@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+                <groupId>org.opendaylight.lispflowmapping</groupId>
+                <artifactId>lispflowmapping-commons</artifactId>
+                <version>0.1.0-SNAPSHOT</version>
+                <relativePath>../parent</relativePath>
+	</parent>
+	<artifactId>common.unittest.tools</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<dependencies>
+       		    <dependency>
+       		        <groupId>equinoxSDK381</groupId>
+       		        <artifactId>org.eclipse.osgi</artifactId>
+       		    </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-legacy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit-addons</groupId>
+			<artifactId>junit-addons</artifactId>
+		</dependency>
+	</dependencies>
+</project>
