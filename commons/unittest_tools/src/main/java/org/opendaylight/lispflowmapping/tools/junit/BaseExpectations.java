@@ -45,7 +45,7 @@ public class BaseExpectations extends Expectations {
             {
                 setImposteriser(ClassImposteriser.INSTANCE);
                 setThreadingPolicy(synchroniser); // otherwise we get errors on
-                                                  // the finalizer thread
+                // the finalizer thread
             }
         };
         defaultAction = new ReturnDefaultValueAction(ClassImposteriser.INSTANCE);
