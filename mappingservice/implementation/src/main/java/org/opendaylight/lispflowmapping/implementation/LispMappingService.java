@@ -65,7 +65,6 @@ public class LispMappingService implements ILispMapping, CommandProvider, IMapRe
     class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<LispIpv6Address, Integer> {
     }
 
-
     void setLispDao(ILispDAO dao) {
         logger.info("LispDAO set in LispMappingService");
         lispDao = dao;

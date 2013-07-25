@@ -90,15 +90,15 @@ public class Activator extends ComponentActivatorAbstractBase {
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
             c.setInterface(new String[] { ILispMapping.class.getName(), IMapResolver.class.getName(), IMapServer.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao")
-                    .setRequired(true));
+            c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao").setRequired(
+                    true));
         } else if (imp.equals(ClusterDAOService.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "clusterosgiservice");
             c.setInterface(new String[] { ILispDAO.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(IClusterContainerServices.class)
-                    .setCallbacks("setClusterContainerService", "unsetClusterContainerService").setRequired(true));
+            c.add(createContainerServiceDependency(containerName).setService(IClusterContainerServices.class).setCallbacks(
+                    "setClusterContainerService", "unsetClusterContainerService").setRequired(true));
         }
     }
 

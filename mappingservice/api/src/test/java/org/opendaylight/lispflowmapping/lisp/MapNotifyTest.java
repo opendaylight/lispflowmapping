@@ -86,7 +86,7 @@ public class MapNotifyTest extends BaseTestCase {
         mn.addEidToLocator(new EidToLocatorRecord());
         mn.addEidToLocator(new EidToLocatorRecord().setPrefix(null));
         mn.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispNoAddress()));
-        
+
         ByteBuffer bb = mn.serialize();
         bb.position(bb.position() + 26); // jump to first record prefix AFI
         assertEquals(0, bb.getShort());

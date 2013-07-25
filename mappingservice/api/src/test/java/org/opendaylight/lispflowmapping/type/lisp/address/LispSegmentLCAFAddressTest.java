@@ -59,7 +59,7 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
                 "02 20 00 0A " + //
                 "AA BB CC DD " + // instance ID
                 "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD")); // AFI=2,
-                                                                           // IPv6
+        // IPv6
 
         assertEquals(new LispIpv6Address(new byte[] { 0x11, 0x22, 0x33, 0x44, //
                 0x55, 0x66, 0x77, (byte) 0x88, //

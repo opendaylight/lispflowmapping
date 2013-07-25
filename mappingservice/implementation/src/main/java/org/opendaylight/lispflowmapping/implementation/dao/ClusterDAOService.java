@@ -64,7 +64,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         logger.debug("Cache successfully created for ClusterDAOService");
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings( { "unchecked", "deprecation" })
     private void retrieveCache() {
         if (this.clusterContainerService == null) {
             logger.error("un-initialized clusterContainerService, can't retrieve cache");

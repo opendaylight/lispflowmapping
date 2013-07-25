@@ -20,7 +20,6 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
-
 /*
  * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
  *
@@ -56,27 +55,22 @@ public class MapResolverTest extends BaseTestCase {
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(1, eidToLocators.getLocators().size());
-        assertLocator(new LispIpv4Address(0x44332211), eidToLocators
-                .getLocators().get(0));
+        assertLocator(new LispIpv4Address(0x44332211), eidToLocators.getLocators().get(0));
     }
 
     @Test
     public void handleMapRequest__BadRLOCType() throws Exception {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        Map<String, Object> rlocs = prepareMapping(new LispIpv4Address(0x71717171),
-                new LispIpv4Address(0x44332211));
+        Map<String, Object> rlocs = prepareMapping(new LispIpv4Address(0x71717171), new LispIpv4Address(0x44332211));
         rlocs.put("RLOC0", "Ooga booga");
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(1, eidToLocators.getLocators().size());
-        assertLocator(new LispIpv4Address(0x44332211), eidToLocators
-                .getLocators().get(0));
+        assertLocator(new LispIpv4Address(0x44332211), eidToLocators.getLocators().get(0));
     }
 
     @Test
@@ -87,11 +81,9 @@ public class MapResolverTest extends BaseTestCase {
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(0, eidToLocators.getLocators().size());
     }
-
 
     @Test
     public void handleMapRequest__IllegalNumRLOCs() throws Exception {
@@ -101,8 +93,7 @@ public class MapResolverTest extends BaseTestCase {
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(0, eidToLocators.getLocators().size());
     }
 
@@ -114,12 +105,10 @@ public class MapResolverTest extends BaseTestCase {
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(1, eidToLocators.getLocators().size());
 
-        assertLocator(new LispIpv4Address(0x04030201), eidToLocators
-                .getLocators().get(0));
+        assertLocator(new LispIpv4Address(0x04030201), eidToLocators.getLocators().get(0));
     }
 
     private Map<String, Object> prepareMapping(LispAddress... address) {
@@ -146,8 +135,7 @@ public class MapResolverTest extends BaseTestCase {
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
         assertEquals(mapRequest.getNonce(), mapReply.getNonce());
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals((byte) 0x20, eidToLocators.getMaskLength());
         assertEquals(v4Address, eidToLocators.getPrefix());
     }
@@ -156,25 +144,19 @@ public class MapResolverTest extends BaseTestCase {
     public void handleMapRequest__ReplyWithMultipleLocators() throws Exception {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
 
-        prepareMapping(new LispIpv4Address(0x04030201), new LispIpv6Address(
-                "::1"), new LispIpv4Address("1.8.2.7"));
+        prepareMapping(new LispIpv4Address(0x04030201), new LispIpv6Address("::1"), new LispIpv4Address("1.8.2.7"));
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords()
-                .get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(3, eidToLocators.getLocators().size());
 
-        assertLocator(new LispIpv4Address(0x04030201), eidToLocators
-                .getLocators().get(0));
-        assertLocator(new LispIpv6Address("::1"), eidToLocators.getLocators()
-                .get(1));
-        assertLocator(new LispIpv4Address("1.8.2.7"), eidToLocators
-                .getLocators().get(2));
+        assertLocator(new LispIpv4Address(0x04030201), eidToLocators.getLocators().get(0));
+        assertLocator(new LispIpv6Address("::1"), eidToLocators.getLocators().get(1));
+        assertLocator(new LispIpv4Address("1.8.2.7"), eidToLocators.getLocators().get(2));
     }
 
-    private void assertLocator(LispAddress expectedAddress,
-            LocatorRecord locatorRecord) {
+    private void assertLocator(LispAddress expectedAddress, LocatorRecord locatorRecord) {
         assertEquals(expectedAddress, locatorRecord.getLocator());
         Assert.assertTrue(locatorRecord.isRouted());
     }

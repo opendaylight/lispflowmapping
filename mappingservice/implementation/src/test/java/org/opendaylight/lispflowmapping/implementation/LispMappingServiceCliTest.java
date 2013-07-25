@@ -38,33 +38,33 @@ public class LispMappingServiceCliTest extends BaseTestCase {
         dao = context.mock(InMemoryDAO.class);
         inject(testedLispMappingService, "lispDao", dao);
         mockCommandInterpreter = new MockCommandInterpreter();
-        
+
         visitorExecutions = new HashMap<Object, Object>();
         allowing(dao).getAll(wany(IRowVisitor.class));
         will(new SimpleAction() {
             @Override
             public Object invoke(Invocation invocation) throws Throwable {
-            	IRowVisitor visitor = (IRowVisitor)invocation.getParameter(0);
-                for(Entry<Object, Object> entry : visitorExecutions.entrySet()) {
+                IRowVisitor visitor = (IRowVisitor) invocation.getParameter(0);
+                for (Entry<Object, Object> entry : visitorExecutions.entrySet()) {
                     visitor.visitRow(LispIpv4Address.class, entry.getKey(), "IP", entry.getValue());
                 }
                 return null;
             }
         });
     }
-    
+
     @Test
-	public void remove__Basic() throws Exception {
-		mockCommandInterpreter.addArgument("1.2.3.4");
-    	oneOf(dao).remove(new LispIpv4Address(0x01020304));
-		testedLispMappingService._removeEid(mockCommandInterpreter);
-	}
-    
+    public void remove__Basic() throws Exception {
+        mockCommandInterpreter.addArgument("1.2.3.4");
+        oneOf(dao).remove(new LispIpv4Address(0x01020304));
+        testedLispMappingService._removeEid(mockCommandInterpreter);
+    }
+
     @Test
     public void oneEntryInDb() throws Exception {
         prepareVisitorResult(0x01020304, 0x09080706);
 
-		testedLispMappingService._dumpAll(mockCommandInterpreter);
+        testedLispMappingService._dumpAll(mockCommandInterpreter);
 
         String console = mockCommandInterpreter.getPrints().toString();
         StringAssert.assertStartsWith("EID\tRLOCs\n", console);
@@ -75,7 +75,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
     public void twoEntriesInDb() throws Exception {
         prepareVisitorResult(0x07020304, 0x09080706);
         prepareVisitorResult(0x01020304, 0x09080706);
-		testedLispMappingService._dumpAll(mockCommandInterpreter);
+        testedLispMappingService._dumpAll(mockCommandInterpreter);
 
         String console = mockCommandInterpreter.getPrints().toString();
         StringAssert.assertStartsWith("EID\tRLOCs\n", console);
