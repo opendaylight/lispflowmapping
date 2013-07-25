@@ -23,118 +23,118 @@ import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
  */
 
 public class InMemoryDAOTest extends BaseTestCase {
-	private InMemoryDAO testedInMemoryDao;
-	private LispIpv4Address eid;
-	private LispIpv4Address rloc;
+    private InMemoryDAO testedInMemoryDao;
+    private LispIpv4Address eid;
+    private LispIpv4Address rloc;
 
-	@Override
-	@Before
-	public void before() throws Exception {
-		super.before();
-		testedInMemoryDao = new InMemoryDAO();
-		testedInMemoryDao.register(TestLispIpv4AddressConverter.class);
-		eid = new LispIpv4Address(1);
-		rloc = new LispIpv4Address(11);
-	}
+    @Override
+    @Before
+    public void before() throws Exception {
+        super.before();
+        testedInMemoryDao = new InMemoryDAO();
+        testedInMemoryDao.register(TestLispIpv4AddressConverter.class);
+        eid = new LispIpv4Address(1);
+        rloc = new LispIpv4Address(11);
+    }
 
-	class TestLispIpv4AddressConverter implements ILispTypeConverter<LispIpv4Address, Integer> {
-	}
+    class TestLispIpv4AddressConverter implements ILispTypeConverter<LispIpv4Address, Integer> {
+    }
 
-	@Test
-	public void put__OverrideValues() throws Exception {
-		testedInMemoryDao.put(eid, new MappingEntry<Integer>("Val", 1),//
-				new MappingEntry<String>("Val2", "Yes"));
+    @Test
+    public void put__OverrideValues() throws Exception {
+        testedInMemoryDao.put(eid, new MappingEntry<Integer>("Val", 1),//
+                new MappingEntry<String>("Val2", "Yes"));
 
-		testedInMemoryDao.put(eid, new MappingEntry<Integer>("Val", 2),//
-				new MappingEntry<String>("Val5", "Bla"));
+        testedInMemoryDao.put(eid, new MappingEntry<Integer>("Val", 2),//
+                new MappingEntry<String>("Val5", "Bla"));
 
-		Map<String, ?> rlocs = testedInMemoryDao.get(eid);
-		assertEquals(2, rlocs.size());
-		
-		assertEquals(2, rlocs.get("Val"));
-		assertEquals("Bla", rlocs.get("Val5"));
+        Map<String, ?> rlocs = testedInMemoryDao.get(eid);
+        assertEquals(2, rlocs.size());
 
-		assertEquals(2, testedInMemoryDao.getSpecific(eid, "Val"));
-		assertEquals(2, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val")));
+        assertEquals(2, rlocs.get("Val"));
+        assertEquals("Bla", rlocs.get("Val5"));
 
-		assertEquals("Bla", testedInMemoryDao.getSpecific(eid, "Val5"));
-		assertEquals("Bla", testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val5")));
-	}
-	
-	@Test
-	public void remove__Basic() throws Exception {
-		testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
-		assertTrue(testedInMemoryDao.remove(eid));
+        assertEquals(2, testedInMemoryDao.getSpecific(eid, "Val"));
+        assertEquals(2, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val")));
 
-		assertNull(testedInMemoryDao.get(eid));
+        assertEquals("Bla", testedInMemoryDao.getSpecific(eid, "Val5"));
+        assertEquals("Bla", testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val5")));
+    }
 
-		assertFalse(testedInMemoryDao.remove(eid));
-	}
+    @Test
+    public void remove__Basic() throws Exception {
+        testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
+        assertTrue(testedInMemoryDao.remove(eid));
 
-	@Test(expected = IllegalArgumentException.class)
-	public void get__NullKey() throws Exception {
-		testedInMemoryDao.get(null);
-	}
+        assertNull(testedInMemoryDao.get(eid));
 
-	@Test
-	public void Scenario__MultiValues() throws Exception {
-		testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc), //
-				new MappingEntry<Integer>("Val", 1),//
-				new MappingEntry<String>("Val2", "Yes"));
+        assertFalse(testedInMemoryDao.remove(eid));
+    }
 
-		Map<String, ?> rlocs = testedInMemoryDao.get(eid);
-		assertEquals(3, rlocs.size());
-		assertEquals(rloc, rlocs.get("IP"));
-		assertEquals(1, rlocs.get("Val"));
-		assertEquals("Yes", rlocs.get("Val2"));
+    @Test(expected = IllegalArgumentException.class)
+    public void get__NullKey() throws Exception {
+        testedInMemoryDao.get(null);
+    }
 
-		assertEquals(rloc, testedInMemoryDao.getSpecific(eid, "IP"));
-		assertEquals(rloc, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
+    @Test
+    public void Scenario__MultiValues() throws Exception {
+        testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc), //
+                new MappingEntry<Integer>("Val", 1),//
+                new MappingEntry<String>("Val2", "Yes"));
 
-		assertEquals(1, testedInMemoryDao.getSpecific(eid, "Val"));
-		assertEquals(1, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val")));
+        Map<String, ?> rlocs = testedInMemoryDao.get(eid);
+        assertEquals(3, rlocs.size());
+        assertEquals(rloc, rlocs.get("IP"));
+        assertEquals(1, rlocs.get("Val"));
+        assertEquals("Yes", rlocs.get("Val2"));
 
-		assertEquals("Yes", testedInMemoryDao.getSpecific(eid, "Val2"));
-		assertEquals("Yes", testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val2")));
-	}
+        assertEquals(rloc, testedInMemoryDao.getSpecific(eid, "IP"));
+        assertEquals(rloc, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
 
-	@Test
-	public void Scenario__BasicFlow() throws Exception {
-		testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
+        assertEquals(1, testedInMemoryDao.getSpecific(eid, "Val"));
+        assertEquals(1, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val")));
 
-		Map<String, ?> rlocs = testedInMemoryDao.get(eid);
-		assertEquals(rloc, rlocs.get("IP"));
+        assertEquals("Yes", testedInMemoryDao.getSpecific(eid, "Val2"));
+        assertEquals("Yes", testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("Val2")));
+    }
 
-		assertEquals(rloc, testedInMemoryDao.getSpecific(eid, "IP"));
-		assertEquals(rloc, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
-	}
+    @Test
+    public void Scenario__BasicFlow() throws Exception {
+        testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
 
-	@Test
-	public void get__MissingValue() throws Exception {
-		assertNull(testedInMemoryDao.get(eid));
+        Map<String, ?> rlocs = testedInMemoryDao.get(eid);
+        assertEquals(rloc, rlocs.get("IP"));
 
-		assertNull(testedInMemoryDao.getSpecific(eid, "IP"));
-		assertNull(testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
+        assertEquals(rloc, testedInMemoryDao.getSpecific(eid, "IP"));
+        assertEquals(rloc, testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
+    }
 
-		testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("Key1", rloc));
-		assertNull(testedInMemoryDao.getSpecific(eid, "IP"));
-		assertNull(testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
-	}
+    @Test
+    public void get__MissingValue() throws Exception {
+        assertNull(testedInMemoryDao.get(eid));
 
-	@SuppressWarnings("unused")
-	@Test(expected = ClassCastException.class)
-	public void get__DifferentType() throws Exception {
-		testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
-		Integer a = testedInMemoryDao.getSpecific(eid, new MappingValueKey<Integer>("IP"));
-	}
+        assertNull(testedInMemoryDao.getSpecific(eid, "IP"));
+        assertNull(testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
 
-	@Test(expected = IllegalArgumentException.class)
-	public void put__WithoutRegister() throws Exception {
-		testedInMemoryDao.put(2, new MappingEntry<Integer>("IP", Integer.valueOf(11)));
-	}
+        testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("Key1", rloc));
+        assertNull(testedInMemoryDao.getSpecific(eid, "IP"));
+        assertNull(testedInMemoryDao.getSpecific(eid, new MappingValueKey<LispIpv4Address>("IP")));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void get__WithoutRegister() throws Exception {
-		testedInMemoryDao.get(1);
-	}
+    @SuppressWarnings("unused")
+    @Test(expected = ClassCastException.class)
+    public void get__DifferentType() throws Exception {
+        testedInMemoryDao.put(eid, new MappingEntry<LispIpv4Address>("IP", rloc));
+        Integer a = testedInMemoryDao.getSpecific(eid, new MappingValueKey<Integer>("IP"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void put__WithoutRegister() throws Exception {
+        testedInMemoryDao.put(2, new MappingEntry<Integer>("IP", Integer.valueOf(11)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void get__WithoutRegister() throws Exception {
+        testedInMemoryDao.get(1);
+    }
 }

@@ -24,7 +24,6 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
-
 public class MapServerTest extends BaseTestCase {
 
     private MapServer testedMapServer;
@@ -81,8 +80,7 @@ public class MapServerTest extends BaseTestCase {
     }
 
     @Test
-    public void handleMapRegisterIpv4__CloneNotOwnYouClown()
-            throws Exception {
+    public void handleMapRegisterIpv4__CloneNotOwnYouClown() throws Exception {
         mapRegister = new MapRegister();
         byte[] originalAuthenticationData = new byte[] { 0x1, 0x2, 0x3, 0x4 };
         mapRegister.setAuthenticationData(originalAuthenticationData);
@@ -90,26 +88,26 @@ public class MapServerTest extends BaseTestCase {
         EidToLocatorRecord eidToLocator = new EidToLocatorRecord();
         eid = new LispIpv4Address(1);
         eidToLocator.setPrefix(eid);
-        
+
         LocatorRecord locator = new LocatorRecord();
         locator.setPriority((byte) 55);
         eidToLocator.addLocator(locator);
-        
+
         mapRegister.addEidToLocator(eidToLocator);
-        
+
         expectPut();
-        
+
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
 
         originalAuthenticationData[1] = 0x77;
         mapRegister.getEidToLocatorRecords().get(0).setPrefix(new LispIpv4Address(55));
         mapRegister.getEidToLocatorRecords().get(0).getLocators().get(0).setPriority((byte) 1);
-        
+
         ArrayAssert.assertEquals(new byte[] { 0x1, 0x2, 0x3, 0x4 }, mapNotify.getAuthenticationData());
         EidToLocatorRecord actualEidToLocator = mapNotify.getEidToLocatorRecords().get(0);
         assertEquals(new LispIpv4Address(1), actualEidToLocator.getPrefix());
-        assertEquals((byte)55, actualEidToLocator.getLocators().get(0).getPriority());
-        
+        assertEquals((byte) 55, actualEidToLocator.getLocators().get(0).getPriority());
+
     }
 
     @Test
@@ -118,8 +116,7 @@ public class MapServerTest extends BaseTestCase {
 
         LispIpv4Address rloc0 = rloc;
         LispIpv6Address rloc1 = new LispIpv6Address("::7");
-        mapRegister.getEidToLocatorRecords().get(0)
-                .addLocator(new LocatorRecord().setLocator(rloc1));
+        mapRegister.getEidToLocatorRecords().get(0).addLocator(new LocatorRecord().setLocator(rloc1));
 
         testedMapServer.handleMapRegister(mapRegister);
 

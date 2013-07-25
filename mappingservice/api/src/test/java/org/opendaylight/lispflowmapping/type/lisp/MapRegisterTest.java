@@ -64,16 +64,16 @@ public class MapRegisterTest extends BaseTestCase {
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 " //
                 + "c5 f2 b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec " //
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " // Record
-                                                                           // 1
+                // 1
                 + "ff 00 00 05 00 01 c0 a8 88 0a " // contd
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 98 10 fe 01 01 64 " // Record
-                                                                           // 2
+                // 2
                 + "ff 00 00 05 00 01 c0 a8 88 0b " // contd
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 97 10 fe 01 01 64 " // Record
-                                                                           // 3
+                // 3
                 + "ff 00 00 05 00 01 c0 a8 88 0c " // contd
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 96 10 fe 01 01 64 " // Record
-                                                                           // 4
+                // 4
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
         ));
 
@@ -112,34 +112,34 @@ public class MapRegisterTest extends BaseTestCase {
         LocatorRecord loc0 = eidToLocator.getLocators().get(0);
         LocatorRecord loc1 = eidToLocator.getLocators().get(1);
         LocatorRecord loc2 = eidToLocator.getLocators().get(2);
-        assertEquals((byte)0x01, loc0.getPriority());
-        assertEquals((byte)0x67, loc1.getPriority());
-        assertEquals((byte)0x60, loc2.getPriority());
+        assertEquals((byte) 0x01, loc0.getPriority());
+        assertEquals((byte) 0x67, loc1.getPriority());
+        assertEquals((byte) 0x60, loc2.getPriority());
 
-        assertEquals((byte)0x64, loc0.getWeight());
-        assertEquals((byte)0x00, loc1.getWeight());
-        assertEquals((byte)0x11, loc2.getWeight());
+        assertEquals((byte) 0x64, loc0.getWeight());
+        assertEquals((byte) 0x00, loc1.getWeight());
+        assertEquals((byte) 0x11, loc2.getWeight());
 
-        assertEquals((byte)0x1F, loc0.getMulticastPriority());
-        assertEquals((byte)0x30, loc1.getMulticastPriority());
-        assertEquals((byte)0x34, loc2.getMulticastPriority());
+        assertEquals((byte) 0x1F, loc0.getMulticastPriority());
+        assertEquals((byte) 0x30, loc1.getMulticastPriority());
+        assertEquals((byte) 0x34, loc2.getMulticastPriority());
 
-        assertEquals((byte)0x00, loc0.getMulticastWeight());
-        assertEquals((byte)0x34, loc1.getMulticastWeight());
-        assertEquals((byte)0xA4, loc2.getMulticastWeight());
+        assertEquals((byte) 0x00, loc0.getMulticastWeight());
+        assertEquals((byte) 0x34, loc1.getMulticastWeight());
+        assertEquals((byte) 0xA4, loc2.getMulticastWeight());
 
         assertTrue(loc0.isLocalLocator());
         assertFalse(loc1.isLocalLocator());
         assertFalse(loc2.isLocalLocator());
-        
+
         assertFalse(loc0.isRlocProbed());
         assertTrue(loc1.isRlocProbed());
         assertTrue(loc2.isRlocProbed());
-        
+
         assertTrue(loc0.isRouted());
         assertFalse(loc1.isRouted());
         assertTrue(loc2.isRouted());
-        
+
         assertEquals(new LispIpv4Address(0xC0A8880A), loc0.getLocator());
         assertEquals(new LispIpv4Address(0xCCAAAA11), loc1.getLocator());
     }
@@ -158,16 +158,16 @@ public class MapRegisterTest extends BaseTestCase {
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 " //
                 + "c5 f2 b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec " //
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " // Record
-                                                                           // 0
+                // 0
                 + "ff 00 00 05 00 01 c0 a8 88 0a " // contd
                 + "00 00 00 0b 01 17 50 00 01 11 00 01 98 10 fe 01 01 64 " // Record
-                                                                           // 1
+                // 1
                 + "ff 00 00 05 00 01 c0 a8 88 0b " // contd
                 + "00 00 00 0c 01 20 00 00 02 22 00 01 97 10 fe 01 01 64 " // Record
-                                                                           // 2
+                // 2
                 + "ff 00 00 05 00 01 c0 a8 88 0c " // contd
                 + "00 00 00 0d 01 20 20 00 03 33 00 01 96 10 fe 01 01 64 " // Record
-                                                                           // 3
+                // 3
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
         ));
 

@@ -77,7 +77,7 @@ public class MapReplyTest extends BaseTestCase {
 
         ByteBuffer packet = mr.serialize();
 
-        packet.position(18); 
+        packet.position(18);
         assertHexEquals((byte) 0x00, packet.get()); // MapReplyAction.NoAction
     }
 
@@ -91,7 +91,7 @@ public class MapReplyTest extends BaseTestCase {
 
         ByteBuffer packet = mr.serialize();
 
-        packet.position(18); 
+        packet.position(18);
         assertHexEquals((byte) 0x00, packet.get()); // MapReplyAction.NoAction
     }
 

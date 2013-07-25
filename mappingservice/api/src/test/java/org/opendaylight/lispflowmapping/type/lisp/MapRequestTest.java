@@ -24,13 +24,13 @@ public class MapRequestTest extends BaseTestCase {
     @Test
     public void prefix__NoPrefix() throws Exception {
         MapRequest mr = new MapRequest();
-        mr.addEidRecord(new EidRecord((byte)0, null));
-        mr.addEidRecord(new EidRecord((byte)0, new LispNoAddress()));
+        mr.addEidRecord(new EidRecord((byte) 0, null));
+        mr.addEidRecord(new EidRecord((byte) 0, new LispNoAddress()));
 
         assertEquals(AddressFamilyNumberEnum.RESERVED, mr.getEids().get(0).getPrefix().getAfi());
         assertEquals(AddressFamilyNumberEnum.RESERVED, mr.getEids().get(1).getPrefix().getAfi());
     }
-    
+
     @Test
     public void deserialize__FlagsInFirstByte() throws Exception {
         MapRequest mr = MapRequest.deserialize(hexToByteBuffer("16 00 00 01 3d 8d " //
