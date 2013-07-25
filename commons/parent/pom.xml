@@ -152,33 +152,6 @@
 
 
   <build>
-                <plugins>
-                        <plugin>
-                                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-                                <artifactId>maven-java-formatter-plugin</artifactId>
-                                <version>0.3.1</version>
-                                <configuration>
-                                        <compilerSource>1.6</compilerSource>
-                                        <compilerCompliance>1.6</compilerCompliance>
-                                        <compilerTargetPlatform>1.6</compilerTargetPlatform>
-                                        <configFile>eclipse/formatter.xml</configFile>
-                                </configuration>
-                                 <dependencies>
-                                           <dependency>
-                                                       <groupId>org.opendaylight.lispflowmapping</groupId>
-                                                       <artifactId>common.build.tools</artifactId>
-                                                       <version>0.1.0-SNAPSHOT</version>
-                                           </dependency>
-                                 </dependencies>
-                                <executions>
-                                        <execution>
-                                                <goals>
-                                                        <goal>format</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                        </plugin>
-                </plugins>
     <pluginManagement>
       <plugins>
         <plugin>

@@ -5,9 +5,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
                 <groupId>org.opendaylight.lispflowmapping</groupId>
-                <artifactId>lispflowmapping-commons</artifactId>
+                <artifactId>lispflowmapping-code-commons</artifactId>
                 <version>0.1.0-SNAPSHOT</version>
-                <relativePath>../parent</relativePath>
+                <relativePath>../code-parent</relativePath>
 	</parent>
 	<artifactId>common.unittest.tools</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
