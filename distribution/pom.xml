@@ -15,7 +15,9 @@ http://maven.apache.org/maven-v4_0_0.xsd">
   <name>LISP Flow Mapping Distribution</name>
 
   <modules>
+    <module>../commons/parent</module>
     <module>../commons/build_tools</module>
+    <module>../commons/code-parent</module>
     <module>../commons/unittest_tools</module>
     <module>../mappingservice</module>
   </modules>
