@@ -17,7 +17,7 @@
                 <module>implementation</module>
         </modules>
         <build>
-                <plugins>
+                <!--plugins>
                         <plugin>
                                 <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
                                 <artifactId>maven-java-formatter-plugin</artifactId>
@@ -43,7 +43,7 @@
                                         </execution>
                                 </executions>
                         </plugin>
-                </plugins>
+                </plugins-->
 	</build>
 	<dependencies>
 	        <dependency>
