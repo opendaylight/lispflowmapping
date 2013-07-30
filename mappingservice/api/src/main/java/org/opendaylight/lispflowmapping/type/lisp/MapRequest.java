@@ -8,13 +8,10 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.util.ByteUtil;
 
 /**
  * <pre>
@@ -255,45 +252,5 @@ public class MapRequest {
         return itrRlocs;
     }
 
-    public static MapRequest deserialize(ByteBuffer requestBuffer) {
-        try {
-            MapRequest mapRequest = new MapRequest();
-
-            byte typeAndFlags = requestBuffer.get();
-            mapRequest.setAuthoritative(ByteUtil.extractBit(typeAndFlags, Flags.AUTHORITATIVE));
-            mapRequest.setMapDataPresent(ByteUtil.extractBit(typeAndFlags, Flags.MAP_DATA_PRESENT));
-            mapRequest.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
-            mapRequest.setSmr(ByteUtil.extractBit(typeAndFlags, Flags.SMR));
-
-            byte moreFlags = requestBuffer.get();
-            mapRequest.setPitr(ByteUtil.extractBit(moreFlags, Flags.PITR));
-            mapRequest.setSmrInvoked(ByteUtil.extractBit(moreFlags, Flags.SMR_INVOKED));
-
-            int itrCount = requestBuffer.get() + 1;
-            int recordCount = requestBuffer.get();
-            mapRequest.setNonce(requestBuffer.getLong());
-            mapRequest.setSourceEid(LispAddress.valueOf(requestBuffer));
-
-            for (int i = 0; i < itrCount; i++) {
-                mapRequest.addItrRloc(LispAddress.valueOf(requestBuffer));
-            }
-
-            for (int i = 0; i < recordCount; i++) {
-                mapRequest.addEidRecord(EidRecord.deserialize(requestBuffer));
-            }
-            return mapRequest;
-        } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + requestBuffer.capacity() + ")", re);
-        }
-    }
-
-    public interface Flags {
-        byte AUTHORITATIVE = 0x08;
-        byte MAP_DATA_PRESENT = 0x04;
-        byte PROBE = 0x02;
-        byte SMR = 0x01;
-
-        byte PITR = (byte) 0x80;
-        byte SMR_INVOKED = 0x40;
-    }
+    
 }

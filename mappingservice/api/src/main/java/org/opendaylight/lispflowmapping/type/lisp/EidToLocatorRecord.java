@@ -168,7 +168,7 @@ public class EidToLocatorRecord {
         return this;
     }
 
-    protected static EidToLocatorRecord deserialize(ByteBuffer buffer) {
+    public static EidToLocatorRecord deserialize(ByteBuffer buffer) {
         EidToLocatorRecord eidToLocatorRecord = new EidToLocatorRecord();
         eidToLocatorRecord.setRecordTtl(buffer.getInt());
         byte locatorCount = buffer.get();

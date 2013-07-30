@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.dao;
+package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
 

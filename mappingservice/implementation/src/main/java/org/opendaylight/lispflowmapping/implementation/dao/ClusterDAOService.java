@@ -18,10 +18,10 @@ import org.opendaylight.controller.clustering.services.CacheConfigException;
 import org.opendaylight.controller.clustering.services.CacheExistException;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.clustering.services.IClusterServices;
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.dao.ILispTypeConverter;
-import org.opendaylight.lispflowmapping.dao.IQueryAll;
-import org.opendaylight.lispflowmapping.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
+import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
+import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

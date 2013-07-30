@@ -11,9 +11,9 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.dao.ILispDAO.MappingEntry;
-import org.opendaylight.lispflowmapping.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;

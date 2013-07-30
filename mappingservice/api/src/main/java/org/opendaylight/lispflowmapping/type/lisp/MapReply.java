@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,34 +139,5 @@ public class MapReply {
         this.eidToLocatorRecords = eidToLocatorRecords;
     }
 
-    public ByteBuffer serialize() {
-        int size = Length.HEADER_SIZE;
-        for (EidToLocatorRecord eidToLocatorRecord : getEidToLocatorRecords()) {
-            size += eidToLocatorRecord.getSerializationSize();
-        }
-
-        ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-
-        replyBuffer.put((byte) ((LispMessageEnum.MapReply.getValue() << 4) | //
-                (isProbe() ? Flags.PROBE : 0x00) | //
-                (isEchoNonceEnabled() ? Flags.ECHO_NONCE_ENABLED : 0x00)));
-
-        replyBuffer.position(replyBuffer.position() + Length.RES);
-        replyBuffer.put((byte) getEidToLocatorRecords().size());
-        replyBuffer.putLong(getNonce());
-        for (EidToLocatorRecord eidToLocatorRecord : getEidToLocatorRecords()) {
-            eidToLocatorRecord.serialize(replyBuffer);
-        }
-        return replyBuffer;
-    }
-
-    private interface Length {
-        int RES = 2;
-        int HEADER_SIZE = 12;
-    }
-
-    private interface Flags {
-        int PROBE = 0x08;
-        int ECHO_NONCE_ENABLED = 0x04;
-    }
+    
 }

@@ -9,7 +9,7 @@
 		<version>0.1.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>mappingservice.api</artifactId>
+	<artifactId>mappingservice.northbound</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<build>
@@ -17,20 +17,15 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<!--version>2.3.6</version-->
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
 						<Export-Package>
-							org.opendaylight.lispflowmapping.interfaces.dao, 
-							org.opendaylight.lispflowmapping.interfaces.lisp, 
-							org.opendaylight.lispflowmapping.type.exception, 
-							org.opendaylight.lispflowmapping.type.lisp, 
-							org.opendaylight.lispflowmapping.type.lisp.address, 
-							org.opendaylight.lispflowmapping.util
 						</Export-Package>
-						<Bundle-Activator>
-						</Bundle-Activator>
+						<Import-Package>
+							org.opendaylight.lispflowmapping
+						</Import-Package>
+						<manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
 						<Service-Component>
 						</Service-Component>
 					</instructions>
@@ -40,8 +35,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal</artifactId>
+			<groupId>org.opendaylight.lispflowmapping</groupId>
+			<artifactId>mappingservice.api</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

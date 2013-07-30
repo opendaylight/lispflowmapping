@@ -6,7 +6,8 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping;
+package org.opendaylight.lispflowmapping.interfaces.dao;
 
-public interface ILispMapping {
+public interface IQueryAll {
+    public void getAll(IRowVisitor visitor);
 }

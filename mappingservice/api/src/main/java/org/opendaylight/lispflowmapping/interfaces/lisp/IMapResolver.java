@@ -6,8 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.dao;
+package org.opendaylight.lispflowmapping.interfaces.lisp;
 
-public interface IRowVisitor {
-    void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value);
+import org.opendaylight.lispflowmapping.type.lisp.MapReply;
+import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
+
+public interface IMapResolver {
+    MapReply handleMapRequest(MapRequest request);
 }

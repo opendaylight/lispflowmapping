@@ -6,11 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.lisp;
+package org.opendaylight.lispflowmapping.northbound;
 
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 
-public interface IMapServer {
-    MapNotify handleMapRegister(MapRegister mapRegister);
+public class NorthboundService implements INorthboundService {
+
+    
+
 }

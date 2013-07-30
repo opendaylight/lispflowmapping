@@ -6,17 +6,17 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation;
+package org.opendaylight.lispflowmapping.southbound;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.apache.felix.dm.Component;
-import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
-import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public Object[] getImplementations() {
-        Object[] res = { LispMappingService.class, ClusterDAOService.class };
+        Object[] res = { LispSouthboundPlugin.class };
         return res;
     }
 
@@ -83,20 +83,13 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
-        if (imp.equals(LispMappingService.class)) {
+        if (imp.equals(LispSouthboundPlugin.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
-            c.setInterface(new String[] { IFlowMapping.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao").setRequired(
-                    true));
-        } else if (imp.equals(ClusterDAOService.class)) {
-            // export the service
-            Dictionary<String, String> props = new Hashtable<String, String>();
-            props.put("name", "clusterosgiservice");
-            c.setInterface(new String[] { ILispDAO.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(IClusterContainerServices.class).setCallbacks(
-                    "setClusterContainerService", "unsetClusterContainerService").setRequired(true));
+            c.setInterface(new String[] { ILispSouthboundPlugin.class.getName() }, props);
+            c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class).setCallbacks("setFlowMappingService", "unsetFlowMappingService")
+                    .setRequired(true));
         }
     }
 

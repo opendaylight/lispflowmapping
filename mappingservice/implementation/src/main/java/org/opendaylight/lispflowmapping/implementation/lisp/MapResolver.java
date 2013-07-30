@@ -10,8 +10,8 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.Map;
 
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.lisp.IMapResolver;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;

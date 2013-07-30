@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.type.lisp;
+package org.opendaylight.lispflowmapping.southbound.lisp.serializer;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -14,10 +14,15 @@ import static junit.framework.Assert.assertTrue;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.southbound.lisp.LispSerializer;
+import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
+import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
+import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
-public class MapRegisterTest extends BaseTestCase {
+public class MapRegisterserializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__AllFields() throws Exception {
@@ -32,7 +37,7 @@ public class MapRegisterTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapRegister mr = MapRegister.deserialize(hexToByteBuffer("38 00 01 01 FF BB " //
+        MapRegister mr = LispSerializer.deserializeMapRegister(hexToByteBuffer("38 00 01 01 FF BB " //
                 + "00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 " //
                 + "b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
@@ -59,7 +64,7 @@ public class MapRegisterTest extends BaseTestCase {
         // Local RLOCs: 192.168.136.10 -- 192.168.136.11 -- 192.168.136.12 --
         // 192.168.136.13
         //
-        MapRegister mr = MapRegister.deserialize(hexToByteBuffer("38 00 01 " //
+        MapRegister mr = LispSerializer.deserializeMapRegister(hexToByteBuffer("38 00 01 " //
                 + "04 " // Record count
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 " //
                 + "c5 f2 b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec " //
@@ -86,7 +91,7 @@ public class MapRegisterTest extends BaseTestCase {
 
     @Test
     public void deserialize__Locators() throws Exception {
-        MapRegister mr = MapRegister.deserialize(hexToByteBuffer("38 00 01 01 " //
+        MapRegister mr = LispSerializer.deserializeMapRegister(hexToByteBuffer("38 00 01 01 " //
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 " //
                 + "c5 f2 b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec " //
                 + "00 00 00 0a " //
@@ -153,7 +158,7 @@ public class MapRegisterTest extends BaseTestCase {
         // Local RLOCs: 192.168.136.10 -- 192.168.136.11 -- 192.168.136.12 --
         // 192.168.136.13
         //
-        MapRegister mr = MapRegister.deserialize(hexToByteBuffer("38 00 01 " //
+        MapRegister mr = LispSerializer.deserializeMapRegister(hexToByteBuffer("38 00 01 " //
                 + "04 " // Record count
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 " //
                 + "c5 f2 b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec " //
@@ -202,7 +207,7 @@ public class MapRegisterTest extends BaseTestCase {
 
     @Test
     public void deserialize__IllegalAction() throws Exception {
-        MapRegister mr = MapRegister.deserialize(hexToByteBuffer("38 00 01 01 FF BB " //
+        MapRegister mr = LispSerializer.deserializeMapRegister(hexToByteBuffer("38 00 01 01 FF BB " //
                 + "00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 " //
                 + "b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 " //
                 + "00 0a 01 20 F0 00 00 00 00 01 99 10 fe 01 01 64 " //

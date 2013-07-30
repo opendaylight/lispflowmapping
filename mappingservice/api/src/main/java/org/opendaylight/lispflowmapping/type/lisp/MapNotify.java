@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,31 +108,6 @@ public class MapNotify {
         setAuthenticationData(null);
     }
 
-    public ByteBuffer serialize() {
-        int size = Length.HEADER_SIZE + getAuthenticationData().length;
-        for (EidToLocatorRecord eidToLocatorRecord : getEidToLocatorRecords()) {
-            size += eidToLocatorRecord.getSerializationSize();
-        }
-
-        ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-        replyBuffer.put((byte) (LispMessageEnum.MapNotify.getValue() << 4));
-        replyBuffer.position(replyBuffer.position() + Length.RES);
-        replyBuffer.put((byte) getEidToLocatorRecords().size());
-        replyBuffer.putLong(getNonce());
-        replyBuffer.putShort(getKeyId());
-        replyBuffer.putShort((short) getAuthenticationData().length);
-        if (getAuthenticationData() != null) {
-            replyBuffer.put(getAuthenticationData());
-        }
-
-        for (EidToLocatorRecord eidToLocatorRecord : getEidToLocatorRecords()) {
-            eidToLocatorRecord.serialize(replyBuffer);
-        }
-
-        replyBuffer.clear();
-        return replyBuffer;
-    }
-
     public boolean isProxyMapReply() {
         return proxyMapReply;
     }
@@ -187,10 +161,7 @@ public class MapNotify {
         eidToLocatorRecords.add(record);
     }
 
-    private interface Length {
-        int HEADER_SIZE = 16;
-        int RES = 2;
-    }
+    
 
     public void setFromMapRegister(MapRegister mapRegister) {
         setNonce(mapRegister.getNonce());

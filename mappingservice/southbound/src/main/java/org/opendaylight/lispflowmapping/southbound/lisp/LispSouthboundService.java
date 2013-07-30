@@ -6,15 +6,15 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.lisp;
+package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import static org.opendaylight.lispflowmapping.util.ByteUtil.getUnsignedByte;
 
 import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 
-import org.opendaylight.lispflowmapping.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.type.lisp.LispMessage;
 import org.opendaylight.lispflowmapping.type.lisp.LispMessageEnum;
@@ -24,11 +24,11 @@ import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.network.PacketHeader;
 
-public class LispService {
+public class LispSouthboundService {
     private IMapResolver mapResolver;
     private IMapServer mapServer;
 
-    public LispService(IMapResolver mapResolver, IMapServer mapServer) {
+    public LispSouthboundService(IMapResolver mapResolver, IMapServer mapServer) {
         this.mapResolver = mapResolver;
         this.mapServer = mapServer;
     }
@@ -49,9 +49,9 @@ public class LispService {
 
     private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
         int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
-        MapRequest request = MapRequest.deserialize(inBuffer);
+        MapRequest request = LispSerializer.deserializeMapRequest(inBuffer);
         MapReply mapReply = mapResolver.handleMapRequest(request);
-        ByteBuffer outBuffer = mapReply.serialize();
+        ByteBuffer outBuffer = LispSerializer.serializeMapReply(mapReply);
 
         DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
         replyPacket.setPort(encapsulatedSourcePort);
@@ -77,11 +77,11 @@ public class LispService {
     }
 
     private DatagramPacket handleMapRegister(ByteBuffer inBuffer) {
-        MapRegister mapRegister = MapRegister.deserialize(inBuffer);
+        MapRegister mapRegister = LispSerializer.deserializeMapRegister(inBuffer);
         MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
 
         if (mapNotify != null) {
-            ByteBuffer outBuffer = mapNotify.serialize();
+            ByteBuffer outBuffer = LispSerializer.serializeMapNotify(mapNotify);
             DatagramPacket notify = new DatagramPacket(outBuffer.array(), outBuffer.limit());
             notify.setPort(LispMessage.PORT_NUM);
             return notify;
