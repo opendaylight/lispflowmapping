@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
-import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 
 public class LispSegmentLCAFAddress extends LispLCAFAddress {
@@ -22,19 +20,6 @@ public class LispSegmentLCAFAddress extends LispLCAFAddress {
         this.instanceId = instanceId;
     }
 
-    public static LispSegmentLCAFAddress valueOf(byte res2, short length, ByteBuffer buffer) {
-        int instanceId = buffer.getInt();
-        LispAddress address = LispAddress.valueOf(buffer);
-
-        return new LispSegmentLCAFAddress(res2, instanceId, address);
-    }
-
-    @Override
-    public void serialize(ByteBuffer buffer) {
-        super.internalSerialize(buffer);
-        buffer.putInt(getInstanceId());
-        address.serialize(buffer);
-    }
 
     public LispAddress getAddress() {
         return address;
@@ -48,10 +33,6 @@ public class LispSegmentLCAFAddress extends LispLCAFAddress {
         return getRes2();
     }
 
-    @Override
-    public short getLcafLength() {
-        return (short) (Length.INSTANCE + getAddress().getAddressSize());
-    }
 
     @Override
     public int hashCode() {
@@ -86,8 +67,5 @@ public class LispSegmentLCAFAddress extends LispLCAFAddress {
         return "LispSegmentLCAFAddress#[address=" + address + ", instanceId=" + instanceId + "]" + super.toString();
     }
 
-    private interface Length {
-        int INSTANCE = 4;
-    }
 
 }

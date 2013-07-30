@@ -12,10 +12,10 @@ import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.dao.ILispTypeConverter;
-import org.opendaylight.lispflowmapping.dao.IQueryAll;
-import org.opendaylight.lispflowmapping.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
+import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
+import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 
 public class InMemoryDAO implements ILispDAO, IQueryAll {
     private Map<Class<?>, Map<Object, Map<String, Object>>> typeToKeysToValues;

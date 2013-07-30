@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
@@ -55,12 +53,6 @@ public class EidRecord {
         this.prefix = (prefix != null) ? prefix : NO_PREFIX;
     }
 
-    public static EidRecord deserialize(ByteBuffer requestBuffer) {
-        /* byte reserved = */requestBuffer.get();
-        byte maskLength = requestBuffer.get();
-        LispAddress prefix = LispAddress.valueOf(requestBuffer);
-        return new EidRecord(maskLength, prefix);
-    }
 
     private static LispAddress NO_PREFIX = new LispNoAddress();
 }

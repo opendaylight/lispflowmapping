@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
-import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispASAddress extends LispAddress {
@@ -20,24 +18,11 @@ public class LispASAddress extends LispAddress {
         this.asNum = num;
     }
 
-    public static LispASAddress valueOf(ByteBuffer buffer) {
-        throw new RuntimeException("Not implemented");
-    }
 
     public int getAS() {
         return asNum;
     }
 
-    @Override
-    public int getAddressSize() {
-        throw new RuntimeException("Not implemented");
-
-    }
-
-    @Override
-    public void serialize(ByteBuffer buffer) {
-        throw new RuntimeException("Not implemented");
-    }
 
     @Override
     public int hashCode() {
