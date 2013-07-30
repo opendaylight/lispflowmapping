@@ -22,9 +22,8 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							org.opendaylight.lispflowmapping,
-							org.opendaylight.lispflowmapping.dao, 
-							org.opendaylight.lispflowmapping.lisp, 
+							org.opendaylight.lispflowmapping.interfaces.dao, 
+							org.opendaylight.lispflowmapping.interfaces.lisp, 
 							org.opendaylight.lispflowmapping.type.exception, 
 							org.opendaylight.lispflowmapping.type.lisp, 
 							org.opendaylight.lispflowmapping.type.lisp.address, 

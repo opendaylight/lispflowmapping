@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.lisp;
+package org.opendaylight.lispflowmapping.southbound.lisp.serializer;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -24,8 +24,10 @@ import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
+import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
@@ -41,11 +43,10 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.util.ByteUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
-public class LispServiceTest extends BaseTestCase {
+public class LispSouthboundServiceTest extends BaseTestCase {
 
-    private LispService testedLispService;
+    private LispSouthboundService testedLispService;
     private IMapResolver mapResolver;
     private IMapServer mapServer;
     private byte[] mapRequestPacket;
@@ -81,7 +82,7 @@ public class LispServiceTest extends BaseTestCase {
         super.before();
         mapResolver = context.mock(IMapResolver.class);
         mapServer = context.mock(IMapServer.class);
-        testedLispService = new LispService(mapResolver, mapServer);
+        testedLispService = new LispSouthboundService(mapResolver, mapServer);
 
         mapRegisterSaver = new ValueSaverAction<MapRegister>();
         mapRequestSaver = new ValueSaverAction<MapRequest>();
