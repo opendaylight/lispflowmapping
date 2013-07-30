@@ -12,16 +12,16 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispASAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispMACAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
 
 public enum AddressFamilyNumberEnum {
     RESERVED(0, LispNoAddress.class), //
     IP(1, LispIpv4Address.class), //
     IP6(2, LispIpv6Address.class), //
     AS(18, LispASAddress.class), //
-    LCAF(16387, LispSegmentLCAFAddress.class), //
+    LCAF(16387, LispLCAFAddress.class), //
     MAC(16389, LispMACAddress.class), //
     UNKNOWN(-1, null);
 
