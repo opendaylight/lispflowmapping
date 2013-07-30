@@ -8,13 +8,11 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
-import org.opendaylight.lispflowmapping.util.ByteUtil;
 
 /**
  * <pre>
@@ -168,47 +166,6 @@ public class EidToLocatorRecord {
         return this;
     }
 
-    protected static EidToLocatorRecord deserialize(ByteBuffer buffer) {
-        EidToLocatorRecord eidToLocatorRecord = new EidToLocatorRecord();
-        eidToLocatorRecord.setRecordTtl(buffer.getInt());
-        byte locatorCount = buffer.get();
-        eidToLocatorRecord.setMaskLength(buffer.get());
-        byte actionAndAuthoritative = buffer.get();
-        eidToLocatorRecord.setAction(MapReplyAction.valueOf(actionAndAuthoritative >> 5));
-        eidToLocatorRecord.setAuthoritative(ByteUtil.extractBit(actionAndAuthoritative, Flags.AUTHORITATIVE));
-        buffer.position(buffer.position() + Length.RESERVED);
-        eidToLocatorRecord.setMapVersion(buffer.getShort());
-
-        eidToLocatorRecord.setPrefix(LispAddress.valueOf(buffer));
-        for (int i = 0; i < locatorCount; i++) {
-            eidToLocatorRecord.addLocator(LocatorRecord.deserialize(buffer));
-        }
-
-        return eidToLocatorRecord;
-    }
-
-    public void serialize(ByteBuffer replyBuffer) {
-        replyBuffer.putInt(getRecordTtl());
-        replyBuffer.put((byte) getLocators().size());
-        replyBuffer.put((byte) getMaskLength());
-        replyBuffer.put((byte) ((getAction().getCode() << 5) | //
-                ByteUtil.boolToBit(isAuthoritative(), Flags.AUTHORITATIVE)));
-        replyBuffer.position(replyBuffer.position() + Length.RESERVED);
-        replyBuffer.putShort(getMapVersion());
-        getPrefix().serialize(replyBuffer);
-
-        for (LocatorRecord locatorRecord : getLocators()) {
-            locatorRecord.serialize(replyBuffer);
-        }
-    }
-
-    public int getSerializationSize() {
-        int size = Length.HEADER_SIZE + getPrefix().getAddressSize();
-        for (LocatorRecord locatorRecord : getLocators()) {
-            size += locatorRecord.getSerializationSize();
-        }
-        return size;
-    }
 
     public EidToLocatorRecord clone() {
         EidToLocatorRecord cloned = new EidToLocatorRecord();
@@ -224,14 +181,6 @@ public class EidToLocatorRecord {
         return cloned;
     }
 
-    private interface Flags {
-        int AUTHORITATIVE = 0x10;
-    }
-
-    private interface Length {
-        int HEADER_SIZE = 10;
-        int RESERVED = 1;
-    }
 
     @Override
     public int hashCode() {

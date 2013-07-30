@@ -14,11 +14,9 @@ import java.util.Hashtable;
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
-import org.opendaylight.lispflowmapping.ILispMapping;
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
-import org.opendaylight.lispflowmapping.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +87,7 @@ public class Activator extends ComponentActivatorAbstractBase {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
-            c.setInterface(new String[] { ILispMapping.class.getName(), IMapResolver.class.getName(), IMapServer.class.getName() }, props);
+            c.setInterface(new String[] { IFlowMapping.class.getName() }, props);
             c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao").setRequired(
                     true));
         } else if (imp.equals(ClusterDAOService.class)) {

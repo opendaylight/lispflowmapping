@@ -13,8 +13,8 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.dao.ILispDAO.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;

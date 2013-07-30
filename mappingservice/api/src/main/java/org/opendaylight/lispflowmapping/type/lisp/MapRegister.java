@@ -8,12 +8,8 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
-import org.opendaylight.lispflowmapping.util.ByteUtil;
 
 /**
  * <pre>
@@ -162,42 +158,6 @@ public class MapRegister {
     public MapRegister setKeyId(short keyId) {
         this.keyId = keyId;
         return this;
-    }
-
-    public static MapRegister deserialize(ByteBuffer registerBuffer) {
-        try {
-            MapRegister mapRegister = new MapRegister();
-
-            mapRegister.setProxyMapReply(ByteUtil.extractBit(registerBuffer.get(), Flags.PROXY));
-
-            registerBuffer.position(registerBuffer.position() + Length.RES);
-            mapRegister.setWantMapNotify(ByteUtil.extractBit(registerBuffer.get(), Flags.WANT_MAP_REPLY));
-            byte recordCount = registerBuffer.get();
-            mapRegister.setNonce(registerBuffer.getLong());
-            mapRegister.setKeyId(registerBuffer.getShort());
-
-            short authenticationLength = registerBuffer.getShort();
-            byte[] authenticationData = new byte[authenticationLength];
-            registerBuffer.get(authenticationData);
-            mapRegister.setAuthenticationData(authenticationData);
-
-            for (int i = 0; i < recordCount; i++) {
-                mapRegister.addEidToLocator(EidToLocatorRecord.deserialize(registerBuffer));
-            }
-            return mapRegister;
-        } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + registerBuffer.capacity() + ")", re);
-        }
-
-    }
-
-    private interface Flags {
-        byte PROXY = 0x08;
-        byte WANT_MAP_REPLY = 0x01;
-    }
-
-    private interface Length {
-        int RES = 1;
     }
 
     private static byte[] NO_AUTHENTICATION_DATA = new byte[] {};
