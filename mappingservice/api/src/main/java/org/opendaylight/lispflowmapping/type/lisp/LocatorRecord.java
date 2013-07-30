@@ -8,10 +8,7 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
-import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.util.ByteUtil;
 
 /**
  * <pre>
@@ -187,35 +184,6 @@ public class LocatorRecord {
         return this;
     }
 
-    protected static LocatorRecord deserialize(ByteBuffer buffer) {
-        LocatorRecord record = new LocatorRecord();
-        record.setPriority(buffer.get());
-        record.setWeight(buffer.get());
-        record.setMulticastPriority(buffer.get());
-        record.setMulticastWeight(buffer.get());
-        byte flags = (byte) buffer.getShort();
-        record.setLocalLocator(ByteUtil.extractBit(flags, Flags.LOCAL_LOCATOR));
-        record.setRlocProbed(ByteUtil.extractBit(flags, Flags.RLOC_PROBED));
-        record.setRouted(ByteUtil.extractBit(flags, Flags.ROUTED));
-        record.setLocator(LispAddress.valueOf(buffer));
-        return record;
-    }
-
-    public void serialize(ByteBuffer replyBuffer) {
-        replyBuffer.put(getPriority());
-        replyBuffer.put(getWeight());
-        replyBuffer.put(getMulticastPriority());
-        replyBuffer.put(getMulticastWeight());
-        replyBuffer.position(replyBuffer.position() + Length.UNUSED_FLAGS);
-        replyBuffer.put((byte) (ByteUtil.boolToBit(isLocalLocator(), Flags.LOCAL_LOCATOR) | //
-                ByteUtil.boolToBit(isRlocProbed(), Flags.RLOC_PROBED) | //
-                ByteUtil.boolToBit(isRouted(), Flags.ROUTED)));
-        getLocator().serialize(replyBuffer);
-    }
-
-    public int getSerializationSize() {
-        return Length.HEADER_SIZE + getLocator().getAddressSize();
-    }
 
     public LocatorRecord clone() {
         LocatorRecord cloned = new LocatorRecord();
@@ -230,16 +198,6 @@ public class LocatorRecord {
         return cloned;
     }
 
-    private interface Flags {
-        int LOCAL_LOCATOR = 0x04;
-        int RLOC_PROBED = 0x02;
-        int ROUTED = 0x01;
-    }
-
-    private interface Length {
-        int HEADER_SIZE = 6;
-        int UNUSED_FLAGS = 1;
-    }
 
     @Override
     public int hashCode() {

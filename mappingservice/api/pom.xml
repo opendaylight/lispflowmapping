@@ -22,13 +22,11 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							org.opendaylight.lispflowmapping,
-							org.opendaylight.lispflowmapping.dao, 
-							org.opendaylight.lispflowmapping.lisp, 
-							org.opendaylight.lispflowmapping.type.exception, 
+							org.opendaylight.lispflowmapping.interfaces.dao, 
+							org.opendaylight.lispflowmapping.interfaces.lisp,
+							org.opendaylight.lispflowmapping.type, 
 							org.opendaylight.lispflowmapping.type.lisp, 
-							org.opendaylight.lispflowmapping.type.lisp.address, 
-							org.opendaylight.lispflowmapping.util
+							org.opendaylight.lispflowmapping.type.lisp.address 
 						</Export-Package>
 						<Bundle-Activator>
 						</Bundle-Activator>
