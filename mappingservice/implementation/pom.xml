@@ -22,7 +22,6 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							org.opendaylight.lispflowmapping.implementation
 						</Export-Package>
 						<Import-Package>
 							org.opendaylight.controller.sal.core,
@@ -32,13 +31,11 @@
 							org.slf4j,
 							org.eclipse.osgi.framework.console,
 							org.osgi.framework,
-							org.opendaylight.lispflowmapping,
-							org.opendaylight.lispflowmapping.dao, 
-							org.opendaylight.lispflowmapping.lisp, 
+							org.opendaylight.lispflowmapping.interfaces.dao, 
+							org.opendaylight.lispflowmapping.interfaces.lisp, 
 							org.opendaylight.lispflowmapping.type.exception, 
 							org.opendaylight.lispflowmapping.type.lisp, 
 							org.opendaylight.lispflowmapping.type.lisp.address, 
-							org.opendaylight.lispflowmapping.util,
 							org.opendaylight.controller.clustering.services
 						</Import-Package>
 						<Bundle-Activator>

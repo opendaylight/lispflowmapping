@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
@@ -23,24 +22,11 @@ public class LispMACAddress extends LispAddress {
         System.arraycopy(mac, 0, this.mac, 0, 6);
     }
 
-    public static LispMACAddress valueOf(ByteBuffer buffer) {
-        throw new RuntimeException("Not implemented");
-    }
 
     public byte[] getMAC() {
         return mac;
     }
 
-    @Override
-    public int getAddressSize() {
-        throw new RuntimeException("Not implemented");
-
-    }
-
-    @Override
-    public void serialize(ByteBuffer buffer) {
-        throw new RuntimeException("Not implemented");
-    }
 
     @Override
     public String toString() {

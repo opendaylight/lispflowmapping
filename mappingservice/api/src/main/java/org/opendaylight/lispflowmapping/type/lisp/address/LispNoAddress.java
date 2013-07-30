@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
-import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispNoAddress extends LispAddress {
@@ -17,16 +15,4 @@ public class LispNoAddress extends LispAddress {
         super(AddressFamilyNumberEnum.RESERVED);
     }
 
-    public static LispNoAddress valueOf(ByteBuffer buffer) {
-        return new LispNoAddress();
-    }
-
-    @Override
-    public int getAddressSize() {
-        return super.getAddressSize();
-    }
-
-    @Override
-    public void serialize(ByteBuffer buffer) {
-    }
 }
