@@ -13,10 +13,7 @@ import java.util.Hashtable;
 
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

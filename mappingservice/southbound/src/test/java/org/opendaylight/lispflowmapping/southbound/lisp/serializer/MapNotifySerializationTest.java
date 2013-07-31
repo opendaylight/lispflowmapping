@@ -15,14 +15,14 @@ import java.nio.ByteBuffer;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.southbound.lisp.LispSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
-public class MapNotifyserializationTest extends BaseTestCase {
+public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void serialize__Fields() throws Exception {
@@ -35,7 +35,7 @@ public class MapNotifyserializationTest extends BaseTestCase {
         byte[] authenticationData = new byte[] { 0x03, 0x01, 0x04, 0x01, 0x05, 0x09, 0x02, 0x06 };
         mn.setAuthenticationData(authenticationData);
 
-        ByteBuffer bb = LispSerializer.serializeMapNotify(mn);
+        ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mn);
         assertHexEquals((byte) 0x40, bb.get()); // Type + MSByte of reserved
         assertEquals(0, bb.getShort()); // Rest of reserved
         assertEquals(2, bb.get()); // Record Count
@@ -61,21 +61,21 @@ public class MapNotifyserializationTest extends BaseTestCase {
         MapNotify mn = new MapNotify();
         mn.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispIpv4Address(1)).setRecordTtl(55));
 
-        ByteBuffer bb = LispSerializer.serializeMapNotify(mn);
+        ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mn);
         bb.position(bb.position() + 14); // jump to AuthenticationDataLength
         assertEquals(0, bb.getShort());
         assertEquals(55, bb.getInt());
 
         mn.setAuthenticationData(null);
 
-        bb = LispSerializer.serializeMapNotify(mn);
+        bb = MapNotifySerializer.getInstance().serialize(mn);
         bb.position(bb.position() + 14); // jump to AuthenticationDataLength
         assertEquals(0, bb.getShort());
         assertEquals(55, bb.getInt());
 
         mn.setAuthenticationData(new byte[0]);
 
-        bb = LispSerializer.serializeMapNotify(mn);
+        bb = MapNotifySerializer.getInstance().serialize(mn);
         bb.position(bb.position() + 14); // jump to AuthenticationDataLength
         assertEquals(0, bb.getShort());
         assertEquals(55, bb.getInt());
@@ -88,7 +88,7 @@ public class MapNotifyserializationTest extends BaseTestCase {
         mn.addEidToLocator(new EidToLocatorRecord().setPrefix(null));
         mn.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispNoAddress()));
 
-        ByteBuffer bb = LispSerializer.serializeMapNotify(mn);
+        ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mn);
         bb.position(bb.position() + 26); // jump to first record prefix AFI
         assertEquals(0, bb.getShort());
 

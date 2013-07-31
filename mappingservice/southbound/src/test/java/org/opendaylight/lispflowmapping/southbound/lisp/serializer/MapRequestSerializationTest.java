@@ -13,14 +13,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.southbound.lisp.LispSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
 public class MapRequestSerializationTest extends BaseTestCase {
 
@@ -36,7 +36,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__FlagsInFirstByte() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("16 00 00 01 3d 8d " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 00 00 01 3d 8d " //
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "00 01 01 02 03 04"));
         assertFalse(mr.isAuthoritative());
@@ -44,7 +44,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertTrue(mr.isProbe());
         assertFalse(mr.isSmr());
 
-        mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("19 00 00 01 3d 8d " //
+        mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 00 00 01 3d 8d " //
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isAuthoritative());
@@ -52,7 +52,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertFalse(mr.isProbe());
         assertTrue(mr.isSmr());
 
-        mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("1C 00 00 01 3d 8d " //
+        mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("1C 00 00 01 3d 8d " //
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isAuthoritative());
@@ -63,13 +63,13 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__FlagsInSecondByte() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("16 80 00 01 3d 8d " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 01 3d 8d " //
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isPitr());
         assertFalse(mr.isSmrInvoked());
 
-        mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("19 40 00 01 3d 8d " //
+        mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 40 00 01 3d 8d " //
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "00 01 01 02 03 04"));
         assertFalse(mr.isPitr());
@@ -78,7 +78,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__SingleEidRecord() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("16 80 00 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 " //
                 + "01 " // single record
                 + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
                 + "00 20 00 01 01 02 03 04"));
@@ -91,7 +91,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__MultipleEidRecord() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("16 80 00 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 " //
                 + "02 " // 2 records
                 + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
                 + "00 20 00 01 01 02 03 04 " //
@@ -110,7 +110,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__SingleItrRloc() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("10 00 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("10 00 " //
                 + "00 " // This means 1 ITR-RLOC
                 + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
                 + "00 01 c0 a8 88 0a " // IPv4 (ITR-RLOC #1 of 1)
@@ -122,7 +122,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__MultipleItrRlocs() throws Exception {
-        MapRequest mr = LispSerializer.deserializeMapRequest(hexToByteBuffer("10 00 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("10 00 " //
                 + "02 " // This means 3 ITR - RLOCs
                 + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
                 + "00 01 c0 a8 88 0a " // IPv4 (ITR-RLOC #1 of 3)

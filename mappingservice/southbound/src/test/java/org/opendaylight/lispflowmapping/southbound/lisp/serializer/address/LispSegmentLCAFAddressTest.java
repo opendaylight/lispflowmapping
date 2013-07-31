@@ -12,9 +12,11 @@ import static junit.framework.Assert.assertEquals;
 import java.nio.ByteBuffer;
 
 import junitx.framework.ArrayAssert;
-import junitx.framework.Assert;
 
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.southbound.serializer.address.LispAddressSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.address.LispSegmentLCAFAddressSerializer;
+import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
@@ -22,13 +24,12 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
 public class LispSegmentLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAddress address = LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddress address = LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "02 20 00 0A " + //
                 "AA BB CC DD " + // instance ID
                 "00 01 11 22 33 44")); // AFI=1, IP=0x11223344
@@ -44,14 +45,14 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
 
     @Test(expected = LispMalformedPacketException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "02 20 00 0A " + //
                 "AA BB "));
     }
 
     @Test(expected = LispMalformedPacketException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "AA 20 00 0A " + // Type AA is unknown
                 "AA BB CC DD " + // instance ID
                 "00 01 11 22 33 44")); // AFI=1, IP=0x11223344
@@ -59,7 +60,7 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Ipv6() throws Exception {
-        LispSegmentLCAFAddress segAddress = (LispSegmentLCAFAddress) LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispSegmentLCAFAddress segAddress = (LispSegmentLCAFAddress) LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "02 20 00 0A " + //
                 "AA BB CC DD " + // instance ID
                 "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD")); // AFI=2,
@@ -75,8 +76,8 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         LispSegmentLCAFAddress address = new LispSegmentLCAFAddress((byte) 0x06, 0x01020304, new LispIpv4Address(0x11223344));
-        ByteBuffer buf = ByteBuffer.allocate(address.getAddressSize());
-        address.serialize(buf);
+        ByteBuffer buf = ByteBuffer.allocate(LispSegmentLCAFAddressSerializer.getInstance().getAddressSize(address));
+        LispSegmentLCAFAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "02 06 00 0A " + //
                 "01 02 03 04 " + // instance ID

@@ -16,14 +16,14 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.southbound.lisp.LispSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
 public class MapReplySerializationTest extends BaseTestCase {
 
@@ -42,14 +42,14 @@ public class MapReplySerializationTest extends BaseTestCase {
         mr.setProbe(true);
         mr.setEchoNonceEnabled(false);
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
         byte firstByte = packet.get(0);
         assertHexEquals((byte) 0x28, firstByte);
 
         mr.setProbe(false);
         mr.setEchoNonceEnabled(true);
 
-        packet = LispSerializer.serializeMapReply(mr);
+        packet = MapReplySerializer.getInstance().serialize(mr);
         firstByte = packet.get(0);
         assertHexEquals((byte) 0x24, firstByte);
     }
@@ -60,7 +60,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         mr.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispIpv6Address("::8")));
         mr.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispIpv4Address(0x08020405)));
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
         assertEquals(2, packet.get(3));
 
         packet.position(24); /* EID in first record */
@@ -80,7 +80,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator.setPrefix(new LispIpv4Address(1));
         mr.addEidToLocator(eidToLocator);
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
 
         packet.position(18);
         assertHexEquals((byte) 0x00, packet.get()); // MapReplyAction.NoAction
@@ -94,7 +94,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator.setAction(null);
         mr.addEidToLocator(eidToLocator);
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
 
         packet.position(18);
         assertHexEquals((byte) 0x00, packet.get()); // MapReplyAction.NoAction
@@ -120,7 +120,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator2.setMapVersion((short) 29);
         mr.addEidToLocator(eidToLocator2);
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
 
         packet.position(12); /* First record */
         assertEquals(7, packet.getInt());
@@ -168,7 +168,7 @@ public class MapReplySerializationTest extends BaseTestCase {
 
         mr.addEidToLocator(eidToLocator);
 
-        ByteBuffer packet = LispSerializer.serializeMapReply(mr);
+        ByteBuffer packet = MapReplySerializer.getInstance().serialize(mr);
 
         packet.position(12 + 16); /* First locator record */
         assertHexEquals((byte) 0xF3, packet.get());

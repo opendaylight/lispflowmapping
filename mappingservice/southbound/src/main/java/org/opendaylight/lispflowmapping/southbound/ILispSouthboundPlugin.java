@@ -1,5 +1,5 @@
 package org.opendaylight.lispflowmapping.southbound;
 
-public interface ILispSouthboundPlugin {
 
+public interface ILispSouthboundPlugin {
 }

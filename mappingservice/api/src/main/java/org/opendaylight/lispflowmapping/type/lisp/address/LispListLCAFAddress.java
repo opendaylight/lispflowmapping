@@ -1,49 +1,22 @@
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 
 public class LispListLCAFAddress extends LispLCAFAddress {
-    List<LispAddress> addresses;
+    List<? extends LispAddress> addresses;
 
-    public LispListLCAFAddress(byte res2, List<LispAddress> addresses) {
+    public LispListLCAFAddress(byte res2, List<? extends LispAddress> addresses) {
         super(LispCanonicalAddressFormatEnum.LIST, res2);
         this.addresses = addresses;
     }
 
-    @Override
-    public void serialize(ByteBuffer buffer) {
-        super.internalSerialize(buffer);
-        for (LispAddress address : addresses) {
-            address.serialize(buffer);
-        }
-    }
 
-    @Override
-    public short getLcafLength() {
-        short totalSize = 0;
-        for (LispAddress address : addresses) {
-            totalSize += address.getAddressSize();
-        }
-        return totalSize;
-    }
-
-    public List<LispAddress> getAddresses() {
+    public List<? extends LispAddress> getAddresses() {
         return addresses;
     }
 
-    public static LispListLCAFAddress valueOf(byte res2, short length, ByteBuffer buffer) {
-        List<LispAddress> addresses = new ArrayList<LispAddress>();
-        while (length > 0) {
-            LispAddress address = LispAddress.valueOf(buffer);
-            length -= address.getAddressSize();
-            addresses.add(address);
-        }
-        return new LispListLCAFAddress(res2, addresses);
-    }
 
     @Override
     public int hashCode() {

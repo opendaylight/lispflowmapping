@@ -18,6 +18,8 @@ import junitx.framework.ArrayAssert;
 import junitx.framework.Assert;
 
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.southbound.serializer.address.LispAddressSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.address.LispListLCAFAddressSerializer;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
@@ -31,7 +33,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAddress address = LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddress address = LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
                 "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44")); // IPv6
@@ -41,7 +43,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
         assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
 
-        List<LispAddress> addressList = lcafList.getAddresses();
+        List<? extends LispAddress> addressList = lcafList.getAddresses();
         assertEquals(2, addressList.size());
 
         assertEquals(new LispIpv4Address(0xAABBCCDD), addressList.get(0));
@@ -50,7 +52,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        LispAddress address = LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddress address = LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00 "));
 
         assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
@@ -58,13 +60,13 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
         assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
 
-        List<LispAddress> addressList = lcafList.getAddresses();
+        List<? extends LispAddress> addressList = lcafList.getAddresses();
         assertEquals(0, addressList.size());
     }
 
     @Test(expected = LispMalformedPacketException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
                 "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
@@ -72,7 +74,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test(expected = LispMalformedPacketException.class)
     public void deserialize__ShorterBuffer2() throws Exception {
-        LispAddress.valueOf(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.valueOf(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 "));
     }
 
@@ -83,8 +85,8 @@ public class LispListLCAFAddressTest extends BaseTestCase {
         addressList.add(new LispIpv6Address("1222:3344:1122:3344:1122:3344:1122:3344"));
         LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, addressList);
 
-        ByteBuffer buf = ByteBuffer.allocate(address.getAddressSize());
-        address.serialize(buf);
+        ByteBuffer buf = ByteBuffer.allocate(LispListLCAFAddressSerializer.getInstance().getAddressSize(address));
+        LispListLCAFAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
@@ -96,8 +98,8 @@ public class LispListLCAFAddressTest extends BaseTestCase {
     public void serialize__NoAddresses() throws Exception {
         LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, new ArrayList<LispAddress>());
 
-        ByteBuffer buf = ByteBuffer.allocate(address.getAddressSize());
-        address.serialize(buf);
+        ByteBuffer buf = ByteBuffer.allocate(LispListLCAFAddressSerializer.getInstance().getAddressSize(address));
+        LispListLCAFAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());

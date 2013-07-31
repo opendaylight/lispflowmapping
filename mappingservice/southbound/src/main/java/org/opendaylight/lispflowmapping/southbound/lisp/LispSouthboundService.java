@@ -15,6 +15,10 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.southbound.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.type.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.type.lisp.LispMessage;
 import org.opendaylight.lispflowmapping.type.lisp.LispMessageEnum;
@@ -24,7 +28,7 @@ import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.network.PacketHeader;
 
-public class LispSouthboundService {
+public class LispSouthboundService implements ILispSouthboundService{
     private IMapResolver mapResolver;
     private IMapServer mapServer;
 
@@ -49,9 +53,9 @@ public class LispSouthboundService {
 
     private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
         int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
-        MapRequest request = LispSerializer.deserializeMapRequest(inBuffer);
+        MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
         MapReply mapReply = mapResolver.handleMapRequest(request);
-        ByteBuffer outBuffer = LispSerializer.serializeMapReply(mapReply);
+        ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
 
         DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
         replyPacket.setPort(encapsulatedSourcePort);
@@ -77,11 +81,11 @@ public class LispSouthboundService {
     }
 
     private DatagramPacket handleMapRegister(ByteBuffer inBuffer) {
-        MapRegister mapRegister = LispSerializer.deserializeMapRegister(inBuffer);
+        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
         MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
 
         if (mapNotify != null) {
-            ByteBuffer outBuffer = LispSerializer.serializeMapNotify(mapNotify);
+            ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
             DatagramPacket notify = new DatagramPacket(outBuffer.array(), outBuffer.limit());
             notify.setPort(LispMessage.PORT_NUM);
             return notify;
