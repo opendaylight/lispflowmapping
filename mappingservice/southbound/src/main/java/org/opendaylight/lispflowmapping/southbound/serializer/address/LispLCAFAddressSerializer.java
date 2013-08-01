@@ -19,14 +19,14 @@ public abstract class LispLCAFAddressSerializer extends LispAddressSerializer{
         byte res2 = buffer.get();
         short length = buffer.getShort();
 
-        Class<? extends LispAddress> addressClass = lcafType.getLcafClass();
-        if (addressClass == null) {
+        Class<? extends LispAddressSerializer> addressClassserializer = LispAddressSerializerFactory.getSerializerClass(lcafType.getLcafClass());
+        if (addressClassserializer == null) {
             throw new LispMalformedPacketException("Unknown LispLCAFAddress type=" + lispCode);
         }
         Method valueOfMethod;
         Throwable t = null;
         try {
-            valueOfMethod = addressClass.getMethod("valueOf", byte.class, short.class, ByteBuffer.class);
+            valueOfMethod = addressClassserializer.getMethod("valueOf", byte.class, short.class, ByteBuffer.class);
             return (LispLCAFAddress) valueOfMethod.invoke(null, res2, length, buffer);
         } catch (NoSuchMethodException e) {
             t = e;

@@ -14,7 +14,7 @@ import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispIpv6Address extends LispIPAddress {
 
-    private LispIpv6Address(InetAddress address) {
+    public LispIpv6Address(InetAddress address) {
         super(address, AddressFamilyNumberEnum.IP6);
     }
 

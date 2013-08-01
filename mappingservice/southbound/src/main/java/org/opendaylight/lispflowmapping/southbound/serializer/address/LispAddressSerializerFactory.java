@@ -34,6 +34,13 @@ public class LispAddressSerializerFactory {
 		return addressToSearializerMap.get(lispAddress.getClass());
 	}
 	
+	public static Class<? extends LispAddressSerializer> getSerializerClass(Class<? extends LispAddress> lispAddress) {
+		if (addressToSearializerMap == null) {
+			initializeMap();
+		}
+		return addressToSearializerMap.get(lispAddress).getClass();
+	}
+	
 	
 
 }

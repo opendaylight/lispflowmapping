@@ -3,15 +3,15 @@ package org.opendaylight.lispflowmapping.southbound.serializer.address;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
 
 public abstract class LispIPAddressSerializer extends LispAddressSerializer{
 
 
     @Override
     public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-    	LispIpv4Address lispIpv4Address = (LispIpv4Address)lispAddress;
+    	LispIPAddress lispIpvAddress = (LispIPAddress)lispAddress;
         super.internalSerialize(buffer, lispAddress);
-        buffer.put(lispIpv4Address.getAddress().getAddress());
+        buffer.put(lispIpvAddress.getAddress().getAddress());
     }
 }

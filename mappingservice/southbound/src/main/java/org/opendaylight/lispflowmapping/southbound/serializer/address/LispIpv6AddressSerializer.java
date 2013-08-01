@@ -1,6 +1,11 @@
 package org.opendaylight.lispflowmapping.southbound.serializer.address;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 
 
 public class LispIpv6AddressSerializer extends LispIPAddressSerializer{
@@ -19,6 +24,19 @@ public class LispIpv6AddressSerializer extends LispIPAddressSerializer{
 	@Override
     public int getAddressSize(LispAddress lispAddress) {
         return super.getAddressSize(lispAddress) + 16;
+    }
+	
+	public static LispIpv6Address valueOf(ByteBuffer buffer) {
+        byte[] ipBuffer = new byte[16];
+        InetAddress address = null;
+        buffer.get(ipBuffer);
+        try {
+            address = InetAddress.getByAddress(ipBuffer);
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return new LispIpv6Address(address);
     }
 
 }

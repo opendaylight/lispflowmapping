@@ -29,7 +29,14 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer{
         super.internalSerialize(buffer, lispAddress);
         buffer.putInt(((LispSegmentLCAFAddress)lispAddress).getInstanceId());
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress());
-        serializer.serialize(buffer, lispAddress);
+        serializer.serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
+    }
+	
+	public static LispSegmentLCAFAddress valueOf(byte res2, short length, ByteBuffer buffer) {
+        int instanceId = buffer.getInt();
+        LispAddress address = LispAddressSerializer.valueOf(buffer);
+
+        return new LispSegmentLCAFAddress(res2, instanceId, address);
     }
 
 	private interface Length {

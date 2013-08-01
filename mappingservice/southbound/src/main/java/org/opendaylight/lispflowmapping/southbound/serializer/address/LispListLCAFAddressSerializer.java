@@ -33,7 +33,7 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer{
     public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
         super.internalSerialize(buffer, lispAddress);
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-        	LispAddressSerializerFactory.getSerializer(address).serialize(buffer, lispAddress);
+        	LispAddressSerializerFactory.getSerializer(address).serialize(buffer, address);
         }
     }
 	

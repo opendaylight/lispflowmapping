@@ -2,6 +2,7 @@ package org.opendaylight.lispflowmapping.southbound.serializer.address;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.type.lisp.address.LispASAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 
 public class LispASAddressSerializer extends LispAddressSerializer {
@@ -15,6 +16,10 @@ public class LispASAddressSerializer extends LispAddressSerializer {
 	public static LispASAddressSerializer getInstance() {
 		return INSTANCE;
 	}
+	
+	public static LispASAddress valueOf(ByteBuffer buffer) {
+        throw new RuntimeException("Not implemented");
+    }
 
 	@Override
 	public int getAddressSize(LispAddress lispAddress) {

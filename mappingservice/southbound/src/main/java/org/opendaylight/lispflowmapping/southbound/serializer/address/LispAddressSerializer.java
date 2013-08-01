@@ -24,7 +24,7 @@ public abstract class LispAddressSerializer {
     public static LispAddress valueOf(ByteBuffer buffer) {
         short afi = buffer.getShort();
         AddressFamilyNumberEnum afiType = AddressFamilyNumberEnum.valueOf(afi);
-        Class<? extends LispAddress> addressClass = afiType.getLispAddressClass();
+        Class<? extends LispAddressSerializer> addressClass = LispAddressSerializerFactory.getSerializerClass(afiType.getLispAddressClass());
         Throwable t = null;
         try {
             Method valueOfMethod = addressClass.getMethod("valueOf", ByteBuffer.class);
