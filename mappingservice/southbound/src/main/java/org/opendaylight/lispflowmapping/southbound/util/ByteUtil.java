@@ -35,6 +35,23 @@ public class ByteUtil {
     public static int getInt(byte[] inBuffer, int pos) {
         return ByteBuffer.wrap(inBuffer, pos, 4).getInt();
     }
+    
+    public static int getPartialInt(byte[] inBuffer) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.position(4-inBuffer.length);
+        buffer.put(inBuffer);
+        buffer.position(0);
+        return buffer.getInt();
+    }
+    
+    public static byte[] partialIntToByteArray(int number, int length) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putInt(number);
+        byte[] result  = new byte[length];
+        buffer.position(4-length);
+        buffer.get(result);
+        return result;
+    }
 
     public static long getLong(byte[] inBuffer, int pos) {
         return ByteBuffer.wrap(inBuffer, pos, 8).getLong();

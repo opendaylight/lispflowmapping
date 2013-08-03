@@ -564,8 +564,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         assertEquals(AddressFamilyNumberEnum.IP6.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SecondLocatorPos.LOC_AFI));
 
         byte[] expectedIpv6Rloc = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-        ArrayAssert.assertEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR,
-                MapReplyIpv4SecondLocatorPos.LOCATOR + 16));
+        ArrayAssert.assertEquals(expectedIpv6Rloc,
+                Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR, MapReplyIpv4SecondLocatorPos.LOCATOR + 16));
 
         assertEquals(0x01, result[MapReplyIpv4SecondLocatorPos.LOCATOR_RBIT] & 0x01);
     }
