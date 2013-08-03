@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.type;
 
+import org.opendaylight.lispflowmapping.type.lisp.address.LispApplicationDataLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
@@ -15,6 +16,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress
 public enum LispCanonicalAddressFormatEnum {
     LIST(1, LispListLCAFAddress.class), //
     SEGMENT(2, LispSegmentLCAFAddress.class), //
+    APPLICATION_DATA(4, LispApplicationDataLCAFAddress.class), //
     UNKNOWN(-1, null);
 
     private byte lispCode;
