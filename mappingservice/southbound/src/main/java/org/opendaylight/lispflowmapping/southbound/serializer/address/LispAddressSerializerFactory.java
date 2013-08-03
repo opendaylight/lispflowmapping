@@ -23,6 +23,7 @@ public class LispAddressSerializerFactory {
 		lcafToSearializerMap = new HashMap<LispCanonicalAddressFormatEnum, LispLCAFAddressSerializer>();
 		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.LIST, LispListLCAFAddressSerializer.getInstance());
 		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.SEGMENT, LispSegmentLCAFAddressSerializer.getInstance());
+		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.APPLICATION_DATA, LispApplicationDataLCAFAddressSerializer.getInstance());
 	}
 	
 	public static LispAddressSerializer getSerializer(AddressFamilyNumberEnum afi) {
