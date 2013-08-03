@@ -40,7 +40,7 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer{
 
     @Override
     public int getAddressSize(LispAddress lispAddress) {
-        return super.getAddressSize(lispAddress) + Length.LCAF_HEADER + getLcafLength(lispAddress);
+        return super.getAddressSize(lispAddress) + Length.LCAF_HEADER + LispAddressSerializerFactory.getLCAFSerializer(((LispLCAFAddress)lispAddress).getType()).getLcafLength(lispAddress);
     }
     
     public short getLcafLength(LispAddress lispAddress) {

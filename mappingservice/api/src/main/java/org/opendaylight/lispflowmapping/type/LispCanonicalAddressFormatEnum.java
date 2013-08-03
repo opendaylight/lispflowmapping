@@ -12,11 +12,13 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispApplicationDataLCA
 import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
 
 public enum LispCanonicalAddressFormatEnum {
     LIST(1, LispListLCAFAddress.class), //
     SEGMENT(2, LispSegmentLCAFAddress.class), //
     APPLICATION_DATA(4, LispApplicationDataLCAFAddress.class), //
+    SOURCE_DEST(12, LispSourceDestLCAFAddress.class), //
     UNKNOWN(-1, null);
 
     private byte lispCode;

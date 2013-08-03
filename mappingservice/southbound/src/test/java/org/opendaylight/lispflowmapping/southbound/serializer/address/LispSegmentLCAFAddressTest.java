@@ -82,4 +82,19 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
                 "00 01 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
+    
+    @Test
+    public void serialize__Recursive_Segment() throws Exception {
+        LispSegmentLCAFAddress address = new LispSegmentLCAFAddress((byte) 0x06, 0x01020304, new LispSegmentLCAFAddress((byte) 0x06, 0x01020305, new LispIpv4Address(0x11223344)));
+        ByteBuffer buf = ByteBuffer.allocate(LispSegmentLCAFAddressSerializer.getInstance().getAddressSize(address));
+        LispSegmentLCAFAddressSerializer.getInstance().serialize(buf,address);
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
+                "02 06 00 16 " + //
+                "01 02 03 04 " + // instance ID
+                "40 03 00 00 " + //
+                "02 06 00 0A " + //
+                "01 02 03 05 " + // instance ID
+                "00 01 11 22 33 44");
+        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+    }
 }
