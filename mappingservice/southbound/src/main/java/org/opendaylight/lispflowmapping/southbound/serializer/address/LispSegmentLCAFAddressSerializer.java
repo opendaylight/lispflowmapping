@@ -22,7 +22,7 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer{
 	@Override
     public short getLcafLength(LispAddress lispAddress) {
 		LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
-        return (short) (Length.INSTANCE + serializer.getAddressSize(lispAddress));
+        return (short) (Length.INSTANCE + serializer.getAddressSize(((LispSegmentLCAFAddress)lispAddress).getAddress()));
     }
 
 	@Override
