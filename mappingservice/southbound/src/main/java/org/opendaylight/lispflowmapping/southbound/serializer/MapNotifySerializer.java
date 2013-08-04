@@ -1,7 +1,11 @@
 package org.opendaylight.lispflowmapping.southbound.serializer;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
+import org.opendaylight.lispflowmapping.southbound.authentication.ILispAuthentication;
+import org.opendaylight.lispflowmapping.southbound.authentication.LispAuthenticationFactory;
+import org.opendaylight.lispflowmapping.southbound.authentication.LispKeyIDEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 
@@ -33,15 +37,20 @@ public class MapNotifySerializer {
         replyBuffer.put((byte) mapNotify.getEidToLocatorRecords().size());
         replyBuffer.putLong(mapNotify.getNonce());
         replyBuffer.putShort(mapNotify.getKeyId());
-        replyBuffer.putShort((short) mapNotify.getAuthenticationData().length);
-        if (mapNotify.getAuthenticationData() != null) {
-            replyBuffer.put(mapNotify.getAuthenticationData());
-        }
+        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
+        replyBuffer.putShort((short) authentication.getAuthenticationLength());
+        byte[] authenticationData = new byte[authentication.getAuthenticationLength()];
+        Arrays.fill(authenticationData, (byte)0);
+        int authenticationPosition = replyBuffer.position();
+        replyBuffer.put(authenticationData);
 
         for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecords()) {
         	EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
         }
-
+        replyBuffer.clear();
+        authenticationData = authentication.getAuthenticationData(replyBuffer.array());
+        replyBuffer.position(authenticationPosition);
+        replyBuffer.put(authenticationData);
         replyBuffer.clear();
         return replyBuffer;
     }
