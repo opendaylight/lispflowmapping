@@ -11,6 +11,10 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opendaylight.lispflowmapping.implementation.authentication.ILispAuthentication;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthentication;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationFactory;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispKeyIDEnum;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
@@ -35,6 +39,9 @@ public class MapServer implements IMapServer {
             logger.warn("handleMapRegister called while dao is uninitialized");
             return null;
         }
+        if (!LispAuthentication.getInstance().validate(mapRegister)) {
+            return null;
+        }
         EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
         List<MappingEntry<?>> rlocs = new ArrayList<ILispDAO.MappingEntry<?>>();
         rlocs.add(new MappingEntry<Integer>("NumRLOCs", eidRecord.getLocators().size()));
@@ -47,7 +54,14 @@ public class MapServer implements IMapServer {
         if (mapRegister.isWantMapNotify()) {
             mapNotify = new MapNotify();
             mapNotify.setFromMapRegister(mapRegister);
+            ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
+            mapNotify.setAuthenticationData(authentication.getAuthenticationData(mapNotify));
         }
         return mapNotify;
+    }
+    
+    
+    private boolean validateMapRegisterAuthentication(MapRegister mapRegister) {
+        return LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapRegister.getKeyId())).validate(mapRegister);
     }
 }
