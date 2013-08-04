@@ -19,16 +19,17 @@ import java.util.List;
 import junitx.framework.ArrayAssert;
 import junitx.framework.Assert;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessageEnum;
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
-import org.opendaylight.lispflowmapping.southbound.serializer.LispMessage;
-import org.opendaylight.lispflowmapping.southbound.serializer.LispMessageEnum;
-import org.opendaylight.lispflowmapping.southbound.util.ByteUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
@@ -126,8 +127,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
-                + "0040   b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 0e a4 c6 d8 a4 06 "
+                + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         mapNotify = new MapNotify();
@@ -179,8 +180,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
                 + "0010   00 68 00 00 40 00 40 11 26 15 0a 01 00 6e 0a 01 " //
                 + "0020   00 01 10 f6 10 f6 00 54 03 3b 38 00 01 01 00 00 " //
-                + "0030   00 00 00 00 00 00 00 01 00 14 f8 3c d8 9d 92 8b " //
-                + "0040   67 20 2c 63 82 63 c5 38 7b 74 b8 70 01 dd 00 00 " //
+                + "0030   00 00 00 00 00 00 00 01 00 14 ae d8 7b d4 9c 59 " //
+                + "0040   e9 35 75 6e f1 29 27 a3 45 20 96 06 c2 e1 00 00 " //
                 + "0050   00 0a 02 20 10 00 00 00 00 01 ac 01 01 02 01 64 " //
                 + "0060   ff 00 00 05 00 01 0a 01 00 6e 06 64 ff 00 00 05 " //
                 + "0070   00 01 c0 a8 88 33"));
@@ -215,8 +216,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 " //
                 + "0010   00 68 00 00 40 00 40 11 ea c3 0a 00 3a 9c 0a 00 " //
                 + "0020   01 26 10 f6 10 f6 00 54 f5 9a 38 00 03 01 00 00 " //
-                + "0030   00 00 00 00 00 00 00 01 00 14 5b c4 d4 4a 57 e2 " //
-                + "0040   a5 5d 57 7a 6f 89 77 9c 00 4f 5d a7 13 fb 00 00 " //
+                + "0030   00 00 00 00 00 00 00 01 00 14 22 97 ff 61 ec d8 " //
+                + "0040   0f 91 c6 c4 01 ef 7f bb 77 58 39 5c 92 23 00 00 " //
                 + "0050   00 0a 01 80 10 00 00 00 00 02 26 10 00 d0 ff ff " //
                 + "0060   01 92 00 00 00 00 00 00 00 01 01 64 ff 00 00 05 " //
                 + "0070   00 01 0a 00 3a 9c"));
@@ -261,8 +262,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df " //
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
-                + "0040   b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 " //
+                + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
+                + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 " //
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
@@ -277,8 +278,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 02 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
-                + "0040   b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 c0 c7 c5 2f 57 f6 "
+                + "0040   e7 20 25 3d e8 b2 07 e2 63 de 62 2b 7a 20 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
@@ -292,8 +293,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 03 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
-                + "0040   b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 a2 72 40 7b 1a ae "
+                + "0040   4e 6b e2 e5 e1 01 40 8a c9 e1 d1 80 cb 72 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
@@ -304,6 +305,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegisterAndNotify__ValidExtraDataParsedSuccessfully() throws Exception {
+    	mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
+                + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
+                + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
+                + "0030   00 38 d4 31 00 00 ff 11 56 f3 c0 a8 88 0a 01 02 "
+                + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
+                + "0050   2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "0060   00 01 01 02 03 04"));
         byte[] extraDataPacket = new byte[mapRegisterPacket.length + 3];
         extraDataPacket[mapRegisterPacket.length] = 0x9;
         System.arraycopy(mapRegisterPacket, 0, extraDataPacket, 0, mapRegisterPacket.length);
@@ -333,9 +341,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         assertHexEquals((byte) 0x00, result[1]);
         assertHexEquals((byte) 0x00, result[2]);
 
-        byte[] registerWithoutType = Arrays.copyOfRange(mapRegisterPacket, 3, mapRegisterPacket.length);
-        byte[] notifyWithoutType = Arrays.copyOfRange(result, 3, result.length);
-        ArrayAssert.assertEquals(registerWithoutType, notifyWithoutType);
+        byte[] registerWithoutTypeWithoutAuthenticationData = ArrayUtils.addAll(Arrays.copyOfRange(mapRegisterPacket, 3, 16),Arrays.copyOfRange(mapRegisterPacket, 36, mapRegisterPacket.length));
+        byte[] notifyWithoutTypeWithOutAuthenticationData = ArrayUtils.addAll(Arrays.copyOfRange(result, 3, 16), Arrays.copyOfRange(result, 36, result.length));
+        ArrayAssert.assertEquals(registerWithoutTypeWithoutAuthenticationData, notifyWithoutTypeWithOutAuthenticationData);
     }
 
     @Test

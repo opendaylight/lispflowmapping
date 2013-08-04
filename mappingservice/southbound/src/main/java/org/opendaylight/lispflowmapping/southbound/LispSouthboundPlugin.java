@@ -16,9 +16,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
-import org.opendaylight.lispflowmapping.southbound.serializer.LispMessage;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
