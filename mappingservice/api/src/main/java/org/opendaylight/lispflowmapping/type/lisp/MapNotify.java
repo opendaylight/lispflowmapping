@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.type.lisp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -169,6 +170,7 @@ public class MapNotify {
         byte[] authenticationData = mapRegister.getAuthenticationData();
         if (authenticationData != null) {
             authenticationData = authenticationData.clone();
+            Arrays.fill(authenticationData, (byte)0);
         }
         setAuthenticationData(authenticationData);
 

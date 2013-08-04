@@ -11,23 +11,23 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 import java.net.DatagramPacket;
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessageEnum;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
-import org.opendaylight.lispflowmapping.southbound.serializer.LispMessage;
-import org.opendaylight.lispflowmapping.southbound.serializer.LispMessageEnum;
-import org.opendaylight.lispflowmapping.southbound.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.southbound.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.southbound.serializer.MapReplySerializer;
-import org.opendaylight.lispflowmapping.southbound.serializer.MapRequestSerializer;
-import org.opendaylight.lispflowmapping.southbound.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 
-public class LispSouthboundService implements ILispSouthboundService{
+public class LispSouthboundService implements ILispSouthboundService {
     private IMapResolver mapResolver;
     private IMapServer mapServer;
 
@@ -51,14 +51,18 @@ public class LispSouthboundService implements ILispSouthboundService{
     }
 
     private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
-        int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
-        MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
-        MapReply mapReply = mapResolver.handleMapRequest(request);
-        ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
+        try {
+            int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
+            MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
+            MapReply mapReply = mapResolver.handleMapRequest(request);
+            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
 
-        DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
-        replyPacket.setPort(encapsulatedSourcePort);
-        return replyPacket;
+            DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
+            replyPacket.setPort(encapsulatedSourcePort);
+            return replyPacket;
+        } catch (RuntimeException re) {
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+        }
     }
 
     private int extractEncapsulatedSourcePort(ByteBuffer inBuffer) {
@@ -80,16 +84,20 @@ public class LispSouthboundService implements ILispSouthboundService{
     }
 
     private DatagramPacket handleMapRegister(ByteBuffer inBuffer) {
-        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
-        MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
+        try {
+            MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
+            MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
 
-        if (mapNotify != null) {
-            ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
-            DatagramPacket notify = new DatagramPacket(outBuffer.array(), outBuffer.limit());
-            notify.setPort(LispMessage.PORT_NUM);
-            return notify;
-        } else {
-            return null;
+            if (mapNotify != null) {
+                ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
+                DatagramPacket notify = new DatagramPacket(outBuffer.array(), outBuffer.limit());
+                notify.setPort(LispMessage.PORT_NUM);
+                return notify;
+            } else {
+                return null;
+            }
+        } catch (RuntimeException re) {
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);
         }
     }
 }

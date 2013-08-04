@@ -93,6 +93,11 @@ public class MapRegister {
      * RECOMMENDED.
      */
     private byte[] authenticationData;
+    
+    /**
+     * The representation in bytes of the map register.
+     */
+    private byte[] mapRegisterBytes;
 
     /**
      * Record Count: This is the number of records in this Map-Register message.
@@ -157,6 +162,15 @@ public class MapRegister {
 
     public MapRegister setKeyId(short keyId) {
         this.keyId = keyId;
+        return this;
+    }
+    
+    public byte[] getMapRegisterBytes() {
+        return mapRegisterBytes;
+    }
+
+    public MapRegister setMapRegisterBytes(byte[] mapRegisterBytes) {
+        this.mapRegisterBytes = mapRegisterBytes;
         return this;
     }
 

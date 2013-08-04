@@ -22,6 +22,8 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
+						org.opendaylight.mappingservice.implementation.serializer,
+						org.opendaylight.mappingservice.implementation.util
 						</Export-Package>
 						<Import-Package>
 							org.opendaylight.controller.sal.core,
@@ -33,9 +35,13 @@
 							org.osgi.framework,
 							org.opendaylight.lispflowmapping.interfaces.dao, 
 							org.opendaylight.lispflowmapping.interfaces.lisp, 
+							org.opendaylight.lispflowmapping.type,
 							org.opendaylight.lispflowmapping.type.lisp, 
 							org.opendaylight.lispflowmapping.type.lisp.address, 
-							org.opendaylight.controller.clustering.services
+							org.opendaylight.controller.clustering.services,
+							javax.crypto,
+							javax.crypto.spec,
+							org.apache.tomcat.util.buf
 						</Import-Package>
 						<Bundle-Activator>
 							org.opendaylight.lispflowmapping.implementation.Activator
