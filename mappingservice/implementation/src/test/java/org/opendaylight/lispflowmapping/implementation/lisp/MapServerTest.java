@@ -82,14 +82,14 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__CloneNotOwnYouClown() throws Exception {
         mapRegister = new MapRegister();
-        byte[] originalAuthenticationData = new byte[] { 0x1, 0x2, 0x3, 0x4 };
-        mapRegister.setAuthenticationData(originalAuthenticationData);
+        mapRegister.setKeyId((byte)0);
         mapRegister.setWantMapNotify(true);
         EidToLocatorRecord eidToLocator = new EidToLocatorRecord();
         eid = new LispIpv4Address(1);
         eidToLocator.setPrefix(eid);
 
         LocatorRecord locator = new LocatorRecord();
+        locator.setLocator(new LispIpv4Address(2));
         locator.setPriority((byte) 55);
         eidToLocator.addLocator(locator);
 
@@ -99,11 +99,9 @@ public class MapServerTest extends BaseTestCase {
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
 
-        originalAuthenticationData[1] = 0x77;
         mapRegister.getEidToLocatorRecords().get(0).setPrefix(new LispIpv4Address(55));
         mapRegister.getEidToLocatorRecords().get(0).getLocators().get(0).setPriority((byte) 1);
 
-        ArrayAssert.assertEquals(new byte[] { 0x1, 0x2, 0x3, 0x4 }, mapNotify.getAuthenticationData());
         EidToLocatorRecord actualEidToLocator = mapNotify.getEidToLocatorRecords().get(0);
         assertEquals(new LispIpv4Address(1), actualEidToLocator.getPrefix());
         assertEquals((byte) 55, actualEidToLocator.getLocators().get(0).getPriority());
