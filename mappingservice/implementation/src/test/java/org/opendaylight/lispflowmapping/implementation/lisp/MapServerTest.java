@@ -58,12 +58,10 @@ public class MapServerTest extends BaseTestCase {
         assertNull(testedMapServer.handleMapRegister(mapRegister));
 
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(2, entries.length);
+        assertEquals(1, entries.length);
 
-        assertEquals("NumRLOCs", entries[0].getKey());
-        assertEquals(1, entries[0].getValue());
-        assertEquals("RLOC0", entries[1].getKey());
-        assertEquals(rloc, entries[1].getValue());
+        assertEquals("RLOCS", entries[0].getKey());
+        assertEquals(rloc, ((EidToLocatorRecord)entries[0].getValue()).getLocators().get(0).getLocator());
     }
 
     @Test
@@ -119,14 +117,12 @@ public class MapServerTest extends BaseTestCase {
         testedMapServer.handleMapRegister(mapRegister);
 
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(3, entries.length);
+        assertEquals(1, entries.length);
+        EidToLocatorRecord record = ((EidToLocatorRecord)entries[0].getValue());
 
-        assertEquals("NumRLOCs", entries[0].getKey());
-        assertEquals(2, entries[0].getValue());
-        assertEquals("RLOC0", entries[1].getKey());
-        assertEquals(rloc0, entries[1].getValue());
-        assertEquals("RLOC1", entries[2].getKey());
-        assertEquals(rloc1, entries[2].getValue());
+        assertEquals("RLOCS", entries[0].getKey());
+        assertEquals(rloc0, record.getLocators().get(0).getLocator());
+        assertEquals(rloc1, record.getLocators().get(1).getLocator());
 
         // When refactoring: reconsider arrays/count
     }

@@ -8,16 +8,12 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import java.util.Map;
-
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,38 +34,10 @@ public class MapResolver implements IMapResolver {
 
         EidRecord eid = request.getEids().get(0);
         mapReply.setNonce(request.getNonce());
-        EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
-        eidToLocators.setMaskLength(eid.getMaskLength())//
-                .setPrefix(eid.getPrefix());
-        Map<String, ?> locators = dao.get(eid.getPrefix());
-        if (locators != null) {
-            addLocators(eidToLocators, locators);
-        }
+        EidToLocatorRecord eidToLocators = (EidToLocatorRecord) dao.get(eid.getPrefix()).get("RLOCS");
         mapReply.addEidToLocator(eidToLocators);
         return mapReply;
     }
 
-    private void addLocators(EidToLocatorRecord eidToLocators, Map<String, ?> locators) {
-        try {
-            Integer numRLOCs = (Integer) locators.get("NumRLOCs");
-            if (numRLOCs == null) {
-                return;
-            }
-            for (int i = 0; i < numRLOCs; i++) {
-                addLocator(eidToLocators, locators.get("RLOC" + i));
-            }
-        } catch (ClassCastException cce) {
-        }
-    }
 
-    private void addLocator(EidToLocatorRecord eidToLocators, Object locatorObject) {
-        if (locatorObject == null) {
-            return;
-        }
-        try {
-            LispAddress locator = (LispAddress) locatorObject;
-            eidToLocators.addLocator(new LocatorRecord().setLocator(locator).setRouted(true));
-        } catch (ClassCastException cce) {
-        }
-    }
 }

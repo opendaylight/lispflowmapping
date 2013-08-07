@@ -8,18 +8,13 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +35,8 @@ public class MapServer implements IMapServer {
             return null;
         }
         EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
-        List<MappingEntry<?>> rlocs = new ArrayList<ILispDAO.MappingEntry<?>>();
-        rlocs.add(new MappingEntry<Integer>("NumRLOCs", eidRecord.getLocators().size()));
-        int i = 0;
-        for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-            rlocs.add(new MappingEntry<LispAddress>("RLOC" + (i++), locatorRecord.getLocator()));
-        }
-        dao.put(eidRecord.getPrefix(), rlocs.toArray(new MappingEntry[rlocs.size()]));
+        MappingEntry<EidToLocatorRecord> eidToRloc = new MappingEntry<EidToLocatorRecord>("RLOCS", eidRecord);
+        dao.put(eidRecord.getPrefix(), eidToRloc);
         MapNotify mapNotify = null;
         if (mapRegister.isWantMapNotify()) {
             mapNotify = new MapNotify();
