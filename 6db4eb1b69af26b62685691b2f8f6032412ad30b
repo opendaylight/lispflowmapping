@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAFn///x0\u003d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispApplicationDataLCAFAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:06:11Z",
+      "side": 1,
+      "message": "should be stored as int and not byte[] (3 bytes for flow should be validated - maybe in the future).",
+      "revId": "6db4eb1b69af26b62685691b2f8f6032412ad30b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xw\u003d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispApplicationDataLCAFAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:06:11Z",
+      "side": 1,
+      "message": "should have a more detailed toString (with all of the relevant members)",
+      "revId": "6db4eb1b69af26b62685691b2f8f6032412ad30b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xs\u003d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/serializer/address/LispApplicationDataLCAFAddressSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:06:11Z",
+      "side": 1,
+      "message": "find a better name",
+      "revId": "6db4eb1b69af26b62685691b2f8f6032412ad30b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
