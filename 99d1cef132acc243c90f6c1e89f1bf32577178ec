@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAFn///xk\u003d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispSourceDestLCAFAddress.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:15:06Z",
+      "side": 1,
+      "message": "re-run formatter on this file",
+      "revId": "99d1cef132acc243c90f6c1e89f1bf32577178ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xY\u003d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispSourceDestLCAFAddress.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:15:06Z",
+      "side": 1,
+      "message": "toString should result IP:srcPort IP2:dstPort",
+      "revId": "99d1cef132acc243c90f6c1e89f1bf32577178ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xQ\u003d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/serializer/address/LispSegmentLCAFAddressSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:15:06Z",
+      "side": 1,
+      "message": "missing unit-test to cover this fix.",
+      "revId": "99d1cef132acc243c90f6c1e89f1bf32577178ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xM\u003d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/serializer/address/LispSourceDestLCAFAddressSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:15:06Z",
+      "side": 1,
+      "message": "run formatter",
+      "revId": "99d1cef132acc243c90f6c1e89f1bf32577178ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAFn///xI\u003d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/serializer/address/LispSourceDestLCAFAddressSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-08-27T12:15:06Z",
+      "side": 1,
+      "message": "change name -",
+      "revId": "99d1cef132acc243c90f6c1e89f1bf32577178ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
