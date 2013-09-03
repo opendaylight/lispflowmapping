@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_5aa049f4",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/MapRegister.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "protected or something. this is not a regular standard API for this object. hide it somehow.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_bab84d2b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "i think that unknown should be no auth as well",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_9ab59133",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispNoAuthentication.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "usually, to avoid dynamic buffer allocation, a static member is defined.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_faaed5e6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "not sure you need it. before you serialize, the mapNotify should have valid authLen \u0026 zero authBuf which will give you the same result.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_3aa57d04",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "you should use the MapServerSerializer to \"serialize\" and check if the result is null (should return ByteBuffer). the serialize method should be implemented by simply returning the member.\n\nthis is a cleaner separation that will allow us to use this even if we are in object environment.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_1aaac1d4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "i suggest all of the below logics should be in the LispAuthentication objects. you\u0027ll be able to hold a static buffer in the authLen size for the zeroBuffer.\n\nLispAuth should have a validate(buff) method that will return true/false.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_daab19d5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/exception/LispAuthenticationException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "no need for this.",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_7a82e553",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapRegisterSerializer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "auth logics should not be here. please revert to previous code - note that this file should be marked as R and not A",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_5a872962",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-03T06:28:24Z",
+      "side": 1,
+      "message": "remove all leftover imports. code was moved to impl",
+      "revId": "b60d28a74da382c46b68295bcead0bc4b19aa0ef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
