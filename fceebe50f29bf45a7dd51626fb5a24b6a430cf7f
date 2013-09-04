@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_7a60a535",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthentication.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-04T08:34:21Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be abstract? getAuthLen can be abstracted and not implemented.",
+      "revId": "fceebe50f29bf45a7dd51626fb5a24b6a430cf7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_5a65e943",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthentication.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-04T08:34:21Z",
+      "side": 1,
+      "message": "i don\u0027t understand why this is the wrapper. the factory should be by the serializers and not by this object. \n\nplease notice that here \"you\" are ILispAuth which gets a mapNotify, fetches the right instance and call the same method (wrapper/proxy).",
+      "revId": "fceebe50f29bf45a7dd51626fb5a24b6a430cf7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_3a5a1d84",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-04T08:34:21Z",
+      "side": 1,
+      "message": "shouldn\u0027t the keyId be an enum in the model? is it defined good in the RFC? if so you can store it there and parse it in the deserializer instead of here.",
+      "revId": "fceebe50f29bf45a7dd51626fb5a24b6a430cf7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_fa53756a",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-04T08:34:21Z",
+      "side": 1,
+      "message": "i think that we should have a mappingservice.tools bundle. please open a TELSDN bug on this (move both packages to that bundle) - consult Guy.",
+      "revId": "fceebe50f29bf45a7dd51626fb5a24b6a430cf7f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
