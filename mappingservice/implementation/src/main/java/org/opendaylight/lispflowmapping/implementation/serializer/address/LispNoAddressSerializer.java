@@ -18,17 +18,17 @@ public class LispNoAddressSerializer extends LispAddressSerializer{
 	}
 	
 	@Override
-	public LispNoAddress deserialize(ByteBuffer buffer) {
+	protected LispNoAddress deserializeData(ByteBuffer buffer) {
         return new LispNoAddress();
     }
 
     @Override
     public int getAddressSize(LispAddress lispAddress) {
-        return super.getAddressSize(lispAddress);
+        return 0;
     }
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
+    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
     }
 
 }

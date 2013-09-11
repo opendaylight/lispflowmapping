@@ -21,28 +21,27 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer{
 
 
 	@Override
-    public short getLcafLength(LispAddress lispAddress) {
+	protected short getLcafLength(LispAddress lispAddress) {
         short totalSize = 0;
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-            totalSize += LispAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(lispAddress);
+            totalSize += LispAddressSerializer.getInstance().getAddressSize(address);
         }
         return totalSize;
     }
 
 	@Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+	protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-        	LispAddressSerializerFactory.getSerializer(address.getAfi()).serialize(buffer, address);
+            LispAddressSerializer.getInstance().serialize(buffer, address);
         }
     }
 	
 	@Override
-	public LispListLCAFAddress innerDeserialize(ByteBuffer buffer, byte res2, short length) {
+	public LispListLCAFAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         List<LispAddress> addresses = new ArrayList<LispAddress>();
         while (length > 0) {
             LispAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
-            length -= LispAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(address);
+            length -= LispAddressSerializer.getInstance().getAddressSize(address);
             addresses.add(address);
         }
         return new LispListLCAFAddress(res2, addresses);

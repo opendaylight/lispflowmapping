@@ -84,8 +84,8 @@ public class LispSourceDestLCAFAddressTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
     	LispSourceDestLCAFAddress address = new LispSourceDestLCAFAddress((byte) 0x20, (short)0x0000, (byte) 0xCC, (byte) 0xDD, new LispIpv4Address(0x11223344), new LispIpv4Address(0x22334455));
-        ByteBuffer buf = ByteBuffer.allocate(LispSourceDestLCAFAddressSerializer.getInstance().getAddressSize(address));
-        LispSourceDestLCAFAddressSerializer.getInstance().serialize(buf,address);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
+        LispAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
         		 "0C 20 00 10 " + //
                  "00 00 CC DD " + // reserved + masks

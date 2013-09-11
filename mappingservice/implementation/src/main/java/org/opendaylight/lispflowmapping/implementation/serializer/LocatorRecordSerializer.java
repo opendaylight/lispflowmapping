@@ -3,7 +3,6 @@ package org.opendaylight.lispflowmapping.implementation.serializer;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 
@@ -42,13 +41,11 @@ public class LocatorRecordSerializer {
         replyBuffer.put((byte) (ByteUtil.boolToBit(record.isLocalLocator(), Flags.LOCAL_LOCATOR) | //
                 ByteUtil.boolToBit(record.isRlocProbed(), Flags.RLOC_PROBED) | //
                 ByteUtil.boolToBit(record.isRouted(), Flags.ROUTED)));
-        LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(record.getLocator().getAfi());
-        serializer.serialize(replyBuffer, record.getLocator());
+        LispAddressSerializer.getInstance().serialize(replyBuffer, record.getLocator());
     }
 
     public int getSerializationSize(LocatorRecord record) {
-    	LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(record.getLocator().getAfi());
-        return Length.HEADER_SIZE + serializer.getAddressSize(record.getLocator());
+        return Length.HEADER_SIZE + LispAddressSerializer.getInstance().getAddressSize(record.getLocator());
     }
     
     private interface Flags {

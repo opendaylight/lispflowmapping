@@ -20,22 +20,25 @@ public class LispMACAddressSerializer extends LispAddressSerializer{
 
 	@Override
     public int getAddressSize(LispAddress lispAddress) {
-		return super.getAddressSize(lispAddress) + 6;
+		return super.getAddressSize(lispAddress) + Length.MAC;
 
     }
 	
 	@Override
-	public LispMACAddress deserialize(ByteBuffer buffer) {
+	protected LispMACAddress deserializeData(ByteBuffer buffer) {
 		byte[] macBuffer = new byte[6];
 		buffer.get(macBuffer);
         return new LispMACAddress(macBuffer);
     }
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
+    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
     	LispMACAddress lispMACAddress = (LispMACAddress)lispAddress;
-        super.internalSerialize(buffer, lispMACAddress);
         buffer.put(lispMACAddress.getMAC());
+    }
+    
+    private interface Length {
+        int MAC = 6;
     }
 
 }
