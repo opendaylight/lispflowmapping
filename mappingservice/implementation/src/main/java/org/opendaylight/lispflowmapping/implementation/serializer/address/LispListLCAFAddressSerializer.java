@@ -30,10 +30,9 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer{
     }
 
 	@Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void innerSerialize(ByteBuffer buffer, LispAddress lispAddress) {
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-        	LispAddressSerializerFactory.getSerializer(address.getAfi()).serialize(buffer, address);
+            LispAddressSerializer.getInstance().serialize(buffer, address);
         }
     }
 	

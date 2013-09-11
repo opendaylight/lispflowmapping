@@ -48,7 +48,7 @@ public class EidToLocatorRecordSerializer {
                 ByteUtil.boolToBit(record.isAuthoritative(), Flags.AUTHORITATIVE)));
         replyBuffer.position(replyBuffer.position() + Length.RESERVED);
         replyBuffer.putShort(record.getMapVersion());
-        LispAddressSerializerFactory.getSerializer(record.getPrefix().getAfi()).serialize(replyBuffer, record.getPrefix());
+        LispAddressSerializer.getInstance().serialize(replyBuffer, record.getPrefix());
 
         for (LocatorRecord locatorRecord : record.getLocators()) {
             LocatorRecordSerializer.getInstance().serialize(replyBuffer, locatorRecord);

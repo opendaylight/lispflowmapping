@@ -87,7 +87,7 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
         address.setRemotePort((short) 0xFFDD);
         address.setAddress(new LispIpv4Address(0x11223344));
         ByteBuffer buf = ByteBuffer.allocate(LispApplicationDataLCAFAddressSerializer.getInstance().getAddressSize(address));
-        LispApplicationDataLCAFAddressSerializer.getInstance().serialize(buf, address);
+        LispAddressSerializer.getInstance().serialize(buf, address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "04 20 00 0E " + //
                 "AA BB CC DD " + // IPTOS & protocol

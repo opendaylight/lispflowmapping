@@ -20,7 +20,7 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer{
 	}
 
 	@Override
-	public LispLCAFAddress deserialize(ByteBuffer buffer) {
+	public LispLCAFAddress innerDeserialize(ByteBuffer buffer) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lispCode = buffer.get();
         LispCanonicalAddressFormatEnum lcafType = LispCanonicalAddressFormatEnum.valueOf(lispCode);
@@ -48,19 +48,19 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer{
     }
     
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
+    public void innerSerialize(ByteBuffer buffer, LispAddress lispAddress) {
     	LispLCAFAddressSerializer lcafSerializer = LispAddressSerializerFactory.getLCAFSerializer(((LispLCAFAddress)lispAddress).getType());
-        lcafSerializer.serialize(buffer, lispAddress);
+    	addLCAFAddressHeader(buffer, lispAddress);
+        lcafSerializer.innerSerialize(buffer, lispAddress);
     }
 
-    @Override
-    protected void internalSerialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public static void addLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress) {
         LispLCAFAddress lispLCAFAddress = (LispLCAFAddress)lispAddress;
         buffer.putShort((short) 0); // RES + Flags.
         buffer.put(lispLCAFAddress.getType().getLispCode());
         buffer.put(lispLCAFAddress.getRes2());
-        buffer.putShort(getLcafLength(lispAddress));
+        LispLCAFAddressSerializer lcafSerializer = LispAddressSerializerFactory.getLCAFSerializer(lispLCAFAddress.getType());
+        buffer.putShort(lcafSerializer.getLcafLength(lispAddress));
     }
     private interface Length {
         int RES = 1;

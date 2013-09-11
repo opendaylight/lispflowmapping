@@ -26,14 +26,9 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer{
     }
 
 	@Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void innerSerialize(ByteBuffer buffer, LispAddress lispAddress) {
         buffer.putInt(((LispSegmentLCAFAddress)lispAddress).getInstanceId());
-        LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
-        if (serializer == null) {
-            throw new LispSerializationException("Unknown AFI type=" + ((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
-        }
-        serializer.serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
     }
 	
 	@Override

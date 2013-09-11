@@ -42,8 +42,7 @@ public class LocatorRecordSerializer {
         replyBuffer.put((byte) (ByteUtil.boolToBit(record.isLocalLocator(), Flags.LOCAL_LOCATOR) | //
                 ByteUtil.boolToBit(record.isRlocProbed(), Flags.RLOC_PROBED) | //
                 ByteUtil.boolToBit(record.isRouted(), Flags.ROUTED)));
-        LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(record.getLocator().getAfi());
-        serializer.serialize(replyBuffer, record.getLocator());
+        LispAddressSerializer.getInstance().serialize(replyBuffer, record.getLocator());
     }
 
     public int getSerializationSize(LocatorRecord record) {

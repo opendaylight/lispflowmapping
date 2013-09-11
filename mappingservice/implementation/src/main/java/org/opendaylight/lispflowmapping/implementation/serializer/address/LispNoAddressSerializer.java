@@ -18,7 +18,7 @@ public class LispNoAddressSerializer extends LispAddressSerializer{
 	}
 	
 	@Override
-	public LispNoAddress deserialize(ByteBuffer buffer) {
+	public LispNoAddress innerDeserialize(ByteBuffer buffer) {
         return new LispNoAddress();
     }
 
@@ -28,7 +28,7 @@ public class LispNoAddressSerializer extends LispAddressSerializer{
     }
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
+    public void innerSerialize(ByteBuffer buffer, LispAddress lispAddress) {
     }
 
 }

@@ -84,7 +84,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
         LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, addressList);
 
         ByteBuffer buf = ByteBuffer.allocate(LispListLCAFAddressSerializer.getInstance().getAddressSize(address));
-        LispListLCAFAddressSerializer.getInstance().serialize(buf,address);
+        LispAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
@@ -97,7 +97,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
         LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, new ArrayList<LispAddress>());
 
         ByteBuffer buf = ByteBuffer.allocate(LispListLCAFAddressSerializer.getInstance().getAddressSize(address));
-        LispListLCAFAddressSerializer.getInstance().serialize(buf,address);
+        LispAddressSerializer.getInstance().serialize(buf,address);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());

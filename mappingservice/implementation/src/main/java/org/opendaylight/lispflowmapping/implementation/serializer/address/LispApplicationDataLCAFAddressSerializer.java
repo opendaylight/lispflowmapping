@@ -28,18 +28,13 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
     }
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void innerSerialize(ByteBuffer buffer, LispAddress lispAddress) {
         LispApplicationDataLCAFAddress applicationDataAddress = ((LispApplicationDataLCAFAddress) lispAddress);
         buffer.put(ByteUtil.partialIntToByteArray(applicationDataAddress.getIPTos(), Length.TOC));
         buffer.put(applicationDataAddress.getProtocol());
         buffer.putShort(applicationDataAddress.getLocalPort());
         buffer.putShort(applicationDataAddress.getRemotePort());
-        LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(applicationDataAddress.getAddress().getAfi());
-        if (serializer == null) {
-            throw new LispSerializationException("Unknown AFI type=" + ((LispSegmentLCAFAddress) lispAddress).getAddress().getAfi());
-        }
-        serializer.serialize(buffer, ((LispApplicationDataLCAFAddress) lispAddress).getAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, ((LispApplicationDataLCAFAddress) lispAddress).getAddress());
     }
 
     @Override
