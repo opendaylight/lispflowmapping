@@ -22,7 +22,7 @@ public class LispIpv6AddressTest extends BaseTestCase {
         LispIpv6Address lispIpv6Address = new LispIpv6Address("::0");
 
         assertEquals(AddressFamilyNumberEnum.IP6, lispIpv6Address.getAfi());
-        assertEquals(18, LispIpv6AddressSerializer.getInstance().getAddressSize(lispIpv6Address));
+        assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(lispIpv6Address));
         assertEquals("0:0:0:0:0:0:0:0", lispIpv6Address.toString());
     }
 
@@ -31,7 +31,7 @@ public class LispIpv6AddressTest extends BaseTestCase {
         LispIpv6Address lispIpv6Address = new LispIpv6Address(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
 
         assertEquals(AddressFamilyNumberEnum.IP6, lispIpv6Address.getAfi());
-        assertEquals(18, LispIpv6AddressSerializer.getInstance().getAddressSize(lispIpv6Address));
+        assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(lispIpv6Address));
         assertEquals("0:0:0:0:0:0:0:1", lispIpv6Address.toString());
     }
 }
