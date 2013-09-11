@@ -23,11 +23,11 @@ public class LispIpv6AddressSerializer extends LispIPAddressSerializer{
 	
 	@Override
     public int getAddressSize(LispAddress lispAddress) {
-        return super.getAddressSize(lispAddress) + 16;
+        return Length.IPV6;
     }
 	
 	@Override
-	public LispIpv6Address deserialize(ByteBuffer buffer) {
+	public LispIpv6Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[16];
         InetAddress address = null;
         buffer.get(ipBuffer);
@@ -39,5 +39,9 @@ public class LispIpv6AddressSerializer extends LispIPAddressSerializer{
         }
         return new LispIpv6Address(address);
     }
+	
+	private interface Length {
+            int IPV6 = 16;
+        }
 
 }

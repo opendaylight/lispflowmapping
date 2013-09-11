@@ -2,7 +2,6 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
-import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
 
@@ -20,31 +19,18 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
 
     @Override
     public short getLcafLength(LispAddress lispAddress) {
-        LispAddressSerializer srcSerializer = LispAddressSerializerFactory.getSerializer(((LispSourceDestLCAFAddress) lispAddress).getSrcAddress()
-                .getAfi());
-        LispAddressSerializer dstSerializer = LispAddressSerializerFactory.getSerializer(((LispSourceDestLCAFAddress) lispAddress).getDstAddress()
-                .getAfi());
-        return (short) (Length.ALL_FIELDS + srcSerializer.getAddressSize(((LispSourceDestLCAFAddress) lispAddress).getSrcAddress()) + dstSerializer
+        return (short) (Length.ALL_FIELDS + LispAddressSerializer.getInstance().getAddressSize(((LispSourceDestLCAFAddress) lispAddress).getSrcAddress()) + LispAddressSerializer.getInstance()
                 .getAddressSize(((LispSourceDestLCAFAddress) lispAddress).getDstAddress()));
     }
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         LispSourceDestLCAFAddress lispSourceDestLCAFAddress = ((LispSourceDestLCAFAddress) lispAddress);
         buffer.putShort(lispSourceDestLCAFAddress.getReserved());
         buffer.put(lispSourceDestLCAFAddress.getSrcMaskLength());
         buffer.put(lispSourceDestLCAFAddress.getDstMaskLength());
-        LispAddressSerializer srcSerializer = LispAddressSerializerFactory.getSerializer(lispSourceDestLCAFAddress.getSrcAddress().getAfi());
-        if (srcSerializer == null) {
-            throw new LispSerializationException("Unknown AFI type=" + lispSourceDestLCAFAddress.getSrcAddress().getAfi());
-        }
-        srcSerializer.serialize(buffer, lispSourceDestLCAFAddress.getSrcAddress());
-        LispAddressSerializer dstSerializer = LispAddressSerializerFactory.getSerializer(lispSourceDestLCAFAddress.getDstAddress().getAfi());
-        if (dstSerializer == null) {
-            throw new LispSerializationException("Unknown AFI type=" + lispSourceDestLCAFAddress.getDstAddress().getAfi());
-        }
-        dstSerializer.serialize(buffer, lispSourceDestLCAFAddress.getDstAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, lispSourceDestLCAFAddress.getSrcAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, lispSourceDestLCAFAddress.getDstAddress());
     }
 
     @Override

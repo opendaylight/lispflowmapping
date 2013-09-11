@@ -23,11 +23,11 @@ public class LispIpv4AddressSerializer extends LispIPAddressSerializer{
 	
 	@Override
     public int getAddressSize(LispAddress lispAddress) {
-        return super.getAddressSize(lispAddress) + 4;
+        return Length.IPV4;
     }
 	
 	@Override
-	public LispIpv4Address deserialize(ByteBuffer buffer) {
+	public LispIpv4Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
         buffer.get(ipBuffer);
@@ -39,6 +39,10 @@ public class LispIpv4AddressSerializer extends LispIPAddressSerializer{
         }
         return new LispIpv4Address(address);
     }
+	
+	private interface Length {
+	        int IPV4 = 4;
+	    }
 
 
 

@@ -9,9 +9,8 @@ public abstract class LispIPAddressSerializer extends LispAddressSerializer{
 
 
     @Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
+    public void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
     	LispIPAddress lispIpvAddress = (LispIPAddress)lispAddress;
-        super.internalSerialize(buffer, lispAddress);
         buffer.put(lispIpvAddress.getAddress().getAddress());
     }
 }
