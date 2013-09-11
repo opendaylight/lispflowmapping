@@ -2,7 +2,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
-import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
+import org.opendaylight.lispflowmapping.implementation.serializer.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
 
@@ -21,19 +21,14 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer{
 
 	@Override
     public short getLcafLength(LispAddress lispAddress) {
-		LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
+		LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
         return (short) (Length.INSTANCE + serializer.getAddressSize(((LispSegmentLCAFAddress)lispAddress).getAddress()));
     }
 
 	@Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         buffer.putInt(((LispSegmentLCAFAddress)lispAddress).getInstanceId());
-        LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
-        if (serializer == null) {
-            throw new LispSerializationException("Unknown AFI type=" + ((LispSegmentLCAFAddress)lispAddress).getAddress().getAfi());
-        }
-        serializer.serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
     }
 	
 	@Override

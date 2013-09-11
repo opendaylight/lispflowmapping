@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opendaylight.lispflowmapping.implementation.serializer.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 
@@ -24,16 +25,15 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer{
     public short getLcafLength(LispAddress lispAddress) {
         short totalSize = 0;
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-            totalSize += LispAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(lispAddress);
+            totalSize += LispAFIAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(lispAddress);
         }
         return totalSize;
     }
 
 	@Override
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        super.internalSerialize(buffer, lispAddress);
+    public void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         for (LispAddress address : ((LispListLCAFAddress)lispAddress).getAddresses()) {
-        	LispAddressSerializerFactory.getSerializer(address.getAfi()).serialize(buffer, address);
+            LispAddressSerializer.getInstance().serialize(buffer, address);
         }
     }
 	
@@ -42,7 +42,7 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer{
         List<LispAddress> addresses = new ArrayList<LispAddress>();
         while (length > 0) {
             LispAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
-            length -= LispAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(address);
+            length -= LispAFIAddressSerializerFactory.getSerializer(address.getAfi()).getAddressSize(address);
             addresses.add(address);
         }
         return new LispListLCAFAddress(res2, addresses);

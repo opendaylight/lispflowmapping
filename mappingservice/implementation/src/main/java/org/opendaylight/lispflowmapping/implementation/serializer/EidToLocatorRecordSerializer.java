@@ -3,7 +3,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializerFactory;
+import org.opendaylight.lispflowmapping.implementation.serializer.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
@@ -48,7 +48,7 @@ public class EidToLocatorRecordSerializer {
                 ByteUtil.boolToBit(record.isAuthoritative(), Flags.AUTHORITATIVE)));
         replyBuffer.position(replyBuffer.position() + Length.RESERVED);
         replyBuffer.putShort(record.getMapVersion());
-        LispAddressSerializerFactory.getSerializer(record.getPrefix().getAfi()).serialize(replyBuffer, record.getPrefix());
+        LispAddressSerializer.getInstance().serialize(replyBuffer, record.getPrefix());
 
         for (LocatorRecord locatorRecord : record.getLocators()) {
             LocatorRecordSerializer.getInstance().serialize(replyBuffer, locatorRecord);
@@ -56,7 +56,7 @@ public class EidToLocatorRecordSerializer {
     }
 
     public int getSerializationSize(EidToLocatorRecord record) {
-        int size = Length.HEADER_SIZE + LispAddressSerializerFactory.getSerializer(record.getPrefix().getAfi()).getAddressSize(record.getPrefix());
+        int size = Length.HEADER_SIZE + LispAFIAddressSerializerFactory.getSerializer(record.getPrefix().getAfi()).getAddressSize(record.getPrefix());
         for (LocatorRecord locatorRecord : record.getLocators()) {
             size += LocatorRecordSerializer.getInstance().getSerializationSize(locatorRecord);
         }

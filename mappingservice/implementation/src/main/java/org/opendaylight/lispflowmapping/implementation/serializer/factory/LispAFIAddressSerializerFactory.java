@@ -1,15 +1,20 @@
-package org.opendaylight.lispflowmapping.implementation.serializer.address;
+package org.opendaylight.lispflowmapping.implementation.serializer.factory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispASAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispIpv4AddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispIpv6AddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispLCAFAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispMACAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispNoAddressSerializer;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 
-public class LispAddressSerializerFactory {
+public class LispAFIAddressSerializerFactory {
 	
 	private static Map<AddressFamilyNumberEnum, LispAddressSerializer> afiToSearializerMap;
-	private static Map<LispCanonicalAddressFormatEnum, LispLCAFAddressSerializer> lcafToSearializerMap;
 	
 	private static void initializeMap() {
 		afiToSearializerMap = new HashMap<AddressFamilyNumberEnum, LispAddressSerializer>();
@@ -20,11 +25,6 @@ public class LispAddressSerializerFactory {
 		afiToSearializerMap.put(AddressFamilyNumberEnum.MAC, LispMACAddressSerializer.getInstance());
 		afiToSearializerMap.put(AddressFamilyNumberEnum.RESERVED, LispNoAddressSerializer.getInstance());
 		
-		lcafToSearializerMap = new HashMap<LispCanonicalAddressFormatEnum, LispLCAFAddressSerializer>();
-		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.LIST, LispListLCAFAddressSerializer.getInstance());
-		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.SEGMENT, LispSegmentLCAFAddressSerializer.getInstance());
-		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.APPLICATION_DATA, LispApplicationDataLCAFAddressSerializer.getInstance());
-		lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.SOURCE_DEST, LispSourceDestLCAFAddressSerializer.getInstance());
 	}
 	
 	public static LispAddressSerializer getSerializer(AddressFamilyNumberEnum afi) {
@@ -32,13 +32,6 @@ public class LispAddressSerializerFactory {
 			initializeMap();
 		}
 		return afiToSearializerMap.get(afi);
-	}
-	
-	public static LispLCAFAddressSerializer getLCAFSerializer(LispCanonicalAddressFormatEnum lcaf) {
-		if (lcafToSearializerMap == null) {
-			initializeMap();
-		}
-		return lcafToSearializerMap.get(lcaf);
 	}
 	
 

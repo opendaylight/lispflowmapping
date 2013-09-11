@@ -27,7 +27,7 @@ public class LispIpv4AddressSerializer extends LispIPAddressSerializer{
     }
 	
 	@Override
-	public LispIpv4Address deserialize(ByteBuffer buffer) {
+	public LispIpv4Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
         buffer.get(ipBuffer);
