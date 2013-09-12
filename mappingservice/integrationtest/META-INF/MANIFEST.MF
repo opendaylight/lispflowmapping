@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1379000120029
+Build-Jdk: 1.7.0_25
+Built-By: devel
+Bundle-ManifestVersion: 2
+Bundle-Name: mappingservice.integrationtest
+Bundle-SymbolicName: org.opendaylight.lispflowmapping.mappingservice.int
+ egrationtest
+Bundle-Version: 0.1.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Import-Package: org.opendaylight.lispflowmapping.interfaces.lisp;version
+ ="[0.1,1)",org.opendaylight.lispflowmapping.type;version="[0.1,1)",org.
+ opendaylight.lispflowmapping.type.lisp;version="[0.1,1)",org.opendaylig
+ ht.lispflowmapping.type.lisp.address;version="[0.1,1)"
+Tool: Bnd-1.50.0
