@@ -668,4 +668,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         }
         return Arrays.copyOf(res, counter - HEADER_LEN);
     }
+    
+    @Test(expected = LispMalformedPacketException.class)
+    public void mapRequest__NoIPITRRLOC() throws Exception {
+        mapRequestPacket = hexToByteBuffer("10 00 " //
+                + "02 " // This means 3 ITR - RLOCs
+                + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
+                + "40 05 c0 a8 88 0a 01 02 " // MAC (ITR-RLOC #1 of 3)
+                // IPv6 (ITR-RLOC #2 of 3)
+                + "40 05 00 00 00 00 00 00 " //
+                + "40 05 11 22 34 56 78 90 " // MAC (ITR-RLOC #3 of 3)
+                + "00 20 00 01 01 02 03 04").array();
+        allowing(mapResolver).handleMapRequest(with(mapRequestSaver));
+        ret(mapReply);
+        handlePacket(mapRequestPacket);
+    }
+    
 }
