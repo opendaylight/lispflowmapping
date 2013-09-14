@@ -18,6 +18,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,7 +28,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
+import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -52,6 +57,7 @@ public class MappingServiceIntegrationTest {
     String ourAddress = "127.0.0.2";
     private DatagramSocket socket;
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
+    private byte[] mapRegisterPacketWithNotifyWithListLCAFAndDistinguishedName;
 
     @After
     public void after() {
@@ -115,8 +121,7 @@ public class MappingServiceIntegrationTest {
         // Record Counter: 1
         // Nonce: 7
         // Key ID: 0x0000 NO AUTHENTICATION!!
-        // AuthDataLength: 20 Data:
-        // e8:f5:0b:c5:c5:f2:b0:21:27:a8:21:41:04:f3:46:5a:a5:68:89:ec
+        // AuthDataLength: 00 Data:
         // EID prefix: 153.16.254.1/32 (EID=0x9910FE01), TTL: 10, Authoritative,
         // No-Action
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
@@ -138,8 +143,34 @@ public class MappingServiceIntegrationTest {
         // Record Counter: 1
         // Nonce: 7
         // Key ID: 0x0000 NO AUTHENTICATION!!
-        // AuthDataLength: 20 Data:
-        // e8:f5:0b:c5:c5:f2:b0:21:27:a8:21:41:04:f3:46:5a:a5:68:89:ec
+        // AuthDataLength: 00 Data:
+        // EID prefix: 153.16.254.1/32 (EID=0x9910FE01), TTL: 10, Authoritative,
+        // No-Action
+        // LIST LCAF
+        // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
+        // Local RLOC: Distinguished Name("david"), Reachable,
+        // Priority/Weight: 1/100, Multicast Priority/Weight:
+        // 255/0
+        //
+
+        mapRegisterPacketWithNotifyWithListLCAFAndDistinguishedName = extractWSUdpByteArray(new String(
+                "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+                        + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
+                        + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
+                        + "0030   00 00 00 00 00 07 00 00 00 14 0e a4 c6 d8 a4 06 "
+                        + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
+                        + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                        + "0060   ff 00 00 05 40 03 00 00 01 00 00 16 00 01 c0 a8 " //
+                        + "0070   88 0a 40 03 00 00 01 00 00 08 00 11 64 61 76 69 " //
+                        + "0080   64 00"));
+
+        // IP: 192.168.136.10 -> 128.223.156.35
+        // UDP: 49289 -> 4342
+        // LISP(Type = 3 Map-Register, P=1, M=1
+        // Record Counter: 1
+        // Nonce: 7
+        // Key ID: 0x0000 NO AUTHENTICATION!!
+        // AuthDataLength: 00 Data:
         // EID prefix: 153.16.254.1/32 (EID=0x9910FE01), TTL: 10, Authoritative,
         // No-Action
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
@@ -258,6 +289,21 @@ public class MappingServiceIntegrationTest {
             fail();
         } catch (SocketTimeoutException ste) {
         }
+    }
+
+    @Test
+    public void mapRegisterWithMapNotifyWithListLcaf() throws SocketTimeoutException {
+        sendPacket(mapRegisterPacketWithNotifyWithListLCAFAndDistinguishedName);
+        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        MapNotify reply = MapNotifySerializer.getInstance().deserialize(readBuf);
+        EidToLocatorRecord etlr = reply.getEidToLocatorRecords().get(0);
+        List<LocatorRecord> locators = etlr.getLocators();
+        assertEquals(true, (locators.get(0).getLocator() instanceof LispListLCAFAddress));
+        LispListLCAFAddress listLCAF = (LispListLCAFAddress) locators.get(0).getLocator();
+        LispListLCAFAddress innerList = (LispListLCAFAddress) listLCAF.getAddresses().get(1);
+        LispDistinguishedNameAddress dn = new LispDistinguishedNameAddress("david");
+        assertEquals(dn, ((LispDistinguishedNameAddress) innerList.getAddresses().get(0)));
+        assertEquals(7, reply.getNonce());
     }
 
     @Test
