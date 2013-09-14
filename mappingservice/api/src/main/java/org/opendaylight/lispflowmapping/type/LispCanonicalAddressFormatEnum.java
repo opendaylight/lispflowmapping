@@ -16,7 +16,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddr
 import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
 
 public enum LispCanonicalAddressFormatEnum {
-    LIST(1, LispListLCAFAddress.class), //
+    BASEONE(1, LispListLCAFAddress.class), //
     SEGMENT(2, LispSegmentLCAFAddress.class), //
     APPLICATION_DATA(4, LispApplicationDataLCAFAddress.class), //
     SOURCE_DEST(12, LispSourceDestLCAFAddress.class), //

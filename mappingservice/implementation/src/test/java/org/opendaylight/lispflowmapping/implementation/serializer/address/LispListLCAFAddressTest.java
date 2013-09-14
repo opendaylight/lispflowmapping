@@ -39,7 +39,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
         assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
         LispListLCAFAddress lcafList = (LispListLCAFAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.BASEONE, lcafList.getType());
 
         List<? extends LispAddress> addressList = lcafList.getAddresses();
         assertEquals(2, addressList.size());
@@ -56,7 +56,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
         assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
         LispListLCAFAddress lcafList = (LispListLCAFAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.BASEONE, lcafList.getType());
 
         List<? extends LispAddress> addressList = lcafList.getAddresses();
         assertEquals(0, addressList.size());

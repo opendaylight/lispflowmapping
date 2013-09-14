@@ -2,21 +2,17 @@ package org.opendaylight.lispflowmapping.type.lisp.address;
 
 import java.util.List;
 
-import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-
-public class LispListLCAFAddress extends LispLCAFAddress {
+public class LispListLCAFAddress extends LispBaseOneLCAFAddress {
     List<? extends LispAddress> addresses;
 
     public LispListLCAFAddress(byte res2, List<? extends LispAddress> addresses) {
-        super(LispCanonicalAddressFormatEnum.LIST, res2);
+        super(res2);
         this.addresses = addresses;
     }
-
 
     public List<? extends LispAddress> getAddresses() {
         return addresses;
     }
-
 
     @Override
     public int hashCode() {
