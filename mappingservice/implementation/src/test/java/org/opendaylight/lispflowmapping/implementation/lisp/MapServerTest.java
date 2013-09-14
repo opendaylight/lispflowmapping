@@ -132,7 +132,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
     }
-    
+
     @Test
     public void handleMapRegisterIpv4__ValidMask32() throws Exception {
         int mask = 32;
@@ -142,9 +142,9 @@ public class MapServerTest extends BaseTestCase {
         record.addLocator(new LocatorRecord().setLocator(rloc));
         mapRegister.addEidToLocator(record);
         mapRegister.setWantMapNotify(true);
-        
+
         expectPut(eid, mask);
-        
+
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv4Address("10.31.0.5"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
@@ -152,7 +152,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
     }
-    
+
     @Test
     public void handleMapRegisterIpv6__ValidMask96() throws Exception {
         int mask = 96;
@@ -173,7 +173,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
     }
-    
+
     @Test
     public void handleMapRegisterIpv6__ValidMask32() throws Exception {
         int mask = 32;
@@ -184,9 +184,9 @@ public class MapServerTest extends BaseTestCase {
         record.addLocator(new LocatorRecord().setLocator(rloc));
         mapRegister.addEidToLocator(record);
         mapRegister.setWantMapNotify(true);
-        
+
         expectPut(addr, mask);
-        
+
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv6Address("1:1:0:0:0:0:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
@@ -194,7 +194,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
     }
-    
+
     @Test
     public void handleMapRegisterIpv6__ValidMask128() throws Exception {
         int mask = 128;
@@ -205,9 +205,9 @@ public class MapServerTest extends BaseTestCase {
         record.addLocator(new LocatorRecord().setLocator(rloc));
         mapRegister.addEidToLocator(record);
         mapRegister.setWantMapNotify(true);
-        
+
         expectPut(addr, mask);
-        
+
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv6Address("1:1:1:1:1:1:1:2"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
@@ -215,7 +215,6 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
     }
-
 
     @Test
     public void handleMapRegister__MultipleRLOCs() throws Exception {
@@ -241,8 +240,8 @@ public class MapServerTest extends BaseTestCase {
     }
 
     private void expectPut(LispAddress address, int mask) {
-        if (address instanceof IMaskable && mask > 0 && mask < ((IMaskable)address).getMaxMask()) {
-            ((IMaskable)address).normalize(mask);
+        if (address instanceof IMaskable && mask > 0 && mask < ((IMaskable) address).getMaxMask()) {
+            ((IMaskable) address).normalize(mask);
             allowing(lispDAO).put(weq(new MappingServiceKey(address, (byte) mask)), with(mappingEntriesSaver));
         } else {
             allowing(lispDAO).put(weq(new MappingServiceNoMaskKey(address)), with(mappingEntriesSaver));

@@ -12,11 +12,9 @@ public class LispListLCAFAddress extends LispLCAFAddress {
         this.addresses = addresses;
     }
 
-
     public List<? extends LispAddress> getAddresses() {
         return addresses;
     }
-
 
     @Override
     public int hashCode() {
