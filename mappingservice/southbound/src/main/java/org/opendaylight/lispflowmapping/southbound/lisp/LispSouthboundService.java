@@ -26,6 +26,8 @@ import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
 
 public class LispSouthboundService implements ILispSouthboundService {
     private IMapResolver mapResolver;
@@ -40,26 +42,44 @@ public class LispSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            return handleMapRequest(inBuffer);
-        } else {
-            if (lispType == LispMessageEnum.MapRegister) {
-                return handleMapRegister(inBuffer);
-            } else {
-                return null;
-            }
+            return handleEncapsulatedControlMessage(inBuffer);
+        } else if (lispType == LispMessageEnum.MapRequest) {
+            return handleMapRequest(inBuffer, true);
+        } else if (lispType == LispMessageEnum.MapRegister) {
+            return handleMapRegister(inBuffer);
         }
+        return null;
     }
 
-    private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
+    private DatagramPacket handleEncapsulatedControlMessage(ByteBuffer inBuffer) {
         try {
             int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
+            DatagramPacket replyPacket = handleMapRequest(inBuffer, false);
+            replyPacket.setPort(encapsulatedSourcePort);
+            return replyPacket;
+        } catch (RuntimeException re) {
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+        }
+    }
+    
+    private DatagramPacket handleMapRequest(ByteBuffer inBuffer, boolean addITRAddress) {
+        try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
             MapReply mapReply = mapResolver.handleMapRequest(request);
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
 
             DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
-            replyPacket.setPort(encapsulatedSourcePort);
-            return replyPacket;
+            if (!addITRAddress) {
+                return replyPacket;
+            }
+            replyPacket.setPort(LispMessage.PORT_NUM);
+            for (LispAddress address : request.getItrRlocs()) {
+                if (address instanceof LispIPAddress) {
+                    replyPacket.setAddress(((LispIPAddress) address).getAddress());
+                    return replyPacket;
+                }
+            }
+            throw new LispMalformedPacketException("No IP address in the ITR's RLOC's");
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }

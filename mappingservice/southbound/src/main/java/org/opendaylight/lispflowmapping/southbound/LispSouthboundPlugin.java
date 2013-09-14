@@ -112,8 +112,9 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                     if (reply == null) {
                         continue;
                     }
-
-                    reply.setAddress(packet.getAddress());
+                    if (reply.getAddress() == null) {
+                        reply.setAddress(packet.getAddress());
+                    }
                     try {
                         logger.debug("sending reply to {}:{} (len={})", reply.getAddress().getHostAddress(), reply.getPort(), reply.getLength());
                         socket.send(reply);
