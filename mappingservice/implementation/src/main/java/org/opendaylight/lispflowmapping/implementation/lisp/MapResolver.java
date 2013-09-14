@@ -35,17 +35,19 @@ public class MapResolver implements IMapResolver {
             return null;
         }
         MapReply mapReply = new MapReply();
-
-        EidRecord eid = request.getEids().get(0);
         mapReply.setNonce(request.getNonce());
-        EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
-        eidToLocators.setMaskLength(eid.getMaskLength())//
-                .setPrefix(eid.getPrefix());
-        Map<String, ?> locators = dao.get(eid.getPrefix());
-        if (locators != null) {
-            addLocators(eidToLocators, locators);
+        
+        for (EidRecord eid : request.getEids()) {
+            EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
+            eidToLocators.setMaskLength(eid.getMaskLength())//
+            .setPrefix(eid.getPrefix());
+            Map<String, ?> locators = dao.get(eid.getPrefix());
+            if (locators != null) {
+                addLocators(eidToLocators, locators);
+            }
+            mapReply.addEidToLocator(eidToLocators);
         }
-        mapReply.addEidToLocator(eidToLocators);
+
         return mapReply;
     }
 
