@@ -14,12 +14,15 @@ import java.util.List;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +47,15 @@ public class MapServer implements IMapServer {
         rlocs.add(new MappingEntry<Integer>("NumRLOCs", eidRecord.getLocators().size()));
         int i = 0;
         for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-            rlocs.add(new MappingEntry<LispAddress>("RLOC" + (i++), locatorRecord.getLocator()));
+            rlocs.add(new MappingEntry<MappingServiceValue>("RLOC" + (i++), new MappingServiceValue(locatorRecord, eidRecord.getRecordTtl())));
         }
-        dao.put(eidRecord.getPrefix(), rlocs.toArray(new MappingEntry[rlocs.size()]));
+        if (eidRecord.getPrefix() instanceof IMaskable && eidRecord.getMaskLength() > 0 && eidRecord.getMaskLength() < ((IMaskable)eidRecord.getPrefix()).getMaxMask()) {
+            ((IMaskable)eidRecord.getPrefix()).normalize(eidRecord.getMaskLength());
+            dao.put(new MappingServiceKey(eidRecord.getPrefix(), (byte)eidRecord.getMaskLength()), rlocs.toArray(new MappingEntry[rlocs.size()]));
+        } else {
+            dao.put(new MappingServiceNoMaskKey(eidRecord.getPrefix()), rlocs.toArray(new MappingEntry[rlocs.size()]));
+            
+        }
         MapNotify mapNotify = null;
         if (mapRegister.isWantMapNotify()) {
             mapNotify = new MapNotify();

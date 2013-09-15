@@ -26,5 +26,9 @@ public class LispIpv6Address extends LispIPAddress {
         super(name, AddressFamilyNumberEnum.IP6);
     }
 
+    public int getMaxMask() {
+        return 128;
+    }
+    
 
 }

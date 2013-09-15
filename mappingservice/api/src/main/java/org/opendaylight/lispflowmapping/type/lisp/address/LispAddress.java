@@ -21,8 +21,6 @@ public abstract class LispAddress {
         return afi;
     }
     
-    
-
     @Override
     public int hashCode() {
         final int prime = 31;

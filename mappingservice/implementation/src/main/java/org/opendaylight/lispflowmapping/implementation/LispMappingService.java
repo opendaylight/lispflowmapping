@@ -15,8 +15,10 @@ import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
+import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
@@ -49,6 +51,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
 
     class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<LispIpv6Address, Integer> {
     }
+    class MappingServiceKeyConvertor implements ILispTypeConverter<IMappingServiceKey, Integer> {
+    }
+    
 
     void setLispDao(ILispDAO dao) {
         logger.info("LispDAO set in LispMappingService");
@@ -59,6 +64,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
         logger.debug("Registering LispIpv6Address");
         lispDao.register(LispIpv6AddressInMemoryConverter.class);
+        logger.debug("Registering MAppingServiceKey");
+        lispDao.register(MappingServiceKeyConvertor.class);
     }
 
     void unsetLispDao(ILispDAO dao) {
