@@ -6,16 +6,16 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
-public abstract class LispIPAddress extends LispAddress{
-	
-	protected InetAddress address;
+public abstract class LispIPAddress extends LispAddress {
 
-	protected LispIPAddress(InetAddress address, AddressFamilyNumberEnum afi) {
-		super(afi);
-		this.address = address;
-	}
-	
-	protected LispIPAddress(int address, AddressFamilyNumberEnum afi) {
+    protected InetAddress address;
+
+    protected LispIPAddress(InetAddress address, AddressFamilyNumberEnum afi) {
+        super(afi);
+        this.address = address;
+    }
+
+    protected LispIPAddress(int address, AddressFamilyNumberEnum afi) {
         super(afi);
         try {
             this.address = InetAddress.getByAddress(ByteBuffer.allocate(4).putInt(address).array());
@@ -24,8 +24,8 @@ public abstract class LispIPAddress extends LispAddress{
             e.printStackTrace();
         }
     }
-	
-	protected LispIPAddress(byte[] address, AddressFamilyNumberEnum afi) {
+
+    protected LispIPAddress(byte[] address, AddressFamilyNumberEnum afi) {
         super(afi);
         try {
 
@@ -35,8 +35,8 @@ public abstract class LispIPAddress extends LispAddress{
             e.printStackTrace();
         }
     }
-	
-	protected LispIPAddress(String name, AddressFamilyNumberEnum afi) {
+
+    protected LispIPAddress(String name, AddressFamilyNumberEnum afi) {
         super(afi);
         try {
             this.address = InetAddress.getByName(name);
@@ -45,11 +45,39 @@ public abstract class LispIPAddress extends LispAddress{
             e.printStackTrace();
         }
     }
-	
-	public InetAddress getAddress() {
+
+    public InetAddress getAddress() {
         return address;
     }
+    
+    @Override
+    public void normalize(int mask) {
+        if (mask <= 0 || mask >= getMaxMask()) {
+            return;
+        }
+        ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
+        byte b = (byte)0xff;
+        for (int i = 0; i < byteRepresentation.array().length; i++) {
+            if (mask >= 8)
+                byteRepresentation.put(i, (byte)(b & byteRepresentation.get(i)));
+            
+            else if (mask >0) {
+                byteRepresentation.put(i, (byte)((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
+            } else {
+                byteRepresentation.put(i, (byte)(0 & byteRepresentation.get(i)));
+            }
+            
+            mask-=8;
+        }
+        try {
+            this.address = InetAddress.getByAddress(byteRepresentation.array());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        
+    }
 
+    protected abstract int getMaxMask();
 
     @Override
     public int hashCode() {
@@ -75,10 +103,15 @@ public abstract class LispIPAddress extends LispAddress{
             return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
         return address.getHostAddress();
+    }
+
+    @Override
+    public boolean isMaskable() {
+        return true;
     }
 
 }

@@ -14,6 +14,8 @@ import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispIpv6Address extends LispIPAddress {
 
+    public static final LispIpv6Address IP_ALL_ONES = null;
+
     public LispIpv6Address(InetAddress address) {
         super(address, AddressFamilyNumberEnum.IP6);
     }
@@ -26,5 +28,14 @@ public class LispIpv6Address extends LispIPAddress {
         super(name, AddressFamilyNumberEnum.IP6);
     }
 
+    public static LispIpv6Address valueOf(String substring) {
+        return new LispIpv6Address(substring);
+    }
+
+    @Override
+    protected int getMaxMask() {
+        return 128;
+    }
+    
 
 }

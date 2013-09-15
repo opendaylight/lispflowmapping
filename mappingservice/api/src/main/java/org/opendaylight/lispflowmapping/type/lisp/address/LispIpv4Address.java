@@ -13,7 +13,7 @@ import java.net.InetAddress;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispIpv4Address extends LispIPAddress {
-
+    
     public LispIpv4Address(InetAddress address) {
         super(address, AddressFamilyNumberEnum.IP);
     }
@@ -25,5 +25,16 @@ public class LispIpv4Address extends LispIPAddress {
     public LispIpv4Address(String name) {
         super(name, AddressFamilyNumberEnum.IP);
     }
+    
+    public static LispIpv4Address valueOf(String substring) {
+        return new LispIpv4Address(substring);
+    }
+
+
+    @Override
+    protected int getMaxMask() {
+        return 32;
+    }
+
 
 }

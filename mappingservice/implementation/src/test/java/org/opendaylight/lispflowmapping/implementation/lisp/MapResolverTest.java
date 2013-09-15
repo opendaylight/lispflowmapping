@@ -13,6 +13,8 @@ import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
@@ -40,7 +42,7 @@ public class MapResolverTest extends BaseTestCase {
     private LispIpv4Address v4Address;
     private LispIpv6Address v6Address;
 
-    private HashMap<LispAddress, Map<String, Object>> daoResults;
+    private HashMap<MappingServiceKey, Map<String, Object>> daoResults;
 
     @Override
     @Before
@@ -50,9 +52,9 @@ public class MapResolverTest extends BaseTestCase {
         testedMapResolver = new MapResolver(lispDAO);
 
         mapRequest = new MapRequest();
-        v4Address = new LispIpv4Address(0x01020304);
+        v4Address = new LispIpv4Address("1.2.3.4");
         v6Address = new LispIpv6Address("0:0:0:0:0:0:0:1");
-        daoResults = new HashMap<LispAddress, Map<String, Object>>();
+        daoResults = new HashMap<MappingServiceKey, Map<String, Object>>();
     }
 
     @Test
@@ -89,7 +91,7 @@ public class MapResolverTest extends BaseTestCase {
     @Test
     public void handleMapRequest__NoNumRLOCs() throws Exception {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        allowing(lispDAO).get(wany(LispAddress.class));
+        allowing(lispDAO).get(wany(MappingServiceKey.class));
         ret(new HashMap<String, Object>());
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
@@ -114,7 +116,7 @@ public class MapResolverTest extends BaseTestCase {
 
     @Test
     public void handleMapRequest__ReplyWithSingleLocator() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
+        mapRequest.addEidRecord(new EidRecord((byte) 0, new LispIpv4Address("1.2.3.4")));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
@@ -139,16 +141,16 @@ public class MapResolverTest extends BaseTestCase {
                 result = new HashMap<String, Object>();
                 result.put("NumRLOCs", locators.size());
                 for (int i = 0; i < locators.size(); i++) {
-                    result.put("RLOC" + i, locators.get(i));
+                    result.put("RLOC" + i, new MappingServiceValue(eidToLocatorRecord.getLocators().get(i),(byte)eidToLocatorRecord.getRecordTtl()));
                 }
-                daoResults.put(eidToLocatorRecord.getPrefix(), result);
+                daoResults.put(new MappingServiceKey(eidToLocatorRecord.getPrefix(), (byte)eidToLocatorRecord.getMaskLength()), result);
             }
         }
 
-        ValueSaverAction<LispAddress> daoGetSaverAction = new ValueSaverAction<LispAddress>() {
+        ValueSaverAction<MappingServiceKey> daoGetSaverAction = new ValueSaverAction<MappingServiceKey>() {
             @Override
-            protected boolean validate(LispAddress value) {
-                return daoResults.containsKey(value);
+            protected boolean validate(MappingServiceKey value) {
+                return true;
             }
             @Override
             public Object invoke(Invocation invocation) throws Throwable {
@@ -156,15 +158,15 @@ public class MapResolverTest extends BaseTestCase {
             }
         };
         
-        atLeast(1).of(lispDAO).get(with(daoGetSaverAction));
+        allowing(lispDAO).get(with(daoGetSaverAction));
         will(daoGetSaverAction);
 
-        return daoResults.get(v4Address);
+        return daoResults.get(new MappingServiceKey(v4Address));
     }
 
     @Test
     public void handleMapRequest__VerifyBasicFields() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0x20, v4Address));
+        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
         
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
@@ -174,9 +176,28 @@ public class MapResolverTest extends BaseTestCase {
 
         assertEquals(mapRequest.getNonce(), mapReply.getNonce());
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals((byte) 0x20, eidToLocators.getMaskLength());
+        assertEquals((byte) 0, eidToLocators.getMaskLength());
         assertEquals(v4Address, eidToLocators.getPrefix());
     }
+    
+    @Test
+    public void handleMapRequest__VerifyMask() throws Exception {
+        EidRecord mapRequestRecord = new EidRecord((byte) 0, v4Address);
+        mapRequestRecord.setMaskLength(32);
+        mapRequest.addEidRecord(mapRequestRecord);
+        
+        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv4Address("1.2.3.0")).setMaskLength(24);
+        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
+        prepareMapping(record);
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+
+        assertEquals(mapRequest.getNonce(), mapReply.getNonce());
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
+        assertEquals((byte) 32, eidToLocators.getMaskLength());
+        assertEquals(v4Address, eidToLocators.getPrefix());
+    }
+
 
     @Test
     public void handleMapRequest__ReplyWithMultipleLocators() throws Exception {

@@ -11,6 +11,8 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
@@ -41,7 +43,11 @@ public class MapResolver implements IMapResolver {
             EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
             eidToLocators.setMaskLength(eid.getMaskLength())//
             .setPrefix(eid.getPrefix());
-            Map<String, ?> locators = dao.get(eid.getPrefix());
+            MappingServiceKey key = new MappingServiceKey(eid.getPrefix(),(byte)eid.getMaskLength());
+            Map<String, ?> locators = dao.get(key);
+            if (locators == null && key.getEID().isMaskable()) {
+                locators = findMaskLocators(key);
+            }
             if (locators != null) {
                 addLocators(eidToLocators, locators);
             }
@@ -49,6 +55,19 @@ public class MapResolver implements IMapResolver {
         }
 
         return mapReply;
+    }
+
+    private Map<String, ?> findMaskLocators(MappingServiceKey key) {
+        int mask = key.getMask();
+        while (mask > 0) {
+            key.getEID().normalize(mask);
+            mask--;
+            Map<String, ?> locators = dao.get(key);
+            if (locators != null) {
+                return locators;
+            } 
+        }
+        return null;
     }
 
     private void addLocators(EidToLocatorRecord eidToLocators, Map<String, ?> locators) {
@@ -69,7 +88,7 @@ public class MapResolver implements IMapResolver {
             return;
         }
         try {
-            LispAddress locator = (LispAddress) locatorObject;
+            LispAddress locator = ((MappingServiceValue) locatorObject).getRecord().getLocator();
             eidToLocators.addLocator(new LocatorRecord().setLocator(locator).setRouted(true));
         } catch (ClassCastException cce) {
         }

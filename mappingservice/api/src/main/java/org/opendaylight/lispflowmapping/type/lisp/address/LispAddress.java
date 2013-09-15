@@ -21,6 +21,14 @@ public abstract class LispAddress {
         return afi;
     }
     
+    public boolean isMaskable() {
+        return false;
+    }
+    
+    public void normalize(int mask) {
+        return;
+    }
+    
     
 
     @Override
