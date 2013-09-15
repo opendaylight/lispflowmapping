@@ -23,12 +23,21 @@
 						<Export-Package>
 						</Export-Package>
 						<Import-Package>
+							org.opendaylight.controller.sal.core,
+							org.apache.felix.dm,
+							org.apache.commons.lang3.builder,
+							org.osgi.service.component,
+							org.slf4j,
+							org.eclipse.osgi.framework.console,
+							org.osgi.framework,
 							org.opendaylight.lispflowmapping.interfaces.lisp,
 							org.opendaylight.lispflowmapping.type,  
 							org.opendaylight.lispflowmapping.type.lisp, 
 							org.opendaylight.lispflowmapping.type.lisp.address 
 						</Import-Package>
-						<manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
+						<Bundle-Activator>
+							org.opendaylight.lispflowmapping.northbound.Activator
+						</Bundle-Activator>
 						<Service-Component>
 						</Service-Component>
 					</instructions>
