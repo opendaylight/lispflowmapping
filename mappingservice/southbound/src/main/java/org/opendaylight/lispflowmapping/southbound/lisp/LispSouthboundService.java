@@ -44,7 +44,7 @@ public class LispSouthboundService implements ILispSouthboundService {
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
             return handleEncapsulatedControlMessage(inBuffer);
         } else if (lispType == LispMessageEnum.MapRequest) {
-            return handleMapRequest(inBuffer, true);
+            return handleMapRequest(inBuffer);
         } else if (lispType == LispMessageEnum.MapRegister) {
             return handleMapRegister(inBuffer);
         }
@@ -53,25 +53,21 @@ public class LispSouthboundService implements ILispSouthboundService {
 
     private DatagramPacket handleEncapsulatedControlMessage(ByteBuffer inBuffer) {
         try {
-            int encapsulatedSourcePort = extractEncapsulatedSourcePort(inBuffer);
-            DatagramPacket replyPacket = handleMapRequest(inBuffer, false);
-            replyPacket.setPort(encapsulatedSourcePort);
+            extractEncapsulatedSourcePort(inBuffer);
+            DatagramPacket replyPacket = handleMapRequest(inBuffer);
             return replyPacket;
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
     
-    private DatagramPacket handleMapRequest(ByteBuffer inBuffer, boolean addITRAddress) {
+    private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
             MapReply mapReply = mapResolver.handleMapRequest(request);
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
 
             DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
-            if (!addITRAddress) {
-                return replyPacket;
-            }
             replyPacket.setPort(LispMessage.PORT_NUM);
             for (LispAddress address : request.getItrRlocs()) {
                 if (address instanceof LispIPAddress) {

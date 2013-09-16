@@ -521,7 +521,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     public void mapReply__UseEncapsulatedUdpPort() throws Exception {
         stubHandleRequest();
 
-        assertEquals(56756, handlePacket(mapRequestPacket).getPort());
+        assertEquals(LispMessage.PORT_NUM, handlePacket(mapRequestPacket).getPort());
     }
 
     @Test
