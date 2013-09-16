@@ -55,5 +55,17 @@ public class MapServer implements IMapServer {
         }
         return mapNotify;
     }
+
+    public String getAuthenticationKey(LispAddress address, int maskLen) {
+        return null;
+    }
+
+    public boolean removeAuthenticationKey(LispAddress address, int maskLen) {
+        return false;
+    }
+
+    public boolean addAuthenticationKey(LispAddress address, int maskLen, String key) {
+        return false;
+    }
     
 }

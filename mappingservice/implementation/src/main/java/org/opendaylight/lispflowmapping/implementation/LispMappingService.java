@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.osgi.framework.BundleContext;
@@ -128,5 +129,17 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
 
     public MapNotify handleMapRegister(MapRegister mapRegister) {
         return mapServer.handleMapRegister(mapRegister);
+    }
+
+    public String getAuthenticationKey(LispAddress address, int maskLen) {
+        return mapServer.getAuthenticationKey(address, maskLen);
+    }
+
+    public boolean removeAuthenticationKey(LispAddress address, int maskLen) {
+        return mapServer.removeAuthenticationKey(address, maskLen);
+    }
+
+    public boolean addAuthenticationKey(LispAddress address, int maskLen, String key) {
+        return mapServer.addAuthenticationKey(address, maskLen, key);
     }
 }
