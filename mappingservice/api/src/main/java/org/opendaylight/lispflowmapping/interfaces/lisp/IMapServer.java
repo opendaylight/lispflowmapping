@@ -10,7 +10,12 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 
 public interface IMapServer {
     MapNotify handleMapRegister(MapRegister mapRegister);
+    String getAuthenticationKey(LispAddress address,int maskLen, String key);
+    boolean removeAuthenticationKey(LispAddress address,int maskLen, String key);
+    boolean addAuthenticationKey(LispAddress address,int maskLen, String key);
+
 }
