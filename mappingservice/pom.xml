@@ -17,6 +17,7 @@
                 <module>implementation</module>
                 <module>southbound</module>
                 <module>northbound</module>
+                <module>integrationtest</module>
         </modules>
 	<dependencies>
 	        <dependency>
