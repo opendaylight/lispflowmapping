@@ -2,6 +2,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 
@@ -42,6 +43,10 @@ public class MapNotifySerializer {
         replyBuffer.clear();
         return replyBuffer;
     }
+	
+	public MapNotify deserialize(ByteBuffer buf) {
+		return new MapNotify().setNonce(buf.getLong(4));
+	}
 	
 	private interface Length {
         int HEADER_SIZE = 16;

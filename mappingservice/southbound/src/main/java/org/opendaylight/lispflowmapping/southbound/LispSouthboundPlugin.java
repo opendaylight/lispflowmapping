@@ -100,26 +100,30 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
                     socket.receive(packet);
+                    logger.debug("Received a packet!");
                 } catch (SocketTimeoutException ste) {
                     continue;
                 } catch (IOException e) {
-                    // TODO: log
+                	logger.error("IO Exception while trying to recieve packet", e);
                 }
                 logger.debug("Handling packet from {}:{} (len={})", packet.getAddress().getHostAddress(), packet.getPort(), packet.getLength());
                 try {
                     DatagramPacket reply = service.handlePacket(packet);
 
                     if (reply == null) {
+                    	logger.debug("Reply was null!");
                         continue;
                     }
                     if (reply.getAddress() == null) {
-                        reply.setAddress(packet.getAddress());
+                    	reply.setAddress(packet.getAddress());
+                        logger.debug("Setting port " + packet.getPort());
+                        reply.setPort(packet.getPort());
                     }
                     try {
                         logger.debug("sending reply to {}:{} (len={})", reply.getAddress().getHostAddress(), reply.getPort(), reply.getLength());
                         socket.send(reply);
                     } catch (IOException e) {
-                        // TODO: log
+                    	logger.error("IO Excpetion while sending: ", e);
                     }
                 } catch (RuntimeException e) {
                     logger.warn("", e);
