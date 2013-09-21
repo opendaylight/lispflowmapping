@@ -39,7 +39,7 @@
 							org.opendaylight.lispflowmapping.type.lisp, 
 							org.opendaylight.lispflowmapping.type.lisp.address, 
 							org.opendaylight.controller.clustering.services,
-							javax.crypto,
+					 		javax.crypto,
 							javax.crypto.spec,
 							org.apache.tomcat.util.buf
 						</Import-Package>
