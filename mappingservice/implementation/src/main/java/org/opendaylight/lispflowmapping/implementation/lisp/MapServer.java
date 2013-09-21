@@ -41,6 +41,7 @@ public class MapServer implements IMapServer {
             return null;
         }
         if (!LispAuthenticationUtil.validate(mapRegister)) {
+        	logger.debug("Authentication failed");
             return null;
         }
         EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
@@ -59,6 +60,7 @@ public class MapServer implements IMapServer {
         }
         MapNotify mapNotify = null;
         if (mapRegister.isWantMapNotify()) {
+        	logger.trace("MapRegister wants MapNotify");
             mapNotify = new MapNotify();
             mapNotify.setFromMapRegister(mapRegister);
             mapNotify.setAuthenticationData(LispAuthenticationUtil.getAuthenticationData(mapNotify));

@@ -2,3 +2,5 @@ implementation/META-INF
 api/META-INF
 northbound/META-INF
 southbound/META-INF
+integrationtest/META-INF
+northbound/src/main/resources/META-INF

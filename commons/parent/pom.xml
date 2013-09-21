@@ -106,6 +106,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+	<dependency>
+		<groupId>org.opendaylight.controller</groupId>
+		<artifactId>commons.integrationtest</artifactId>
+		<type>pom</type>
+		 <version>0.5.1-SNAPSHOT</version>
+	</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>clustering.services</artifactId>
@@ -151,7 +157,7 @@
 	</dependencyManagement>
 
 
-  <build>
+   <build>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -186,4 +192,5 @@
       </plugins>
     </pluginManagement>
   </build>
+    
 </project>
