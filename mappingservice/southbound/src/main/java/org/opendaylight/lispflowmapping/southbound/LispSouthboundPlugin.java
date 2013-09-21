@@ -30,7 +30,6 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
     private LispIoThread thread;
     private LispSouthboundService service;
 
-
     void setFlowMappingService(IFlowMapping mappingService) {
         logger.debug("FlowMapping set in LispSouthbound");
         service = new LispSouthboundService(mappingService, mappingService);
@@ -82,10 +81,15 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
 
         @Override
         public void run() {
+            String lispBindAddress = "0.0.0.0";
+            String lispIp = System.getProperty("lispip");
+            if (lispIp != null) {
+                lispBindAddress = lispIp;
+            }
             DatagramSocket socket;
             int lispPortNumber = LispMessage.PORT_NUM;
             int lispReceiveTimeout = 1000;
-            String lispBindAddress = "0.0.0.0";
+
             logger.info("LISP (RFC6830) Mapping Service is running and listening on " + lispBindAddress);
             try {
                 socket = new DatagramSocket(new InetSocketAddress(lispBindAddress, lispPortNumber));
@@ -100,16 +104,18 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
                     socket.receive(packet);
+                    logger.debug("Received a packet!");
                 } catch (SocketTimeoutException ste) {
                     continue;
                 } catch (IOException e) {
-                    // TODO: log
+                    logger.error("IO Exception while trying to recieve packet", e);
                 }
                 logger.debug("Handling packet from {}:{} (len={})", packet.getAddress().getHostAddress(), packet.getPort(), packet.getLength());
                 try {
                     DatagramPacket reply = service.handlePacket(packet);
 
                     if (reply == null) {
+                        logger.debug("Reply was null!");
                         continue;
                     }
                     if (reply.getAddress() == null) {
@@ -119,7 +125,7 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                         logger.debug("sending reply to {}:{} (len={})", reply.getAddress().getHostAddress(), reply.getPort(), reply.getLength());
                         socket.send(reply);
                     } catch (IOException e) {
-                        // TODO: log
+                        logger.error("IO Excpetion while sending: ", e);
                     }
                 } catch (RuntimeException e) {
                     logger.warn("", e);
@@ -133,7 +139,6 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
             running = false;
         }
     }
-
 
     public static String intToIpv4(int address) {
         return ((address >> 24) & 0xff) + "." + //
