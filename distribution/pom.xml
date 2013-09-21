@@ -19,6 +19,7 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <module>../commons/build_tools</module>
     <module>../commons/code-parent</module>
     <module>../commons/unittest_tools</module>
+    <module>../commons/lispflowmapping</module>
     <module>../mappingservice</module>
   </modules>
 

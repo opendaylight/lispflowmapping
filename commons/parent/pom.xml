@@ -14,6 +14,9 @@
   <properties>
     <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <surefire.version>2.15</surefire.version>
+    <failsafe.version>2.15</failsafe.version>
+    <compiler.version>2.3.2</compiler.version>
   </properties>
 
   <repositories>
@@ -151,7 +154,7 @@
 	</dependencyManagement>
 
 
-  <build>
+   <build>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -186,4 +189,5 @@
       </plugins>
     </pluginManagement>
   </build>
+    
 </project>
