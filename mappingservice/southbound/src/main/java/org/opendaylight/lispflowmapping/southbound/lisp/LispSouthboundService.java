@@ -28,10 +28,13 @@ import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LispSouthboundService implements ILispSouthboundService {
     private IMapResolver mapResolver;
     private IMapServer mapServer;
+    protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundService.class);
 
     public LispSouthboundService(IMapResolver mapResolver, IMapServer mapServer) {
         this.mapResolver = mapResolver;
@@ -42,12 +45,16 @@ public class LispSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            return handleEncapsulatedControlMessage(inBuffer);
+        	logger.debug("Recieved packet of type EncapsulatedControlMessage");
+        	return handleEncapsulatedControlMessage(inBuffer);
         } else if (lispType == LispMessageEnum.MapRequest) {
+        	logger.debug("Recieved packet of type MapRequest");
             return handleMapRequest(inBuffer);
         } else if (lispType == LispMessageEnum.MapRegister) {
+        	logger.debug("Recieved packet of type MapRegister");
             return handleMapRegister(inBuffer);
         }
+        logger.debug("Recieved unknown packet type");
         return null;
     }
 
@@ -110,6 +117,7 @@ public class LispSouthboundService implements ILispSouthboundService {
                 notify.setPort(LispMessage.PORT_NUM);
                 return notify;
             } else {
+            	logger.debug("MapNotify was null");
                 return null;
             }
         } catch (RuntimeException re) {
