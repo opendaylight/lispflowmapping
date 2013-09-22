@@ -15,12 +15,15 @@ import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
-import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
@@ -33,12 +36,14 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping {
+public class LispMappingService implements CommandProvider, IFlowMapping, IMapReplyHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
-    private IMapResolver mapResolver;
-    private IMapServer mapServer;
+    private IMapResolverAsync mapResolver;
+    private IMapServerAsync mapServer;
+    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
+    private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
 
     public static void main(String[] args) throws Exception {
         LispMappingService serv = new LispMappingService();
@@ -51,21 +56,30 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
 
     class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<LispIpv6Address, Integer> {
     }
-    class MappingServiceKeyConvertor implements ILispTypeConverter<IMappingServiceKey, Integer> {
-    }
-    
 
-    void setLispDao(ILispDAO dao) {
-        logger.info("LispDAO set in LispMappingService");
+    class MappingServiceKeyConvertor implements ILispTypeConverter<MappingServiceKey, Integer> {
+    }
+
+    class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingServiceNoMaskKey, Integer> {
+    }
+
+    public void basicInit(ILispDAO dao) {
         lispDao = dao;
         mapResolver = new MapResolver(dao);
         mapServer = new MapServer(dao);
+    }
+
+    void setLispDao(ILispDAO dao) {
+        logger.info("LispDAO set in LispMappingService");
+        basicInit(dao);
         logger.debug("Registering LispIpv4Address");
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
         logger.debug("Registering LispIpv6Address");
         lispDao.register(LispIpv6AddressInMemoryConverter.class);
-        logger.debug("Registering MAppingServiceKey");
+        logger.debug("Registering MappingServiceKey");
         lispDao.register(MappingServiceKeyConvertor.class);
+        logger.debug("Registering MappingServiceNoMaskKey");
+        lispDao.register(MappingServiceNoMaskKeyConvertor.class);
     }
 
     void unsetLispDao(ILispDAO dao) {
@@ -85,13 +99,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         bundleContext.registerService(CommandProvider.class.getName(), this, null);
     }
 
-
     public void destroy() {
         logger.debug("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
     }
-
 
     public void _removeEid(final CommandInterpreter ci) {
         lispDao.remove(new LispIpv4Address(ci.nextArgument()));
@@ -120,7 +132,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         return;
     }
 
-
     public String getHelp() {
         StringBuffer help = new StringBuffer();
         help.append("---LISP Mapping Service---\n");
@@ -130,11 +141,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
     }
 
     public MapReply handleMapRequest(MapRequest request) {
-        return mapResolver.handleMapRequest(request);
+        tlsMapReply.set(null);
+        mapResolver.handleMapRequest(request, this);
+        // After this invocation we assume that the thread local is filled with
+        // the reply
+        return tlsMapReply.get();
+
     }
 
     public MapNotify handleMapRegister(MapRegister mapRegister) {
-        return mapServer.handleMapRegister(mapRegister);
+        tlsMapNotify.set(null);
+        mapServer.handleMapRegister(mapRegister, this);
+        // After this invocation we assume that the thread local is filled with
+        // the reply
+        return tlsMapNotify.get();
     }
 
     public String getAuthenticationKey(LispAddress address, int maskLen) {
@@ -155,5 +175,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
 
     public void setIterateMask(boolean iterateMask) {
         this.mapResolver.setIterateMask(iterateMask);
+    }
+
+    public void handleMapReply(MapReply reply) {
+        tlsMapReply.set(reply);
+    }
+
+    public void handleMapNotify(MapNotify notify) {
+        tlsMapNotify.set(notify);
     }
 }

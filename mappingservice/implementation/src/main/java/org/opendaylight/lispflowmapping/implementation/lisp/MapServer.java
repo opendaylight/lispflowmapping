@@ -17,7 +17,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
@@ -27,7 +28,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServer {
+public class MapServer implements IMapServerAsync {
     private ILispDAO dao;
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
 
@@ -35,35 +36,37 @@ public class MapServer implements IMapServer {
         this.dao = dao;
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister) {
+    public void handleMapRegister(MapRegister mapRegister, IMapNotifyHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRegister called while dao is uninitialized");
-            return null;
-        }
-        if (!LispAuthenticationUtil.validate(mapRegister)) {
-            return null;
-        }
-        EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
-        List<MappingEntry<?>> rlocs = new ArrayList<ILispDAO.MappingEntry<?>>();
-        rlocs.add(new MappingEntry<Integer>("NumRLOCs", eidRecord.getLocators().size()));
-        int i = 0;
-        for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-            rlocs.add(new MappingEntry<MappingServiceValue>("RLOC" + (i++), new MappingServiceValue(locatorRecord, eidRecord.getRecordTtl())));
-        }
-        if (eidRecord.getPrefix() instanceof IMaskable && eidRecord.getMaskLength() > 0 && eidRecord.getMaskLength() < ((IMaskable)eidRecord.getPrefix()).getMaxMask()) {
-            ((IMaskable)eidRecord.getPrefix()).normalize(eidRecord.getMaskLength());
-            dao.put(new MappingServiceKey(eidRecord.getPrefix(), (byte)eidRecord.getMaskLength()), rlocs.toArray(new MappingEntry[rlocs.size()]));
+        } else if (!LispAuthenticationUtil.validate(mapRegister)) {
+            logger.debug("Authentication failed");
         } else {
-            dao.put(new MappingServiceNoMaskKey(eidRecord.getPrefix()), rlocs.toArray(new MappingEntry[rlocs.size()]));
-            
+            EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
+            List<MappingEntry<?>> rlocs = new ArrayList<ILispDAO.MappingEntry<?>>();
+            rlocs.add(new MappingEntry<Integer>("NumRLOCs", eidRecord.getLocators().size()));
+            int i = 0;
+            for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
+                rlocs.add(new MappingEntry<MappingServiceValue>("RLOC" + (i++), new MappingServiceValue(locatorRecord, eidRecord.getRecordTtl())));
+            }
+            if (eidRecord.getPrefix() instanceof IMaskable && eidRecord.getMaskLength() > 0
+                    && eidRecord.getMaskLength() < ((IMaskable) eidRecord.getPrefix()).getMaxMask()) {
+                ((IMaskable) eidRecord.getPrefix()).normalize(eidRecord.getMaskLength());
+                dao.put(new MappingServiceKey(eidRecord.getPrefix(), (byte) eidRecord.getMaskLength()), rlocs.toArray(new MappingEntry[rlocs.size()]));
+            } else {
+                dao.put(new MappingServiceNoMaskKey(eidRecord.getPrefix()), rlocs.toArray(new MappingEntry[rlocs.size()]));
+
+            }
+            MapNotify mapNotify = null;
+            if (mapRegister.isWantMapNotify()) {
+                logger.trace("MapRegister wants MapNotify");
+                mapNotify = new MapNotify();
+                mapNotify.setFromMapRegister(mapRegister);
+                mapNotify.setAuthenticationData(LispAuthenticationUtil.getAuthenticationData(mapNotify));
+                callback.handleMapNotify(mapNotify);
+            }
         }
-        MapNotify mapNotify = null;
-        if (mapRegister.isWantMapNotify()) {
-            mapNotify = new MapNotify();
-            mapNotify.setFromMapRegister(mapRegister);
-            mapNotify.setAuthenticationData(LispAuthenticationUtil.getAuthenticationData(mapNotify));
-        }
-        return mapNotify;
+
     }
 
     public String getAuthenticationKey(LispAddress address, int maskLen) {

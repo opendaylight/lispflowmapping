@@ -11,8 +11,7 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 
-public interface IMapResolver {
+public interface IMapResolver extends IGeneralMapResolver {
     MapReply handleMapRequest(MapRequest request);
-    boolean iterateMask();
-    void setIterateMask(boolean iterateMask);
+
 }
