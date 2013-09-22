@@ -17,6 +17,7 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
@@ -37,7 +38,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 public class MapServerTest extends BaseTestCase {
 
-    private MapServer testedMapServer;
+    private LispMappingService testedMapServer;
     private ILispDAO lispDAO;
     private MapRegister mapRegister;
     private LispIpv4Address eid;
@@ -50,7 +51,8 @@ public class MapServerTest extends BaseTestCase {
     public void before() throws Exception {
         super.before();
         lispDAO = context.mock(ILispDAO.class);
-        testedMapServer = new MapServer(lispDAO);
+        testedMapServer = new LispMappingService();
+        testedMapServer.basicInit(lispDAO);
         mapRegister = new MapRegister();
         eid = new LispIpv4Address("10.31.0.5");
         rloc = new LispIpv4Address(0xC0A8880A);
@@ -223,7 +225,6 @@ public class MapServerTest extends BaseTestCase {
         mapRegister.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(eid, mask);
-
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv4Address("10.31.0.5"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
@@ -308,7 +309,6 @@ public class MapServerTest extends BaseTestCase {
         mapRegister.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr, mask);
-
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv6Address("1:1:1:0:0:0:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mask, mapNotify.getEidToLocatorRecords().get(0).getMaskLength());

@@ -25,8 +25,10 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
@@ -43,14 +45,17 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, NotificationListener<LispNotification> {
+public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
+        NotificationListener<LispNotification>, IMapReplyHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
+    private IMapResolverAsync mapResolver;
+    private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
-    private IMapResolver mapResolver;
-    private IMapServer mapServer;
+    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
+    private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
 
     private ILispSouthboundPlugin lispSB = null;
 
@@ -84,11 +89,15 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         logger.info("BindingAwareBroker was unset in LispMappingService");
     }
 
-    void setLispDao(ILispDAO dao) {
-        logger.debug("LispDAO set in LispMappingService");
+    public void basicInit(ILispDAO dao) {
         lispDao = dao;
         mapResolver = new MapResolver(dao);
         mapServer = new MapServer(dao);
+    }
+
+    void setLispDao(ILispDAO dao) {
+        logger.debug("LispDAO set in LispMappingService");
+        basicInit(dao);
         logger.debug("Registering LispIpv4Address");
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
         logger.debug("Registering LispIpv6Address");
@@ -166,11 +175,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public MapReply handleMapRequest(MapRequest request) {
-        return mapResolver.handleMapRequest(request);
+        tlsMapReply.set(null);
+        mapResolver.handleMapRequest(request, this);
+        // After this invocation we assume that the thread local is filled with
+        // the reply
+        return tlsMapReply.get();
+
     }
 
     public MapNotify handleMapRegister(MapRegister mapRegister) {
-        return mapServer.handleMapRegister(mapRegister);
+        tlsMapNotify.set(null);
+        mapServer.handleMapRegister(mapRegister, this);
+        // After this invocation we assume that the thread local is filled with
+        // the reply
+        return tlsMapNotify.get();
     }
 
     public String getAuthenticationKey(LispAddress address, int maskLen) {
@@ -237,5 +255,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
             lispSB = session.getRpcService(ILispSouthboundPlugin.class);
         }
         return lispSB;
+    }
+
+    public void handleMapReply(MapReply reply) {
+        tlsMapReply.set(reply);
+    }
+
+    public void handleMapNotify(MapNotify notify) {
+        tlsMapNotify.set(notify);
     }
 }

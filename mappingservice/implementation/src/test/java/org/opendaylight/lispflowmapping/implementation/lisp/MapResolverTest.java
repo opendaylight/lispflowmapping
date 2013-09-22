@@ -13,6 +13,7 @@ import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyUtil;
@@ -39,7 +40,8 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 
 public class MapResolverTest extends BaseTestCase {
 
-    private MapResolver testedMapResolver;
+    // private MapResolver testedMapResolver;
+    private LispMappingService testedMapResolver;
 
     private ILispDAO lispDAO;
     private MapRequest mapRequest;
@@ -53,7 +55,8 @@ public class MapResolverTest extends BaseTestCase {
     public void before() throws Exception {
         super.before();
         lispDAO = context.mock(ILispDAO.class);
-        testedMapResolver = new MapResolver(lispDAO);
+        testedMapResolver = new LispMappingService();
+        testedMapResolver.basicInit(lispDAO);
 
         mapRequest = new MapRequest();
         v4Address = new LispIpv4Address("1.2.3.4");
