@@ -19,7 +19,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
@@ -29,7 +30,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServer {
+public class MapServer implements IMapServerAsync {
     private ILispDAO dao;
     private volatile boolean shouldAuthenticate;
     private volatile boolean shouldIterateMask;
@@ -49,42 +50,45 @@ public class MapServer implements IMapServer {
         this.shouldIterateMask = iterateAuthenticationMask;
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister) {
+    public void handleMapRegister(MapRegister mapRegister, IMapNotifyHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRegister called while dao is uninitialized");
-            return null;
-        }
-        String password = null;
-        for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecords()) {
+        } else {
+            boolean failed = false;
+            String password = null;
+            for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecords()) {
+                if (shouldAuthenticate) {
+                    password = getPassword(eidRecord.getPrefix(), eidRecord.getMaskLength());
+                    if (!LispAuthenticationUtil.validate(mapRegister, password)) {
+                        logger.debug("Authentication failed");
+                        failed = true;
+                        break;
+                    }
+                }
+                MappingServiceValue value = new MappingServiceValue();
+                MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
+                for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
+                    rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
+                }
+                value.setRlocs(rlocs);
+                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getPrefix(), eidRecord.getMaskLength());
+                dao.put(key, entry);
 
-            if (shouldAuthenticate) {
-                password = getPassword(eidRecord.getPrefix(), eidRecord.getMaskLength());
-                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                    logger.debug("Authentication failed");
-                    return null;
+            }
+            if (!failed) {
+                MapNotify mapNotify = null;
+                if (mapRegister.isWantMapNotify()) {
+                    logger.trace("MapRegister wants MapNotify");
+                    mapNotify = new MapNotify();
+                    mapNotify.setFromMapRegister(mapRegister);
+                    if (shouldAuthenticate) {
+                        mapNotify.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(mapNotify, password));
+                    }
+                    callback.handleMapNotify(mapNotify);
                 }
             }
-            MappingServiceValue value = new MappingServiceValue();
-            MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-            List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-            for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-                rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
-            }
-            value.setRlocs(rlocs);
-            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getPrefix(), eidRecord.getMaskLength());
-            dao.put(key, entry);
-
         }
-        MapNotify mapNotify = null;
-        if (mapRegister.isWantMapNotify()) {
-            logger.trace("MapRegister wants MapNotify");
-            mapNotify = new MapNotify();
-            mapNotify.setFromMapRegister(mapRegister);
-            if (shouldAuthenticate) {
-                mapNotify.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(mapNotify, password));
-            }
-        }
-        return mapNotify;
     }
 
     private String getPassword(LispAddress prefix, int maskLength) {

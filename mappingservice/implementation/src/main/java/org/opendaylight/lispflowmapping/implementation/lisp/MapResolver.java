@@ -15,7 +15,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
@@ -24,7 +25,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapResolver implements IMapResolver {
+public class MapResolver implements IMapResolverAsync {
     private ILispDAO dao;
     private volatile boolean shouldAuthenticate;
     private volatile boolean shouldIterateMask;
@@ -40,36 +41,35 @@ public class MapResolver implements IMapResolver {
         this.shouldIterateMask = iterateMask;
     }
 
-    public MapReply handleMapRequest(MapRequest request) {
+    public void handleMapRequest(MapRequest request, IMapReplyHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRequest called while dao is uninitialized");
-            return null;
-        }
-        MapReply mapReply = new MapReply();
-        mapReply.setNonce(request.getNonce());
-
-        for (EidRecord eid : request.getEids()) {
-            EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
-            eidToLocators.setMaskLength(eid.getMaskLength())//
-                    .setPrefix(eid.getPrefix());
-            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getPrefix(), eid.getMaskLength());
-            Map<String, ?> locators = dao.get(key);
-            if (shouldIterateMask() && locators == null && key.getEID() instanceof IMaskable) {
-                locators = findMaskLocators(key);
+        } else {
+            MapReply mapReply = new MapReply();
+            mapReply.setNonce(request.getNonce());
+            for (EidRecord eid : request.getEids()) {
+                EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
+                eidToLocators.setMaskLength(eid.getMaskLength())//
+                        .setPrefix(eid.getPrefix());
+                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getPrefix(), eid.getMaskLength());
+                Map<String, ?> locators = dao.get(key);
+                if (shouldIterateMask() && locators == null && key.getEID() instanceof IMaskable) {
+                    locators = findMaskLocators(key);
+                }
+                if (locators != null) {
+                    addLocators(eidToLocators, locators);
+                }
+                mapReply.addEidToLocator(eidToLocators);
             }
-            if (locators != null) {
-                addLocators(eidToLocators, locators);
-            }
-            mapReply.addEidToLocator(eidToLocators);
+            callback.handleMapReply(mapReply);
         }
-
-        return mapReply;
     }
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
         int mask = key.getMask();
         while (mask > 0) {
             key = MappingServiceKeyUtil.generateMappingServiceKey(key.getEID(), (byte) mask);
+
             ((IMaskable) key.getEID()).normalize(mask);
             mask--;
             Map<String, ?> locators = dao.get(key);
