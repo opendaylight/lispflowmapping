@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e1e72411",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/ReencapHop.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "missing comment header to the file.",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_811740ed",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "addAFIAddressHeader -\u003e serializeAFIAddressHeader",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_2183ec05",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "innerSerialize -\u003e serializeData",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_0188f01d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "innerDes -\u003e deserializeData",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_a19fdc5e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispAddressSerializerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "both factories should be in non exposed (OSGi) package \"factory\".",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e195e440",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispAddressSerializerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "move this to LispLCAFAddressSerializerFactory",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_410a788b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispLCAFAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "deserializeData",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_21ff6c69",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispLCAFAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "serializeData",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_9db562cf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispTrafficEngineeringLCAFAddressTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T07:36:22Z",
+      "side": 1,
+      "message": "please add another test/tests for the bits as well.",
+      "revId": "1cf2c8ba49062a808491a188c99eaefa648c7d37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
