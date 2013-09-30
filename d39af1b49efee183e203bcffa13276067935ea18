@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c109c832",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispLCAFAddressSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T09:28:04Z",
+      "side": 1,
+      "message": "protected",
+      "revId": "d39af1b49efee183e203bcffa13276067935ea18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_a106bc1e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispLCAFAddressSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-09-30T09:28:04Z",
+      "side": 1,
+      "message": "private and remove the static.",
+      "revId": "d39af1b49efee183e203bcffa13276067935ea18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
