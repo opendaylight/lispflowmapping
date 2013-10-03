@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_b4d74ded",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-03T07:15:18Z",
+      "side": 1,
+      "message": "move the relevant code to the caller.",
+      "revId": "b9eccf4e721cece27cb856295436308f575592f4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_7409d594",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 673,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-03T07:15:18Z",
+      "side": 1,
+      "message": "add unit-tests for the MapRequest with ITR-RLOCs that sets the IP and one that doesn\u0027t contain and leaves the IP.",
+      "revId": "b9eccf4e721cece27cb856295436308f575592f4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
