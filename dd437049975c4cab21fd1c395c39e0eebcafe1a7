@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_1b02c43e",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispIPAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "i think there is much efficient way to do this. we\u0027ll probably need to optimize it for IPv6 \u0026 IPv4 - let\u0027s discuss.",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_5b9f1c04",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispIPAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "not good. i\u0027d like to see where this can occur and understand if we should through or log (e.print.... should not be used).",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_dbe42cae",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispIpv4Address.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "the convention here is to use constructors and not factories (valueOf). please drop this",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_dbfb0c46",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispIpv6Address.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "???? delete this.",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_fbfed037",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispIpv6Address.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "same comment as in IPv4",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_bbf8584a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "please make sure that in case a max mask is used, you will be storing the prefix without the MaskLength + fetch it using LispAddress and not MappingServiceKey",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_9b9594e6",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "add a negative test as well. also add 2 Ipv6 tests.",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_7b9ae015",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-07T06:09:50Z",
+      "side": 1,
+      "message": "additional tests: IPv6, Ipv4/32, IPv6/32",
+      "revId": "dd437049975c4cab21fd1c395c39e0eebcafe1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
