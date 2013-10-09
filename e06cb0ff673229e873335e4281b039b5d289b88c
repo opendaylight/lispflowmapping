@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_898c3981",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/MapRegister.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "we\u0027ll need to see if/how we plan to support authetnicationData using the NB interface. I think we should at least mark it as an opened issue in the bugzilla system.",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_69e9051a",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "we might refactor this later and move it to the interface (i think model should be interface rather than in implementation but we\u0027ll talk about it tomorrow)",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_49ee4124",
+        "filename": "mappingservice/northbound/enunciate.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "what is this file used for? if it should be packed for runtime, it should be in folder: src/main/resource",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_29f30d0c",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "a general comment for poms, we\u0027re heading towards multiple dependencies and versions. i\u0027ll try to refactor it later and have all versions in a \"parent\" pom so that it\u0027ll be manageable.",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_09f849e4",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/MapRegisterNB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "maybe (for separation purposes) you can move the locatorString and eidPrefixString to these objects rather than have NB variables in the model. thoughts?",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_29caeda1",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "didn\u0027t see where this is being used.",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_69d0e553",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "leftover?",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_49d52142",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "where is this used?",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_89e31933",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "maybe we should call it mapRegister or something more lisp like?",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a9e6dd42",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "camel case (unless it\u0027s a single word :-))",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e9dcd576",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "what is the container name? if it\u0027s a static value, we can store the nbservice as a class variable that is initialized on start/create",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c9d91185",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "1. keep in mind that mapnotify depends on the MapRegister s-bit.\n2. mapnotify -\u003e mapNotify (camel case convention).",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_09cf29b2",
+        "filename": "mappingservice/northbound/src/main/resources/WEB-INF/web.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-09T07:54:13Z",
+      "side": 1,
+      "message": "will need to take your word for that. i\u0027m not familiar with REST web.xml syntax and fields.",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
