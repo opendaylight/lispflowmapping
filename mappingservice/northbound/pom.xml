@@ -60,8 +60,6 @@
               com.sun.jersey.spi.container.servlet,
               org.opendaylight.controller.sal.authorization,
               org.opendaylight.controller.usermanager,
-	      org.opendaylight.lispflowmapping.implementation,
-	      org.opendaylight.lispflowmapping.implementation.lisp,
 	      org.opendaylight.lispflowmapping.type,
 	      org.opendaylight.lispflowmapping.type.lisp,
 	      org.opendaylight.lispflowmapping.type.lisp.address,

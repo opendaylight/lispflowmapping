@@ -23,9 +23,7 @@
 					<instructions>
 						<Export-Package>
 						org.opendaylight.lispflowmapping.implementation.serializer,
-						org.opendaylight.lispflowmapping.implementation.util,
-						org.opendaylight.lispflowmapping.implementation.lisp,
-						org.opendaylight.lispflowmapping.implementation
+						org.opendaylight.lispflowmapping.implementation.util
 						</Export-Package>
 						<Import-Package>
 							org.opendaylight.controller.sal.core,

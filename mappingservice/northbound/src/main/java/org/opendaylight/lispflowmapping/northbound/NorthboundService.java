@@ -40,8 +40,6 @@ import org.opendaylight.controller.sal.authorization.Privilege;
 import org.opendaylight.controller.sal.core.NodeConnector;
 import org.opendaylight.controller.sal.utils.ServiceHelper;
 import org.opendaylight.controller.sal.utils.Status;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
@@ -107,8 +105,6 @@ public class NorthboundService implements INorthboundService, CommandProvider{
     }
     
     public void _runRegister(final CommandInterpreter ci) {
-    	logger.info("runRegister - Object hash number: " + System.identityHashCode(this));
-    	
         LispIpv4Address EID = new LispIpv4Address("10.0.0.1");
         LocatorRecord RLOC1 = new LocatorRecord();
         RLOC1.setLocator(new LispIpv4Address("10.0.0.2"));
@@ -175,22 +171,23 @@ public class NorthboundService implements INorthboundService, CommandProvider{
         @ResponseCode(code = 404, condition = "The containerName passed was not found"),
         @ResponseCode(code = 503, condition = "Service unavailable") })
     
-    public String addmapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapregisternb) {
+    public String addmapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapregisterNB) {
     	
+    	handleContainerDoesNotExist(containerName);
     	
-    	INorthboundService nbservice = 
+    	INorthboundService nbService = 
     			(INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName,this);
     	
-    	
+    	//Temporal EID/RLOC processing based on String and assuming IPv4
     	LispIpv4Address EID;
     	List<LocatorRecord> locRecordList;
     	LispIpv4Address RLOC;
-    	int EIDtoLocatorRecordCount = mapregisternb.getMapRegister().getEidToLocatorRecords().size();
+    	int EIDtoLocatorRecordCount = mapregisterNB.getMapRegister().getEidToLocatorRecords().size();
     	
     	for (int i=0;i<EIDtoLocatorRecordCount;i++){
-	    	EID = new LispIpv4Address(mapregisternb.getMapRegister().getEidToLocatorRecords().get(i).getPrefixString());
-	    	mapregisternb.getMapRegister().getEidToLocatorRecords().get(i).setPrefix(EID);
-	    	locRecordList = mapregisternb.getMapRegister().getEidToLocatorRecords().get(i).getLocators();
+	    	EID = new LispIpv4Address(mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).getPrefixString());
+	    	mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).setPrefix(EID);
+	    	locRecordList = mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).getLocators();
 	    	
 	    	for(int j=0;j<locRecordList.size();j++){
 	    		RLOC = new LispIpv4Address(locRecordList.get(j).getLocatorString());
@@ -199,10 +196,18 @@ public class NorthboundService implements INorthboundService, CommandProvider{
     	
     	}
     	
-    	MapNotify mapnotify = nbservice.getMappingService().handleMapRegister(mapregisternb.getMapRegister());
+    	MapNotify mapNotify = nbService.getMappingService().handleMapRegister(mapregisterNB.getMapRegister());
     	
-    	return "Mapping added with EID "+ mapnotify.getEidToLocatorRecords().get(0).getPrefix()+
-    			" and RLOC "+mapnotify.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator()+"\n";
+    	String response;
+    	
+    	if (mapNotify!=null){
+    		response = "Mapping added with EID "+ mapNotify.getEidToLocatorRecords().get(0).getPrefix()+
+        			" and RLOC "+mapNotify.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator()+"\n";
+    	}else{
+    		response = "Add mapping message received\n";
+    	}
+    	
+    	return response;
     }    
        
 }
