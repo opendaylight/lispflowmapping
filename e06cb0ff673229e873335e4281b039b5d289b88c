@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_af549dca",
+        "filename": "mappingservice/northbound/enunciate.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "I removed this file for the moment.",
+      "parentUuid": "da6255ed_49ee4124",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_29f30d0c",
         "filename": "mappingservice/northbound/pom.xml",
         "patchSetId": 1
@@ -123,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_4f63e1b1",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/MapRegisterNB.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "We\u0027ll discuss the different options regarding this tomorrow ;)",
+      "parentUuid": "da6255ed_09f849e4",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_29caeda1",
         "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
         "patchSetId": 1
@@ -134,6 +170,24 @@
       "writtenOn": "2013-10-09T07:54:13Z",
       "side": 1,
       "message": "didn\u0027t see where this is being used.",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2f58adf9",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "It is used to get the MappingService each time the Northbound API is used (line 202)",
+      "parentUuid": "da6255ed_29caeda1",
       "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -157,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_0f5de9e9",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "yup, fixed.",
+      "parentUuid": "da6255ed_69d0e553",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_49d52142",
         "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
         "patchSetId": 1
@@ -168,6 +240,24 @@
       "writtenOn": "2013-10-09T07:54:13Z",
       "side": 1,
       "message": "where is this used?",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_af6b7d84",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "It wasn\u0027t :P. Now I added it to the addMapping method.",
+      "parentUuid": "da6255ed_49d52142",
       "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -191,6 +281,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_8f68b988",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "Another item for tomorrow\u0027s discussion.",
+      "parentUuid": "da6255ed_89e31933",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_a9e6dd42",
         "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
         "patchSetId": 1
@@ -202,6 +310,24 @@
       "writtenOn": "2013-10-09T07:54:13Z",
       "side": 1,
       "message": "camel case (unless it\u0027s a single word :-))",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6f0585c1",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_a9e6dd42",
       "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -236,6 +362,24 @@
       "writtenOn": "2013-10-09T07:54:13Z",
       "side": 1,
       "message": "1. keep in mind that mapnotify depends on the MapRegister s-bit.\n2. mapnotify -\u003e mapNotify (camel case convention).",
+      "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4f0ac1d3",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-10T01:21:07Z",
+      "side": 1,
+      "message": "Improved in the new commit",
+      "parentUuid": "da6255ed_c9d91185",
       "revId": "e06cb0ff673229e873335e4281b039b5d289b88c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
