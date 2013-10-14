@@ -8,6 +8,11 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElement;
+
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 
 /**
@@ -34,6 +39,9 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
  * @author gmainzer
  * 
  */
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.NONE)
 public class LocatorRecord {
     /**
      * Priority: Each RLOC is assigned a unicast Priority. Lower values are more
@@ -41,6 +49,7 @@ public class LocatorRecord {
      * in a load-split fashion. A value of 255 means the RLOC MUST NOT be used
      * for unicast forwarding.
      */
+	@XmlElement
     private byte priority;
     /**
      * Weight: When priorities are the same for multiple RLOCs, the Weight
@@ -55,6 +64,7 @@ public class LocatorRecord {
      * distribute the load across Locators with the same Priority and equal
      * Weight values.
      */
+	@XmlElement
     private byte weight;
     /**
      * M Priority: Each RLOC is assigned a multicast Priority used by an ETR in
@@ -63,6 +73,7 @@ public class LocatorRecord {
      * NOT be used for joining a multicast distribution tree. For more details,
      * see [RFC6831].
      */
+	@XmlElement
     private byte multicastPriority;
     /**
      * M Weight: When priorities are the same for multiple RLOCs, the Weight
@@ -73,6 +84,7 @@ public class LocatorRecord {
      * the receiver of the Map-Reply will decide how to distribute multicast
      * state across ITRs. For more details, see [RFC6831].
      */
+	@XmlElement
     private byte multicastWeight;
     /**
      * L: When this bit is set, the Locator is flagged as a local Locator to the
@@ -80,6 +92,7 @@ public class LocatorRecord {
      * Map-Replying [RFC6833] for a LISP site, the L-bit is set to 0 for all
      * Locators in this Locator-Set.
      */
+	@XmlElement
     private boolean localLocator;
     /**
      * p: When this bit is set, an ETR informs the RLOC-Probing ITR that the
@@ -92,6 +105,7 @@ public class LocatorRecord {
      * of the Map-Reply MUST select the first Locator. The p-bit MUST NOT be set
      * for Locator-Set records sent in Map-Request and Map-Register messages.
      */
+	@XmlElement
     private boolean rlocProbed;
     /**
      * R: This is set when the sender of a Map-Reply has a route to the Locator
@@ -99,6 +113,7 @@ public class LocatorRecord {
      * the Locator is up but not necessarily reachable from the receiver's point
      * of view. See also Section 6.4 for another way the R-bit may be used.
      */
+	@XmlElement
     private boolean routed;
     /**
      * Locator: This is an IPv4 or IPv6 address (as encoded by the 'Loc-AFI'
@@ -110,9 +125,21 @@ public class LocatorRecord {
      * multicast address. The destination RLOC SHOULD be a multicast address if
      * it is being mapped from a multicast destination EID.
      */
+	
     private LispAddress locator;
+	
+    /**
+	 * To be used on the NB interface, prior to parse and convert it into a specific LISP address type 
+	 */
+    
+	@XmlElement
+    private String locatorString;
 
-    public byte getPriority() {
+    public String getLocatorString() {
+		return locatorString;
+	}
+
+	public byte getPriority() {
         return priority;
     }
 

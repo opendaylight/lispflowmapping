@@ -8,10 +8,16 @@
 
 package org.opendaylight.lispflowmapping.northbound;
 
-import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import java.util.HashSet;
+import java.util.Set;
+import javax.ws.rs.core.Application;
 
-public interface INorthboundService {
-	
-	public IFlowMapping getMappingService();
+public class NorthboundRSApplication extends Application {
 
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(NorthboundService.class);
+        return classes;
+    }
 }
