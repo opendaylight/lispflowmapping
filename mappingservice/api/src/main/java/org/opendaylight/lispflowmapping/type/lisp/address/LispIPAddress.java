@@ -6,9 +6,12 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
-public abstract class LispIPAddress extends LispAddress implements IMaskable{
+public abstract class LispIPAddress extends LispAddress implements IMaskable {
 
     protected InetAddress address;
+
+    @Override
+    public abstract LispIPAddress clone();
 
     protected LispIPAddress(InetAddress address, AddressFamilyNumberEnum afi) {
         super(afi);
@@ -43,31 +46,31 @@ public abstract class LispIPAddress extends LispAddress implements IMaskable{
     public InetAddress getAddress() {
         return address;
     }
-    
+
     public void normalize(int mask) {
         if (mask <= 0 || mask >= getMaxMask()) {
             return;
         }
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
-        byte b = (byte)0xff;
+        byte b = (byte) 0xff;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
             if (mask >= 8)
-                byteRepresentation.put(i, (byte)(b & byteRepresentation.get(i)));
-            
-            else if (mask >0) {
-                byteRepresentation.put(i, (byte)((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
+                byteRepresentation.put(i, (byte) (b & byteRepresentation.get(i)));
+
+            else if (mask > 0) {
+                byteRepresentation.put(i, (byte) ((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
             } else {
-                byteRepresentation.put(i, (byte)(0 & byteRepresentation.get(i)));
+                byteRepresentation.put(i, (byte) (0 & byteRepresentation.get(i)));
             }
-            
-            mask-=8;
+
+            mask -= 8;
         }
         try {
             this.address = InetAddress.getByAddress(byteRepresentation.array());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     @Override

@@ -3,19 +3,16 @@ package org.opendaylight.lispflowmapping.implementation.authentication;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 
-public class LispAuthenticationUtil  {
-    
+public class LispAuthenticationUtil {
 
-    public static boolean validate(MapRegister mapRegister) {
+    public static boolean validate(MapRegister mapRegister, String key) {
         ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapRegister.getKeyId()));
-        return authentication.validate(mapRegister);
+        return authentication.validate(mapRegister, key);
     }
 
-    public static byte[] getAuthenticationData(MapNotify mapNotify) {
+    public static byte[] getAuthenticationData(MapNotify mapNotify, String key) {
         ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
-        return authentication.getAuthenticationData(mapNotify);
+        return authentication.getAuthenticationData(mapNotify, key);
     }
-
-	
 
 }
