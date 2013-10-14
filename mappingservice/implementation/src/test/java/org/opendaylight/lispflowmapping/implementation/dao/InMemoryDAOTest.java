@@ -9,8 +9,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO.MappingValueKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 

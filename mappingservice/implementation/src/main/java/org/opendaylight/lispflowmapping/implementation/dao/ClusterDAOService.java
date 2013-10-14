@@ -22,6 +22,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

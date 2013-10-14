@@ -16,6 +16,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 
 public class InMemoryDAO implements ILispDAO, IQueryAll {
     private Map<Class<?>, Map<Object, Map<String, Object>>> typeToKeysToValues;
