@@ -16,6 +16,92 @@
       "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_bdb609db",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/MapRegister.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-14T02:12:01Z",
+      "side": 1,
+      "message": "Right. This authentication data is used to provide authorization for the EID prefix being registered, and to protect the integrity of the message in transit. I think for the REST API, the integrity of messages should be protected by a generic security framework such as SSL. This is a temporary choice until we confirm the security framework for ODL.",
+      "parentUuid": "da6255ed_f7f5c3cb",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_dd453db4",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-14T02:12:01Z",
+      "side": 1,
+      "message": "looks like extra exclamation mark here.",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ddc09d2c",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-14T02:12:01Z",
+      "side": 1,
+      "message": "Extra dependency declared.",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_bddde916",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-14T02:12:01Z",
+      "side": 1,
+      "message": "I think these dependencies are extra. probably all controller and sal related dependencies can be removed.",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_bd2ba9ea",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-14T02:12:01Z",
+      "side": 1,
+      "message": "There seems to be extra imports from controller and sal that are not used",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
