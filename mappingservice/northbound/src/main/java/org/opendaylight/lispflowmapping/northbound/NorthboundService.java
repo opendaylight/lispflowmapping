@@ -30,24 +30,20 @@ import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.opendaylight.controller.containermanager.IContainerManager;
 import org.opendaylight.controller.northbound.commons.RestMessages;
-import org.opendaylight.controller.northbound.commons.exception.BadRequestException;
-import org.opendaylight.controller.northbound.commons.exception.ResourceConflictException;
 import org.opendaylight.controller.northbound.commons.exception.ResourceNotFoundException;
 import org.opendaylight.controller.northbound.commons.exception.ServiceUnavailableException;
 import org.opendaylight.controller.northbound.commons.exception.UnauthorizedException;
 import org.opendaylight.controller.northbound.commons.utils.NorthboundUtils;
 import org.opendaylight.controller.sal.authorization.Privilege;
-import org.opendaylight.controller.sal.core.NodeConnector;
 import org.opendaylight.controller.sal.utils.ServiceHelper;
-import org.opendaylight.controller.sal.utils.Status;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.northbound.MapRegisterNB;
-import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
-import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
@@ -65,6 +61,22 @@ public class NorthboundService implements INorthboundService, CommandProvider{
     protected static final Logger logger = LoggerFactory.getLogger(NorthboundService.class);
     private IFlowMapping mappingService;
 
+    private String userName;
+
+    //Based on code from controller project
+    @Context
+    public void setSecurityContext(SecurityContext context) {
+        if (context != null && context.getUserPrincipal() != null) {
+            userName = context.getUserPrincipal().getName();
+        }
+    }
+
+    protected String getUserName() {
+        return userName;
+    }
+    
+    
+    
     public IFlowMapping getMappingService(){
     	return this.mappingService;
     }
@@ -143,6 +155,7 @@ public class NorthboundService implements INorthboundService, CommandProvider{
         return help.toString();
     } 
     
+    //Based on code from controller project
     private void handleContainerDoesNotExist(String containerName) {
         IContainerManager containerManager = (IContainerManager) ServiceHelper.getGlobalInstance(
                 IContainerManager.class, this);
@@ -160,11 +173,18 @@ public class NorthboundService implements INorthboundService, CommandProvider{
         throw new ResourceNotFoundException(containerName + " " + RestMessages.NOCONTAINER.toString());
     }
     
-    
+    private void authorizationCheck(String containerName, Privilege privilege){
+    	
+    	if (!NorthboundUtils.isAuthorized(getUserName(), containerName, privilege, this)) {
+            throw new UnauthorizedException("User is not authorized to perform this operation on container "
+                    + containerName);   
+    	}
+    }
+
 
     
-    @Path("/{containerName}/addmapping")
-    @POST
+    @Path("/{containerName}/mapping")
+    @PUT
     @Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
@@ -175,26 +195,14 @@ public class NorthboundService implements INorthboundService, CommandProvider{
     	
     	handleContainerDoesNotExist(containerName);
     	
+    	authorizationCheck(containerName, Privilege.WRITE);
+    	
+    	//TODO Check LISP key here
+    	
+    	mapregisterNB.convertAddresses();
+    	
     	INorthboundService nbService = 
     			(INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName,this);
-    	
-    	//Temporal EID/RLOC processing based on String and assuming IPv4
-    	LispIpv4Address EID;
-    	List<LocatorRecord> locRecordList;
-    	LispIpv4Address RLOC;
-    	int EIDtoLocatorRecordCount = mapregisterNB.getMapRegister().getEidToLocatorRecords().size();
-    	
-    	for (int i=0;i<EIDtoLocatorRecordCount;i++){
-	    	EID = new LispIpv4Address(mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).getPrefixString());
-	    	mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).setPrefix(EID);
-	    	locRecordList = mapregisterNB.getMapRegister().getEidToLocatorRecords().get(i).getLocators();
-	    	
-	    	for(int j=0;j<locRecordList.size();j++){
-	    		RLOC = new LispIpv4Address(locRecordList.get(j).getLocatorString());
-	    		locRecordList.get(j).setLocator(RLOC);
-	    	}
-    	
-    	}
     	
     	MapNotify mapNotify = nbService.getMappingService().handleMapRegister(mapregisterNB.getMapRegister());
     	
@@ -209,7 +217,44 @@ public class NorthboundService implements INorthboundService, CommandProvider{
     	
     	return response;
     }    
-       
+ 
+    @Path("/{containerName}/mapping/{iid}/{afi}/{address}/{mask}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON) 
+    @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+        @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+        @ResponseCode(code = 503, condition = "Service unavailable") })
+    
+    public EidToLocatorRecord getMapping(@PathParam("containerName") String containerName, 
+    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
+    		@PathParam("address") String address, @PathParam("mask") int mask) {
+    	
+    	authorizationCheck(containerName, Privilege.READ);
+    	
+    	INorthboundService nbservice = 
+    			(INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName,this);
+  
+    	LispAddressGeneric EIDGeneric = new LispAddressGeneric();
+    	
+    	EIDGeneric.setAfi(afi);
+    	EIDGeneric.setIpAddress(address);
+    	EIDGeneric.setIid(iid);
+    	
+    	LispAddress EID = EIDGeneric.convertToLispAddress();
+    	
+        MapRequest mapRequest = new MapRequest();
+        EidRecord EIDRecord = new EidRecord((byte) mask, EID);
+        mapRequest.addEidRecord(EIDRecord);
+        
+        MapReply mapReply = nbservice.getMappingService().handleMapRequest(mapRequest);
+        
+        EidToLocatorRecord response = mapReply.getEidToLocatorRecords().get(0);
+        
+        return response;
+    }   
+    
+    //TODO get method for source/destination type
+    
 }
 
 

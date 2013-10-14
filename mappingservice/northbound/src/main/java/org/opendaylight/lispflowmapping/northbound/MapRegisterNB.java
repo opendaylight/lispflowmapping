@@ -7,14 +7,19 @@
  */
 package org.opendaylight.lispflowmapping.northbound;
  
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 
-@XmlRootElement(name="list")
+@XmlRootElement(name="MapRegisterNB")
 @XmlAccessorType(XmlAccessType.NONE)
 
 public class MapRegisterNB {
@@ -33,5 +38,34 @@ public class MapRegisterNB {
 	public MapRegister getMapRegister() {
 		return mapregister;
 	}
+	
+    public void convertAddresses(){
+    	LispAddress EID;
+    	LispAddressGeneric EIDGeneric;
+    	
+    	List<LocatorRecord> locRecordList;
+    	LispAddress RLOC;
+    	LispAddressGeneric RLOCGeneric;
+    	
+    	int EIDtoLocatorRecordCount = this.getMapRegister().getEidToLocatorRecords().size();
+    	
+    	for (int i=0;i<EIDtoLocatorRecordCount;i++){
+	    	EIDGeneric = this.getMapRegister().getEidToLocatorRecords().get(i).getPrefixGeneric();
+	    	
+	    	EID = EIDGeneric.convertToLispAddress();
+	    	
+	    	this.getMapRegister().getEidToLocatorRecords().get(i).setPrefix(EID);
+	    	locRecordList = this.getMapRegister().getEidToLocatorRecords().get(i).getLocators();
+	    	
+	    	for(int j=0;j<locRecordList.size();j++){
+	    		
+	    		RLOCGeneric = locRecordList.get(j).getLocatorGeneric();
+	    		
+	    		RLOC = RLOCGeneric.convertToLispAddress();
+	    		locRecordList.get(j).setLocator(RLOC);
+	    	}
+    	
+    	}
+    }
 	
 }
