@@ -159,4 +159,17 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
     public void setIterateMask(boolean iterateMask) {
         this.mapResolver.setIterateMask(iterateMask);
     }
+
+    public boolean authenticate() {
+        return mapServer.authenticate();
+    }
+
+    public boolean iterateAuthenticationMask() {
+        return mapServer.iterateAuthenticationMask();
+    }
+
+    public void setIterateAuthenticationMask(boolean iterateAuthenticationMask) {
+        mapServer.setIterateAuthenticationMask(iterateAuthenticationMask);
+    }
+
 }

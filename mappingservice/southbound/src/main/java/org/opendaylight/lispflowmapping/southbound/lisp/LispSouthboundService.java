@@ -28,6 +28,7 @@ import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +46,13 @@ public class LispSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-        	logger.debug("Recieved packet of type EncapsulatedControlMessage");
-        	return handleEncapsulatedControlMessage(inBuffer);
+            logger.debug("Recieved packet of type EncapsulatedControlMessage");
+            return handleEncapsulatedControlMessage(inBuffer);
         } else if (lispType == LispMessageEnum.MapRequest) {
-        	logger.debug("Recieved packet of type MapRequest");
+            logger.debug("Recieved packet of type MapRequest");
             return handleMapRequest(inBuffer);
         } else if (lispType == LispMessageEnum.MapRegister) {
-        	logger.debug("Recieved packet of type MapRegister");
+            logger.debug("Recieved packet of type MapRegister");
             return handleMapRegister(inBuffer);
         }
         logger.debug("Recieved unknown packet type");
@@ -67,7 +68,7 @@ public class LispSouthboundService implements ILispSouthboundService {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
-    
+
     private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
@@ -117,7 +118,7 @@ public class LispSouthboundService implements ILispSouthboundService {
                 notify.setPort(LispMessage.PORT_NUM);
                 return notify;
             } else {
-            	logger.debug("MapNotify was null");
+                logger.debug("MapNotify was null");
                 return null;
             }
         } catch (RuntimeException re) {

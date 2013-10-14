@@ -29,6 +29,11 @@ public class LispIpv6Address extends LispIPAddress {
     public int getMaxMask() {
         return 128;
     }
-    
+
+    @Override
+    public LispIpv6Address clone() {
+        LispIpv6Address clonedAddress = new LispIpv6Address(address.getHostAddress());
+        return clonedAddress;
+    }
 
 }
