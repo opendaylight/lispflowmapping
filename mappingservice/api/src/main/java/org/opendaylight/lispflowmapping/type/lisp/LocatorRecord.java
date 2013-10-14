@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 
 /**
  * <pre>
@@ -128,15 +129,14 @@ public class LocatorRecord {
 	
     private LispAddress locator;
 	
-    /**
+	/**
 	 * To be used on the NB interface, prior to parse and convert it into a specific LISP address type 
 	 */
+    @XmlElement
+    private LispAddressGeneric locatorGeneric;
     
-	@XmlElement
-    private String locatorString;
-
-    public String getLocatorString() {
-		return locatorString;
+    public LispAddressGeneric getLocatorGeneric() {
+		return locatorGeneric;
 	}
 
 	public byte getPriority() {

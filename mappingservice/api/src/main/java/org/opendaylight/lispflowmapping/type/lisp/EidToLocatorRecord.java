@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -108,10 +109,10 @@ public class EidToLocatorRecord {
 	 * To be used on the NB interface, prior to parse and convert it into a specific LISP address type 
 	 */
     @XmlElement
-    private String prefixString;
+    private LispAddressGeneric prefixGeneric;
     
-    public String getPrefixString() {
-		return prefixString;
+    public LispAddressGeneric getPrefixGeneric() {
+		return prefixGeneric;
 	}
 
 	/**
