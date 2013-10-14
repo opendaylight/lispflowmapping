@@ -1,28 +1,36 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
+import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 
 public class MappingServiceNoMaskKey implements IMappingServiceKey {
-    
+
     private LispAddress EID;
-    
+
     public MappingServiceNoMaskKey(LispAddress EID) {
-        this.EID=EID;
+        this.EID = EID;
     }
-    
+
     public LispAddress getEID() {
         return EID;
     }
+
     public void setEID(LispAddress eID) {
         EID = eID;
     }
+
     public byte getMask() {
-        return 0;
+        if (EID instanceof IMaskable) {
+            return (byte) ((IMaskable) EID).getMaxMask();
+        } else {
+            return 0;
+        }
     }
+
     public void setMask(byte mask) {
         return;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -52,5 +60,5 @@ public class MappingServiceNoMaskKey implements IMappingServiceKey {
     public String toString() {
         return EID.toString();
     }
-    
+
 }

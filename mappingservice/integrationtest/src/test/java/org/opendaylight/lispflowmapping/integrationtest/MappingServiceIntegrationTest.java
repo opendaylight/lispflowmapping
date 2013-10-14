@@ -51,6 +51,7 @@ public class MappingServiceIntegrationTest {
     String lispBindAddress = "127.0.0.1";
     String ourAddress = "127.0.0.2";
     private DatagramSocket socket;
+    private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
 
     @After
     public void after() {
@@ -84,6 +85,29 @@ public class MappingServiceIntegrationTest {
                 + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
                 + "0050   2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
                 + "0060   00 01 01 02 03 04"));
+
+        // IP: 192.168.136.10 -> 128.223.156.35
+        // UDP: 49289 -> 4342
+        // LISP(Type = 3 Map-Register, P=1, M=1
+        // Record Counter: 1
+        // Nonce: 0
+        // Key ID: 0x0001
+        // AuthDataLength: 20 Data:
+        // e8:f5:0b:c5:c5:f2:b0:21:27:a8:21:41:04:f3:46:5a:a5:68:89:ec
+        // EID prefix: 153.16.254.1/32 (EID=0x9910FE01), TTL: 10, Authoritative,
+        // No-Action
+        // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
+        // Priority/Weight: 1/100, Multicast Priority/Weight:
+        // 255/0
+        //
+
+        mapRegisterPacketWithAuthenticationAndMapNotify = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+                + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
+                + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 0e a4 c6 d8 a4 06 "
+                + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
 
         // IP: 192.168.136.10 -> 128.223.156.35
         // UDP: 49289 -> 4342
@@ -223,6 +247,17 @@ public class MappingServiceIntegrationTest {
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
         MapNotify reply = MapNotifySerializer.getInstance().deserialize(readBuf);
         assertEquals(7, reply.getNonce());
+    }
+
+    @Test
+    public void mapRegisterWithAuthenticationWithoutConfiguringAKey() throws SocketTimeoutException {
+        sendPacket(mapRegisterPacketWithAuthenticationAndMapNotify);
+        try {
+            receivePacket(3000);
+            // If didn't timeout then fail:
+            fail();
+        } catch (SocketTimeoutException ste) {
+        }
     }
 
     @Test
