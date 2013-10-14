@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.lispflowmapping.northbound;
- 
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 
-@XmlRootElement(name="list")
+@XmlRootElement(name="MapRegisterNB")
 @XmlAccessorType(XmlAccessType.NONE)
 
 public class MapRegisterNB {
@@ -34,4 +34,6 @@ public class MapRegisterNB {
 		return mapregister;
 	}
 	
+    
+    
 }
