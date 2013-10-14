@@ -11,11 +11,16 @@ package org.opendaylight.lispflowmapping.type.lisp.address;
 import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispMACAddress extends LispAddress {
-    private byte[] mac = new byte[6];
+    
+	private byte[] mac = new byte[6];
 
     public LispMACAddress(byte[] mac) {
         super(AddressFamilyNumberEnum.MAC);
