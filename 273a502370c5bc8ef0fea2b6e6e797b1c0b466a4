@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_605d86e9",
+        "filename": "commons/lispflowmapping/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "1. what is this file used for?\n2. why do we need this folder?",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4072827d",
+        "filename": "commons/lispflowmapping/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "can you use the dependencies and properties from the controller integration pom? i prefer minimum configuration at our end.",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_206f8e94",
+        "filename": "commons/lispflowmapping/sun_coding_style.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "should use our style.",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_40f962c7",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "do we need this here? again, prefer if this will be in the controller parent we inherit (if possible)",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_20f66ed8",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "???",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a0313ea4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "doesn\u0027t look relevant. either revert file or make it info with meaningful info",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_80263a67",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapNotifySerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "??? looks like leftover. revert.",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_602b4631",
+        "filename": "mappingservice/integrationtest/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "not sure we need this folder/file. check if you can remove it and add it to ignore list",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_80dd1a45",
+        "filename": "mappingservice/integrationtest/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "1. file should be formatted.\n2. some dependencies (not all) should probably be in the common parent with it\u0027s version. we\u0027d like to have the versions managed in a common place and reduce the chance someone adds a module with different version for same component.\n3. same goes for the plugins. only module specific things can override the default configuration (destFile, etc.)",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8082bafe",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "you\u0027ll need to refactor this a bit. the test itself should have a send with a packet which receives a notify or null which you can assert.\n\nalso, please open bugs:\n 1. with enhancements for de/serializing the integration tests purposes.\n 2. for some scenarios (eid-prefix lookups, simple scenarios, etc).",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_80999a70",
+        "filename": "mappingservice/integrationtest/src/test/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "what is this file used for?",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_80b07ade",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-14T06:54:22Z",
+      "side": 1,
+      "message": "why do you need this? we should refactor this to a tools/interface module rather than exporting implementation.",
+      "revId": "273a502370c5bc8ef0fea2b6e6e797b1c0b466a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
