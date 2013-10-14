@@ -7,17 +7,10 @@ public class MappingServiceKey implements IMappingServiceKey {
     private LispAddress EID;
     private byte mask;
     
-    
-    
     public MappingServiceKey(LispAddress EID, byte mask) {
         this.EID=EID;
         this.mask = mask;
     }
-    
-    public MappingServiceKey(LispAddress EID) {
-        this(EID,(byte)0);
-    }
-    
     
     public LispAddress getEID() {
         return EID;

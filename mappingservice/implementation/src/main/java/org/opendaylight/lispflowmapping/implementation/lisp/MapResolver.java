@@ -12,8 +12,8 @@ import java.util.Map;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyFactory;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
@@ -28,16 +28,18 @@ import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolver {
     private ILispDAO dao;
-    private boolean iterateMask;
+    private boolean shouldAuthenticate;
+    private boolean shouldIterateMask;
     protected static final Logger logger = LoggerFactory.getLogger(MapResolver.class);
 
     public MapResolver(ILispDAO dao) {
-        this(dao, true);
+        this(dao, true, true);
     }
-    
-    public MapResolver(ILispDAO dao, boolean iterateMask) {
+
+    public MapResolver(ILispDAO dao, boolean authenticate, boolean iterateMask) {
         this.dao = dao;
-        this.iterateMask = iterateMask;
+        this.shouldAuthenticate = authenticate;
+        this.shouldIterateMask = iterateMask;
     }
 
     public MapReply handleMapRequest(MapRequest request) {
@@ -47,19 +49,14 @@ public class MapResolver implements IMapResolver {
         }
         MapReply mapReply = new MapReply();
         mapReply.setNonce(request.getNonce());
-        
+
         for (EidRecord eid : request.getEids()) {
             EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
             eidToLocators.setMaskLength(eid.getMaskLength())//
-            .setPrefix(eid.getPrefix());
-            IMappingServiceKey key = null;
-            if (!(eid.getPrefix() instanceof IMaskable) || eid.getMaskLength() == 0 || eid.getMaskLength() == ((IMaskable)eid.getPrefix()).getMaxMask()) {
-                key = new MappingServiceNoMaskKey(eid.getPrefix());
-            } else {
-                key = new MappingServiceKey(eid.getPrefix(),(byte)eid.getMaskLength());
-            }
+                    .setPrefix(eid.getPrefix());
+            IMappingServiceKey key = MappingServiceKeyFactory.getInstance().generateMappingServiceKey(eid.getPrefix(), eid.getMaskLength());
             Map<String, ?> locators = dao.get(key);
-            if (iterateMask() && locators == null && key.getEID() instanceof IMaskable) {
+            if (shouldIterateMask() && locators == null && key.getEID() instanceof IMaskable) {
                 locators = findMaskLocators(key);
             }
             if (locators != null) {
@@ -74,49 +71,56 @@ public class MapResolver implements IMapResolver {
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
         int mask = key.getMask();
         if (mask == 0) {
-            mask = ((IMaskable)key.getEID()).getMaxMask() - 1;
-            key = new MappingServiceKey(key.getEID(), (byte)mask);
+            mask = ((IMaskable) key.getEID()).getMaxMask() - 1;
+            key = MappingServiceKeyFactory.getInstance().generateMappingServiceKey(key.getEID(), (byte) mask);
         }
         while (mask > 0) {
-            ((IMaskable)key.getEID()).normalize(mask);
+            ((IMaskable) key.getEID()).normalize(mask);
             mask--;
             Map<String, ?> locators = dao.get(key);
             if (locators != null) {
                 return locators;
-            } 
+            }
         }
         return null;
     }
 
     private void addLocators(EidToLocatorRecord eidToLocators, Map<String, ?> locators) {
         try {
-            Integer numRLOCs = (Integer) locators.get("NumRLOCs");
-            if (numRLOCs == null) {
-                return;
-            }
-            for (int i = 0; i < numRLOCs; i++) {
-                addLocator(eidToLocators, locators.get("RLOC" + i));
+            MappingServiceValue value = (MappingServiceValue) locators.get("value");
+            for (MappingServiceRLOC rloc : value.getRlocs()) {
+                addLocator(eidToLocators, rloc);
+
             }
         } catch (ClassCastException cce) {
         }
     }
 
-    private void addLocator(EidToLocatorRecord eidToLocators, Object locatorObject) {
+    private void addLocator(EidToLocatorRecord eidToLocators, MappingServiceRLOC locatorObject) {
         if (locatorObject == null) {
             return;
         }
         try {
-            LispAddress locator = ((MappingServiceValue) locatorObject).getRecord().getLocator();
+            LispAddress locator = locatorObject.getRecord().getLocator();
             eidToLocators.addLocator(new LocatorRecord().setLocator(locator).setRouted(true));
         } catch (ClassCastException cce) {
         }
     }
 
-    public boolean iterateMask() {
-        return iterateMask;
+    public boolean shouldIterateMask() {
+        return shouldIterateMask;
     }
 
-    public void setIterateMask(boolean iterateMask) {
-        this.iterateMask = iterateMask;
+    public boolean shouldAuthenticate() {
+        return shouldAuthenticate;
     }
+
+    public void setShouldIterateMask(boolean shouldIterateMask) {
+        this.shouldIterateMask = shouldIterateMask;
+    }
+
+    public void setShouldAuthenticate(boolean shouldAuthenticate) {
+        this.shouldAuthenticate = shouldAuthenticate;
+    }
+
 }

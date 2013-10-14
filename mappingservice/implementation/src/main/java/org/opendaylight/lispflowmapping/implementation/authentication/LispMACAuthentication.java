@@ -15,45 +15,50 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 
 public class LispMACAuthentication implements ILispAuthentication {
 
-    private static String KEY = "password";
     protected String algorithem;
-    protected Mac mac;
     private byte[] tempAuthenticationData;
-    
+    private int authenticationLength;
+
     public LispMACAuthentication(String algorithem) {
         this.algorithem = algorithem;
         try {
-            byte[] keyBytes = KEY.getBytes();
-            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, algorithem);
-
-            mac = Mac.getInstance(algorithem);
-            mac.init(signingKey);
-            tempAuthenticationData = new byte[mac.getMacLength()];
-            Arrays.fill(tempAuthenticationData, (byte) 0);
-
+            authenticationLength = Mac.getInstance(algorithem).getMacLength();
+            tempAuthenticationData = new byte[authenticationLength];
         } catch (NoSuchAlgorithmException e) {
-        } catch (InvalidKeyException e) {
         }
     }
 
-    public boolean validate(MapRegister mapRegister) {
+    public boolean validate(MapRegister mapRegister, String key) {
+        if (key == null) {
+            return false;
+        }
         ByteBuffer mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
         if (mapRegisterBuffer == null) {
             return true;
         }
-        
+
         mapRegisterBuffer.position(MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
-        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array()),mapRegister.getAuthenticationData());
+        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key), mapRegister.getAuthenticationData());
     }
 
-    protected byte[] getAuthenticationData(byte[] data) {
-        return mac.doFinal(data);
+    protected byte[] getAuthenticationData(byte[] data, String key) {
+        try {
+            byte[] keyBytes = key.getBytes();
+            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, algorithem);
+            Mac mac = Mac.getInstance(algorithem);
+            mac.init(signingKey);
+
+            return mac.doFinal(data);
+        } catch (InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException e) {
+        }
+        return null;
     }
 
     public int getAuthenticationLength() {
-        return mac.getMacLength();
+        return authenticationLength;
     }
 
     public String getAlgorithem() {
@@ -64,8 +69,8 @@ public class LispMACAuthentication implements ILispAuthentication {
         this.algorithem = algorithem;
     }
 
-    public byte[] getAuthenticationData(MapNotify mapNotify) {
-        return getAuthenticationData(MapNotifySerializer.getInstance().serialize(mapNotify).array());
+    public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
+        return getAuthenticationData(MapNotifySerializer.getInstance().serialize(mapNotify).array(), key);
     }
 
 }

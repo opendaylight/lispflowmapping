@@ -13,6 +13,12 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 
 public interface IMapResolver {
     MapReply handleMapRequest(MapRequest request);
-    boolean iterateMask();
-    void setIterateMask(boolean iterateMask);
+
+    boolean shouldIterateMask();
+
+    boolean shouldAuthenticate();
+
+    void setShouldIterateMask(boolean iterateMask);
+
+    void setShouldAuthenticate(boolean shouldAuthenticate);
 }

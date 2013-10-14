@@ -38,6 +38,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
+    private boolean shouldIterateMask;
+    private boolean shouldAuthenticate;
     private IMapResolver mapResolver;
     private IMapServer mapServer;
 
@@ -124,6 +126,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         return;
     }
 
+    public void _addDefualtPassword(final CommandInterpreter ci) {
+        addAuthenticationKey(new LispIpv4Address("10.0.0.1"), 1, "password");
+        addAuthenticationKey(new LispIpv4Address("0.0.0.1"), 1, "password");
+    }
+
     public String getHelp() {
         StringBuffer help = new StringBuffer();
         help.append("---LISP Mapping Service---\n");
@@ -152,11 +159,24 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         return mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
-    public boolean iterateMask() {
-        return mapResolver.iterateMask();
+    public boolean shouldIterateMask() {
+        return this.shouldIterateMask;
     }
 
-    public void setIterateMask(boolean iterateMask) {
-        this.mapResolver.setIterateMask(iterateMask);
+    public void setShouldIterateMask(boolean shouldIterateMask) {
+        this.shouldIterateMask = shouldIterateMask;
+        this.mapResolver.setShouldIterateMask(shouldIterateMask);
+        this.mapServer.setShouldIterateMask(shouldIterateMask);
     }
+
+    public void setShouldAuthenticate(boolean shouldAuthenticate) {
+        this.shouldAuthenticate = shouldAuthenticate;
+        this.mapResolver.setShouldAuthenticate(shouldAuthenticate);
+        this.mapServer.setShouldAuthenticate(shouldAuthenticate);
+    }
+
+    public boolean shouldAuthenticate() {
+        return shouldAuthenticate;
+    }
+
 }

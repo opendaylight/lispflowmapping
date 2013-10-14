@@ -1,37 +1,51 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
+import java.util.List;
 
 public class MappingServiceValue {
-    
-    private LocatorRecord record;
-    private int ttl;
-    
-    public MappingServiceValue(LocatorRecord record, int ttl) {
-        super();
-        this.record = record;
-        this.ttl = ttl;
+
+    private List<MappingServiceRLOC> rlocs;
+    private String key;
+
+    private final static MappingServiceValue EMPTY_MAPPING_SERVICE_VALUE = new MappingServiceValue();
+
+    public MappingServiceValue() {
     }
-    public LocatorRecord getRecord() {
-        return record;
+
+    public MappingServiceValue(List<MappingServiceRLOC> rlocs, String key) {
+        this.rlocs = rlocs;
+        this.key = key;
     }
-    public void setRecord(LocatorRecord record) {
-        this.record = record;
+
+    public List<MappingServiceRLOC> getRlocs() {
+        return rlocs;
     }
-    public int getTtl() {
-        return ttl;
+
+    public void setRlocs(List<MappingServiceRLOC> rlocs) {
+        this.rlocs = rlocs;
     }
-    public void setTtl(int ttl) {
-        this.ttl = ttl;
+
+    public String getKey() {
+        return key;
     }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public boolean isEmpty() {
+        return equals(EMPTY_MAPPING_SERVICE_VALUE);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((record == null) ? 0 : record.hashCode());
-        result = prime * result + ttl;
+        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + ((rlocs == null) ? 0 : rlocs.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -41,19 +55,23 @@ public class MappingServiceValue {
         if (getClass() != obj.getClass())
             return false;
         MappingServiceValue other = (MappingServiceValue) obj;
-        if (record == null) {
-            if (other.record != null)
+        if (key == null) {
+            if (other.key != null)
                 return false;
-        } else if (!record.equals(other.record))
+        } else if (!key.equals(other.key))
             return false;
-        if (ttl != other.ttl)
+        if (rlocs == null) {
+            if (other.rlocs != null)
+                return false;
+        } else if (!rlocs.equals(other.rlocs))
             return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
-        return record.getLocator().toString();
+        StringBuilder sb = new StringBuilder();
+        return sb.append("MappingServiceValue: Password: ").append(key).append(" RLOCs: ").append(rlocs).toString();
     }
 
 }

@@ -21,11 +21,11 @@ public class LispNoAuthentication implements ILispAuthentication {
         return 0;
     }
 
-    public byte[] getAuthenticationData(MapNotify mapNotify) {
+    public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
         return authenticationData;
     }
 
-    public boolean validate(MapRegister mapRegister) {
+    public boolean validate(MapRegister mapRegister, String key) {
         return true;
     }
 
