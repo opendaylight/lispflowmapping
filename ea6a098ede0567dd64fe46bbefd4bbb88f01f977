@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_c0f30d72",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-15T07:36:05Z",
+      "side": 1,
+      "message": "format this file",
+      "revId": "ea6a098ede0567dd64fe46bbefd4bbb88f01f977",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a0e8197d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-15T07:36:05Z",
+      "side": 1,
+      "message": "remove this duplication (pull the newest code)",
+      "revId": "ea6a098ede0567dd64fe46bbefd4bbb88f01f977",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_608901ca",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-15T07:36:05Z",
+      "side": 1,
+      "message": "please move all of the utility methods to be below the tests (receive, send and config)",
+      "revId": "ea6a098ede0567dd64fe46bbefd4bbb88f01f977",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4086fdba",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-15T07:36:05Z",
+      "side": 1,
+      "message": "add if (isDebugEnabled)",
+      "revId": "ea6a098ede0567dd64fe46bbefd4bbb88f01f977",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
