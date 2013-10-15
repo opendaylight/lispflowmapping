@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
+import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
@@ -126,51 +127,27 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, new LispIpv4Address("1.2.3.4")));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
+        LocatorRecord locator = new LocatorRecord().setLocator(new LispIpv4Address(0x04030201));
+        locator.setLocalLocator(false);
+        locator.setRouted(true);
+        locator.setMulticastPriority((byte) 5);
+        locator.setMulticastWeight((byte) 17);
+        locator.setPriority((byte) 16);
+        record.addLocator(locator);
         prepareMapping(record);
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
 
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals(1, eidToLocators.getLocators().size());
+        LocatorRecord resultLocator = mapReply.getEidToLocatorRecords().get(0).getLocators().get(0);
+        assertEquals(locator.isLocalLocator(), resultLocator.isLocalLocator());
+        assertEquals(locator.isRouted(), resultLocator.isRouted());
+        assertEquals(locator.getMulticastPriority(), resultLocator.getMulticastPriority());
+        assertEquals(locator.getMulticastWeight(), resultLocator.getMulticastWeight());
+        assertEquals(locator.getPriority(), resultLocator.getPriority());
 
         assertLocator(new LispIpv4Address(0x04030201), eidToLocators.getLocators().get(0));
-    }
-
-    private Map<String, MappingServiceValue> prepareMapping(EidToLocatorRecord... records) {
-        if (records.length > 0) {
-            for (EidToLocatorRecord eidToLocatorRecord : records) {
-                MappingServiceValue value = new MappingServiceValue();
-                Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-                result.put("value", value);
-                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-                for (LocatorRecord locator : eidToLocatorRecord.getLocators()) {
-                    rlocs.add(new MappingServiceRLOC(locator, eidToLocatorRecord.getRecordTtl()));
-                }
-                value.setRlocs(rlocs);
-
-                daoResults.put(
-                        MappingServiceKeyUtil.generateMappingServiceKey(eidToLocatorRecord.getPrefix(), (byte) eidToLocatorRecord.getMaskLength()),
-                        result);
-            }
-        }
-
-        ValueSaverAction<IMappingServiceKey> daoGetSaverAction = new ValueSaverAction<IMappingServiceKey>() {
-            @Override
-            protected boolean validate(IMappingServiceKey value) {
-                return true;
-            }
-
-            @Override
-            public Object invoke(Invocation invocation) throws Throwable {
-                return daoResults.get(lastValue);
-            }
-        };
-
-        allowing(lispDAO).get(with(daoGetSaverAction));
-        will(daoGetSaverAction);
-
-        return daoResults.get(MappingServiceKeyUtil.generateMappingServiceKey(v4Address));
     }
 
     @Test
@@ -178,6 +155,8 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
+        record.setAction(MapReplyAction.NativelyForward);
+        record.setAuthoritative(true);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
         prepareMapping(record);
 
@@ -187,6 +166,9 @@ public class MapResolverTest extends BaseTestCase {
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
         assertEquals((byte) 0, eidToLocators.getMaskLength());
         assertEquals(v4Address, eidToLocators.getPrefix());
+        assertEquals(record.isAuthoritative(), eidToLocators.isAuthoritative());
+        assertEquals(record.getAction(), eidToLocators.getAction());
+        assertEquals(record.getRecordTtl(), eidToLocators.getRecordTtl());
     }
 
     @Test
@@ -304,5 +286,42 @@ public class MapResolverTest extends BaseTestCase {
         EidToLocatorRecord eidToLocators2 = mapReply.getEidToLocatorRecords().get(1);
         assertEquals(1, eidToLocators2.getLocators().size());
         assertLocator(new LispIpv6Address("0:0:0:0:0:0:0:1"), eidToLocators2.getLocators().get(0));
+    }
+
+    private Map<String, MappingServiceValue> prepareMapping(EidToLocatorRecord... records) {
+        if (records.length > 0) {
+            for (EidToLocatorRecord eidToLocatorRecord : records) {
+                MappingServiceValue value = new MappingServiceValue();
+                Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+                result.put("value", value);
+                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
+                for (LocatorRecord locator : eidToLocatorRecord.getLocators()) {
+                    rlocs.add(new MappingServiceRLOC(locator, eidToLocatorRecord.getRecordTtl(), eidToLocatorRecord.getAction(), eidToLocatorRecord
+                            .isAuthoritative()));
+                }
+                value.setRlocs(rlocs);
+
+                daoResults.put(
+                        MappingServiceKeyUtil.generateMappingServiceKey(eidToLocatorRecord.getPrefix(), (byte) eidToLocatorRecord.getMaskLength()),
+                        result);
+            }
+        }
+
+        ValueSaverAction<IMappingServiceKey> daoGetSaverAction = new ValueSaverAction<IMappingServiceKey>() {
+            @Override
+            protected boolean validate(IMappingServiceKey value) {
+                return true;
+            }
+
+            @Override
+            public Object invoke(Invocation invocation) throws Throwable {
+                return daoResults.get(lastValue);
+            }
+        };
+
+        allowing(lispDAO).get(with(daoGetSaverAction));
+        will(daoGetSaverAction);
+
+        return daoResults.get(MappingServiceKeyUtil.generateMappingServiceKey(v4Address));
     }
 }
