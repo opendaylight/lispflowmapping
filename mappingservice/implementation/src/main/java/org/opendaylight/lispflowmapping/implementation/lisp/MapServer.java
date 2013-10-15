@@ -67,7 +67,7 @@ public class MapServer implements IMapServer {
         MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
         List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
         for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-            rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl()));
+            rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
         }
         value.setRlocs(rlocs);
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getPrefix(), eidRecord.getMaskLength());
