@@ -18,11 +18,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +99,10 @@ public class MapResolver implements IMapResolver {
             return;
         }
         try {
-            LispAddress locator = locatorObject.getRecord().getLocator();
-            eidToLocators.addLocator(new LocatorRecord().setLocator(locator).setRouted(true));
+            eidToLocators.addLocator(locatorObject.getRecord().clone().setRouted(true));
+            eidToLocators.setAction(locatorObject.getAction());
+            eidToLocators.setAuthoritative(locatorObject.isAuthoritative());
+            eidToLocators.setRecordTtl(locatorObject.getTtl());
         } catch (ClassCastException cce) {
         }
     }
