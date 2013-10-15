@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_39c7c447",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-15T21:49:39Z",
+      "side": 1,
+      "message": "Actually that exclamation mark is necessary. If not present, it fails on runtime.",
+      "parentUuid": "da6255ed_dd453db4",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_ddc09d2c",
         "filename": "mappingservice/northbound/pom.xml",
         "patchSetId": 3
@@ -88,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_39234407",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-15T21:49:39Z",
+      "side": 1,
+      "message": "A few can be removed, not all of them. For instance, there are a some dependences on sal utils and on controller northbound commons.",
+      "parentUuid": "da6255ed_bddde916",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_bd2ba9ea",
         "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
         "patchSetId": 3
@@ -99,6 +135,24 @@
       "writtenOn": "2013-10-14T02:12:01Z",
       "side": 1,
       "message": "There seems to be extra imports from controller and sal that are not used",
+      "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_192080f6",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-15T21:49:39Z",
+      "side": 1,
+      "message": "There were indeed some extra imports. I removed them.",
+      "parentUuid": "da6255ed_bd2ba9ea",
       "revId": "d7ff5c0d656d1608747a9b5834ed643c48a02012",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
