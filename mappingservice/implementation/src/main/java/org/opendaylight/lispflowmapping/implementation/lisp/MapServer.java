@@ -55,24 +55,26 @@ public class MapServer implements IMapServer {
             return null;
         }
         String password = null;
-        EidToLocatorRecord eidRecord = mapRegister.getEidToLocatorRecords().get(0);
-        if (shouldAuthenticate) {
-            password = getPassword(eidRecord.getPrefix(), eidRecord.getMaskLength());
-            if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                logger.debug("Authentication failed");
-                return null;
-            }
-        }
-        MappingServiceValue value = new MappingServiceValue();
-        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-        List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-        for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
-            rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl()));
-        }
-        value.setRlocs(rlocs);
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getPrefix(), eidRecord.getMaskLength());
-        dao.put(key, entry);
+        for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecords()) {
 
+            if (shouldAuthenticate) {
+                password = getPassword(eidRecord.getPrefix(), eidRecord.getMaskLength());
+                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
+                    logger.debug("Authentication failed");
+                    return null;
+                }
+            }
+            MappingServiceValue value = new MappingServiceValue();
+            MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+            List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
+            for (LocatorRecord locatorRecord : eidRecord.getLocators()) {
+                rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl()));
+            }
+            value.setRlocs(rlocs);
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getPrefix(), eidRecord.getMaskLength());
+            dao.put(key, entry);
+
+        }
         MapNotify mapNotify = null;
         if (mapRegister.isWantMapNotify()) {
             logger.trace("MapRegister wants MapNotify");
