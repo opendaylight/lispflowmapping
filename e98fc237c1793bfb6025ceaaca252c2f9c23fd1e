@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_aff36272",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceKey.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 0,
+      "message": "No default mask anymore?",
+      "revId": "e98fc237c1793bfb6025ceaaca252c2f9c23fd1e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ef027a0a",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 0,
+      "message": "Don\u0027t delete the tests put the @Ignore annotation on them, because they might be needed in the future. Depends on the model that will be chosen in the end.",
+      "revId": "e98fc237c1793bfb6025ceaaca252c2f9c23fd1e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

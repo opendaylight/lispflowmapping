@@ -1,0 +1,548 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_cfee968b",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingEntry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "It doesn\u0027t make sense that the MappingEntry is now out of ILispDAO and MappingValueKey is still in. Maybe put MVK here.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8fe89e7d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceKeyFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "First of all it doesn\u0027t compel to Factory design pattern because it\u0027s not a singleton.\nIt\u0027s seems to me the behavior is more of: MappingServiceKeyUtil.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_af1da275",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceKeyFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "if mask\u003d1000, don\u0027t we want error/warn/exception/null ?",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0f06ee20",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceKeyFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "refactor to a method: \"mask \u003e 0 \u0026\u0026 mask \u003c ((IMaskable)prefix).getMaxMask() \"\nwith a meaningful name",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4f02a63f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceValue.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Not efficient! I would check that both fields are null.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2fff7236",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceValue.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "This is a scale area so use StringBuilder",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6fed6a8b",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Format this",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2f09b231",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "I guess iterateMask is something global to the system. So it doesn\u0027t make sense that we have to \"query\" with different methods about it\u0027s value, one for the MapRegister and one for the MapServer. Makes more sense for me that LispMappingService will hold both booleans, and that the query will just check them.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6f17aa52",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispMACAuthentication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "no need to fill with 0",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4f0ce642",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispMACAuthentication.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "mac is not thread safe",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0f2f0ea3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "shouldIterateMask",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2fad3232",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "getAuthen... is a confusing name. Why isn\u0027t it createAuthenticationData?",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4f7746d5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Why don\u0027t u use dao.getSpecific(\"value\")?",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ef7ddab2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "1) dao.getSpecific()\n2) What if the mapping doesn\u0027t exist ? NPE?",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_cf4a1683",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Let\u0027s say value isn\u0027t Empty. Don\u0027t you want to write in the MappingService the new record without the key?",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4f2506c1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "1) You aren\u0027t re-writing the object to the cache/DB.\n2) Talk to Gal about the .get(): Map interface, because I think we have to use it, for Cassandra/DB data types.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2f7412ce",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "shouldAuthenticate()",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0f814e8f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "shouldIterate...()",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_aa047015",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "add: assertTrue(password)",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8a09ac2e",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "I would add assretFalse(\"wrongPassword\") in many tests, just nice to have",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6a0e7836",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "again, put \"wrongPAssword\" too",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4a13b45c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Ask Gal what he thinks about sysout in the code, and notify me :)",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0a349cdc",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Check",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ea3028ea",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Move the packet to a data member.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2a3760e5",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Because assertEquals(null) on MapNotifydoesn\u0027t check too much, we should add a test with identical data that pass and one that doesn\u0027t pass. Identical besides one byte.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ca4d6474",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "remove this un-needed comment",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8a576c02",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "You can refactor out: int mask, String password and maybe even IMappingServiceKey key, instead of rewriting everytime.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_aa523011",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "oneOf not allowing. Check other places if needed\n\nyou have an implmeneting code of dao.get \u003d\u003d null, should be splitted to 2 tests",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6a5c3826",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "validate remove did removed: before get will give value and after get will return null",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_aa2b5081",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "rename: addDAOExpectations, + private method addPasswordExpectations",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8a208c9c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "with/withoutPassword: meaningful names",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ca2684ba",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-16T14:52:28Z",
+      "side": 1,
+      "message": "Create a story that when we have REST api for keys, we add tests here.",
+      "revId": "9c9731450c06bb7a627dbc0b1312c438921c9dcc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
