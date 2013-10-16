@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
+import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 
 /**
@@ -25,7 +26,26 @@ public class MapRegisterSerializer {
         if (mapRegister.getMapRegisterBytes() != null)
             return ByteBuffer.wrap(mapRegister.getMapRegisterBytes());
         else {
-            return null;
+            int size = Length.HEADER_SIZE + mapRegister.getAuthenticationData().length;
+            for (EidToLocatorRecord eidToLocatorRecord : mapRegister.getEidToLocatorRecords()) {
+                size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
+            }
+
+            ByteBuffer replyBuffer = ByteBuffer.allocate(size);
+            replyBuffer.put((byte) ((byte) (LispMessageEnum.MapRegister.getValue() << 4) | ByteUtil.boolToBit(mapRegister.isProxyMapReply(), 1)));
+            replyBuffer.position(replyBuffer.position() + Length.RES);
+            replyBuffer.put(ByteUtil.boolToBit(mapRegister.isWantMapNotify(), 1));
+            replyBuffer.put((byte) mapRegister.getEidToLocatorRecords().size());
+            replyBuffer.putLong(mapRegister.getNonce());
+            replyBuffer.putShort(mapRegister.getKeyId());
+            replyBuffer.putShort((short) mapRegister.getAuthenticationData().length);
+            replyBuffer.put(mapRegister.getAuthenticationData());
+
+            for (EidToLocatorRecord eidToLocatorRecord : mapRegister.getEidToLocatorRecords()) {
+                EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
+            }
+            replyBuffer.clear();
+            return replyBuffer;
         }
     }
 
@@ -66,6 +86,7 @@ public class MapRegisterSerializer {
     }
 
     private interface Length {
+        int HEADER_SIZE = 16;
         int RES = 1;
     }
 }
