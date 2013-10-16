@@ -2,6 +2,8 @@ package org.opendaylight.lispflowmapping.implementation.serializer;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 
@@ -42,24 +44,33 @@ public class MapNotifySerializer {
         return replyBuffer;
     }
 
-    public MapNotify deserialize(ByteBuffer buf) {
-        MapNotify notify = new MapNotify();
+    public MapNotify deserialize(ByteBuffer notifyBuffer) {
+        try {
+            MapNotify mapNotify = new MapNotify();
+            mapNotify.setProxyMapReply(ByteUtil.extractBit(notifyBuffer.get(), Flags.PROXY));
 
-        buf.position(buf.position() + 3);
+            notifyBuffer.position(notifyBuffer.position() + Length.RES);
 
-        byte recordCount = buf.get();
-        notify.setNonce(buf.getLong());
-        notify.setKeyId(buf.getShort());
-        short authenticationLength = buf.getShort();
-        byte[] authenticationData = new byte[authenticationLength];
-        buf.get(authenticationData);
-        notify.setAuthenticationData(authenticationData);
+            byte recordCount = notifyBuffer.get();
+            mapNotify.setNonce(notifyBuffer.getLong());
+            mapNotify.setKeyId(notifyBuffer.getShort());
+            short authenticationLength = notifyBuffer.getShort();
+            byte[] authenticationData = new byte[authenticationLength];
+            notifyBuffer.get(authenticationData);
+            mapNotify.setAuthenticationData(authenticationData);
 
-        for (int i = 0; i < recordCount; i++) {
-            notify.addEidToLocator(EidToLocatorRecordSerializer.getInstance().deserialize(buf));
+            for (int i = 0; i < recordCount; i++) {
+                mapNotify.addEidToLocator(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer));
+            }
+            notifyBuffer.limit(notifyBuffer.position());
+            return mapNotify;
+        } catch (RuntimeException re) {
+            throw new LispSerializationException("Couldn't deserialize Map-Notify (len=" + notifyBuffer.capacity() + ")", re);
         }
-        buf.limit(buf.position());
-        return notify;
+    }
+
+    private interface Flags {
+        byte PROXY = 0x08;
     }
 
     private interface Length {
