@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_4a25f4c0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapNotifySerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T12:00:37Z",
+      "side": 1,
+      "message": "The code from here until the //, is this just a leftover?",
+      "revId": "c76409866cd9b06364c801106d3da1b8ce9fc48d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2a22c0b9",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T12:00:37Z",
+      "side": 1,
+      "message": "Why was this changed?",
+      "revId": "c76409866cd9b06364c801106d3da1b8ce9fc48d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_65258baa",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispDistinguishedNameAddressTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T12:00:37Z",
+      "side": 1,
+      "message": "I would add an empty string test (\"Testing the code in the edge\" rule of thumb)",
+      "revId": "c76409866cd9b06364c801106d3da1b8ce9fc48d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c52677ba",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispDistinguishedNameAddressTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T12:00:37Z",
+      "side": 1,
+      "message": "What do u test here ??",
+      "revId": "c76409866cd9b06364c801106d3da1b8ce9fc48d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
