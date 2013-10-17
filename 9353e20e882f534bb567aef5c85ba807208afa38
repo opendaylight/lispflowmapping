@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_a5a023f5",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispDistinguishedNameAddressSerializerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T12:23:11Z",
+      "side": 1,
+      "message": "I wouldn\u0027t call the empty string: deserialize__Simple(). Simple is a normal String, this is emptyString test.",
+      "revId": "9353e20e882f534bb567aef5c85ba807208afa38",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
