@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_8ab64c89",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceKeyFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T11:00:48Z",
+      "side": 1,
+      "message": "looks like a util class and not a factory.",
+      "revId": "3e44ac2c5540b0d6a8d3fbca34f39c628cbd623d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ca632419",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T11:00:48Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "3e44ac2c5540b0d6a8d3fbca34f39c628cbd623d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0a581c55",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T11:00:48Z",
+      "side": 1,
+      "message": "If this members can change on runtime, they all should be declared \u0027volatile\u0027 for thread safety.",
+      "revId": "3e44ac2c5540b0d6a8d3fbca34f39c628cbd623d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_aa36b001",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispMACAuthentication.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-17T11:00:48Z",
+      "side": 1,
+      "message": "What about some warns/errors to the log?\nRule of thumb: Never leave empty catches",
+      "revId": "3e44ac2c5540b0d6a8d3fbca34f39c628cbd623d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
