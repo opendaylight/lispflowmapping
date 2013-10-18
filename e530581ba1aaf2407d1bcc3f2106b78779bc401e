@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_65b58bcc",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispAddressGeneric.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-18T03:25:15Z",
+      "side": 1,
+      "message": "Indeed. Exception added.",
+      "parentUuid": "da6255ed_0555afc5",
+      "revId": "e530581ba1aaf2407d1bcc3f2106b78779bc401e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_e5517bd9",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispAddressGeneric.java",
         "patchSetId": 3
@@ -132,6 +150,24 @@
       "writtenOn": "2013-10-17T13:48:09Z",
       "side": 1,
       "message": "General question: Why do you query for a reference of INorthboundService? This class is the NorthboundService, so you are acquiring a reference to yourself? What am I missing here?",
+      "revId": "e530581ba1aaf2407d1bcc3f2106b78779bc401e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_45ca8750",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2013-10-18T03:25:15Z",
+      "side": 1,
+      "message": "Each time the REST API is called, a different instance of this class is created to serve the request. However the LISP DAO is only attached to the instance created as a service during bootup. This allows to retrieve that instance to make use of the LISP DAO",
+      "parentUuid": "da6255ed_25c1d380",
       "revId": "e530581ba1aaf2407d1bcc3f2106b78779bc401e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
