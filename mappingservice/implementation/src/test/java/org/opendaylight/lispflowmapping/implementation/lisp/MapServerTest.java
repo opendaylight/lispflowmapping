@@ -32,6 +32,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispMACAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 public class MapServerTest extends BaseTestCase {
@@ -100,6 +101,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegister.setKeyId((byte) 0);
         mapRegister.setWantMapNotify(true);
         EidToLocatorRecord eidToLocator = new EidToLocatorRecord();
+        eidToLocator.setMaskLength(32);
         eid = new LispIpv4Address(1);
         eidToLocator.setPrefix(eid);
 
@@ -110,7 +112,7 @@ public class MapServerTest extends BaseTestCase {
 
         mapRegister.addEidToLocator(eidToLocator);
 
-        addDAOExpectations(eid, 0);
+        addDAOExpectations(eid, 32);
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
 
@@ -137,6 +139,68 @@ public class MapServerTest extends BaseTestCase {
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv4Address("10.31.0.0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegister__NonMaskable() throws Exception {
+        int mask = 16;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispMACAddress addr = new LispMACAddress(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 });
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(addr, mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegister__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispMACAddress addr = new LispMACAddress(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 });
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(addr, mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegisterIPv4__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        record.setPrefix(eid).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(eid, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(new LispIpv4Address("0.0.0.0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
@@ -178,6 +242,27 @@ public class MapServerTest extends BaseTestCase {
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv6Address("1:1:1:1:1:1:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegisterIpv6__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispIpv6Address addr = new LispIpv6Address("1:1:1:1:1:1:1:0");
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(new LispIpv6Address("0:0:0:0:0:0:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
@@ -280,6 +365,7 @@ public class MapServerTest extends BaseTestCase {
         EidToLocatorRecord etlr = new EidToLocatorRecord();
         LispIpv4Address address = new LispIpv4Address("1.1.1.1");
         etlr.setPrefix(address);
+        etlr.setMaskLength(32);
         int recordTtl = 5;
         etlr.setRecordTtl(recordTtl);
         etlr.addLocator(new LocatorRecord().setLocator(new LispIpv4Address("2.2.2.2")).setPriority((byte) 10));
@@ -297,7 +383,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ChekWrongPassword() throws Exception {
 
-        addDAOEpectations(new LispIpv4Address("153.16.254.1"), 32, 0, 31, "bla");
+        addDAOExpectations(new LispIpv4Address("153.16.254.1"), 32, false, 0, 31, "bla");
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(null, mapNotify);
     }
@@ -305,7 +391,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ChcekNoPasswordAndThenPassword() throws Exception {
 
-        addDAOEpectations(new LispIpv4Address("153.16.254.1"), 32, 30, 25, "password");
+        addDAOExpectations(new LispIpv4Address("153.16.254.1"), 32, 30, 25, "password");
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(mapRegisterWithAuthentication.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
         assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
@@ -315,7 +401,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ChcekNoPassword() throws Exception {
 
-        addDAOEpectations(new LispIpv4Address("153.16.254.1"), 32, 30, 0, "password");
+        addDAOExpectations(new LispIpv4Address("153.16.254.1"), 32, false, 30, 0, "password");
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(null, mapNotify);
     }
@@ -323,7 +409,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ChcekNoreturn() throws Exception {
 
-        addDAOExpectations(new LispIpv4Address("153.16.254.1"), 32);
+        addDAOExpectations(new LispIpv4Address("153.16.254.1"), 32, false);
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(mapNotify, null);
     }
@@ -393,16 +479,26 @@ public class MapServerTest extends BaseTestCase {
     }
 
     private void addDAOExpectations(LispAddress address, int mask) {
-        addDAOEpectations(address, mask, 0, 0, "password");
+        addDAOExpectations(address, mask, true);
     }
 
-    private void addDAOEpectations(LispAddress address, int mask, int withoutPassword, int withPassword, String password) {
+    private void addDAOExpectations(LispAddress address, int mask, boolean shouldCallPut) {
+        addDAOExpectations(address, mask, shouldCallPut, 0, 0, "password");
+    }
+
+    private void addDAOExpectations(LispAddress address, int mask, int withoutPassword, int withPassword, String password) {
+        addDAOExpectations(address, mask, true, withoutPassword, withPassword, password);
+    }
+
+    private void addDAOExpectations(LispAddress address, int mask, boolean shouldCallPut, int withoutPassword, int withPassword, String password) {
         LispAddress clonedAddress = address;
         addPasswordExpextations(address, mask, withoutPassword, withPassword, password);
         if (address instanceof IMaskable) {
             clonedAddress = (LispAddress) ((IMaskable) address).clone();
         }
-        allowing(lispDAO).put(weq(MappingServiceKeyUtil.generateMappingServiceKey(clonedAddress, (byte) mask)), with(mappingEntriesSaver));
+        if (shouldCallPut) {
+            oneOf(lispDAO).put(weq(MappingServiceKeyUtil.generateMappingServiceKey(clonedAddress, (byte) mask)), with(mappingEntriesSaver));
+        }
     }
 
     private void addPasswordExpextations(LispAddress address, int mask, int withoutPassword, int withPassword, String password) {
