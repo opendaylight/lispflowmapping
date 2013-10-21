@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_c809eb2d",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/Convertor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-21T08:01:49Z",
+      "side": 1,
+      "message": "Convertor is a very ambiguous name, let\u0027s go with something more specific.",
+      "revId": "a37861b53449fb9803883f4646a3b68472f5e01c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
