@@ -4,6 +4,6 @@ import java.net.DatagramPacket;
 
 public interface ILispSouthboundService {
 
-	public DatagramPacket handlePacket(DatagramPacket packet);
-	
+    public void handlePacket(DatagramPacket packet);
+
 }
