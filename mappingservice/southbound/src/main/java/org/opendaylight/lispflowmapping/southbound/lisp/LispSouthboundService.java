@@ -9,32 +9,32 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
+import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessageEnum;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolver;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
+import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
+import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispSouthboundService implements ILispSouthboundService {
     private IMapResolver mapResolver;
     private IMapServer mapServer;
+    private NotificationProviderService notificationProvider;
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundService.class);
 
     public LispSouthboundService(IMapResolver mapResolver, IMapServer mapServer) {
@@ -42,48 +42,67 @@ public class LispSouthboundService implements ILispSouthboundService {
         this.mapServer = mapServer;
     }
 
+    public void setNotificationProvider(NotificationProviderService nps) {
+        this.notificationProvider = nps;
+    }
+
     public DatagramPacket handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
             logger.debug("Recieved packet of type EncapsulatedControlMessage");
-            return handleEncapsulatedControlMessage(inBuffer);
+            return handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
             logger.debug("Recieved packet of type MapRequest");
-            return handleMapRequest(inBuffer);
+            return handleMapRequest(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRegister) {
             logger.debug("Recieved packet of type MapRegister");
-            return handleMapRegister(inBuffer);
+            return handleMapRegister(inBuffer, packet.getAddress());
         }
         logger.debug("Recieved unknown packet type");
         return null;
     }
 
-    private DatagramPacket handleEncapsulatedControlMessage(ByteBuffer inBuffer) {
+    private DatagramPacket handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             extractEncapsulatedSourcePort(inBuffer);
-            DatagramPacket replyPacket = handleMapRequest(inBuffer);
+            DatagramPacket replyPacket = handleMapRequest(inBuffer, sourceAddress);
             return replyPacket;
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
 
-    private DatagramPacket handleMapRequest(ByteBuffer inBuffer) {
+    private DatagramPacket handleMapRequest(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
-            MapReply mapReply = mapResolver.handleMapRequest(request);
-            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
+            InetAddress finalSourceAddress = sourceAddress;
+            for (LispAddress address : request.getItrRlocs()) {
+                if (address instanceof LispIPAddress) {
+                    finalSourceAddress = (((LispIPAddress) address).getAddress());
+                }
+            }
 
-            DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
+            MapRequestNotification requestNotification = new MapRequestNotification(request, finalSourceAddress);
+            if (notificationProvider != null) {
+                notificationProvider.publish(requestNotification);
+                logger.info("MapRequest was published!");
+            } else {
+                logger.error("Notification Provider is null!");
+            }
+            //MapReply mapReply = mapResolver.handleMapRequest(request);
+            //ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
+            return null;
+
+            /*DatagramPacket replyPacket = new DatagramPacket(outBuffer.array(), outBuffer.capacity());
             replyPacket.setPort(LispMessage.PORT_NUM);
             for (LispAddress address : request.getItrRlocs()) {
                 if (address instanceof LispIPAddress) {
                     replyPacket.setAddress(((LispIPAddress) address).getAddress());
                     return replyPacket;
                 }
-            }
-            throw new LispMalformedPacketException("No IP address in the ITR's RLOC's");
+            }*/
+            //  throw new LispMalformedPacketException("No IP address in the ITR's RLOC's");
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
@@ -107,10 +126,17 @@ public class LispSouthboundService implements ILispSouthboundService {
         }
     }
 
-    private DatagramPacket handleMapRegister(ByteBuffer inBuffer) {
+    private DatagramPacket handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
-            MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
+            MapRegisterNotification registerNotification = new MapRegisterNotification(mapRegister, sourceAddress);
+            if (notificationProvider != null) {
+                notificationProvider.publish(registerNotification);
+                logger.info("MapRegister was published!");
+            } else {
+                logger.error("Notification Provider is null!");
+            }
+            /*MapNotify mapNotify = mapServer.handleMapRegister(mapRegister);
 
             if (mapNotify != null) {
                 ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
@@ -120,7 +146,8 @@ public class LispSouthboundService implements ILispSouthboundService {
             } else {
                 logger.debug("MapNotify was null");
                 return null;
-            }
+            }*/
+            return null;
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);
         }

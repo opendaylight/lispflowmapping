@@ -11,49 +11,62 @@ package org.opendaylight.lispflowmapping.southbound;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.Future;
 
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.opendaylight.controller.sal.binding.api.AbstractBindingAwareProvider;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
+import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
+import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
+import org.opendaylight.lispflowmapping.type.lisp.MapReply;
+import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
+import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin implements ILispSouthboundPlugin {
+public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements ILispSouthboundPlugin, CommandProvider {
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private LispIoThread thread;
     private LispSouthboundService service;
+    DatagramSocket sendSocket;
 
     void setFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("FlowMapping set in LispSouthbound");
-        service = new LispSouthboundService(mappingService, mappingService);
-        logger.debug("Registering LispIpv4Address");
-        logger.debug("Registering LispIpv6Address");
+        /* logger.debug("FlowMapping set in LispSouthbound");
+         service = new LispSouthboundService(mappingService, mappingService);
+         logger.debug("Registering LispIpv4Address");
+         logger.debug("Registering LispIpv6Address");*/
     }
 
     void unsetFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("LispDAO was unset in LispMappingService");
-        service = null;
+        /*logger.debug("LispDAO was unset in LispMappingService");
+        service = null;*/
     }
 
     public void init() {
-        logger.debug("LISP (RFC6830) Mapping Service is initialized!");
-        thread = new LispIoThread();
+        //   logger.debug("LISP (RFC6830) Mapping Service is initialized!");
+        // thread = new LispIoThread();
     }
 
-    public void start() {
-        logger.info("LISP (RFC6830) Mapping Service is up!");
-        thread.start();
+    //  public void start() {
+    /*   logger.info("LISP (RFC6830) Mapping Service is up!");
+       thread.start();
 
-        // OSGI console
-        registerWithOSGIConsole();
-    }
+       // OSGI console
+       registerWithOSGIConsole();*/
+    // }
 
     private void registerWithOSGIConsole() {
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
@@ -86,14 +99,15 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
             if (lispIp != null) {
                 lispBindAddress = lispIp;
             }
-            DatagramSocket socket;
+            DatagramSocket receiveSocket;
             int lispPortNumber = LispMessage.PORT_NUM;
             int lispReceiveTimeout = 1000;
 
             logger.info("LISP (RFC6830) Mapping Service is running and listening on " + lispBindAddress);
             try {
-                socket = new DatagramSocket(new InetSocketAddress(lispBindAddress, lispPortNumber));
-                socket.setSoTimeout(lispReceiveTimeout);
+                receiveSocket = new DatagramSocket(new InetSocketAddress(lispBindAddress, lispPortNumber));
+                receiveSocket.setSoTimeout(lispReceiveTimeout);
+                sendSocket = new DatagramSocket(new InetSocketAddress(lispBindAddress, 4350));
             } catch (SocketException e) {
                 logger.warn("Cannot open socket on UDP port " + lispPortNumber, e);
                 return;
@@ -103,7 +117,7 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                 byte[] buffer = new byte[4096];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
-                    socket.receive(packet);
+                    receiveSocket.receive(packet);
                     logger.debug("Received a packet!");
                 } catch (SocketTimeoutException ste) {
                     continue;
@@ -111,8 +125,10 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                     logger.error("IO Exception while trying to recieve packet", e);
                 }
                 logger.debug("Handling packet from {}:{} (len={})", packet.getAddress().getHostAddress(), packet.getPort(), packet.getLength());
-                try {
-                    DatagramPacket reply = service.handlePacket(packet);
+
+                service.handlePacket(packet);
+                /*try {
+                    
 
                     if (reply == null) {
                         logger.debug("Reply was null!");
@@ -129,10 +145,10 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
                     }
                 } catch (RuntimeException e) {
                     logger.warn("", e);
-                }
+                }*/
             }
 
-            socket.close();
+            receiveSocket.close();
         }
 
         public void stopRunning() {
@@ -153,4 +169,56 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
         return help.toString();
     }
 
+    public void onSessionInitiated(ProviderContext session) {
+        service = new LispSouthboundService(null, null);
+        thread = new LispIoThread();
+        logger.info("LISP (RFC6830) Mapping Service is up!");
+        thread.start();
+
+        // OSGI console
+        registerWithOSGIConsole();
+
+        logger.info("Provider Session initialized");
+
+        service.setNotificationProvider(session.getSALService(NotificationProviderService.class));
+        session.addRpcImplementation(ILispSouthboundPlugin.class, this);
+        logger.info("Registered ILispSouthboundPlugin!");
+    }
+
+    public Future<RpcResult<Void>> handleMapNotify(MapNotify mapNotify, InetAddress address) {
+        logger.info("HANDLE MAP NOTIFY!!");
+        if (mapNotify != null) {
+            ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
+            DatagramPacket notify = new DatagramPacket(outBuffer.array(), outBuffer.limit());
+            notify.setPort(LispMessage.PORT_NUM);
+            notify.setAddress(address);
+            try {
+                sendSocket.send(notify);
+            } catch (IOException e) {
+                logger.error("Failed to send MapNotify", e);
+            }
+        } else {
+            logger.debug("MapNotify was null");
+        }
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> handleMapReply(MapReply mapReply, InetAddress address) {
+        logger.info("HANDLE MAP REPLY!!");
+        if (mapReply != null) {
+            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
+            DatagramPacket reply = new DatagramPacket(outBuffer.array(), outBuffer.limit());
+            reply.setPort(LispMessage.PORT_NUM);
+            reply.setAddress(address);
+            try {
+                sendSocket.send(reply);
+            } catch (IOException e) {
+                logger.error("Failed to send MapReply", e);
+            }
+        } else {
+            logger.debug("MapReply was null");
+        }
+        return null;
+    }
 }
