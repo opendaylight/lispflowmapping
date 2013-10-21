@@ -28,7 +28,6 @@ import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

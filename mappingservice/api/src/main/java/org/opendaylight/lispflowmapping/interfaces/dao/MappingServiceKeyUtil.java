@@ -23,7 +23,7 @@ public class MappingServiceKeyUtil {
             return false;
         }
         IMaskable maskablePrefix = (IMaskable) prefix;
-        if (mask > 0 && mask < maskablePrefix.getMaxMask()) {
+        if (mask >= 0 && mask < maskablePrefix.getMaxMask()) {
             return true;
         } else {
             return false;
@@ -31,6 +31,9 @@ public class MappingServiceKeyUtil {
     }
 
     public static IMappingServiceKey generateMappingServiceKey(LispAddress prefix) {
-        return generateMappingServiceKey(prefix, 0);
+        if (prefix instanceof IMaskable) {
+            return generateMappingServiceKey(prefix, ((IMaskable) prefix).getMaxMask());
+        } else
+            return generateMappingServiceKey(prefix, 0);
     }
 }
