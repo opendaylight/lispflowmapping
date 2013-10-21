@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 /**
  * <pre>
@@ -158,10 +159,12 @@ public class MapRequest {
      * private byte recordCount;
      */
     private List<EidRecord> eids;
+    final private static LispNoAddress NULL_ADDRESS = new LispNoAddress();
 
     public MapRequest() {
         eids = new ArrayList<EidRecord>();
         itrRlocs = new ArrayList<LispAddress>();
+        sourceEid = NULL_ADDRESS;
     }
 
     public List<EidRecord> getEids() {
@@ -173,6 +176,9 @@ public class MapRequest {
     }
 
     public MapRequest setSourceEid(LispAddress sourceEid) {
+        if (sourceEid == null) {
+            sourceEid = NULL_ADDRESS;
+        }
         this.sourceEid = sourceEid;
         return this;
     }
@@ -252,5 +258,4 @@ public class MapRequest {
         return itrRlocs;
     }
 
-    
 }

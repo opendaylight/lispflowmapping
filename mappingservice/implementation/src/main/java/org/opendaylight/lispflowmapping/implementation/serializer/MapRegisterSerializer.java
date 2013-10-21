@@ -31,21 +31,21 @@ public class MapRegisterSerializer {
                 size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
             }
 
-            ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-            replyBuffer.put((byte) ((byte) (LispMessageEnum.MapRegister.getValue() << 4) | ByteUtil.boolToBit(mapRegister.isProxyMapReply(), 1)));
-            replyBuffer.position(replyBuffer.position() + Length.RES);
-            replyBuffer.put(ByteUtil.boolToBit(mapRegister.isWantMapNotify(), 1));
-            replyBuffer.put((byte) mapRegister.getEidToLocatorRecords().size());
-            replyBuffer.putLong(mapRegister.getNonce());
-            replyBuffer.putShort(mapRegister.getKeyId());
-            replyBuffer.putShort((short) mapRegister.getAuthenticationData().length);
-            replyBuffer.put(mapRegister.getAuthenticationData());
+            ByteBuffer registerBuffer = ByteBuffer.allocate(size);
+            registerBuffer.put((byte) ((byte) (LispMessageEnum.MapRegister.getValue() << 4) | ByteUtil.boolToBit(mapRegister.isProxyMapReply(), 1)));
+            registerBuffer.position(registerBuffer.position() + Length.RES);
+            registerBuffer.put(ByteUtil.boolToBit(mapRegister.isWantMapNotify(), 1));
+            registerBuffer.put((byte) mapRegister.getEidToLocatorRecords().size());
+            registerBuffer.putLong(mapRegister.getNonce());
+            registerBuffer.putShort(mapRegister.getKeyId());
+            registerBuffer.putShort((short) mapRegister.getAuthenticationData().length);
+            registerBuffer.put(mapRegister.getAuthenticationData());
 
             for (EidToLocatorRecord eidToLocatorRecord : mapRegister.getEidToLocatorRecords()) {
-                EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
+                EidToLocatorRecordSerializer.getInstance().serialize(registerBuffer, eidToLocatorRecord);
             }
-            replyBuffer.clear();
-            return replyBuffer;
+            registerBuffer.clear();
+            return registerBuffer;
         }
     }
 
