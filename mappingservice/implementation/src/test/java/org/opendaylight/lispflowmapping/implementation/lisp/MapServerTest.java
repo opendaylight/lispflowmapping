@@ -32,6 +32,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispMACAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 public class MapServerTest extends BaseTestCase {
@@ -100,6 +101,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegister.setKeyId((byte) 0);
         mapRegister.setWantMapNotify(true);
         EidToLocatorRecord eidToLocator = new EidToLocatorRecord();
+        eidToLocator.setMaskLength(32);
         eid = new LispIpv4Address(1);
         eidToLocator.setPrefix(eid);
 
@@ -110,7 +112,7 @@ public class MapServerTest extends BaseTestCase {
 
         mapRegister.addEidToLocator(eidToLocator);
 
-        addDAOExpectations(eid, 0);
+        addDAOExpectations(eid, 32);
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
 
@@ -137,6 +139,68 @@ public class MapServerTest extends BaseTestCase {
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv4Address("10.31.0.0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegister__NonMaskable() throws Exception {
+        int mask = 16;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispMACAddress addr = new LispMACAddress(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 });
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(addr, mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegister__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispMACAddress addr = new LispMACAddress(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 });
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(addr, mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegisterIPv4__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        record.setPrefix(eid).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(eid, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(new LispIpv4Address("0.0.0.0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
@@ -178,6 +242,27 @@ public class MapServerTest extends BaseTestCase {
 
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
         assertEquals(new LispIpv6Address("1:1:1:1:1:1:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
+        assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
+        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
+        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegisterIpv6__ZeroMask() throws Exception {
+        int mask = 0;
+        mapRegister = new MapRegister();
+        EidToLocatorRecord record = new EidToLocatorRecord();
+        LispIpv6Address addr = new LispIpv6Address("1:1:1:1:1:1:1:0");
+        record.setPrefix(addr).setMaskLength(mask);
+        record.addLocator(new LocatorRecord().setLocator(rloc));
+        mapRegister.addEidToLocator(record);
+        mapRegister.setWantMapNotify(true);
+
+        addDAOExpectations(addr, mask);
+
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        assertEquals(new LispIpv6Address("0:0:0:0:0:0:0:0"), mapNotify.getEidToLocatorRecords().get(0).getPrefix());
         assertEquals(mapRegister.getEidToLocatorRecords(), mapNotify.getEidToLocatorRecords());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
@@ -280,6 +365,7 @@ public class MapServerTest extends BaseTestCase {
         EidToLocatorRecord etlr = new EidToLocatorRecord();
         LispIpv4Address address = new LispIpv4Address("1.1.1.1");
         etlr.setPrefix(address);
+        etlr.setMaskLength(32);
         int recordTtl = 5;
         etlr.setRecordTtl(recordTtl);
         etlr.addLocator(new LocatorRecord().setLocator(new LispIpv4Address("2.2.2.2")).setPriority((byte) 10));
