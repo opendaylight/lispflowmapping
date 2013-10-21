@@ -10,6 +10,10 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ConsumerContext;
+import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
+import org.opendaylight.controller.sal.binding.api.NotificationListener;
+import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -29,12 +33,14 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
+import org.opendaylight.lispflowmapping.type.sbplugin.LispNotification;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping {
+public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, NotificationListener<LispNotification> {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
@@ -42,6 +48,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
     private volatile boolean shouldAuthenticate;
     private IMapResolver mapResolver;
     private IMapServer mapServer;
+
+    private ILispSouthboundPlugin lispSB = null;
+
+    private ConsumerContext session;
 
     public static void main(String[] args) throws Exception {
         LispMappingService serv = new LispMappingService();
@@ -179,4 +189,38 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
         return shouldAuthenticate;
     }
 
+    public void onSessionInitialized(ConsumerContext session) {
+        logger.info("Lisp Consumer session initialized!");
+        NotificationService notificationService = session.getSALService(NotificationService.class);
+        notificationService.registerNotificationListener(LispNotification.class, this);
+        this.session = session;
+    }
+
+    public void onNotification(LispNotification notification) {
+        try {
+            Object lispMessage = notification.getLispMessage();
+            if (lispMessage instanceof MapRequest) {
+                logger.trace("MapRequest notification recieved!");
+                MapReply mapReply = handleMapRequest((MapRequest) lispMessage);
+                getLispSB().handleMapReply(mapReply, notification.getSourceAddress());
+            } else if (lispMessage instanceof MapRegister) {
+                logger.trace("MapRegister notification recieved!");
+                MapNotify mapNotify = handleMapRegister((MapRegister) lispMessage);
+                getLispSB().handleMapNotify(mapNotify, notification.getSourceAddress());
+            } else if (lispMessage == null) {
+                logger.warn("Notification contained null message.");
+            } else {
+                logger.error("Notification contained unknown message.");
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    private ILispSouthboundPlugin getLispSB() {
+        if (lispSB == null) {
+            lispSB = session.getRpcService(ILispSouthboundPlugin.class);
+        }
+        return lispSB;
+    }
 }
