@@ -149,6 +149,16 @@
 				<artifactId>org.eclipse.osgi</artifactId>
 				<version>3.8.1.v20120830-144521</version>
 			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.controller</groupId>
+				<artifactId>sal-binding-api</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.controller</groupId>
+				<artifactId>sal-common-util</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>

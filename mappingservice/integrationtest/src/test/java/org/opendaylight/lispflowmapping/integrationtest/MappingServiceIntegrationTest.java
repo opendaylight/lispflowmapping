@@ -28,9 +28,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
+import org.opendaylight.lispflowmapping.type.lisp.MapReply;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.ops4j.pax.exam.Option;
@@ -58,6 +60,9 @@ public class MappingServiceIntegrationTest {
     private DatagramSocket socket;
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
     private byte[] mapRegisterPacketWithNotifyWithListLCAFAndDistinguishedName;
+
+    public static final String ODL = "org.opendaylight.controller";
+    public static final String YANG = "org.opendaylight.yangtools";
 
     @After
     public void after() {
@@ -87,9 +92,9 @@ public class MappingServiceIntegrationTest {
         mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
-                + "0030   00 38 d4 31 00 00 ff 11 56 f3 c0 a8 88 0a 01 02 "
+                + "0030   00 38 d4 31 00 00 ff 11 56 f3 7f 00 00 02 01 02 "
                 + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
-                + "0050   2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "0050   2a cd 39 c8 d6 08 00 00 00 01 7f 00 00 02 00 20 " //
                 + "0060   00 01 01 02 03 04"));
 
         // IP: 192.168.136.10 -> 128.223.156.35
@@ -207,16 +212,18 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.apache.felix", "org.apache.felix.dependencymanager").versionAsInProject(),
 
                 // List logger bundles
-                mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(), mavenBundle("org.slf4j", "log4j-over-slf4j").versionAsInProject(),
-                mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(), mavenBundle("ch.qos.logback", "logback-classic")
-                        .versionAsInProject(),
+                mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
+                mavenBundle("org.slf4j", "log4j-over-slf4j").versionAsInProject(),
+                mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(),
+                mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject(),
 
                 mavenBundle("commons-io", "commons-io").versionAsInProject(),
 
                 mavenBundle("commons-fileupload", "commons-fileupload").versionAsInProject(),
 
-                mavenBundle("equinoxSDK381", "javax.servlet").versionAsInProject(), mavenBundle("equinoxSDK381", "javax.servlet.jsp")
-                        .versionAsInProject(), mavenBundle("equinoxSDK381", "org.eclipse.equinox.ds").versionAsInProject(),
+                mavenBundle("equinoxSDK381", "javax.servlet").versionAsInProject(),
+                mavenBundle("equinoxSDK381", "javax.servlet.jsp").versionAsInProject(),
+                mavenBundle("equinoxSDK381", "org.eclipse.equinox.ds").versionAsInProject(),
 
                 mavenBundle("equinoxSDK381", "org.eclipse.equinox.util").versionAsInProject(),
                 mavenBundle("equinoxSDK381", "org.eclipse.osgi.services").versionAsInProject(),
@@ -233,10 +240,11 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("com.google.code.gson", "gson").versionAsInProject(),
                 mavenBundle("org.jboss.spec.javax.transaction", "jboss-transaction-api_1.1_spec").versionAsInProject(),
                 mavenBundle("org.apache.felix", "org.apache.felix.fileinstall").versionAsInProject(),
-                mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject(), mavenBundle("commons-codec", "commons-codec")
-                        .versionAsInProject(), mavenBundle("virgomirror", "org.eclipse.jdt.core.compiler.batch").versionAsInProject(),
-                mavenBundle("eclipselink", "javax.persistence").versionAsInProject(), mavenBundle("eclipselink", "javax.resource")
-                        .versionAsInProject(),
+                mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject(),
+                mavenBundle("commons-codec", "commons-codec").versionAsInProject(),
+                mavenBundle("virgomirror", "org.eclipse.jdt.core.compiler.batch").versionAsInProject(),
+                mavenBundle("eclipselink", "javax.persistence").versionAsInProject(),
+                mavenBundle("eclipselink", "javax.resource").versionAsInProject(),
 
                 mavenBundle("orbit", "javax.activation").versionAsInProject(),
                 mavenBundle("orbit", "javax.annotation").versionAsInProject(),
@@ -263,13 +271,34 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.opendaylight.controller", "containermanager.it.implementation").versionAsInProject(),
 
                 // Specific bundles
-                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
+                mavenBundle(ODL, "sal-binding-api").versionAsInProject(), //
+                mavenBundle(ODL, "sal-binding-broker-impl").versionAsInProject(), //
+                mavenBundle(ODL, "sal-common").versionAsInProject(), //
+                mavenBundle(ODL, "sal-common-api").versionAsInProject(), //
+                mavenBundle(ODL, "sal-common-impl").versionAsInProject(),
+                mavenBundle(ODL, "sal-common-util").versionAsInProject(), //
+                mavenBundle(YANG, "concepts").versionAsInProject(),
+                mavenBundle(YANG, "yang-binding").versionAsInProject(), //
+                mavenBundle(YANG, "yang-common").versionAsInProject(), //
+                mavenBundle(YANG + ".thirdparty", "xtend-lib-osgi").versionAsInProject(),//
+                mavenBundle("com.google.guava", "guava").versionAsInProject(), //
+                mavenBundle("org.javassist", "javassist").versionAsInProject(),
+
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), junitBundles());
+    }
+
+    @Test
+    public void mapRequestSimple() throws SocketTimeoutException {
+        sendPacket(mapRequestPacket);
+        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        MapReply reply = MapReplySerializer.getInstance().deserialize(readBuf);
+        assertEquals(4435248268955932168L, reply.getNonce());
+
     }
 
     @Test
@@ -330,7 +359,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private DatagramPacket receivePacket() throws SocketTimeoutException {
-        return receivePacket(5000);
+        return receivePacket(6000);
     }
 
     private DatagramPacket receivePacket(int timeout) throws SocketTimeoutException {
@@ -408,18 +437,22 @@ public class MappingServiceIntegrationTest {
             int state = element.getState();
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
-                /*
-                 * UNCOMMENT to see why bundles didn't resolve! try { String
-                 * host = element.getHeaders().get(Constants.FRAGMENT_HOST); if
-                 * (host != null) { logger.warn("Bundle " +
-                 * element.getSymbolicName() +
-                 * " is a fragment which is part of: " + host);
-                 * logger.warn("Required imports are: " +
-                 * element.getHeaders().get(Constants.IMPORT_PACKAGE)); } else {
-                 * element.start(); } } catch (BundleException e) {
-                 * logger.error("BundleException:", e); fail(); }
-                 */
-                debugit = true;
+
+                // UNCOMMENT to see why bundles didn't resolve!
+                /*  try {
+                      String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
+                      if (host != null) {
+                          logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
+                          logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                      } else {
+                          element.start();
+                      }
+                  } catch (BundleException e) {
+                      logger.error("BundleException:", e);
+                      fail();
+                  }
+
+                debugit = true;*/
             }
         }
         if (debugit) {
