@@ -10,20 +10,20 @@
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
-	  <repositories>
-    <!-- OpenDayLight Released artifact -->
-    <repository>
-      <id>opendaylight-release</id>
-      <name>opendaylight-release</name>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
-    </repository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <repository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
-    </repository>
-  </repositories>
+	<repositories>
+		<!-- OpenDayLight Released artifact -->
+		<repository>
+			<id>opendaylight-release</id>
+			<name>opendaylight-release</name>
+			<url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
+		</repository>
+		<!-- OpenDayLight Snapshot artifact -->
+		<repository>
+			<id>opendaylight-snapshot</id>
+			<name>opendaylight-snapshot</name>
+			<url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+		</repository>
+	</repositories>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -93,14 +93,39 @@
 		<sonar.jacoco.reportPath>../implementation/target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>../implementaiton/target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
+		<!-- Dependency Versions -->
+        <slf4j.version>1.7.2</slf4j.version>
+        <!-- <yang.version>0.5.9-SNAPSHOT</yang.version>
+        <yang.binding.version>0.6.0-SNAPSHOT</yang.binding.version>
+        <yang.codegen.version>0.6.0-SNAPSHOT</yang.codegen.version>-->
+        <osgi.core.version>5.0.0</osgi.core.version>
+        <junit.version>4.8.1</junit.version>
+        <xtend.version>2.4.3</xtend.version>
 	</properties>
 	<dependencies>
-	<dependency>
-		<groupId>org.opendaylight.controller</groupId>
-		<artifactId>commons.integrationtest</artifactId>
-		<type>pom</type>
-		 <version>0.5.1-SNAPSHOT</version>
-	</dependency>
+
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-binding-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-common-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-common-util</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>commons.integrationtest</artifactId>
+			<type>pom</type>
+			<version>0.5.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
@@ -214,11 +239,11 @@
 			<artifactId>org.eclipse.equinox.util</artifactId>
 			<version>1.0.400.v20120522-2049</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>equinoxSDK381</groupId>
 			<artifactId>org.eclipse.osgi.services</artifactId>
 			<version>3.3.100.v20120522-1822</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>equinoxSDK381</groupId>
 			<artifactId>org.eclipse.osgi</artifactId>
@@ -518,6 +543,53 @@
 			<artifactId>jersey-json</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.yangtools.thirdparty</groupId>
+			<artifactId>xtend-lib-osgi</artifactId>
+			<version>2.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-binding-broker-impl</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.17.1-GA</version>
+		</dependency>
+		<!-- YANG Tools Dependencies -->
+	<!-- 	<dependency>
+			<groupId>org.opendaylight.yangtools</groupId>
+			<artifactId>yang-binding</artifactId>
+			<version>${yang.binding.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.yangtools</groupId>
+			<artifactId>yang-common</artifactId>
+			<version>${yang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.yangtools</groupId>
+			<artifactId>yang-data-api</artifactId>
+			<version>${yang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.yangtools</groupId>
+			<artifactId>yang-model-api</artifactId>
+			<version>${yang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.yangtools</groupId>
+			<artifactId>yang-data-util</artifactId>
+			<version>${yang.version}</version>
+		</dependency>-->
+		<!-- <dependency>
+          <groupId>org.opendaylight.yangtools</groupId>
+          <artifactId>concepts</artifactId>
+          <version>0.1.1-SNAPSHOT</version>
+        </dependency>-->
+		
 	</dependencies>
-	
+
 </project>
