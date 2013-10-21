@@ -10,7 +10,6 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.southbound</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<build>
 		<plugins>
@@ -31,15 +30,19 @@
 							org.eclipse.osgi.framework.console,
 							org.osgi.framework,
 							org.opendaylight.lispflowmapping.interfaces.lisp,
-							org.opendaylight.lispflowmapping.type,  
-							org.opendaylight.lispflowmapping.type.lisp, 
-							org.opendaylight.lispflowmapping.type.lisp.address, 
+							org.opendaylight.lispflowmapping.type,
+							org.opendaylight.lispflowmapping.type.lisp,
+							org.opendaylight.lispflowmapping.type.lisp.address,
+							org.opendaylight.lispflowmapping.type.sbplugin,
 							org.opendaylight.controller.clustering.services,
 							org.opendaylight.lispflowmapping.implementation.serializer,
-							org.opendaylight.lispflowmapping.implementation.util
+							org.opendaylight.lispflowmapping.implementation.util,
+							org.opendaylight.controller.sal.binding.api,
+							org.opendaylight.yangtools.yang.binding,
+							org.opendaylight.yangtools.yang.common
 						</Import-Package>
 						<Bundle-Activator>
-							org.opendaylight.lispflowmapping.southbound.Activator
+							org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin
 						</Bundle-Activator>
 						<Service-Component>
 						</Service-Component>
@@ -49,6 +52,14 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-binding-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-common-util</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>

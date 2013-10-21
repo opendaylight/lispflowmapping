@@ -48,7 +48,7 @@ public abstract class LispIPAddress extends LispAddress implements IMaskable {
     }
 
     public void normalize(int mask) {
-        if (mask <= 0 || mask >= getMaxMask()) {
+        if (mask < 0 || mask >= getMaxMask()) {
             return;
         }
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());

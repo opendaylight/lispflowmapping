@@ -68,11 +68,8 @@ public class MapResolver implements IMapResolver {
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
         int mask = key.getMask();
-        if (mask == 0) {
-            mask = ((IMaskable) key.getEID()).getMaxMask() - 1;
-            key = MappingServiceKeyUtil.generateMappingServiceKey(key.getEID(), (byte) mask);
-        }
         while (mask > 0) {
+            key = MappingServiceKeyUtil.generateMappingServiceKey(key.getEID(), (byte) mask);
             ((IMaskable) key.getEID()).normalize(mask);
             mask--;
             Map<String, ?> locators = dao.get(key);
