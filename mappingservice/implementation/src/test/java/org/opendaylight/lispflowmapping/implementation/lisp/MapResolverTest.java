@@ -212,7 +212,7 @@ public class MapResolverTest extends BaseTestCase {
         EidRecord mapRequestRecord = new EidRecord((byte) 128, v6Address);
         mapRequest.addEidRecord(mapRequestRecord);
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv6Address("0:0:0:0:0:0:0:1")).setMaskLength(112);
+        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv6Address("0:1:0:0:0:0:0:1")).setMaskLength(112);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
         prepareMapping(record);
 

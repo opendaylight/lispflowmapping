@@ -19,9 +19,9 @@ public class MappingServiceNoMaskKey implements IMappingServiceKey {
         EID = eID;
     }
 
-    public byte getMask() {
+    public int getMask() {
         if (EID instanceof IMaskable) {
-            return (byte) ((IMaskable) EID).getMaxMask();
+            return ((IMaskable) EID).getMaxMask() & 0xFF;
         } else {
             return 0;
         }

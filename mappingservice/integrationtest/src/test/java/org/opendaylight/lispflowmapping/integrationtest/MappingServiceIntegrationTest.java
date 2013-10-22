@@ -41,6 +41,7 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -314,6 +315,47 @@ public class MappingServiceIntegrationTest {
         assertEquals(4, mapReply.getNonce());
         assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
 
+    }
+
+    @Test
+    public void eidPrefixLookupIPv4() throws SocketTimeoutException {
+        runPrefixTest(new LispIpv4Address("1.2.3.4"), 16, new LispIpv4Address("1.2.3.2"), new LispIpv4Address("1.1.1.1"), (byte) 32);
+    }
+
+    @Test
+    public void eidPrefixLookupIPv6() throws SocketTimeoutException {
+        runPrefixTest(new LispIpv6Address("1:2:3:4:5:6:7:8"), 64, new LispIpv6Address("1:2:3:4:5:1:2:3"), new LispIpv6Address("1:2:3:1:2:3:1:2"),
+                (byte) 128);
+    }
+
+    private void runPrefixTest(LispAddress registerEID, int registerdMask, LispAddress matchedAddress, LispAddress unMatchedAddress, byte mask)
+            throws SocketTimeoutException {
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        etlr.setPrefix(registerEID);
+        etlr.setMaskLength(registerdMask);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(new LispIpv4Address("4.3.2.1"));
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+        sendMapRegister(mapRegister);
+        MapNotify mapNotify = recieveMapNotify();
+        assertEquals(8, mapNotify.getNonce());
+        MapRequest mapRequest = new MapRequest();
+        mapRequest.setNonce(4);
+        mapRequest.addEidRecord(new EidRecord(mask, matchedAddress));
+        mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
+        sendMapRequest(mapRequest);
+        MapReply mapReply = recieveMapReply();
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+        mapRequest.getEids().get(0).setPrefix(unMatchedAddress);
+        sendMapRequest(mapRequest);
+        mapReply = recieveMapReply();
+        assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
     }
 
     private MapReply recieveMapReply() throws SocketTimeoutException {
