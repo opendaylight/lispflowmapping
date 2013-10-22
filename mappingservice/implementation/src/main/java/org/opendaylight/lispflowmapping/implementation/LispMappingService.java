@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ConsumerContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
@@ -73,8 +74,18 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingServiceNoMaskKey, Integer> {
     }
 
+    void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
+        logger.debug("BindingAwareBroker set!");
+        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+        bindingAwareBroker.registerConsumer(this, bundleContext);
+    }
+
+    void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
+        logger.info("BindingAwareBroker was unset in LispMappingService");
+    }
+
     void setLispDao(ILispDAO dao) {
-        logger.info("LispDAO set in LispMappingService");
+        logger.debug("LispDAO set in LispMappingService");
         lispDao = dao;
         mapResolver = new MapResolver(dao);
         mapServer = new MapServer(dao);
@@ -96,8 +107,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void init() {
-        logger.info("LISP (RFC6830) Mapping Service is initialized!");
-        registerWithOSGIConsole();
+        try {
+            registerWithOSGIConsole();
+            logger.info("LISP (RFC6830) Mapping Service init finished");
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     private void registerWithOSGIConsole() {
@@ -191,7 +206,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void onSessionInitialized(ConsumerContext session) {
-        logger.info("Lisp Consumer session initialized!");
+        logger.debug("Lisp Consumer session initialized!");
         NotificationService notificationService = session.getSALService(NotificationService.class);
         notificationService.registerNotificationListener(LispNotification.class, this);
         this.session = session;

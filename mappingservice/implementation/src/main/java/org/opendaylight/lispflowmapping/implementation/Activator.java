@@ -14,13 +14,10 @@ import java.util.Hashtable;
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +28,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public class Activator extends ComponentActivatorAbstractBase {
-
-    private BundleContext context = null;
-    private LispMappingService instance = null;
 
     /*
      * Logger instance
@@ -58,24 +52,6 @@ public class Activator extends ComponentActivatorAbstractBase {
     public void destroy() {
     }
 
-    public void start(BundleContext context) {
-        super.start(context);
-        try {
-            ServiceReference<BindingAwareBroker> brokerRef = context.getServiceReference(BindingAwareBroker.class);
-            BindingAwareBroker broker = context.getService(brokerRef);
-            broker.registerConsumer((BindingAwareConsumer) instance, context);
-
-            ServiceReference<ILispDAO> lispRef = context.getServiceReference(ILispDAO.class);
-            ILispDAO service = context.getService(lispRef);
-            instance.setLispDao(service);
-
-            instance.init();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-
-    }
-
     /**
      * Function that is used to communicate to dependency manager the list of
      * known implementations for services inside a container
@@ -87,7 +63,7 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public Object[] getImplementations() {
-        Object[] res = { new LispMappingService(), ClusterDAOService.class };
+        Object[] res = { LispMappingService.class, ClusterDAOService.class };
         return res;
     }
 
@@ -108,15 +84,15 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
-        if (imp instanceof LispMappingService) {
+        if (imp.equals(LispMappingService.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
             c.setInterface(new String[] { IFlowMapping.class.getName() }, props);
             c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao")
                     .setRequired(true));
-            c.add(createContainerServiceDependency(containerName).setService(BindingAwareBroker.class).setRequired(true));
-            this.instance = (LispMappingService) imp;
+            c.add(createServiceDependency().setService(BindingAwareBroker.class).setRequired(true)
+                    .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker"));
         } else if (imp.equals(ClusterDAOService.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
