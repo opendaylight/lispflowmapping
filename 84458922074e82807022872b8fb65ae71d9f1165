@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ce821300",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-22T22:50:29Z",
+      "side": 1,
+      "message": "wrong check ;) should be \u003d\u003d",
+      "revId": "84458922074e82807022872b8fb65ae71d9f1165",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
