@@ -4,13 +4,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyUtil;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceNoMaskKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
+import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
+import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 
@@ -27,12 +35,16 @@ public class InMemoryDAOTest extends BaseTestCase {
     private LispIpv4Address eid;
     private LispIpv4Address rloc;
 
+    class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingServiceNoMaskKey, Integer> {
+    }
+
     @Override
     @Before
     public void before() throws Exception {
         super.before();
         testedInMemoryDao = new InMemoryDAO();
         testedInMemoryDao.register(TestLispIpv4AddressConverter.class);
+        testedInMemoryDao.register(MappingServiceNoMaskKeyConvertor.class);
         eid = new LispIpv4Address(1);
         rloc = new LispIpv4Address(11);
     }
@@ -69,6 +81,62 @@ public class InMemoryDAOTest extends BaseTestCase {
         assertNull(testedInMemoryDao.get(eid));
 
         assertFalse(testedInMemoryDao.remove(eid));
+    }
+
+    @Test
+    public void timeOut__Basic() throws Exception {
+
+        MappingServiceValue value = new MappingServiceValue();
+        value.setRlocs(new ArrayList<MappingServiceRLOC>());
+        MappingServiceRLOC mappingServiceRloc = new MappingServiceRLOC(new LocatorRecord().setLocator(rloc), 120, MapReplyAction.NoAction, true);
+        value.getRlocs().add(mappingServiceRloc);
+        testedInMemoryDao.put(MappingServiceKeyUtil.generateMappingServiceKey(eid), new MappingEntry<MappingServiceValue>("value", value));
+
+        assertEquals(rloc, ((MappingServiceValue) testedInMemoryDao.get(MappingServiceKeyUtil.generateMappingServiceKey(eid)).get("value"))
+                .getRlocs().get(0).getRecord().getLocator());
+
+        testedInMemoryDao.setTimeUnit(TimeUnit.NANOSECONDS);
+
+        assertNull(testedInMemoryDao.get(eid));
+
+        testedInMemoryDao.setTimeUnit(TimeUnit.MINUTES);
+
+        assertEquals(rloc, ((MappingServiceValue) testedInMemoryDao.get(MappingServiceKeyUtil.generateMappingServiceKey(eid)).get("value"))
+                .getRlocs().get(0).getRecord().getLocator());
+    }
+
+    @Test
+    public void clean__Basic() throws Exception {
+
+        MappingServiceValue value = new MappingServiceValue();
+        value.setRlocs(new ArrayList<MappingServiceRLOC>());
+        MappingServiceRLOC mappingServiceRloc = new MappingServiceRLOC(new LocatorRecord().setLocator(rloc), 120, MapReplyAction.NoAction, true);
+        value.getRlocs().add(mappingServiceRloc);
+        testedInMemoryDao.put(MappingServiceKeyUtil.generateMappingServiceKey(eid), new MappingEntry<MappingServiceValue>("value", value));
+
+        assertEquals(rloc, ((MappingServiceValue) testedInMemoryDao.get(MappingServiceKeyUtil.generateMappingServiceKey(eid)).get("value"))
+                .getRlocs().get(0).getRecord().getLocator());
+
+        testedInMemoryDao.cleanOld();
+
+        assertEquals(rloc, ((MappingServiceValue) testedInMemoryDao.get(MappingServiceKeyUtil.generateMappingServiceKey(eid)).get("value"))
+                .getRlocs().get(0).getRecord().getLocator());
+
+        testedInMemoryDao.setTimeUnit(TimeUnit.NANOSECONDS);
+
+        assertNull(testedInMemoryDao.get(eid));
+
+        testedInMemoryDao.setTimeUnit(TimeUnit.MINUTES);
+
+        assertEquals(rloc, ((MappingServiceValue) testedInMemoryDao.get(MappingServiceKeyUtil.generateMappingServiceKey(eid)).get("value"))
+                .getRlocs().get(0).getRecord().getLocator());
+
+        testedInMemoryDao.setTimeUnit(TimeUnit.NANOSECONDS);
+        testedInMemoryDao.cleanOld();
+        assertNull(testedInMemoryDao.get(eid));
+        testedInMemoryDao.setTimeUnit(TimeUnit.MINUTES);
+        assertNull(testedInMemoryDao.get(eid));
+
     }
 
     @Test(expected = IllegalArgumentException.class)

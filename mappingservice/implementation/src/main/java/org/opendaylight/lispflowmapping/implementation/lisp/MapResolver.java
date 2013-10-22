@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
@@ -85,7 +86,6 @@ public class MapResolver implements IMapResolverAsync {
             MappingServiceValue value = (MappingServiceValue) locators.get("value");
             for (MappingServiceRLOC rloc : value.getRlocs()) {
                 addLocator(eidToLocators, rloc);
-
             }
         } catch (ClassCastException cce) {
         }

@@ -130,6 +130,7 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, new LispIpv4Address("1.2.3.4")));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
+        record.setRecordTtl(100);
         LocatorRecord locator = new LocatorRecord().setLocator(new LispIpv4Address(0x04030201));
         locator.setLocalLocator(false);
         locator.setRouted(true);
@@ -158,6 +159,7 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
+        record.setRecordTtl(100);
         record.setAction(MapReplyAction.NativelyForward);
         record.setAuthoritative(true);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
@@ -247,6 +249,7 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
 
         EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
+        record.setRecordTtl(100);
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
         record.addLocator(new LocatorRecord().setLocator(new LispIpv6Address("::1")));
         record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address("1.8.2.7")));
@@ -273,11 +276,12 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest.addEidRecord(new EidRecord((byte) 0, v6Address));
 
         EidToLocatorRecord record1 = new EidToLocatorRecord().setPrefix(v4Address);
+        record1.setRecordTtl(100);
         record1.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
 
         EidToLocatorRecord record2 = new EidToLocatorRecord().setPrefix(v6Address);
         record2.addLocator(new LocatorRecord().setLocator(new LispIpv6Address("0:0:0:0:0:0:0:1")));
-        // prepareMapping(record2);
+        record2.setRecordTtl(100);
         prepareMapping(record1, record2);
 
         MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);

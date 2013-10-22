@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public interface ILispDAO {
 
@@ -25,4 +26,12 @@ public interface ILispDAO {
     public void clearAll();
 
     public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType);
+
+    public TimeUnit getTimeUnit();
+
+    public void setTimeUnit(TimeUnit timeUnit);
+
+    public int getCleanInterval();
+
+    public void setCleanInterval(int cleanInterval);
 }

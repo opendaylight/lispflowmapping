@@ -11,8 +11,12 @@ package org.opendaylight.lispflowmapping.implementation.dao;
 import java.lang.reflect.ParameterizedType;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.opendaylight.controller.clustering.services.CacheConfigException;
 import org.opendaylight.controller.clustering.services.CacheExistException;
@@ -23,6 +27,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,20 +39,31 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     private IClusterContainerServices clusterContainerService = null;
     private ConcurrentMap<Class<?>, Map<Object, Map<String, Object>>> typeToKeysToValues;
     private final String CACHE_NAME = "mappingServiceCache";
+    private TimeUnit timeUnit = TimeUnit.SECONDS;
+    private int recordTimeOut = 240;
+    private int cleanInterval = 10;
+    private ScheduledExecutorService scheduler;
 
     void setClusterContainerService(IClusterContainerServices s) {
         logger.debug("Cluster Service set");
         this.clusterContainerService = s;
         allocateCache();
         retrieveCache();
+        scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(new Runnable() {
+
+            public void run() {
+                cleanOld();
+            }
+        }, 0, cleanInterval, timeUnit);
     }
 
     void unsetClusterContainerService(IClusterContainerServices s) {
         logger.debug("Cluster Service unset");
         if (this.clusterContainerService == s) {
             this.clusterContainerService = null;
-
         }
+        scheduler.shutdownNow();
     }
 
     @SuppressWarnings("deprecation")
@@ -66,7 +83,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         logger.debug("Cache successfully created for ClusterDAOService");
     }
 
-    @SuppressWarnings( { "unchecked", "deprecation" })
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private void retrieveCache() {
         if (this.clusterContainerService == null) {
             logger.error("un-initialized clusterContainerService, can't retrieve cache");
@@ -120,6 +137,26 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         return (V) keyToValues.get(valueKey.getKey());
     }
 
+    public void cleanOld() {
+        getAll(new IRowVisitor() {
+            public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
+                if (value instanceof MappingServiceValue) {
+                    MappingServiceValue msv = (MappingServiceValue) value;
+                    for (Iterator<MappingServiceRLOC> it = msv.getRlocs().iterator(); it.hasNext();) {
+                        MappingServiceRLOC rloc = it.next();
+                        if (isExpired(rloc)) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+
+            private boolean isExpired(MappingServiceRLOC rloc) {
+                return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+            }
+        });
+    }
+
     public <K> Object getSpecific(K key, String valueKey) {
         return getSpecific(key, new MappingValueKey<Object>(valueKey));
     }
@@ -142,4 +179,29 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public void clearAll() {
         typeToKeysToValues.clear();
     }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setRecordTimeOut(int recordTimeOut) {
+        this.recordTimeOut = recordTimeOut;
+    }
+
+    public int getRecordTimeOut() {
+        return recordTimeOut;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public int getCleanInterval() {
+        return cleanInterval;
+    }
+
+    public void setCleanInterval(int cleanInterval) {
+        this.cleanInterval = cleanInterval;
+    }
+
 }

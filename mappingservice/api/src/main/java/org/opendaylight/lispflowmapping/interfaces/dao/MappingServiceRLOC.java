@@ -1,5 +1,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
+import java.util.Date;
+
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
 
@@ -9,13 +11,19 @@ public class MappingServiceRLOC {
     private int ttl;
     private MapReplyAction action;
     private boolean authoritative;
+    private Date registerdDate;
 
     public MappingServiceRLOC(LocatorRecord record, int ttl, MapReplyAction action, boolean authoritative) {
+        this(record, ttl, action, authoritative, new Date(System.currentTimeMillis()));
+    }
+
+    public MappingServiceRLOC(LocatorRecord record, int ttl, MapReplyAction action, boolean authoritative, Date registerdDate) {
         super();
         this.record = record;
         this.ttl = ttl;
         this.action = action;
         this.authoritative = authoritative;
+        this.registerdDate = registerdDate;
     }
 
     public LocatorRecord getRecord() {
@@ -50,6 +58,14 @@ public class MappingServiceRLOC {
         this.authoritative = authoritative;
     }
 
+    public Date getRegisterdDate() {
+        return registerdDate;
+    }
+
+    public void setRegisterdDate(Date registerdDate) {
+        this.registerdDate = registerdDate;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -57,7 +73,6 @@ public class MappingServiceRLOC {
         result = prime * result + ((action == null) ? 0 : action.hashCode());
         result = prime * result + (authoritative ? 1231 : 1237);
         result = prime * result + ((record == null) ? 0 : record.hashCode());
-        result = prime * result + ttl;
         return result;
     }
 
@@ -78,8 +93,6 @@ public class MappingServiceRLOC {
             if (other.record != null)
                 return false;
         } else if (!record.equals(other.record))
-            return false;
-        if (ttl != other.ttl)
             return false;
         return true;
     }

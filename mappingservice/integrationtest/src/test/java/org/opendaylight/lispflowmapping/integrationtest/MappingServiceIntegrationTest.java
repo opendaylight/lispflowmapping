@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -42,11 +43,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
@@ -906,6 +909,49 @@ public class MappingServiceIntegrationTest {
         assertEquals(4, mapReply.getNonce());
         assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
 
+    }
+
+    public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
+
+        LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
+        MapRequest mapRequest = new MapRequest();
+        mapRequest.setNonce(4);
+        mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
+        mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
+        sendMapRequest(mapRequest);
+        MapReply mapReply = recieveMapReply();
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        etlr.setPrefix(eid);
+        etlr.setMaskLength(32);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(new LispIpv4Address("4.3.2.1"));
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+        sendMapRegister(mapRegister);
+        MapNotify mapNotify = recieveMapNotify();
+        assertEquals(8, mapNotify.getNonce());
+        sendMapRequest(mapRequest);
+        mapReply = recieveMapReply();
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+        ServiceReference r = bc.getServiceReference(ILispDAO.class.getName());
+        if (r != null) {
+            ClusterDAOService clusterService = (ClusterDAOService) bc.getService(r);
+            clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
+            sendMapRequest(mapRequest);
+            mapReply = recieveMapReply();
+            assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
+            clusterService.setTimeUnit(TimeUnit.MINUTES);
+            sendMapRequest(mapRequest);
+            mapReply = recieveMapReply();
+            assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+        }
     }
 
     private MapReply recieveMapReply() throws SocketTimeoutException {

@@ -10,20 +10,37 @@ package org.opendaylight.lispflowmapping.implementation.dao;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 
 public class InMemoryDAO implements ILispDAO, IQueryAll {
     private Map<Class<?>, Map<Object, Map<String, Object>>> typeToKeysToValues;
+    private TimeUnit timeUnit = TimeUnit.SECONDS;
+    private int recordTimeOut = 240;
+    private int cleanInterval = 10;
+    private ScheduledExecutorService scheduler;
 
     public InMemoryDAO() {
         typeToKeysToValues = new HashMap<Class<?>, Map<Object, Map<String, Object>>>();
+        scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(new Runnable() {
+
+            public void run() {
+                cleanOld();
+            }
+        }, 0, cleanInterval, timeUnit);
     }
 
     public void getAll(IRowVisitor visitor) {
@@ -34,6 +51,26 @@ public class InMemoryDAO implements ILispDAO, IQueryAll {
                 }
             }
         }
+    }
+
+    public void cleanOld() {
+        getAll(new IRowVisitor() {
+            public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
+                if (value instanceof MappingServiceValue) {
+                    MappingServiceValue msv = (MappingServiceValue) value;
+                    for (Iterator<MappingServiceRLOC> it = msv.getRlocs().iterator(); it.hasNext();) {
+                        MappingServiceRLOC rloc = it.next();
+                        if (isExpired(rloc)) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+
+            private boolean isExpired(MappingServiceRLOC rloc) {
+                return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+            }
+        });
     }
 
     public <K> void put(K key, MappingEntry<?>... values) {
@@ -87,5 +124,27 @@ public class InMemoryDAO implements ILispDAO, IQueryAll {
 
     public void clearAll() {
         typeToKeysToValues.clear();
+    }
+
+    public TimeUnit getTimeUnit() {
+        return TimeUnit.MINUTES;
+    }
+
+    public void setTimeUnit(int recordTimeOut) {
+        this.recordTimeOut = recordTimeOut;
+    }
+
+    public int getRecordTimeOut() {
+        return recordTimeOut;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+    }
+
+    public int getCleanInterval() {
+        return 0;
+    }
+
+    public void setCleanInterval(int cleanInterval) {
     }
 }
