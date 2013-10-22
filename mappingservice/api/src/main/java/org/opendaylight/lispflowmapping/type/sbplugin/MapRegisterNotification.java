@@ -3,7 +3,7 @@ package org.opendaylight.lispflowmapping.type.sbplugin;
 import java.net.InetAddress;
 
 import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 
 public class MapRegisterNotification implements LispNotification {
     private MapRegister mapRegister;
@@ -14,7 +14,7 @@ public class MapRegisterNotification implements LispNotification {
         this.address = sourceAddress;
     }
 
-    public Class<? extends DataContainer> getImplementedInterface() {
+    public Class<? extends DataObject> getImplementedInterface() {
         return LispNotification.class;
     }
 
