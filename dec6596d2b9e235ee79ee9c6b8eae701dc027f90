@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ebd82955",
+        "filename": "mappingservice/northbound/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-22T02:51:18Z",
+      "side": 1,
+      "message": "The version for schema in enunciate.xml is 1.26. Looking at vtn project version is not hard coded in pom.xml. Could this be the source of the error for the build?",
+      "revId": "dec6596d2b9e235ee79ee9c6b8eae701dc027f90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_cbdd6544",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/LispAddressConvertorNB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-22T02:51:18Z",
+      "side": 1,
+      "message": "Maybe change name to convertRecordListToGenericAddress.\nThis method doesnt seem to be used anywhere.",
+      "revId": "dec6596d2b9e235ee79ee9c6b8eae701dc027f90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_abe23101",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/LispAddressConvertorNB.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-22T02:51:18Z",
+      "side": 1,
+      "message": "Can change name to convertRecordToGenericAddress",
+      "revId": "dec6596d2b9e235ee79ee9c6b8eae701dc027f90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8be76d12",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-22T02:51:18Z",
+      "side": 1,
+      "message": "handleMapRequest may return null. best to check before calling methods on MapReply.",
+      "revId": "dec6596d2b9e235ee79ee9c6b8eae701dc027f90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
