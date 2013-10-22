@@ -95,9 +95,6 @@
 		<sonar.language>java</sonar.language>
 		<!-- Dependency Versions -->
         <slf4j.version>1.7.2</slf4j.version>
-        <!-- <yang.version>0.5.9-SNAPSHOT</yang.version>
-        <yang.binding.version>0.6.0-SNAPSHOT</yang.binding.version>
-        <yang.codegen.version>0.6.0-SNAPSHOT</yang.codegen.version>-->
         <osgi.core.version>5.0.0</osgi.core.version>
         <junit.version>4.8.1</junit.version>
         <xtend.version>2.4.3</xtend.version>
