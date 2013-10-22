@@ -127,8 +127,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping {
     }
 
     public void _addDefaultPassword(final CommandInterpreter ci) {
-        addAuthenticationKey(new LispIpv4Address("10.0.0.1"), 1, "password");
-        addAuthenticationKey(new LispIpv4Address("0.0.0.1"), 1, "password");
+        addAuthenticationKey(new LispIpv4Address("0.0.0.0"), 0, "password");
     }
 
     public String getHelp() {

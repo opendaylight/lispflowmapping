@@ -91,7 +91,7 @@ public class MapServer implements IMapServer {
         if (prefix instanceof IMaskable) {
             prefix = ((IMaskable) prefix).clone();
         }
-        while (maskLength > 0) {
+        while (maskLength >= 0) {
             IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
             Map<String, ?> daoMap = dao.get(key);
             if (daoMap != null) {
