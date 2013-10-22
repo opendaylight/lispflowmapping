@@ -358,6 +358,38 @@ public class MappingServiceIntegrationTest {
         assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
     }
 
+    public void mapRequestMapRegisterAndMapRequest() throws SocketTimeoutException {
+
+        LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
+        MapRequest mapRequest = new MapRequest();
+        mapRequest.setNonce(4);
+        mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
+        mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
+        sendMapRequest(mapRequest);
+        MapReply mapReply = recieveMapReply();
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        etlr.setPrefix(eid);
+        etlr.setMaskLength(32);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(new LispIpv4Address("4.3.2.1"));
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+        sendMapRegister(mapRegister);
+        MapNotify mapNotify = recieveMapNotify();
+        assertEquals(8, mapNotify.getNonce());
+        sendMapRequest(mapRequest);
+        mapReply = recieveMapReply();
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+
+    }
+
     private MapReply recieveMapReply() throws SocketTimeoutException {
         return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
