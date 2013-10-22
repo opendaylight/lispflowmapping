@@ -28,10 +28,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
+import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.lispflowmapping.type.lisp.MapReply;
+import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -278,6 +287,36 @@ public class MappingServiceIntegrationTest {
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
         MapNotify reply = MapNotifySerializer.getInstance().deserialize(readBuf);
         assertEquals(7, reply.getNonce());
+    }
+
+    @Test
+    public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
+        etlr.setPrefix(eid);
+        etlr.setMaskLength(32);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(new LispIpv4Address("4.3.2.1"));
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+        sendPacket(MapRegisterSerializer.getInstance().serialize(mapRegister).array());
+        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        MapNotify mapNotify = MapNotifySerializer.getInstance().deserialize(readBuf);
+        assertEquals(8, mapNotify.getNonce());
+        MapRequest mapRequest = new MapRequest();
+        mapRequest.setNonce(4);
+        mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
+        mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
+        sendPacket(MapRequestSerializer.getInstance().serialize(mapRequest).array());
+        readBuf = ByteBuffer.wrap(receivePacket().getData());
+        MapReply mapReply = MapReplySerializer.getInstance().deserialize(readBuf);
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+
     }
 
     @Test
