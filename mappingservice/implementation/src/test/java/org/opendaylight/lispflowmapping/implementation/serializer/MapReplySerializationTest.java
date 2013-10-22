@@ -54,6 +54,57 @@ public class MapReplySerializationTest extends BaseTestCase {
     }
 
     @Test
+    public void deserialize__SomeFlags() throws Exception {
+
+        MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("2A 00 00 00 00 00 " //
+                + "00 00 00 00 00 00"));
+        assertEquals(true, mr.isProbe());
+        assertEquals(false, mr.isEchoNonceEnabled());
+        assertEquals(true, mr.isSecurityEnabled());
+    }
+
+    @Test
+    public void deserialize__All() throws Exception {
+        MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 " //
+                + "00 00 00 00 00 02 00 00 " //
+                + "00 02 02 20 00 00 00 00 " //
+                + "00 01 01 02 03 04 01 02 " //
+                + "03 04 00 06 00 01 0a 0a " //
+                + "0a 0a 04 03 02 01 00 01 " //
+                + "00 02 00 01 00 02 00 03 " //
+                + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 02 01"));
+        assertEquals(2, mr.getNonce());
+        assertEquals(new LispIpv4Address("1.2.3.4"), mr.getEidToLocatorRecords().get(0).getPrefix());
+        assertEquals(new LispIpv4Address("4.3.2.1"), mr.getEidToLocatorRecords().get(1).getPrefix());
+        assertEquals(false, mr.getEidToLocatorRecords().get(0).isAuthoritative());
+        assertEquals(true, mr.getEidToLocatorRecords().get(1).isAuthoritative());
+        assertEquals(MapReplyAction.NoAction, mr.getEidToLocatorRecords().get(0).getAction());
+        assertEquals(MapReplyAction.NativelyForward, mr.getEidToLocatorRecords().get(1).getAction());
+        assertEquals(0, mr.getEidToLocatorRecords().get(0).getMapVersion());
+        assertEquals(2, mr.getEidToLocatorRecords().get(1).getMapVersion());
+        assertEquals(32, mr.getEidToLocatorRecords().get(0).getMaskLength());
+        assertEquals(16, mr.getEidToLocatorRecords().get(1).getMaskLength());
+        assertEquals(2, mr.getEidToLocatorRecords().get(0).getRecordTtl());
+        assertEquals(0, mr.getEidToLocatorRecords().get(1).getRecordTtl());
+        assertEquals(new LispIpv6Address("1:2:3:4:5:6:7:8"), mr.getEidToLocatorRecords().get(0).getLocators().get(1).getLocator());
+        assertEquals(new LispIpv4Address("10.10.10.10"), mr.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+        assertEquals(1, mr.getEidToLocatorRecords().get(0).getLocators().get(0).getPriority());
+        assertEquals(2, mr.getEidToLocatorRecords().get(0).getLocators().get(0).getWeight());
+        assertEquals(3, mr.getEidToLocatorRecords().get(0).getLocators().get(0).getMulticastPriority());
+        assertEquals(4, mr.getEidToLocatorRecords().get(0).getLocators().get(0).getMulticastWeight());
+        assertEquals(4, mr.getEidToLocatorRecords().get(0).getLocators().get(1).getPriority());
+        assertEquals(3, mr.getEidToLocatorRecords().get(0).getLocators().get(1).getWeight());
+        assertEquals(2, mr.getEidToLocatorRecords().get(0).getLocators().get(1).getMulticastPriority());
+        assertEquals(1, mr.getEidToLocatorRecords().get(0).getLocators().get(1).getMulticastWeight());
+        assertEquals(true, mr.getEidToLocatorRecords().get(0).getLocators().get(0).isLocalLocator());
+        assertEquals(true, mr.getEidToLocatorRecords().get(0).getLocators().get(0).isRlocProbed());
+        assertEquals(false, mr.getEidToLocatorRecords().get(0).getLocators().get(0).isRouted());
+        assertEquals(false, mr.getEidToLocatorRecords().get(0).getLocators().get(1).isLocalLocator());
+        assertEquals(false, mr.getEidToLocatorRecords().get(0).getLocators().get(1).isRlocProbed());
+        assertEquals(true, mr.getEidToLocatorRecords().get(0).getLocators().get(1).isRouted());
+    }
+
+    @Test
     public void serialize__MultipleRecordsWithoutRLOCs() throws Exception {
         MapReply mr = new MapReply();
         mr.addEidToLocator(new EidToLocatorRecord().setPrefix(new LispIpv6Address("::8")));
@@ -70,6 +121,24 @@ public class MapReplySerializationTest extends BaseTestCase {
 
         packet.position(packet.position() + 12); /* EID in second record */
         assertEquals(0x08020405, packet.getInt());
+    }
+
+    @Test
+    public void deserialize__MultipleRecordsWithoutRLOCs() throws Exception {
+        MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 " //
+                + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 02 01"));
+        assertEquals(new LispIpv4Address("1.2.3.4"), mr.getEidToLocatorRecords().get(0).getPrefix());
+        assertEquals(new LispIpv4Address("4.3.2.1"), mr.getEidToLocatorRecords().get(1).getPrefix());
+        assertEquals(false, mr.getEidToLocatorRecords().get(0).isAuthoritative());
+        assertEquals(true, mr.getEidToLocatorRecords().get(1).isAuthoritative());
+        assertEquals(MapReplyAction.NoAction, mr.getEidToLocatorRecords().get(0).getAction());
+        assertEquals(MapReplyAction.NativelyForward, mr.getEidToLocatorRecords().get(1).getAction());
+        assertEquals(0, mr.getEidToLocatorRecords().get(0).getMapVersion());
+        assertEquals(2, mr.getEidToLocatorRecords().get(1).getMapVersion());
+        assertEquals(32, mr.getEidToLocatorRecords().get(0).getMaskLength());
+        assertEquals(16, mr.getEidToLocatorRecords().get(1).getMaskLength());
+        assertEquals(1, mr.getEidToLocatorRecords().get(0).getRecordTtl());
+        assertEquals(0, mr.getEidToLocatorRecords().get(1).getRecordTtl());
     }
 
     @Test
