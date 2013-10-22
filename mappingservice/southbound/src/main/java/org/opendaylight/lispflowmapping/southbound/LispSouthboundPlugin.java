@@ -67,12 +67,15 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
 
     public void destroy() {
         logger.debug("LISP (RFC6830) Mapping Service is destroyed!");
+        if (thread != null) {
+            thread.stopRunning();
+        }
         thread = null;
         service = null;
     }
 
     private class LispIoThread extends Thread {
-        private boolean running;
+        private volatile boolean running;
 
         public LispIoThread() {
             super("Lisp Thread");
@@ -133,10 +136,12 @@ public class LispSouthboundPlugin implements ILispSouthboundPlugin {
             }
 
             socket.close();
+            logger.info("Socket closed");
         }
 
         public void stopRunning() {
             running = false;
+            System.out.println("called");
         }
     }
 
