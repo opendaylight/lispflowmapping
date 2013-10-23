@@ -18,6 +18,7 @@
                 <module>southbound</module>
                 <module>northbound</module>
                 <module>integrationtest</module>
+                <module>lispyangmodule</module>
         </modules>
 	<dependencies>
 	        <dependency>
