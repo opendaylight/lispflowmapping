@@ -225,6 +225,8 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(),
                 mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject(),
 
+                mavenBundle(ODL, "config-api").versionAsInProject(), //
+                mavenBundle(ODL, "config-manager").versionAsInProject(), //
                 mavenBundle("commons-io", "commons-io").versionAsInProject(),
 
                 mavenBundle("commons-fileupload", "commons-fileupload").versionAsInProject(),
@@ -280,6 +282,7 @@ public class MappingServiceIntegrationTest {
 
                 // Specific bundles
                 mavenBundle(ODL, "sal-binding-api").versionAsInProject(), //
+                mavenBundle(ODL, "sal-binding-config").versionAsInProject(),
                 mavenBundle(ODL, "sal-binding-broker-impl").versionAsInProject(), //
                 mavenBundle(ODL, "sal-common").versionAsInProject(), //
                 mavenBundle(ODL, "sal-common-api").versionAsInProject(), //
@@ -290,7 +293,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(YANG, "yang-common").versionAsInProject(), //
                 mavenBundle(YANG + ".thirdparty", "xtend-lib-osgi").versionAsInProject(),//
                 mavenBundle("com.google.guava", "guava").versionAsInProject(), //
-                mavenBundle("org.javassist", "javassist").versionAsInProject(),
+                mavenBundle("org.javassist", "javassist").versionAsInProject(), //
 
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
@@ -563,20 +566,20 @@ public class MappingServiceIntegrationTest {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
-                /*  try {
-                      String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                      if (host != null) {
-                          logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                          logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                      } else {
-                          element.start();
-                      }
-                  } catch (BundleException e) {
-                      logger.error("BundleException:", e);
-                      fail();
-                  }
+                /* try {
+                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
+                     if (host != null) {
+                         logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
+                         logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                     } else {
+                         element.start();
+                     }
+                 } catch (BundleException e) {
+                     logger.error("BundleException:", e);
+                     fail();
+                 }
 
-                debugit = true;*/
+                 debugit = true;*/
             }
         }
         if (debugit) {

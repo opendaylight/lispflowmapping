@@ -94,10 +94,10 @@
 		<sonar.jacoco.itReportPath>../implementaiton/target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 		<!-- Dependency Versions -->
-        <slf4j.version>1.7.2</slf4j.version>
-        <osgi.core.version>5.0.0</osgi.core.version>
-        <junit.version>4.8.1</junit.version>
-        <xtend.version>2.4.3</xtend.version>
+		<slf4j.version>1.7.2</slf4j.version>
+		<osgi.core.version>5.0.0</osgi.core.version>
+		<junit.version>4.8.1</junit.version>
+		<xtend.version>2.4.3</xtend.version>
 	</properties>
 	<dependencies>
 
@@ -107,11 +107,11 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-            <groupId>org.opendaylight.controller</groupId>
-            <artifactId>sal-common-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-		
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal-common-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>sal-common-util</artifactId>
@@ -204,7 +204,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -236,11 +235,6 @@
 			<artifactId>org.eclipse.equinox.util</artifactId>
 			<version>1.0.400.v20120522-2049</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>equinoxSDK381</groupId>
-			<artifactId>org.eclipse.osgi.services</artifactId>
-			<version>3.3.100.v20120522-1822</version>
-		</dependency>-->
 		<dependency>
 			<groupId>equinoxSDK381</groupId>
 			<artifactId>org.eclipse.osgi</artifactId>
@@ -555,38 +549,11 @@
 			<artifactId>javassist</artifactId>
 			<version>3.17.1-GA</version>
 		</dependency>
-		<!-- YANG Tools Dependencies -->
-	<!-- 	<dependency>
-			<groupId>org.opendaylight.yangtools</groupId>
-			<artifactId>yang-binding</artifactId>
-			<version>${yang.binding.version}</version>
-		</dependency>
 		<dependency>
-			<groupId>org.opendaylight.yangtools</groupId>
-			<artifactId>yang-common</artifactId>
-			<version>${yang.version}</version>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>config-manager</artifactId>
+			<version>0.2.2-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.yangtools</groupId>
-			<artifactId>yang-data-api</artifactId>
-			<version>${yang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.yangtools</groupId>
-			<artifactId>yang-model-api</artifactId>
-			<version>${yang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.yangtools</groupId>
-			<artifactId>yang-data-util</artifactId>
-			<version>${yang.version}</version>
-		</dependency>-->
-		<!-- <dependency>
-          <groupId>org.opendaylight.yangtools</groupId>
-          <artifactId>concepts</artifactId>
-          <version>0.1.1-SNAPSHOT</version>
-        </dependency>-->
-		
 	</dependencies>
 
 </project>
