@@ -20,7 +20,7 @@
     description
       "YANG version of the mapping service.";
 
-    revision "2013-10-27" {
+    revision "2013-10-31" {
       description
         "mapping service";
     }
