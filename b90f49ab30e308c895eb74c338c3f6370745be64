@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_d409862d",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-10-24T10:49:39Z",
+      "side": 1,
+      "message": "sendRegister\nsendRequest.\nreceiveNotify\nreceiveReply",
+      "revId": "b90f49ab30e308c895eb74c338c3f6370745be64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
