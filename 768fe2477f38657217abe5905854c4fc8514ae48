@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_546236d9",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "Move to parent - both of them",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f4524a12",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/sbplugin/ILispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "open a bug on InetAddress and other fields that might be stored in Notify/Reply",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_345fc210",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "versions will be inherited from the parent",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b45cd226",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/Activator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "check if the unset is still called",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d4574601",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "Listen to general notification, create 2 impls to different notifs..\nask mailiing list if this is normal",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b4aa92d2",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "delete this",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_94af8ee3",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "move to parent",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_9441ce3b",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "Open another ticket for working with netty",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_544b5659",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "debug",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_743e5aba",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "Check if it\u0027s \u0027this\u0027.",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b473b2b0",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "refactor to private method",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_54b9162d",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-10-24T12:02:14Z",
+      "side": 1,
+      "message": "Add the fact there are ignored tests to the TICKET",
+      "revId": "768fe2477f38657217abe5905854c4fc8514ae48",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
