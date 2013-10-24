@@ -1,11 +1,11 @@
-  module mappingservice {
+  module lispflowmapping {
 
     
 
     namespace
-      "mappingservice";
+      "lispflowmapping";
 
-    prefix mappingservice;
+    prefix lispflowmapping;
     
     import ietf-inet-types {
                prefix inet;
@@ -194,24 +194,71 @@
     
     }
     
-    container MapRegisterNotification {
+    grouping MapRegisterNotification {
     container MapRegister {
     uses MapRegister;
     }
     leaf address {
     type inet:ip-address;
     }
+    leaf port {
+    type inet:port-number;
+    }
     }
     
-    container MapRequestNotification {
+    grouping MapNotifyNotification {
+    container MapNotify {
+    uses MapNotify;
+    }
+    leaf address {
+    type inet:ip-address;
+    }
+    leaf port {
+    type inet:port-number;
+    }
+    }
+    
+    grouping MapRequestNotification {
     container MapRequest {
     uses MapRequest;
     }
     leaf address {
     type inet:ip-address;
     }
+    leaf port {
+    type inet:port-number;
     }
-
+    }
+    
+    
+    grouping MapReplyNotification {
+    container MapReply {
+    uses MapReply;
+    }
+    leaf address {
+    type inet:ip-address;
+    }
+    leaf port {
+    type inet:port-number;
+    }
+    }
+    
+    rpc handleMapNotify {
+    input {
+    container MapNotifyNotificationMessage {
+    uses MapNotifyNotification;
+    }
+    }
+    }
+    
+    rpc handleMapReply {
+    input {
+    container MapReplyNotificationMessage {
+    uses MapReplyNotification;
+    }
+    }
+    }
+    
 
 	 }
 	 
