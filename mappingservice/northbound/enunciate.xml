@@ -7,6 +7,6 @@
   </services>
 
   <modules>
-    <docs docsDir="rest" title="LISP flowmapping REST API" includeExampleXml="true" includeExampleJson="true"/>
+    <docs docsDir="rest" title="LISP flowmapping REST API" includeExampleXml="false" includeExampleJson="true"/>
   </modules>
 </enunciate>

@@ -83,6 +83,10 @@ public class LispAddressGeneric{
 	@XmlElement
 	List<LispAddressGeneric> addresses;
 	
+	@XmlElement
+	String distinguishedName;
+	
+	
 	public LispAddressGeneric(){}
 	
 	
@@ -137,6 +141,10 @@ public class LispAddressGeneric{
 		case MAC:
 			LispMACAddress macAddress = (LispMACAddress) lispAddress;
 			mac = macAddress.getMAC();
+			break;
+		case DISTINGUISHED_NAME:
+			LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) lispAddress;
+			distinguishedName = distinguishedNameAddress.getDistinguishedName();
 			break;
 		case LCAF:
 			LispLCAFAddress lcafAddress = (LispLCAFAddress) lispAddress;
@@ -274,14 +282,6 @@ public class LispAddressGeneric{
 		this.protocol = protocol;
 	}
 
-	public int getIPTos() {
-		return ipTos;
-	}
-
-	public void setIPTos(int iPTos) {
-		ipTos = iPTos;
-	}
-
 	public short getLocalPort() {
 		return localPort;
 	}
@@ -376,6 +376,26 @@ public class LispAddressGeneric{
 
 	public void setAddresses(List<LispAddressGeneric> addresses) {
 		this.addresses = addresses;
+	}
+
+
+	public int getIpTos() {
+		return ipTos;
+	}
+
+
+	public void setIpTos(int ipTos) {
+		this.ipTos = ipTos;
+	}
+
+
+	public String getDistinguishedName() {
+		return distinguishedName;
+	}
+
+
+	public void setDistinguishedName(String distinguishedName) {
+		this.distinguishedName = distinguishedName;
 	}
 
     
