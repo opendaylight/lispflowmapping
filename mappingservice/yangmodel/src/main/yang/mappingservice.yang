@@ -25,14 +25,120 @@
         "mapping service";
     }
     
+    grouping LispAFIAddress {
+    leaf afi {
+               type int16;
+       }
+    }
+    
+    grouping LispPrimitiveAddress {
+       uses LispAFIAddress;
+       choice primitiveAddress {
+       case Ipv4 {
+       leaf Ipv4Address {
+               type inet:ipv4-address;
+               reference "https://tools.ietf.org/html/rfc3209#section-4.6.2.1";
+       }
+       }
+       case Ipv6 {
+               leaf Ipv6Address {
+               type inet:ipv6-address;
+       }
+       }
+       case MAC {
+       leaf MacAddress {
+               type int64;
+               // TBD change to standard MAC type 
+       }
+       }
+       case distName {
+               leaf distinguishedName {
+               type string;
+       }
+       }
+    }//choice
+    }//grouping
+    
+    grouping LispLcafAddress {
+    uses LispAFIAddress;
+       leaf LcafType {
+               type enumeration{
+                       enum Segment;
+                       enum SourceDest;
+                       enum TE;
+               }
+       }
+       leaf res2 {
+               type int8;
+       }
+    }
+    
+    grouping LcafSegment {
+       uses LispLcafAddress;
+       leaf instanceId {
+               type uint32{
+               range "0 .. 16777215";
+               }
+       }
+       container Address {
+               uses LispPrimitiveAddress;
+       }
+    }
+    
+    // Primitive Address or SegmentLCAF
+    grouping LispSimpleAddress { 
+       choice SegmentAddress {
+               case Primitive {
+                       uses LispPrimitiveAddress;
+               }
+               case Segment {
+                       uses LcafSegment;
+               }
+       }
+    }
+    
+    
+
+               grouping SourceDestLcaf {
+                uses LispLcafAddress;
+                       container srcAddress {
+                               uses LispSimpleAddress;
+                       }
+                       container dstAddress {
+                               uses LispSimpleAddress;
+                       }
+                      leaf srcMaskLength {
+                               type int8;
+                       }
+                       leaf dstMaskLength {
+                               type int8;
+                       }
+                       leaf reserved {
+                               type int16;
+                       }
+                       }
+
+       
+       grouping LispAddress {
+               choice Address {
+                       case simpleAddress {
+                               uses LispSimpleAddress;
+                       }
+                       case complexAddress {
+                               uses LispLcafAddress;
+                       }
+               } 
+       }
+    
+    
     typedef LispBaseAddress {
     type empty;
     	description "an address in the mapping service";
     }
     
     grouping EidRecord {
-    leaf prefix {
-    type LispBaseAddress; 
+    container Prefix {
+    uses LispAddress; 
     }
     leaf mask {
     type int8;
@@ -61,8 +167,8 @@
     leaf routed {
     type boolean;
     }
-    leaf locator {
-    type LispBaseAddress; 
+    container Locator {
+    uses LispAddress; 
     }
     }
     
@@ -84,8 +190,8 @@
     leaf authoritative {
     type boolean;
     }
-    leaf prefix {
-    type LispBaseAddress; 
+    container Prefix {
+    uses LispAddress; 
     }
     list locatores {
     uses LocatorRecord;
@@ -161,12 +267,12 @@
     }leaf nounce {
     type int64;
     }
-    leaf sourceEid {
-    type LispBaseAddress; 
+    container SourceEid {
+    uses LispAddress; 
     }
     list itrRlocs {
-    leaf itrRloc {
-    type LispBaseAddress; 
+    container itrRloc {
+    uses LispAddress; 
     }
     }
     list eidRecords {
