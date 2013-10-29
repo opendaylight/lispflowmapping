@@ -20,6 +20,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispASAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispApplicationDataLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
@@ -61,6 +62,9 @@ public static LispAddress convertToLispAddress(LispAddressGeneric generic){
 		case MAC:
 			lispAddress = new LispMACAddress(generic.getMac());
 			break;
+		case DISTINGUISHED_NAME:
+			lispAddress = new LispDistinguishedNameAddress(generic.getDistinguishedName());
+			break;
 		case LCAF:
 			LispCanonicalAddressFormatEnum lcafEnum = 
 				LispCanonicalAddressFormatEnum.valueOf(generic.getLcafType());
@@ -94,7 +98,7 @@ public static LispAddress convertToLispAddress(LispAddressGeneric generic){
 
 private static LispApplicationDataLCAFAddress convertToApplicationData(LispAddressGeneric generic){
 	return new LispApplicationDataLCAFAddress(
-			(byte) 0, generic.getProtocol(), generic.getIPTos(), generic.getLocalPort(),
+			(byte) 0, generic.getProtocol(), generic.getIpTos(), generic.getLocalPort(),
 			generic.getRemotePort(), convertToLispAddress(generic.getAddress()));
 }
 
@@ -173,7 +177,9 @@ public static void convertGenericToLispAddresses(MapRegister mapRegister){
 	}
 }
 
+
 public static void convertRecordToGenericAddress(EidToLocatorRecord record){
+
 	LispAddress EID;    	
 	List<LocatorRecord> locRecordList;
 	LispAddress RLOC;
