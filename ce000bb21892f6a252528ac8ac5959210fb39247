@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_04b6c73d",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-29T22:39:59Z",
+      "side": 1,
+      "message": "Add should require a WRITE privilege, please change.",
+      "revId": "ce000bb21892f6a252528ac8ac5959210fb39247",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_24b9cb2e",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/NorthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2013-10-29T22:39:59Z",
+      "side": 1,
+      "message": "Delete should require a WRITE privilege. Can you please change the privilege here.",
+      "revId": "ce000bb21892f6a252528ac8ac5959210fb39247",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
