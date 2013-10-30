@@ -1,0 +1,218 @@
+  module mappingservice {
+
+    
+
+    namespace
+      "mappingservice";
+
+    prefix mappingservice;
+    
+    import ietf-inet-types {
+               prefix inet;
+               revision-date 2010-09-24;
+       }
+
+    organization "LISP Flow Mapping";
+
+    contact
+      "David Goldberg <david.goldberg@contextream.com>";
+
+    description
+      "YANG version of the mapping service.";
+
+    revision "2013-10-27" {
+      description
+        "mapping service";
+    }
+    
+    typedef LispBaseAddress {
+    type empty;
+    	description "an address in the mapping service";
+    }
+    
+    grouping EidRecord {
+    leaf prefix {
+    type LispBaseAddress; 
+    }
+    leaf mask {
+    type int8;
+    }
+    }
+    
+    grouping LocatorRecord {
+    leaf priority {
+    type int8;
+    }
+    leaf weight {
+    type int8;
+    }
+    leaf multicastPriority {
+    type int8;
+    }
+    leaf multicastWeight {
+    type int8;
+    }
+    leaf localLocator {
+    type boolean;
+    }
+    leaf rlocProbed {
+    type boolean;
+    }
+    leaf routed {
+    type boolean;
+    }
+    leaf locator {
+    type LispBaseAddress; 
+    }
+    }
+    
+    grouping EidToLocatorRecord {
+    leaf recordTtl {
+    type int32;
+    }
+    leaf maskLength {
+    type int8;
+    }
+    leaf action {
+    type enumeration {
+    enum NoAction;
+    enum NativelyForward;
+    enum SendMapRequest;
+    enum Drop;
+    }
+    }
+    leaf authoritative {
+    type boolean;
+    }
+    leaf prefix {
+    type LispBaseAddress; 
+    }
+    list locatores {
+    uses LocatorRecord;
+    }
+    }
+    
+    grouping MapRegister {
+    leaf recordCount {
+    type int8;
+    }
+    leaf proxyMapReply {
+    type boolean;
+    }leaf wantMapNotify {
+    type boolean;
+    }leaf nounce {
+    type int64;
+    }
+    leaf keyId {
+    type int16;
+    }
+    leaf authenticationData {
+    type binary;
+    }
+    list eidToLocatorRecords {
+    uses EidToLocatorRecord;
+    }
+    }
+    
+    grouping MapNotify {
+    leaf recordCount {
+    type int8;
+    }
+    leaf proxyMapReply {
+    type boolean;
+    }leaf wantMapNotify {
+    type boolean;
+    }leaf nounce {
+    type int64;
+    }
+    leaf keyId {
+    type int16;
+    }
+    leaf authenticationData {
+    type binary;
+    }
+    list eidToLocatorRecords {
+    uses EidToLocatorRecord;
+    }
+    }
+    
+    grouping MapRequest {
+    leaf recordCount {
+    type int8;
+    }leaf irc {
+    type int8;
+    }
+    leaf authoritative {
+    type boolean;
+    }
+    leaf mapDataPresent {
+    type boolean;
+    }
+    leaf probe {
+    type boolean;
+    }
+    leaf smr {
+    type boolean;
+    }
+    leaf pitr {
+    type boolean;
+    }leaf smrInvoked {
+    type boolean;
+    }leaf nounce {
+    type int64;
+    }
+    leaf sourceEid {
+    type LispBaseAddress; 
+    }
+    list itrRlocs {
+    leaf itrRloc {
+    type LispBaseAddress; 
+    }
+    }
+    list eidRecords {
+    uses EidRecord;
+    }
+    
+    }
+    
+    grouping MapReply {
+    leaf recordCount {
+    type int8;
+    }
+    leaf probe {
+    type boolean;
+    }
+    leaf echoNonceEnabled {
+    type boolean;
+    }
+    leaf securityEnabled {
+    type boolean;
+    }
+    list eidToLocatorRecords {
+    uses EidToLocatorRecord;
+    }
+    
+    }
+    
+    container MapRegisterNotification {
+    container MapRegister {
+    uses MapRegister;
+    }
+    leaf address {
+    type inet:ip-address;
+    }
+    }
+    
+    container MapRequestNotification {
+    container MapRequest {
+    uses MapRequest;
+    }
+    leaf address {
+    type inet:ip-address;
+    }
+    }
+
+
+	 }
+	 
+	 
