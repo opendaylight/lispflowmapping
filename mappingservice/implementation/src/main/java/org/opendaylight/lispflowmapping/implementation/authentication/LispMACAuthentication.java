@@ -19,17 +19,17 @@ public class LispMACAuthentication implements ILispAuthentication {
 
     protected static final Logger logger = LoggerFactory.getLogger(LispMACAuthentication.class);
 
-    protected String algorithem;
+    protected String algorithm;
     private byte[] tempAuthenticationData;
     private int authenticationLength;
 
-    public LispMACAuthentication(String algorithem) {
-        this.algorithem = algorithem;
+    public LispMACAuthentication(String algorithm) {
+        this.algorithm = algorithm;
         try {
-            authenticationLength = Mac.getInstance(algorithem).getMacLength();
+            authenticationLength = Mac.getInstance(algorithm).getMacLength();
             tempAuthenticationData = new byte[authenticationLength];
         } catch (NoSuchAlgorithmException e) {
-            logger.error("No such MAC algorithem" + algorithem);
+            logger.error("No such MAC algorithm" + algorithm);
         }
     }
 
@@ -51,15 +51,15 @@ public class LispMACAuthentication implements ILispAuthentication {
     protected byte[] getAuthenticationData(byte[] data, String key) {
         try {
             byte[] keyBytes = key.getBytes();
-            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, algorithem);
-            Mac mac = Mac.getInstance(algorithem);
+            SecretKeySpec signingKey = new SecretKeySpec(keyBytes, algorithm);
+            Mac mac = Mac.getInstance(algorithm);
             mac.init(signingKey);
 
             return mac.doFinal(data);
         } catch (InvalidKeyException e) {
             logger.error("Invalid password" + key);
         } catch (NoSuchAlgorithmException e) {
-            logger.error("No such MAC algorithem" + algorithem);
+            logger.error("No such MAC algorithm" + algorithm);
         }
         return null;
     }
@@ -68,12 +68,12 @@ public class LispMACAuthentication implements ILispAuthentication {
         return authenticationLength;
     }
 
-    public String getAlgorithem() {
-        return algorithem;
+    public String getAlgorithm() {
+        return algorithm;
     }
 
-    public void setAlgorithem(String algorithem) {
-        this.algorithem = algorithem;
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
     }
 
     public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
