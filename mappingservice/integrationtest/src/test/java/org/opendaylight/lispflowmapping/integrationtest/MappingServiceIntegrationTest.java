@@ -1,8 +1,6 @@
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -17,6 +15,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +30,7 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySeria
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
@@ -42,7 +42,13 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispMACAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.ReencapHop;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -318,19 +324,27 @@ public class MappingServiceIntegrationTest {
         MapNotify reply = recieveMapNotify();
         assertEquals(7, reply.getNonce());
     }
-
-    @Test
-    public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
-        MapRegister mapRegister = new MapRegister();
-        mapRegister.setWantMapNotify(true);
-        mapRegister.setNonce(8);
-        EidToLocatorRecord etlr = new EidToLocatorRecord();
-        LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
-        etlr.setPrefix(eid);
-        etlr.setMaskLength(32);
+    
+    private MapReply runIntegrationTest(LispAddress eid) throws SocketTimeoutException {
+    	return runIntegrationTest(eid, -1);
+    }
+    
+    private LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
+    
+    
+    //takes an address, packs it in a MapRegister, sends it, returns the MapReply
+	private MapReply runIntegrationTest(LispAddress eid, int maskLength) throws SocketTimeoutException{
+		MapRegister mapRegister = new MapRegister();
+		mapRegister.setWantMapNotify(true);
+		mapRegister.setNonce(8);
+		EidToLocatorRecord etlr = new EidToLocatorRecord();
+		etlr.setPrefix(eid);
+		if (maskLength != -1) {
+			etlr.setMaskLength(maskLength);
+		}
         etlr.setRecordTtl(254);
         LocatorRecord record = new LocatorRecord();
-        record.setLocator(new LispIpv4Address("4.3.2.1"));
+        record.setLocator(locatorEid);
         etlr.addLocator(record);
         mapRegister.addEidToLocator(etlr);
         sendMapRegister(mapRegister);
@@ -341,10 +355,145 @@ public class MappingServiceIntegrationTest {
         mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
         mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
         sendMapRequest(mapRequest);
-        MapReply mapReply = recieveMapReply();
-        assertEquals(4, mapReply.getNonce());
-        assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+        return recieveMapReply();
+	}
+	
+    @Test
+    public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
+        
+        LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
 
+        MapReply mapReply = runIntegrationTest(eid, 32);
+        
+        assertEquals(4, mapReply.getNonce());
+        assertEquals(locatorEid, mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
+
+    }
+    
+    @Test
+    public void integrationTestMAC() throws SocketTimeoutException {
+    	byte[] fakeMACAddress = new byte[] {
+    			(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6 };
+    	
+    	LispMACAddress eid = new LispMACAddress(fakeMACAddress);
+    	MapReply reply = runIntegrationTest(eid);
+    	
+    	LispAddress addressFromNetwork = reply.getEidToLocatorRecords().get(0).getPrefix();
+    	assertTrue(addressFromNetwork instanceof LispMACAddress);
+    	byte[] macAddressFromReply = ((LispMACAddress)addressFromNetwork).getMAC(); 
+    	
+    	assertArrayEquals(fakeMACAddress, macAddressFromReply);
+    }
+    
+    @Test
+    public void integrationTestSrcDestLCAF() throws SocketTimeoutException {
+    	String ipString = "10.20.30.200";
+    	LispAddress fakeAddr1 = new LispIpv4Address(ipString);
+    	byte[] fakeMAC = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+    	LispAddress fakeAddr2 = new LispMACAddress(fakeMAC);
+    	LispLCAFAddress address = new LispSourceDestLCAFAddress((byte)0, (short)0, 
+    			(byte)32, (byte)0, fakeAddr1, fakeAddr2);
+    	
+    	MapReply reply = runIntegrationTest(address);
+    	
+    	LispAddress fromNetwork = reply.getEidToLocatorRecords().get(0).getPrefix();
+    	assertTrue(fromNetwork instanceof LispSourceDestLCAFAddress);
+    	LispSourceDestLCAFAddress sourceDestFromNetwork = (LispSourceDestLCAFAddress)fromNetwork;
+    	
+    	LispAddress a1 = sourceDestFromNetwork.getSrcAddress();
+    	LispAddress a2 = sourceDestFromNetwork.getDstAddress();
+    	
+    	assertTrue(a1 instanceof LispIpv4Address);
+    	assertTrue(a2 instanceof LispMACAddress);
+    	
+    	LispIpv4Address ip = (LispIpv4Address)a1;
+    	LispMACAddress mac = (LispMACAddress)a2;
+    	
+    	assertEquals(ipString, ip.getAddress().getHostAddress());
+    	assertArrayEquals(fakeMAC, mac.getMAC());
+    }
+    
+    @Test
+    public void integrationTestListLCAF() throws SocketTimeoutException {
+    	byte[] fakeMAC = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+    	String fakeIP = "10.20.255.30";
+    	List<LispAddress> list = new ArrayList<LispAddress>();
+    	list.add(new LispMACAddress(fakeMAC));
+    	list.add(new LispIpv4Address(fakeIP));
+    	
+    	LispListLCAFAddress listAddr = new LispListLCAFAddress((byte)0, list);
+    	
+    	MapReply reply = runIntegrationTest(listAddr);
+    	
+    	LispAddress address = reply.getEidToLocatorRecords().get(0).getPrefix();
+    	
+    	assertTrue(address instanceof LispListLCAFAddress);
+    	
+    	LispListLCAFAddress listAddrFromNetwork = (LispListLCAFAddress)address; 
+    	LispAddress addr1 = listAddrFromNetwork.getAddresses().get(0);
+    	LispAddress addr2 = listAddrFromNetwork.getAddresses().get(1);
+    	
+    	assertTrue(addr1 instanceof LispMACAddress);
+    	assertTrue(addr2 instanceof LispIpv4Address);
+    	
+    	assertArrayEquals(fakeMAC, ((LispMACAddress)addr1).getMAC());
+    	assertEquals(fakeIP, ((LispIpv4Address)addr2).getAddress().getHostAddress());
+    }
+    
+    @Test
+    public void integrationTestSegmentLCAF() throws SocketTimeoutException {
+    	String fakeIP = "10.20.255.30";
+    	int instanceId = 6;
+    	LispIpv4Address ipAddr = new LispIpv4Address(fakeIP);
+    	LispSegmentLCAFAddress addr = new LispSegmentLCAFAddress((byte)0, instanceId, ipAddr);
+    	
+    	MapReply reply = runIntegrationTest(addr);
+    	
+    	LispAddress addrFromNetwork = reply.getEidToLocatorRecords().get(0).getPrefix();
+    	assertTrue(addrFromNetwork instanceof LispSegmentLCAFAddress);
+    	
+    	LispSegmentLCAFAddress segmentfromNetwork = (LispSegmentLCAFAddress)addrFromNetwork;
+    	LispAddress addrFromSegment = segmentfromNetwork.getAddress();
+    	assertTrue(addrFromSegment instanceof LispIpv4Address);
+    	assertEquals(fakeIP, ((LispIpv4Address)addrFromSegment).getAddress().getHostAddress());
+    	
+    	assertEquals(instanceId, segmentfromNetwork.getInstanceId());
+    	assertTrue(true);
+    }
+    
+    @Test
+    public void integrationTestTrafficEngineering() throws SocketTimeoutException {
+    	byte[] fakeMAC = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+    	String fakeIP = "10.20.255.30";
+    	List<ReencapHop> hops = new ArrayList<ReencapHop>();
+    	hops.add(new ReencapHop(new LispMACAddress(fakeMAC), (short)0, true, true, true));
+    	hops.add(new ReencapHop(new LispIpv4Address(fakeIP), (short)0, false, false, false));
+    	
+    	LispTrafficEngineeringLCAFAddress te = new LispTrafficEngineeringLCAFAddress((byte)0, hops);
+    	
+    	MapReply reply = runIntegrationTest(te);
+    	
+    	assertTrue(reply.getEidToLocatorRecords().get(0).getPrefix() instanceof LispTrafficEngineeringLCAFAddress);
+    	
+    	LispTrafficEngineeringLCAFAddress a = 
+    			(LispTrafficEngineeringLCAFAddress)reply.getEidToLocatorRecords().get(0).getPrefix();
+    	ReencapHop h1 = a.getHops().get(0);
+    	ReencapHop h2 = a.getHops().get(1);
+    	assertTrue(h1.isLookup());
+    	assertTrue(h1.isRLOCProbe());
+    	assertTrue(h1.isStrict());
+    	assertFalse(h2.isLookup());
+    	assertFalse(h2.isRLOCProbe());
+    	assertFalse(h2.isStrict());
+    	
+    	assertTrue(h1.getHop() instanceof LispMACAddress);
+    	assertTrue(h2.getHop() instanceof LispIpv4Address);
+    	
+    	LispMACAddress mac = (LispMACAddress)h1.getHop();
+    	LispIpv4Address ip = (LispIpv4Address)h2.getHop();
+    	
+    	assertArrayEquals(fakeMAC, mac.getMAC());
+    	assertEquals(fakeIP, ip.getAddress().getHostAddress());
     }
 
     @Test
