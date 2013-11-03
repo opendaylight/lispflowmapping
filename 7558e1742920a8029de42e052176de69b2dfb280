@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_d84f7091",
+        "filename": "mappingservice/lispyangmodule/.gitignore",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-03T15:11:52Z",
+      "side": 1,
+      "message": "Why 4 targets?",
+      "revId": "7558e1742920a8029de42e052176de69b2dfb280",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
