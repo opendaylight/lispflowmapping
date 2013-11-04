@@ -20,8 +20,7 @@ public class LispMACAddressSerializer extends LispAddressSerializer{
 
 	@Override
     public int getAddressSize(LispAddress lispAddress) {
-		return super.getAddressSize(lispAddress) + Length.MAC;
-
+		return Length.MAC;
     }
 	
 	@Override
