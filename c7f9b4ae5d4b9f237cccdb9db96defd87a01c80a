@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_535fe2e5",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-04T11:01:44Z",
+      "side": 1,
+      "message": "Name not clear",
+      "revId": "c7f9b4ae5d4b9f237cccdb9db96defd87a01c80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_13596afe",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-04T11:01:44Z",
+      "side": 1,
+      "message": "fake is misleading",
+      "revId": "c7f9b4ae5d4b9f237cccdb9db96defd87a01c80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f35db6ea",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-04T11:01:44Z",
+      "side": 1,
+      "message": "more clear name",
+      "revId": "c7f9b4ae5d4b9f237cccdb9db96defd87a01c80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b36f3e92",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-04T11:01:44Z",
+      "side": 1,
+      "message": "Not literals",
+      "revId": "c7f9b4ae5d4b9f237cccdb9db96defd87a01c80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
