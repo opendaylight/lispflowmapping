@@ -11,6 +11,11 @@
                prefix inet;
                revision-date 2010-09-24;
        }
+       
+       import ietf-yang-types {
+               prefix yang;
+               revision-date 2010-09-24;
+       }
 
     organization "LISP Flow Mapping";
 
@@ -28,6 +33,7 @@
     grouping LispAFIAddress {
     leaf afi {
                type int16;
+               reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
        }
     }
     
@@ -47,8 +53,7 @@
        }
        case MAC {
        leaf MacAddress {
-               type int64;
-               // TBD change to standard MAC type 
+               type yang:mac-address;
        }
        }
        case distName {
@@ -62,11 +67,8 @@
     grouping LispLcafAddress {
     uses LispAFIAddress;
        leaf LcafType {
-               type enumeration{
-                       enum Segment;
-                       enum SourceDest;
-                       enum TE;
-               }
+               type int16;
+               reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03";
        }
        leaf res2 {
                type int8;
@@ -74,6 +76,7 @@
     }
     
     grouping LcafSegment {
+    reference http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1;
        uses LispLcafAddress;
        leaf instanceId {
                type uint32{
@@ -100,6 +103,7 @@
     
 
                grouping SourceDestLcaf {
+               reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
                 uses LispLcafAddress;
                        container srcAddress {
                                uses LispSimpleAddress;
@@ -199,6 +203,7 @@
     }
     
     grouping MapRegister {
+    reference "http://tools.ietf.org/html/rfc6830#section-6.1.6";
     leaf recordCount {
     type int8;
     }
@@ -221,6 +226,7 @@
     }
     
     grouping MapNotify {
+    reference "http://tools.ietf.org/html/rfc6830#section-6.1.7";
     leaf recordCount {
     type int8;
     }
@@ -243,6 +249,7 @@
     }
     
     grouping MapRequest {
+    reference "http://tools.ietf.org/html/rfc6830#section-6.1.2";
     leaf recordCount {
     type int8;
     }leaf irc {
@@ -282,6 +289,7 @@
     }
     
     grouping MapReply {
+    reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
     leaf recordCount {
     type int8;
     }
