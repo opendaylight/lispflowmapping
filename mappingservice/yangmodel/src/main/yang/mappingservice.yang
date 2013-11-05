@@ -20,7 +20,8 @@
     organization "LISP Flow Mapping";
 
     contact
-      "David Goldberg <david.goldberg@contextream.com>";
+      "David Goldberg <david.goldberg@contextream.com>
+      Vina Ermagan <vermagan@cisco.com>";
 
     description
       "YANG version of the mapping service.";
@@ -30,43 +31,92 @@
         "mapping service";
     }
     
+    grouping TransportAddress{	    	
+	    leaf ipAddress {	
+	               type inet:ip-address;	
+	               reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";	    	
+	               }	
+	     leaf port {	
+	   				type inet:port-number;	
+	    	    	}	
+	   }
+
     grouping LispAFIAddress {
-    leaf afi {
+    	leaf afi {
                type int16;
                reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
        }
     }
     
-    grouping LispPrimitiveAddress {
-       uses LispAFIAddress;
-       choice primitiveAddress {
-       case Ipv4 {
-       leaf Ipv4Address {
+    grouping LispIpv4Address {
+    	uses LispAFIAddress {
+    		refine afi {
+    		default 1;
+    		}
+    	}
+    	leaf Ipv4Address {
                type inet:ipv4-address;
                reference "https://tools.ietf.org/html/rfc3209#section-4.6.2.1";
+       	}
+    }
+    
+    grouping LispIpv6Address {
+    	uses LispAFIAddress{
+    		refine afi {
+    		default 2;
+    		}
+    	}
+    	leaf Ipv6Address {
+        	type inet:ipv6-address;
+       	}
+    }
+    
+    grouping LispMacAddress {
+    	uses LispAFIAddress{
+    		refine afi {
+    		default 16389;
+    		}
+    	}
+    	leaf MacAddress {
+        	type yang:mac-address;
+       	}
+    }
+    
+    grouping LispDistinguishedNameAddress {
+    	uses LispAFIAddress{
+    		refine afi {
+    		default 17;
+    	}
+    }
+    	leaf distinguishedName {
+              type string;
        }
-       }
-       case Ipv6 {
-               leaf Ipv6Address {
-               type inet:ipv6-address;
-       }
-       }
-       case MAC {
-       leaf MacAddress {
-               type yang:mac-address;
-       }
-       }
-       case distName {
-               leaf distinguishedName {
-               type string;
-       }
-       }
-    }//choice
-    }//grouping
+    }
+    
+    grouping LispSimpleAddress {
+       choice primitiveAddress {
+       		case Ipv4 {
+       			uses LispIpv4Address;
+       		}
+       		case Ipv6 {
+       			uses LispIpv6Address;
+       		}
+       		case Mac {
+       			uses LispMacAddress;
+       		}
+       		case DistinguishedName {
+				uses LispDistinguishedNameAddress;
+       		}
+    	}
+    }
     
     grouping LispLcafAddress {
-    uses LispAFIAddress;
-       leaf LcafType {
+    	uses LispAFIAddress{
+    		refine afi {
+    			default 16387;
+    		}
+    	}
+       leaf lcafType {
                type int16;
                reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03";
        }
@@ -75,305 +125,291 @@
        }
     }
     
-    grouping LcafSegment {
-    reference http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1;
-       uses LispLcafAddress;
-       leaf instanceId {
+    grouping LcafSegmentAddress {
+    	reference http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1;
+       	uses LispLcafAddress{
+    		refine lcafType {
+    			default 2;
+    	}
+    }
+    	leaf instanceId {
                type uint32{
-               range "0 .. 16777215";
+               		range "0 .. 16777215";
                }
        }
        container Address {
-               uses LispPrimitiveAddress;
+               uses LispSimpleAddress;
        }
     }
     
-    // Primitive Address or SegmentLCAF
-    grouping LispSimpleAddress { 
-       choice SegmentAddress {
-               case Primitive {
-                       uses LispPrimitiveAddress;
-               }
-               case Segment {
-                       uses LcafSegment;
-               }
-       }
-    }
-    
-    
-
-               grouping SourceDestLcaf {
-               reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
-                uses LispLcafAddress;
-                       container srcAddress {
-                               uses LispSimpleAddress;
-                       }
-                       container dstAddress {
-                               uses LispSimpleAddress;
-                       }
-                      leaf srcMaskLength {
-                               type int8;
-                       }
-                       leaf dstMaskLength {
-                               type int8;
-                       }
-                       leaf reserved {
-                               type int16;
-                       }
-                       }
+       grouping LcafSourceDestAddress {
+       		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
+       		uses LispLcafAddress{
+    			refine lcafType {
+    				default 12;
+    			}
+    		}
+            container srcAddress {
+            	uses LispSimpleAddress;
+             }
+             container dstAddress {
+                uses LispSimpleAddress;
+             }
+             leaf srcMaskLength {
+             	type int8;
+             }
+             leaf dstMaskLength {
+                 type int8;
+              }
+              leaf reserved {
+                  type int16;
+              }
+        }
 
        
        grouping LispAddress {
                choice Address {
-                       case simpleAddress {
+                       case SimpleAddress {
                                uses LispSimpleAddress;
                        }
-                       case complexAddress {
-                               uses LispLcafAddress;
+                       case LcafSegment {
+                               uses LcafSegmentAddress;
+                       }
+                       case LcafSourceDest {
+                               uses LcafSourceDestAddress;
                        }
                } 
        }
     
     
-    typedef LispBaseAddress {
-    type empty;
-    	description "an address in the mapping service";
-    }
-    
     grouping EidRecord {
-    container Prefix {
-    uses LispAddress; 
-    }
-    leaf mask {
-    type int8;
-    }
+    	container Prefix {
+    		uses LispAddress; 
+    	}
+    	leaf mask {
+    		type int8;
+    	}
     }
     
     grouping LocatorRecord {
-    leaf priority {
-    type int8;
-    }
-    leaf weight {
-    type int8;
-    }
-    leaf multicastPriority {
-    type int8;
-    }
-    leaf multicastWeight {
-    type int8;
-    }
-    leaf localLocator {
-    type boolean;
-    }
-    leaf rlocProbed {
-    type boolean;
-    }
-    leaf routed {
-    type boolean;
-    }
-    container Locator {
-    uses LispAddress; 
-    }
+    	leaf priority {
+    		type int8;
+    	}
+    	leaf weight {
+    		type int8;
+    	}
+    	leaf multicastPriority {
+    		type int8;
+    	}
+    	leaf multicastWeight {
+    		type int8;
+    	}
+    	leaf localLocator {
+    		type boolean;
+    	}
+    	leaf rlocProbed {
+    		type boolean;
+    	}
+    	leaf routed {
+    		type boolean;
+    	}
+    	container Locator {
+    		uses LispAddress; 
+    	}
     }
     
     grouping EidToLocatorRecord {
-    leaf recordTtl {
-    type int32;
-    }
-    leaf maskLength {
-    type int8;
-    }
-    leaf action {
-    type enumeration {
-    enum NoAction;
-    enum NativelyForward;
-    enum SendMapRequest;
-    enum Drop;
-    }
-    }
-    leaf authoritative {
-    type boolean;
-    }
-    container Prefix {
-    uses LispAddress; 
-    }
-    list locatores {
-    uses LocatorRecord;
-    }
+    	leaf recordTtl {
+    		type int32;
+    	}
+    	leaf maskLength {
+    		type int8;
+    	}
+    	leaf action {
+    		type enumeration {
+    			enum NoAction;
+    			enum NativelyForward;
+    			enum SendMapRequest;
+    			enum Drop;
+    		}
+    	}
+    	leaf authoritative {
+    		type boolean;
+    	}
+    	container Prefix {
+    		uses LispAddress; 
+    	}
+    	list locatores {
+    		uses LocatorRecord;
+    	}
     }
     
     grouping MapRegister {
-    reference "http://tools.ietf.org/html/rfc6830#section-6.1.6";
-    leaf recordCount {
-    type int8;
-    }
-    leaf proxyMapReply {
-    type boolean;
-    }leaf wantMapNotify {
-    type boolean;
-    }leaf nounce {
-    type int64;
-    }
-    leaf keyId {
-    type int16;
-    }
-    leaf authenticationData {
-    type binary;
-    }
-    list eidToLocatorRecords {
-    uses EidToLocatorRecord;
-    }
+    	reference "http://tools.ietf.org/html/rfc6830#section-6.1.6";
+    	leaf recordCount {
+    		type int8;
+    	}
+    	leaf proxyMapReply {
+    		type boolean;
+    	}
+    	leaf wantMapNotify {
+    		type boolean;
+    	}
+    	leaf nounce {
+    		type int64;
+    	}
+    	leaf keyId {
+    		type int16;
+    	}
+    	leaf authenticationData {
+    		type binary;
+    	}
+    	list eidToLocatorRecords {
+    		uses EidToLocatorRecord;
+    	}
     }
     
     grouping MapNotify {
-    reference "http://tools.ietf.org/html/rfc6830#section-6.1.7";
-    leaf recordCount {
-    type int8;
-    }
-    leaf proxyMapReply {
-    type boolean;
-    }leaf wantMapNotify {
-    type boolean;
-    }leaf nounce {
-    type int64;
-    }
-    leaf keyId {
-    type int16;
-    }
-    leaf authenticationData {
-    type binary;
-    }
-    list eidToLocatorRecords {
-    uses EidToLocatorRecord;
-    }
+    	reference "http://tools.ietf.org/html/rfc6830#section-6.1.7";
+    	leaf recordCount {
+    		type int8;
+    	}
+    	leaf proxyMapReply {
+    		type boolean;
+    	}
+    	leaf wantMapNotify {
+    		type boolean;
+    	}
+    	leaf nounce {
+    		type int64;
+    	}
+    	leaf keyId {
+    		type int16;
+    	}
+    	leaf authenticationData {
+    		type binary;
+    	}
+    	list eidToLocatorRecords {
+    		uses EidToLocatorRecord;
+    	}
     }
     
     grouping MapRequest {
-    reference "http://tools.ietf.org/html/rfc6830#section-6.1.2";
-    leaf recordCount {
-    type int8;
-    }leaf irc {
-    type int8;
-    }
-    leaf authoritative {
-    type boolean;
-    }
-    leaf mapDataPresent {
-    type boolean;
-    }
-    leaf probe {
-    type boolean;
-    }
-    leaf smr {
-    type boolean;
-    }
-    leaf pitr {
-    type boolean;
-    }leaf smrInvoked {
-    type boolean;
-    }leaf nounce {
-    type int64;
-    }
-    container SourceEid {
-    uses LispAddress; 
-    }
-    list itrRlocs {
-    container itrRloc {
-    uses LispAddress; 
-    }
-    }
-    list eidRecords {
-    uses EidRecord;
-    }
+    	reference "http://tools.ietf.org/html/rfc6830#section-6.1.2";
+    	leaf recordCount {
+    		type int8;
+    	}
+    	leaf irc {
+    		type int8;
+    	}
+    	leaf authoritative {
+    		type boolean;
+    	}
+    	leaf mapDataPresent {
+    		type boolean;
+    	}
+    	leaf probe {
+    		type boolean;
+    	}
+    	leaf smr {
+    		type boolean;
+    	}
+    	leaf pitr {
+    		type boolean;
+    	}
+    	leaf smrInvoked {
+    		type boolean;
+    	}
+    	leaf nounce {
+    		type int64;
+    	}
+    	container SourceEid {
+    		uses LispAddress; 
+    	}
+    	list itrRlocs {
+    		container itrRloc {
+    			uses LispAddress; 
+    		}
+    	}
+    	list eidRecords {
+    		uses EidRecord;
+    	}
     
     }
     
     grouping MapReply {
-    reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
-    leaf recordCount {
-    type int8;
-    }
-    leaf probe {
-    type boolean;
-    }
-    leaf echoNonceEnabled {
-    type boolean;
-    }
-    leaf securityEnabled {
-    type boolean;
-    }
-    list eidToLocatorRecords {
-    uses EidToLocatorRecord;
-    }
+    	reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
+    	leaf recordCount {
+    		type int8;
+    	}
+    	leaf probe {
+    		type boolean;
+    	}
+    	leaf echoNonceEnabled {
+    		type boolean;
+    	}
+    	leaf securityEnabled {
+    		type boolean;
+    	}
+    	list eidToLocatorRecords {
+    		uses EidToLocatorRecord;
+    	}
     
     }
     
     grouping MapRegisterNotification {
-    container MapRegister {
-    uses MapRegister;
-    }
-    leaf address {
-    type inet:ip-address;
-    }
-    leaf port {
-    type inet:port-number;
-    }
+    	container MapRegister {
+    		uses MapRegister;
+    	}
+    	container Transport {
+    		uses TransportAddress;
+    	}
     }
     
     grouping MapNotifyMessage {
-    container MapNotify {
-    uses MapNotify;
-    }
-    leaf address {
-    type inet:ip-address;
-    }
-    leaf port {
-    type inet:port-number;
-    }
+    	container MapNotify {
+    		uses MapNotify;
+    	}
+    	container Transport {
+    		uses TransportAddress;
+    	}
     }
     
     grouping MapRequestNotification {
-    container MapRequest {
-    uses MapRequest;
-    }
-    leaf address {
-    type inet:ip-address;
-    }
-    leaf port {
-    type inet:port-number;
-    }
+    	container MapRequest {
+    		uses MapRequest;
+    	}
+    	container Transport {
+    		uses TransportAddress;
+    	}
     }
     
     
     grouping MapReplyMessage {
-    container MapReply {
-    uses MapReply;
-    }
-    leaf address {
-    type inet:ip-address;
-    }
-    leaf port {
-    type inet:port-number;
-    }
+    	container MapReply {
+    		uses MapReply;
+    	}
+    	container Transport {
+    		uses TransportAddress;
+    	}
     }
     
     rpc handleMapNotify {
-    input {
-    container MapNotifyMessage {
-    uses MapNotifyMessage;
-    }
-    }
+    	input {
+    		container MapNotifyMessage {
+    			uses MapNotifyMessage;
+    		}
+    	}
     }
     
     rpc handleMapReply {
-    input {
-    container MapReplyMessage {
-    uses MapReplyMessage;
-    }
-    }
+    	input {
+    		container MapReplyMessage {
+    			uses MapReplyMessage;
+    		}
+    	}
     }
     
-
-	 }
+}
 	 
 	 
