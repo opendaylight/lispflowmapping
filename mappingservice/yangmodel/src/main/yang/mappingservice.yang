@@ -95,6 +95,18 @@
        }
     }
     
+    
+    grouping LispASAddress {
+    	uses LispAFIAddress{
+    		refine afi {
+    		default 18;
+    	}
+    }
+    	leaf AS {
+              type int32;
+       }
+    }
+    
     grouping LispSimpleAddress {
        choice primitiveAddress {
        		case Ipv4 {
@@ -109,8 +121,29 @@
        		case DistinguishedName {
 				uses LispDistinguishedNameAddress;
        		}
+       		case AS {
+				uses LispASAddress;
+       		}
     	}
     }
+    
+    grouping ReencapHop {
+    	container hop {
+               uses LispSimpleAddress;
+       }
+       leaf lookup {
+             type int8;
+       }
+       leaf RLOCProbe {
+             type int8;
+       }
+       leaf strict {
+             type int8;
+       }
+    }
+    
+    
+    
     
     grouping LispLcafAddress {
     	uses LispAFIAddress{
@@ -121,9 +154,6 @@
        leaf lcafType {
                type int16;
                reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03";
-       }
-       leaf res2 {
-               type int8;
        }
     }
     
@@ -140,6 +170,29 @@
                }
        }
        container Address {
+               uses LispSimpleAddress;
+       }
+    }
+    grouping LcafTrafficEngineeringAddress {
+    	reference http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1;
+       	uses LispLcafAddress{
+    		refine lcafType {
+    			default 10;
+    	}
+    }
+       list Hops {
+               uses ReencapHop;
+       }
+    }
+    
+    grouping LcafListAddress {
+    	reference http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1;
+       	uses LispLcafAddress{
+    		refine lcafType {
+    			default 1;
+    	}
+    }
+       list Addresses {
                uses LispSimpleAddress;
        }
     }
@@ -167,6 +220,30 @@
                   type int16;
               }
         }
+        
+        grouping LcafApplicationDataAddress {
+       		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
+       		uses LispLcafAddress{
+    			refine lcafType {
+    				default 4;
+    			}
+    		}
+            container Address {
+            	uses LispSimpleAddress;
+             }
+             leaf protocol {
+             	type int8;
+             }
+             leaf ipTos {
+                 type int32;
+              }
+              leaf localPort {	
+   				type inet:port-number;	
+   			}	
+	   		leaf remotePort {	
+   				type inet:port-number;	
+	   		}	
+        }
 
        
        grouping LispAddress {
@@ -180,6 +257,15 @@
                        }
                        case LcafSourceDest {
                                uses LcafSourceDestAddress;
+                       }
+                       case LcafList {
+                               uses LcafListAddress;
+                       }
+                       case LcafApplicationData {
+                               uses LcafApplicationDataAddress;
+                       }
+                       case LcafTrafficEngineering {
+                               uses LcafTrafficEngineeringAddress;
                        }
                } 
        }
@@ -235,6 +321,9 @@
     	leaf maskLength {
     		type int8;
     	}
+    	leaf mapVersion {
+    		type int16;
+    	}
     	leaf action {
     		type enumeration {
     			enum NoAction;
@@ -256,9 +345,6 @@
     
     grouping MapRegister {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.6";
-    	leaf recordCount {
-    		type int8;
-    	}
     	leaf proxyMapReply {
     		type boolean;
     	}
@@ -281,9 +367,6 @@
     
     grouping MapNotify {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.7";
-    	leaf recordCount {
-    		type int8;
-    	}
     	leaf proxyMapReply {
     		type boolean;
     	}
@@ -304,12 +387,6 @@
     
     grouping MapRequest {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.2";
-    	leaf recordCount {
-    		type int8;
-    	}
-    	leaf irc {
-    		type int8;
-    	}
     	leaf authoritative {
     		type boolean;
     	}
@@ -338,14 +415,13 @@
     		uses LispAddress; 
     	}
     	uses EidRecords;
-    
+    	container MapReply {
+    		uses MapReply;
+    	}
     }
     
     grouping MapReply {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
-    	leaf recordCount {
-    		type int8;
-    	}
     	leaf probe {
     		type boolean;
     	}
@@ -356,7 +432,6 @@
     		type boolean;
     	}
     	uses EidToLocatorRecords;
-    
     }
     
     grouping MapRegisterNotification {
