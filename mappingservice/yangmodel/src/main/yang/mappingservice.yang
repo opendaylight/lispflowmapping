@@ -132,13 +132,13 @@
                uses LispSimpleAddress;
        }
        leaf lookup {
-             type int8;
+             type boolean;
        }
        leaf RLOCProbe {
-             type int8;
+             type boolean;
        }
        leaf strict {
-             type int8;
+             type boolean;
        }
     }
     
@@ -247,11 +247,23 @@
 
        
        grouping LispAddress {
-       container LispAddress{
+       container LispAddressContainer{
                choice Address {
-                       case SimpleAddress {
-                               uses LispSimpleAddress;
-                       }
+                       case Ipv4 {
+       						uses LispIpv4Address;
+       					}
+       					case Ipv6 {
+       						uses LispIpv6Address;
+       					}
+			       		case Mac {
+			       			uses LispMacAddress;
+			       		}
+			       		case DistinguishedName {
+							uses LispDistinguishedNameAddress;
+			       		}
+			       		case AS {
+							uses LispASAddress;
+			       		}
                        case LcafSegment {
                                uses LcafSegmentAddress;
                        }
@@ -405,7 +417,7 @@
     	leaf smrInvoked {
     		type boolean;
     	}
-    	leaf nounce {
+    	leaf nonce {
     		type int64;
     	}
     	container SourceEid {
@@ -424,6 +436,16 @@
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
     	leaf probe {
     		type boolean;
+    	}
+    	leaf action {
+      type enumeration {
+          enum NoAction;
+          enum NativelyForward;
+          enum Drop;
+      }
+  }
+    	leaf nonce {
+    		type int64;
     	}
     	leaf echoNonceEnabled {
     		type boolean;

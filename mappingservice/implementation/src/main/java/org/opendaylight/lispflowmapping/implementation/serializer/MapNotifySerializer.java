@@ -4,8 +4,9 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
-import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
 
 /**
  * This class deals with serializing map notify from the java object to udp.
@@ -24,20 +25,20 @@ public class MapNotifySerializer {
 
     public ByteBuffer serialize(MapNotify mapNotify) {
         int size = Length.HEADER_SIZE + mapNotify.getAuthenticationData().length;
-        for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecords()) {
+        for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecord()) {
             size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
         replyBuffer.put((byte) (LispMessageEnum.MapNotify.getValue() << 4));
         replyBuffer.position(replyBuffer.position() + Length.RES);
-        replyBuffer.put((byte) mapNotify.getEidToLocatorRecords().size());
-        replyBuffer.putLong(mapNotify.getNonce());
+        replyBuffer.put((byte) mapNotify.getEidToLocatorRecord().size());
+        replyBuffer.putLong(mapNotify.getNounce());
         replyBuffer.putShort(mapNotify.getKeyId());
         replyBuffer.putShort((short) mapNotify.getAuthenticationData().length);
         replyBuffer.put(mapNotify.getAuthenticationData());
 
-        for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecords()) {
+        for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecord()) {
             EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
         }
         replyBuffer.clear();
@@ -46,24 +47,24 @@ public class MapNotifySerializer {
 
     public MapNotify deserialize(ByteBuffer notifyBuffer) {
         try {
-            MapNotify mapNotify = new MapNotify();
-            mapNotify.setProxyMapReply(ByteUtil.extractBit(notifyBuffer.get(), Flags.PROXY));
+            MapNotifyBuilder builder = new MapNotifyBuilder();
+            builder.setProxyMapReply(ByteUtil.extractBit(notifyBuffer.get(), Flags.PROXY));
 
             notifyBuffer.position(notifyBuffer.position() + Length.RES);
 
             byte recordCount = notifyBuffer.get();
-            mapNotify.setNonce(notifyBuffer.getLong());
-            mapNotify.setKeyId(notifyBuffer.getShort());
+            builder.setNounce(notifyBuffer.getLong());
+            builder.setKeyId(notifyBuffer.getShort());
             short authenticationLength = notifyBuffer.getShort();
             byte[] authenticationData = new byte[authenticationLength];
             notifyBuffer.get(authenticationData);
-            mapNotify.setAuthenticationData(authenticationData);
+            builder.setAuthenticationData(authenticationData);
 
             for (int i = 0; i < recordCount; i++) {
-                mapNotify.addEidToLocator(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer));
+                builder.getEidToLocatorRecord().add(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer));
             }
             notifyBuffer.limit(notifyBuffer.position());
-            return mapNotify;
+            return builder.build();
         } catch (RuntimeException re) {
             throw new LispSerializationException("Couldn't deserialize Map-Notify (len=" + notifyBuffer.capacity() + ")", re);
         }

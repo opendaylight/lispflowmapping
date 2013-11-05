@@ -1,7 +1,7 @@
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 
 public class LispNoAuthentication implements ILispAuthentication {
 

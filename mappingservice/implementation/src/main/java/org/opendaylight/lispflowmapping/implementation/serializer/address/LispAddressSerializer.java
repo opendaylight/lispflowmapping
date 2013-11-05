@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 
 public class LispAddressSerializer {
 
@@ -25,17 +25,17 @@ public class LispAddressSerializer {
     public static LispAddressSerializer getInstance() {
         return INSTANCE;
     }
-    
-    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        throw new RuntimeException("UnImplemented");
-    }
-    
-    protected LispAddress deserializeData(ByteBuffer buffer) {
+
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         throw new RuntimeException("UnImplemented");
     }
 
-    public void serialize(ByteBuffer buffer, LispAddress lispAddress) {
-        LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(lispAddress.getAfi());
+    protected LispAFIAddress deserializeData(ByteBuffer buffer) {
+        throw new RuntimeException("UnImplemented");
+    }
+
+    public void serialize(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum.valueOf(lispAddress.getAfi()));
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI type=" + lispAddress.getAfi());
         }
@@ -43,20 +43,20 @@ public class LispAddressSerializer {
         serializer.serializeData(buffer, lispAddress);
     }
 
-    protected static void serializeAFIAddressHeader(ByteBuffer buffer, LispAddress lispAddress) {
-        buffer.putShort(lispAddress.getAfi().getIanaCode());
+    protected static void serializeAFIAddressHeader(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        buffer.putShort(lispAddress.getAfi());
     }
 
-    public int getAddressSize(LispAddress lispAddress) {
-        AddressFamilyNumberEnum afiType = lispAddress.getAfi();
+    public int getAddressSize(LispAFIAddress lispAddress) {
+        AddressFamilyNumberEnum afiType = AddressFamilyNumberEnum.valueOf(lispAddress.getAfi());
         LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(afiType);
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI type=" + afiType);
         }
-        return  Length.AFI + serializer.getAddressSize(lispAddress);
+        return Length.AFI + serializer.getAddressSize(lispAddress);
     }
 
-    public LispAddress deserialize(ByteBuffer buffer) {
+    public LispAFIAddress deserialize(ByteBuffer buffer) {
         short afi = buffer.getShort();
         AddressFamilyNumberEnum afiType = AddressFamilyNumberEnum.valueOf(afi);
         LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(afiType);
@@ -69,7 +69,7 @@ public class LispAddressSerializer {
             throw new LispSerializationException(e.getMessage());
         }
     }
-    
+
     private interface Length {
         int AFI = 2;
     }

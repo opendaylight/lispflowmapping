@@ -2,7 +2,7 @@ package org.opendaylight.lispflowmapping.type.sbplugin;
 
 import java.net.InetAddress;
 
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 public class MapRegisterNotification implements LispNotification {

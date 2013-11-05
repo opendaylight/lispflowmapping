@@ -10,7 +10,6 @@ import org.opendaylight.lispflowmapping.implementation.serializer.address.LispIp
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispIpv6AddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispLCAFAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispMACAddressSerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.address.LispNoAddressSerializer;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispAFIAddressSerializerFactory {
@@ -25,7 +24,6 @@ public class LispAFIAddressSerializerFactory {
         afiToSearializerMap.put(AddressFamilyNumberEnum.DISTINGUISHED_NAME, LispDistinguishedNameAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.LCAF, LispLCAFAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.MAC, LispMACAddressSerializer.getInstance());
-        afiToSearializerMap.put(AddressFamilyNumberEnum.RESERVED, LispNoAddressSerializer.getInstance());
 
     }
 

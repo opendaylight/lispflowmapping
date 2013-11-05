@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.northbound;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ws.rs.core.Application;
 
 public class NorthboundRSApplication extends Application {
@@ -17,7 +18,7 @@ public class NorthboundRSApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(NorthboundService.class);
+        // classes.add(NorthboundService.class);
         return classes;
     }
 }

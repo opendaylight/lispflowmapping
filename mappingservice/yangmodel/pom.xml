@@ -7,8 +7,8 @@
 		<version>0.1.0-SNAPSHOT</version>
 		<relativePath>../../commons/parent</relativePath>
 	</parent>
-	<artifactId>yangmodel</artifactId>
-	<packaging>pom</packaging>
+	<artifactId>mappingservice.yangmodel</artifactId>
+	<packaging>jar</packaging>
 
 	<build>
 		<plugins>

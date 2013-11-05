@@ -12,8 +12,8 @@ import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.factory.LispLCAFAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispLcafAddress;
 
 public class LispLCAFAddressSerializer extends LispAddressSerializer {
 
@@ -28,7 +28,7 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer {
     }
 
     @Override
-    protected LispLCAFAddress deserializeData(ByteBuffer buffer) {
+    protected LispLcafAddress deserializeData(ByteBuffer buffer) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lispCode = buffer.get();
         LispCanonicalAddressFormatEnum lcafType = LispCanonicalAddressFormatEnum.valueOf(lispCode);
@@ -42,34 +42,37 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer {
         return serializer.deserializeData(buffer, res2, length);
     }
 
-    protected LispLCAFAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
+    protected LispLcafAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public int getAddressSize(LispAddress lispAddress) {
+    public int getAddressSize(LispAFIAddress lispAddress) {
         return Length.LCAF_HEADER
-                + LispLCAFAddressSerializerFactory.getLCAFSerializer(((LispLCAFAddress) lispAddress).getType()).getLcafLength(lispAddress);
+                + LispLCAFAddressSerializerFactory.getLCAFSerializer(
+                        LispCanonicalAddressFormatEnum.valueOf(((LispLcafAddress) lispAddress).getLcafType())).getLcafLength(lispAddress);
     }
 
-    protected short getLcafLength(LispAddress lispAddress) {
+    protected short getLcafLength(LispAFIAddress lispAddress) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         serializeLCAFAddressHeader(buffer, lispAddress);
-        
-        LispLCAFAddressSerializer lcafSerializer = LispLCAFAddressSerializerFactory.getLCAFSerializer(((LispLCAFAddress) lispAddress).getType());
+
+        LispLCAFAddressSerializer lcafSerializer = LispLCAFAddressSerializerFactory.getLCAFSerializer(LispCanonicalAddressFormatEnum
+                .valueOf(((LispLcafAddress) lispAddress).getLcafType()));
         lcafSerializer.serializeData(buffer, lispAddress);
     }
 
-    private void serializeLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress) {
-        LispLCAFAddress lispLCAFAddress = (LispLCAFAddress) lispAddress;
+    private void serializeLCAFAddressHeader(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        LispLcafAddress lispLcafAddress = (LispLcafAddress) lispAddress;
         buffer.putShort((short) 0); // RES + Flags.
-        buffer.put(lispLCAFAddress.getType().getLispCode());
-        buffer.put(lispLCAFAddress.getRes2());
-        LispLCAFAddressSerializer lcafSerializer = LispLCAFAddressSerializerFactory.getLCAFSerializer(lispLCAFAddress.getType());
+        buffer.putShort(lispLcafAddress.getLcafType());
+        buffer.put((byte) 0);
+        LispLCAFAddressSerializer lcafSerializer = LispLCAFAddressSerializerFactory.getLCAFSerializer(LispCanonicalAddressFormatEnum
+                .valueOf(lispLcafAddress.getLcafType()));
         buffer.putShort(lcafSerializer.getLcafLength(lispAddress));
     }
 

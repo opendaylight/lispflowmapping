@@ -30,6 +30,11 @@
 							org.opendaylight.lispflowmapping.type.sbplugin
 						</Export-Package>
 						<Import-Package>
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords,
 						 	org.opendaylight.controller.sal.binding.api,
 							org.opendaylight.yangtools.yang.binding,
 							 javax.xml.bind, 
@@ -58,6 +63,11 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>sal</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.lispflowmapping</groupId>
+			<artifactId>mappingservice.yangmodel</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

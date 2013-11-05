@@ -59,8 +59,9 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public Object[] getImplementations() {
-        Object[] res = { NorthboundService.class };
-        return res;
+        // Object[] res = { NorthboundService.class };
+        // return res;
+        return null;
     }
 
     /**
@@ -80,14 +81,16 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
-        if (imp.equals(NorthboundService.class)) {
-            // export the service
-            Dictionary<String, String> props = new Hashtable<String, String>();
-            props.put("name", "mappingservice");
-            c.setInterface(new String[] { INorthboundService.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class).setCallbacks("setFlowMappingService", "unsetFlowMappingService")
-                    .setRequired(true));
-        }
+        // if (imp.equals(NorthboundService.class)) {
+        // // export the service
+        // Dictionary<String, String> props = new Hashtable<String, String>();
+        // props.put("name", "mappingservice");
+        // c.setInterface(new String[] { INorthboundService.class.getName() },
+        // props);
+        // c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class)
+        // .setCallbacks("setFlowMappingService",
+        // "unsetFlowMappingService").setRequired(true));
+        // }
     }
 
     /**

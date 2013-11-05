@@ -2,42 +2,48 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSegmentAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsegmentaddress.AddressBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSegmentBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 
-public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer{
-	
-	private static final LispSegmentLCAFAddressSerializer INSTANCE = new LispSegmentLCAFAddressSerializer();
+public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
-	// Private constructor prevents instantiation from other classes
-	private LispSegmentLCAFAddressSerializer() {
-	}
+    private static final LispSegmentLCAFAddressSerializer INSTANCE = new LispSegmentLCAFAddressSerializer();
 
-	public static LispSegmentLCAFAddressSerializer getInstance() {
-		return INSTANCE;
-	}
-
-
-	@Override
-	protected short getLcafLength(LispAddress lispAddress) {
-        return (short) (Length.INSTANCE + LispAddressSerializer.getInstance().getAddressSize(((LispSegmentLCAFAddress)lispAddress).getAddress()));
+    // Private constructor prevents instantiation from other classes
+    private LispSegmentLCAFAddressSerializer() {
     }
 
-	@Override
-	protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        buffer.putInt(((LispSegmentLCAFAddress)lispAddress).getInstanceId());
-        LispAddressSerializer.getInstance().serialize(buffer, ((LispSegmentLCAFAddress)lispAddress).getAddress());
+    public static LispSegmentLCAFAddressSerializer getInstance() {
+        return INSTANCE;
     }
-	
-	@Override
-	protected LispSegmentLCAFAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
+
+    @Override
+    protected short getLcafLength(LispAFIAddress lispAddress) {
+        return (short) (Length.INSTANCE + LispAddressSerializer.getInstance().getAddressSize(
+                (LispAFIAddress) ((LcafSegmentAddress) lispAddress).getAddress()));
+    }
+
+    @Override
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        buffer.putInt(((LcafSegmentAddress) lispAddress).getInstanceId().intValue());
+        LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) ((LcafSegmentAddress) lispAddress).getAddress());
+    }
+
+    @Override
+    protected LcafSegmentAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         int instanceId = buffer.getInt();
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
+        LcafSegmentBuilder builder = new LcafSegmentBuilder();
+        builder.setInstanceId((long) instanceId);
+        builder.setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) address).build());
 
-        return new LispSegmentLCAFAddress(res2, instanceId, address);
+        return builder.build();
     }
 
-	private interface Length {
+    private interface Length {
         int INSTANCE = 4;
     }
 }

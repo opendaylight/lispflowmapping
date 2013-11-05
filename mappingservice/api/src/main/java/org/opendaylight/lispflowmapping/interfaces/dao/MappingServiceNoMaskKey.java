@@ -1,21 +1,21 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
 public class MappingServiceNoMaskKey implements IMappingServiceKey {
 
-    private LispAddress EID;
+    private LispAddressContainer EID;
 
-    public MappingServiceNoMaskKey(LispAddress EID) {
-        this.EID = EID;
+    public MappingServiceNoMaskKey(LispAddressContainer lispAddressContainer) {
+        this.EID = lispAddressContainer;
     }
 
-    public LispAddress getEID() {
+    public LispAddressContainer getEID() {
         return EID;
     }
 
-    public void setEID(LispAddress eID) {
+    public void setEID(LispAddressContainer eID) {
         EID = eID;
     }
 

@@ -1,13 +1,20 @@
 package org.opendaylight.lispflowmapping.implementation.serializer;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
-import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
 
 /**
  * This class deals with deserializing map request from udp to the java object.
@@ -26,12 +33,12 @@ public class MapRequestSerializer {
 
     public ByteBuffer serialize(MapRequest mapRequest) {
         int size = Length.HEADER_SIZE;
-        size += LispAddressSerializer.getInstance().getAddressSize(mapRequest.getSourceEid());
-        for (LispAddress address : mapRequest.getItrRlocs()) {
-            size += LispAddressSerializer.getInstance().getAddressSize(address);
+        size += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) mapRequest.getSourceEid().getLispAddressContainer().getAddress());
+        for (ItrRloc address : mapRequest.getItrRloc()) {
+            size += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) address.getLispAddressContainer().getAddress());
         }
-        for (EidRecord record : mapRequest.getEids()) {
-            size += 2 + LispAddressSerializer.getInstance().getAddressSize(record.getPrefix());
+        for (EidRecord record : mapRequest.getEidRecord()) {
+            size += 2 + LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) record.getLispAddressContainer().getAddress());
         }
         ByteBuffer requestBuffer = ByteBuffer.allocate(size);
         requestBuffer
@@ -41,52 +48,64 @@ public class MapRequestSerializer {
                         | ByteUtil.boolToBit(mapRequest.isProbe(), Flags.PROBE) | ByteUtil.boolToBit(mapRequest.isSmr(), Flags.SMR)));
         requestBuffer.put((byte) (ByteUtil.boolToBit(mapRequest.isPitr(), Flags.PITR) | ByteUtil.boolToBit(mapRequest.isSmrInvoked(),
                 Flags.SMR_INVOKED)));
-        int IRC = mapRequest.getItrRlocs().size();
+        int IRC = mapRequest.getItrRloc().size();
         if (IRC > 0) {
             IRC--;
         }
         requestBuffer.put((byte) (IRC));
-        requestBuffer.put((byte) mapRequest.getEids().size());
+        requestBuffer.put((byte) mapRequest.getEidRecord().size());
         requestBuffer.putLong(mapRequest.getNonce());
-        LispAddressSerializer.getInstance().serialize(requestBuffer, mapRequest.getSourceEid());
-        for (LispAddress address : mapRequest.getItrRlocs()) {
-            LispAddressSerializer.getInstance().serialize(requestBuffer, address);
+        LispAddressSerializer.getInstance().serialize(requestBuffer,
+                (LispAFIAddress) mapRequest.getSourceEid().getLispAddressContainer().getAddress());
+        for (ItrRloc address : mapRequest.getItrRloc()) {
+            LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) address.getLispAddressContainer().getAddress());
         }
-        for (EidRecord record : mapRequest.getEids()) {
+        for (EidRecord record : mapRequest.getEidRecord()) {
             requestBuffer.put((byte) 0);
-            requestBuffer.put((byte) record.getMaskLength());
-            LispAddressSerializer.getInstance().serialize(requestBuffer, record.getPrefix());
+            requestBuffer.put((byte) record.getMask());
+            LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) record.getLispAddressContainer().getAddress());
         }
         return requestBuffer;
     }
 
     public MapRequest deserialize(ByteBuffer requestBuffer) {
         try {
-            MapRequest mapRequest = new MapRequest();
+            MapRequestBuilder builder = new MapRequestBuilder();
 
             byte typeAndFlags = requestBuffer.get();
-            mapRequest.setAuthoritative(ByteUtil.extractBit(typeAndFlags, Flags.AUTHORITATIVE));
-            mapRequest.setMapDataPresent(ByteUtil.extractBit(typeAndFlags, Flags.MAP_DATA_PRESENT));
-            mapRequest.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
-            mapRequest.setSmr(ByteUtil.extractBit(typeAndFlags, Flags.SMR));
+            builder.setAuthoritative(ByteUtil.extractBit(typeAndFlags, Flags.AUTHORITATIVE));
+            builder.setMapDataPresent(ByteUtil.extractBit(typeAndFlags, Flags.MAP_DATA_PRESENT));
+            builder.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
+            builder.setSmr(ByteUtil.extractBit(typeAndFlags, Flags.SMR));
 
             byte moreFlags = requestBuffer.get();
-            mapRequest.setPitr(ByteUtil.extractBit(moreFlags, Flags.PITR));
-            mapRequest.setSmrInvoked(ByteUtil.extractBit(moreFlags, Flags.SMR_INVOKED));
+            builder.setPitr(ByteUtil.extractBit(moreFlags, Flags.PITR));
+            builder.setSmrInvoked(ByteUtil.extractBit(moreFlags, Flags.SMR_INVOKED));
 
             int itrCount = requestBuffer.get() + 1;
             int recordCount = requestBuffer.get();
-            mapRequest.setNonce(requestBuffer.getLong());
-            mapRequest.setSourceEid(LispAddressSerializer.getInstance().deserialize(requestBuffer));
+            builder.setNonce(requestBuffer.getLong());
+            builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
+                    new LispAddressContainerBuilder().setAddress((Address) LispAddressSerializer.getInstance().deserialize(requestBuffer)).build())
+                    .build());
 
+            if (builder.getItrRloc() == null) {
+                builder.setItrRloc(new ArrayList<ItrRloc>());
+            }
             for (int i = 0; i < itrCount; i++) {
-                mapRequest.addItrRloc(LispAddressSerializer.getInstance().deserialize(requestBuffer));
+                builder.getItrRloc().add(
+                        new ItrRlocBuilder().setLispAddressContainer(
+                                new LispAddressContainerBuilder()
+                                        .setAddress((Address) LispAddressSerializer.getInstance().deserialize(requestBuffer)).build()).build());
             }
 
-            for (int i = 0; i < recordCount; i++) {
-                mapRequest.addEidRecord(EidRecordSerializer.getInstance().deserialize(requestBuffer));
+            if (builder.getEidRecord() == null) {
+                builder.setEidRecord(new ArrayList<EidRecord>());
             }
-            return mapRequest;
+            for (int i = 0; i < recordCount; i++) {
+                builder.getEidRecord().add(EidRecordSerializer.getInstance().deserialize(requestBuffer));
+            }
+            return builder.build();
         } catch (RuntimeException re) {
             throw new LispSerializationException("Couldn't deserialize Map-Request (len=" + requestBuffer.capacity() + ")", re);
         }

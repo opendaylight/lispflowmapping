@@ -3,8 +3,12 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispApplicationDataLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress.AddressBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 
 public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
@@ -19,34 +23,36 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
     }
 
     @Override
-    protected short getLcafLength(LispAddress lispAddress) {
-        return (short) (Length.ALL_FIELDS + LispAddressSerializer.getInstance().getAddressSize(((LispApplicationDataLCAFAddress)lispAddress).getAddress()));
+    protected short getLcafLength(LispAFIAddress lispAddress) {
+        return (short) (Length.ALL_FIELDS + LispAddressSerializer.getInstance().getAddressSize(
+                (LispAFIAddress) ((LcafApplicationDataAddress) lispAddress).getAddress().getPrimitiveAddress()));
     }
 
     @Override
-    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        LispApplicationDataLCAFAddress applicationDataAddress = ((LispApplicationDataLCAFAddress) lispAddress);
-        buffer.put(ByteUtil.partialIntToByteArray(applicationDataAddress.getIPTos(), Length.TOC));
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        LcafApplicationDataAddress applicationDataAddress = ((LcafApplicationDataAddress) lispAddress);
+        buffer.put(ByteUtil.partialIntToByteArray(applicationDataAddress.getIpTos(), Length.TOC));
         buffer.put(applicationDataAddress.getProtocol());
-        buffer.putShort(applicationDataAddress.getLocalPort());
-        buffer.putShort(applicationDataAddress.getRemotePort());
-        LispAddressSerializer.getInstance().serialize(buffer, ((LispApplicationDataLCAFAddress) lispAddress).getAddress());
+        buffer.putShort(applicationDataAddress.getLocalPort().getValue().shortValue());
+        buffer.putShort(applicationDataAddress.getRemotePort().getValue().shortValue());
+        LispAddressSerializer.getInstance().serialize(buffer,
+                (LispAFIAddress) ((LcafApplicationDataAddress) lispAddress).getAddress().getPrimitiveAddress());
     }
 
     @Override
-    protected LispApplicationDataLCAFAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
+    protected LcafApplicationDataAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
 
-        LispApplicationDataLCAFAddress applicationDataAddress = new LispApplicationDataLCAFAddress(res2);
+        LcafApplicationDataBuilder builder = new LcafApplicationDataBuilder();
         byte[] rawIPTos = new byte[3];
         buffer.get(rawIPTos);
-        applicationDataAddress.setIPTos(ByteUtil.getPartialInt(rawIPTos));
-        applicationDataAddress.setProtocol(buffer.get());
-        applicationDataAddress.setLocalPort(buffer.getShort());
-        applicationDataAddress.setRemotePort(buffer.getShort());
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
-        applicationDataAddress.setAddress(address);
+        builder.setIpTos(ByteUtil.getPartialInt(rawIPTos));
+        builder.setProtocol(buffer.get());
+        builder.setLocalPort(new PortNumber(new Integer(buffer.getShort())));
+        builder.setRemotePort(new PortNumber(new Integer(buffer.getShort())));
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
+        builder.setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) address).build());
 
-        return applicationDataAddress;
+        return builder.build();
     }
 
     private interface Length {

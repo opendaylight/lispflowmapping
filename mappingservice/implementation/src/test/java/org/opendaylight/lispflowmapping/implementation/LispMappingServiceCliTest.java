@@ -19,9 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.tools.junit.MockCommandInterpreter;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 
 public class LispMappingServiceCliTest extends BaseTestCase {
     private LispMappingService testedLispMappingService;

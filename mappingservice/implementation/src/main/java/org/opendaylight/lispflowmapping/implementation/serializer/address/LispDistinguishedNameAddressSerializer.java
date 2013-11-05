@@ -2,8 +2,9 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedNameBuilder;
 
 public class LispDistinguishedNameAddressSerializer extends LispAddressSerializer {
 
@@ -18,7 +19,7 @@ public class LispDistinguishedNameAddressSerializer extends LispAddressSerialize
     }
 
     @Override
-    public int getAddressSize(LispAddress lispAddress) {
+    public int getAddressSize(LispAFIAddress lispAddress) {
         return ((LispDistinguishedNameAddress) lispAddress).getDistinguishedName().length() + 1;
 
     }
@@ -31,11 +32,11 @@ public class LispDistinguishedNameAddressSerializer extends LispAddressSerialize
             sb.append((char) b);
             b = buffer.get();
         }
-        return new LispDistinguishedNameAddress(sb.toString());
+        return new DistinguishedNameBuilder().setDistinguishedName((sb.toString())).build();
     }
 
     @Override
-    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) lispAddress;
         buffer.put(distinguishedNameAddress.getDistinguishedName().getBytes());
         buffer.put((byte) 0);
