@@ -1,6 +1,10 @@
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -30,7 +34,6 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySeria
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
-import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
@@ -56,6 +59,8 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +83,7 @@ public class MappingServiceIntegrationTest {
 
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
+    public static final String JERSEY = "com.sun.jersey";
 
     @After
     public void after() {
@@ -302,12 +308,57 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("com.google.guava", "guava").versionAsInProject(), //
                 mavenBundle("org.javassist", "javassist").versionAsInProject(), //
 
+                // Northbound bundles
+                mavenBundle("org.opendaylight.controller", "commons.northbound").versionAsInProject(), //
+                mavenBundle(ODL + ".thirdparty", "com.sun.jersey.jersey-servlet").versionAsInProject(), //
+                mavenBundle(JERSEY, "jersey-core").versionAsInProject(), //
+                mavenBundle(JERSEY, "jersey-server").versionAsInProject(), //
+                mavenBundle(JERSEY, "jersey-client").versionAsInProject(),//
+                mavenBundle(JERSEY, "jersey-json").versionAsInProject(),//
+                mavenBundle("org.codehaus.jackson", "jackson-mapper-asl").versionAsInProject(),//
+                mavenBundle("org.codehaus.jackson", "jackson-core-asl").versionAsInProject(),//
+                mavenBundle("org.codehaus.jackson", "jackson-jaxrs").versionAsInProject(),//
+                mavenBundle("org.codehaus.jackson", "jackson-xc").versionAsInProject(),//
+                mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),//
+                mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "bundlescanner.implementation").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "switchmanager").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "connectionmanager").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "connectionmanager.implementation").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "commons.httpclient").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "configuration.implementation").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "usermanager").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "usermanager.implementation").versionAsInProject(), //
+                mavenBundle("org.springframework", "org.springframework.asm").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.aop").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.context").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.context.support").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.core").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.beans").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.expression").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.web").versionAsInProject(),
+
+                mavenBundle("org.aopalliance", "com.springsource.org.aopalliance").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.web.servlet").versionAsInProject(),
+                mavenBundle("org.springframework.security", "spring-security-config").versionAsInProject(),
+                mavenBundle("org.springframework.security", "spring-security-core").versionAsInProject(),
+                mavenBundle("org.springframework.security", "spring-security-web").versionAsInProject(),
+                mavenBundle("org.springframework.security", "spring-security-taglibs").versionAsInProject(),
+                mavenBundle("org.springframework", "org.springframework.transaction").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "sal.connection").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "sal.connection.implementation").versionAsInProject(),
+
+                // Our bundles
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), junitBundles());
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.northbound").versionAsInProject(), //
+                junitBundles());
     }
 
     @Test
@@ -325,16 +376,15 @@ public class MappingServiceIntegrationTest {
         MapNotify reply = recieveMapNotify();
         assertEquals(7, reply.getNonce());
     }
-    
+
     private MapReply registerAddressAndQuery(LispAddress eid) throws SocketTimeoutException {
         return registerAddressAndQuery(eid, -1);
     }
-    
+
     private LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
-    
-    
+
     //takes an address, packs it in a MapRegister, sends it, returns the MapReply
-    private MapReply registerAddressAndQuery(LispAddress eid, int maskLength) throws SocketTimeoutException{
+    private MapReply registerAddressAndQuery(LispAddress eid, int maskLength) throws SocketTimeoutException {
         MapRegister mapRegister = new MapRegister();
         mapRegister.setWantMapNotify(true);
         mapRegister.setNonce(8);
@@ -358,131 +408,128 @@ public class MappingServiceIntegrationTest {
         sendMapRequest(mapRequest);
         return recieveMapReply();
     }
-    
+
     @Test
     public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
-        
+
         LispIpv4Address eid = new LispIpv4Address("1.2.3.4");
 
         MapReply mapReply = registerAddressAndQuery(eid, 32);
-        
+
         assertEquals(4, mapReply.getNonce());
         assertEquals(locatorEid, mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
 
     }
-    
+
     @Test
     public void registerAndQuery__MAC() throws SocketTimeoutException {
-        byte[] macAddress = new byte[] {
-                (byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6 };
-        
+        byte[] macAddress = new byte[] { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6 };
+
         LispMACAddress eid = new LispMACAddress(macAddress);
         MapReply reply = registerAddressAndQuery(eid);
-        
+
         LispAddress addressFromNetwork = reply.getEidToLocatorRecords().get(0).getPrefix();
         assertTrue(addressFromNetwork instanceof LispMACAddress);
-        byte[] macAddressFromReply = ((LispMACAddress)addressFromNetwork).getMAC(); 
-        
+        byte[] macAddressFromReply = ((LispMACAddress) addressFromNetwork).getMAC();
+
         assertArrayEquals(macAddress, macAddressFromReply);
     }
-    
+
     @Test
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         String ipString = "10.20.30.200";
         LispAddress addrToSend1 = new LispIpv4Address(ipString);
-        byte[] fakeMAC = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+        byte[] fakeMAC = new byte[] { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6 };
         LispAddress addrToSend2 = new LispMACAddress(fakeMAC);
-        LispLCAFAddress address = new LispSourceDestLCAFAddress((byte)0, (short)0, 
-                (byte)32, (byte)0, addrToSend1, addrToSend2);
-        
+        LispLCAFAddress address = new LispSourceDestLCAFAddress((byte) 0, (short) 0, (byte) 32, (byte) 0, addrToSend1, addrToSend2);
+
         MapReply reply = registerAddressAndQuery(address);
-        
+
         LispAddress fromNetwork = reply.getEidToLocatorRecords().get(0).getPrefix();
         assertTrue(fromNetwork instanceof LispSourceDestLCAFAddress);
-        LispSourceDestLCAFAddress sourceDestFromNetwork = (LispSourceDestLCAFAddress)fromNetwork;
-        
+        LispSourceDestLCAFAddress sourceDestFromNetwork = (LispSourceDestLCAFAddress) fromNetwork;
+
         LispAddress receivedAddr1 = sourceDestFromNetwork.getSrcAddress();
         LispAddress receivedAddr2 = sourceDestFromNetwork.getDstAddress();
-        
+
         assertTrue(receivedAddr1 instanceof LispIpv4Address);
         assertTrue(receivedAddr2 instanceof LispMACAddress);
-        
-        LispIpv4Address receivedIP = (LispIpv4Address)receivedAddr1;
-        LispMACAddress receivedMAC = (LispMACAddress)receivedAddr2;
-        
+
+        LispIpv4Address receivedIP = (LispIpv4Address) receivedAddr1;
+        LispMACAddress receivedMAC = (LispMACAddress) receivedAddr2;
+
         assertEquals(ipString, receivedIP.getAddress().getHostAddress());
         assertArrayEquals(fakeMAC, receivedMAC.getMAC());
     }
-    
+
     @Test
     public void registerAndQuery__ListLCAF() throws SocketTimeoutException {
-        byte[] macAddress = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+        byte[] macAddress = new byte[] { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6 };
         String ipAddress = "10.20.255.30";
         List<LispAddress> list = new ArrayList<LispAddress>();
         list.add(new LispMACAddress(macAddress));
         list.add(new LispIpv4Address(ipAddress));
-        
-        LispListLCAFAddress listAddrToSend = new LispListLCAFAddress((byte)0, list);
-        
+
+        LispListLCAFAddress listAddrToSend = new LispListLCAFAddress((byte) 0, list);
+
         MapReply reply = registerAddressAndQuery(listAddrToSend);
-        
+
         LispAddress receivedAddress = reply.getEidToLocatorRecords().get(0).getPrefix();
-        
+
         assertTrue(receivedAddress instanceof LispListLCAFAddress);
-        
-        LispListLCAFAddress listAddrFromNetwork = (LispListLCAFAddress)receivedAddress; 
+
+        LispListLCAFAddress listAddrFromNetwork = (LispListLCAFAddress) receivedAddress;
         LispAddress receivedAddr1 = listAddrFromNetwork.getAddresses().get(0);
         LispAddress receivedAddr2 = listAddrFromNetwork.getAddresses().get(1);
-        
+
         assertTrue(receivedAddr1 instanceof LispMACAddress);
         assertTrue(receivedAddr2 instanceof LispIpv4Address);
-        
-        assertArrayEquals(macAddress, ((LispMACAddress)receivedAddr1).getMAC());
-        assertEquals(ipAddress, ((LispIpv4Address)receivedAddr2).getAddress().getHostAddress());
+
+        assertArrayEquals(macAddress, ((LispMACAddress) receivedAddr1).getMAC());
+        assertEquals(ipAddress, ((LispIpv4Address) receivedAddr2).getAddress().getHostAddress());
     }
-    
+
     @Test
     public void registerAndQuerySegmentLCAF() throws SocketTimeoutException {
         String ipAddress = "10.20.255.30";
         int instanceId = 6;
         LispIpv4Address lispIpAddress = new LispIpv4Address(ipAddress);
-        LispSegmentLCAFAddress addressToSend = new LispSegmentLCAFAddress((byte)0, instanceId, lispIpAddress);
-        
+        LispSegmentLCAFAddress addressToSend = new LispSegmentLCAFAddress((byte) 0, instanceId, lispIpAddress);
+
         MapReply reply = registerAddressAndQuery(addressToSend);
-        
+
         LispAddress receivedAddress = reply.getEidToLocatorRecords().get(0).getPrefix();
         assertTrue(receivedAddress instanceof LispSegmentLCAFAddress);
-        
-        LispSegmentLCAFAddress segmentfromNetwork = (LispSegmentLCAFAddress)receivedAddress;
+
+        LispSegmentLCAFAddress segmentfromNetwork = (LispSegmentLCAFAddress) receivedAddress;
         LispAddress addrFromSegment = segmentfromNetwork.getAddress();
         assertTrue(addrFromSegment instanceof LispIpv4Address);
-        assertEquals(ipAddress, ((LispIpv4Address)addrFromSegment).getAddress().getHostAddress());
-        
+        assertEquals(ipAddress, ((LispIpv4Address) addrFromSegment).getAddress().getHostAddress());
+
         assertEquals(instanceId, segmentfromNetwork.getInstanceId());
     }
-    
+
     @Test
     public void registerAndQuery__TrafficEngineering() throws SocketTimeoutException {
-        byte[] macAddress = new byte[] {(byte)1, (byte)2, (byte)3, (byte)4, (byte)5, (byte)6};
+        byte[] macAddress = new byte[] { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6 };
         String ipAddress = "10.20.255.30";
         List<ReencapHop> hops = new ArrayList<ReencapHop>();
         boolean f = false;
         boolean t = true;
-        hops.add(new ReencapHop(new LispMACAddress(macAddress), (short)0, t, t, t));
-        hops.add(new ReencapHop(new LispIpv4Address(ipAddress), (short)0, f, f, f));
-        
-        LispTrafficEngineeringLCAFAddress addressToSend = new LispTrafficEngineeringLCAFAddress((byte)0, hops);
-        
+        hops.add(new ReencapHop(new LispMACAddress(macAddress), (short) 0, t, t, t));
+        hops.add(new ReencapHop(new LispIpv4Address(ipAddress), (short) 0, f, f, f));
+
+        LispTrafficEngineeringLCAFAddress addressToSend = new LispTrafficEngineeringLCAFAddress((byte) 0, hops);
+
         MapReply reply = registerAddressAndQuery(addressToSend);
-        
+
         assertTrue(reply.getEidToLocatorRecords().get(0).getPrefix() instanceof LispTrafficEngineeringLCAFAddress);
-        
-        LispTrafficEngineeringLCAFAddress receivedAddress = 
-                (LispTrafficEngineeringLCAFAddress)reply.getEidToLocatorRecords().get(0).getPrefix();
-        
+
+        LispTrafficEngineeringLCAFAddress receivedAddress = (LispTrafficEngineeringLCAFAddress) reply.getEidToLocatorRecords().get(0).getPrefix();
+
         ReencapHop hop1 = receivedAddress.getHops().get(0);
         ReencapHop hop2 = receivedAddress.getHops().get(1);
-        
+
         assertEquals(t, hop1.isLookup());
         assertEquals(t, hop1.isRLOCProbe());
         assertEquals(t, hop1.isStrict());
@@ -493,38 +540,38 @@ public class MappingServiceIntegrationTest {
 
         assertTrue(hop1.getHop() instanceof LispMACAddress);
         assertTrue(hop2.getHop() instanceof LispIpv4Address);
-        
-        LispMACAddress receivedMACAddress = (LispMACAddress)hop1.getHop();
-        LispIpv4Address receivedIPAddress = (LispIpv4Address)hop2.getHop();
-        
+
+        LispMACAddress receivedMACAddress = (LispMACAddress) hop1.getHop();
+        LispIpv4Address receivedIPAddress = (LispIpv4Address) hop2.getHop();
+
         assertArrayEquals(macAddress, receivedMACAddress.getMAC());
         assertEquals(ipAddress, receivedIPAddress.getAddress().getHostAddress());
     }
-    
+
     @Test
     public void registerAndQuery__ApplicationData() throws SocketTimeoutException {
         String ipAddress = "1.2.3.4";
-        byte protocol = (byte)1;
+        byte protocol = (byte) 1;
         int ipTOs = 2;
-        short localPort = (short)3;
-        short remotePort = (short)4;
-        
-        LispApplicationDataLCAFAddress addressToSend = new LispApplicationDataLCAFAddress(
-                (byte)0, protocol, ipTOs, localPort, remotePort, new LispIpv4Address(ipAddress));
-        
+        short localPort = (short) 3;
+        short remotePort = (short) 4;
+
+        LispApplicationDataLCAFAddress addressToSend = new LispApplicationDataLCAFAddress((byte) 0, protocol, ipTOs, localPort, remotePort,
+                new LispIpv4Address(ipAddress));
+
         MapReply reply = registerAddressAndQuery(addressToSend);
-        
+
         LispAddress receivedAddress = reply.getEidToLocatorRecords().get(0).getPrefix();
-        
+
         assertTrue(receivedAddress instanceof LispApplicationDataLCAFAddress);
-        
-        LispApplicationDataLCAFAddress receivedApplicationDataAddress = (LispApplicationDataLCAFAddress)receivedAddress;
+
+        LispApplicationDataLCAFAddress receivedApplicationDataAddress = (LispApplicationDataLCAFAddress) receivedAddress;
         assertEquals(protocol, receivedApplicationDataAddress.getProtocol());
         assertEquals(ipTOs, receivedApplicationDataAddress.getIPTos());
         assertEquals(localPort, receivedApplicationDataAddress.getLocalPort());
         assertEquals(remotePort, receivedApplicationDataAddress.getRemotePort());
-        
-        LispIpv4Address ipAddressReceived = (LispIpv4Address)receivedApplicationDataAddress.getAddress();
+
+        LispIpv4Address ipAddressReceived = (LispIpv4Address) receivedApplicationDataAddress.getAddress();
         assertEquals(ipAddress, ipAddressReceived.getAddress().getHostAddress());
     }
 
@@ -747,20 +794,20 @@ public class MappingServiceIntegrationTest {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
-                /* try {
-                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                     if (host != null) {
-                         logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                         logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                     } else {
-                         element.start();
-                     }
-                 } catch (BundleException e) {
-                     logger.error("BundleException:", e);
-                     fail();
-                 }
+                try {
+                    String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
+                    if (host != null) {
+                        logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
+                        logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                    } else {
+                        element.start();
+                    }
+                } catch (BundleException e) {
+                    logger.error("BundleException:", e);
+                    fail();
+                }
 
-                 debugit = true;*/
+                debugit = true;
             }
         }
         if (debugit) {
