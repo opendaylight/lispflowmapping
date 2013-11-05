@@ -11,22 +11,33 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemPackages;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jettison.json.JSONObject;
+import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
@@ -34,6 +45,7 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySeria
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
 import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
 import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
@@ -60,14 +72,14 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(PaxExam.class)
 public class MappingServiceIntegrationTest {
 
-    // private IMapResolver mapResolver;
-    // private IMapServer mapServer;
+    private IFlowMapping lms;
     protected static final Logger logger = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
@@ -397,13 +409,57 @@ public class MappingServiceIntegrationTest {
         assertEquals(7, reply.getNonce());
     }
 
+    @Test
+    public void northboundGetPassword() throws Exception {
+        LispIpv4Address address = new LispIpv4Address("10.0.0.1");
+        int mask = 32;
+        String pass = "pass";
+        lms.addAuthenticationKey(address, mask, pass);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/key/%d/%s/%d", address.getAfi().getIanaCode(), address
+                .getAddress().getHostAddress(), mask);
+        URL url = new URL(restUrl);
+
+        // attaching authentication information
+        String authString = "admin:admin";
+        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        String authStringEnc = new String(authEncBytes);
+
+        // creating the URLConnection
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Basic " + authStringEnc);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.connect();
+
+        // getting the result, first check response code
+        Integer httpResponseCode = connection.getResponseCode();
+        if (httpResponseCode > 299)
+            fail();
+        // get the result string from the inputstream.
+        InputStream is = connection.getInputStream();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        JSONTokener jt = new JSONTokener(sb.toString());
+        JSONObject json = new JSONObject(jt);
+        // test that the password matches what was we expected.
+        assertEquals(pass, json.get("key"));
+        is.close();
+        connection.disconnect();
+    }
+
     private MapReply registerAddressAndQuery(LispAddress eid) throws SocketTimeoutException {
         return registerAddressAndQuery(eid, -1);
     }
 
     private LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
 
-    //takes an address, packs it in a MapRegister, sends it, returns the MapReply
+    // takes an address, packs it in a MapRegister, sends it, returns the
+    // MapReply
     private MapReply registerAddressAndQuery(LispAddress eid, int maskLength) throws SocketTimeoutException {
         MapRegister mapRegister = new MapRegister();
         mapRegister.setWantMapNotify(true);
@@ -814,25 +870,29 @@ public class MappingServiceIntegrationTest {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
-                /* try {
-                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                     if (host != null) {
-                         logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                         logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                     } else {
-                         element.start();
-                     }
-                 } catch (BundleException e) {
-                     logger.error("BundleException:", e);
-                     fail();
-                 }
-
-                 debugit = true;*/
+                /*
+                 * try { String host =
+                 * element.getHeaders().get(Constants.FRAGMENT_HOST); if (host
+                 * != null) { logger.warn("Bundle " + element.getSymbolicName()
+                 * + " is a fragment which is part of: " + host);
+                 * logger.warn("Required imports are: " +
+                 * element.getHeaders().get(Constants.IMPORT_PACKAGE)); } else {
+                 * element.start(); } } catch (BundleException e) {
+                 * logger.error("BundleException:", e); fail(); }
+                 * 
+                 * debugit = true;
+                 */
             }
         }
         if (debugit) {
             logger.warn(("Do some debugging because some bundle is unresolved"));
         }
+        ServiceReference r = bc.getServiceReference(IFlowMapping.class.getName());
+        if (r != null) {
+            this.lms = (IFlowMapping) bc.getService(r);
+        }
+        // If LispMappingServer is null, cannot work
+        assertNotNull(this.lms);
 
         // Uncomment this code to Know which services were actually loaded to
         // BundleContext
