@@ -652,17 +652,85 @@
 			<artifactId>usermanager.implementation</artifactId>
 			<version>0.4.1-SNAPSHOT</version>
 		</dependency>
-        <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal.connection</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal.connection.implementation</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
-    </dependency>
-    
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal.connection</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>sal.connection.implementation</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller.thirdparty</groupId>
+			<artifactId>org.apache.catalina.filters.CorsFilter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller.thirdparty</groupId>
+			<artifactId>net.sf.jung2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>logging.bridge</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<!-- Gemini Web -->
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.gemini.web.core</artifactId>
+			<version>${geminiweb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.gemini.web.extender</artifactId>
+			<version>${geminiweb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.gemini.web.tomcat</artifactId>
+			<version>${geminiweb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.kernel.equinox.extensions</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.common</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.io</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.math</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.osgi</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.osgi.manifest</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>geminiweb</groupId>
+			<artifactId>org.eclipse.virgo.util.parser.manifest</artifactId>
+			<version>${virgo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>security</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>

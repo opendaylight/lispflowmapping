@@ -222,6 +222,12 @@ public class MappingServiceIntegrationTest {
                 systemProperty("logback.configurationFile").value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logback.xml"),
                 // To start OSGi console for inspection remotely
                 systemProperty("osgi.console").value("2401"),
+                systemProperty("org.eclipse.gemini.web.tomcat.config.path").value(PathUtils.getBaseDir() + "/src/test/resources/tomcat-server.xml"),
+
+                // setting default level. Jersey bundles will need to be started
+                // earlier.
+                systemProperty("osgi.bundles.defaultStartLevel").value("4"),
+
                 // Set the systemPackages (used by clustering)
                 systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec"),
 
@@ -231,6 +237,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.apache.felix", "org.apache.felix.dependencymanager").versionAsInProject(),
 
                 // List logger bundles
+                mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject(),
                 mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
                 mavenBundle("org.slf4j", "log4j-over-slf4j").versionAsInProject(),
                 mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(),
@@ -309,10 +316,12 @@ public class MappingServiceIntegrationTest {
                 // Northbound bundles
                 mavenBundle("org.opendaylight.controller", "commons.northbound").versionAsInProject(), //
                 mavenBundle(ODL + ".thirdparty", "com.sun.jersey.jersey-servlet").versionAsInProject(), //
-                mavenBundle(JERSEY, "jersey-core").versionAsInProject(), //
-                mavenBundle(JERSEY, "jersey-server").versionAsInProject(), //
-                mavenBundle(JERSEY, "jersey-client").versionAsInProject(),//
-                mavenBundle(JERSEY, "jersey-json").versionAsInProject(),//
+                mavenBundle(ODL + ".thirdparty", "net.sf.jung2").versionAsInProject(), //
+                mavenBundle(ODL + ".thirdparty", "org.apache.catalina.filters.CorsFilter").versionAsInProject().noStart(),
+                mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
+                mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
+                mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
+                mavenBundle(JERSEY, "jersey-json").versionAsInProject().startLevel(2),
                 mavenBundle("org.codehaus.jackson", "jackson-mapper-asl").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-core-asl").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-jaxrs").versionAsInProject(),//
@@ -347,6 +356,19 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.springframework", "org.springframework.transaction").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "sal.connection").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "sal.connection.implementation").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "security").versionAsInProject().noStart(),
+
+                // Tomcat for northbound
+                mavenBundle("geminiweb", "org.eclipse.gemini.web.core").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.gemini.web.extender").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.gemini.web.tomcat").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.kernel.equinox.extensions").versionAsInProject().noStart(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.common").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.io").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.math").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.osgi").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.osgi.manifest").versionAsInProject(),
+                mavenBundle("geminiweb", "org.eclipse.virgo.util.parser.manifest").versionAsInProject(),
 
                 // Our bundles
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
@@ -792,20 +814,20 @@ public class MappingServiceIntegrationTest {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
-                /*  try {
-                      String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                      if (host != null) {
-                          logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                          logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                      } else {
-                          element.start();
-                      }
-                  } catch (BundleException e) {
-                      logger.error("BundleException:", e);
-                      fail();
-                  }
+                /* try {
+                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
+                     if (host != null) {
+                         logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
+                         logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                     } else {
+                         element.start();
+                     }
+                 } catch (BundleException e) {
+                     logger.error("BundleException:", e);
+                     fail();
+                 }
 
-                  debugit = true;*/
+                 debugit = true;*/
             }
         }
         if (debugit) {
