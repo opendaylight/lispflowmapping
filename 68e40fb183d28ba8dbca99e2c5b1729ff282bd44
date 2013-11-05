@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_f988f5e8",
+        "filename": "mappingservice/yangmodel/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-05T12:52:00Z",
+      "side": 1,
+      "message": "Lcaf* \n*Lcaf\nfix convention",
+      "revId": "68e40fb183d28ba8dbca99e2c5b1729ff282bd44",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
