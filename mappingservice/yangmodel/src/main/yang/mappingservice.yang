@@ -394,7 +394,7 @@
     	}
     }
     
-    rpc handleMapNotify {
+    rpc sendMapNotify {
     	input {
     		container MapNotifyMessage {
     			uses MapNotifyMessage;
@@ -402,14 +402,25 @@
     	}
     }
     
-    rpc handleMapReply {
+    rpc sendMapReply {
     	input {
     		container MapReplyMessage {
     			uses MapReplyMessage;
     		}
     	}
     }
+
+     notification MapRegisterNotification {
+	container MapRegisterMessage {
+		uses MapRegisterNotification;	
+	}	
+    }
+    
+     notification MapRequestNotification {
+	container MapRequestNotification {
+		uses MapRequestNotification;	
+	}
+    }
+
     
 }
-	 
-	 
