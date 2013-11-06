@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_c8f9d5c9",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-06T12:51:11Z",
+      "side": 1,
+      "message": "You should do some crazy refactoring here.\nMany utility methods, that will leave only what you are really testing.",
+      "revId": "cb0ca4c57f951b6c38cb3135b7d26c5b5dc5a3bd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
