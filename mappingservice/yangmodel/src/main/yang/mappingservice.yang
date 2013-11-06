@@ -409,6 +409,15 @@
     		}
     	}
     }
+
+	notification MapRegisterNotification {
+	    	uses MapRegisterNotification;
+    }
+    
+	notification MapRequestNotification {
+		uses MapRequestNotification;
+	    
+    }
     
 }
 	 
