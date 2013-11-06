@@ -31,15 +31,17 @@
         "mapping service";
     }
     
-    grouping TransportAddress{	    	
+    grouping TransportAddress{
+	container TransportAddress {	    	
 	    leaf ipAddress {	
-	               type inet:ip-address;	
-	               reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";	    	
-	               }	
+	    	type inet:ip-address;	
+	        reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";	    	
+	    }	
 	     leaf port {	
-	   				type inet:port-number;	
-	    	    	}	
-	   }
+   			type inet:port-number;	
+	   	}	
+	}
+    }
 
     grouping LispAFIAddress {
     	leaf afi {
@@ -168,6 +170,7 @@
 
        
        grouping LispAddress {
+       container LispAddress{
                choice Address {
                        case SimpleAddress {
                                uses LispSimpleAddress;
@@ -180,18 +183,23 @@
                        }
                } 
        }
+       }
     
     
-    grouping EidRecord {
-    	container Prefix {
+    grouping EidRecords {
+    list EidRecord {
+	
+    		// EID
     		uses LispAddress; 
-    	}
-    	leaf mask {
-    		type int8;
-    	}
+    		
+    		leaf mask {
+    			type int8;
+    		}
+	}
     }
     
-    grouping LocatorRecord {
+    grouping LocatorRecords {
+	list LocatorRecord {
     	leaf priority {
     		type int8;
     	}
@@ -213,12 +221,14 @@
     	leaf routed {
     		type boolean;
     	}
-    	container Locator {
-    		uses LispAddress; 
-    	}
+    	
+    	//locator address
+    	uses LispAddress; 
+    }	
     }
     
-    grouping EidToLocatorRecord {
+    grouping EidToLocatorRecords {
+    list EidToLocatorRecord {    	
     	leaf recordTtl {
     		type int32;
     	}
@@ -236,12 +246,12 @@
     	leaf authoritative {
     		type boolean;
     	}
-    	container Prefix {
-    		uses LispAddress; 
-    	}
-    	list locatores {
-    		uses LocatorRecord;
-    	}
+    	// EID prefix
+    	uses LispAddress; 
+    	
+        // locator record list
+        uses LocatorRecords;
+    }
     }
     
     grouping MapRegister {
@@ -264,9 +274,9 @@
     	leaf authenticationData {
     		type binary;
     	}
-    	list eidToLocatorRecords {
-    		uses EidToLocatorRecord;
-    	}
+    	
+    	uses EidToLocatorRecords;
+    	
     }
     
     grouping MapNotify {
@@ -289,9 +299,7 @@
     	leaf authenticationData {
     		type binary;
     	}
-    	list eidToLocatorRecords {
-    		uses EidToLocatorRecord;
-    	}
+    	uses EidToLocatorRecords;
     }
     
     grouping MapRequest {
@@ -326,14 +334,10 @@
     	container SourceEid {
     		uses LispAddress; 
     	}
-    	list itrRlocs {
-    		container itrRloc {
-    			uses LispAddress; 
-    		}
+    	list itrRloc {
+    		uses LispAddress; 
     	}
-    	list eidRecords {
-    		uses EidRecord;
-    	}
+    	uses EidRecords;
     
     }
     
@@ -351,9 +355,7 @@
     	leaf securityEnabled {
     		type boolean;
     	}
-    	list eidToLocatorRecords {
-    		uses EidToLocatorRecord;
-    	}
+    	uses EidToLocatorRecords;
     
     }
     
@@ -361,27 +363,24 @@
     	container MapRegister {
     		uses MapRegister;
     	}
-    	container Transport {
-    		uses TransportAddress;
-    	}
+    	uses TransportAddress;
+    	
     }
     
     grouping MapNotifyMessage {
     	container MapNotify {
     		uses MapNotify;
     	}
-    	container Transport {
-    		uses TransportAddress;
-    	}
+    	uses TransportAddress;
+    	
     }
     
     grouping MapRequestNotification {
     	container MapRequest {
     		uses MapRequest;
     	}
-    	container Transport {
-    		uses TransportAddress;
-    	}
+    	uses TransportAddress;
+    
     }
     
     
@@ -389,32 +388,27 @@
     	container MapReply {
     		uses MapReply;
     	}
-    	container Transport {
-    		uses TransportAddress;
+    	uses TransportAddress;
+    	
+    }
+    
+    rpc sendMapNotify {
+    	input {
+    		uses MapNotifyMessage;
     	}
     }
     
-    rpc handleMapNotify {
+    rpc sendMapReply {
     	input {
-    		container MapNotifyMessage {
-    			uses MapNotifyMessage;
-    		}
-    	}
-    }
-    
-    rpc handleMapReply {
-    	input {
-    		container MapReplyMessage {
-    			uses MapReplyMessage;
-    		}
+    		uses MapReplyMessage;
     	}
     }
 
-	notification MapRegisterNotification {
-	    	uses MapRegisterNotification;
+	notification addMapping {
+    	uses MapRegisterNotification;
     }
     
-	notification MapRequestNotification {
+	notification requestMapping {
 		uses MapRequestNotification;
 	    
     }
