@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
-	
+
 	<repositories>
 		<!-- OpenDayLight Released artifact -->
 		<repository>
@@ -26,7 +26,7 @@
 		</repository>
 	</repositories>
 	<build>
-		
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -59,7 +59,7 @@
 				<configuration>
 					<skipTests>false</skipTests>
 					<argLine>-Dlispip=127.0.0.1</argLine>
-    				<skip>${skipIntegrationTest}</skip>
+					<skip>${skipIntegrationTest}</skip>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -139,6 +139,11 @@
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.southbound</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.lispflowmapping</groupId>
+			<artifactId>mappingservice.northbound</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -557,40 +562,141 @@
 			<artifactId>config-manager</artifactId>
 			<version>0.2.2-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller.thirdparty</groupId>
+			<artifactId>com.sun.jersey.jersey-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+			<version>1.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>commons.northbound</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>bundlescanner</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>bundlescanner.implementation</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>switchmanager</artifactId>
+			<version>0.6.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>switchmanager.implementation</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>commons.httpclient</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>connectionmanager</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>connectionmanager.implementation</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>configuration</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>configuration.implementation</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>usermanager</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>usermanager.implementation</artifactId>
+			<version>0.4.1-SNAPSHOT</version>
+		</dependency>
+        <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal.connection</artifactId>
+      <version>0.1.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal.connection.implementation</artifactId>
+      <version>0.1.1-SNAPSHOT</version>
+    </dependency>
+    
 	</dependencies>
 
-<profiles>
-    <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <skipIntegrationTest>false</skipIntegrationTest>
-      </properties>
-    </profile>
-    <profile>
-      <id>skipTestCompileAndRun</id>
-      <activation>
-        <property>
-          <name>maven.test.skip</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <properties>
-        <skipIntegrationTest>true</skipIntegrationTest>
-      </properties>
-    </profile>
-    <profile>
-      <id>skipTestRun</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-        </property>
-      </activation>
-      <properties>
-        <skipIntegrationTest>true</skipIntegrationTest>
-      </properties>
-    </profile>
-</profiles>
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<skipIntegrationTest>false</skipIntegrationTest>
+			</properties>
+		</profile>
+		<profile>
+			<id>skipTestCompileAndRun</id>
+			<activation>
+				<property>
+					<name>maven.test.skip</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<skipIntegrationTest>true</skipIntegrationTest>
+			</properties>
+		</profile>
+		<profile>
+			<id>skipTestRun</id>
+			<activation>
+				<property>
+					<name>skipTests</name>
+				</property>
+			</activation>
+			<properties>
+				<skipIntegrationTest>true</skipIntegrationTest>
+			</properties>
+		</profile>
+	</profiles>
 </project>
