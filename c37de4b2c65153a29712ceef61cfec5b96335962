@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_288e312f",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-06T13:12:51Z",
+      "side": 1,
+      "message": "1) Put the connection as a datamember and do the disconnect in the @After.\n2) Afterwards you can refactor createConnection+getResult into one method, because you don\u0027t need to touch the connection object afterwards(It\u0027s closed in the @After)",
+      "revId": "c37de4b2c65153a29712ceef61cfec5b96335962",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c8955541",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-06T13:12:51Z",
+      "side": 1,
+      "message": "getResult is a too abstract name",
+      "revId": "c37de4b2c65153a29712ceef61cfec5b96335962",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
