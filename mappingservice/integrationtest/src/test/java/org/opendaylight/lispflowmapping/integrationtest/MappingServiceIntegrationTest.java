@@ -418,22 +418,182 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
-    public void northboundGetPassword() throws Exception {
-        LispIpv4Address address = new LispIpv4Address("10.0.0.1");
-        int mask = 32;
-        String pass = "pass";
-        lms.addAuthenticationKey(address, mask, pass);
-        URL url = createGetURL(address, mask);
+    public void northboundAddKey() throws Exception {
 
-        JSONObject json = callURL(url);
+    	LispIpv4Address address = new LispIpv4Address("10.0.0.1");
+        int mask = 32;
+    	String pass = "asdf";
+        
+    	URL url = createPutURL("key");
+    	String authKeyJSON = createAuthKeyJSON(pass,address,mask);
+    	callURL("PUT", "application/json", "text/plain", authKeyJSON, url);
+
+        String retrievedKey = lms.getAuthenticationKey(address, mask);
+        
+        //Check stored password matches the one sent
+        assertEquals(pass, retrievedKey);
+
+    }
+    
+    @Test
+    public void northboundRetrieveKey() throws Exception {
+
+    	LispIpv4Address address = new LispIpv4Address("10.0.0.1");
+        int mask = 32;
+    	String pass = "asdf";
+        
+        lms.addAuthenticationKey(address, mask, pass);
+        
+        URL url = createGetKeyIPv4URL(address, mask);
+        String reply = callURL("GET",null,"application/json",null,url);
+        JSONTokener jt = new JSONTokener(reply);
+        JSONObject json = new JSONObject(jt);
+        
         // test that the password matches what was we expected.
         assertEquals(pass, json.get("key"));
 
     }
 
-    private URL createGetURL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/key/%d/%s/%d", address.getAfi().getIanaCode(), address
-                .getAddress().getHostAddress(), mask);
+    private String createAuthKeyJSON(String key, LispIpv4Address address, int mask){
+    	return "{\"key\" : \""+key+"\",\"maskLength\" : "+mask+",\"address\" : "
+    			+ "{\"ipAddress\" : \""+address.getAddress().getHostAddress()
+    			+ "\",\"afi\" : "+address.getAfi().getIanaCode()+"}}";
+    }
+    
+    @Test
+    public void northboundAddMapping() throws Exception {
+
+    	String pass = "asdf";
+    	LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
+        int mask = 32;
+        LispIpv4Address rloc = new LispIpv4Address("20.0.0.2");
+    	
+        //NB add mapping always checks the key
+        lms.addAuthenticationKey(eid, mask, pass);
+        
+    	URL url = createPutURL("mapping");
+    	String mapRegisterJSON = createMapRegisterJSON(pass,eid,mask,rloc);
+    	callURL("PUT", "application/json", "text/plain", mapRegisterJSON, url);
+
+    	//Retrieve the RLOC from the database
+    	MapRequest mapRequest = new MapRequest();
+        mapRequest.addEidRecord(new EidRecord((byte) mask, eid));
+        MapReply mapReply = lms.handleMapRequest(mapRequest);
+       
+        LispIpv4Address retrievedRloc = (LispIpv4Address) 
+        		mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator();
+        
+        assertEquals(rloc.getAddress().getHostAddress(), retrievedRloc.getAddress().getHostAddress());
+
+    }
+
+    private String createMapRegisterJSON(String key, LispIpv4Address eid, int mask, LispIpv4Address rloc){
+    	String jsonString = 
+    	"{ "+ 
+    		"\"key\" : \""+key+"\","+ 
+    		"\"mapregister\" : "+
+    		  "{ "+
+    		"\"wantMapNotify\" : true,"+ 
+    		"\"proxyMapReply\" : false, "+
+    		"\"eidToLocatorRecords\" : "+
+    		    "[ "+
+    		      "{ "+
+    		      "\"authoritative\" : true,"+ 
+    		      "\"prefixGeneric\" : "+
+    		        "{ "+
+    		    	  "\"ipAddress\" : \""+eid.getAddress().getHostAddress()+"\","+ 
+    		    	  "\"afi\" : "+eid.getAfi().getIanaCode()+
+    		        "},"+
+    		        "\"mapVersion\" : 0,"+ 
+    		        "\"maskLength\" : "+mask+", "+
+    		        "\"action\" : \"NoAction\","+ 
+    		        "\"locators\" : "+
+    		        "[ "+
+    		          "{ "+
+    		        	  "\"multicastPriority\" : 1,"+ 
+    		        	  "\"locatorGeneric\" : "+
+    		            "{ "+
+    		        	  "\"ipAddress\" : \""+rloc.getAddress().getHostAddress()+"\","+ 
+    		        	  "\"afi\" : "+rloc.getAfi().getIanaCode()+
+    		            "}, "+
+    		            "\"routed\" : true,"+ 
+    		            "\"multicastWeight\" : 50,"+ 
+    		            "\"rlocProbed\" : false, "+
+    		            "\"localLocator\" : false, "+
+    		            "\"priority\" : 1, "+
+    		            "\"weight\" : 50 "+
+    		          "} "+
+    		        "], "+
+    		        "\"recordTtl\" : 100"+ 
+    		      "} "+
+    		    "], "+
+    		    "\"nonce\" : 3,"+ 
+    		    "\"keyId\" : 0 "+
+    		  "} "+
+    		"}";
+    	
+    	return jsonString;
+    }
+    
+    @Test
+    public void northboundRetrieveMapping() throws Exception {
+
+    	String pass = ""; 
+    	LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
+        int mask = 32;
+        LispIpv4Address rloc = new LispIpv4Address("20.0.0.2");
+        
+        //Insert mapping in the database
+        MapRegister mapRegister = new MapRegister();
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        etlr.setPrefix(eid);
+        etlr.setMaskLength(mask);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(rloc);
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+        lms.handleMapRegister(mapRegister);
+    	     
+        //Get mapping using NB interface. No IID used
+    	URL url = createGetMappingIPv4URL(0, eid, mask);
+    	String reply = callURL("GET", null, "application/json", null, url);
+    	JSONTokener jt = new JSONTokener(reply);
+        JSONObject json = new JSONObject(jt);
+        
+        //With just one locator, locators is not a JSONArray
+        String rlocRetrieved = json
+        		.getJSONObject("locators")
+        		.getJSONObject("locatorGeneric")
+        		.getString("ipAddress");
+        
+        assertEquals(rloc.getAddress().getHostAddress(), rlocRetrieved);
+
+    }
+    
+    private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d",
+        		"key",
+        		address.getAfi().getIanaCode(), 
+        		address.getAddress().getHostAddress(), 
+        		mask);
+        URL url = new URL(restUrl);
+        return url;
+    }
+    
+    private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%d/%s/%d",
+        		"mapping",
+        		iid,
+        		address.getAfi().getIanaCode(), 
+        		address.getAddress().getHostAddress(), 
+        		mask);
+        URL url = new URL(restUrl);
+        return url;
+    }
+    
+    private URL createPutURL(String type) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s",type);
         URL url = new URL(restUrl);
         return url;
     }
@@ -445,19 +605,35 @@ public class MappingServiceIntegrationTest {
         return authStringEnc;
     }
 
-    private JSONObject callURL(URL url) throws IOException, JSONException {
+    private String callURL(String method, String content, String accept, String body, URL url) 
+    		throws IOException, JSONException {
         String authStringEnc = createAuthenticationString();
         connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod(method);
         connection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Accept", "application/json");
+        if (content != null){
+        	connection.setRequestProperty("Content-Type", content);
+        }
+        if (accept != null){
+        	connection.setRequestProperty("Accept", accept);	
+        }
+        if (body != null){
+        	//now add the request body
+        	connection.setDoOutput(true);
+        	OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+        	wr.write(body);
+        	wr.flush();
+        }
         connection.connect();
 
         // getting the result, first check response code
         Integer httpResponseCode = connection.getResponseCode();
-        if (httpResponseCode > 299)
-            fail();
+        
+        if (httpResponseCode > 299){
+            logger.info("HTTP Response Code: "+httpResponseCode);
+        	fail();
+        }
+            
         InputStream is = connection.getInputStream();
         BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         StringBuilder sb = new StringBuilder();
@@ -466,9 +642,7 @@ public class MappingServiceIntegrationTest {
             sb.append((char) cp);
         }
         is.close();
-        JSONTokener jt = new JSONTokener(sb.toString());
-        JSONObject json = new JSONObject(jt);
-        return json;
+        return (sb.toString());
     }
 
     private MapReply registerAddressAndQuery(LispAddress eid) throws SocketTimeoutException {
