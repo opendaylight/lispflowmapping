@@ -57,13 +57,13 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         if (thread != null) {
             thread.stopRunning();
         }
+        lispSouthboundService = null;
+        thread = null;
         logger.info("LISP (RFC6830) Mapping Service is down!");
         try {
             Thread.sleep(1100);
         } catch (InterruptedException e) {
         }
-        lispSouthboundService = null;
-        thread = null;
     }
 
     public void destroy() {
@@ -141,18 +141,20 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     }
 
     public void onSessionInitiated(ProviderContext session) {
-        lispSouthboundService = new LispSouthboundService();
-        thread = new LispIoThread();
-        logger.info("LISP (RFC6830) Mapping Service is up!");
-        thread.start();
+        if (thread == null) {
+            lispSouthboundService = new LispSouthboundService();
+            thread = new LispIoThread();
+            logger.info("LISP (RFC6830) Mapping Service is up!");
+            thread.start();
 
-        // OSGI console
-        registerWithOSGIConsole();
+            // OSGI console
+            registerWithOSGIConsole();
 
-        logger.debug("Provider Session initialized");
+            logger.debug("Provider Session initialized");
 
-        lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
-        session.addRpcImplementation(ILispSouthboundPlugin.class, this);
+            lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
+            session.addRpcImplementation(ILispSouthboundPlugin.class, this);
+        }
     }
 
     public Future<RpcResult<Void>> handleMapNotify(MapNotify mapNotify, InetAddress address) {
