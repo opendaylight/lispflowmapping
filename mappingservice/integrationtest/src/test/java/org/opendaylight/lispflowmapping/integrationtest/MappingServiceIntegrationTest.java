@@ -413,7 +413,7 @@ public class MappingServiceIntegrationTest {
     @Test
     public void mapRegisterWithMapNotify() throws SocketTimeoutException {
         sendPacket(mapRegisterPacketWithNotify);
-        MapNotify reply = recieveMapNotify();
+        MapNotify reply = receiveMapNotify();
         assertEquals(7, reply.getNonce());
     }
 
@@ -423,19 +423,93 @@ public class MappingServiceIntegrationTest {
         int mask = 32;
         String pass = "pass";
         lms.addAuthenticationKey(address, mask, pass);
-        URL url = createGetURL(address, mask);
+        URL url = createGetURLForAddKey(address, mask);
 
-        JSONObject json = callURL(url);
+        JSONObject json = sendHttpRequest(url);
         // test that the password matches what was we expected.
         assertEquals(pass, json.get("key"));
 
     }
 
-    private URL createGetURL(LispIpv4Address address, int mask) throws MalformedURLException {
+    // timePeriod - in ms
+    public void assertNoPacketReceived(int timePeriod) {
+        try {
+            receivePacket(timePeriod);
+            // If didn't timeout then fail:
+            fail();
+        } catch (SocketTimeoutException ste) {
+        }
+    }
+
+    // This registers an IP with a MapRegisters, then adds a password via the northbound REST API
+    // and checks that the password works
+    @Test
+    public void addPasswordAfterRegister() throws Exception {
+        String ipString = "10.0.0.1";
+        LispIpv4Address address = new LispIpv4Address(ipString);
+        int mask = 32;
+        String pass = "pass";
+
+        URL url = createPostURLForAddKey();
+
+        String jsonAuthData = "{ \n" +
+                "\"key\" : \"%s\", \n" +
+                "\"maskLength\" : %d, \n" +
+                "\"address\" : \n" +
+                "{ \n" +
+                "\"ipAddress\" : \"10.0.0.1\", \n" +
+                "\"afi\" : 1\n" +
+                "}\n" +
+                "}";
+
+        byte[] expectedSha = new byte[] {(byte)146, (byte)234, (byte)52, (byte)247,
+                (byte)186, (byte)232, (byte)31, (byte)249, (byte)87, (byte)73,
+                (byte)234, (byte)54, (byte)225, (byte)160, (byte)129, (byte)251,
+                (byte)73, (byte)53, (byte)196, (byte)62
+                };
+
+        byte[] zeros = new byte[20];
+
+        jsonAuthData = String.format(jsonAuthData, pass, mask);
+        JSONObject json = sendHttpRequest(url, "PUT", jsonAuthData.getBytes());
+
+
+        // build a MapRegister
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+        etlr.setPrefix(address);
+        etlr.setMaskLength(mask);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(locatorEid);
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+
+        mapRegister.setKeyId((short) 1 ); // LispKeyIDEnum.SHA1.getKeyID()
+        mapRegister.setAuthenticationData(zeros);
+
+        sendMapRegister(mapRegister);
+        assertNoPacketReceived(3000);
+
+        mapRegister.setAuthenticationData(expectedSha);
+
+        sendMapRegister(mapRegister);
+
+        // this will fail if no MapNotify arrives for 6 seconds
+        MapNotify notify = receiveMapNotify();
+    }
+
+    private URL createGetURLForAddKey(LispIpv4Address address, int mask) throws MalformedURLException {
         String restUrl = String.format("http://localhost:8080/lispflowmapping/default/key/%d/%s/%d", address.getAfi().getIanaCode(), address
                 .getAddress().getHostAddress(), mask);
         URL url = new URL(restUrl);
         return url;
+    }
+
+    private URL createPostURLForAddKey() throws MalformedURLException {
+        return new URL("http://localhost:8080/lispflowmapping/default/key");
     }
 
     private String createAuthenticationString() {
@@ -445,20 +519,7 @@ public class MappingServiceIntegrationTest {
         return authStringEnc;
     }
 
-    private JSONObject callURL(URL url) throws IOException, JSONException {
-        String authStringEnc = createAuthenticationString();
-        connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.connect();
-
-        // getting the result, first check response code
-        Integer httpResponseCode = connection.getResponseCode();
-        if (httpResponseCode > 299)
-            fail();
-        InputStream is = connection.getInputStream();
+    private JSONObject inputStreamToJson(InputStream is) throws IOException, JSONException {
         BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -471,11 +532,46 @@ public class MappingServiceIntegrationTest {
         return json;
     }
 
+    private JSONObject sendHttpRequest(URL url) throws IOException, JSONException {
+        return sendHttpRequest(url, "GET", null);
+    }
+
+    private JSONObject sendHttpRequest(URL url, String httpMethod, byte[] data) throws IOException, JSONException {
+        String authStringEnc = createAuthenticationString();
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setRequestMethod(httpMethod);
+        connection.setRequestProperty("Authorization", "Basic " + authStringEnc);
+        connection.setRequestProperty("Content-Type", "application/json");
+//        connection.setRequestProperty("Accept", "application/json");
+
+        connection.connect();
+
+        if (data != null) {
+            connection.getOutputStream().write(data);
+        }
+
+        // getting the result, first check response code
+        Integer httpResponseCode = connection.getResponseCode();
+
+        if (httpResponseCode > 299){
+            fail();
+        }
+
+        if (!httpMethod.equals("GET")) {
+            return null;
+        }
+
+        InputStream is = connection.getInputStream();
+        return inputStreamToJson(is);
+    }
+
     private MapReply registerAddressAndQuery(LispAddress eid) throws SocketTimeoutException {
         return registerAddressAndQuery(eid, -1);
     }
 
-    private LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
+    private final LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
 
     // takes an address, packs it in a MapRegister, sends it, returns the
     // MapReply
@@ -494,14 +590,14 @@ public class MappingServiceIntegrationTest {
         etlr.addLocator(record);
         mapRegister.addEidToLocator(etlr);
         sendMapRegister(mapRegister);
-        MapNotify mapNotify = recieveMapNotify();
+        MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce());
         MapRequest mapRequest = new MapRequest();
         mapRequest.setNonce(4);
         mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
         mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
         sendMapRequest(mapRequest);
-        return recieveMapReply();
+        return receiveMapReply();
     }
 
     @Test
@@ -695,19 +791,19 @@ public class MappingServiceIntegrationTest {
         etlr.addLocator(record);
         mapRegister.addEidToLocator(etlr);
         sendMapRegister(mapRegister);
-        MapNotify mapNotify = recieveMapNotify();
+        MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce());
         MapRequest mapRequest = new MapRequest();
         mapRequest.setNonce(4);
         mapRequest.addEidRecord(new EidRecord(mask, matchedAddress));
         mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
         sendMapRequest(mapRequest);
-        MapReply mapReply = recieveMapReply();
+        MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce());
         assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
         mapRequest.getEids().get(0).setPrefix(unMatchedAddress);
         sendMapRequest(mapRequest);
-        mapReply = recieveMapReply();
+        mapReply = receiveMapReply();
         assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
     }
 
@@ -719,7 +815,7 @@ public class MappingServiceIntegrationTest {
         mapRequest.addEidRecord(new EidRecord((byte) 32, eid));
         mapRequest.addItrRloc(new LispIpv4Address(ourAddress));
         sendMapRequest(mapRequest);
-        MapReply mapReply = recieveMapReply();
+        MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce());
         assertEquals(0, mapReply.getEidToLocatorRecords().get(0).getLocators().size());
         MapRegister mapRegister = new MapRegister();
@@ -734,20 +830,20 @@ public class MappingServiceIntegrationTest {
         etlr.addLocator(record);
         mapRegister.addEidToLocator(etlr);
         sendMapRegister(mapRegister);
-        MapNotify mapNotify = recieveMapNotify();
+        MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce());
         sendMapRequest(mapRequest);
-        mapReply = recieveMapReply();
+        mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce());
         assertEquals(record.getLocator(), mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator());
 
     }
 
-    private MapReply recieveMapReply() throws SocketTimeoutException {
+    private MapReply receiveMapReply() throws SocketTimeoutException {
         return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
 
-    private MapNotify recieveMapNotify() throws SocketTimeoutException {
+    private MapNotify receiveMapNotify() throws SocketTimeoutException {
         return MapNotifySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
 
@@ -781,7 +877,7 @@ public class MappingServiceIntegrationTest {
         LispListLCAFAddress listLCAF = (LispListLCAFAddress) locators.get(0).getLocator();
         LispListLCAFAddress innerList = (LispListLCAFAddress) listLCAF.getAddresses().get(1);
         LispDistinguishedNameAddress dn = new LispDistinguishedNameAddress("david");
-        assertEquals(dn, ((LispDistinguishedNameAddress) innerList.getAddresses().get(0)));
+        assertEquals(dn, (innerList.getAddresses().get(0)));
         assertEquals(7, reply.getNonce());
     }
 
@@ -898,7 +994,7 @@ public class MappingServiceIntegrationTest {
                  * element.getHeaders().get(Constants.IMPORT_PACKAGE)); } else {
                  * element.start(); } } catch (BundleException e) {
                  * logger.error("BundleException:", e); fail(); }
-                 * 
+                 *
                  * debugit = true;
                  */
             }
