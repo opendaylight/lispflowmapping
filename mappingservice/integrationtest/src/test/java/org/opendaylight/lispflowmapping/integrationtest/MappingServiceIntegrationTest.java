@@ -44,6 +44,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispKeyIDEnum;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispMACAuthentication;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
@@ -466,12 +468,6 @@ public class MappingServiceIntegrationTest {
                 "}\n" +
                 "}";
 
-        byte[] expectedSha = new byte[] {(byte)146, (byte)234, (byte)52, (byte)247,
-                (byte)186, (byte)232, (byte)31, (byte)249, (byte)87, (byte)73,
-                (byte)234, (byte)54, (byte)225, (byte)160, (byte)129, (byte)251,
-                (byte)73, (byte)53, (byte)196, (byte)62
-                };
-
         byte[] zeros = new byte[20];
 
         jsonAuthData = String.format(jsonAuthData, pass, mask);
@@ -497,13 +493,89 @@ public class MappingServiceIntegrationTest {
         sendMapRegister(mapRegister);
         assertNoPacketReceived(3000);
 
-        mapRegister.setAuthenticationData(expectedSha);
+        mapRegister.setAuthenticationData(new byte[] {-110, -22, 52, -9, -70, -24, 31, -7,
+                87, 73, -22, 54, -31, -96, -127, -5, 73, 53, -60, 62});
 
         sendMapRegister(mapRegister);
 
         // this will fail if no MapNotify arrives for 6 seconds
         MapNotify notify = receiveMapNotify();
     }
+
+
+
+    // Comment out and change some visibility code to be able to generate authentication data fields
+    // for building MapRequests
+
+//    private void computeAuthData(MapRegister mapRegister, String pass) {
+//        mapRegister.setAuthenticationData(new byte[20]);
+//        LispMACAuthentication macAuth = new LispMACAuthentication(LispKeyIDEnum.SHA1.getAuthenticationName());
+//
+//        ByteBuffer buffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
+//        mapRegister.setAuthenticationData(macAuth.getAuthenticationData(buffer.array(), pass));
+//        System.out.println();System.out.println();System.out.println();System.out.println();
+//        for (byte b : macAuth.getAuthenticationData(buffer.array(), pass)) {
+//            System.out.print(String.format("%d, ", (int)b));
+//        }
+//        System.out.println();System.out.println();System.out.println();System.out.println();
+//    }
+
+
+    @Test
+    public void testPasswordMaskMatch() throws Exception {
+        LispIpv4Address addressInRange = new LispIpv4Address("10.20.30.40");
+        LispIpv4Address addressOutOfRange = new LispIpv4Address("20.40.30.40");
+        int mask = 32;
+        String pass = "pass";
+
+        URL url = createPostURLForAddKey;
+
+        String jsonAuthData = "{ \n" +
+                "\"key\" : \"%s\", \n" +
+                "\"maskLength\" : 8, \n" +
+                "\"address\" : \n" +
+                "{ \n" +
+                "\"ipAddress\" : \"10.20.30.0\", \n" +
+                "\"afi\" : 1\n" +
+                "}\n" +
+                "}";
+
+        jsonAuthData = String.format(jsonAuthData, pass);
+        JSONObject json = sendHttpRequest(url, "PUT", jsonAuthData.getBytes());
+
+
+        // build a MapRegister
+        MapRegister mapRegister = new MapRegister();
+        mapRegister.setWantMapNotify(true);
+        mapRegister.setNonce(8);
+        EidToLocatorRecord etlr = new EidToLocatorRecord();
+
+        etlr.setPrefix(addressInRange);
+
+        etlr.setMaskLength(mask);
+        etlr.setRecordTtl(254);
+        LocatorRecord record = new LocatorRecord();
+        record.setLocator(locatorEid);
+        etlr.addLocator(record);
+        mapRegister.addEidToLocator(etlr);
+
+        mapRegister.setKeyId((short) 1 ); // LispKeyIDEnum.SHA1.getKeyID()
+        mapRegister.setAuthenticationData(new byte[] {-15, -52, 38, -94, 125, -111, -68, -79,
+                68, 6, 101, 45, -1, 47, -4, -67, -113, 104, -110, -71});
+
+        sendMapRegister(mapRegister);
+
+     // this will fail if no MapNotify arrives for 6 seconds
+        MapNotify notify = receiveMapNotify();
+
+        etlr.setPrefix(addressOutOfRange);
+        mapRegister.setAuthenticationData(new byte[] {-54, 68, -58, -91, -23, 22, -88, -31,
+                113, 39, 115, 78, -68, -123, -71, -14, -99, 67, -23, -73});
+
+        sendMapRegister(mapRegister);
+        assertNoPacketReceived(3000);
+    }
+
 
     private URL createGetURLForAddKey(LispIpv4Address address, int mask) throws MalformedURLException {
         String restUrl = String.format("http://localhost:8080/lispflowmapping/default/key/%d/%s/%d", address.getAfi().getIanaCode(), address
@@ -679,7 +751,7 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
-    public void registerAndQuerySegmentLCAF() throws SocketTimeoutException {
+    public void registerAndQuery__SegmentLCAF() throws SocketTimeoutException {
         String ipAddress = "10.20.255.30";
         int instanceId = 6;
         LispIpv4Address lispIpAddress = new LispIpv4Address(ipAddress);
