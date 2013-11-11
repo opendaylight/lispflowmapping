@@ -95,6 +95,10 @@ public class MappingServiceIntegrationTest {
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
     private byte[] mapRegisterPacketWithNotifyWithListLCAFAndDistinguishedName;
 
+    private LispAddress locatorEid;
+
+    URL createPostURLForAddKey;
+
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
@@ -450,7 +454,7 @@ public class MappingServiceIntegrationTest {
         int mask = 32;
         String pass = "pass";
 
-        URL url = createPostURLForAddKey();
+        URL url = createPostURLForAddKey;
 
         String jsonAuthData = "{ \n" +
                 "\"key\" : \"%s\", \n" +
@@ -506,10 +510,6 @@ public class MappingServiceIntegrationTest {
                 .getAddress().getHostAddress(), mask);
         URL url = new URL(restUrl);
         return url;
-    }
-
-    private URL createPostURLForAddKey() throws MalformedURLException {
-        return new URL("http://localhost:8080/lispflowmapping/default/key");
     }
 
     private String createAuthenticationString() {
@@ -570,8 +570,6 @@ public class MappingServiceIntegrationTest {
     private MapReply registerAddressAndQuery(LispAddress eid) throws SocketTimeoutException {
         return registerAddressAndQuery(eid, -1);
     }
-
-    private final LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
 
     // takes an address, packs it in a MapRegister, sends it, returns the
     // MapReply
@@ -1008,6 +1006,12 @@ public class MappingServiceIntegrationTest {
         }
         // If LispMappingServer is null, cannot work
         assertNotNull(this.lms);
+
+        try {
+            createPostURLForAddKey = new URL("http://localhost:8080/lispflowmapping/default/key");
+        } catch (MalformedURLException e) { }
+
+        locatorEid = new LispIpv4Address("4.3.2.1");
 
         // Uncomment this code to Know which services were actually loaded to
         // BundleContext
