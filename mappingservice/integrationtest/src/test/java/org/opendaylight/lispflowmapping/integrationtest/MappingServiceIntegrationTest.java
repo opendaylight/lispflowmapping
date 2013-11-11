@@ -445,10 +445,10 @@ public class MappingServiceIntegrationTest {
         }
     }
 
-    // This registers an IP with a MapRegisters, then adds a password via the northbound REST API
+    // This registers an IP with a MapRegister, then adds a password via the northbound REST API
     // and checks that the password works
     @Test
-    public void addPasswordAfterRegister() throws Exception {
+    public void testPasswordExactMatch() throws Exception {
         String ipString = "10.0.0.1";
         LispIpv4Address address = new LispIpv4Address(ipString);
         int mask = 32;
