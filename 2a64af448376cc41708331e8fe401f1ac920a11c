@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_60ce74b6",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-11T11:33:47Z",
+      "side": 1,
+      "message": "as a test member that is initialized in the before.",
+      "revId": "2a64af448376cc41708331e8fe401f1ac920a11c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e0b94416",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 574,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-11T11:33:47Z",
+      "side": 1,
+      "message": "move to the \"members\" area",
+      "revId": "2a64af448376cc41708331e8fe401f1ac920a11c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
