@@ -22,7 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -41,7 +40,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
@@ -75,6 +73,8 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -326,10 +326,28 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(ODL, "sal-common-api").versionAsInProject(), //
                 mavenBundle(ODL, "sal-common-impl").versionAsInProject(),
                 mavenBundle(ODL, "sal-common-util").versionAsInProject(), //
+
                 mavenBundle(YANG, "concepts").versionAsInProject(),
                 mavenBundle(YANG, "yang-binding").versionAsInProject(), //
                 mavenBundle(YANG, "yang-common").versionAsInProject(), //
                 mavenBundle(YANG + ".thirdparty", "xtend-lib-osgi").versionAsInProject(),//
+                mavenBundle(YANG, "yang-data-api").versionAsInProject(), //
+                mavenBundle(YANG, "yang-data-impl").versionAsInProject(), //
+                mavenBundle(YANG, "yang-model-api").versionAsInProject(), //
+                mavenBundle(YANG, "yang-model-api").versionAsInProject(), //
+                mavenBundle(YANG, "yang-model-util").versionAsInProject(), //
+                mavenBundle(YANG, "yang-parser-api").versionAsInProject(),
+                mavenBundle(YANG, "yang-parser-impl").versionAsInProject(),
+                mavenBundle(YANG, "binding-generator-spi").versionAsInProject(), //
+                mavenBundle(YANG, "binding-model-api").versionAsInProject(), //
+                mavenBundle(YANG, "binding-generator-util").versionAsInProject(),
+                mavenBundle(YANG, "yang-parser-impl").versionAsInProject(),
+                mavenBundle(YANG, "binding-type-provider").versionAsInProject(),
+                mavenBundle(YANG, "binding-generator-api").versionAsInProject(),
+                mavenBundle(YANG, "binding-generator-spi").versionAsInProject(),
+                mavenBundle(YANG, "binding-generator-impl").versionAsInProject(),
+                mavenBundle(YANG + ".thirdparty", "antlr4-runtime-osgi-nohead").versionAsInProject(), //
+
                 mavenBundle("com.google.guava", "guava").versionAsInProject(), //
                 mavenBundle("org.javassist", "javassist").versionAsInProject(), //
 
@@ -398,6 +416,12 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.northbound").versionAsInProject(), //
+
+                // Additions
+                mavenBundle(ODL, "sal-core-api").versionAsInProject().update(), //
+                mavenBundle(ODL, "sal-core-spi").versionAsInProject().update(), //
+                mavenBundle(ODL, "sal-broker-impl").versionAsInProject(), //
+                mavenBundle(ODL, "sal-connector-api").versionAsInProject(), //
                 junitBundles());
     }
 
@@ -420,129 +444,92 @@ public class MappingServiceIntegrationTest {
     @Test
     public void northboundAddKey() throws Exception {
 
-    	LispIpv4Address address = new LispIpv4Address("10.0.0.1");
+        LispIpv4Address address = new LispIpv4Address("10.0.0.1");
         int mask = 32;
-    	String pass = "asdf";
-        
-    	URL url = createPutURL("key");
-    	String authKeyJSON = createAuthKeyJSON(pass,address,mask);
-    	callURL("PUT", "application/json", "text/plain", authKeyJSON, url);
+        String pass = "asdf";
+
+        URL url = createPutURL("key");
+        String authKeyJSON = createAuthKeyJSON(pass, address, mask);
+        callURL("PUT", "application/json", "text/plain", authKeyJSON, url);
 
         String retrievedKey = lms.getAuthenticationKey(address, mask);
-        
+
         //Check stored password matches the one sent
         assertEquals(pass, retrievedKey);
 
     }
-    
+
     @Test
     public void northboundRetrieveKey() throws Exception {
 
-    	LispIpv4Address address = new LispIpv4Address("10.0.0.1");
+        LispIpv4Address address = new LispIpv4Address("10.0.0.1");
         int mask = 32;
-    	String pass = "asdf";
-        
+        String pass = "asdf";
+
         lms.addAuthenticationKey(address, mask, pass);
-        
+
         URL url = createGetKeyIPv4URL(address, mask);
-        String reply = callURL("GET",null,"application/json",null,url);
+        String reply = callURL("GET", null, "application/json", null, url);
         JSONTokener jt = new JSONTokener(reply);
         JSONObject json = new JSONObject(jt);
-        
+
         // test that the password matches what was we expected.
         assertEquals(pass, json.get("key"));
 
     }
 
-    private String createAuthKeyJSON(String key, LispIpv4Address address, int mask){
-    	return "{\"key\" : \""+key+"\",\"maskLength\" : "+mask+",\"address\" : "
-    			+ "{\"ipAddress\" : \""+address.getAddress().getHostAddress()
-    			+ "\",\"afi\" : "+address.getAfi().getIanaCode()+"}}";
+    private String createAuthKeyJSON(String key, LispIpv4Address address, int mask) {
+        return "{\"key\" : \"" + key + "\",\"maskLength\" : " + mask + ",\"address\" : " + "{\"ipAddress\" : \""
+                + address.getAddress().getHostAddress() + "\",\"afi\" : " + address.getAfi().getIanaCode() + "}}";
     }
-    
+
     @Test
     public void northboundAddMapping() throws Exception {
 
-    	String pass = "asdf";
-    	LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
+        String pass = "asdf";
+        LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
         int mask = 32;
         LispIpv4Address rloc = new LispIpv4Address("20.0.0.2");
-    	
+
         //NB add mapping always checks the key
         lms.addAuthenticationKey(eid, mask, pass);
-        
-    	URL url = createPutURL("mapping");
-    	String mapRegisterJSON = createMapRegisterJSON(pass,eid,mask,rloc);
-    	callURL("PUT", "application/json", "text/plain", mapRegisterJSON, url);
 
-    	//Retrieve the RLOC from the database
-    	MapRequest mapRequest = new MapRequest();
+        URL url = createPutURL("mapping");
+        String mapRegisterJSON = createMapRegisterJSON(pass, eid, mask, rloc);
+        callURL("PUT", "application/json", "text/plain", mapRegisterJSON, url);
+
+        //Retrieve the RLOC from the database
+        MapRequest mapRequest = new MapRequest();
         mapRequest.addEidRecord(new EidRecord((byte) mask, eid));
         MapReply mapReply = lms.handleMapRequest(mapRequest);
-       
-        LispIpv4Address retrievedRloc = (LispIpv4Address) 
-        		mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator();
-        
+
+        LispIpv4Address retrievedRloc = (LispIpv4Address) mapReply.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator();
+
         assertEquals(rloc.getAddress().getHostAddress(), retrievedRloc.getAddress().getHostAddress());
 
     }
 
-    private String createMapRegisterJSON(String key, LispIpv4Address eid, int mask, LispIpv4Address rloc){
-    	String jsonString = 
-    	"{ "+ 
-    		"\"key\" : \""+key+"\","+ 
-    		"\"mapregister\" : "+
-    		  "{ "+
-    		"\"wantMapNotify\" : true,"+ 
-    		"\"proxyMapReply\" : false, "+
-    		"\"eidToLocatorRecords\" : "+
-    		    "[ "+
-    		      "{ "+
-    		      "\"authoritative\" : true,"+ 
-    		      "\"prefixGeneric\" : "+
-    		        "{ "+
-    		    	  "\"ipAddress\" : \""+eid.getAddress().getHostAddress()+"\","+ 
-    		    	  "\"afi\" : "+eid.getAfi().getIanaCode()+
-    		        "},"+
-    		        "\"mapVersion\" : 0,"+ 
-    		        "\"maskLength\" : "+mask+", "+
-    		        "\"action\" : \"NoAction\","+ 
-    		        "\"locators\" : "+
-    		        "[ "+
-    		          "{ "+
-    		        	  "\"multicastPriority\" : 1,"+ 
-    		        	  "\"locatorGeneric\" : "+
-    		            "{ "+
-    		        	  "\"ipAddress\" : \""+rloc.getAddress().getHostAddress()+"\","+ 
-    		        	  "\"afi\" : "+rloc.getAfi().getIanaCode()+
-    		            "}, "+
-    		            "\"routed\" : true,"+ 
-    		            "\"multicastWeight\" : 50,"+ 
-    		            "\"rlocProbed\" : false, "+
-    		            "\"localLocator\" : false, "+
-    		            "\"priority\" : 1, "+
-    		            "\"weight\" : 50 "+
-    		          "} "+
-    		        "], "+
-    		        "\"recordTtl\" : 100"+ 
-    		      "} "+
-    		    "], "+
-    		    "\"nonce\" : 3,"+ 
-    		    "\"keyId\" : 0 "+
-    		  "} "+
-    		"}";
-    	
-    	return jsonString;
+    private String createMapRegisterJSON(String key, LispIpv4Address eid, int mask, LispIpv4Address rloc) {
+        String jsonString = "{ " + "\"key\" : \"" + key + "\"," + "\"mapregister\" : " + "{ " + "\"wantMapNotify\" : true,"
+                + "\"proxyMapReply\" : false, " + "\"eidToLocatorRecords\" : " + "[ " + "{ " + "\"authoritative\" : true," + "\"prefixGeneric\" : "
+                + "{ " + "\"ipAddress\" : \"" + eid.getAddress().getHostAddress() + "\"," + "\"afi\" : " + eid.getAfi().getIanaCode() + "},"
+                + "\"mapVersion\" : 0," + "\"maskLength\" : " + mask + ", " + "\"action\" : \"NoAction\"," + "\"locators\" : " + "[ " + "{ "
+                + "\"multicastPriority\" : 1," + "\"locatorGeneric\" : " + "{ " + "\"ipAddress\" : \"" + rloc.getAddress().getHostAddress() + "\","
+                + "\"afi\" : " + rloc.getAfi().getIanaCode() + "}, " + "\"routed\" : true," + "\"multicastWeight\" : 50,"
+                + "\"rlocProbed\" : false, " + "\"localLocator\" : false, " + "\"priority\" : 1, " + "\"weight\" : 50 " + "} " + "], "
+                + "\"recordTtl\" : 100" + "} " + "], " + "\"nonce\" : 3," + "\"keyId\" : 0 " + "} " + "}";
+
+        return jsonString;
     }
-    
+
     @Test
     public void northboundRetrieveMapping() throws Exception {
 
-    	String pass = ""; 
-    	LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
+        String pass = "";
+        LispIpv4Address eid = new LispIpv4Address("10.0.0.1");
         int mask = 32;
         LispIpv4Address rloc = new LispIpv4Address("20.0.0.2");
-        
+
         //Insert mapping in the database
         MapRegister mapRegister = new MapRegister();
         EidToLocatorRecord etlr = new EidToLocatorRecord();
@@ -554,46 +541,36 @@ public class MappingServiceIntegrationTest {
         etlr.addLocator(record);
         mapRegister.addEidToLocator(etlr);
         lms.handleMapRegister(mapRegister);
-    	     
+
         //Get mapping using NB interface. No IID used
-    	URL url = createGetMappingIPv4URL(0, eid, mask);
-    	String reply = callURL("GET", null, "application/json", null, url);
-    	JSONTokener jt = new JSONTokener(reply);
+        URL url = createGetMappingIPv4URL(0, eid, mask);
+        String reply = callURL("GET", null, "application/json", null, url);
+        JSONTokener jt = new JSONTokener(reply);
         JSONObject json = new JSONObject(jt);
-        
+
         //With just one locator, locators is not a JSONArray
-        String rlocRetrieved = json
-        		.getJSONObject("locators")
-        		.getJSONObject("locatorGeneric")
-        		.getString("ipAddress");
-        
+        String rlocRetrieved = json.getJSONObject("locators").getJSONObject("locatorGeneric").getString("ipAddress");
+
         assertEquals(rloc.getAddress().getHostAddress(), rlocRetrieved);
 
     }
-    
+
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d",
-        		"key",
-        		address.getAfi().getIanaCode(), 
-        		address.getAddress().getHostAddress(), 
-        		mask);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d", "key", address.getAfi().getIanaCode(), address
+                .getAddress().getHostAddress(), mask);
         URL url = new URL(restUrl);
         return url;
     }
-    
+
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%d/%s/%d",
-        		"mapping",
-        		iid,
-        		address.getAfi().getIanaCode(), 
-        		address.getAddress().getHostAddress(), 
-        		mask);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%d/%s/%d", "mapping", iid,
+                address.getAfi().getIanaCode(), address.getAddress().getHostAddress(), mask);
         URL url = new URL(restUrl);
         return url;
     }
-    
+
     private URL createPutURL(String resource) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s",resource);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s", resource);
         URL url = new URL(restUrl);
         return url;
     }
@@ -605,35 +582,34 @@ public class MappingServiceIntegrationTest {
         return authStringEnc;
     }
 
-    private String callURL(String method, String content, String accept, String body, URL url) 
-    		throws IOException, JSONException {
+    private String callURL(String method, String content, String accept, String body, URL url) throws IOException, JSONException {
         String authStringEnc = createAuthenticationString();
         connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
         connection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-        if (content != null){
-        	connection.setRequestProperty("Content-Type", content);
+        if (content != null) {
+            connection.setRequestProperty("Content-Type", content);
         }
-        if (accept != null){
-        	connection.setRequestProperty("Accept", accept);	
+        if (accept != null) {
+            connection.setRequestProperty("Accept", accept);
         }
-        if (body != null){
-        	//now add the request body
-        	connection.setDoOutput(true);
-        	OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-        	wr.write(body);
-        	wr.flush();
+        if (body != null) {
+            //now add the request body
+            connection.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            wr.write(body);
+            wr.flush();
         }
         connection.connect();
 
         // getting the result, first check response code
         Integer httpResponseCode = connection.getResponseCode();
-        
-        if (httpResponseCode > 299){
-            logger.info("HTTP Response Code: "+httpResponseCode);
-        	fail();
+
+        if (httpResponseCode > 299) {
+            logger.info("HTTP Response Code: " + httpResponseCode);
+            fail();
         }
-            
+
         InputStream is = connection.getInputStream();
         BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         StringBuilder sb = new StringBuilder();
@@ -1064,18 +1040,24 @@ public class MappingServiceIntegrationTest {
                 System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
-                /*
-                 * try { String host =
-                 * element.getHeaders().get(Constants.FRAGMENT_HOST); if (host
-                 * != null) { logger.warn("Bundle " + element.getSymbolicName()
-                 * + " is a fragment which is part of: " + host);
-                 * logger.warn("Required imports are: " +
-                 * element.getHeaders().get(Constants.IMPORT_PACKAGE)); } else {
-                 * element.start(); } } catch (BundleException e) {
-                 * logger.error("BundleException:", e); fail(); }
-                 * 
-                 * debugit = true;
-                 */
+
+                try {
+                    String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
+                    if (host != null) {
+                        logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
+                        logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                    } else {
+                        //  if (element.getSymbolicName().equals("org.opendaylight.controller.sal-core-api")) {
+                        element.start();
+                        // }
+                    }
+                } catch (BundleException e) {
+                    logger.error("BundleException:", e);
+                    fail();
+                }
+
+                debugit = true;
+
             }
         }
         if (debugit) {
