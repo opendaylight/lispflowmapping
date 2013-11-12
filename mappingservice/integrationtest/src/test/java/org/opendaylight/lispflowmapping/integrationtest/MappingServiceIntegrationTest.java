@@ -67,6 +67,7 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress
 import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.ReencapHop;
+import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -420,6 +421,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(ODL, "sal-core-spi").versionAsInProject().update(), //
                 mavenBundle(ODL, "sal-broker-impl").versionAsInProject(), //
                 mavenBundle(ODL, "sal-connector-api").versionAsInProject(), //
+
                 junitBundles());
     }
 
@@ -625,6 +627,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private LispAddress locatorEid = new LispIpv4Address("4.3.2.1");
+    private IConfigLispPlugin configLispPlugin;
 
     // takes an address, packs it in a MapRegister, sends it, returns the
     // MapReply
@@ -1065,8 +1068,21 @@ public class MappingServiceIntegrationTest {
         if (r != null) {
             this.lms = (IFlowMapping) bc.getService(r);
         }
-        // If LispMappingServer is null, cannot work
-        assertNotNull(this.lms);
+
+        assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
+
+        r = bc.getServiceReference(IConfigLispPlugin.class.getName());
+        if (r != null) {
+            this.configLispPlugin = (IConfigLispPlugin) bc.getService(r);
+        }
+
+        assertNotNull(IConfigLispPlugin.class.getName() + " service wasn't found in bundle context ", this.configLispPlugin);
+        configLispPlugin.setLispAddress(lispBindAddress);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // Uncomment this code to Know which services were actually loaded to
         // BundleContext

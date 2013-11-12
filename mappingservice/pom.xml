@@ -15,6 +15,7 @@
         <modules>
         	<module>yangmodel</module>
                 <module>api</module>
+                <module>configmodule</module>
                 <module>implementation</module>
                 <module>southbound</module>
                 <module>northbound</module>

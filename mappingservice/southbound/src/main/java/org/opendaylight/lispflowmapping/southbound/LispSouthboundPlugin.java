@@ -28,6 +28,7 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerial
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
 import org.opendaylight.lispflowmapping.type.lisp.MapReply;
+import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
@@ -35,18 +36,23 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements ILispSouthboundPlugin, CommandProvider {
+public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements ILispSouthboundPlugin, IConfigLispPlugin, CommandProvider {
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
+    private static Object startLock = new Object();
     private LispIoThread thread;
     private LispSouthboundService lispSouthboundService;
     private volatile DatagramSocket socket = null;
     private final String MAP_NOTIFY = "MapNotify";
     private final String MAP_REPlY = "MapReply";
+    private volatile String bindingAddress = null;
+    private volatile boolean stillRunning = false;
+    private volatile boolean alreadyInit = false;
 
     private void registerWithOSGIConsole() {
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bundleContext.registerService(CommandProvider.class.getName(), this, null);
+        bundleContext.registerService(IConfigLispPlugin.class.getName(), this, null);
     }
 
     protected void stopImpl(BundleContext context) {
@@ -80,18 +86,14 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
         @Override
         public void run() {
-            String lispBindAddress = "0.0.0.0";
-            String lispIp = System.getProperty("lispip");
-            if (lispIp != null) {
-                lispBindAddress = lispIp;
-            }
+            stillRunning = true;
 
             int lispPortNumber = LispMessage.PORT_NUM;
             int lispReceiveTimeout = 1000;
 
-            logger.info("LISP (RFC6830) Mapping Service is running and listening on " + lispBindAddress);
+            logger.info("LISP (RFC6830) Mapping Service is running and listening on " + bindingAddress);
             try {
-                socket = new DatagramSocket(new InetSocketAddress(lispBindAddress, lispPortNumber));
+                socket = new DatagramSocket(new InetSocketAddress(bindingAddress, lispPortNumber));
                 socket.setSoTimeout(lispReceiveTimeout);
             } catch (SocketException e) {
                 logger.warn("Cannot open socket on UDP port " + lispPortNumber, e);
@@ -120,6 +122,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
             socket.close();
             logger.info("Socket closed");
+            stillRunning = false;
         }
 
         public void stopRunning() {
@@ -140,20 +143,34 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         return help.toString();
     }
 
+    private void startIOThread() {
+        thread = new LispIoThread();
+        logger.info("LISP (RFC6830) Mapping Service Southbound Plugin is up!");
+        thread.start();
+    }
+
     public void onSessionInitiated(ProviderContext session) {
-        if (thread == null) {
-            lispSouthboundService = new LispSouthboundService();
-            thread = new LispIoThread();
-            logger.info("LISP (RFC6830) Mapping Service is up!");
-            thread.start();
+        synchronized (startLock) {
+            if (!alreadyInit) {
+                alreadyInit = true;
+                lispSouthboundService = new LispSouthboundService();
+                registerWithOSGIConsole();
+                registerRPCs(session);
+                logger.debug("Provider Session initialized");
+                if (bindingAddress == null) {
+                    setLispAddress("0.0.0.0");
+                }
+            }
 
-            // OSGI console
-            registerWithOSGIConsole();
+        }
+    }
 
-            logger.debug("Provider Session initialized");
-
+    private void registerRPCs(ProviderContext session) {
+        try {
             lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
             session.addRpcImplementation(ILispSouthboundPlugin.class, this);
+        } catch (Throwable t) {
+            logger.error(t.getMessage(), t);
         }
     }
 
@@ -191,5 +208,28 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             logger.debug("MapReply was null");
         }
         return null;
+    }
+
+    public void setLispAddress(String address) {
+        synchronized (startLock) {
+            if (bindingAddress != null && bindingAddress.equals(address)) {
+                logger.debug("configured lisp binding address didn't change.");
+            } else {
+                String action = (bindingAddress == null ? "Setting" : "Resetting");
+                logger.info(action + " lisp binding address to: " + address);
+                bindingAddress = address;
+                if (thread != null) {
+                    thread.stopRunning();
+                    while (stillRunning) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                startIOThread();
+            }
+        }
     }
 }
