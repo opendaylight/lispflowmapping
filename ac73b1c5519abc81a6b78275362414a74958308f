@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_266e5497",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-12T07:35:48Z",
+      "side": 1,
+      "message": "call it \"addKeyUrl\"",
+      "revId": "ac73b1c5519abc81a6b78275362414a74958308f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_066d9098",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-12T07:35:48Z",
+      "side": 1,
+      "message": "no need for \"url\" variable. simply use addKeyUrl",
+      "revId": "ac73b1c5519abc81a6b78275362414a74958308f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e6671cb6",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-12T07:35:48Z",
+      "side": 1,
+      "message": "remove the try catch. test method can throw Exception which will fail the test and give the user full stack trace (better debug info)",
+      "revId": "ac73b1c5519abc81a6b78275362414a74958308f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
