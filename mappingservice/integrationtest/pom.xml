@@ -59,7 +59,6 @@
 				<version>${surefire.version}</version>
 				<configuration>
 					<skipTests>false</skipTests>
-					<argLine>-Dlispip=127.0.0.1</argLine>
 					<skip>${skipIntegrationTest}</skip>
 				</configuration>
 			</plugin>
@@ -561,7 +560,7 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>config-manager</artifactId>
-			<version>0.2.2-SNAPSHOT</version>
+			<version>0.2.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller.thirdparty</groupId>
@@ -742,7 +741,6 @@
 			<artifactId>antlr4-runtime-osgi-nohead</artifactId>
 			<version>4.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<profiles>
