@@ -52,12 +52,18 @@ public static LispAddress convertToLispAddress(LispAddressGeneric generic){
     	
     	case IP: 
     		lispAddress = new LispIpv4Address(generic.getIpAddress());
+        	if (((LispIpv4Address)lispAddress).getAddress() == null){
+        		throw new IllegalArgumentException("Convertor was unable to convert address");
+        	}
     		break;
 		case AS:
 			lispAddress = new LispASAddress(generic.getAsNum());
 			break;
 		case IP6:
 			lispAddress = new LispIpv6Address(generic.getIpAddress());
+        	if (((LispIpv6Address)lispAddress).getAddress() == null){
+        		throw new IllegalArgumentException("Convertor was unable to convert address");
+        	}
 			break;
 		case MAC:
 			lispAddress = new LispMACAddress(generic.getMac());
@@ -86,13 +92,16 @@ public static LispAddress convertToLispAddress(LispAddressGeneric generic){
 				break;
 			default:
 				throw new IllegalArgumentException("LCAF type " + lcafEnum + 
-						" not supported by this constructor: convertToLispAddress(LispAddressGeneric generic)");
+						" not supported by this convertor: convertToLispAddress(LispAddressGeneric generic)");
 			}
 			break;
 		default:
 			throw new IllegalArgumentException("AFI " + afiEnum + 
 					" not supported by this convertor: convertToLispAddress(LispAddressGeneric generic)");
     	}
+    	
+
+    	
     	return lispAddress;
     }
 

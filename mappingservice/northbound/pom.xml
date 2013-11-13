@@ -84,7 +84,7 @@
 
             <Export-Package>
             </Export-Package>
-            <Web-ContextPath>/lispflowmapping</Web-ContextPath>
+            <Web-ContextPath>/lispflowmapping/nb/v2</Web-ContextPath>
             <Jaxrs-Resources>,${classes;ANNOTATION;javax.ws.rs.Path}</Jaxrs-Resources>
           </instructions>
           <manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>

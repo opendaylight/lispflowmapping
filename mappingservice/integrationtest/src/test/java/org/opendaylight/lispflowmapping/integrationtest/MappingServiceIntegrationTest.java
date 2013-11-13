@@ -448,7 +448,7 @@ public class MappingServiceIntegrationTest {
 
         URL url = createPutURL("key");
         String authKeyJSON = createAuthKeyJSON(pass, address, mask);
-        callURL("PUT", "application/json", "text/plain", authKeyJSON, url);
+        callURL("PUT", "application/json", null, authKeyJSON, url);
 
         String retrievedKey = lms.getAuthenticationKey(address, mask);
 
@@ -494,7 +494,7 @@ public class MappingServiceIntegrationTest {
 
         URL url = createPutURL("mapping");
         String mapRegisterJSON = createMapRegisterJSON(pass, eid, mask, rloc);
-        callURL("PUT", "application/json", "text/plain", mapRegisterJSON, url);
+        callURL("PUT", "application/json", null, mapRegisterJSON, url);
 
         //Retrieve the RLOC from the database
         MapRequest mapRequest = new MapRequest();
@@ -508,7 +508,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private String createMapRegisterJSON(String key, LispIpv4Address eid, int mask, LispIpv4Address rloc) {
-        String jsonString = "{ " + "\"key\" : \"" + key + "\"," + "\"mapregister\" : " + "{ " + "\"wantMapNotify\" : true,"
+        String jsonString = "{ " + "\"key\" : \"" + key + "\"," + "\"mapregister\" : " + "{ " 
                 + "\"proxyMapReply\" : false, " + "\"eidToLocatorRecords\" : " + "[ " + "{ " + "\"authoritative\" : true," + "\"prefixGeneric\" : "
                 + "{ " + "\"ipAddress\" : \"" + eid.getAddress().getHostAddress() + "\"," + "\"afi\" : " + eid.getAfi().getIanaCode() + "},"
                 + "\"mapVersion\" : 0," + "\"maskLength\" : " + mask + ", " + "\"action\" : \"NoAction\"," + "\"locators\" : " + "[ " + "{ "
@@ -554,21 +554,34 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d", "key", address.getAfi().getIanaCode(), address
-                .getAddress().getHostAddress(), mask);
+
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d",
+        		"key",
+        		address.getAfi().getIanaCode(), 
+        		address.getAddress().getHostAddress(), 
+        		mask);
+
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%d/%s/%d", "mapping", iid,
-                address.getAfi().getIanaCode(), address.getAddress().getHostAddress(), mask);
+
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d",
+        		"mapping",
+        		iid,
+        		address.getAfi().getIanaCode(), 
+        		address.getAddress().getHostAddress(), 
+        		mask);
+
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createPutURL(String resource) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s", resource);
+
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s",resource);
+
         URL url = new URL(restUrl);
         return url;
     }
