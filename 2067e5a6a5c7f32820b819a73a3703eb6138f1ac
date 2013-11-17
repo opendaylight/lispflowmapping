@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_a46fd7c4",
+        "filename": "mappingservice/configmodule/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "drop the module",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_847293ab",
+        "filename": "mappingservice/configmodule/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "package should be:\norg.opendaylight.lispflowmapping.config.yang",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e49cafc2",
+        "filename": "mappingservice/configmodule/src/main/java/org/opendaylight/lispflowmapping/lispconfig/yang/LispConfigModule.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "from the YANG?",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_045ea312",
+        "filename": "mappingservice/configmodule/src/main/java/org/opendaylight/lispflowmapping/lispconfig/yang/LispConfigModuleFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "where does this abstract class coming from? the generated model? if so, why do we need to extend it?\n\ni think we should drop the \"module\" naming.",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6469dfbd",
+        "filename": "mappingservice/configmodule/src/main/yang/config-lisp.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "1. ident\n2. please use the lisp IP address type.",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_44649be4",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "i don\u0027t see the thread being started here. \n\nare we expecting the setLispAddress to be called on init as well?",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2463e7dd",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-17T07:12:23Z",
+      "side": 1,
+      "message": "is this call thread safe? we should probably protect the config (or expect the infra to do so).",
+      "revId": "2067e5a6a5c7f32820b819a73a3703eb6138f1ac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
