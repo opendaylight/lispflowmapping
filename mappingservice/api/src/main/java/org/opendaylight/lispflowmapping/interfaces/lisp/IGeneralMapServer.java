@@ -1,6 +1,6 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
 public interface IGeneralMapServer {
     boolean shouldAuthenticate();
@@ -11,9 +11,9 @@ public interface IGeneralMapServer {
 
     void setShouldAuthenticate(boolean shouldAuthenticate);
 
-    String getAuthenticationKey(LispAddress address, int maskLen);
+    String getAuthenticationKey(LispAddressContainer address, int maskLen);
 
-    boolean removeAuthenticationKey(LispAddress address, int maskLen);
+    boolean removeAuthenticationKey(LispAddressContainer address, int maskLen);
 
-    boolean addAuthenticationKey(LispAddress address, int maskLen, String key);
+    boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
 }

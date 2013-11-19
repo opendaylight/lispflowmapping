@@ -50,6 +50,14 @@
        }
     }
     
+    grouping LispNoAddress {
+    	uses LispAFIAddress {
+    		refine afi {
+    		default 0;
+    		}
+    	}
+    }
+    
     grouping LispIpv4Address {
     	uses LispAFIAddress {
     		refine afi {
@@ -109,6 +117,9 @@
     
     grouping LispSimpleAddress {
        choice primitiveAddress {
+       		case No {
+       			uses LispNoAddress;
+       		}
        		case Ipv4 {
        			uses LispIpv4Address;
        		}
@@ -132,13 +143,13 @@
                uses LispSimpleAddress;
        }
        leaf lookup {
-             type int8;
+             type boolean;
        }
        leaf RLOCProbe {
-             type int8;
+             type boolean;
        }
        leaf strict {
-             type int8;
+             type boolean;
        }
     }
     
@@ -152,7 +163,7 @@
     		}
     	}
        leaf lcafType {
-               type int16;
+               type uint8;
                reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03";
        }
     }
@@ -211,10 +222,10 @@
                 uses LispSimpleAddress;
              }
              leaf srcMaskLength {
-             	type int8;
+             	type uint8;
              }
              leaf dstMaskLength {
-                 type int8;
+                 type uint8;
               }
               leaf reserved {
                   type int16;
@@ -232,7 +243,7 @@
             	uses LispSimpleAddress;
              }
              leaf protocol {
-             	type int8;
+             	type uint8;
              }
              leaf ipTos {
                  type int32;
@@ -247,11 +258,26 @@
 
        
        grouping LispAddress {
-       container LispAddress{
+       container LispAddressContainer{
                choice Address {
-                       case SimpleAddress {
-                               uses LispSimpleAddress;
-                       }
+               			case No {
+       						uses LispNoAddress;
+       					}
+                       case Ipv4 {
+       						uses LispIpv4Address;
+       					}
+       					case Ipv6 {
+       						uses LispIpv6Address;
+       					}
+			       		case Mac {
+			       			uses LispMacAddress;
+			       		}
+			       		case DistinguishedName {
+							uses LispDistinguishedNameAddress;
+			       		}
+			       		case AS {
+							uses LispASAddress;
+			       		}
                        case LcafSegment {
                                uses LcafSegmentAddress;
                        }
@@ -279,7 +305,7 @@
     		uses LispAddress; 
     		
     		leaf mask {
-    			type int8;
+    			type uint8;
     		}
 	}
     }
@@ -287,16 +313,16 @@
     grouping LocatorRecords {
     list LocatorRecord {
     	leaf priority {
-    		type int8;
+    		type uint8;
     	}
     	leaf weight {
-    		type int8;
+    		type uint8;
     	}
     	leaf multicastPriority {
-    		type int8;
+    		type uint8;
     	}
     	leaf multicastWeight {
-    		type int8;
+    		type uint8;
     	}
     	leaf localLocator {
     		type boolean;
@@ -319,7 +345,7 @@
     		type int32;
     	}
     	leaf maskLength {
-    		type int8;
+    		type uint8;
     	}
     	leaf mapVersion {
     		type int16;
@@ -351,7 +377,7 @@
     	leaf wantMapNotify {
     		type boolean;
     	}
-    	leaf nounce {
+    	leaf nonce {
     		type int64;
     	}
     	leaf keyId {
@@ -373,7 +399,7 @@
     	leaf wantMapNotify {
     		type boolean;
     	}
-    	leaf nounce {
+    	leaf nonce {
     		type int64;
     	}
     	leaf keyId {
@@ -405,7 +431,7 @@
     	leaf smrInvoked {
     		type boolean;
     	}
-    	leaf nounce {
+    	leaf nonce {
     		type int64;
     	}
     	container SourceEid {
@@ -424,6 +450,16 @@
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.4";
     	leaf probe {
     		type boolean;
+    	}
+    	leaf action {
+      type enumeration {
+          enum NoAction;
+          enum NativelyForward;
+          enum Drop;
+      }
+  }
+    	leaf nonce {
+    		type int64;
     	}
     	leaf echoNonceEnabled {
     		type boolean;

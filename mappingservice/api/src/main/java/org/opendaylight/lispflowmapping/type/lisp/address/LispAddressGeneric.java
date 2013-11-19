@@ -17,7 +17,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 
 @XmlRootElement(name="LispAddressGeneric")
 @XmlAccessorType(XmlAccessType.NONE)

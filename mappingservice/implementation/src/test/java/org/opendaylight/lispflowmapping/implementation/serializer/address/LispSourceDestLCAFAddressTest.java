@@ -17,32 +17,33 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
+import org.opendaylight.lispflowmapping.type.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSourceDestAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress.DstAddressBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress.SrcAddressBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
 
 public class LispSourceDestLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0C 20 00 10 " + //
                 "00 00 10 18 " + // reserved + masks
-                "00 01 11 22 33 44 " +  // AFI=1, IP=0x11223344
-    			"00 01 22 33 44 55")); // AFI=1, IP=0x22334455
+                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
+                "00 01 22 33 44 55")); // AFI=1, IP=0x22334455
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispSourceDestLCAFAddress srcDestAddress = (LispSourceDestLCAFAddress) address;
-        
-        assertEquals(0, srcDestAddress.getReserved());
-        assertEquals((byte)0x10, srcDestAddress.getSrcMaskLength());
-        assertEquals((byte)0x18, srcDestAddress.getDstMaskLength());
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafSourceDestAddress srcDestAddress = (LcafSourceDestAddress) address;
 
-        assertEquals(new LispIpv4Address(0x11223344), srcDestAddress.getSrcAddress());
-        assertEquals(new LispIpv4Address(0x22334455), srcDestAddress.getDstAddress());
-        assertEquals(LispCanonicalAddressFormatEnum.SOURCE_DEST, srcDestAddress.getType());
+        assertEquals((byte) 0x10, srcDestAddress.getSrcMaskLength().byteValue());
+        assertEquals((byte) 0x18, srcDestAddress.getDstMaskLength().byteValue());
+
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), srcDestAddress.getSrcAddress().getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("34.51.68.85"), srcDestAddress.getDstAddress().getPrimitiveAddress());
+        assertEquals(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode(), srcDestAddress.getLcafType().byteValue());
     }
 
     @Test(expected = LispSerializationException.class)
@@ -57,40 +58,41 @@ public class LispSourceDestLCAFAddressTest extends BaseTestCase {
         LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "AA 20 00 0A " + // Type AA is unknown
                 "00 00 CC DD " + // reserved + masks
-                "00 01 11 22 33 44 " +  // AFI=1, IP=0x11223344
-    			"00 01 22 33 44 55")); // AFI=1, IP=0x22334455
+                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
+                "00 01 22 33 44 55")); // AFI=1, IP=0x22334455
     }
 
     @Test
     public void deserialize__Ipv6() throws Exception {
-    	LispSourceDestLCAFAddress srcAddress = (LispSourceDestLCAFAddress) LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
-        		"0C 20 00 28 " + //
+        LcafSourceDestAddress srcAddress = (LcafSourceDestAddress) LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+                "0C 20 00 28 " + //
                 "00 00 CC DD " + // reserved + masks
                 "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD " + // AFI=2,
-    			"00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD")); // AFI=2,
+                "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD")); // AFI=2,
         // IPv6
 
-        assertEquals(new LispIpv6Address(new byte[] { 0x11, 0x22, 0x33, 0x44, //
-                0x55, 0x66, 0x77, (byte) 0x88, //
-                (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, //
-                (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD }), srcAddress.getSrcAddress());
-        assertEquals(new LispIpv6Address(new byte[] { 0x44, 0x33, 0x22, 0x11, //
-        		(byte) 0x88, 0x77, 0x66, 0x55, //
-        		(byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, //
-        		(byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD }), srcAddress.getDstAddress());
-
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd")), srcAddress
+                .getSrcAddress().getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("4433:2211:8877:6655:99aa:bbcc:aabb:ccdd")), srcAddress
+                .getDstAddress().getPrimitiveAddress());
     }
 
     @Test
     public void serialize__Simple() throws Exception {
-    	LispSourceDestLCAFAddress address = new LispSourceDestLCAFAddress((byte) 0x20, (short)0x0000, (byte) 0xCC, (byte) 0xDD, new LispIpv4Address(0x11223344), new LispIpv4Address(0x22334455));
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
-        LispAddressSerializer.getInstance().serialize(buf,address);
+        LcafSourceDestBuilder addressBuilder = new LcafSourceDestBuilder();
+        addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
+                (short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+        addressBuilder.setSrcMaskLength((short) 0xCC);
+        addressBuilder.setDstMaskLength((short) 0xDD);
+        addressBuilder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build());
+        addressBuilder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("34.51.68.85")).build());
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(addressBuilder.build()));
+        LispAddressSerializer.getInstance().serialize(buf, addressBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-        		 "0C 20 00 10 " + //
-                 "00 00 CC DD " + // reserved + masks
-                 "00 01 11 22 33 44 " +  // AFI=1, IP=0x11223344
-     			"00 01 22 33 44 55"); // AFI=1, IP=0x22334455
+                "0C 00 00 10 " + //
+                "00 00 CC DD " + // reserved + masks
+                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
+                "00 01 22 33 44 55"); // AFI=1, IP=0x22334455
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 }

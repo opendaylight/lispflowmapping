@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -17,11 +18,16 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
-import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
-import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapReply;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.IMaskable;
+import org.opendaylight.lispflowmapping.type.MaskUtils;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,32 +51,44 @@ public class MapResolver implements IMapResolverAsync {
         if (dao == null) {
             logger.warn("handleMapRequest called while dao is uninitialized");
         } else {
-            MapReply mapReply = new MapReply();
-            mapReply.setNonce(request.getNonce());
-            for (EidRecord eid : request.getEids()) {
-                EidToLocatorRecord eidToLocators = new EidToLocatorRecord();
-                eidToLocators.setMaskLength(eid.getMaskLength())//
-                        .setPrefix(eid.getPrefix());
-                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getPrefix(), eid.getMaskLength());
+            MapReplyBuilder builder = new MapReplyBuilder();
+            builder.setAction(Action.NoAction);
+            builder.setEchoNonceEnabled(true);
+            builder.setProbe(request.isProbe());
+            builder.setSecurityEnabled(false);
+            builder.setNonce(request.getNonce());
+            for (EidRecord eid : request.getEidRecord()) {
+                EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
+                recordBuilder.setRecordTtl(0);
+                recordBuilder
+                        .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NoAction);
+                recordBuilder.setAuthoritative(request.isAuthoritative());
+                recordBuilder.setMapVersion((short) 0);
+                recordBuilder.setMaskLength(eid.getMask());
+                recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
+                recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
                 Map<String, ?> locators = dao.get(key);
-                if (shouldIterateMask() && locators == null && key.getEID() instanceof IMaskable) {
+                if (shouldIterateMask() && locators == null && MaskUtils.isMaskable(key.getEID().getAddress(), 0)) {
                     locators = findMaskLocators(key);
                 }
                 if (locators != null) {
-                    addLocators(eidToLocators, locators);
+                    addLocators(recordBuilder, locators);
                 }
-                mapReply.addEidToLocator(eidToLocators);
+                if (builder.getEidToLocatorRecord() == null) {
+                    builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+                }
+                builder.getEidToLocatorRecord().add(recordBuilder.build());
             }
-            callback.handleMapReply(mapReply);
+            callback.handleMapReply(builder.build());
         }
     }
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
         int mask = key.getMask();
         while (mask > 0) {
-            key = MappingServiceKeyUtil.generateMappingServiceKey(key.getEID(), (byte) mask);
-
-            ((IMaskable) key.getEID()).normalize(mask);
+            key = MappingServiceKeyUtil.generateMappingServiceKey(
+                    new LispAddressContainerBuilder().setAddress(MaskUtils.normalize(key.getEID().getAddress(), mask)).build(), mask);
             mask--;
             Map<String, ?> locators = dao.get(key);
             if (locators != null) {
@@ -80,26 +98,31 @@ public class MapResolver implements IMapResolverAsync {
         return null;
     }
 
-    private void addLocators(EidToLocatorRecord eidToLocators, Map<String, ?> locators) {
+    private void addLocators(EidToLocatorRecordBuilder recordBuilder, Map<String, ?> locators) {
         try {
             MappingServiceValue value = (MappingServiceValue) locators.get("value");
             for (MappingServiceRLOC rloc : value.getRlocs()) {
-                addLocator(eidToLocators, rloc);
-
+                addLocator(recordBuilder, rloc);
+                recordBuilder.setRecordTtl(rloc.getTtl());
             }
         } catch (ClassCastException cce) {
         }
     }
 
-    private void addLocator(EidToLocatorRecord eidToLocators, MappingServiceRLOC locatorObject) {
+    private void addLocator(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOC locatorObject) {
         if (locatorObject == null) {
             return;
         }
         try {
-            eidToLocators.addLocator(locatorObject.getRecord().clone().setRouted(true));
-            eidToLocators.setAction(locatorObject.getAction());
-            eidToLocators.setAuthoritative(locatorObject.isAuthoritative());
-            eidToLocators.setRecordTtl(locatorObject.getTtl());
+            recordBuilder.getLocatorRecord().add(
+                    new LocatorRecordBuilder().setLocalLocator(locatorObject.getRecord().isLocalLocator())
+                            .setRlocProbed(locatorObject.getRecord().isRlocProbed()).setWeight(locatorObject.getRecord().getWeight())
+                            .setPriority(locatorObject.getRecord().getPriority()).setMulticastWeight(locatorObject.getRecord().getMulticastWeight())
+                            .setMulticastPriority(locatorObject.getRecord().getMulticastPriority()).setRouted(locatorObject.getRecord().isRouted())
+                            .setLispAddressContainer(locatorObject.getRecord().getLispAddressContainer()).build());
+            recordBuilder.setAction(locatorObject.getAction());
+            recordBuilder.setAuthoritative(locatorObject.isAuthoritative());
+            recordBuilder.setRecordTtl(locatorObject.getTtl());
         } catch (ClassCastException cce) {
         }
     }

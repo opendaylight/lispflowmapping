@@ -22,6 +22,11 @@
 						<Export-Package>
 						</Export-Package>
 						<Import-Package>
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer,
+							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.controller.sal.core,
 							org.apache.felix.dm,
 							org.apache.commons.lang3.builder,
@@ -32,7 +37,6 @@
 							org.opendaylight.lispflowmapping.interfaces.lisp,
 							org.opendaylight.lispflowmapping.type,
 							org.opendaylight.lispflowmapping.type.lisp,
-							org.opendaylight.lispflowmapping.type.lisp.address,
 							org.opendaylight.lispflowmapping.type.sbplugin,
 							org.opendaylight.controller.clustering.services,
 							org.opendaylight.lispflowmapping.implementation.serializer,

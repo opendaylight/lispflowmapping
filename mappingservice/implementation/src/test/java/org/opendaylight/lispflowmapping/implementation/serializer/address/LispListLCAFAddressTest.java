@@ -21,44 +21,52 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
+import org.opendaylight.lispflowmapping.type.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.Addresses;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.AddressesBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafList;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv6;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 
 public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
                 "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44")); // IPv6
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispListLCAFAddress lcafList = (LispListLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafListAddress lcafList = (LcafListAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lcafList.getLcafType().byteValue());
 
-        List<? extends LispAddress> addressList = lcafList.getAddresses();
+        List<Addresses> addressList = lcafList.getAddresses();
         assertEquals(2, addressList.size());
 
-        assertEquals(new LispIpv4Address(0xAABBCCDD), addressList.get(0));
-        assertEquals(new LispIpv6Address("1122:3344:1122:3344:1122:3344:1122:3344"), addressList.get(1));
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress("170.187.204.221")), addressList.get(0).getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:1122:3344:1122:3344:1122:3344")), addressList.get(1)
+                .getPrimitiveAddress());
     }
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00 "));
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispListLCAFAddress lcafList = (LispListLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafListAddress lcafList = (LcafListAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST, lcafList.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lcafList.getLcafType().byteValue());
 
-        List<? extends LispAddress> addressList = lcafList.getAddresses();
+        List<Addresses> addressList = lcafList.getAddresses();
         assertEquals(0, addressList.size());
     }
 
@@ -78,26 +86,33 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        List<LispAddress> addressList = new ArrayList<LispAddress>();
-        addressList.add(new LispIpv4Address(0xAABBCCDD));
-        addressList.add(new LispIpv6Address("1222:3344:1122:3344:1122:3344:1122:3344"));
-        LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, addressList);
-
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
-        LispAddressSerializer.getInstance().serialize(buf,address);
+        LcafListBuilder listBuilder = new LcafListBuilder();
+        listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
+        listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
+        List<Addresses> addressList = new ArrayList<Addresses>();
+        addressList.add(new AddressesBuilder().setPrimitiveAddress(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress("170.187.204.221")))
+                .build());
+        addressList.add(new AddressesBuilder().setPrimitiveAddress(
+                LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:1122:3344:1122:3344:1122:3344"))).build());
+        listBuilder.setAddresses(addressList);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(listBuilder.build()));
+        LispAddressSerializer.getInstance().serialize(buf, listBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
-                "00 02 12 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44");
+                "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 
     @Test
     public void serialize__NoAddresses() throws Exception {
-        LispListLCAFAddress address = new LispListLCAFAddress((byte) 0, new ArrayList<LispAddress>());
-
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
-        LispAddressSerializer.getInstance().serialize(buf,address);
+        LcafListBuilder listBuilder = new LcafListBuilder();
+        listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
+        listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
+        List<Addresses> addressList = new ArrayList<Addresses>();
+        listBuilder.setAddresses(addressList);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(listBuilder.build()));
+        LispAddressSerializer.getInstance().serialize(buf, listBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
@@ -105,23 +120,21 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void equals__Simple() throws Exception {
-        LispListLCAFAddress address1 = new LispListLCAFAddress((byte) 0x06, Arrays.asList(new LispIpv4Address(0x11223344), //
-                new LispIpv6Address("::1")));
-        LispListLCAFAddress address2 = new LispListLCAFAddress((byte) 0x06, Arrays.asList(new LispIpv4Address(0x11223344), //
-                new LispIpv6Address("::1")));
-        LispListLCAFAddress address3 = new LispListLCAFAddress((byte) 0x06, Arrays.asList(new LispIpv4Address(0x11223344), //
-                new LispIpv6Address("::2")));
-        LispListLCAFAddress address4 = new LispListLCAFAddress((byte) 0x05, Arrays.asList(new LispIpv4Address(0x11223344), //
-                new LispIpv6Address("::1")));
-        LispListLCAFAddress address5 = new LispListLCAFAddress((byte) 0x06, new ArrayList<LispAddress>());
+        Ipv6 ip1 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"));
+        Ipv6 ip2 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:2"));
+        LcafListBuilder listBuilder = new LcafListBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode()).setAddresses(new ArrayList<Addresses>());
+        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
+        LcafList address1 = listBuilder.build();
+        listBuilder.setAddresses(new ArrayList<Addresses>());
+        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
+        LcafList address2 = listBuilder.build();
+        listBuilder.setAddresses(new ArrayList<Addresses>());
+        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip2).build());
+        LcafList address3 = listBuilder.build();
 
         assertEquals(address1, address2);
-        assertEquals(address1, address1);
+        Assert.assertNotEquals(address2, address3);
         Assert.assertNotEquals(address1, address3);
-        Assert.assertNotEquals(address1, address4);
-        Assert.assertNotEquals(address1, address5);
-        Assert.assertNotEquals(address3, address4);
-        Assert.assertNotEquals(address3, address5);
-        Assert.assertNotEquals(address4, address5);
     }
 }
