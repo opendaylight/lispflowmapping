@@ -8,35 +8,20 @@
 
 package org.opendaylight.lispflowmapping.type;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispASAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispMACAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
-
 public enum AddressFamilyNumberEnum {
-    RESERVED(0, LispNoAddress.class), //
-    IP(1, LispIpv4Address.class), //
-    IP6(2, LispIpv6Address.class), //
-    DISTINGUISHED_NAME(17, LispDistinguishedNameAddress.class), //
-    AS(18, LispASAddress.class), //
-    LCAF(16387, LispLCAFAddress.class), //
-    MAC(16389, LispMACAddress.class), //
-    UNKNOWN(-1, null);
+    NO_ADDRESS(0), //
+    IP(1), //
+    IP6(2), //
+    DISTINGUISHED_NAME(17), //
+    AS(18), //
+    LCAF(16387), //
+    MAC(16389), //
+    UNKNOWN(-1);
 
     private short ianaCode;
-    private Class<? extends LispAddress> lispAddressClass;
 
-    private AddressFamilyNumberEnum(int ianaCode, Class<? extends LispAddress> lispAddressClass) {
+    private AddressFamilyNumberEnum(int ianaCode) {
         this.ianaCode = (short) ianaCode;
-        this.lispAddressClass = lispAddressClass;
-    }
-
-    public Class<? extends LispAddress> getLispAddressClass() {
-        return lispAddressClass;
     }
 
     public short getIanaCode() {

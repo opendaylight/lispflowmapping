@@ -2,22 +2,22 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
 
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 
 public class MappingServiceRLOC {
 
     private LocatorRecord record;
     private int ttl;
-    private MapReplyAction action;
+    private Action action;
     private boolean authoritative;
     private Date registerdDate;
 
-    public MappingServiceRLOC(LocatorRecord record, int ttl, MapReplyAction action, boolean authoritative) {
+    public MappingServiceRLOC(LocatorRecord record, int ttl, Action action, boolean authoritative) {
         this(record, ttl, action, authoritative, new Date(System.currentTimeMillis()));
     }
 
-    public MappingServiceRLOC(LocatorRecord record, int ttl, MapReplyAction action, boolean authoritative, Date registerdDate) {
+    public MappingServiceRLOC(LocatorRecord record, int ttl, Action action, boolean authoritative, Date registerdDate) {
         super();
         this.record = record;
         this.ttl = ttl;
@@ -42,11 +42,11 @@ public class MappingServiceRLOC {
         this.ttl = ttl;
     }
 
-    public MapReplyAction getAction() {
+    public Action getAction() {
         return action;
     }
 
-    public void setAction(MapReplyAction action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 
@@ -99,7 +99,7 @@ public class MappingServiceRLOC {
 
     @Override
     public String toString() {
-        return record.getLocator().toString();
+        return record.getLispAddressContainer().getAddress().toString();
     }
 
 }

@@ -8,8 +8,8 @@
 
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
-import org.opendaylight.lispflowmapping.type.lisp.MapReply;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 
 public interface IMapResolver extends IGeneralMapResolver {
     MapReply handleMapRequest(MapRequest request);

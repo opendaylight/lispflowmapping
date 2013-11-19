@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
@@ -20,12 +21,15 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSeri
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIPAddress;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +70,20 @@ public class LispSouthboundService implements ILispSouthboundService {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
             InetAddress finalSourceAddress = null;
-            for (LispAddress address : request.getItrRlocs()) {
-                if (address instanceof LispIPAddress) {
-                    finalSourceAddress = (((LispIPAddress) address).getAddress());
+            for (ItrRloc itr : request.getItrRloc()) {
+                Address addr = itr.getLispAddressContainer().getAddress();
+                if (addr instanceof LispIpv4Address) {
+                    try {
+                        finalSourceAddress = InetAddress.getByName(((LispIpv4Address) addr).getIpv4Address().getValue());
+                    } catch (UnknownHostException e) {
+                    }
+                    break;
+                }
+                if (addr instanceof LispIpv6Address) {
+                    try {
+                        finalSourceAddress = InetAddress.getByName((((LispIpv6Address) addr).getIpv6Address().getValue()));
+                    } catch (UnknownHostException e) {
+                    }
                     break;
                 }
             }
