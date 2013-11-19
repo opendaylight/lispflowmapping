@@ -14,21 +14,26 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
-import org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapReply;
-import org.opendaylight.lispflowmapping.type.lisp.MapReplyAction;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
 
 /*
  * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
@@ -44,9 +49,9 @@ public class MapResolverTest extends BaseTestCase {
     private LispMappingService testedMapResolver;
 
     private ILispDAO lispDAO;
-    private MapRequest mapRequest;
-    private LispIpv4Address v4Address;
-    private LispIpv6Address v6Address;
+    private MapRequestBuilder mapRequest;
+    private LispAFIAddress v4Address;
+    private LispAFIAddress v6Address;
 
     private HashMap<IMappingServiceKey, Map<String, MappingServiceValue>> daoResults;
 
@@ -58,117 +63,68 @@ public class MapResolverTest extends BaseTestCase {
         testedMapResolver = new LispMappingService();
         testedMapResolver.basicInit(lispDAO);
 
-        mapRequest = new MapRequest();
-        v4Address = new LispIpv4Address("1.2.3.4");
-        v6Address = new LispIpv6Address("0:0:0:0:0:0:0:1");
+        mapRequest = new MapRequestBuilder();
+        v4Address = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        v6Address = LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1");
         daoResults = new HashMap<IMappingServiceKey, Map<String, MappingServiceValue>>();
     }
 
     @Test
-    @Ignore
-    public void handleMapRequest__NumRLOCsMismatch() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x44332211)));
-        // Map<String, Object> rlocs = prepareMapping(record);
-        // rlocs.put("NumRLOCs", 5);
-
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
-
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(1, eidToLocators.getLocators().size());
-        assertLocator(new LispIpv4Address(0x44332211), eidToLocators.getLocators().get(0));
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRequest__BadRLOCType() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x71717171)));
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x44332211)));
-        // Map<String, Object> rlocs = prepareMapping(record);
-        // rlocs.put("RLOC0", "Ooga booga");
-
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
-
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(1, eidToLocators.getLocators().size());
-        assertLocator(new LispIpv4Address(0x44332211), eidToLocators.getLocators().get(0));
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRequest__NoNumRLOCs() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        allowing(lispDAO).get(wany(IMappingServiceKey.class));
-        ret(new HashMap<String, Object>());
-
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
-
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(0, eidToLocators.getLocators().size());
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRequest__IllegalNumRLOCs() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x44332211)));
-        // Map<String, Object> rlocs = prepareMapping(record);
-        // rlocs.put("NumRLOCs", "Bla");
-
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
-
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(0, eidToLocators.getLocators().size());
-    }
-
-    @Test
     public void handleMapRequest__ReplyWithSingleLocator() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, new LispIpv4Address("1.2.3.4")));
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32)
+                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        LocatorRecord locator = new LocatorRecord().setLocator(new LispIpv4Address(0x04030201));
-        locator.setLocalLocator(false);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(v4Address));
+
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
         locator.setRouted(true);
-        locator.setMulticastPriority((byte) 5);
-        locator.setMulticastWeight((byte) 17);
-        locator.setPriority((byte) 16);
-        record.addLocator(locator);
-        prepareMapping(record);
+        locator.setMulticastPriority((short) 5);
+        locator.setWeight((short) 17);
+        locator.setPriority((short) 16);
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest.build());
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(1, eidToLocators.getLocators().size());
-        LocatorRecord resultLocator = mapReply.getEidToLocatorRecords().get(0).getLocators().get(0);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(1, eidToLocators.getLocatorRecord().size());
+        LocatorRecord resultLocator = mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0);
         assertEquals(locator.isLocalLocator(), resultLocator.isLocalLocator());
         assertEquals(locator.isRouted(), resultLocator.isRouted());
         assertEquals(locator.getMulticastPriority(), resultLocator.getMulticastPriority());
         assertEquals(locator.getMulticastWeight(), resultLocator.getMulticastWeight());
         assertEquals(locator.getPriority(), resultLocator.getPriority());
+        assertEquals(locator.getWeight(), resultLocator.getWeight());
 
-        assertLocator(new LispIpv4Address(0x04030201), eidToLocators.getLocators().get(0));
+        assertLocator(LispAFIConvertor.asIPAfiAddress("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
     }
 
     @Test
     public void handleMapRequest__VerifyBasicFields() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.setAction(MapReplyAction.NativelyForward);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(v4Address));
+
+        record.setAction(Action.NativelyForward);
         record.setAuthoritative(true);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        prepareMapping(record);
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest.build());
 
         assertEquals(mapRequest.getNonce(), mapReply.getNonce());
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals((byte) 0, eidToLocators.getMaskLength());
-        assertEquals(v4Address, eidToLocators.getPrefix());
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals((byte) 32, eidToLocators.getMaskLength().byteValue());
+        assertEquals(v4Address, LispAFIConvertor.toAFI(eidToLocators.getLispAddressContainer()));
         assertEquals(record.isAuthoritative(), eidToLocators.isAuthoritative());
         assertEquals(record.getAction(), eidToLocators.getAction());
         assertEquals(record.getRecordTtl(), eidToLocators.getRecordTtl());
@@ -176,119 +132,173 @@ public class MapResolverTest extends BaseTestCase {
 
     @Test
     public void handleMapRequest__VerifyMask() throws Exception {
-        EidRecord mapRequestRecord = new EidRecord((byte) 0, v4Address);
-        mapRequestRecord.setMaskLength(32);
-        mapRequest.addEidRecord(mapRequestRecord);
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv4Address("1.2.3.0")).setMaskLength(24);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        prepareMapping(record);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.0")));
+        record.setMaskLength((short) 24);
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
 
-        assertEquals(mapRequest.getNonce(), mapReply.getNonce());
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals((byte) 32, eidToLocators.getMaskLength());
-        assertEquals(v4Address, eidToLocators.getPrefix());
+        MapRequest mr = mapRequest.build();
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mr);
+
+        assertEquals(mr.getNonce(), mapReply.getNonce());
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals((byte) 32, eidToLocators.getMaskLength().byteValue());
+        assertEquals(v4Address, LispAFIConvertor.toAFI(eidToLocators.getLispAddressContainer()));
     }
 
     @Test
     public void handleMapRequest__VerifyMaskIPv6() throws Exception {
-        EidRecord mapRequestRecord = new EidRecord((byte) 0, v6Address);
-        mapRequestRecord.setMaskLength(128);
-        mapRequest.addEidRecord(mapRequestRecord);
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 128).setLispAddressContainer(LispAFIConvertor.toContainer(v6Address)).build());
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv6Address("0:0:0:0:0:0:0:0")).setMaskLength(128);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        prepareMapping(record);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:0")));
+        record.setMaskLength((short) 128);
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
 
-        assertEquals(mapRequest.getNonce(), mapReply.getNonce());
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals((byte) 128, eidToLocators.getMaskLength());
-        assertEquals(v6Address, eidToLocators.getPrefix());
+        MapRequest mr = mapRequest.build();
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mr);
+
+        assertEquals(mr.getNonce(), mapReply.getNonce());
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals((byte) 128, eidToLocators.getMaskLength().byteValue());
+        assertEquals(v6Address, LispAFIConvertor.toAFI(eidToLocators.getLispAddressContainer()));
     }
 
     @Test
     public void handleMapRequest__VerifyMaskIPv6NoMatch() throws Exception {
-        EidRecord mapRequestRecord = new EidRecord((byte) 128, v6Address);
-        mapRequest.addEidRecord(mapRequestRecord);
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 128).setLispAddressContainer(LispAFIConvertor.toContainer(v6Address)).build());
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv6Address("0:1:0:0:0:0:0:1")).setMaskLength(112);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        prepareMapping(record);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:1:0:0:0:0:0:1")));
+        record.setMaskLength((short) 112);
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(0, eidToLocators.getLocators().size());
+        MapRequest mr = mapRequest.build();
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mr);
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(0, eidToLocators.getLocatorRecord().size());
     }
 
     @Test
     public void handleMapRequest__VerifyMaskNoMatch() throws Exception {
-        EidRecord mapRequestRecord = new EidRecord((byte) 0, v4Address);
-        mapRequestRecord.setMaskLength(32);
-        mapRequest.addEidRecord(mapRequestRecord);
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(new LispIpv4Address("1.2.4.0")).setMaskLength(24);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        prepareMapping(record);
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.4.0")));
+        record.setMaskLength((short) 24);
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(0, eidToLocators.getLocators().size());
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        prepareMapping(record.build());
+
+        MapRequest mr = mapRequest.build();
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mr);
+
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(0, eidToLocators.getLocatorRecord().size());
 
     }
 
     @Test
     public void handleMapRequest__ReplyWithMultipleLocators() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
 
-        EidToLocatorRecord record = new EidToLocatorRecord().setPrefix(v4Address);
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv6Address("::1")));
-        record.addLocator(new LocatorRecord().setLocator(new LispIpv4Address("1.8.2.7")));
-        prepareMapping(record);
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(v4Address));
 
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(3, eidToLocators.getLocators().size());
+        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record.getLocatorRecord().add(locator.build());
+        locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
+        record.getLocatorRecord().add(locator.build());
+        locator = getDefaultLocatorBuilder();
+        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.8.2.7")));
+        record.getLocatorRecord().add(locator.build());
 
-        assertLocator(new LispIpv4Address(0x04030201), eidToLocators.getLocators().get(0));
-        assertLocator(new LispIpv6Address("::1"), eidToLocators.getLocators().get(1));
-        assertLocator(new LispIpv4Address("1.8.2.7"), eidToLocators.getLocators().get(2));
-    }
+        prepareMapping(record.build());
 
-    private void assertLocator(LispAddress expectedAddress, LocatorRecord locatorRecord) {
-        assertEquals(expectedAddress, locatorRecord.getLocator());
-        Assert.assertTrue(locatorRecord.isRouted());
+        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest.build());
+
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(3, eidToLocators.getLocatorRecord().size());
+
+        assertLocator(LispAFIConvertor.asIPAfiAddress("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
+        assertLocator(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"), eidToLocators.getLocatorRecord().get(1));
+        assertLocator(LispAFIConvertor.asIPAfiAddress("1.8.2.7"), eidToLocators.getLocatorRecord().get(2));
     }
 
     @Test
     public void handleMapRequest__MultipleEIDs() throws Exception {
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v4Address));
-        mapRequest.addEidRecord(new EidRecord((byte) 0, v6Address));
 
-        EidToLocatorRecord record1 = new EidToLocatorRecord().setPrefix(v4Address);
-        record1.addLocator(new LocatorRecord().setLocator(new LispIpv4Address(0x04030201)));
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 128).setLispAddressContainer(LispAFIConvertor.toContainer(v6Address)).build());
 
-        EidToLocatorRecord record2 = new EidToLocatorRecord().setPrefix(v6Address);
-        record2.addLocator(new LocatorRecord().setLocator(new LispIpv6Address("0:0:0:0:0:0:0:1")));
-        // prepareMapping(record2);
-        prepareMapping(record1, record2);
+        EidToLocatorRecordBuilder record1 = getDefaultEidToLocatorBuilder();
+        record1.setLispAddressContainer(LispAFIConvertor.toContainer(v4Address));
 
-        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest);
+        LocatorRecordBuilder locator1 = getDefaultLocatorBuilder();
+        locator1.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        record1.getLocatorRecord().add(locator1.build());
 
-        EidToLocatorRecord eidToLocators1 = mapReply.getEidToLocatorRecords().get(0);
-        assertEquals(1, eidToLocators1.getLocators().size());
-        assertLocator(new LispIpv4Address(0x04030201), eidToLocators1.getLocators().get(0));
+        EidToLocatorRecordBuilder record2 = getDefaultEidToLocatorBuilder();
+        record2.setLispAddressContainer(LispAFIConvertor.toContainer(v6Address));
+        record2.setMaskLength((short) 128);
 
-        EidToLocatorRecord eidToLocators2 = mapReply.getEidToLocatorRecords().get(1);
-        assertEquals(1, eidToLocators2.getLocators().size());
-        assertLocator(new LispIpv6Address("0:0:0:0:0:0:0:1"), eidToLocators2.getLocators().get(0));
+        LocatorRecordBuilder locator2 = getDefaultLocatorBuilder();
+        locator2.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
+        record2.getLocatorRecord().add(locator2.build());
+
+        prepareMapping(record1.build(), record2.build());
+
+        MapReply mapReply = testedMapResolver.handleMapRequest(mapRequest.build());
+
+        EidToLocatorRecord eidToLocators1 = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(1, eidToLocators1.getLocatorRecord().size());
+        assertLocator(LispAFIConvertor.asIPAfiAddress("4.3.2.1"), eidToLocators1.getLocatorRecord().get(0));
+
+        EidToLocatorRecord eidToLocators2 = mapReply.getEidToLocatorRecord().get(1);
+        assertEquals(1, eidToLocators2.getLocatorRecord().size());
+        assertLocator(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"), eidToLocators2.getLocatorRecord().get(0));
+    }
+
+    private void assertLocator(LispAFIAddress expectedAddress, LocatorRecord locatorRecord) {
+        assertEquals(LispAFIConvertor.toContainer(expectedAddress), locatorRecord.getLispAddressContainer());
+        Assert.assertTrue(locatorRecord.isRouted());
     }
 
     private Map<String, MappingServiceValue> prepareMapping(EidToLocatorRecord... records) {
@@ -298,15 +308,15 @@ public class MapResolverTest extends BaseTestCase {
                 Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
                 result.put("value", value);
                 List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-                for (LocatorRecord locator : eidToLocatorRecord.getLocators()) {
+                for (LocatorRecord locator : eidToLocatorRecord.getLocatorRecord()) {
                     rlocs.add(new MappingServiceRLOC(locator, eidToLocatorRecord.getRecordTtl(), eidToLocatorRecord.getAction(), eidToLocatorRecord
                             .isAuthoritative()));
                 }
                 value.setRlocs(rlocs);
 
                 daoResults.put(
-                        MappingServiceKeyUtil.generateMappingServiceKey(eidToLocatorRecord.getPrefix(), (byte) eidToLocatorRecord.getMaskLength()),
-                        result);
+                        MappingServiceKeyUtil.generateMappingServiceKey(eidToLocatorRecord.getLispAddressContainer(),
+                                (short) eidToLocatorRecord.getMaskLength()), result);
             }
         }
 
@@ -325,6 +335,46 @@ public class MapResolverTest extends BaseTestCase {
         allowing(lispDAO).get(with(daoGetSaverAction));
         will(daoGetSaverAction);
 
-        return daoResults.get(MappingServiceKeyUtil.generateMappingServiceKey(v4Address));
+        return daoResults.get(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(v4Address)));
     }
+
+    private MapRequestBuilder getDefaultMapRequestBuilder() {
+        MapRequestBuilder mrBuilder = new MapRequestBuilder();
+        mrBuilder.setAuthoritative(false);
+        mrBuilder.setEidRecord(new ArrayList<EidRecord>());
+        mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
+        mrBuilder.setMapDataPresent(true);
+        mrBuilder.setNonce((long) 0);
+        mrBuilder.setPitr(false);
+        mrBuilder.setProbe(false);
+        mrBuilder.setSmr(false);
+        mrBuilder.setSmrInvoked(true);
+        mrBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
+                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("127.0.0.1"))).build());
+        return mrBuilder;
+    }
+
+    private EidToLocatorRecordBuilder getDefaultEidToLocatorBuilder() {
+        EidToLocatorRecordBuilder builder = new EidToLocatorRecordBuilder();
+        builder.setAction(Action.NoAction);
+        builder.setAuthoritative(false);
+        builder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        builder.setMapVersion((short) 0);
+        builder.setMaskLength((short) 32);
+        builder.setRecordTtl(60);
+        return builder;
+    }
+
+    private LocatorRecordBuilder getDefaultLocatorBuilder() {
+        LocatorRecordBuilder builder = new LocatorRecordBuilder();
+        builder.setLocalLocator(false);
+        builder.setMulticastPriority((short) 0);
+        builder.setMulticastWeight((short) 0);
+        builder.setPriority((short) 0);
+        builder.setRlocProbed(false);
+        builder.setRouted(true);
+        builder.setWeight((short) 0);
+        return builder;
+    }
+
 }
