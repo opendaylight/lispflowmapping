@@ -11,14 +11,14 @@ package org.opendaylight.lispflowmapping.type.lisp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
 
 /**
  * <pre>
@@ -54,13 +54,13 @@ public class EidToLocatorRecord {
      * the cache immediately. If the value is 0xffffffff, the recipient can
      * decide locally how long to store the mapping.
      */
-	@XmlElement
+    @XmlElement
     private int recordTtl;
 
     /**
      * EID mask-len: This is the mask length for the EID-Prefix.
      */
-	@XmlElement
+    @XmlElement
     private byte maskLength;
 
     /**
@@ -73,7 +73,7 @@ public class EidToLocatorRecord {
      * packets match this negative cache entry, they will be dropped. The
      * current assigned values are:
      */
-	@XmlElement
+    @XmlElement
     private MapReplyAction action;
     /**
      * A: The Authoritative bit, when sent, is always set to 1 by an ETR. When a
@@ -82,7 +82,7 @@ public class EidToLocatorRecord {
      * Map-Reply was not originated by a LISP node managed at the site that owns
      * the EID-Prefix.
      */
-	@XmlElement
+    @XmlElement
     private boolean authoritative;
     /**
      * Map-Version Number: When this 12-bit value is non-zero, the Map-Reply
@@ -93,7 +93,7 @@ public class EidToLocatorRecord {
      * Number can be included in Map-Request and Map-Register messages. See
      * Section 6.6.3 for more details.
      */
-	@XmlElement
+    @XmlElement
     private short mapVersion;
 
     /**
@@ -102,31 +102,32 @@ public class EidToLocatorRecord {
      * EID-Prefix: This prefix is 4 octets for an IPv4 address family and 16
      * octets for an IPv6 address family.
      */
-	
+
     private LispAddress prefix;
-	
-	/**
-	 * To be used on the NB interface, prior to parse and convert it into a specific LISP address type 
-	 */
+
+    /**
+     * To be used on the NB interface, prior to parse and convert it into a
+     * specific LISP address type
+     */
     @XmlElement
     private LispAddressGeneric prefixGeneric;
-    
+
     public void setPrefixGeneric(LispAddressGeneric prefixGeneric) {
-		this.prefixGeneric = prefixGeneric;
-	}
+        this.prefixGeneric = prefixGeneric;
+    }
 
-	public LispAddressGeneric getPrefixGeneric() {
-		return prefixGeneric;
-	}
+    public LispAddressGeneric getPrefixGeneric() {
+        return prefixGeneric;
+    }
 
-	/**
+    /**
      * Locator Count: This is the number of Locator entries. A Locator entry
      * comprises what is labeled above as 'Loc'. The Locator count can be 0,
      * indicating that there are no Locators for the EID-Prefix.
      * 
      * private byte locatorCount;
      */
-	@XmlElement
+    @XmlElement
     private List<LocatorRecord> locators;
 
     public EidToLocatorRecord() {
@@ -197,7 +198,6 @@ public class EidToLocatorRecord {
         return this;
     }
 
-
     public EidToLocatorRecord clone() {
         EidToLocatorRecord cloned = new EidToLocatorRecord();
         cloned.setAction(getAction());
@@ -211,7 +211,6 @@ public class EidToLocatorRecord {
         }
         return cloned;
     }
-
 
     @Override
     public int hashCode() {

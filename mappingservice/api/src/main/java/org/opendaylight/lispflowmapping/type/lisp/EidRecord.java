@@ -53,6 +53,5 @@ public class EidRecord {
         this.prefix = (prefix != null) ? prefix : NO_PREFIX;
     }
 
-
     private static LispAddress NO_PREFIX = new LispNoAddress();
 }

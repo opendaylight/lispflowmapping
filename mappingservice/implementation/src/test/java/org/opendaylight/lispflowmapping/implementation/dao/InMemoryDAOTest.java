@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
+import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
 
 /*
  * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.

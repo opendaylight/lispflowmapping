@@ -3,7 +3,6 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address.facto
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opendaylight.lispflowmapping.implementation.serializer.address.LispASAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispDistinguishedNameAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispIpv4AddressSerializer;
@@ -19,13 +18,12 @@ public class LispAFIAddressSerializerFactory {
 
     private static void initializeMap() {
         afiToSearializerMap = new HashMap<AddressFamilyNumberEnum, LispAddressSerializer>();
-        afiToSearializerMap.put(AddressFamilyNumberEnum.AS, LispASAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.IP, LispIpv4AddressSerializer.getInstance());
+        afiToSearializerMap.put(AddressFamilyNumberEnum.NO_ADDRESS, LispNoAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.IP6, LispIpv6AddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.DISTINGUISHED_NAME, LispDistinguishedNameAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.LCAF, LispLCAFAddressSerializer.getInstance());
         afiToSearializerMap.put(AddressFamilyNumberEnum.MAC, LispMACAddressSerializer.getInstance());
-        afiToSearializerMap.put(AddressFamilyNumberEnum.RESERVED, LispNoAddressSerializer.getInstance());
 
     }
 

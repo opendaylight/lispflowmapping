@@ -53,7 +53,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-
 public class MapRegister {
     /**
      * P: This is the proxy Map-Reply bit. When set to 1, an ETR sends a
@@ -61,7 +60,7 @@ public class MapRegister {
      * Map-Server will send non-authoritative Map-Replies on behalf of the ETR.
      * Details on this usage can be found in [RFC6833].
      */
-	@XmlElement
+    @XmlElement
     private boolean proxyMapReply;
     /**
      * M: This is the want-map-notify bit. When set to 1, an ETR is requesting a
@@ -69,8 +68,8 @@ public class MapRegister {
      * message. The Map-Notify message sent by a Map-Server is used to
      * acknowledge receipt of a Map-Register message.
      */
-	@XmlElement
-	private boolean wantMapNotify;
+    @XmlElement
+    private boolean wantMapNotify;
 
     /**
      * Nonce: This 8-octet 'Nonce' field is set to 0 in Map-Register messages.
@@ -78,16 +77,16 @@ public class MapRegister {
      * currently used for any security function but may be in the future as part
      * of an anti-replay solution.
      */
-	@XmlElement
-	private long nonce;
+    @XmlElement
+    private long nonce;
 
     /**
      * Key ID: This is a configured ID to find the configured Message
      * Authentication Code (MAC) algorithm and key value used for the
      * authentication function. See Section 14.4 for codepoint assignments.
      */
-	@XmlElement
-	private short keyId;
+    @XmlElement
+    private short keyId;
 
     /**
      * Authentication Data Length: This is the length in octets of the
@@ -105,9 +104,9 @@ public class MapRegister {
      * HMAC-SHA-1-96 [RFC2404], and support for HMAC-SHA-256-128 [RFC4868] is
      * RECOMMENDED.
      */
-	
-	private byte[] authenticationData;
-    
+
+    private byte[] authenticationData;
+
     /**
      * The representation in bytes of the map register.
      */
@@ -179,7 +178,7 @@ public class MapRegister {
         this.keyId = keyId;
         return this;
     }
-    
+
     public byte[] getMapRegisterBytes() {
         return mapRegisterBytes;
     }

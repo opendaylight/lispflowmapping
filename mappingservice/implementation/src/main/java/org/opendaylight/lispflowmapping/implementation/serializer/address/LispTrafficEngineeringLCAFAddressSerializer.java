@@ -4,12 +4,19 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.ReencapHop;
+import org.opendaylight.lispflowmapping.type.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.HopsBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafTrafficEngineeringBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.HopBuilder;
 
 public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
@@ -24,30 +31,35 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
     }
 
     @Override
-    protected short getLcafLength(LispAddress lispAddress) {
+    protected short getLcafLength(LispAFIAddress lispAddress) {
         short totalSize = 0;
-        for (ReencapHop hop : ((LispTrafficEngineeringLCAFAddress) lispAddress).getHops()) {
-            totalSize += LispAddressSerializer.getInstance().getAddressSize(hop) + 2;
+        if (((LcafTrafficEngineeringAddress) lispAddress).getHops() != null) {
+            for (Hops hop : ((LcafTrafficEngineeringAddress) lispAddress).getHops()) {
+                totalSize += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) hop.getHop().getPrimitiveAddress()) + 2;
+            }
         }
         return totalSize;
     }
 
     @Override
-    protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        for (ReencapHop hop : ((LispTrafficEngineeringLCAFAddress) lispAddress).getHops()) {
-            serializeAFIAddressHeader(buffer, hop);
-            buffer.put((byte) 0);
-            buffer.put((byte) (ByteUtil.boolToBit(hop.isLookup(), Flags.LOOKUP) | //
-                    ByteUtil.boolToBit(hop.isRLOCProbe(), Flags.RLOC_PROBE) | //
-            ByteUtil.boolToBit(hop.isStrict(), Flags.STRICT)));
-            LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(hop.getAfi());
-            serializer.serializeData(buffer, hop.getHop());
+    protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        if (((LcafTrafficEngineeringAddress) lispAddress).getHops() != null) {
+            for (Hops hop : ((LcafTrafficEngineeringAddress) lispAddress).getHops()) {
+                serializeAFIAddressHeader(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
+                buffer.put((byte) 0);
+                buffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isLookup()), Flags.LOOKUP) | //
+                        ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isRLOCProbe()), Flags.RLOC_PROBE) | //
+                ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isStrict()), Flags.STRICT)));
+                LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum
+                        .valueOf(((LispAFIAddress) hop.getHop().getPrimitiveAddress()).getAfi()));
+                serializer.serializeData(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
+            }
         }
     }
 
     @Override
-    protected LispTrafficEngineeringLCAFAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
-        List<ReencapHop> hops = new ArrayList<ReencapHop>();
+    protected LcafTrafficEngineeringAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
+        List<Hops> hops = new ArrayList<Hops>();
         while (length > 0) {
             short afi = buffer.getShort();
             LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum.valueOf(afi));
@@ -55,12 +67,17 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
             boolean lookup = ByteUtil.extractBit(flags, Flags.LOOKUP);
             boolean RLOCProbe = ByteUtil.extractBit(flags, Flags.RLOC_PROBE);
             boolean strict = ByteUtil.extractBit(flags, Flags.STRICT);
-            LispAddress address = serializer.deserializeData(buffer);
-            ReencapHop hop = new ReencapHop(address, (short) 0, lookup, RLOCProbe, strict);
-            length -= LispAddressSerializer.getInstance().getAddressSize(hop) + 2;
-            hops.add(hop);
+            LispAFIAddress address = serializer.deserializeData(buffer);
+            HopsBuilder builder = new HopsBuilder();
+            builder.setLookup(lookup);
+            builder.setRLOCProbe(RLOCProbe);
+            builder.setStrict(strict);
+            builder.setHop(new HopBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
+            length -= LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) builder.getHop().getPrimitiveAddress()) + 2;
+            hops.add(builder.build());
         }
-        return new LispTrafficEngineeringLCAFAddress(res2, hops);
+        return new LcafTrafficEngineeringBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode()).setHops(hops).build();
     }
 
     private interface Flags {
