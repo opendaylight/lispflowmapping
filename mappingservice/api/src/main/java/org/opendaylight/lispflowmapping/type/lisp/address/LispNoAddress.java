@@ -12,7 +12,7 @@ import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispNoAddress extends LispAddress {
     public LispNoAddress() {
-        super(AddressFamilyNumberEnum.RESERVED);
+        super(AddressFamilyNumberEnum.NO_ADDRESS);
     }
 
 }

@@ -8,10 +8,11 @@ import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.tomcat.util.buf.HexUtils;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,10 @@ public class LispMACAuthentication implements ILispAuthentication {
         mapRegisterBuffer.position(MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
+        System.out.println("Expected Authentication:");
+        System.out.println(HexUtils.toHexString(getAuthenticationData(mapRegisterBuffer.array(), key)));
+        System.out.println("Got Authentication:");
+        System.out.println(HexUtils.toHexString(mapRegister.getAuthenticationData()));
         return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key), mapRegister.getAuthenticationData());
     }
 
