@@ -8,35 +8,22 @@
 
 package org.opendaylight.lispflowmapping.type;
 
-import org.opendaylight.lispflowmapping.type.lisp.address.LispApplicationDataLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispSegmentLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispSourceDestLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
-
 public enum LispCanonicalAddressFormatEnum {
-    LIST(1, LispListLCAFAddress.class), //
-    SEGMENT(2, LispSegmentLCAFAddress.class), //
-    APPLICATION_DATA(4, LispApplicationDataLCAFAddress.class), //
-    SOURCE_DEST(12, LispSourceDestLCAFAddress.class), //
-    TRAFFIC_ENGINEERING(10, LispTrafficEngineeringLCAFAddress.class), //
-    UNKNOWN(-1, null);
+    LIST(1), //
+    SEGMENT(2), //
+    APPLICATION_DATA(4), //
+    SOURCE_DEST(12), //
+    TRAFFIC_ENGINEERING(10), //
+    UNKNOWN(-1);
 
     private byte lispCode;
-    private Class<? extends LispLCAFAddress> lcafClass;
 
-    private LispCanonicalAddressFormatEnum(int lispCode, Class<? extends LispLCAFAddress> lcafClass) {
+    private LispCanonicalAddressFormatEnum(int lispCode) {
         this.lispCode = (byte) lispCode;
-        this.lcafClass = lcafClass;
     }
 
     public byte getLispCode() {
         return lispCode;
-    }
-
-    public Class<? extends LispLCAFAddress> getLcafClass() {
-        return lcafClass;
     }
 
     public static LispCanonicalAddressFormatEnum valueOf(int lispCode) {
