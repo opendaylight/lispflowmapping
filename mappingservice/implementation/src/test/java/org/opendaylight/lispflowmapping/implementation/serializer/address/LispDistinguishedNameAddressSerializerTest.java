@@ -18,17 +18,18 @@ import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerial
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispDistinguishedNameAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispListLCAFAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.DistinguishedNameBuilder;
 
 public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__EmptyString() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("00 11 00"));
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("00 11 00"));
 
-        assertEquals(AddressFamilyNumberEnum.DISTINGUISHED_NAME, address.getAfi());
+        assertEquals(AddressFamilyNumberEnum.DISTINGUISHED_NAME.getIanaCode(), address.getAfi().shortValue());
         LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) address;
 
         assertEquals("", distinguishedNameAddress.getDistinguishedName());
@@ -37,9 +38,9 @@ public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__DavidString() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("00 11 64 61 76 69 64 00"));
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("00 11 64 61 76 69 64 00"));
 
-        assertEquals(AddressFamilyNumberEnum.DISTINGUISHED_NAME, address.getAfi());
+        assertEquals(AddressFamilyNumberEnum.DISTINGUISHED_NAME.getIanaCode(), address.getAfi().shortValue());
         LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) address;
 
         assertEquals("david", distinguishedNameAddress.getDistinguishedName());
@@ -48,16 +49,17 @@ public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__inList() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 8 " + //
                 "00 11 64 61 76 69 64 00"));
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispListLCAFAddress lispLCAFAddress = (LispListLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafListAddress lispLCAFAddress = (LcafListAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST, lispLCAFAddress.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lispLCAFAddress.getLcafType().byteValue());
 
-        LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) lispLCAFAddress.getAddresses().get(0);
+        LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) lispLCAFAddress.getAddresses().get(0)
+                .getPrimitiveAddress();
 
         assertEquals("david", distinguishedNameAddress.getDistinguishedName());
 
@@ -85,10 +87,11 @@ public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        LispDistinguishedNameAddress distinguishedName = new LispDistinguishedNameAddress("david");
+        DistinguishedNameBuilder distinguishedName = new DistinguishedNameBuilder().setDistinguishedName("david").setAfi(
+                AddressFamilyNumberEnum.DISTINGUISHED_NAME.getIanaCode());
 
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(distinguishedName));
-        LispAddressSerializer.getInstance().serialize(buf, distinguishedName);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(distinguishedName.build()));
+        LispAddressSerializer.getInstance().serialize(buf, distinguishedName.build());
         ByteBuffer expectedBuf = hexToByteBuffer("00 11 64 61 76 69 64 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
