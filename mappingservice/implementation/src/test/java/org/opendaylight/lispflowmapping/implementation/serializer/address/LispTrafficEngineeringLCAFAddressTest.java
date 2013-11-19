@@ -17,71 +17,74 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispTrafficEngineeringLCAFAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.ReencapHop;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.HopsBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafTrafficEngineeringBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.HopBuilder;
 
 public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
                 "00 01 00 00 AA BB CC DD " + // IPv4
                 "00 01 00 00 11 22 33 44")); // IPv4
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispTrafficEngineeringLCAFAddress trafficEngineering = (LispTrafficEngineeringLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafTrafficEngineeringAddress trafficEngineering = (LcafTrafficEngineeringAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING, trafficEngineering.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode(), trafficEngineering.getLcafType().byteValue());
 
-        List<ReencapHop> hops = trafficEngineering.getHops();
+        List<Hops> hops = trafficEngineering.getHops();
         assertEquals(2, hops.size());
 
-        assertEquals(new LispIpv4Address(0xAABBCCDD), hops.get(0).getHop());
-        assertEquals(new LispIpv4Address(0x11223344), hops.get(1).getHop());
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("170.187.204.221"), hops.get(0).getHop().getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), hops.get(1).getHop().getPrimitiveAddress());
     }
-    
+
     @Test
     public void deserialize__Bits() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
                 "00 01 00 05 AA BB CC DD " + // IPv4
                 "00 01 00 02 11 22 33 44")); // IPv4
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispTrafficEngineeringLCAFAddress trafficEngineering = (LispTrafficEngineeringLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafTrafficEngineeringAddress trafficEngineering = (LcafTrafficEngineeringAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING, trafficEngineering.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode(), trafficEngineering.getLcafType().byteValue());
 
-        List<ReencapHop> hops = trafficEngineering.getHops();
+        List<Hops> hops = trafficEngineering.getHops();
         assertEquals(2, hops.size());
 
-        assertEquals(new LispIpv4Address(0xAABBCCDD), hops.get(0).getHop());
-        assertEquals(true, hops.get(0).isLookup());
-        assertEquals(false, hops.get(0).isRLOCProbe());
-        assertEquals(true, hops.get(0).isStrict());
-        assertEquals(new LispIpv4Address(0x11223344), hops.get(1).getHop());
-        assertEquals(false, hops.get(1).isLookup());
-        assertEquals(true, hops.get(1).isRLOCProbe());
-        assertEquals(false, hops.get(1).isStrict());
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("170.187.204.221"), hops.get(0).getHop().getPrimitiveAddress());
+        assertEquals(true, hops.get(0).isLookup().booleanValue());
+        assertEquals(false, hops.get(0).isRLOCProbe().booleanValue());
+        assertEquals(true, hops.get(0).isStrict().booleanValue());
+        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), hops.get(1).getHop().getPrimitiveAddress());
+        assertEquals(false, hops.get(1).isLookup().booleanValue());
+        assertEquals(true, hops.get(1).isRLOCProbe().booleanValue());
+        assertEquals(false, hops.get(1).isStrict().booleanValue());
     }
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        LispAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 00 "));
 
-        assertEquals(AddressFamilyNumberEnum.LCAF, address.getAfi());
-        LispTrafficEngineeringLCAFAddress trafficEngineering = (LispTrafficEngineeringLCAFAddress) address;
+        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
+        LcafTrafficEngineeringAddress trafficEngineering = (LcafTrafficEngineeringAddress) address;
 
-        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING, trafficEngineering.getType());
+        assertEquals(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode(), trafficEngineering.getLcafType().byteValue());
 
-        List<ReencapHop> hops = trafficEngineering.getHops();
+        List<Hops> hops = trafficEngineering.getHops();
         assertEquals(0, hops.size());
     }
 
@@ -101,13 +104,18 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        List<ReencapHop> hops = new ArrayList<ReencapHop>();
-        hops.add(new ReencapHop(new LispIpv4Address(0xAABBCCDD), (short)0, false, false, false));
-        hops.add(new ReencapHop(new LispIpv4Address(0x11223344), (short)0, false, false, false));
-        LispTrafficEngineeringLCAFAddress address = new LispTrafficEngineeringLCAFAddress((byte) 0, hops);
+        List<Hops> hops = new ArrayList<Hops>();
+        hops.add(new HopsBuilder().setHop(new HopBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("170.187.204.221")).build())
+                .build());
+        hops.add(new HopsBuilder().setHop(new HopBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build())
+                .build());
+        LcafTrafficEngineeringBuilder trafficBuilder = new LcafTrafficEngineeringBuilder();
+        trafficBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
+                (short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode());
+        trafficBuilder.setHops(hops);
 
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
-        LispAddressSerializer.getInstance().serialize(buf,address);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(trafficBuilder.build()));
+        LispAddressSerializer.getInstance().serialize(buf, trafficBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
                 "00 01 00 00 AA BB CC DD " + // IPv4
@@ -117,10 +125,12 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__NoAddresses() throws Exception {
-        LispTrafficEngineeringLCAFAddress address = new LispTrafficEngineeringLCAFAddress((byte) 0, new ArrayList<ReencapHop>());
+        LcafTrafficEngineeringBuilder addressBuilder = new LcafTrafficEngineeringBuilder();
+        addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
+                (short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode());
 
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(address));
-        LispAddressSerializer.getInstance().serialize(buf,address);
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(addressBuilder.build()));
+        LispAddressSerializer.getInstance().serialize(buf, addressBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
