@@ -1,12 +1,16 @@
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 
 public class LispAuthenticationUtil {
 
     public static boolean validate(MapRegister mapRegister, String key) {
-        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapRegister.getKeyId()));
+        short keyId = 0;
+        if (mapRegister.getKeyId() != null) {
+            keyId = mapRegister.getKeyId();
+        }
+        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(keyId));
         return authentication.validate(mapRegister, key);
     }
 

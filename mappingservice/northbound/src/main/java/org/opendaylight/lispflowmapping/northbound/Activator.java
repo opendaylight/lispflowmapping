@@ -85,8 +85,8 @@ public class Activator extends ComponentActivatorAbstractBase {
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
             c.setInterface(new String[] { INorthboundService.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class).setCallbacks("setFlowMappingService", "unsetFlowMappingService")
-                    .setRequired(true));
+            c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class)
+                    .setCallbacks("setFlowMappingService", "unsetFlowMappingService").setRequired(true));
         }
     }
 

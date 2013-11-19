@@ -29,17 +29,21 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
-import org.opendaylight.lispflowmapping.type.lisp.MapNotify;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
-import org.opendaylight.lispflowmapping.type.lisp.MapReply;
-import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv6Address;
+import org.opendaylight.lispflowmapping.type.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.type.sbplugin.LispNotification;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -67,10 +71,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         serv.init();
     }
 
-    class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<LispIpv4Address, Integer> {
+    class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
 
-    class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<LispIpv6Address, Integer> {
+    class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<Ipv6Address, Integer> {
     }
 
     class MappingServiceKeyConvertor implements ILispTypeConverter<MappingServiceKey, Integer> {
@@ -136,7 +140,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void _removeEid(final CommandInterpreter ci) {
-        lispDao.remove(new LispIpv4Address(ci.nextArgument()));
+        lispDao.remove(LispAFIConvertor.asIPAfiAddress(ci.nextArgument()));
     }
 
     public void _dumpAll(final CommandInterpreter ci) {
@@ -163,7 +167,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void _addDefaultPassword(final CommandInterpreter ci) {
-        addAuthenticationKey(new LispIpv4Address("0.0.0.0"), 0, "password");
+        LispAddressContainerBuilder builder = new LispAddressContainerBuilder();
+        builder.setAddress((Address) (new Ipv4Builder().setIpv4Address(new Ipv4Address("0.0.0.0")).build()));
+        addAuthenticationKey(builder.build(), 0, "password");
     }
 
     public String getHelp() {
@@ -191,15 +197,15 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         return tlsMapNotify.get();
     }
 
-    public String getAuthenticationKey(LispAddress address, int maskLen) {
+    public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
         return mapServer.getAuthenticationKey(address, maskLen);
     }
 
-    public boolean removeAuthenticationKey(LispAddress address, int maskLen) {
+    public boolean removeAuthenticationKey(LispAddressContainer address, int maskLen) {
         return mapServer.removeAuthenticationKey(address, maskLen);
     }
 
-    public boolean addAuthenticationKey(LispAddress address, int maskLen, String key) {
+    public boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         return mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
