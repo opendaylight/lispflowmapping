@@ -69,7 +69,7 @@ public class MapRegister {
      * message. The Map-Notify message sent by a Map-Server is used to
      * acknowledge receipt of a Map-Register message.
      */
-	@XmlElement
+
 	private boolean wantMapNotify;
 
     /**

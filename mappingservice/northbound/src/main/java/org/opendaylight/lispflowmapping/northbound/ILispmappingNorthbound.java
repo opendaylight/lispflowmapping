@@ -10,7 +10,7 @@ package org.opendaylight.lispflowmapping.northbound;
 
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 
-public interface INorthboundService {
+public interface ILispmappingNorthbound {
 	
 	public IFlowMapping getMappingService();
 

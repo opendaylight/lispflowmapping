@@ -59,7 +59,7 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public Object[] getImplementations() {
-        Object[] res = { NorthboundService.class };
+        Object[] res = { LispMappingNorthbound.class };
         return res;
     }
 
@@ -80,11 +80,11 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
-        if (imp.equals(NorthboundService.class)) {
+        if (imp.equals(LispMappingNorthbound.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
-            c.setInterface(new String[] { INorthboundService.class.getName() }, props);
+            c.setInterface(new String[] { ILispmappingNorthbound.class.getName() }, props);
             c.add(createContainerServiceDependency(containerName).setService(IFlowMapping.class).setCallbacks("setFlowMappingService", "unsetFlowMappingService")
                     .setRequired(true));
         }

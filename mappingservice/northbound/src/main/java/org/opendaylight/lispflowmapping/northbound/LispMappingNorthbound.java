@@ -19,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response;
 
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
@@ -27,9 +28,11 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.containermanager.IContainerManager;
 import org.opendaylight.controller.northbound.commons.RestMessages;
+import org.opendaylight.controller.northbound.commons.exception.BadRequestException;
 import org.opendaylight.controller.northbound.commons.exception.ResourceNotFoundException;
 import org.opendaylight.controller.northbound.commons.exception.ServiceUnavailableException;
 import org.opendaylight.controller.northbound.commons.exception.UnauthorizedException;
+import org.opendaylight.controller.northbound.commons.exception.InternalServerErrorException;
 import org.opendaylight.controller.northbound.commons.utils.NorthboundUtils;
 import org.opendaylight.controller.sal.authorization.Privilege;
 import org.opendaylight.controller.sal.utils.ServiceHelper;
@@ -52,8 +55,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/")
-public class NorthboundService implements INorthboundService, CommandProvider {
-    protected static final Logger logger = LoggerFactory.getLogger(NorthboundService.class);
+public class LispMappingNorthbound implements ILispmappingNorthbound, CommandProvider {
+    protected static final Logger logger = LoggerFactory.getLogger(LispMappingNorthbound.class);
     private IFlowMapping mappingService;
 
     private String userName;
@@ -155,7 +158,7 @@ public class NorthboundService implements INorthboundService, CommandProvider {
     private void handleContainerDoesNotExist(String containerName) {
         IContainerManager containerManager = (IContainerManager) ServiceHelper.getGlobalInstance(IContainerManager.class, this);
         if (containerManager == null) {
-            throw new ServiceUnavailableException("Container " + RestMessages.NOCONTAINER.toString());
+            throw new ServiceUnavailableException("Container " + containerName + RestMessages.NOCONTAINER.toString());
         }
 
         List<String> containerNames = containerManager.getContainerNames();
@@ -165,7 +168,7 @@ public class NorthboundService implements INorthboundService, CommandProvider {
             }
         }
 
-        throw new ResourceNotFoundException(containerName + " " + RestMessages.NOCONTAINER.toString());
+        throw new ResourceNotFoundException("Container " + containerName + " " + RestMessages.NOCONTAINER.toString());
     }
 
     private void authorizationCheck(String containerName, Privilege privilege) {
@@ -177,22 +180,26 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
     private EidToLocatorRecord lookupEID(String containerName, int mask, LispAddress EID) {
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
         MapRequest mapRequest = new MapRequest();
         EidRecord EIDRecord = new EidRecord((byte) mask, EID);
         mapRequest.addEidRecord(EIDRecord);
 
-        MapReply mapReply = nbService.getMappingService().handleMapRequest(mapRequest);
-
-        if (mapReply == null) {
-            logger.warn("Couldn't lookup EID, got null mapReply");
-            return null;
+        MapReply mapReply;
+        try{
+        	mapReply = nbService.getMappingService().handleMapRequest(mapRequest);
+        }catch (Exception e){
+            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+            		+ " : There was an error looking up the EID");
         }
 
-        EidToLocatorRecord record = null;
+        if (mapReply == null) {
+            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+            		+ " : There was an error looking up the EID");
+        }
 
-        record = mapReply.getEidToLocatorRecords().get(0);
+        EidToLocatorRecord record = mapReply.getEidToLocatorRecords().get(0);
 
         return record;
     }
@@ -211,12 +218,25 @@ public class NorthboundService implements INorthboundService, CommandProvider {
         for (int i = 0; i < numEidRecords; i++) {
 
             lispAddressGeneric = mapRegisterNB.getMapRegister().getEidToLocatorRecords().get(i).getPrefixGeneric();
-            lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+            
+            try{
+            	lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+            }catch (Exception e){
+            	throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+            }
             mask = mapRegisterNB.getMapRegister().getEidToLocatorRecords().get(i).getMaskLength();
+            
+            try{
             storedKey = mappingService.getAuthenticationKey(lispAddress, mask);
-
+            }catch (Exception e){
+            	 throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+                 		+ " : There was an error while retrieving the key");
+            }
+            
+            
             if (!usedKey.equals(storedKey)) {
-                throw new UnauthorizedException("The key used to register the mapping " + "does not match with the stored key for that mapping");
+                throw new UnauthorizedException("The key used to register the mapping "
+                		+ "does not match with the stored key for that mapping");
             }
         }
     }
@@ -287,35 +307,49 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
     @Path("/{containerName}/mapping")
     @PUT
-    @Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
-    @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+    @StatusCodes({ @ResponseCode(code = 400, condition = "Invalid data passed"),
+    	    @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
-    public String addMapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapRegisterNB) {
+    public Response addMapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapRegisterNB) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
         keyCheck(nbService.getMappingService(), mapRegisterNB);
 
-        LispAddressConvertorNB.convertGenericToLispAddresses(mapRegisterNB.getMapRegister());
-
-        MapNotify mapNotify = nbService.getMappingService().handleMapRegister(mapRegisterNB.getMapRegister());
-
+        
+        try{
+        	LispAddressConvertorNB.convertGenericToLispAddresses(mapRegisterNB.getMapRegister());
+	    }catch (Exception e){
+	    	throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+	    }
+        
+        //Always request MapNotify
+        mapRegisterNB.getMapRegister().setWantMapNotify(true);
+        
+        MapNotify mapNotify;
+        try{
+        	mapNotify = nbService.getMappingService().handleMapRegister(mapRegisterNB.getMapRegister());
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+        		+ " : There was an error while registering the mapping");
+    	}
+        
+        
         String response;
 
-        if (mapNotify != null) {
-            response = "Mapping added with EID " + mapNotify.getEidToLocatorRecords().get(0).getPrefix() + " and RLOC "
-                    + mapNotify.getEidToLocatorRecords().get(0).getLocators().get(0).getLocator() + "\n";
-        } else {
-            response = "Add mapping message received\n";
+        if (mapNotify == null) {
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while registering the mapping");
         }
 
-        return response;
+        return Response.status(Response.Status.OK).build();
     }
 
     /**
@@ -351,7 +385,9 @@ public class NorthboundService implements INorthboundService, CommandProvider {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
     public EidToLocatorRecord getMapping(@PathParam("containerName") String containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
             @PathParam("address") String address, @PathParam("mask") int mask) {
@@ -360,15 +396,22 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
         authorizationCheck(containerName, Privilege.READ);
 
-        LispAddressGeneric EIDGeneric = new LispAddressGeneric(afi, address);
+        LispAddressGeneric eidGeneric = new LispAddressGeneric(afi, address);
 
         if (iid != 0) {
-            EIDGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), EIDGeneric);
-            EIDGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
-            EIDGeneric.setInstanceId(iid);
+            eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), eidGeneric);
+            eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
+            eidGeneric.setInstanceId(iid);
         }
-
-        EidToLocatorRecord record = lookupEID(containerName, mask, LispAddressConvertorNB.convertToLispAddress(EIDGeneric));
+        
+        LispAddress eid;
+        try{
+        	 eid = LispAddressConvertorNB.convertToLispAddress(eidGeneric);
+    	}catch (Exception e){
+    		throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+    	}
+        
+        EidToLocatorRecord record = lookupEID(containerName, mask, eid);
 
         LispAddressConvertorNB.convertRecordToGenericAddress(record);
 
@@ -415,7 +458,9 @@ public class NorthboundService implements INorthboundService, CommandProvider {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
     public EidToLocatorRecord getMapping(@PathParam("containerName") String containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
             @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
@@ -447,7 +492,14 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
         int mask = 0; //Not used here
 
-        EidToLocatorRecord record = lookupEID(containerName, mask, LispAddressConvertorNB.convertToLispAddress(eidGeneric));
+        LispAddress eid;
+        try{
+        	 eid = LispAddressConvertorNB.convertToLispAddress(eidGeneric);
+		}catch (Exception e){
+			throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+		}
+        				
+        EidToLocatorRecord record = lookupEID(containerName, mask, eid);
 
         LispAddressConvertorNB.convertRecordToGenericAddress(record);
 
@@ -488,29 +540,43 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
     @Path("/{containerName}/key")
     @PUT
-    @Produces("text/plain")
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of key failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
-    public String addAuthKey(@PathParam("containerName") String containerName, @TypeHint(AuthKeyNB.class) AuthKeyNB authKeyNB) {
+    public Response addAuthKey(@PathParam("containerName") String containerName, @TypeHint(AuthKeyNB.class) AuthKeyNB authKeyNB) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
-        LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(authKeyNB.getAddress());
+        LispAddress lispAddress;
+        try{
+        	lispAddress = LispAddressConvertorNB.convertToLispAddress(authKeyNB.getAddress());
+		}catch (Exception e){
+			throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+		}
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
+        
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        boolean success = nbService.getMappingService().addAuthenticationKey(lispAddress, authKeyNB.getMaskLength(), authKeyNB.getKey());
-
-        if (success) {
-            return "Key added successfully";
-        } else {
-            return "There was a problem while adding the key";
+        boolean success = false;
+        
+        try{
+        	 success = nbService.getMappingService().addAuthenticationKey(lispAddress, authKeyNB.getMaskLength(), authKeyNB.getKey());
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while adding the key");
+        }
+        
+        if (!success) {
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while adding the key");
         }
 
+        return Response.status(Response.Status.OK).build();
     }
 
     /**
@@ -544,7 +610,9 @@ public class NorthboundService implements INorthboundService, CommandProvider {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
     public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("address") String address,
             @PathParam("mask") int mask) {
@@ -555,14 +623,26 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
         LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(afi, address);
 
-        LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+        LispAddress lispAddress;
+        try{
+         lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+		}catch (Exception e){
+			throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+		}   
+        
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
-
-        String key = nbService.getMappingService().getAuthenticationKey(lispAddress, mask);
+        String key;
+        try{
+        	key = nbService.getMappingService().getAuthenticationKey(lispAddress, mask);
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while retrieving the key");
+        }
 
         if (key == null) {
-            return null;
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while retrieving the key");
         }
 
         AuthKeyNB authKeyNB = new AuthKeyNB();
@@ -611,7 +691,9 @@ public class NorthboundService implements INorthboundService, CommandProvider {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
     public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd,
             @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
@@ -631,16 +713,28 @@ public class NorthboundService implements INorthboundService, CommandProvider {
         lispAddressGeneric.setDstAddress(dstGeneric);
         lispAddressGeneric.setDstMaskLength((byte) dstML);
 
-        LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+        LispAddress lispAddress;
+        try{
+        	lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+    	}catch (Exception e){
+    		throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+    	}
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
         int mask = 0; //Not used here
 
-        String key = nbService.getMappingService().getAuthenticationKey(lispAddress, mask);
+        String key;
+        try{
+        	key = nbService.getMappingService().getAuthenticationKey(lispAddress, mask);
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while retrieving the key");
+        }
 
         if (key == null) {
-            return null;
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while retrieving the key");
         }
 
         AuthKeyNB authKeyNB = new AuthKeyNB();
@@ -681,30 +775,126 @@ public class NorthboundService implements INorthboundService, CommandProvider {
 
     @Path("/{containerName}/key/{afi}/{address}/{mask}")
     @DELETE
-    @Produces("text/plain")
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
             @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
             @ResponseCode(code = 503, condition = "Service unavailable") })
-    public String delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("address") String address,
+    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("address") String address,
             @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
-        LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(new LispAddressGeneric(afi, address));
+        LispAddress lispAddress;
+        try{
+        	lispAddress = LispAddressConvertorNB.convertToLispAddress(new LispAddressGeneric(afi, address));
+		}catch (Exception e){
+			throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+		}
 
-        INorthboundService nbService = (INorthboundService) ServiceHelper.getInstance(INorthboundService.class, containerName, this);
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        String response;
-
-        if (nbService.getMappingService().removeAuthenticationKey(lispAddress, mask)) {
-            response = "Success to remove authentication key";
-        } else {
-            response = "Failure to remove authentication key";
+        boolean success = false;
+        try{
+        	success = nbService.getMappingService().removeAuthenticationKey(lispAddress, mask);
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while deleting the key");
         }
 
-        return response;
+        if (!success) {
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while deleting the key");
+        }
+
+        return Response.status(Response.Status.OK).build();
+    }
+    
+    /**
+     * Delete the key used to register an EID prefix
+     * 
+     * @param containerName
+     *            name of the container context from which the key is going to
+     *            be retrieved
+     * 
+     * @param afi
+     *            Address Family of the addresses (IPv4, IPv6 or MAC)
+     * 
+     * @param srcAdd
+     *            Source address of type defined by afi
+     * 
+     * @param srcML
+     *            Network mask length of the source address
+     * 
+     * @param dstAdd
+     *            Destination address of type defined by afi
+     * 
+     * @param dstML
+     *            Network mask length of the destination address
+     * 
+     * @return AuthKeyNB as a JSON object
+     * 
+     *         <pre>
+     * Example:
+     * 
+     * Request URL:
+     * http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32/20.0.0.2/32
+     * 
+     * </pre>
+     */
+
+    @Path("/{containerName}/key/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+    @DELETE
+    @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+	        @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd,
+            @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+
+        handleContainerDoesNotExist(containerName);
+
+        authorizationCheck(containerName, Privilege.WRITE);
+
+        LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
+        LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
+
+        LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
+
+        lispAddressGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+        lispAddressGeneric.setSrcAddress(srcGeneric);
+        lispAddressGeneric.setSrcMaskLength((byte) srcML);
+        lispAddressGeneric.setDstAddress(dstGeneric);
+        lispAddressGeneric.setDstMaskLength((byte) dstML);
+        
+        LispAddress lispAddress;
+        try{
+        	lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+		}catch (Exception e){
+			throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+		}
+
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
+
+        int mask = 0; //Not used here
+        
+        boolean success = false; 
+        try{
+        	success = nbService.getMappingService().removeAuthenticationKey(lispAddress, mask);
+        }catch (Exception e){
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while deleting the key");
+        }
+
+        if (!success) {
+        	throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() 
+             		+ " : There was an error while deleting the key");
+        }
+
+        return Response.status(Response.Status.OK).build();
     }
 
 }
