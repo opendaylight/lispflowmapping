@@ -12,7 +12,22 @@
 	<artifactId>mappingservice.api</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
+	<properties>
+		<!-- Sonar properties using jacoco to retrieve integration test results -->
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
+		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
+	</properties>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -30,12 +45,12 @@
 							org.opendaylight.lispflowmapping.type.sbplugin
 						</Export-Package>
 						<Import-Package>
-						 	org.opendaylight.controller.sal.binding.api,
+							org.opendaylight.controller.sal.binding.api,
 							org.opendaylight.yangtools.yang.binding,
-							 javax.xml.bind, 
-							 javax.xml.bind.annotation, 
-							 org.slf4j,
-							 org.opendaylight.yangtools.yang.common
+							javax.xml.bind,
+							javax.xml.bind.annotation,
+							org.slf4j,
+							org.opendaylight.yangtools.yang.common
 						</Import-Package>
 						<Bundle-Activator>
 						</Bundle-Activator>
@@ -43,6 +58,28 @@
 						</Service-Component>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<includes>org.opendaylight.controller.*</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
