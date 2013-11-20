@@ -1,0 +1,378 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_e577083a",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/AddressFamilyNumberEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "do we need this enum? isn\u0027t this class deprecated?",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c576443e",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/LispAFIConvertor.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "please open a refactor bug for this class - should be a map or something instead of many if instanceof",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a5711046",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/LispCanonicalAddressFormatEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "deprecated?",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_459a5464",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/MaskUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "how can this class be in the API? please see if it can be in impl",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_259d205a",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/address/LispNoAddress.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "???",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_05a45ca4",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/sbplugin/MapRegisterNotification.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be a YANG as well? open a bug for this - should be done to RC2",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e59ee853",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/sbplugin/MapRequestNotification.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "same bug as previous",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c5ad248a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "default is true? what was the previous behavior? probably false",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_85b72cd8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "are we supporting prob? previous behavior was probe \u003d false, wasn\u0027t it?",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_45b134e0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "same as above. keep previous behavior.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_85de0c10",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "remove validation of mask and open a bug. you don\u0027t have coverage of unit-tests for this.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a5bfd0a9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "setRouted should be \"true\" always - see previous code",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e5cca863",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mask/MaskUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "this class is also defined in api. i think it should be only here. see comments from other class",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c5dbe419",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/EidRecordSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "why short? because of the model definition? it should be byte.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a5d6b0ef",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/EidToLocatorRecordSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "refactor this method - use asInt(Integer) to do the if logics.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8505ec7b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/LocatorRecordSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "why short? all model bytes should be byte. can\u0027t it?",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6508b891",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/LocatorRecordSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "same as previous serializer. same comment to all",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_05f9fc7f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapRegisterSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "this means we\u0027ve dropped the optimization of doing the serialization twice. please open a bug on it. no need to add the optimization for now (not for RC2.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c549a4d1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispApplicationDataLCAFAddressSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "same",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_251080a7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispMACAddressSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "logger, no println",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_458494d3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispMACAddressSerializer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "move this to StringUtil class (if we have one)",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_05033c43",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/authentication/LispAuthenticationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-20T16:04:15Z",
+      "side": 1,
+      "message": "1. no ignores in unit-test.\n2. un-comment the rest.",
+      "revId": "8c91d0c9648cd9296a6ce11284b6682aa9180614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
