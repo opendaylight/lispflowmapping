@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.lispflowmapping.implementation.dao;
 
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
@@ -16,20 +23,12 @@ public class MappingServiceNoMaskKey implements IMappingServiceKey {
         return EID;
     }
 
-    public void setEID(LispAddressContainer eID) {
-        EID = eID;
-    }
-
     public int getMask() {
         if (MaskUtil.isMaskable(EID.getAddress())) {
             return MaskUtil.getMaxMask(EID.getAddress());
         } else {
             return 0;
         }
-    }
-
-    public void setMask(int mask) {
-        return;
     }
 
     @Override

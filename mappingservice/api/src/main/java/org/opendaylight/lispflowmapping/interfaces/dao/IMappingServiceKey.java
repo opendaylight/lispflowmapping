@@ -1,15 +1,28 @@
+/*
+ * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
+/**
+ * The mapping service key in the DAO.
+ */
 public interface IMappingServiceKey {
 
+    /**
+     * @return The eid of the key
+     */
     LispAddressContainer getEID();
 
-    void setEID(LispAddressContainer eID);
-
+    /**
+     * @return The mask of the eid
+     */
     int getMask();
-
-    void setMask(int mask);
 
 }

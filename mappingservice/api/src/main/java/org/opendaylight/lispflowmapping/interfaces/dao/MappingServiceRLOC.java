@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
@@ -5,6 +12,9 @@ import java.util.Date;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 
+/**
+ * A RLOC in the mapping service with it's properties.
+ */
 public class MappingServiceRLOC {
 
     private LocatorRecord record;

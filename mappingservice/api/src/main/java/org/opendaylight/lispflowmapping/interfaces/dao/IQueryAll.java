@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
+/**
+ * An interface for allowing iteration over all of the entries in the DAO
+ */
 public interface IQueryAll {
     public void getAll(IRowVisitor visitor);
 }

@@ -13,25 +13,79 @@ import java.util.concurrent.TimeUnit;
 
 public interface ILispDAO {
 
+    /**
+     * Put a entry into the DAO.
+     * 
+     * @param key
+     *            The entry's key.
+     * @param values
+     *            The entry's value.
+     */
     public <K> void put(K key, MappingEntry<?>... values);
 
+    /**
+     * Get a specific value from the DAO.
+     * 
+     * @param key
+     *            The key of the value to fetch
+     * @param valueKey
+     *            The value to fetch
+     * @return The value from the DAO.
+     */
     public <K, V> V getSpecific(K key, MappingValueKey<V> valueKey);
 
+    /**
+     * Get a specific value from the DAO.
+     * 
+     * @param key
+     *            The key of the value to fetch
+     * @param valueKey
+     *            The value to fetch
+     * @return The value from the DAO.
+     */
     public <K> Object getSpecific(K key, String valueKey);
 
+    /**
+     * Get the entries from the DAO
+     * 
+     * @param key
+     *            The key.
+     * @return The value from the DAO.
+     */
     public <K> Map<String, ?> get(K key);
 
+    /**
+     * Remove an entry from the DAO
+     * 
+     * @param key
+     *            The key of the entry
+     * @return true if success, false otherwise
+     */
     public <K> boolean remove(K key);
 
+    /**
+     * Clear the DAO and remove all of the entries.
+     */
     public void clearAll();
 
+    /**
+     * Register a type converter to the DAO
+     * 
+     * @param userType
+     *            The type converter to register
+     */
     public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType);
 
+    /**
+     * @return The time unit of the DAO cleaner
+     */
     public TimeUnit getTimeUnit();
 
+    /**
+     * Set the time unit of the DAO cleaner
+     * 
+     * @param timeUnit
+     */
     public void setTimeUnit(TimeUnit timeUnit);
 
-    public int getCleanInterval();
-
-    public void setCleanInterval(int cleanInterval);
 }

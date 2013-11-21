@@ -11,6 +11,9 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 
+/**
+ * The map resolver interface for dealing with map requests.
+ */
 public interface IMapResolver extends IGeneralMapResolver {
     MapReply handleMapRequest(MapRequest request);
 }

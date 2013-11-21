@@ -141,10 +141,4 @@ public class InMemoryDAO implements ILispDAO, IQueryAll {
     public void setTimeUnit(TimeUnit timeUnit) {
     }
 
-    public int getCleanInterval() {
-        return 0;
-    }
-
-    public void setCleanInterval(int cleanInterval) {
-    }
 }

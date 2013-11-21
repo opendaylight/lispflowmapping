@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.lispflowmapping.implementation.dao;
 
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
@@ -21,10 +28,10 @@ public class MappingServiceKeyUtil {
         }
     }
 
-    public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer prefix) {
-        if (MaskUtil.isMaskable(prefix.getAddress())) {
-            return generateMappingServiceKey(prefix, MaskUtil.getMaxMask(prefix.getAddress()));
+    public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer lispAddressContainer) {
+        if (MaskUtil.isMaskable(lispAddressContainer.getAddress())) {
+            return generateMappingServiceKey(lispAddressContainer, MaskUtil.getMaxMask(lispAddressContainer.getAddress()));
         } else
-            return generateMappingServiceKey(prefix, 0);
+            return generateMappingServiceKey(lispAddressContainer, 0);
     }
 }
