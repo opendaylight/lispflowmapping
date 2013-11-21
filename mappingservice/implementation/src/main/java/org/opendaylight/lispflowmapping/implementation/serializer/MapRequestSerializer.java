@@ -111,8 +111,8 @@ public class MapRequestSerializer {
             builder.setPitr(ByteUtil.extractBit(moreFlags, Flags.PITR));
             builder.setSmrInvoked(ByteUtil.extractBit(moreFlags, Flags.SMR_INVOKED));
 
-            int itrCount = requestBuffer.get() + 1;
-            int recordCount = requestBuffer.get();
+            int itrCount = ByteUtil.getUnsignedByte(requestBuffer) + 1;
+            int recordCount = ByteUtil.getUnsignedByte(requestBuffer);
             builder.setNonce(requestBuffer.getLong());
             builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
                     new LispAddressContainerBuilder().setAddress((Address) LispAddressSerializer.getInstance().deserialize(requestBuffer)).build())

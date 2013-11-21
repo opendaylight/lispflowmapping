@@ -46,12 +46,12 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
     @Override
     protected LcafSourceDestAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         short res = buffer.getShort();
-        byte srcMaskLength = buffer.get();
-        byte dstMaskLength = buffer.get();
+        int srcMaskLength = ByteUtil.getUnsignedByte(buffer);
+        int dstMaskLength = ByteUtil.getUnsignedByte(buffer);
         LispAFIAddress srcAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         LispAFIAddress dstAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         LcafSourceDestBuilder builder = new LcafSourceDestBuilder();
-        builder.setDstMaskLength(ByteUtil.asUnsignedByte(dstMaskLength)).setSrcMaskLength(ByteUtil.asUnsignedByte(srcMaskLength));
+        builder.setDstMaskLength((short) dstMaskLength).setSrcMaskLength((short) srcMaskLength);
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(srcAddress)).build());
         builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(dstAddress)).build());
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());

@@ -448,13 +448,6 @@
     	leaf probe {
     		type boolean;
     	}
-    	leaf action {
-      type enumeration {
-          enum NoAction;
-          enum NativelyForward;
-          enum Drop;
-      }
-  }
     	leaf nonce {
     		type int64;
     	}

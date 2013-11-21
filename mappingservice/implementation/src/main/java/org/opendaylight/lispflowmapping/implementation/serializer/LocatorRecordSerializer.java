@@ -28,10 +28,10 @@ public class LocatorRecordSerializer {
 
     protected LocatorRecord deserialize(ByteBuffer buffer) {
         LocatorRecordBuilder builder = new LocatorRecordBuilder();
-        builder.setPriority(ByteUtil.asUnsignedByte(buffer.get()));
-        builder.setWeight(ByteUtil.asUnsignedByte(buffer.get()));
-        builder.setMulticastPriority(ByteUtil.asUnsignedByte(buffer.get()));
-        builder.setMulticastWeight(ByteUtil.asUnsignedByte(buffer.get()));
+        builder.setPriority((short) ByteUtil.getUnsignedByte(buffer));
+        builder.setWeight((short) ByteUtil.getUnsignedByte(buffer));
+        builder.setMulticastPriority((short) ByteUtil.getUnsignedByte(buffer));
+        builder.setMulticastWeight((short) ByteUtil.getUnsignedByte(buffer));
         byte flags = (byte) buffer.getShort();
         builder.setLocalLocator(ByteUtil.extractBit(flags, Flags.LOCAL_LOCATOR));
         builder.setRlocProbed(ByteUtil.extractBit(flags, Flags.RLOC_PROBED));

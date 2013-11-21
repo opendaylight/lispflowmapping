@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.tomcat.util.buf.HexUtils;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
@@ -34,8 +33,8 @@ public class EidToLocatorRecordSerializer {
     public EidToLocatorRecord deserialize(ByteBuffer buffer) {
         EidToLocatorRecordBuilder builder = new EidToLocatorRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
-        byte locatorCount = buffer.get();
-        builder.setMaskLength((short) (buffer.get() & 0xff));
+        byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
+        builder.setMaskLength((short) ByteUtil.getUnsignedByte(buffer));
         byte actionAndAuthoritative = buffer.get();
         Action act = Action.forValue(actionAndAuthoritative >> 5);
         if (act == null) {

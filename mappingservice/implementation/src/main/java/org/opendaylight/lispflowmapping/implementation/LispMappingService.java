@@ -90,7 +90,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.info("BindingAwareBroker was unset in LispMappingService");
+        logger.debug("BindingAwareBroker was unset in LispMappingService");
     }
 
     public void basicInit(ILispDAO dao) {
@@ -113,7 +113,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void unsetLispDao(ILispDAO dao) {
-        logger.info("LispDAO was unset in LispMappingService");
+        logger.debug("LispDAO was unset in LispMappingService");
         mapServer = null;
         mapResolver = null;
         lispDao = null;
