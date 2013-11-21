@@ -12,8 +12,8 @@
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 	</scm>
 	<properties>
-	<jacoco.version>0.5.3.201107060350</jacoco.version>
-    <enforcer.version>1.3.1</enforcer.version>
+		<jacoco.version>0.5.3.201107060350</jacoco.version>
+		<enforcer.version>1.3.1</enforcer.version>
 		<nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<projectinfo>2.6</projectinfo>
@@ -27,6 +27,9 @@
 		<sonar.branch>${user.name}-private-view</sonar.branch>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.language>java</sonar.language>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
+        <sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<forwardingrulesmanager.version>0.5.0-SNAPSHOT</forwardingrulesmanager.version>
 		<statisticsmanager.version>0.5.0-SNAPSHOT</statisticsmanager.version>
 		<maven.compile.plugin.version>2.5.1</maven.compile.plugin.version>
@@ -181,7 +184,7 @@
 			<dependency>
 				<groupId>org.opendaylight.controller</groupId>
 				<artifactId>sal</artifactId>
-				<version>0.5.0-SNAPSHOT</version>
+				<version>0.6.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
@@ -297,6 +300,11 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+			<plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>

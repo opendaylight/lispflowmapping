@@ -19,10 +19,10 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolverAsync {
+    private static final int TTL_RLOC_TIMED_OUT = 1;
+    private static final int TTL_NO_RLOC_KNOWN = 15;
     private ILispDAO dao;
     private volatile boolean shouldAuthenticate;
     private volatile boolean shouldIterateMask;
@@ -52,16 +54,15 @@ public class MapResolver implements IMapResolverAsync {
             logger.warn("handleMapRequest called while dao is uninitialized");
         } else {
             MapReplyBuilder builder = new MapReplyBuilder();
-            builder.setAction(Action.NoAction);
             builder.setEchoNonceEnabled(false);
             builder.setProbe(false);
             builder.setSecurityEnabled(false);
             builder.setNonce(request.getNonce());
+            builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
             for (EidRecord eid : request.getEidRecord()) {
                 EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
                 recordBuilder.setRecordTtl(0);
-                recordBuilder
-                        .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NoAction);
+                recordBuilder.setAction(Action.NoAction);
                 recordBuilder.setAuthoritative(false);
                 recordBuilder.setMapVersion((short) 0);
                 recordBuilder.setMaskLength(eid.getMask());
@@ -73,15 +74,33 @@ public class MapResolver implements IMapResolverAsync {
                     locators = findMaskLocators(key);
                 }
                 if (locators != null) {
-                    addLocators(recordBuilder, locators);
-                }
-                if (builder.getEidToLocatorRecord() == null) {
-                    builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+                    MappingServiceValue value = (MappingServiceValue) locators.get("value");
+
+                    if (value.getRlocs() != null && value.getRlocs().size() > 0) {
+                        addLocators(recordBuilder, value);
+                    } else {
+                        recordBuilder
+                                .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
+
+                        if (didContainRLOCs(value)) {
+                            recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+                        } else {
+                            recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+                        }
+                    }
+                } else {
+                    recordBuilder
+                            .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
+                    recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
                 }
                 builder.getEidToLocatorRecord().add(recordBuilder.build());
             }
             callback.handleMapReply(builder.build());
         }
+    }
+
+    private boolean didContainRLOCs(MappingServiceValue value) {
+        return value.getKey() == null;
     }
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
@@ -98,14 +117,10 @@ public class MapResolver implements IMapResolverAsync {
         return null;
     }
 
-    private void addLocators(EidToLocatorRecordBuilder recordBuilder, Map<String, ?> locators) {
-        try {
-            MappingServiceValue value = (MappingServiceValue) locators.get("value");
-            for (MappingServiceRLOC rloc : value.getRlocs()) {
-                addLocator(recordBuilder, rloc);
-                recordBuilder.setRecordTtl(rloc.getTtl());
-            }
-        } catch (ClassCastException cce) {
+    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceValue value) {
+        for (MappingServiceRLOC rloc : value.getRlocs()) {
+            addLocator(recordBuilder, rloc);
+            recordBuilder.setRecordTtl(rloc.getTtl());
         }
     }
 
