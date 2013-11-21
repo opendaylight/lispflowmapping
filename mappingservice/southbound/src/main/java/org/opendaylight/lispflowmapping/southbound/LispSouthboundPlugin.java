@@ -150,6 +150,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     }
 
     public void onSessionInitiated(ProviderContext session) {
+        logger.info("LISP (RFC6830) Mapping Service is up!");
         synchronized (startLock) {
             if (!alreadyInit) {
                 alreadyInit = true;

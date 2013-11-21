@@ -20,6 +20,10 @@ public class ByteUtil {
         return inBuffer.get(pos) & 0xFF;
     }
 
+    public static int getUnsignedByte(ByteBuffer inBuffer) {
+        return inBuffer.get() & 0xFF;
+    }
+
     public static int getUnsignedShort(byte[] inBuffer, int pos) {
         return getShort(inBuffer, pos) & 0xFFFF;
     }
@@ -35,20 +39,20 @@ public class ByteUtil {
     public static int getInt(byte[] inBuffer, int pos) {
         return ByteBuffer.wrap(inBuffer, pos, 4).getInt();
     }
-    
+
     public static int getPartialInt(byte[] inBuffer) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.position(4-inBuffer.length);
+        buffer.position(4 - inBuffer.length);
         buffer.put(inBuffer);
         buffer.position(0);
         return buffer.getInt();
     }
-    
+
     public static byte[] partialIntToByteArray(int number, int length) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(number);
-        byte[] result  = new byte[length];
-        buffer.position(4-length);
+        byte[] result = new byte[length];
+        buffer.position(4 - length);
         buffer.get(result);
         return result;
     }
