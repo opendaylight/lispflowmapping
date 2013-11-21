@@ -45,7 +45,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     private ScheduledExecutorService scheduler;
 
     void setClusterContainerService(IClusterContainerServices s) {
-        logger.debug("Cluster Service set");
+        logger.info("Cluster Service set");
         this.clusterContainerService = s;
         allocateCache();
         retrieveCache();

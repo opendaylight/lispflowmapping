@@ -21,7 +21,6 @@ import junitx.framework.ArrayAssert;
 import junitx.framework.Assert;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.tomcat.util.buf.HexUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -126,7 +125,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapReplyBuilder = new MapReplyBuilder();
         mapReplyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapReplyBuilder.setNonce((long) 0);
-        mapReplyBuilder.setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply.Action.NativelyForward);
         mapReplyBuilder.setEchoNonceEnabled(false);
         mapReplyBuilder.setProbe(true);
         mapReplyBuilder.setSecurityEnabled(true);
@@ -373,8 +371,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // XXX: test
         // byte[] notifyResult = testedLispService.handlePacket(dp).getData();
         byte[] notifyResult = lastMapNotifyPacket().getData();
-        System.out.println(HexUtils.toHexString(mapRegisterPacket));
-        System.out.println(HexUtils.toHexString(notifyResult));
         assertEquals(mapRegisterPacket.length, notifyResult.length);
 
     }

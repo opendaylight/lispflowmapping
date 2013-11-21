@@ -60,7 +60,7 @@ public class MapReplySerializer {
         builder.setEchoNonceEnabled(ByteUtil.extractBit(typeAndFlags, Flags.ECHO_NONCE_ENABLED));
         builder.setSecurityEnabled(ByteUtil.extractBit(typeAndFlags, Flags.SECURITY_ENABLED));
         replyBuffer.getShort();
-        int recordCount = replyBuffer.get();
+        int recordCount = ByteUtil.getUnsignedByte(replyBuffer);
         builder.setNonce(replyBuffer.getLong());
         builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         for (int i = 0; i < recordCount; i++) {

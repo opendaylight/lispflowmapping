@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.factory.LispLCAFAddressSerializerFactory;
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispLcafAddress;
@@ -30,7 +31,7 @@ public class LispLCAFAddressSerializer extends LispAddressSerializer {
     @Override
     protected LispLcafAddress deserializeData(ByteBuffer buffer) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
-        byte lispCode = buffer.get();
+        byte lispCode = (byte) ByteUtil.getUnsignedByte(buffer);
         LispCanonicalAddressFormatEnum lcafType = LispCanonicalAddressFormatEnum.valueOf(lispCode);
         byte res2 = buffer.get();
         short length = buffer.getShort();

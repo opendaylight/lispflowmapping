@@ -67,7 +67,7 @@ public class MapNotifySerializer {
 
             notifyBuffer.position(notifyBuffer.position() + Length.RES);
 
-            byte recordCount = notifyBuffer.get();
+            byte recordCount = (byte) ByteUtil.getUnsignedByte(notifyBuffer);
             builder.setNonce(notifyBuffer.getLong());
             builder.setKeyId(notifyBuffer.getShort());
             short authenticationLength = notifyBuffer.getShort();

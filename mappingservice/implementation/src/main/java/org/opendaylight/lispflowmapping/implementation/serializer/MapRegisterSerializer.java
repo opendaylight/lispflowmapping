@@ -66,7 +66,7 @@ public class MapRegisterSerializer {
 
             registerBuffer.position(registerBuffer.position() + Length.RES);
             builder.setWantMapNotify(ByteUtil.extractBit(registerBuffer.get(), Flags.WANT_MAP_REPLY));
-            byte recordCount = registerBuffer.get();
+            byte recordCount = (byte) ByteUtil.getUnsignedByte(registerBuffer);
             builder.setNonce(registerBuffer.getLong());
             builder.setKeyId(registerBuffer.getShort());
             short authenticationLength = registerBuffer.getShort();
