@@ -469,7 +469,7 @@ public class MappingServiceIntegrationTest {
     @Test
     public void northboundAddKey() throws Exception {
 
-        LispIpv4Address address = LispAFIConvertor.asIPAfiAddress("10.0.0.1");
+        LispIpv4Address address = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
         int mask = 32;
         String pass = "asdf";
 
@@ -1231,6 +1231,7 @@ public class MappingServiceIntegrationTest {
 
     }
 
+    @Test
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
 
         LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
@@ -1273,14 +1274,76 @@ public class MappingServiceIntegrationTest {
         if (r != null) {
             ClusterDAOService clusterService = (ClusterDAOService) bc.getService(r);
             clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
+            clusterService.cleanOld();
             sendMapRequest(mapRequestBuilder.build());
             mapReply = receiveMapReply();
             assertEquals(0, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        }
+    }
+
+    @Test
+    public void mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse() throws Exception {
+
+        LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
+        mapRequestBuilder.setNonce((long) 4);
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
+                LispAFIConvertor.toContainer(new NoBuilder().setAfi((short) 0).build())).build());
+        mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
+        mapRequestBuilder.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build());
+        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
+        mapRequestBuilder.getItrRloc().add(
+                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress(ourAddress))).build());
+        sendMapRequest(mapRequestBuilder.build());
+        MapReply mapReply = receiveMapReply();
+        assertEquals(4, mapReply.getNonce().longValue());
+        assertEquals(15, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().byteValue());
+        assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+        assertEquals(0, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
+        mapRegisterbuilder.setWantMapNotify(true);
+        mapRegisterbuilder.setNonce((long) 8);
+        EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
+        etlrBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        etlrBuilder.setMaskLength((short) 24);
+        etlrBuilder.setRecordTtl(254);
+        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress("4.3.2.1")));
+        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
+        mapRegisterbuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapRegisterbuilder.getEidToLocatorRecord().add(etlrBuilder.build());
+        sendMapRegister(mapRegisterbuilder.build());
+        MapNotify mapNotify = receiveMapNotify();
+        assertEquals(8, mapNotify.getNonce().longValue());
+        sendMapRequest(mapRequestBuilder.build());
+        mapReply = receiveMapReply();
+        assertEquals(4, mapReply.getNonce().longValue());
+        assertEquals(recordBuilder.getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
+                .getLispAddressContainer());
+        assertEquals(254, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+        assertEquals(Action.NoAction, mapReply.getEidToLocatorRecord().get(0).getAction());
+        ServiceReference r = bc.getServiceReference(ILispDAO.class.getName());
+        if (r != null) {
+            ClusterDAOService clusterService = (ClusterDAOService) bc.getService(r);
+            clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
+            clusterService.cleanOld();
             clusterService.setTimeUnit(TimeUnit.MINUTES);
             sendMapRequest(mapRequestBuilder.build());
             mapReply = receiveMapReply();
-            assertEquals(recordBuilder.getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
-                    .getLispAddressContainer());
+            sendMapRequest(mapRequestBuilder.build());
+            mapReply = receiveMapReply();
+            assertEquals(1, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+            assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+            northboundAddKey();
+            sendMapRequest(mapRequestBuilder.build());
+            mapReply = receiveMapReply();
+            sendMapRequest(mapRequestBuilder.build());
+            mapReply = receiveMapReply();
+            assertEquals(15, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+            assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+
         }
     }
 
