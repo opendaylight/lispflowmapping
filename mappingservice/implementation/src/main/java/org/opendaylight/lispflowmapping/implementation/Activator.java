@@ -85,6 +85,7 @@ public class Activator extends ComponentActivatorAbstractBase {
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
         if (imp.equals(LispMappingService.class)) {
+            logger.info("exporting iflowmapping");
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
@@ -95,6 +96,7 @@ public class Activator extends ComponentActivatorAbstractBase {
                     .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker"));
         } else if (imp.equals(ClusterDAOService.class)) {
             // export the service
+            logger.info("exporting ilispdao");
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "clusterosgiservice");
             c.setInterface(new String[] { ILispDAO.class.getName() }, props);
