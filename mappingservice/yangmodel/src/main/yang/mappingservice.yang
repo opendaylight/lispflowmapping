@@ -227,9 +227,6 @@
              leaf dstMaskLength {
                  type uint8;
               }
-              leaf reserved {
-                  type int16;
-              }
         }
         
         grouping LcafApplicationDataAddress {

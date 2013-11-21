@@ -9,8 +9,8 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;

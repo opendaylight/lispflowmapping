@@ -1,4 +1,4 @@
-package org.opendaylight.lispflowmapping.implementation.serializer;
+package org.opendaylight.lispflowmapping.implementation.util;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
