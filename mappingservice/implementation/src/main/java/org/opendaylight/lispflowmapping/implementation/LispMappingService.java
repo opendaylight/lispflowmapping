@@ -84,7 +84,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.debug("BindingAwareBroker set!");
+        logger.info("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerConsumer(this, bundleContext);
     }
@@ -100,7 +100,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setLispDao(ILispDAO dao) {
-        logger.debug("LispDAO set in LispMappingService");
+        logger.info("LispDAO set in LispMappingService");
         basicInit(dao);
         logger.debug("Registering LispIpv4Address");
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
