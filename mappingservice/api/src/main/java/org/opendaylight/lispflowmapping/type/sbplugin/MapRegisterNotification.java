@@ -5,6 +5,9 @@ import java.net.InetAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
+/**
+ * A map register notification
+ */
 public class MapRegisterNotification implements LispNotification {
     private MapRegister mapRegister;
     private InetAddress address;
