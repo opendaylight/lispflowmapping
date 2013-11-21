@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_d3bf2efb",
+        "filename": "mappingservice/integrationtest/.gitignore",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-21T15:17:34Z",
+      "side": 1,
+      "message": "remove this git ignore",
+      "revId": "42589ff85a37b78a61dbf8e63db6a2fb91ac05f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f3c47293",
+        "filename": "mappingservice/integrationtest/hs_err_pid34331.log",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-21T15:17:34Z",
+      "side": 1,
+      "message": "remove this file",
+      "revId": "42589ff85a37b78a61dbf8e63db6a2fb91ac05f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_93e2d62d",
+        "filename": "mappingservice/yangmodel/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-21T15:17:34Z",
+      "side": 1,
+      "message": "as far as i know, META-INF folder should be ignored.\nplease delete and check it is created + add to ignore list.",
+      "revId": "42589ff85a37b78a61dbf8e63db6a2fb91ac05f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
