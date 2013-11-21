@@ -2,6 +2,10 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.List;
 
+/**
+ * A value in the mapping service. It contains a list of the RLOCs, and a
+ * password.
+ */
 public class MappingServiceValue {
 
     private List<MappingServiceRLOC> rlocs;

@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
+/**
+ * A converter between a user data type, and the DAO data type.
+ */
 public interface ILispTypeConverter<UserType, DbType> {
 
 }

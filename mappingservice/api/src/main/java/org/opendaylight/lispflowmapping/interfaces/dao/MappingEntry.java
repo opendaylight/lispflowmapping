@@ -1,6 +1,11 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
-
+/**
+ * A mapping service entry in the DAO
+ * 
+ * @param <V>
+ *            The type of the mapping key.
+ */
 public class MappingEntry<V> {
     private MappingValueKey<V> mappingValueKey;
     private V value;

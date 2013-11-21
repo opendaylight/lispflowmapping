@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.type;
 
+/**
+ * The LCAF enum. http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03
+ */
 public enum LispCanonicalAddressFormatEnum {
     LIST(1), //
     SEGMENT(2), //

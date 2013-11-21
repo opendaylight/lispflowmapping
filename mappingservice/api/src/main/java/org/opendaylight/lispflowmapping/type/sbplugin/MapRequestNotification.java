@@ -2,6 +2,9 @@ package org.opendaylight.lispflowmapping.type.sbplugin;
 
 import java.net.InetAddress;
 
+/**
+ * A map request notification
+ */
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 

@@ -2,14 +2,19 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
+/**
+ * The mapping service key in the DAO.
+ */
 public interface IMappingServiceKey {
 
+    /**
+     * @return The eid of the key
+     */
     LispAddressContainer getEID();
 
-    void setEID(LispAddressContainer eID);
-
+    /**
+     * @return The mask of the eid
+     */
     int getMask();
-
-    void setMask(int mask);
 
 }
