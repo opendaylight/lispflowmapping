@@ -285,8 +285,6 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(),
                 mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject(),
 
-                mavenBundle(ODL, "config-api").versionAsInProject(), //
-                mavenBundle(ODL, "config-manager").versionAsInProject(), //
                 mavenBundle("commons-io", "commons-io").versionAsInProject(),
 
                 mavenBundle("commons-fileupload", "commons-fileupload").versionAsInProject(),
@@ -394,7 +392,6 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.opendaylight.controller", "switchmanager").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager.implementation").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "commons.httpclient").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "configuration.implementation").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "usermanager").versionAsInProject(), //
@@ -435,7 +432,15 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
+
+                // TestHelper.baseModelBundles(),
+                // TestHelper.configMinumumBundles(),
+                // TestHelper.bindingIndependentSalBundles(),
+                // TestHelper.bindingAwareSalBundles(),
+                // TestHelper.mdSalCoreBundles(),
+
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.yangmodel").versionAsInProject(),
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(),
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
@@ -446,6 +451,9 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(ODL, "sal-core-spi").versionAsInProject().update(), //
                 mavenBundle(ODL, "sal-broker-impl").versionAsInProject(), //
                 mavenBundle(ODL, "sal-connector-api").versionAsInProject(), //
+
+                mavenBundle(ODL, "config-api").versionAsInProject(), //
+                mavenBundle(ODL, "config-manager").versionAsInProject(), //
 
                 junitBundles());
     }
@@ -469,7 +477,7 @@ public class MappingServiceIntegrationTest {
     @Test
     public void northboundAddKey() throws Exception {
 
-        LispIpv4Address address = LispAFIConvertor.asIPAfiAddress("10.0.0.1");
+        LispIpv4Address address = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
         int mask = 32;
         String pass = "asdf";
 
@@ -1231,6 +1239,7 @@ public class MappingServiceIntegrationTest {
 
     }
 
+    @Test
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
 
         LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
@@ -1273,15 +1282,87 @@ public class MappingServiceIntegrationTest {
         if (r != null) {
             ClusterDAOService clusterService = (ClusterDAOService) bc.getService(r);
             clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
+            clusterService.cleanOld();
             sendMapRequest(mapRequestBuilder.build());
             mapReply = receiveMapReply();
             assertEquals(0, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
-            clusterService.setTimeUnit(TimeUnit.MINUTES);
-            sendMapRequest(mapRequestBuilder.build());
-            mapReply = receiveMapReply();
-            assertEquals(recordBuilder.getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
-                    .getLispAddressContainer());
         }
+    }
+
+    @Test
+    public void mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse() throws Exception {
+
+        LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        MapRequest mapRequest = createMapRequest(eid);
+        sendMapRequest(mapRequest);
+        MapReply mapReply = receiveMapReply();
+        assertEquals(4, mapReply.getNonce().longValue());
+        assertEquals(15, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().byteValue());
+        assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+        assertEquals(0, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+
+        MapRegister mapRegister = createMapRegister(eid);
+        sendMapRegister(mapRegister);
+        MapNotify mapNotify = receiveMapNotify();
+        assertEquals(8, mapNotify.getNonce().longValue());
+        sendMapRequest(mapRequest);
+        mapReply = receiveMapReply();
+        assertEquals(4, mapReply.getNonce().longValue());
+        assertEquals(LispAFIConvertor.toContainer(asIPAfiAddress("4.3.2.1")), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
+                .getLispAddressContainer());
+        assertEquals(254, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+        assertEquals(Action.NoAction, mapReply.getEidToLocatorRecord().get(0).getAction());
+
+        ServiceReference r = bc.getServiceReference(ILispDAO.class.getName());
+        if (r != null) {
+            ClusterDAOService clusterService = (ClusterDAOService) bc.getService(r);
+            clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
+            clusterService.cleanOld();
+            sendMapRequest(mapRequest);
+            mapReply = receiveMapReply();
+            assertEquals(1, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+            assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+
+            northboundAddKey();
+            sendMapRequest(mapRequest);
+            mapReply = receiveMapReply();
+            assertEquals(15, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
+            assertEquals(Action.NativelyForward, mapReply.getEidToLocatorRecord().get(0).getAction());
+
+        }
+    }
+
+    private MapRegister createMapRegister(LispIpv4Address eid) {
+        MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
+        mapRegisterbuilder.setWantMapNotify(true);
+        mapRegisterbuilder.setNonce((long) 8);
+        EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
+        etlrBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        etlrBuilder.setMaskLength((short) 24);
+        etlrBuilder.setRecordTtl(254);
+        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress("4.3.2.1")));
+        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
+        mapRegisterbuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapRegisterbuilder.getEidToLocatorRecord().add(etlrBuilder.build());
+        MapRegister mapRegister = mapRegisterbuilder.build();
+        return mapRegister;
+    }
+
+    private MapRequest createMapRequest(LispIpv4Address eid) {
+        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
+        mapRequestBuilder.setNonce((long) 4);
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
+                LispAFIConvertor.toContainer(new NoBuilder().setAfi((short) 0).build())).build());
+        mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
+        mapRequestBuilder.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build());
+        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
+        mapRequestBuilder.getItrRloc().add(
+                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress(ourAddress))).build());
+        MapRequest mr = mapRequestBuilder.build();
+        return mr;
     }
 
     private MapReply receiveMapReply() throws SocketTimeoutException {
@@ -1411,8 +1492,10 @@ public class MappingServiceIntegrationTest {
         Bundle b[] = bc.getBundles();
         for (Bundle element : b) {
             int state = element.getState();
+            logger.debug("Bundle:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:" + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
+                // System.out.println("Bundle:" + element.getSymbolicName() +
+                // " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
 
