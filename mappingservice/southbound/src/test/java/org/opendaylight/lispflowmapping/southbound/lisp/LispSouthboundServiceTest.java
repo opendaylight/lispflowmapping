@@ -126,7 +126,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapReplyBuilder = new MapReplyBuilder();
         mapReplyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapReplyBuilder.setNonce((long) 0);
-        mapReplyBuilder.setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply.Action.NativelyForward);
         mapReplyBuilder.setEchoNonceEnabled(false);
         mapReplyBuilder.setProbe(true);
         mapReplyBuilder.setSecurityEnabled(true);

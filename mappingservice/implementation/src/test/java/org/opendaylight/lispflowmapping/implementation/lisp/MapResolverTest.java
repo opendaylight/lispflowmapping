@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispKeyIDEnum;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -201,6 +202,52 @@ public class MapResolverTest extends BaseTestCase {
         MapReply mapReply = testedMapResolver.handleMapRequest(mr);
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
         assertEquals(0, eidToLocators.getLocatorRecord().size());
+    }
+
+    @Test
+    public void handleMapRequest_VerifyNativelyForwardAutherized() {
+        MapRequest mr = getDefaultMapRequest();
+
+        MappingServiceValue value = new MappingServiceValue();
+        value.setKey("pass");
+        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+        result.put("value", value);
+
+        MapReply mapReply = getNativelyForwardMapReply(mr, result);
+
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(15, eidToLocators.getRecordTtl().intValue());
+        assertEquals(Action.NativelyForward, eidToLocators.getAction());
+    }
+
+    private MapReply getNativelyForwardMapReply(MapRequest mr, Map<String, MappingServiceValue> result) {
+        allowing(lispDAO).get(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(v4Address), 32));
+        ret(result);
+        MapReply mapReply = testedMapResolver.handleMapRequest(mr);
+        return mapReply;
+    }
+
+    @Test
+    public void handleMapRequest_VerifyNativelyForwardOldRegister() {
+        MapRequest mr = getDefaultMapRequest();
+
+        MappingServiceValue value = new MappingServiceValue();
+        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+        result.put("value", value);
+
+        MapReply mapReply = getNativelyForwardMapReply(mr, result);
+
+        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
+        assertEquals(1, eidToLocators.getRecordTtl().intValue());
+        assertEquals(Action.NativelyForward, eidToLocators.getAction());
+    }
+
+    private MapRequest getDefaultMapRequest() {
+        mapRequest = getDefaultMapRequestBuilder();
+        mapRequest.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(v4Address)).build());
+        MapRequest mr = mapRequest.build();
+        return mr;
     }
 
     @Test
