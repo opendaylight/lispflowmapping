@@ -40,16 +40,15 @@ import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
@@ -90,11 +89,13 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSegmentBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSourceDest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafTrafficEngineeringBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Mac;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
@@ -484,6 +485,36 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
+    public void northboundRetrieveSourceDestKey() throws Exception {
+
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+                .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.1"));
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+                .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.2"));
+        int mask1 = 32;
+        int mask2 = 32;
+        LcafSourceDest sourceDestAddress = new LcafSourceDestBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode())
+                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(address1).build()).setSrcMaskLength((short) mask1)
+                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(address2).build()).setDstMaskLength((short) mask2).build();
+        String pass = "asdf";
+
+        lms.addAuthenticationKey(LispAFIConvertor.toContainer(sourceDestAddress), mask1, pass);
+
+        // URL url = createGetKeyIPv4URL(address1, mask1);
+        URL url = createGetKeySourceDestURL(address1.getAfi(), ((LispIpv4Address) sourceDestAddress.getSrcAddress().getPrimitiveAddress())
+                .getIpv4Address().getValue(), sourceDestAddress.getSrcMaskLength(), ((LispIpv4Address) sourceDestAddress.getDstAddress()
+                .getPrimitiveAddress()).getIpv4Address().getValue(), sourceDestAddress.getDstMaskLength());
+        String reply = callURL("GET", null, "application/json", null, url);
+        JSONTokener jt = new JSONTokener(reply);
+        JSONObject json = new JSONObject(jt);
+
+        // test that the password matches what was we expected.
+        assertEquals(pass, json.get("key"));
+
+    }
+
+    @Test
     public void northboundRetrieveKey() throws Exception {
 
         LispIpv4Address address = LispAFIConvertor.asIPAfiAddress("10.0.0.1");
@@ -661,8 +692,6 @@ public class MappingServiceIntegrationTest {
 
     @Test
     public void northboundRetrieveMapping() throws Exception {
-
-        String pass = "";
         LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("10.0.0.1");
         int mask = 32;
         LispIpv4Address rloc = LispAFIConvertor.asIPAfiAddress("20.0.0.2");
@@ -697,9 +726,69 @@ public class MappingServiceIntegrationTest {
 
     }
 
+    @Test
+    public void northboundRetrieveSourceDestMapping() throws Exception {
+
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+                .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.1"));
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+                .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.2"));
+        int mask1 = 32;
+        int mask2 = 32;
+        LcafSourceDest sourceDestAddress = new LcafSourceDestBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode())
+                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(address1).build()).setSrcMaskLength((short) mask1)
+                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(address2).build()).setDstMaskLength((short) mask2).build();
+        LispIpv4Address rloc = LispAFIConvertor.asIPAfiAddress("20.0.0.2");
+
+        // Insert mapping in the database
+        MapRegisterBuilder mapRegister = new MapRegisterBuilder();
+        EidToLocatorRecordBuilder etlr = new EidToLocatorRecordBuilder();
+        etlr.setLispAddressContainer(LispAFIConvertor.toContainer(sourceDestAddress));
+        etlr.setMaskLength((short) mask1);
+        etlr.setRecordTtl(254);
+        etlr.setAuthoritative(false);
+        etlr.setAction(Action.NoAction);
+        LocatorRecordBuilder record = new LocatorRecordBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(rloc));
+        record.setRouted(true);
+        etlr.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlr.getLocatorRecord().add(record.build());
+        mapRegister.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapRegister.getEidToLocatorRecord().add(etlr.build());
+        lms.handleMapRegister(mapRegister.build());
+
+        // Get mapping using NB interface. No IID used
+        URL url = createGetMappingSourceDestURL(address1.getAfi(), address1.getIpv4Address().getValue(), mask1, address2.getIpv4Address().getValue(),
+                mask2);
+        String reply = callURL("GET", null, "application/json", null, url);
+        JSONTokener jt = new JSONTokener(reply);
+        JSONObject json = new JSONObject(jt);
+
+        // With just one locator, locators is not a JSONArray
+        String rlocRetrieved = json.getJSONObject("locators").getJSONObject("locatorGeneric").getString("ipAddress");
+
+        assertEquals(rloc.getIpv4Address().getValue(), rlocRetrieved);
+
+    }
+
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
         String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d", "key", address.getAfi().shortValue(), address
                 .getIpv4Address().getValue(), mask);
+        URL url = new URL(restUrl);
+        return url;
+    }
+
+    private URL createGetKeySourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d/%s/%d", "key", afi, srcAddress, srcMask,
+                dstAddress, dstMask);
+        URL url = new URL(restUrl);
+        return url;
+    }
+
+    private URL createGetMappingSourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d/%s/%d", "mapping", afi, srcAddress, srcMask,
+                dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }

@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;

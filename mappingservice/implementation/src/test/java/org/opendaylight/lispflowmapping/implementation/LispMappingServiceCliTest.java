@@ -18,7 +18,7 @@ import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.tools.junit.MockCommandInterpreter;
