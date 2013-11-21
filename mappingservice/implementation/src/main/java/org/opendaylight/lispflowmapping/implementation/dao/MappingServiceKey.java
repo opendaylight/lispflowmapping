@@ -17,16 +17,8 @@ public class MappingServiceKey implements IMappingServiceKey {
         return EID;
     }
 
-    public void setEID(LispAddressContainer eID) {
-        EID = eID;
-    }
-
     public int getMask() {
         return mask & 0xFF;
-    }
-
-    public void setMask(int mask) {
-        this.mask = mask;
     }
 
     @Override

@@ -16,20 +16,12 @@ public class MappingServiceNoMaskKey implements IMappingServiceKey {
         return EID;
     }
 
-    public void setEID(LispAddressContainer eID) {
-        EID = eID;
-    }
-
     public int getMask() {
         if (MaskUtil.isMaskable(EID.getAddress())) {
             return MaskUtil.getMaxMask(EID.getAddress());
         } else {
             return 0;
         }
-    }
-
-    public void setMask(int mask) {
-        return;
     }
 
     @Override

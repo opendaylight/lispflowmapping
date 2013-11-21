@@ -8,6 +8,11 @@
 
 package org.opendaylight.lispflowmapping.type;
 
+/**
+ * The AFI enum:
+ * http://www.iana.org/assignments/address-family-numbers/address-family
+ * -numbers.xhtml
+ */
 public enum AddressFamilyNumberEnum {
     NO_ADDRESS(0), //
     IP(1), //

@@ -21,10 +21,10 @@ public class MappingServiceKeyUtil {
         }
     }
 
-    public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer prefix) {
-        if (MaskUtil.isMaskable(prefix.getAddress())) {
-            return generateMappingServiceKey(prefix, MaskUtil.getMaxMask(prefix.getAddress()));
+    public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer lispAddressContainer) {
+        if (MaskUtil.isMaskable(lispAddressContainer.getAddress())) {
+            return generateMappingServiceKey(lispAddressContainer, MaskUtil.getMaxMask(lispAddressContainer.getAddress()));
         } else
-            return generateMappingServiceKey(prefix, 0);
+            return generateMappingServiceKey(lispAddressContainer, 0);
     }
 }

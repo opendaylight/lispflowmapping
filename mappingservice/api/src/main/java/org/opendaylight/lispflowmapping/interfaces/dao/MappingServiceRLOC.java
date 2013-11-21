@@ -5,6 +5,9 @@ import java.util.Date;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 
+/**
+ * A RLOC in the mapping service with it's properties.
+ */
 public class MappingServiceRLOC {
 
     private LocatorRecord record;

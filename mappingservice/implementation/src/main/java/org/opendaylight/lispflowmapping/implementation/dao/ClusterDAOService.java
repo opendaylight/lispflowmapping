@@ -196,12 +196,4 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         this.timeUnit = timeUnit;
     }
 
-    public int getCleanInterval() {
-        return cleanInterval;
-    }
-
-    public void setCleanInterval(int cleanInterval) {
-        this.cleanInterval = cleanInterval;
-    }
-
 }
