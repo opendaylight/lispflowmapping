@@ -373,96 +373,97 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         return legacyRecord;
     }
 
-    // /**
-    // * Retrieve a mapping from the LISP mapping system, using
-    // Source-Destination
-    // * LCAF as EID
-    // *
-    // * @param containerName
-    // * name of the container context from which the mapping is going
-    // * to be retrieved
-    // * @param iid
-    // * Instance-ID of the addresses (0 if none)
-    // *
-    // * @param afi
-    // * Address Family of the addresses (IPv4, IPv6 or MAC)
-    // *
-    // * @param srcAdd
-    // * Source address of type defined by afi
-    // *
-    // * @param srcML
-    // * Network mask length of the source address
-    // *
-    // * @param dstAdd
-    // * Destination address of type defined by afi
-    // *
-    // * @param dstML
-    // * Network mask length of the destination address
-    // *
-    // * @return EidToLocatorRecord as a JSON object
-    // *
-    // * <pre>
-    // * Example:
-    // *
-    // * Request URL:
-    // *
-    // http://localhost:8080/lispflowmapping/default/mapping/0/1/10.0.0.1/32/20.0.0.2/32
-    // *
-    // * </pre>
-    // */
-    //
-    // @Path("/{containerName}/mapping/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
-    // @GET
-    // @Produces(MediaType.APPLICATION_JSON)
-    // @StatusCodes({ @ResponseCode(code = 401, condition =
-    // "User not authorized to perform this operation"),
-    // @ResponseCode(code = 404, condition =
-    // "The containerName passed was not found"),
-    // @ResponseCode(code = 503, condition = "Service unavailable") })
-    // public EidToLocatorRecord getMapping(@PathParam("containerName") String
-    // containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
-    // @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML,
-    // @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
-    //
-    // handleContainerDoesNotExist(containerName);
-    //
-    // authorizationCheck(containerName, Privilege.READ);
-    //
-    // LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
-    // LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
-    //
-    // if (iid != 0) {
-    // srcGeneric = new
-    // LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(),
-    // srcGeneric);
-    // srcGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
-    // srcGeneric.setInstanceId(iid);
-    //
-    // dstGeneric = new
-    // LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(),
-    // dstGeneric);
-    // dstGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
-    // dstGeneric.setInstanceId(iid);
-    // }
-    //
-    // LispAddressGeneric eidGeneric = new
-    // LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
-    //
-    // eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-    // eidGeneric.setSrcAddress(srcGeneric);
-    // eidGeneric.setSrcMaskLength((byte) srcML);
-    // eidGeneric.setDstAddress(dstGeneric);
-    // eidGeneric.setDstMaskLength((byte) dstML);
-    //
-    // int mask = 0; //Not used here
-    //
-    // EidToLocatorRecord record = lookupEID(containerName, mask,
-    // LispAddressConvertorNB.convertToLispAddress(eidGeneric));
-    //
-    // LispAddressConvertorNB.convertRecordToGenericAddress(record);
-    //
-    // return record;
-    // }
+     /**
+     * Retrieve a mapping from the LISP mapping system, using
+     Source-Destination
+     * LCAF as EID
+     *
+     * @param containerName
+     * name of the container context from which the mapping is going
+     * to be retrieved
+     * @param iid
+     * Instance-ID of the addresses (0 if none)
+     *
+     * @param afi
+     * Address Family of the addresses (IPv4, IPv6 or MAC)
+     *
+     * @param srcAdd
+     * Source address of type defined by afi
+     *
+     * @param srcML
+     * Network mask length of the source address
+     *
+     * @param dstAdd
+     * Destination address of type defined by afi
+     *
+     * @param dstML
+     * Network mask length of the destination address
+     *
+     * @return EidToLocatorRecord as a JSON object
+     *
+     * <pre>
+     * Example:
+     *
+     * Request URL:
+     *
+     http://localhost:8080/lispflowmapping/default/mapping/0/1/10.0.0.1/32/20.0.0.2/32
+     *
+     * </pre>
+     */
+    
+     @Path("/{containerName}/mapping/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+     @GET
+     @Produces(MediaType.APPLICATION_JSON)
+     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+                    @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                    @ResponseCode(code = 503, condition = "Service unavailable") })
+     public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(
+    		 @PathParam("containerName") String containerName, 
+    		 @PathParam("iid") int iid, @PathParam("afi") int afi,
+             @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML,
+             @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+    
+     handleContainerDoesNotExist(containerName);
+    
+     authorizationCheck(containerName, Privilege.READ);
+    
+     LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
+     LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
+    
+     if (iid != 0) {
+     srcGeneric = new
+     LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(),
+     srcGeneric);
+     srcGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
+     srcGeneric.setInstanceId(iid);
+    
+     dstGeneric = new
+     LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(),
+     dstGeneric);
+     dstGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
+     dstGeneric.setInstanceId(iid);
+     }
+    
+     LispAddressGeneric eidGeneric = new
+     LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
+    
+     eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+     eidGeneric.setSrcAddress(srcGeneric);
+     eidGeneric.setSrcMaskLength((byte) srcML);
+     eidGeneric.setDstAddress(dstGeneric);
+     eidGeneric.setDstMaskLength((byte) dstML);
+    
+     int mask = 0; //Not used here
+    
+     EidToLocatorRecord record = lookupEID(containerName, mask, LispAddressConvertorNB.convertToLispAddress(eidGeneric));
+    
+     org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord 
+     	legacyRecord = YangTransformerNB.reTransformEidToLocatorRecord(record);
+     
+     LispAddressConvertorNB.convertRecordToGenericAddress(legacyRecord);
+    
+     return legacyRecord;
+     }
 
     /**
      * Set the authentication key for an EID prefix
@@ -606,93 +607,85 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         return authKeyNB;
     }
 
-    // /**
-    // * Retrieve a key used to register a Source-Destination LCAF EID prefix
-    // *
-    // * @param containerName
-    // * name of the container context from which the key is going to
-    // * be retrieved
-    // *
-    // * @param afi
-    // * Address Family of the addresses (IPv4, IPv6 or MAC)
-    // *
-    // * @param srcAdd
-    // * Source address of type defined by afi
-    // *
-    // * @param srcML
-    // * Network mask length of the source address
-    // *
-    // * @param dstAdd
-    // * Destination address of type defined by afi
-    // *
-    // * @param dstML
-    // * Network mask length of the destination address
-    // *
-    // * @return AuthKeyNB as a JSON object
-    // *
-    // * <pre>
-    // * Example:
-    // *
-    // * Request URL:
-    // *
-    // http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32/20.0.0.2/32
-    // *
-    // * </pre>
-    // */
-    //
-    // @Path("/{containerName}/key/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
-    // @GET
-    // @Produces(MediaType.APPLICATION_JSON)
-    // @StatusCodes({ @ResponseCode(code = 401, condition =
-    // "User not authorized to perform this operation"),
-    // @ResponseCode(code = 404, condition =
-    // "The containerName passed was not found"),
-    // @ResponseCode(code = 503, condition = "Service unavailable") })
-    // public AuthKeyNB getAuthKey(@PathParam("containerName") String
-    // containerName, @PathParam("afi") int afi, @PathParam("srcAdd") String
-    // srcAdd,
-    // @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd,
-    // @PathParam("dstML") int dstML) {
-    //
-    // handleContainerDoesNotExist(containerName);
-    //
-    // authorizationCheck(containerName, Privilege.READ);
-    //
-    // LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
-    // LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
-    //
-    // LispAddressGeneric lispAddressGeneric = new
-    // LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
-    //
-    // lispAddressGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-    // lispAddressGeneric.setSrcAddress(srcGeneric);
-    // lispAddressGeneric.setSrcMaskLength((byte) srcML);
-    // lispAddressGeneric.setDstAddress(dstGeneric);
-    // lispAddressGeneric.setDstMaskLength((byte) dstML);
-    //
-    // LispAddress lispAddress =
-    // LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
-    //
-    // INorthboundService nbService = (INorthboundService)
-    // ServiceHelper.getInstance(INorthboundService.class, containerName, this);
-    //
-    // int mask = 0; //Not used here
-    //
-    // String key =
-    // nbService.getMappingService().getAuthenticationKey(lispAddress, mask);
-    //
-    // if (key == null) {
-    // return null;
-    // }
-    //
-    // AuthKeyNB authKeyNB = new AuthKeyNB();
-    //
-    // authKeyNB.setKey(key);
-    // authKeyNB.setAddress(lispAddressGeneric);
-    // authKeyNB.setMaskLength(mask);
-    //
-    // return authKeyNB;
-    // }
+     /**
+     * Retrieve a key used to register a Source-Destination LCAF EID prefix
+     *
+     * @param containerName
+     * name of the container context from which the key is going to
+     * be retrieved
+     *
+     * @param afi
+     * Address Family of the addresses (IPv4, IPv6 or MAC)
+     *
+     * @param srcAdd
+     * Source address of type defined by afi
+     *
+     * @param srcML
+     * Network mask length of the source address
+     *
+     * @param dstAdd
+     * Destination address of type defined by afi
+     *
+     * @param dstML
+     * Network mask length of the destination address
+     *
+     * @return AuthKeyNB as a JSON object
+     *
+     * <pre>
+     * Example:
+     *
+     * Request URL:
+     *
+     http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32/20.0.0.2/32
+     *
+     * </pre>
+     */
+    
+     @Path("/{containerName}/key/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+     @GET
+     @Produces(MediaType.APPLICATION_JSON)
+     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+     @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+     @ResponseCode(code = 503, condition = "Service unavailable") })
+     public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, 
+    		 @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
+    		 @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+    
+     handleContainerDoesNotExist(containerName);
+    
+     authorizationCheck(containerName, Privilege.READ);
+    
+     LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
+     LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
+    
+     LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
+    
+     lispAddressGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+     lispAddressGeneric.setSrcAddress(srcGeneric);
+     lispAddressGeneric.setSrcMaskLength((byte) srcML);
+     lispAddressGeneric.setDstAddress(dstGeneric);
+     lispAddressGeneric.setDstMaskLength((byte) dstML);
+    
+     LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
+    
+     ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
+    
+     int mask = 0; //Not used here
+    
+     String key = nbService.getMappingService().getAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), mask);
+    
+     if (key == null) {
+     return null;
+     }
+    
+     AuthKeyNB authKeyNB = new AuthKeyNB();
+    
+     authKeyNB.setKey(key);
+     authKeyNB.setAddress(lispAddressGeneric);
+     authKeyNB.setMaskLength(mask);
+    
+     return authKeyNB;
+     }
 
     /**
      * Delete the key used to register an EID prefix
