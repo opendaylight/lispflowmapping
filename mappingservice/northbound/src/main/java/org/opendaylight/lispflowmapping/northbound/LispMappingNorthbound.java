@@ -199,76 +199,77 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     /**
-     * // * Add a mapping to the LISP mapping system // * // * @param
-     * containerName // * name of the container context in which the mapping
-     * needs to be // * added // * @param mapRegisterNB // * JSON object that
-     * contains the mapping information // * // * @return Text plain confirming
-     * reception // * // *
+     * Add a mapping to the LISP mapping system
      * 
-     * <pre>
-     * // * Example:
-     * // *
-     * // * Request URL:
-     * // * http://localhost:8080/lispflowmapping/default/mapping
-     * // *
-     * // * Request body in JSON:
-     * // *
-     * // * {
-     * // * &quot;key&quot; : &quot;asdf&quot;,
-     * // * &quot;mapregister&quot; :
-     * // * {
-     * // * &quot;wantMapNotify&quot; : true,
-     * // * &quot;proxyMapReply&quot; : false,
-     * // * &quot;eidToLocatorRecords&quot; :
-     * // * [
-     * // * {
-     * // * &quot;authoritative&quot; : true,
-     * // * &quot;prefixGeneric&quot; :
-     * // * {
-     * // * &quot;ipAddress&quot; : &quot;10.0.0.1&quot;,
-     * // * &quot;afi&quot; : 1
-     * // * },
-     * // * &quot;mapVersion&quot; : 3,
-     * // * &quot;maskLength&quot; : 32,
-     * // * &quot;action&quot; : &quot;NoAction&quot;,
-     * // * &quot;locators&quot; :
-     * // * [
-     * // * {
-     * // * &quot;multicastPriority&quot; : 3,
-     * // * &quot;locatorGeneric&quot; :
-     * // * {
-     * // * &quot;ipAddress&quot; : &quot;3.3.3.3&quot;,
-     * // * &quot;afi&quot; : 1
-     * // * },
-     * // * &quot;routed&quot; : true,
-     * // * &quot;multicastWeight&quot; : 3,
-     * // * &quot;rlocProbed&quot; : false,
-     * // * &quot;localLocator&quot; : false,
-     * // * &quot;priority&quot; : 3,
-     * // * &quot;weight&quot; : 3
-     * // * }
-     * // * ],
-     * // * &quot;recordTtl&quot; : 3
-     * // * }
-     * // * ],
-     * // * &quot;nonce&quot; : 3,
-     * // * &quot;keyId&quot; : 0
-     * // * }
-     * // * }
-     * // *
+     * @param containerName
+     *            name of the container context in which the mapping needs to be
+     *            added
+     * @param mapRegisterNB
+     *            JSON object that contains the mapping information
+     * 
+     * @return Text plain confirming reception
+     * 
+     *         <pre>
+     * Example:
+     * 
+     * Request URL:
+     * http://localhost:8080/lispflowmapping/nb/v2/default/mapping
+     * 
+     * Request body in JSON:
+     * 
+     * { 
+     * "key" : "asdf", 
+     * "mapregister" : 
+     *   { 
+     *   "wantMapNotify" : true, 
+     *   "proxyMapReply" : false, 
+     *   "eidToLocatorRecords" : 
+     *     [ 
+     *       { 
+     *       "authoritative" : true, 
+     *       "prefixGeneric" : 
+     *         { 
+     *         "ipAddress" : "10.0.0.1", 
+     *         "afi" : 1
+     *         },
+     *       "mapVersion" : 3, 
+     *       "maskLength" : 32, 
+     *       "action" : "NoAction", 
+     *       "locators" : 
+     *         [ 
+     *           { 
+     *           "multicastPriority" : 3, 
+     *           "locatorGeneric" : 
+     *             { 
+     *             "ipAddress" : "3.3.3.3", 
+     *             "afi" : 1
+     *             }, 
+     *           "routed" : true, 
+     *           "multicastWeight" : 3, 
+     *           "rlocProbed" : false, 
+     *           "localLocator" : false, 
+     *           "priority" : 3, 
+     *           "weight" : 3 
+     *           } 
+     *         ], 
+     *       "recordTtl" : 3 
+     *       } 
+     *     ], 
+     *   "nonce" : 3, 
+     *   "keyId" : 0 
+     *   } 
+     * }
      * </pre>
-     * 
-     * //
      */
 
     @Path("/{containerName}/mapping")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
+                   @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
     public Response addMapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapRegisterNB) {
 
         handleContainerDoesNotExist(containerName);
@@ -331,33 +332,68 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/default/mapping/0/1/10.0.0.1/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/mapping/0/1/10.0.0.1/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/mapping/{iid}/{afi}/{address}/{mask}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(@PathParam("containerName") String containerName,
-            @PathParam("iid") int iid, @PathParam("afi") int afi, @PathParam("address") String address, @PathParam("mask") int mask) {
-
-        handleContainerDoesNotExist(containerName);
-
-        authorizationCheck(containerName, Privilege.READ);
-
-        LispAddressGeneric eidGeneric = new LispAddressGeneric(afi, address);
+    
+    private LispAddressGeneric parseAddressURL(int iid, int afi, String address, int mask) {
+    	LispAddressGeneric eidGeneric = new LispAddressGeneric(afi, address);
 
         if (iid != 0) {
             eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), eidGeneric);
             eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             eidGeneric.setInstanceId(iid);
         }
+    	
+        return eidGeneric;
+    }
+    
+    private LispAddressGeneric parseSrcDstAddressURL(int iid, int afi, String srcAdd, int srcML, String dstAdd, int dstML) {
+        LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
+        LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
+
+        if (iid != 0) {
+            srcGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), srcGeneric);
+            srcGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
+            srcGeneric.setInstanceId(iid);
+           
+            dstGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), dstGeneric);
+            dstGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
+            dstGeneric.setInstanceId(iid);
+            }
+        
+        LispAddressGeneric address = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
+
+        address.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+        address.setSrcAddress(srcGeneric);
+        address.setSrcMaskLength((byte) srcML);
+        address.setDstAddress(dstGeneric);
+        address.setDstMaskLength((byte) dstML);
+        
+        return address;
+    }
+    
+    
+    @Path("/{containerName}/mapping/{iid}/{afi}/{address}/{mask}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+                   @ResponseCode(code = 400, condition = "Invalid data passed"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(
+    		@PathParam("containerName") String containerName,
+            @PathParam("iid") int iid, @PathParam("afi") int afi,
+            @PathParam("address") String address, @PathParam("mask") int mask) {
+
+        handleContainerDoesNotExist(containerName);
+
+        authorizationCheck(containerName, Privilege.READ);
+
+        LispAddressGeneric eidGeneric = parseAddressURL(iid, afi, address, mask);
 
         LispAddress eid;
         try {
@@ -406,35 +442,28 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * 
      * Request URL:
      * 
-     *      http://localhost:8080/lispflowmapping/default/mapping/0/1/10.0.0.1/32/20.0.0.2/32
+     *      http://localhost:8080/lispflowmapping/nb/v2/default/mapping/0/1/10.0.0.1/32/20.0.0.2/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/mapping/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+    @Path("/{containerName}/mapping/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(@PathParam("containerName") String containerName,
-            @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd,
-            @PathParam("dstML") int dstML) {
+            	   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(
+    		@PathParam("containerName") String containerName,
+    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
+            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
+            @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.READ);
 
-        LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
-        LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
-
-        LispAddressGeneric eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
-
-        eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        eidGeneric.setSrcAddress(srcGeneric);
-        eidGeneric.setSrcMaskLength((byte) srcML);
-        eidGeneric.setDstAddress(dstGeneric);
-        eidGeneric.setDstMaskLength((byte) dstML);
+        LispAddressGeneric eidGeneric = parseSrcDstAddressURL(iid, afi, srcAdd, srcML, dstAdd, dstML);
 
         int mask = 0; // Not used here
 
@@ -451,7 +480,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * 
      * @param containerName
      *            name of the container context in which the key needs to be
-     *            setted
+     *            set
      * @param authKeyNB
      *            JSON object that contains the key information
      * 
@@ -461,7 +490,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/default/key
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key
      * 
      * Request body in JSON:
      * 
@@ -482,10 +511,10 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of key failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
+                   @ResponseCode(code = 400, condition = "Invalid data passed"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Addition of key failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
     public Response addAuthKey(@PathParam("containerName") String containerName, @TypeHint(AuthKeyNB.class) AuthKeyNB authKeyNB) {
 
         handleContainerDoesNotExist(containerName);
@@ -520,8 +549,8 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Retrieve the key used to register an EID prefix
      * 
      * @param containerName
-     *            name of the container context from which the key is going to
-     *            be retrieved
+     *            name of the container context from which the key is going
+     *            to be retrieved
      * 
      * @param afi
      *            Address Family of the address (IPv4, IPv6 or MAC)
@@ -538,29 +567,31 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/key/{afi}/{address}/{mask}")
+    @Path("/{containerName}/key/{iid}/{afi}/{address}/{mask}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("address") String address,
-            @PathParam("mask") int mask) {
+                   @ResponseCode(code = 400, condition = "Invalid data passed"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName,
+    		@PathParam("iid") int iid, @PathParam("afi") int afi,
+    		@PathParam("address") String address, @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.READ);
 
-        LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(afi, address);
+        LispAddressGeneric lispAddressGeneric = parseAddressURL(iid, afi, address, mask);
 
         LispAddress lispAddress;
+        
         try {
             lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
         } catch (Exception e) {
@@ -617,34 +648,27 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * 
      * Request URL:
      * 
-     *      http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32/20.0.0.2/32
+     *      http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32/20.0.0.2/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/key/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+    @Path("/{containerName}/key/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd,
-            @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+            	   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName,
+    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
+            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
+            @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.READ);
 
-        LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
-        LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
-
-        LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
-
-        lispAddressGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        lispAddressGeneric.setSrcAddress(srcGeneric);
-        lispAddressGeneric.setSrcMaskLength((byte) srcML);
-        lispAddressGeneric.setDstAddress(dstGeneric);
-        lispAddressGeneric.setDstMaskLength((byte) dstML);
+        LispAddressGeneric lispAddressGeneric = parseSrcDstAddressURL(iid, afi, srcAdd, srcML, dstAdd, dstML);
 
         LispAddress lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
 
@@ -691,28 +715,31 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/key/{afi}/{address}/{mask}")
+    @Path("/{containerName}/key/{iid}/{afi}/{address}/{mask}")
     @DELETE
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("address") String address,
-            @PathParam("mask") int mask) {
+                   @ResponseCode(code = 400, condition = "Invalid data passed"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response delAuthKey(@PathParam("containerName") String containerName, 
+    		@PathParam("afi") int afi, @PathParam("iid") int iid,
+    		@PathParam("address") String address, @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
+        LispAddressGeneric lispAddressGeneric = parseAddressURL(iid, afi, address, mask);
+        
         LispAddress lispAddress;
         try {
-            lispAddress = LispAddressConvertorNB.convertToLispAddress(new LispAddressGeneric(afi, address));
+            lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
         } catch (Exception e) {
             throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
         }
@@ -761,35 +788,28 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/default/key/1/10.0.0.1/32/20.0.0.2/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32/20.0.0.2/32
      * 
      * </pre>
      */
 
-    @Path("/{containerName}/key/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
+    @Path("/{containerName}/key/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
     @DELETE
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            @ResponseCode(code = 400, condition = "Invalid data passed"),
-            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
-            @ResponseCode(code = 503, condition = "Service unavailable") })
-    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd,
-            @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+                   @ResponseCode(code = 400, condition = "Invalid data passed"),
+                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+                   @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
+                   @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response delAuthKey(@PathParam("containerName") String containerName,
+    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
+            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
+            @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
-        LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
-        LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
-
-        LispAddressGeneric lispAddressGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
-
-        lispAddressGeneric.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        lispAddressGeneric.setSrcAddress(srcGeneric);
-        lispAddressGeneric.setSrcMaskLength((byte) srcML);
-        lispAddressGeneric.setDstAddress(dstGeneric);
-        lispAddressGeneric.setDstMaskLength((byte) dstML);
+        LispAddressGeneric lispAddressGeneric = parseSrcDstAddressURL(iid, afi, srcAdd, srcML, dstAdd, dstML);
 
         LispAddress lispAddress;
         try {
