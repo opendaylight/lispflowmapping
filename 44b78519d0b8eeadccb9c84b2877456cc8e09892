@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_a805607b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-26T12:44:06Z",
+      "side": 1,
+      "message": "same as below?",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_08cd8c5d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-26T12:44:06Z",
+      "side": 1,
+      "message": "must handle the other actions as well. please open a bug for RC2 and define the missing behaviors.",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c8d654f1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-11-26T12:44:06Z",
+      "side": 1,
+      "message": "put this number as a define somewhere",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
