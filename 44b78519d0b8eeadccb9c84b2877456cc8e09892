@@ -50,6 +50,125 @@
       "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ab19da89",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "didContainRlocs",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2b5f2a43",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "REquest",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0b5a2650",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "REply",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ab4b1a86",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1285,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "should consult with Gal if to split it to three tests",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_eb811290",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "refactor everything to many small methods",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0b7346e8",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "Two map requests - unnecessary",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8b673625",
+        "filename": "mappingservice/yangmodel/.gitignore",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-11-27T13:46:08Z",
+      "side": 1,
+      "message": "Why all those /target?",
+      "revId": "44b78519d0b8eeadccb9c84b2877456cc8e09892",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
