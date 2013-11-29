@@ -2,6 +2,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
@@ -14,6 +15,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.
 
 public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
+    private static final int MAX_INSTANCE_ID = 16777216;
     private static final LispSegmentLCAFAddressSerializer INSTANCE = new LispSegmentLCAFAddressSerializer();
 
     // Private constructor prevents instantiation from other classes
@@ -38,10 +40,14 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer 
 
     @Override
     protected LcafSegmentAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
-        int instanceId = buffer.getInt();
+        long instanceId = (int) ByteUtil.asUnsignedInteger(buffer.getInt());
+
+        if (instanceId > MAX_INSTANCE_ID) {
+            throw new LispSerializationException("Instance ID is longer than 24 bits. got " + instanceId);
+        }
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         LcafSegmentBuilder builder = new LcafSegmentBuilder();
-        builder.setInstanceId(ByteUtil.asUnsignedInteger(instanceId) & 0xFFFFFF);
+        builder.setInstanceId(instanceId);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
 
