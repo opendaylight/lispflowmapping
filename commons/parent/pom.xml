@@ -18,6 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<projectinfo>2.6</projectinfo>
 		<enunciate.version>1.26.2</enunciate.version>
+		<guava.version>14.0.1</guava.version>
 		<build.suffix>0.1.0-SNAPSHOT</build.suffix>
 		<yangtools.binding.version>0.6.0-SNAPSHOT</yangtools.binding.version>
 		<yang.binding.version>0.6.0-SNAPSHOT</yang.binding.version>
@@ -28,8 +29,8 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.language>java</sonar.language>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
-        <sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
+		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<forwardingrulesmanager.version>0.5.0-SNAPSHOT</forwardingrulesmanager.version>
 		<statisticsmanager.version>0.5.0-SNAPSHOT</statisticsmanager.version>
 		<maven.compile.plugin.version>2.5.1</maven.compile.plugin.version>
@@ -179,8 +180,11 @@
 				<artifactId>ietf-yang-types</artifactId>
 				<version>2010.09.24-SNAPSHOT</version>
 			</dependency>
-
-
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.controller</groupId>
 				<artifactId>sal</artifactId>
@@ -300,11 +304,11 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-			<plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.version}</version>
-                </plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
