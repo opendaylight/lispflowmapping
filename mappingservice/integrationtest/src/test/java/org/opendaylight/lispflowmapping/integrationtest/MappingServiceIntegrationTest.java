@@ -42,6 +42,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opendaylight.controller.test.sal.binding.it.TestHelper;
 import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
@@ -337,6 +338,12 @@ public class MappingServiceIntegrationTest {
                 // Basic bundles needed
                 mavenBundle("org.opendaylight.controller", "containermanager").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "containermanager.it.implementation").versionAsInProject(),
+
+                TestHelper.baseModelBundles(),
+                TestHelper.configMinumumBundles(),
+                TestHelper.bindingIndependentSalBundles(),
+                TestHelper.bindingAwareSalBundles(),
+                TestHelper.mdSalCoreBundles(),
 
                 // Specific bundles
                 mavenBundle(ODL, "sal-binding-api").versionAsInProject(), //
