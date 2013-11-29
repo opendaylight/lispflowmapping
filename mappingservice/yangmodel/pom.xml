@@ -46,8 +46,7 @@
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
 							org.opendaylight.yangtools.yang.binding,
-							org.opendaylight.yangtools.yang.common,
-							com.google.common.collect
+							org.opendaylight.yangtools.yang.common
 						</Import-Package>
 						<Bundle-Activator>
 						</Bundle-Activator>
@@ -67,6 +66,10 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.yangtools</groupId>
 			<artifactId>yang-binding</artifactId>
