@@ -37,7 +37,7 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
         LcafSegmentAddress segAddress = (LcafSegmentAddress) address;
 
         assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), segAddress.getAddress().getPrimitiveAddress());
-        assertEquals(0xAABBCCDD, segAddress.getInstanceId().intValue());
+        assertEquals(0x00BBCCDD, segAddress.getInstanceId().intValue()); // only first 24bit are relevant.
         assertEquals(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode(), segAddress.getLcafType().byteValue());
     }
 
@@ -72,14 +72,14 @@ public class LispSegmentLCAFAddressTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         LcafSegmentBuilder addressBuilder = new LcafSegmentBuilder();
-        addressBuilder.setInstanceId((long) 0x01020304);
+        addressBuilder.setInstanceId((long) 0x00020304);
         addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
         addressBuilder.setAddress(new AddressBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build());
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(addressBuilder.build()));
         LispAddressSerializer.getInstance().serialize(buf, addressBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "02 00 00 0A " + //
-                "01 02 03 04 " + // instance ID
+                "00 02 03 04 " + // instance ID
                 "00 01 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }

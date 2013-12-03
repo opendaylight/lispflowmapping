@@ -21,11 +21,11 @@ public class ByteUtil {
     }
 
     public static int getUnsignedShort(byte[] inBuffer, int pos) {
-        return getShort(inBuffer, pos) & 0xFFFF;
+        return asUnsignedShort(getShort(inBuffer, pos));
     }
 
     public static int getUnsignedShort(ByteBuffer inBuffer, int pos) {
-        return inBuffer.getShort(pos) & 0xFFFF;
+        return asUnsignedShort(inBuffer.getShort(pos));
     }
 
     public static short getShort(byte[] inBuffer, int pos) {
@@ -42,6 +42,18 @@ public class ByteUtil {
         buffer.put(inBuffer);
         buffer.position(0);
         return buffer.getInt();
+    }
+    
+    public static short asUnsignedByte(byte b) {
+    	return (short)((short)b & 0xFF);
+    }
+
+    public static int asUnsignedShort(short s) {
+    	return s & 0xFFFF;
+    }
+    
+    public static long asUnsignedInteger(int i) {
+    	return i & 0xFFFFFFFF;
     }
     
     public static byte[] partialIntToByteArray(int number, int length) {

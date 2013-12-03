@@ -2,6 +2,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
@@ -40,7 +41,7 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer 
         int instanceId = buffer.getInt();
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         LcafSegmentBuilder builder = new LcafSegmentBuilder();
-        builder.setInstanceId((long) instanceId);
+        builder.setInstanceId(ByteUtil.asUnsignedInteger(instanceId) & 0xFFFFFF);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
 

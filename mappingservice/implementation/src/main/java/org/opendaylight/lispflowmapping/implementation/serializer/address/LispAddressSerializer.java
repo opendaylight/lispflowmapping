@@ -66,7 +66,7 @@ public class LispAddressSerializer {
         try {
             return serializer.deserializeData(buffer);
         } catch (RuntimeException e) {
-            throw new LispSerializationException(e.getMessage());
+            throw new LispSerializationException("Problem deserializing AFI=" + afiType, e);
         }
     }
 
