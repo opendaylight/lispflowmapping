@@ -7,7 +7,7 @@
 		<groupId>org.opendaylight.controller</groupId>
 		<artifactId>commons.integrationtest</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
-                <relativePath></relativePath>
+		<relativePath></relativePath>
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
@@ -27,7 +27,6 @@
 		</repository>
 	</repositories>
 	<build>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -35,9 +34,48 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.5.3.201107060350</version>
 				</plugin>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.ops4j.pax.exam</groupId>
+										<artifactId>maven-paxexam-plugin</artifactId>
+										<versionRange>[1.2.4,)</versionRange>
+										<goals>
+											<goal>generate-depends-file</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
+		<plugin>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>maven-paxexam-plugin</artifactId>
+                <version>1.2.4</version>
+                <executions>
+                    <execution>
+                        <id>generate-config</id>
+                        <goals>
+                            <goal>generate-depends-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -85,12 +123,11 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 	<properties>
 		<exam.version>3.0.0</exam.version>
-		<url.version>1.5.2</url.version>
+		<url.version>1.5.0</url.version>
 		<!-- Sonar jacoco plugin to get integration test coverage info -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.jacoco.reportPath>../implementation/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -133,6 +170,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
+			<artifactId>mappingservice.config</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
@@ -154,13 +196,17 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
-			<version>0.5.1-SNAPSHOT</version>
+			<version>0.5.0-SNAPSHOT</version>
 		</dependency>
-
+		<dependency>
+          <groupId>org.opendaylight.controller</groupId>
+          <artifactId>netconf-impl</artifactId>
+          <version>${netconf.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager.it.implementation</artifactId>
-			<version>0.5.1-SNAPSHOT</version>
+			<version>0.5.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
@@ -181,7 +227,7 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>clustering.stub</artifactId>
-			<version>0.4.1-SNAPSHOT</version>
+			<version>0.4.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -226,7 +272,6 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>equinoxSDK381</groupId>
@@ -418,25 +463,25 @@
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-container-native</artifactId>
-			<version>${exam.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-junit4</artifactId>
-			<version>${exam.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam</artifactId>
+            <version>${exam.version}</version>
+            <!-- Compile scope here is intentional, it is used in TestHelper 
+                class which could be downloaded via nexus and reused in other integration 
+                tests. -->
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-link-mvn</artifactId>
-			<version>${exam.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.url</groupId>
-			<artifactId>pax-url-aether</artifactId>
-			<version>${url.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -621,11 +666,6 @@
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>switchmanager.implementation</artifactId>
 			<version>0.4.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>commons.httpclient</artifactId>
-			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>

@@ -3,6 +3,7 @@ package org.opendaylight.lispflowmapping.implementation.serializer;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
@@ -23,7 +24,7 @@ public class EidRecordSerializer {
 
     public EidRecord deserialize(ByteBuffer requestBuffer) {
         /* byte reserved = */requestBuffer.get();
-        short maskLength = (short) (requestBuffer.get() & 0xff);
+        short maskLength = (short) (ByteUtil.getUnsignedByte(requestBuffer));
         LispAFIAddress prefix = LispAddressSerializer.getInstance().deserialize(requestBuffer);
         return new EidRecordBuilder().setLispAddressContainer(new LispAddressContainerBuilder().setAddress((Address) prefix).build())
                 .setMask(maskLength).build();
