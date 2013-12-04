@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_7c2ba194",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/Activator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-12-04T14:20:05Z",
+      "side": 1,
+      "message": "debug",
+      "revId": "d9ab8404764fb2ae7a5e82e5fff5185838659c2d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_bc08f92d",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-12-04T14:20:05Z",
+      "side": 1,
+      "message": "delete the comments",
+      "revId": "d9ab8404764fb2ae7a5e82e5fff5185838659c2d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_47048614",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1303,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2013-12-04T14:20:05Z",
+      "side": 1,
+      "message": "Still refactor",
+      "revId": "d9ab8404764fb2ae7a5e82e5fff5185838659c2d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
