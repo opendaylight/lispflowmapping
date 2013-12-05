@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_e2a488a7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-12-05T13:01:27Z",
+      "side": 1,
+      "message": "refactor to a method (InetAddress extractAddress(...)).",
+      "revId": "89aa1b2395020cb15b30f6474792e200eb89283f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c29f444f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-12-05T13:01:27Z",
+      "side": 1,
+      "message": "delete dead code (implement calls, LispNotification object, methods, etc.)",
+      "revId": "89aa1b2395020cb15b30f6474792e200eb89283f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
