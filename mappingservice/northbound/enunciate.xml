@@ -3,7 +3,7 @@
     xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.27.xsd">
 
   <services>
-    <rest defaultRestSubcontext="/lispflowmapping/nb/v2"/>
+    <rest defaultRestSubcontext="/lispflowmapping"/>
   </services>
 
   <modules>
