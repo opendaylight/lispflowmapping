@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -19,17 +20,24 @@ import org.opendaylight.lispflowmapping.implementation.serializer.LispMessageEnu
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMappingBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +99,13 @@ public class LispSouthboundService implements ILispSouthboundService {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
             }
 
-            MapRequestNotification requestNotification = new MapRequestNotification(request, finalSourceAddress);
+            RequestMappingBuilder requestMappingBuilder = new RequestMappingBuilder();
+            requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
+            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
+            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
-                notificationProvider.publish(requestNotification);
+                notificationProvider.publish(requestMappingBuilder.build());
                 logger.debug("MapRequest was published!");
             } else {
                 logger.error("Notification Provider is null!");
@@ -124,9 +136,13 @@ public class LispSouthboundService implements ILispSouthboundService {
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
-            MapRegisterNotification registerNotification = new MapRegisterNotification(mapRegister, sourceAddress);
+            AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
+            addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
+            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
+            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
-                notificationProvider.publish(registerNotification);
+                notificationProvider.publish(addMappingBuilder.build());
                 logger.debug("MapRegister was published!");
             } else {
                 logger.error("Notification Provider is null!");
