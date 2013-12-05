@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -34,10 +37,12 @@ import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.type.sbplugin.LispNotification;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
 import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
@@ -48,6 +53,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.net.InetAddresses;
 
 public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
         NotificationListener<LispNotification>, IMapReplyHandler, IMapNotifyHandler {
@@ -232,8 +239,50 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void onSessionInitialized(ConsumerContext session) {
         logger.debug("Lisp Consumer session initialized!");
         NotificationService notificationService = session.getSALService(NotificationService.class);
-        notificationService.registerNotificationListener(LispNotification.class, this);
+        // notificationService.registerNotificationListener(LispNotification.class,
+        // this);
+        notificationService.registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
+        notificationService.registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         this.session = session;
+    }
+
+    private class MapRegisterNotificationHandler implements NotificationListener<AddMapping> {
+
+        @Override
+        public void onNotification(AddMapping mapRegisterNotification) {
+            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+            String ipString = (mapRegisterNotification.getTransportAddress().getIpAddress().getIpv4Address() != null) ? mapRegisterNotification
+                    .getTransportAddress().getIpAddress().getIpv4Address().getValue() : mapRegisterNotification.getTransportAddress().getIpAddress()
+                    .getIpv6Address().getValue();
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(ipString);
+            } catch (UnknownHostException e) {
+                address = InetAddress.getLoopbackAddress();
+            }
+            getLispSB().handleMapNotify(mapNotify, address);
+
+        }
+    }
+
+    private class MapRequestNotificationHandler implements NotificationListener<RequestMapping> {
+
+        @Override
+        public void onNotification(RequestMapping mapRequestNotification) {
+            MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
+            String ipString = (mapRequestNotification.getTransportAddress().getIpAddress().getIpv4Address() != null) ? mapRequestNotification
+                    .getTransportAddress().getIpAddress().getIpv4Address().getValue() : mapRequestNotification.getTransportAddress().getIpAddress()
+                    .getIpv6Address().getValue();
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(ipString);
+            } catch (UnknownHostException e) {
+                address = InetAddress.getLoopbackAddress();
+            }
+            getLispSB().handleMapReply(mapReply, address);
+
+        }
+
     }
 
     public void onNotification(LispNotification notification) {

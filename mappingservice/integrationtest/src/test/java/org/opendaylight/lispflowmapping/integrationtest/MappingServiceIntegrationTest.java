@@ -346,6 +346,7 @@ public class MappingServiceIntegrationTest {
                 TestHelper.mdSalCoreBundles(),
 
                 // Specific bundles
+                mavenBundle(ODL, "config-api").versionAsInProject(),
                 mavenBundle(ODL, "sal-binding-api").versionAsInProject(), //
                 mavenBundle(ODL, "sal-binding-config").versionAsInProject(),
                 mavenBundle(ODL, "sal-binding-broker-impl").versionAsInProject(), //
