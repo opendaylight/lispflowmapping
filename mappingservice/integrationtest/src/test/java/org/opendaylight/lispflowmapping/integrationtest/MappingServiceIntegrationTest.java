@@ -1307,7 +1307,7 @@ public class MappingServiceIntegrationTest {
             testTTLAfterClean(mapRequest);
 
             northboundAddKey();
-            testTTLBeforeRegister(mapRequest);
+            testTTLAfterAutherize(mapRequest);
 
         }
     }
@@ -1345,6 +1345,13 @@ public class MappingServiceIntegrationTest {
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertCorrectMapReplyTTLAndAction(mapReply, 15, Action.NativelyForward);
+    }
+
+    private void testTTLAfterAutherize(MapRequest mapRequest) throws SocketTimeoutException {
+        MapReply mapReply;
+        sendMapRequest(mapRequest);
+        mapReply = receiveMapReply();
+        assertCorrectMapReplyTTLAndAction(mapReply, 1, Action.NativelyForward);
     }
 
     private void assertCorrectMapReplyTTLAndAction(MapReply mapReply, int expectedTTL, Action expectedAction) {
