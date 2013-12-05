@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -31,13 +34,12 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.type.sbplugin.LispNotification;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
@@ -49,8 +51,10 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.net.InetAddresses;
+
 public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
-        NotificationListener<LispNotification>, IMapReplyHandler, IMapNotifyHandler {
+        IMapReplyHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
@@ -232,28 +236,50 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void onSessionInitialized(ConsumerContext session) {
         logger.debug("Lisp Consumer session initialized!");
         NotificationService notificationService = session.getSALService(NotificationService.class);
-        notificationService.registerNotificationListener(LispNotification.class, this);
+        // notificationService.registerNotificationListener(LispNotification.class,
+        // this);
+        notificationService.registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
+        notificationService.registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         this.session = session;
     }
 
-    public void onNotification(LispNotification notification) {
-        try {
-            if (notification instanceof MapRegisterNotification) {
-                logger.trace("MapRegister notification recieved!");
-                MapRegisterNotification mapRegisterNotification = (MapRegisterNotification) notification;
-                MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
-                getLispSB().handleMapNotify(mapNotify, mapRegisterNotification.getSourceAddress());
-            } else if (notification instanceof MapRequestNotification) {
-                logger.trace("MapRequest notification recieved!");
-                MapRequestNotification mapRequestNotification = (MapRequestNotification) notification;
-                MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
-                getLispSB().handleMapReply(mapReply, mapRequestNotification.getSourceAddress());
-            } else {
-                logger.error("Unknown notification: " + notification);
+    private class MapRegisterNotificationHandler implements NotificationListener<AddMapping> {
+
+        @Override
+        public void onNotification(AddMapping mapRegisterNotification) {
+            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+            String ipString = (mapRegisterNotification.getTransportAddress().getIpAddress().getIpv4Address() != null) ? mapRegisterNotification
+                    .getTransportAddress().getIpAddress().getIpv4Address().getValue() : mapRegisterNotification.getTransportAddress().getIpAddress()
+                    .getIpv6Address().getValue();
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(ipString);
+            } catch (UnknownHostException e) {
+                address = InetAddress.getLoopbackAddress();
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
+            getLispSB().handleMapNotify(mapNotify, address);
+
         }
+    }
+
+    private class MapRequestNotificationHandler implements NotificationListener<RequestMapping> {
+
+        @Override
+        public void onNotification(RequestMapping mapRequestNotification) {
+            MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
+            String ipString = (mapRequestNotification.getTransportAddress().getIpAddress().getIpv4Address() != null) ? mapRequestNotification
+                    .getTransportAddress().getIpAddress().getIpv4Address().getValue() : mapRequestNotification.getTransportAddress().getIpAddress()
+                    .getIpv6Address().getValue();
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(ipString);
+            } catch (UnknownHostException e) {
+                address = InetAddress.getLoopbackAddress();
+            }
+            getLispSB().handleMapReply(mapReply, address);
+
+        }
+
     }
 
     private ILispSouthboundPlugin getLispSB() {

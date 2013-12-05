@@ -36,12 +36,11 @@ import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelp
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.type.sbplugin.LispNotification;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRegisterNotification;
-import org.opendaylight.lispflowmapping.type.sbplugin.MapRequestNotification;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
@@ -58,6 +57,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.M
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
 
@@ -65,7 +65,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private NotificationProviderService nps;
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacket;
-    private ValueSaverAction<LispNotification> lispNotificationSaver;
+    private ValueSaverAction<Notification> lispNotificationSaver;
     // private ValueSaverAction<MapRegister> mapRegisterSaver;
     // private ValueSaverAction<MapRequest> mapRequestSaver;
     private MapNotifyBuilder mapNotifyBuilder;
@@ -100,7 +100,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         testedLispService = new LispSouthboundService();
         nps = context.mock(NotificationProviderService.class);
         testedLispService.setNotificationProvider(nps);
-        lispNotificationSaver = new ValueSaverAction<LispNotification>();
+        lispNotificationSaver = new ValueSaverAction<Notification>();
         // mapRegisterSaver = new ValueSaverAction<MapRegister>();
         // mapRequestSaver = new ValueSaverAction<MapRequest>();
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
@@ -214,13 +214,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private MapRegister lastMapRegister() {
-        assertTrue(lispNotificationSaver.lastValue instanceof MapRegisterNotification);
-        MapRegisterNotification lastValue = (MapRegisterNotification) lispNotificationSaver.lastValue;
+        assertTrue(lispNotificationSaver.lastValue instanceof AddMapping);
+        AddMapping lastValue = (AddMapping) lispNotificationSaver.lastValue;
         return lastValue.getMapRegister();
     }
 
     private MapRequest lastMapRequest() {
-        MapRequestNotification lastValue = (MapRequestNotification) lispNotificationSaver.lastValue;
+        RequestMapping lastValue = (RequestMapping) lispNotificationSaver.lastValue;
         return lastValue.getMapRequest();
     }
 
@@ -714,7 +714,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private void stubHandleRequest() {
-        allowing(nps).publish(wany(LispNotification.class));
+        allowing(nps).publish(wany(Notification.class));
     }
 
     private byte[] handleMapRequestAsByteArray(byte[] inPacket) {
