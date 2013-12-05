@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_829b8c71",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IMapNotifyHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2013-12-05T12:39:14Z",
+      "side": 1,
+      "message": "missing copyrights.",
+      "revId": "f48efea20c082bc5db122c2ee666e2aa90904df1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
