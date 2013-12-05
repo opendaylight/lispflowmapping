@@ -29,11 +29,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.5.3.201107060350</version>
-				</plugin>
+				
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -103,6 +99,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.5.3.201107060350</version>
 				<configuration>
 					<destFile>../implementation/target/jacoco-it.exec</destFile>
 					<includes>org.opendaylight.controller.*</includes>
