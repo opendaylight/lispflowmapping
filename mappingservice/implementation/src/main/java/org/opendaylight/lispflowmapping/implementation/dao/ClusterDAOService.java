@@ -147,6 +147,9 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
                             it.remove();
                         }
                     }
+                    if (msv.getKey() == null && msv.getRlocs().size() == 0) {
+                        remove(keyId);
+                    }
                 }
             }
 

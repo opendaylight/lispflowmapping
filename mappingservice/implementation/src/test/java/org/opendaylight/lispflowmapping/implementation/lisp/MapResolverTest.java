@@ -216,7 +216,7 @@ public class MapResolverTest extends BaseTestCase {
         MapReply mapReply = getNativelyForwardMapReply(mr, result);
 
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
-        assertEquals(15, eidToLocators.getRecordTtl().intValue());
+        assertEquals(1, eidToLocators.getRecordTtl().intValue());
         assertEquals(Action.NativelyForward, eidToLocators.getAction());
     }
 
@@ -225,21 +225,6 @@ public class MapResolverTest extends BaseTestCase {
         ret(result);
         MapReply mapReply = testedMapResolver.handleMapRequest(mr);
         return mapReply;
-    }
-
-    @Test
-    public void handleMapRequest_VerifyNativelyForwardOldRegister() {
-        MapRequest mr = getDefaultMapRequest();
-
-        MappingServiceValue value = new MappingServiceValue();
-        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-        result.put("value", value);
-
-        MapReply mapReply = getNativelyForwardMapReply(mr, result);
-
-        EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
-        assertEquals(1, eidToLocators.getRecordTtl().intValue());
-        assertEquals(Action.NativelyForward, eidToLocators.getAction());
     }
 
     private MapRequest getDefaultMapRequest() {

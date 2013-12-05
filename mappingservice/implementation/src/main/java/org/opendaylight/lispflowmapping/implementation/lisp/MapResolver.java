@@ -81,12 +81,7 @@ public class MapResolver implements IMapResolverAsync {
                     } else {
                         recordBuilder
                                 .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
-
-                        if (didContainRLOCs(value)) {
-                            recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
-                        } else {
-                            recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
-                        }
+                        recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                     }
                 } else {
                     recordBuilder
@@ -97,10 +92,6 @@ public class MapResolver implements IMapResolverAsync {
             }
             callback.handleMapReply(builder.build());
         }
-    }
-
-    private boolean didContainRLOCs(MappingServiceValue value) {
-        return value.getKey() == null;
     }
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
