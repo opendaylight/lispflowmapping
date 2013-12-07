@@ -272,7 +272,8 @@ public class MappingServiceIntegrationTest {
                 // setting default level. Jersey bundles will need to be started
                 // earlier.
                 systemProperty("osgi.bundles.defaultStartLevel").value("4"),
-//                CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + DEBUG_PORT),
+                // CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address="
+                // + DEBUG_PORT),
 
                 // Set the systemPackages (used by clustering)
                 systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec"),
@@ -786,8 +787,8 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d", "key", address.getAfi().shortValue(), address
-                .getIpv4Address().getValue(), mask);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d", "key", address.getAfi().shortValue(),
+                address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
     }
@@ -807,8 +808,8 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi().shortValue(),
-                address.getIpv4Address().getValue(), mask);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi()
+                .shortValue(), address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
     }
@@ -1137,11 +1138,11 @@ public class MappingServiceIntegrationTest {
     @Test
     public void eidPrefixLookupIPv6() throws SocketTimeoutException {
         runPrefixTest(LispAFIConvertor.asIPv6AfiAddress("1:2:3:4:5:6:7:8"), 64, LispAFIConvertor.asIPv6AfiAddress("1:2:3:4:5:1:2:3"),
-                LispAFIConvertor.asIPv6AfiAddress("1:2:3:1:2:3:1:2"), (byte) 128);
+                LispAFIConvertor.asIPv6AfiAddress("1:2:3:1:2:3:1:2"), 128);
     }
 
-    private void runPrefixTest(LispAFIAddress registerEID, int registerdMask, LispAFIAddress matchedAddress, LispAFIAddress unMatchedAddress,
-            byte mask) throws SocketTimeoutException {
+    private void runPrefixTest(LispAFIAddress registerEID, int registerdMask, LispAFIAddress matchedAddress, LispAFIAddress unMatchedAddress, int mask)
+            throws SocketTimeoutException {
 
         MapRegisterBuilder mapRegister = new MapRegisterBuilder();
         mapRegister.setWantMapNotify(true);
@@ -1320,7 +1321,7 @@ public class MappingServiceIntegrationTest {
         MapReply mapReply;
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
-        assertCorrectMapReplyTTLAndAction(mapReply, 1, Action.NativelyForward);
+        assertCorrectMapReplyTTLAndAction(mapReply, 15, Action.NativelyForward);
     }
 
     private void causeEntryToBeCleaned(ServiceReference r) {
@@ -1359,7 +1360,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private void assertCorrectMapReplyTTLAndAction(MapReply mapReply, int expectedTTL, Action expectedAction) {
-        assertEquals(expectedTTL, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().byteValue());
+        assertEquals(expectedTTL, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
         assertEquals(expectedAction, mapReply.getEidToLocatorRecord().get(0).getAction());
     }
 
