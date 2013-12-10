@@ -7,16 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemPackages;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
+import aQute.lib.osgi.Constants;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,11 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -59,10 +47,9 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSeri
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
-import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
+import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSegmentAddress;
@@ -103,7 +90,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Mac;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
@@ -117,11 +103,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
-//import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -133,8 +114,21 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemPackages;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
-import aQute.lib.osgi.Constants;
+//import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
+//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
+//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 
 @RunWith(PaxExam.class)
 public class MappingServiceIntegrationTest {
@@ -154,6 +148,7 @@ public class MappingServiceIntegrationTest {
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
+    private static final String DEBUG_PORT = "8005";
 
     @After
     public void after() {
@@ -277,6 +272,7 @@ public class MappingServiceIntegrationTest {
                 // setting default level. Jersey bundles will need to be started
                 // earlier.
                 systemProperty("osgi.bundles.defaultStartLevel").value("4"),
+//                CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + DEBUG_PORT),
 
                 // Set the systemPackages (used by clustering)
                 systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec"),

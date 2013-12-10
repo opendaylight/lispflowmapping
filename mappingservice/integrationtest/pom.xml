@@ -463,9 +463,16 @@
 		</dependency>
 		<!-- Add Pax Exam -->
 		<dependency>
+            <exclusions>
+                <exclusion>  <!-- declare the exclusion here -->
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-native</artifactId>
+                </exclusion>
+            </exclusions>
 			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam-container-native</artifactId>
+			<artifactId>pax-exam-container-forked</artifactId>
 			<scope>test</scope>
+            <version>${exam.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
@@ -829,7 +836,13 @@
 			<artifactId>config-api</artifactId>
 			<version>0.2.3-SNAPSHOT</version>
 		</dependency>
-	</dependencies>
+
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+    </dependencies>
 
 	<profiles>
 		<profile>
