@@ -790,28 +790,28 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d", "key", address.getAfi().shortValue(), address
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d", "key", address.getAfi().shortValue(), address
                 .getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createGetKeySourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d/%s/%d", "key", afi, srcAddress, srcMask,
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d/%s/%d", "key", afi, srcAddress, srcMask,
                 dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createGetMappingSourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%s/%d/%s/%d", "mapping", afi, srcAddress, srcMask,
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%s/%d/%s/%d", "mapping", afi, srcAddress, srcMask,
                 dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi().shortValue(),
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi().shortValue(),
                 address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
@@ -819,7 +819,7 @@ public class MappingServiceIntegrationTest {
 
     private URL createPutURL(String resource) throws MalformedURLException {
 
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/default/%s", resource);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s", resource);
 
         URL url = new URL(restUrl);
         return url;

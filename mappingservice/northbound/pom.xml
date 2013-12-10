@@ -65,6 +65,11 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress,
+                                                        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress,
+                                                        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress,
+                                                        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsegmentaddress,
+                                                        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress,
+                                                        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.lispflowmapping.type,
@@ -91,7 +96,7 @@
 
 						<Export-Package>
 						</Export-Package>
-						<Web-ContextPath>/lispflowmapping</Web-ContextPath>
+						<Web-ContextPath>/lispflowmapping/nb/v2</Web-ContextPath>
 						<Jaxrs-Resources>,${classes;ANNOTATION;javax.ws.rs.Path}</Jaxrs-Resources>
 					</instructions>
 					<manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
