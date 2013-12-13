@@ -586,10 +586,13 @@ public class YangTransformerNB {
 
             legacyLocatorRecord.setLocator(YangTransformerNB.transformToLispAddress(rloc));
 
-            legacyLocatorRecord.setLocalLocator(legacyLocatorRecord.isLocalLocator()).setPriority((byte) legacyLocatorRecord.getPriority())
-                    .setWeight((byte) legacyLocatorRecord.getWeight()).setMulticastPriority((byte) legacyLocatorRecord.getMulticastPriority())
-                    .setMulticastWeight((byte) legacyLocatorRecord.getMulticastWeight()).setRlocProbed(legacyLocatorRecord.isRlocProbed())
-                    .setRouted(legacyLocatorRecord.isRouted());
+            legacyLocatorRecord.setLocalLocator(locatorRecord.isLocalLocator())
+            				   .setPriority(locatorRecord.getPriority().byteValue())
+            				   .setWeight(locatorRecord.getWeight().byteValue())
+            				   .setMulticastPriority(locatorRecord.getMulticastPriority().byteValue())
+            				   .setMulticastWeight(locatorRecord.getMulticastWeight().byteValue())
+            				   .setRlocProbed(locatorRecord.isRlocProbed())
+            				   .setRouted(locatorRecord.isRouted());
 
             legacyRecord.addLocator(legacyLocatorRecord);
         }
