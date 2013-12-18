@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.integrationtest;
 
 import aQute.lib.osgi.Constants;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -114,6 +117,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -813,8 +817,8 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetMappingSourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d", "mapping", afi, srcAddress, srcMask,
-                dstAddress, dstMask);
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d", "mapping", afi, srcAddress,
+                srcMask, dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }
