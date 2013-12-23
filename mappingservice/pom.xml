@@ -25,6 +25,7 @@
                 <module>implementation</module>
                 <module>southbound</module>
                 <module>northbound</module>
+                <module>neutron</module>
                 <module>integrationtest</module>
         </modules>
 	<dependencies>
