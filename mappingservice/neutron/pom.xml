@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>mappingservice-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <artifactId>mappingservice.neutron</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>bundle</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.6</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+            </Export-Package>
+            <Import-Package>
+              org.opendaylight.controller.sal.core,
+              org.opendaylight.controller.sal.utils,
+              org.opendaylight.controller.containermanager,
+              org.opendaylight.controller.switchmanager,
+              org.opendaylight.controller.networkconfig.neutron,
+              org.opendaylight.controller.northbound.commons,
+              org.opendaylight.controller.northbound.commons.exception,
+              org.opendaylight.controller.northbound.commons.utils,
+              com.sun.jersey.spi.container.servlet,
+              org.opendaylight.controller.sal.authorization,
+              org.opendaylight.controller.usermanager,
+	      org.opendaylight.lispflowmapping.type,
+	      org.opendaylight.lispflowmapping.type.lisp,
+	      org.opendaylight.lispflowmapping.type.lisp.address,
+	      org.opendaylight.lispflowmapping.interfaces.lisp,
+              org.slf4j,
+              org.apache.catalina.filters,
+	      org.apache.felix.dm,
+	      org.apache.commons.lang3.builder,
+	      org.osgi.service.component,
+	      org.eclipse.osgi.framework.console,
+	      org.osgi.framework,
+            </Import-Package>
+	<Bundle-Activator>
+		org.opendaylight.lispflowmapping.neutron.Activator
+	</Bundle-Activator>
+
+            <Export-Package>
+            </Export-Package>
+          </instructions>
+          <manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.api</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>containermanager</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>commons.northbound</artifactId>
+      <version>0.4.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>networkconfig.neutron</artifactId>
+      <version>0.4.1-SNAPSHOT</version>
+    </dependency>
+ 
+  </dependencies>
+</project>
