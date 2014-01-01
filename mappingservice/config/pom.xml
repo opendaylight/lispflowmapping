@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>lispflowmapping-commons</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../../commons/parent</relativePath>
 	</parent>
 	<artifactId>mappingservice.config</artifactId>
@@ -130,7 +130,7 @@
 	<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.yangtools</groupId>
