@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>lispflowmapping-code-commons</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../commons/code-parent</relativePath>
 	</parent>
 	<artifactId>mappingservice-parent</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
         <modules>
         	<module>yangmodel</module>
@@ -25,7 +25,7 @@
 	        <dependency>
 	        	<groupId>org.opendaylight.lispflowmapping</groupId>
 	        	<artifactId>common.unittest.tools</artifactId>
-	        	<version>0.1.0-SNAPSHOT</version>
+	        	<version>${lispflowmapping.version}</version>
 	        	<scope>test</scope>
 	        </dependency>
        		<dependency>
