@@ -123,6 +123,7 @@
 		</plugins>
 	</build>
 	<properties>
+		<lispflowmapping.version>1.0.0</lispflowmapping.version>
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.0</url.version>
 		<!-- Sonar jacoco plugin to get integration test coverage info -->
@@ -168,32 +169,32 @@
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.yangmodel</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.config</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.implementation</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.southbound</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.northbound</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
