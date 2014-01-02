@@ -123,7 +123,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<lispflowmapping.version>1.0.0</lispflowmapping.version>
+		<lispflowmapping.version>1.0.0-SNAPSHOT</lispflowmapping.version>
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.0</url.version>
 		<!-- Sonar jacoco plugin to get integration test coverage info -->
