@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandlerHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
@@ -49,9 +50,22 @@ public class MapResolver implements IMapResolverAsync {
         this.shouldIterateMask = iterateMask;
     }
 
-    public void handleMapRequest(MapRequest request, IMapReplyHandler callback) {
+    public void handleMapRequest(MapRequest request, IMapRequestResultHandlerHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRequest called while dao is uninitialized");
+            return;
+        }
+        if (request.isPitr()) {
+            if (request.getEidRecord().size() > 0) {
+                EidRecord eid = request.getEidRecord().get(0);
+                Map<String, ?> locators = getLocators(eid);
+                MappingServiceValue value = (MappingServiceValue) locators.get("value");
+                if (value.getRlocs() != null && value.getRlocs().size() > 0) {
+                    callback.handleNonProxyMapRequest(request,
+                            LispNotificationHelper.getInetAddressFromContainer(value.getRlocs().get(0).getRecord().getLispAddressContainer()));
+                }
+            }
+
         } else {
             MapReplyBuilder builder = new MapReplyBuilder();
             builder.setEchoNonceEnabled(false);
@@ -68,11 +82,7 @@ public class MapResolver implements IMapResolverAsync {
                 recordBuilder.setMaskLength(eid.getMask());
                 recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
-                Map<String, ?> locators = dao.get(key);
-                if (shouldIterateMask() && locators == null && MaskUtil.isMaskable(key.getEID().getAddress())) {
-                    locators = findMaskLocators(key);
-                }
+                Map<String, ?> locators = getLocators(eid);
                 if (locators != null) {
                     MappingServiceValue value = (MappingServiceValue) locators.get("value");
 
@@ -92,6 +102,15 @@ public class MapResolver implements IMapResolverAsync {
             }
             callback.handleMapReply(builder.build());
         }
+    }
+
+    private Map<String, ?> getLocators(EidRecord eid) {
+        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+        Map<String, ?> locators = dao.get(key);
+        if (shouldIterateMask() && locators == null && MaskUtil.isMaskable(key.getEID().getAddress())) {
+            locators = findMaskLocators(key);
+        }
+        return locators;
     }
 
     private Map<String, ?> findMaskLocators(IMappingServiceKey key) {

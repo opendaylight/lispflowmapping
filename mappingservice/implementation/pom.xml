@@ -60,6 +60,7 @@
 							org.opendaylight.controller.sal.core,
 							org.apache.felix.dm,
 							org.apache.commons.lang3,
+							org.apache.commons.lang3.tuple,
 							org.apache.commons.lang3.builder,
 							org.osgi.service.component,
 							org.slf4j,

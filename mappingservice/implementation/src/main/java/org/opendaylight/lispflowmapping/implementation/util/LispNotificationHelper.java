@@ -4,6 +4,8 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequest;
@@ -39,21 +41,31 @@ public class LispNotificationHelper {
     }
 
     public static InetAddress getInetAddressFromIpAddress(IpAddress ipAddress) {
-        InetAddress address = InetAddress.getLoopbackAddress();
-        if (ipAddress == null) {
-            return address;
+        InetAddress address = null;
+        if (ipAddress != null) {
+            if (ipAddress.getIpv4Address() != null) {
+                address = getAddressByName(ipAddress.getIpv4Address().getValue());
+            } else if (ipAddress.getIpv6Address() != null) {
+                address = getAddressByName(ipAddress.getIpv6Address().getValue());
+            }
         }
-        if (ipAddress.getIpv4Address() != null) {
-            try {
-                address = Inet4Address.getByName(ipAddress.getIpv4Address().getValue());
-            } catch (UnknownHostException e) {
-            }
-        } else if (ipAddress.getIpv6Address() != null) {
-            try {
-                address = Inet4Address.getByName(ipAddress.getIpv6Address().getValue());
-            } catch (UnknownHostException e) {
-            }
+        if (address == null) {
+            address = InetAddress.getLoopbackAddress();
         }
         return address;
+    }
+
+    public static InetAddress getInetAddressFromContainer(LispAddressContainer container) {
+        Ipv4Address ipAddress = ((Ipv4) LispAFIConvertor.toAFI(container)).getIpv4Address();
+        return getAddressByName(ipAddress.getValue());
+    }
+
+    public static InetAddress getAddressByName(String IPAddress) {
+        try {
+            InetAddress address = InetAddress.getByName(IPAddress);
+            return address;
+        } catch (UnknownHostException e) {
+            return null;
+        }
     }
 }

@@ -11,6 +11,8 @@ package org.opendaylight.lispflowmapping.implementation;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -31,7 +33,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapReplyHandler;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandlerHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
@@ -55,7 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.net.InetAddresses;
 
 public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
-        IMapReplyHandler, IMapNotifyHandler {
+        IMapRequestResultHandlerHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
     private ILispDAO lispDao = null;
@@ -65,6 +67,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private volatile boolean shouldAuthenticate;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
+    private ThreadLocal<Pair<MapRequest, InetAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, InetAddress>>();
 
     private ILispSouthboundPlugin lispSB = null;
 
@@ -187,10 +190,16 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public MapReply handleMapRequest(MapRequest request) {
         tlsMapReply.set(null);
+        tlsMapRequest.set(null);
         mapResolver.handleMapRequest(request, this);
         // After this invocation we assume that the thread local is filled with
         // the reply
-        return tlsMapReply.get();
+        if (tlsMapRequest.get() != null) {
+            getLispSB().handleMapRequest(tlsMapRequest.get().getLeft(), tlsMapRequest.get().getRight());
+            return null;
+        } else {
+            return tlsMapReply.get();
+        }
 
     }
 
@@ -280,4 +289,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void handleMapNotify(MapNotify notify) {
         tlsMapNotify.set(notify);
     }
+
+    @Override
+    public void handleNonProxyMapRequest(MapRequest mapRequest, InetAddress targetAddress) {
+        tlsMapRequest.set(new MutablePair<MapRequest, InetAddress>(mapRequest, targetAddress));
+    }
+
 }
