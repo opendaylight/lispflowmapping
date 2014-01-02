@@ -396,11 +396,17 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
                 mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
                 mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
-                mavenBundle(JERSEY, "jersey-json").versionAsInProject().startLevel(2),
-                mavenBundle("org.codehaus.jackson", "jackson-mapper-asl").versionAsInProject(),//
+                // mavenBundle(JERSEY,
+                // "jersey-json").versionAsInProject().startLevel(2),
+                mavenBundle("com.fasterxml.jackson.core", "jackson-annotations").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.core", "jackson-core").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-json-provider").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-base").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-core-asl").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-jaxrs").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-xc").versionAsInProject(),//
+                mavenBundle("org.codehaus.jackson", "jackson-mapper-asl").versionAsInProject(),//
                 mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),//
                 mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//

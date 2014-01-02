@@ -135,6 +135,7 @@
 		<osgi.core.version>5.0.0</osgi.core.version>
 		<junit.version>4.8.1</junit.version>
 		<xtend.version>2.4.3</xtend.version>
+		<old-jackson.version>1.9.8</old-jackson.version>
 	</properties>
 	<dependencies>
 
@@ -219,7 +220,7 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>sal</artifactId>
-			<version>0.5.1-SNAPSHOT</version>
+			<version>${sal.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
@@ -596,11 +597,6 @@
 			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.opendaylight.yangtools.thirdparty</groupId>
 			<artifactId>xtend-lib-osgi</artifactId>
 			<version>2.4.3</version>
@@ -651,25 +647,56 @@
 			<groupId>org.opendaylight.controller.thirdparty</groupId>
 			<artifactId>com.sun.jersey.jersey-servlet</artifactId>
 		</dependency>
+		
+		<dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    
+    <dependency>
+       <groupId>com.fasterxml.jackson.jaxrs</groupId>
+       <artifactId>jackson-jaxrs-json-provider</artifactId>
+       <version>${jackson.version}</version>
+    </dependency>
+
+      <dependency>
+         <groupId>com.fasterxml.jackson.jaxrs</groupId>
+         <artifactId>jackson-jaxrs-base</artifactId>
+         <version>${jackson.version}</version>
+      </dependency>
+    
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>${jackson.version}</version>
+			<version>${old-jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>${jackson.version}</version>
+			<version>${old-jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
-			<version>${jackson.version}</version>
+			<version>${old-jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
-			<version>${jackson.version}</version>
+			<version>${old-jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
@@ -695,7 +722,6 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>switchmanager</artifactId>
-			<version>0.6.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
