@@ -1420,8 +1420,36 @@ public class MappingServiceIntegrationTest {
         return mr;
     }
 
+    @Test
+    public void nonProxyTest() throws SocketTimeoutException, SocketException {
+        String eid = "10.0.0.1";
+        String rloc = "127.0.0.3";
+        MapRegister mr = createMapRegister(LispAFIConvertor.asIPAfiAddress(eid));
+        LocatorRecord record = new LocatorRecordBuilder(mr.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)).setLispAddressContainer(
+                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(rloc))).build();
+        mr.getEidToLocatorRecord().get(0).getLocatorRecord().set(0, record);
+        sendMapRegister(mr);
+        receiveMapNotify();
+        MapRequest mapRequest = createMapRequest(LispAFIConvertor.asIPAfiAddress(eid));
+        MapRequestBuilder builder = new MapRequestBuilder(mapRequest);
+        builder.setPitr(true);
+        mapRequest = builder.build();
+        sendMapRequest(mapRequest);
+        socket = new DatagramSocket(new InetSocketAddress(rloc, LispMessage.PORT_NUM));
+        MapRequest recievedMapRequest = receiveMapRequest();
+        assertEquals(mapRequest.getNonce(), recievedMapRequest.getNonce());
+        assertEquals(mapRequest.getSourceEid(), recievedMapRequest.getSourceEid());
+        assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
+        assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
+
+    }
+
     private MapReply receiveMapReply() throws SocketTimeoutException {
         return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
+    }
+
+    private MapRequest receiveMapRequest() throws SocketTimeoutException {
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
