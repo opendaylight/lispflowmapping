@@ -107,7 +107,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
@@ -166,6 +166,7 @@ public class MappingServiceIntegrationTest {
 
     @Before
     public void before() throws Exception {
+        areWeReady();
         locatorEid = asIPAfiAddress("4.3.2.1");
         socket = initSocket(socket);
         // mapResolver = context.mock(IMapResolver.class);
@@ -1533,8 +1534,7 @@ public class MappingServiceIntegrationTest {
         }
     }
 
-    @Before
-    public void areWeReady() throws InvalidSyntaxException {
+    private void areWeReady() throws InvalidSyntaxException {
         assertNotNull(bc);
         boolean debugit = false;
         Bundle b[] = bc.getBundles();
