@@ -25,11 +25,13 @@ import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -45,6 +47,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private volatile DatagramSocket socket = null;
     private final String MAP_NOTIFY = "MapNotify";
     private final String MAP_REPlY = "MapReply";
+    private final String MAP_REQUEST = "MapRequest";
     private volatile String bindingAddress = null;
     private volatile boolean stillRunning = false;
     private volatile boolean alreadyInit = false;
@@ -207,6 +210,17 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             handleSerializedLispBuffer(address, outBuffer, MAP_REPlY);
         } else {
             logger.debug("MapReply was null");
+        }
+        return null;
+    }
+
+    public Future<RpcResult<Void>> handleMapRequest(MapRequest mapRequest, InetAddress address) {
+        logger.trace("handleMapRequest called!!");
+        if (mapRequest != null) {
+            ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequest);
+            handleSerializedLispBuffer(address, outBuffer, MAP_REQUEST);
+        } else {
+            logger.debug("MapRequest was null");
         }
         return null;
     }

@@ -397,8 +397,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
                 mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
                 mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
-                // mavenBundle(JERSEY,
-                // "jersey-json").versionAsInProject().startLevel(2),
+                mavenBundle(JERSEY, "jersey-json").versionAsInProject().startLevel(2),
                 mavenBundle("com.fasterxml.jackson.core", "jackson-annotations").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-core").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
@@ -690,6 +689,7 @@ public class MappingServiceIntegrationTest {
 
         // Retrieve the RLOC from the database
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
+        mapRequestBuilder.setPitr(false);
         mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
         mapRequestBuilder.getEidRecord().add(
                 new EidRecordBuilder().setMask((short) mask).setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build());
@@ -1420,8 +1420,36 @@ public class MappingServiceIntegrationTest {
         return mr;
     }
 
+    @Test
+    public void nonProxyTest() throws SocketTimeoutException, SocketException {
+        String eid = "10.0.0.1";
+        String rloc = "127.0.0.3";
+        MapRegister mr = createMapRegister(LispAFIConvertor.asIPAfiAddress(eid));
+        LocatorRecord record = new LocatorRecordBuilder(mr.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)).setLispAddressContainer(
+                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(rloc))).build();
+        mr.getEidToLocatorRecord().get(0).getLocatorRecord().set(0, record);
+        sendMapRegister(mr);
+        receiveMapNotify();
+        MapRequest mapRequest = createMapRequest(LispAFIConvertor.asIPAfiAddress(eid));
+        MapRequestBuilder builder = new MapRequestBuilder(mapRequest);
+        builder.setPitr(true);
+        mapRequest = builder.build();
+        sendMapRequest(mapRequest);
+        socket = new DatagramSocket(new InetSocketAddress(rloc, LispMessage.PORT_NUM));
+        MapRequest recievedMapRequest = receiveMapRequest();
+        assertEquals(mapRequest.getNonce(), recievedMapRequest.getNonce());
+        assertEquals(mapRequest.getSourceEid(), recievedMapRequest.getSourceEid());
+        assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
+        assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
+
+    }
+
     private MapReply receiveMapReply() throws SocketTimeoutException {
         return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
+    }
+
+    private MapRequest receiveMapRequest() throws SocketTimeoutException {
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
