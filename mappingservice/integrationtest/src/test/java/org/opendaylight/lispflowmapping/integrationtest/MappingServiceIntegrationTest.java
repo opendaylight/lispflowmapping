@@ -397,8 +397,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
                 mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
                 mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
-                // mavenBundle(JERSEY,
-                // "jersey-json").versionAsInProject().startLevel(2),
+                mavenBundle(JERSEY, "jersey-json").versionAsInProject().startLevel(2),
                 mavenBundle("com.fasterxml.jackson.core", "jackson-annotations").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-core").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
