@@ -153,6 +153,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
+    private static final int MAX_SERVICE_LOAD_RETRIES = 30;
 
     @After
     public void after() {
@@ -1572,15 +1573,23 @@ public class MappingServiceIntegrationTest {
         if (debugit) {
             logger.warn(("Do some debugging because some bundle is unresolved"));
         }
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        ServiceReference r = bc.getServiceReference(IFlowMapping.class.getName());
-        if (r != null) {
-            this.lms = (IFlowMapping) bc.getService(r);
+        int retry = 0;
+        ServiceReference r = null;
+        while (this.lms == null && retry < MAX_SERVICE_LOAD_RETRIES) {
+
+            r = bc.getServiceReference(IFlowMapping.class.getName());
+            // r.getPropertyKeys();
+            if (r != null) {
+                this.lms = (IFlowMapping) bc.getService(r);
+            } else {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            retry += 1;
         }
 
         assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
