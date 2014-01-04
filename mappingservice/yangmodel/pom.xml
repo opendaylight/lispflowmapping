@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>mappingservice-parent</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.yangmodel</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>bundle</packaging>
 	<build>
 		<plugins>
