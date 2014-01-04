@@ -1575,6 +1575,7 @@ public class MappingServiceIntegrationTest {
         for (Bundle element : b) {
             int state = element.getState();
             logger.debug("Bundle:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:" + stateToString(state));
+            logger.debug("services: " + Arrays.toString(element.getRegisteredServices()));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 // System.out.println("Bundle:" + element.getSymbolicName() +
                 // " state:" + stateToString(state));
