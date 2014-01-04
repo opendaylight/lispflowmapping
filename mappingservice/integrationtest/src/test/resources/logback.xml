@@ -6,6 +6,7 @@
       </pattern>
     </encoder>
   </appender>
+  <logger name="org.opendaylight.lispflowmapping" level="debug"/>
 
   <root level="info">
     <appender-ref ref="STDOUT" />

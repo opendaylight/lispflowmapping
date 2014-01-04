@@ -24,8 +24,6 @@ import javax.ws.rs.core.Response;
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
 import org.codehaus.enunciate.jaxrs.TypeHint;
-import org.eclipse.osgi.framework.console.CommandInterpreter;
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.containermanager.IContainerManager;
 import org.opendaylight.controller.northbound.commons.RestMessages;
 import org.opendaylight.controller.northbound.commons.exception.BadRequestException;
@@ -95,13 +93,6 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     public void start() {
         logger.info("LISP Northbound Service is up!");
 
-        // OSGI console
-        registerWithOSGIConsole();
-    }
-
-    private void registerWithOSGIConsole() {
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bundleContext.registerService(CommandProvider.class.getName(), this, null);
     }
 
     public void stop() {
@@ -266,10 +257,10 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
+            @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
     public Response addMapping(@PathParam("containerName") String containerName, @TypeHint(MapRegisterNB.class) MapRegisterNB mapRegisterNB) {
 
         handleContainerDoesNotExist(containerName);
@@ -337,19 +328,18 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * </pre>
      */
 
-    
     private LispAddressGeneric parseAddressURL(int iid, int afi, String address, int mask) {
-    	LispAddressGeneric eidGeneric = new LispAddressGeneric(afi, address);
+        LispAddressGeneric eidGeneric = new LispAddressGeneric(afi, address);
 
         if (iid != 0) {
             eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), eidGeneric);
             eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             eidGeneric.setInstanceId(iid);
         }
-    	
+
         return eidGeneric;
     }
-    
+
     private LispAddressGeneric parseSrcDstAddressURL(int iid, int afi, String srcAdd, int srcML, String dstAdd, int dstML) {
         LispAddressGeneric srcGeneric = new LispAddressGeneric(afi, srcAdd);
         LispAddressGeneric dstGeneric = new LispAddressGeneric(afi, dstAdd);
@@ -358,12 +348,12 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
             srcGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), srcGeneric);
             srcGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             srcGeneric.setInstanceId(iid);
-           
+
             dstGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), dstGeneric);
             dstGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             dstGeneric.setInstanceId(iid);
-            }
-        
+        }
+
         LispAddressGeneric address = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode());
 
         address.setLcafType(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
@@ -371,23 +361,20 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         address.setSrcMaskLength((byte) srcML);
         address.setDstAddress(dstGeneric);
         address.setDstMaskLength((byte) dstML);
-        
+
         return address;
     }
-    
-    
+
     @Path("/{containerName}/mapping/{iid}/{afi}/{address}/{mask}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(
-    		@PathParam("containerName") String containerName,
-            @PathParam("iid") int iid, @PathParam("afi") int afi,
-            @PathParam("address") String address, @PathParam("mask") int mask) {
+            @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get mapping failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(@PathParam("containerName") String containerName,
+            @PathParam("iid") int iid, @PathParam("afi") int afi, @PathParam("address") String address, @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
@@ -451,12 +438,10 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            	   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(
-    		@PathParam("containerName") String containerName,
-    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
-            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public org.opendaylight.lispflowmapping.type.lisp.EidToLocatorRecord getMapping(@PathParam("containerName") String containerName,
+            @PathParam("iid") int iid, @PathParam("afi") int afi, @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML,
             @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
@@ -479,8 +464,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Set the authentication key for an EID prefix
      * 
      * @param containerName
-     *            name of the container context in which the key needs to be
-     *            set
+     *            name of the container context in which the key needs to be set
      * @param authKeyNB
      *            JSON object that contains the key information
      * 
@@ -511,10 +495,10 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Addition of key failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
+            @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of key failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
     public Response addAuthKey(@PathParam("containerName") String containerName, @TypeHint(AuthKeyNB.class) AuthKeyNB authKeyNB) {
 
         handleContainerDoesNotExist(containerName);
@@ -549,8 +533,8 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Retrieve the key used to register an EID prefix
      * 
      * @param containerName
-     *            name of the container context from which the key is going
-     *            to be retrieved
+     *            name of the container context from which the key is going to
+     *            be retrieved
      * 
      * @param afi
      *            Address Family of the address (IPv4, IPv6 or MAC)
@@ -576,13 +560,12 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName,
-    		@PathParam("iid") int iid, @PathParam("afi") int afi,
-    		@PathParam("address") String address, @PathParam("mask") int mask) {
+            @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Get key failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
+            @PathParam("address") String address, @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
@@ -591,7 +574,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         LispAddressGeneric lispAddressGeneric = parseAddressURL(iid, afi, address, mask);
 
         LispAddress lispAddress;
-        
+
         try {
             lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
         } catch (Exception e) {
@@ -657,12 +640,10 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-            	   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName,
-    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
-            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
-            @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public AuthKeyNB getAuthKey(@PathParam("containerName") String containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
+            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
 
@@ -723,20 +704,19 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @Path("/{containerName}/key/{iid}/{afi}/{address}/{mask}")
     @DELETE
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public Response delAuthKey(@PathParam("containerName") String containerName, 
-    		@PathParam("afi") int afi, @PathParam("iid") int iid,
-    		@PathParam("address") String address, @PathParam("mask") int mask) {
+            @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("afi") int afi, @PathParam("iid") int iid,
+            @PathParam("address") String address, @PathParam("mask") int mask) {
 
         handleContainerDoesNotExist(containerName);
 
         authorizationCheck(containerName, Privilege.WRITE);
 
         LispAddressGeneric lispAddressGeneric = parseAddressURL(iid, afi, address, mask);
-        
+
         LispAddress lispAddress;
         try {
             lispAddress = LispAddressConvertorNB.convertToLispAddress(lispAddressGeneric);
@@ -796,14 +776,12 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     @Path("/{containerName}/key/{iid}/{afi}/{srcAdd}/{srcML}/{dstAdd}/{dstML}")
     @DELETE
     @StatusCodes({ @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
-                   @ResponseCode(code = 400, condition = "Invalid data passed"),
-                   @ResponseCode(code = 404, condition = "The containerName passed was not found"),
-                   @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
-                   @ResponseCode(code = 503, condition = "Service unavailable") })
-    public Response delAuthKey(@PathParam("containerName") String containerName,
-    		@PathParam("iid") int iid, @PathParam("afi") int afi, 
-            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, 
-            @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
+            @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Delete key failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response delAuthKey(@PathParam("containerName") String containerName, @PathParam("iid") int iid, @PathParam("afi") int afi,
+            @PathParam("srcAdd") String srcAdd, @PathParam("srcML") int srcML, @PathParam("dstAdd") String dstAdd, @PathParam("dstML") int dstML) {
 
         handleContainerDoesNotExist(containerName);
 
