@@ -153,7 +153,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
-    private static final int MAX_SERVICE_LOAD_RETRIES = 30;
+    private static final int MAX_SERVICE_LOAD_RETRIES = 20;
 
     @After
     public void after() {
