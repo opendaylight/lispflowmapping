@@ -153,7 +153,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
-    private static final int MAX_SERVICE_LOAD_RETRIES = 30;
+    private static final int MAX_SERVICE_LOAD_RETRIES = 20;
 
     @After
     public void after() {
@@ -1582,7 +1582,8 @@ public class MappingServiceIntegrationTest {
             // r.getPropertyKeys();
             if (r != null) {
                 this.lms = (IFlowMapping) bc.getService(r);
-            } else {
+            }
+            if (this.lms == null) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
