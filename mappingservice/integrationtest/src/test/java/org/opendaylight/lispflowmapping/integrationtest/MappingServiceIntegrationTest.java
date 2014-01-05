@@ -1555,7 +1555,7 @@ public class MappingServiceIntegrationTest {
             int state = element.getState();
             logger.debug("Bundle:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:" + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
+                logger.debug("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
 

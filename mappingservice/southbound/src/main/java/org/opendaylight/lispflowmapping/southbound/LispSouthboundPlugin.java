@@ -111,7 +111,8 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 } catch (IOException e) {
                     logger.error("IO Exception while trying to recieve packet", e);
                 }
-                logger.debug("Handling packet from {}:{} (len={})", packet.getAddress().getHostAddress(), packet.getPort(), packet.getLength());
+                logger.debug(String.format("Handling packet from {%s}:{%d} (len={%d})", packet.getAddress().getHostAddress(), packet.getPort(),
+                        packet.getLength()));
 
                 try {
                     lispSouthboundService.handlePacket(packet);

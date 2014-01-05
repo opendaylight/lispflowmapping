@@ -294,7 +294,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         handleMapRegisterPacket(mapRegisterPacket);
 
         EidToLocatorRecord eidToLocator = lastMapRegister().getEidToLocatorRecord().get(0);
-        System.out.println(((Ipv4) LispAFIConvertor.toAFI(eidToLocator.getLispAddressContainer())).getIpv4Address().getValue());
         assertEquals(getIP("153.16.254.1"), LispAFIConvertor.toAFI(eidToLocator.getLispAddressContainer()));
 
         assertEquals(1, eidToLocator.getLocatorRecord().size());
@@ -472,8 +471,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(getIPV6("2610:d0:ffff:192:0:0:0:1"), LispAFIConvertor.toAFI(lastMapRequest().getSourceEid().getLispAddressContainer()));
-        System.out.println(((Ipv6) LispAFIConvertor.toAFI(lastMapRequest().getEidRecord().get(0).getLispAddressContainer())).getIpv6Address()
-                .getValue());
         assertEquals(getIPV6("2610:d0:ffff:192:0:0:0:2"), LispAFIConvertor.toAFI(lastMapRequest().getEidRecord().get(0).getLispAddressContainer()));
     }
 
