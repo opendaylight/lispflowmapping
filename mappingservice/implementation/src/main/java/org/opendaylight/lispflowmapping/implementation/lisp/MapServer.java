@@ -9,8 +9,11 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
@@ -67,17 +70,42 @@ public class MapServer implements IMapServerAsync {
                         break;
                     }
                 }
-                MappingServiceValue value = new MappingServiceValue();
-                MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-                if (eidRecord.getLocatorRecord() != null) {
-                    for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
-                        rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
-                    }
-                }
-                value.setRlocs(rlocs);
                 IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
                         eidRecord.getMaskLength());
+                MappingServiceValue value = null;
+                Map<String, ?> locators = dao.get(key);
+                if (locators != null) {
+                    value = (MappingServiceValue) locators.get("value");
+                }
+                if (value == null) {
+                    value = new MappingServiceValue();
+                    value.setRlocs(new ArrayList<MappingServiceRLOC>());
+                }
+                if (value.getRlocs() == null) {
+
+                    value.setRlocs(new ArrayList<MappingServiceRLOC>());
+                }
+
+                MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+                if (eidRecord.getLocatorRecord() != null) {
+                    Map<LocatorRecord, MappingServiceRLOC> currentRLOCs = new HashMap<LocatorRecord, MappingServiceRLOC>();
+                    for (MappingServiceRLOC msr : value.getRlocs()) {
+                        currentRLOCs.put(msr.getRecord(), msr);
+                    }
+
+                    for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
+                        if (currentRLOCs.containsKey(locatorRecord)) {
+                            currentRLOCs.get(locatorRecord).setAction(eidRecord.getAction()).setAuthoritative(eidRecord.isAuthoritative())
+                                    .setRegisterdDate(new Date(System.currentTimeMillis())).setTtl(eidRecord.getRecordTtl());
+                            currentRLOCs.get(locatorRecord).setAction(eidRecord.getAction());
+                        } else {
+
+                            value.getRlocs().add(
+                                    new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord
+                                            .isAuthoritative()));
+                        }
+                    }
+                }
                 dao.put(key, entry);
 
             }
