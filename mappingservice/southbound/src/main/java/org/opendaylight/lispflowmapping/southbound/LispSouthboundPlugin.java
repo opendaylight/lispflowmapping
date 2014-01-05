@@ -226,7 +226,6 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
                 }

@@ -25,7 +25,7 @@
 		<build.suffix>1.0.0</build.suffix>
 		<yangtools.binding.version>0.6.0-SNAPSHOT</yangtools.binding.version>
 		<yang.binding.version>0.6.0-SNAPSHOT</yang.binding.version>
-		<yang.version>0.5.9-SNAPSHOT</yang.version>
+		<yang.version>0.6.0-SNAPSHOT</yang.version>
 		<yang.codegen.version>0.6.0-SNAPSHOT</yang.codegen.version>
 		<sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
 		<sonar.branch>${user.name}-private-view</sonar.branch>

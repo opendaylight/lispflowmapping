@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
@@ -92,6 +94,93 @@ public class MapServerTest extends BaseTestCase {
 
         assertEquals("value", entries[0].getKey());
         assertEquals(rloc, ((MappingServiceValue) entries[0].getValue()).getRlocs().get(0).getRecord().getLispAddressContainer().getAddress());
+    }
+
+    @Test
+    public void handleMapRegister__TestOtherKeyExists() throws Exception {
+        mapRegisterBuilder.setWantMapNotify(false);
+
+        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+        MappingServiceValue value = new MappingServiceValue();
+        value.setRlocs(new ArrayList<MappingServiceRLOC>());
+        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build();
+        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
+        value.getRlocs().add(msr);
+        result.put("value", value);
+        allowing(lispDAO)
+                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
+                        32)));
+        ret(result);
+        addGetExpectations(eid, 32);
+        msr = new MappingServiceRLOC(new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build(), 60,
+                Action.NoAction, false);
+        value.getRlocs().add(msr);
+        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+        allowing(lispDAO).put(
+                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
+                entry);
+
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+
+    }
+
+    @Test
+    public void handleMapRegister__TestKeyExistsAndOther() throws Exception {
+        mapRegisterBuilder.setWantMapNotify(false);
+
+        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+        MappingServiceValue value = new MappingServiceValue();
+        value.setRlocs(new ArrayList<MappingServiceRLOC>());
+        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build();
+        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
+        value.getRlocs().add(msr);
+        rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build();
+        msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
+        value.getRlocs().add(msr);
+        result.put("value", value);
+        allowing(lispDAO)
+                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
+                        32)));
+        ret(result);
+        addGetExpectations(eid, 32);
+        msr = new MappingServiceRLOC(new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build(), 60,
+                Action.NoAction, false);
+        value.getRlocs().add(msr);
+        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+        allowing(lispDAO).put(
+                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
+                entry);
+
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+
+    }
+
+    @Test
+    public void handleMapRegister__TestSameKeyExists() throws Exception {
+        mapRegisterBuilder.setWantMapNotify(false);
+
+        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
+        MappingServiceValue value = new MappingServiceValue();
+        value.setRlocs(new ArrayList<MappingServiceRLOC>());
+        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build();
+        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 40, Action.Drop, true);
+        value.getRlocs().add(msr);
+        result.put("value", value);
+        allowing(lispDAO)
+                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
+                        32)));
+        ret(result);
+        addGetExpectations(eid, 32);
+        MappingServiceRLOC expectedMsr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
+        value = new MappingServiceValue();
+        value.setRlocs(Arrays.asList(expectedMsr));
+        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+        allowing(lispDAO).put(
+                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
+                entry);
+
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+
     }
 
     @Test
