@@ -1276,6 +1276,32 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
+    public void mapRegisterMapRegisterAndMapRequest() throws SocketTimeoutException {
+
+        LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
+        MapRegister mb = createMapRegister(eid, asIPAfiAddress("4.3.2.1"));
+        sendMapRegister(mb);
+        MapNotify mapNotify = receiveMapNotify();
+        MapRequest mr = createMapRequest(eid);
+        sendMapRequest(mr);
+        MapReply mapReply = receiveMapReply();
+        assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+        MapRegister mb2 = createMapRegister(eid, asIPAfiAddress("4.3.2.2"));
+        sendMapRegister(mb2);
+        mapNotify = receiveMapNotify();
+        assertEquals(8, mapNotify.getNonce().longValue());
+        mr = createMapRequest(eid);
+        sendMapRequest(mr);
+        mapReply = receiveMapReply();
+        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+        assertEquals(mb2.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(1).getLispAddressContainer());
+    }
+
+    @Test
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
 
         LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
@@ -1394,7 +1420,7 @@ public class MappingServiceIntegrationTest {
         assertEquals(expectedAction, mapReply.getEidToLocatorRecord().get(0).getAction());
     }
 
-    private MapRegister createMapRegister(LispIpv4Address eid) {
+    private MapRegister createMapRegister(LispIpv4Address eid, LispIpv4Address rloc) {
         MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
         mapRegisterbuilder.setWantMapNotify(true);
         mapRegisterbuilder.setNonce((long) 8);
@@ -1403,13 +1429,17 @@ public class MappingServiceIntegrationTest {
         etlrBuilder.setMaskLength((short) 24);
         etlrBuilder.setRecordTtl(254);
         LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress("4.3.2.1")));
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(rloc));
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlrBuilder.getLocatorRecord().add(recordBuilder.build());
         mapRegisterbuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapRegisterbuilder.getEidToLocatorRecord().add(etlrBuilder.build());
         MapRegister mapRegister = mapRegisterbuilder.build();
         return mapRegister;
+    }
+
+    private MapRegister createMapRegister(LispIpv4Address eid) {
+        return createMapRegister(eid, asIPAfiAddress("4.3.2.1"));
     }
 
     private MapRequest createMapRequest(LispIpv4Address eid) {
@@ -1472,7 +1502,6 @@ public class MappingServiceIntegrationTest {
             logger.info("Sending MapRegister to LispPlugin on socket");
             socket.send(packet);
         } catch (Throwable t) {
-            t.printStackTrace();
             fail();
         }
     }
@@ -1493,7 +1522,6 @@ public class MappingServiceIntegrationTest {
         } catch (SocketTimeoutException ste) {
             throw ste;
         } catch (Throwable t) {
-            t.printStackTrace();
             fail();
             return null;
         }
@@ -1508,7 +1536,6 @@ public class MappingServiceIntegrationTest {
         try {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, LispMessage.PORT_NUM));
         } catch (SocketException e) {
-            e.printStackTrace();
             fail();
         }
         return socket;
@@ -1557,8 +1584,6 @@ public class MappingServiceIntegrationTest {
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 logger.debug("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
-                // UNCOMMENT to see why bundles didn't resolve!
-
                 try {
                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
                     if (host != null) {
@@ -1592,7 +1617,6 @@ public class MappingServiceIntegrationTest {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
             retry += 1;
@@ -1610,7 +1634,6 @@ public class MappingServiceIntegrationTest {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         // If LispMappingServer is null, cannot work
