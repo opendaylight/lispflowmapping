@@ -206,7 +206,7 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
@@ -216,7 +216,7 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager.it.implementation</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
@@ -232,12 +232,12 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>clustering.services</artifactId>
-			<version>0.4.1-SNAPSHOT</version>
+			<version>0.5.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>clustering.stub</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
+			<version>0.4.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -595,6 +595,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
@@ -735,6 +740,36 @@
 			<artifactId>switchmanager.implementation</artifactId>
 			<version>0.4.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>forwardingrulesmanager</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>hosttracker</artifactId>
+      <version>${hosttracker.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>topologymanager</artifactId>
+      <version>0.4.1-SNAPSHOT</version>
+    </dependency>
+		<dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>forwardingrulesmanager.implementation</artifactId>
+      <version>0.4.1-SNAPSHOT</version>
+    </dependency>
+		<dependency>
+  <groupId>org.opendaylight.controller</groupId>
+  <artifactId>statisticsmanager</artifactId>
+  <version>0.5.0-SNAPSHOT</version>
+</dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>statisticsmanager.implementation</artifactId>
+      <version>0.4.1-SNAPSHOT</version>
+    </dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>connectionmanager</artifactId>

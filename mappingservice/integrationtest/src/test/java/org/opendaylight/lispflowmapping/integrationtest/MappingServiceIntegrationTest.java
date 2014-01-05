@@ -153,7 +153,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
-    private static final int MAX_SERVICE_LOAD_RETRIES = 20;
+    private static final int MAX_SERVICE_LOAD_RETRIES = 30;
 
     @After
     public void after() {
@@ -412,7 +412,14 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "bundlescanner.implementation").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "topologymanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "hosttracker").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager.implementation").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "statisticsmanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "statisticsmanager.implementation").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "switchmanager").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "switchmanager.implementation").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager.implementation").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),//
@@ -1548,8 +1555,7 @@ public class MappingServiceIntegrationTest {
             int state = element.getState();
             logger.debug("Bundle:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:" + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                // System.out.println("Bundle:" + element.getSymbolicName() +
-                // " state:" + stateToString(state));
+                System.out.println("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // UNCOMMENT to see why bundles didn't resolve!
 
