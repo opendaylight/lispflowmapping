@@ -68,7 +68,6 @@ public abstract class LispIPAddress extends LispAddress implements IMaskable {
         try {
             this.address = InetAddress.getByAddress(byteRepresentation.array());
         } catch (UnknownHostException e) {
-            e.printStackTrace();
         }
 
     }
