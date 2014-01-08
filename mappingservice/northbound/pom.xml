@@ -82,7 +82,6 @@
 							javax.xml.bind.annotation,
 							org.slf4j,
 							org.apache.catalina.filters,
-							org.codehaus.jackson.jaxrs,
 							!org.codehaus.enunciate.jaxrs,
 							org.apache.felix.dm,
 							org.apache.commons.lang3.builder,
