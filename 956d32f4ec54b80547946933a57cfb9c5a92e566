@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_139d8159",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2014-01-09T12:30:42Z",
+      "side": 1,
+      "message": "shouldn\u0027t you iterate over the records? eTR can for different EIDs can be different.",
+      "revId": "956d32f4ec54b80547946933a57cfb9c5a92e566",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5397793b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2014-01-09T12:30:42Z",
+      "side": 1,
+      "message": "nice refactorring. please do such refactorring more.",
+      "revId": "956d32f4ec54b80547946933a57cfb9c5a92e566",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f3a54da2",
+        "filename": "mappingservice/integrationtest/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2014-01-09T12:30:42Z",
+      "side": 1,
+      "message": "why do we need this?",
+      "revId": "956d32f4ec54b80547946933a57cfb9c5a92e566",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
