@@ -3,3 +3,7 @@
 *.classpath
 *target
 *logs
+*.ipr
+*.iml
+*.iws
+.idea
