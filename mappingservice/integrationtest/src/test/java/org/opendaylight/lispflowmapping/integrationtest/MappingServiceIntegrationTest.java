@@ -1572,6 +1572,12 @@ public class MappingServiceIntegrationTest {
         if (debugit) {
             logger.warn(("Do some debugging because some bundle is unresolved"));
         }
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         ServiceReference r = bc.getServiceReference(IFlowMapping.class.getName());
         if (r != null) {
             this.lms = (IFlowMapping) bc.getService(r);
