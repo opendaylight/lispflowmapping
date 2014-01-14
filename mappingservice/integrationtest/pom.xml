@@ -11,6 +11,12 @@
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
+	<scm>
+		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
+		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
+		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<repositories>
 		<!-- OpenDayLight Released artifact -->
