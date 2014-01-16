@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_a9019906",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1559,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-01-16T18:49:37Z",
+      "side": 1,
+      "message": "Daivd, there is some discussion going on in the ODL release syncup meetings about removal of system.out.print-s even from the integration tests, replacing them with logs. Just FYI. It seems no decision is made yet.",
+      "revId": "9745f415059fc66ede84d4ad6d32e000e342fa53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
