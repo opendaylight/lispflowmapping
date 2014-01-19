@@ -58,8 +58,8 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
         buffer.get(rawIPTos);
         builder.setIpTos(ByteUtil.getPartialInt(rawIPTos));
         builder.setProtocol((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setLocalPort(new PortNumber(new Integer(buffer.getShort())));
-        builder.setRemotePort(new PortNumber(new Integer(buffer.getShort())));
+        builder.setLocalPort(new PortNumber(new Integer(ByteUtil.getUnsignedShort(buffer, 0))));
+        builder.setRemotePort(new PortNumber(new Integer(ByteUtil.getUnsignedShort(buffer, 0))));
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
