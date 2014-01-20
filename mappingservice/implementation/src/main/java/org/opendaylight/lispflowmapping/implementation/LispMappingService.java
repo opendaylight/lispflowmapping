@@ -89,7 +89,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.debug("BindingAwareBroker set!");
+        logger.trace("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerConsumer(this, bundleContext);
     }
@@ -105,20 +105,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setLispDao(ILispDAO dao) {
-        logger.debug("LispDAO set in LispMappingService");
+        logger.trace("LispDAO set in LispMappingService");
         basicInit(dao);
-        logger.debug("Registering LispIpv4Address");
+        logger.trace("Registering LispIpv4Address");
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
-        logger.debug("Registering LispIpv6Address");
+        logger.trace("Registering LispIpv6Address");
         lispDao.register(LispIpv6AddressInMemoryConverter.class);
-        logger.debug("Registering MappingServiceKey");
+        logger.trace("Registering MappingServiceKey");
         lispDao.register(MappingServiceKeyConvertor.class);
-        logger.debug("Registering MappingServiceNoMaskKey");
+        logger.trace("Registering MappingServiceNoMaskKey");
         lispDao.register(MappingServiceNoMaskKeyConvertor.class);
     }
 
     void unsetLispDao(ILispDAO dao) {
-        logger.debug("LispDAO was unset in LispMappingService");
+        logger.trace("LispDAO was unset in LispMappingService");
         mapServer = null;
         mapResolver = null;
         lispDao = null;
@@ -139,7 +139,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void destroy() {
-        logger.debug("LISP (RFC6830) Mapping Service is destroyed!");
+        logger.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
     }
@@ -235,7 +235,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void onSessionInitialized(ConsumerContext session) {
-        logger.debug("Lisp Consumer session initialized!");
+        logger.info("Lisp Consumer session initialized!");
         NotificationService notificationService = session.getSALService(NotificationService.class);
         // notificationService.registerNotificationListener(LispNotification.class,
         // this);

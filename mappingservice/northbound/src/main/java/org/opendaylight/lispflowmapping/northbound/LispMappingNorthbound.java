@@ -75,17 +75,17 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     void setFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("FlowMapping set in LispNorthbound");
+        logger.trace("FlowMapping set in LispNorthbound");
         this.mappingService = mappingService;
     }
 
     void unsetFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("LispDAO was unset in LISP Northbound");
+        logger.trace("LispDAO was unset in LISP Northbound");
         this.mappingService = null;
     }
 
     public void init() {
-        logger.debug("LISP Northbound Service is initialized!");
+        logger.trace("LISP Northbound Service is initialized!");
     }
 
     public void start() {
@@ -97,7 +97,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     public void destroy() {
-        logger.debug("LISP Northbound Service is destroyed!");
+        logger.trace("LISP Northbound Service is destroyed!");
         mappingService = null;
     }
 

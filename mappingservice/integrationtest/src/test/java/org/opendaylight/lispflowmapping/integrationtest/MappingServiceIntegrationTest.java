@@ -544,8 +544,8 @@ public class MappingServiceIntegrationTest {
 
         String jsonAuthData = createAuthKeyJSON(pass, address, mask);
 
-        logger.info("Sending this JSON to LISP server: \n" + jsonAuthData);
-        logger.info("Address: " + address);
+        logger.trace("Sending this JSON to LISP server: \n" + jsonAuthData);
+        logger.trace("Address: " + address);
 
         byte[] expectedSha = new byte[] { (byte) 146, (byte) 234, (byte) 52, (byte) 247, (byte) 186, (byte) 232, (byte) 31, (byte) 249, (byte) 87,
                 (byte) 73, (byte) 234, (byte) 54, (byte) 225, (byte) 160, (byte) 129, (byte) 251, (byte) 73, (byte) 53, (byte) 196, (byte) 62 };
@@ -838,8 +838,8 @@ public class MappingServiceIntegrationTest {
         Integer httpResponseCode = connection.getResponseCode();
 
         if (httpResponseCode > 299) {
-            logger.info("HTTP Address: " + url);
-            logger.info("HTTP Response Code: " + httpResponseCode);
+            logger.trace("HTTP Address: " + url);
+            logger.trace("HTTP Response Code: " + httpResponseCode);
             fail();
         }
 
@@ -1454,7 +1454,7 @@ public class MappingServiceIntegrationTest {
         try {
             DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
             initPacketAddress(packet);
-            logger.info("Sending MapRegister to LispPlugin on socket");
+            logger.trace("Sending MapRegister to LispPlugin on socket");
             socket.send(packet);
         } catch (Throwable t) {
             fail();
@@ -1469,10 +1469,10 @@ public class MappingServiceIntegrationTest {
         try {
             byte[] buffer = new byte[4096];
             DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-            logger.info("Waiting for packet from socket...");
+            logger.trace("Waiting for packet from socket...");
             socket.setSoTimeout(timeout);
             socket.receive(receivePacket);
-            logger.info("Recieved packet from socket!");
+            logger.trace("Recieved packet from socket!");
             return receivePacket;
         } catch (SocketTimeoutException ste) {
             throw ste;
@@ -1535,10 +1535,10 @@ public class MappingServiceIntegrationTest {
         Bundle b[] = bc.getBundles();
         for (Bundle element : b) {
             int state = element.getState();
-            logger.debug("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
+            logger.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
                     + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                logger.debug("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
+                logger.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 try {
                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
@@ -1600,8 +1600,8 @@ public class MappingServiceIntegrationTest {
         // BundleContext
         /*
          * for (ServiceReference sr : bc.getAllServiceReferences(null, null)) {
-         * logger.info(sr.getBundle().getSymbolicName());
-         * logger.info(sr.toString()); }
+         * logger.trace(sr.getBundle().getSymbolicName());
+         * logger.trace(sr.toString()); }
          */
     }
 

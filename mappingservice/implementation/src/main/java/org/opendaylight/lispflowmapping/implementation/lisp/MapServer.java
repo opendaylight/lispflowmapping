@@ -63,7 +63,7 @@ public class MapServer implements IMapServerAsync {
                 if (shouldAuthenticate) {
                     password = getPassword(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
                     if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                        logger.debug("Authentication failed");
+                        logger.warn("Authentication failed");
                         failed = true;
                         break;
                     }

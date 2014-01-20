@@ -236,7 +236,7 @@ public class BaseExpectations extends Expectations {
             values.add(lastValue);
             boolean match = match(lastValue);
             if (match && (logMatch != null)) {
-                logger.debug("Match: " + logMatch + " " + value);
+                logger.trace("Match: " + logMatch + " " + value);
             }
             return match;
         }
@@ -262,7 +262,7 @@ public class BaseExpectations extends Expectations {
 
         public Object invoke(Invocation invocation) throws Throwable {
             if (logInvocation) {
-                logger.debug("Invoke: returning " + lastValue);
+                logger.trace("Invoke: returning " + lastValue);
             }
             return lastValue;
         }

@@ -14,8 +14,6 @@ import java.util.Hashtable;
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main application activator class for registering the dependencies and
@@ -24,11 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public class Activator extends ComponentActivatorAbstractBase {
-
-    /*
-     * Logger instance
-     */
-    protected static final Logger logger = LoggerFactory.getLogger(Activator.class);
 
     /**
      * Function called when the activator starts just after some initializations
