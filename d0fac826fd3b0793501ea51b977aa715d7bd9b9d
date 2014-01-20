@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_888a4619",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2014-01-20T11:40:14Z",
+      "side": 1,
+      "message": "remove this - duplication",
+      "revId": "d0fac826fd3b0793501ea51b977aa715d7bd9b9d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e87ae222",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 636
+      },
+      "writtenOn": "2014-01-20T11:40:14Z",
+      "side": 1,
+      "message": "move  the logger.error back to debug - re-check all of the changes here.",
+      "revId": "d0fac826fd3b0793501ea51b977aa715d7bd9b9d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
