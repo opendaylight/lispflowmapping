@@ -18,12 +18,6 @@
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
 		<tag>HEAD</tag>
 	</scm>
-	<properties>
-		<!-- Sonar properties using jacoco to retrieve integration test results -->
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
-		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -90,29 +84,6 @@
 						</Service-Component>
 					</instructions>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<configuration>
-					<includes>org.opendaylight.controller.*</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>pre-test</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
