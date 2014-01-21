@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_69d0331f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IMapReplyHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-01-21T21:50:52Z",
+      "side": 0,
+      "message": "This one seems a bit odd. Lori, can you verify this?",
+      "revId": "c89d679db97b3f5d81564a8e1827f899fcd34482",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
