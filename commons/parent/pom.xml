@@ -40,6 +40,7 @@
 		<java.version.source>1.7</java.version.source>
 		<java.version.target>1.7</java.version.target>
 		<releaseplugin.version>2.3.2</releaseplugin.version>
+		<slf4j.version>1.7.2</slf4j.version>
 	</properties>
 	
 	<repositories>
