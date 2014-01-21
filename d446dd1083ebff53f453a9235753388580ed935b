@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_460b1e2a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/dao/ClusterDAOService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1462
+      },
+      "writtenOn": "2014-01-21T16:26:03Z",
+      "side": 1,
+      "message": "return?",
+      "revId": "d446dd1083ebff53f453a9235753388580ed935b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c906ff1c",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1604,
+      "author": {
+        "id": 1462
+      },
+      "writtenOn": "2014-01-21T16:26:03Z",
+      "side": 1,
+      "message": "IMO better keep it info. When you uncomment these lines, you do it for a purpose and you may not want to see trace level.",
+      "revId": "d446dd1083ebff53f453a9235753388580ed935b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_890c873c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1462
+      },
+      "writtenOn": "2014-01-21T16:26:03Z",
+      "side": 1,
+      "message": "no log?",
+      "revId": "d446dd1083ebff53f453a9235753388580ed935b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6915d33e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 1462
+      },
+      "writtenOn": "2014-01-21T16:26:03Z",
+      "side": 1,
+      "message": "return null anyway?\n+below.",
+      "revId": "d446dd1083ebff53f453a9235753388580ed935b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_291b5b74",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1462
+      },
+      "writtenOn": "2014-01-21T16:26:03Z",
+      "side": 1,
+      "message": "info maybe? is it an error path?",
+      "revId": "d446dd1083ebff53f453a9235753388580ed935b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
