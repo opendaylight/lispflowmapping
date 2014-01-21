@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,7 +7,15 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import aQute.lib.osgi.Constants;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemPackages;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -106,9 +114,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -118,21 +127,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemPackages;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
-//import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
-//import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import aQute.lib.osgi.Constants;
 
 @RunWith(PaxExam.class)
 public class MappingServiceIntegrationTest {
@@ -153,6 +148,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
+    private static final int MAX_SERVICE_LOAD_RETRIES = 45;
 
     @After
     public void after() {
@@ -314,6 +310,7 @@ public class MappingServiceIntegrationTest {
 
                 mavenBundle("org.apache.felix", "org.apache.felix.dependencymanager").versionAsInProject(),
                 mavenBundle("org.apache.felix", "org.apache.felix.dependencymanager.shell").versionAsInProject(),
+                mavenBundle("org.osgi", "org.osgi.core").versionAsInProject(),
 
                 mavenBundle("com.google.code.gson", "gson").versionAsInProject(),
                 mavenBundle("org.jboss.spec.javax.transaction", "jboss-transaction-api_1.1_spec").versionAsInProject(),
@@ -353,40 +350,8 @@ public class MappingServiceIntegrationTest {
                 TestHelper.bindingIndependentSalBundles(),
                 TestHelper.bindingAwareSalBundles(),
                 TestHelper.mdSalCoreBundles(),
+                TestHelper.junitAndMockitoBundles(),
 
-                // Specific bundles
-                mavenBundle(ODL, "config-api").versionAsInProject(),
-                mavenBundle(ODL, "sal-binding-api").versionAsInProject(), //
-                mavenBundle(ODL, "sal-binding-config").versionAsInProject(),
-                mavenBundle(ODL, "sal-binding-broker-impl").versionAsInProject(), //
-                mavenBundle(ODL, "sal-common").versionAsInProject(), //
-                mavenBundle(ODL, "sal-common-api").versionAsInProject(), //
-                mavenBundle(ODL, "sal-common-impl").versionAsInProject(),
-                mavenBundle(ODL, "sal-common-util").versionAsInProject(), //
-
-                mavenBundle(YANG, "concepts").versionAsInProject(),
-                mavenBundle(YANG, "yang-binding").versionAsInProject(), //
-                mavenBundle(YANG, "yang-common").versionAsInProject(), //
-                mavenBundle(YANG + ".model", "ietf-inet-types").versionAsInProject(),//
-                mavenBundle(YANG + ".model", "ietf-yang-types").versionAsInProject(),//
-                mavenBundle(YANG + ".thirdparty", "xtend-lib-osgi").versionAsInProject(),//
-                mavenBundle(YANG, "yang-data-api").versionAsInProject(), //
-                mavenBundle(YANG, "yang-data-impl").versionAsInProject(), //
-                mavenBundle(YANG, "yang-model-api").versionAsInProject(), //
-                mavenBundle(YANG, "yang-model-util").versionAsInProject(), //
-                mavenBundle(YANG, "yang-parser-api").versionAsInProject(),
-                mavenBundle(YANG, "yang-parser-impl").versionAsInProject(),
-                mavenBundle(YANG, "binding-generator-spi").versionAsInProject(), //
-                mavenBundle(YANG, "binding-model-api").versionAsInProject(), //
-                mavenBundle(YANG, "binding-generator-util").versionAsInProject(),
-                mavenBundle(YANG, "yang-parser-impl").versionAsInProject(),
-                mavenBundle(YANG, "binding-type-provider").versionAsInProject(),
-                mavenBundle(YANG, "binding-generator-api").versionAsInProject(),
-                mavenBundle(YANG, "binding-generator-spi").versionAsInProject(),
-                mavenBundle(YANG, "binding-generator-impl").versionAsInProject(),
-                mavenBundle(YANG + ".thirdparty", "antlr4-runtime-osgi-nohead").versionAsInProject(), //
-
-                mavenBundle("com.google.guava", "guava").versionAsInProject(), //
                 mavenBundle("org.javassist", "javassist").versionAsInProject(), //
 
                 // Northbound bundles
@@ -411,7 +376,14 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "bundlescanner.implementation").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "topologymanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "hosttracker").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager.implementation").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "statisticsmanager").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "statisticsmanager.implementation").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "switchmanager").versionAsInProject(),//
+                mavenBundle("org.opendaylight.controller", "switchmanager.implementation").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "connectionmanager.implementation").versionAsInProject(),//
                 mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),//
@@ -461,15 +433,6 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.northbound").versionAsInProject(), //
-
-                // Additions
-                mavenBundle(ODL, "sal-core-api").versionAsInProject().update(), //
-                mavenBundle(ODL, "sal-core-spi").versionAsInProject().update(), //
-                mavenBundle(ODL, "sal-broker-impl").versionAsInProject(), //
-                mavenBundle(ODL, "sal-connector-api").versionAsInProject(), //
-
-                mavenBundle(ODL, "config-api").versionAsInProject(), //
-                mavenBundle(ODL, "config-manager").versionAsInProject(), //
 
                 junitBundles());
     }
@@ -581,8 +544,8 @@ public class MappingServiceIntegrationTest {
 
         String jsonAuthData = createAuthKeyJSON(pass, address, mask);
 
-        logger.info("Sending this JSON to LISP server: \n" + jsonAuthData);
-        logger.info("Address: " + address);
+        logger.trace("Sending this JSON to LISP server: \n" + jsonAuthData);
+        logger.trace("Address: " + address);
 
         byte[] expectedSha = new byte[] { (byte) 146, (byte) 234, (byte) 52, (byte) 247, (byte) 186, (byte) 232, (byte) 31, (byte) 249, (byte) 87,
                 (byte) 73, (byte) 234, (byte) 54, (byte) 225, (byte) 160, (byte) 129, (byte) 251, (byte) 73, (byte) 53, (byte) 196, (byte) 62 };
@@ -876,8 +839,8 @@ public class MappingServiceIntegrationTest {
         Integer httpResponseCode = connection.getResponseCode();
 
         if (httpResponseCode > 299) {
-            logger.info("HTTP Address: " + url);
-            logger.info("HTTP Response Code: " + httpResponseCode);
+            logger.trace("HTTP Address: " + url);
+            logger.trace("HTTP Response Code: " + httpResponseCode);
             fail();
         }
 
@@ -1269,6 +1232,32 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
+    public void mapRegisterMapRegisterAndMapRequest() throws SocketTimeoutException {
+
+        LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
+        MapRegister mb = createMapRegister(eid, asIPAfiAddress("4.3.2.1"));
+        sendMapRegister(mb);
+        MapNotify mapNotify = receiveMapNotify();
+        MapRequest mr = createMapRequest(eid);
+        sendMapRequest(mr);
+        MapReply mapReply = receiveMapReply();
+        assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+        MapRegister mb2 = createMapRegister(eid, asIPAfiAddress("4.3.2.2"));
+        sendMapRegister(mb2);
+        mapNotify = receiveMapNotify();
+        assertEquals(8, mapNotify.getNonce().longValue());
+        mr = createMapRequest(eid);
+        sendMapRequest(mr);
+        mapReply = receiveMapReply();
+        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+        assertEquals(mb2.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(1).getLispAddressContainer());
+    }
+
+    @Test
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
 
         LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
@@ -1387,7 +1376,7 @@ public class MappingServiceIntegrationTest {
         assertEquals(expectedAction, mapReply.getEidToLocatorRecord().get(0).getAction());
     }
 
-    private MapRegister createMapRegister(LispIpv4Address eid) {
+    private MapRegister createMapRegister(LispIpv4Address eid, LispIpv4Address rloc) {
         MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
         mapRegisterbuilder.setWantMapNotify(true);
         mapRegisterbuilder.setNonce((long) 8);
@@ -1396,13 +1385,17 @@ public class MappingServiceIntegrationTest {
         etlrBuilder.setMaskLength((short) 24);
         etlrBuilder.setRecordTtl(254);
         LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(asIPAfiAddress("4.3.2.1")));
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(rloc));
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlrBuilder.getLocatorRecord().add(recordBuilder.build());
         mapRegisterbuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapRegisterbuilder.getEidToLocatorRecord().add(etlrBuilder.build());
         MapRegister mapRegister = mapRegisterbuilder.build();
         return mapRegister;
+    }
+
+    private MapRegister createMapRegister(LispIpv4Address eid) {
+        return createMapRegister(eid, asIPAfiAddress("4.3.2.1"));
     }
 
     private MapRequest createMapRequest(LispIpv4Address eid) {
@@ -1490,10 +1483,9 @@ public class MappingServiceIntegrationTest {
         try {
             DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
             initPacketAddress(packet);
-            logger.info("Sending MapRegister to LispPlugin on socket");
+            logger.trace("Sending MapRegister to LispPlugin on socket");
             socket.send(packet);
         } catch (Throwable t) {
-            t.printStackTrace();
             fail();
         }
     }
@@ -1506,15 +1498,14 @@ public class MappingServiceIntegrationTest {
         try {
             byte[] buffer = new byte[4096];
             DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-            logger.info("Waiting for packet from socket...");
+            logger.trace("Waiting for packet from socket...");
             socket.setSoTimeout(timeout);
             socket.receive(receivePacket);
-            logger.info("Recieved packet from socket!");
+            logger.trace("Recieved packet from socket!");
             return receivePacket;
         } catch (SocketTimeoutException ste) {
             throw ste;
         } catch (Throwable t) {
-            t.printStackTrace();
             fail();
             return null;
         }
@@ -1529,7 +1520,6 @@ public class MappingServiceIntegrationTest {
         try {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, LispMessage.PORT_NUM));
         } catch (SocketException e) {
-            e.printStackTrace();
             fail();
         }
         return socket;
@@ -1574,13 +1564,10 @@ public class MappingServiceIntegrationTest {
         Bundle b[] = bc.getBundles();
         for (Bundle element : b) {
             int state = element.getState();
-            logger.debug("Bundle:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:" + stateToString(state));
-            logger.debug("services: " + Arrays.toString(element.getRegisteredServices()));
+            logger.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
+                    + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                // System.out.println("Bundle:" + element.getSymbolicName() +
-                // " state:" + stateToString(state));
-
-                // UNCOMMENT to see why bundles didn't resolve!
+                logger.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 try {
                     String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
@@ -1602,9 +1589,23 @@ public class MappingServiceIntegrationTest {
         if (debugit) {
             logger.warn(("Do some debugging because some bundle is unresolved"));
         }
-        ServiceReference r = bc.getServiceReference(IFlowMapping.class.getName());
-        if (r != null) {
-            this.lms = (IFlowMapping) bc.getService(r);
+        // assertNotNull(broker);
+
+        int retry = 0;
+        ServiceReference r = null;
+        while (this.lms == null && retry < MAX_SERVICE_LOAD_RETRIES) {
+
+            r = bc.getServiceReference(IFlowMapping.class.getName());
+            // r.getPropertyKeys();
+            if (r != null) {
+                this.lms = (IFlowMapping) bc.getService(r);
+            } else {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+            }
+            retry += 1;
         }
 
         assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
@@ -1619,7 +1620,6 @@ public class MappingServiceIntegrationTest {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         // If LispMappingServer is null, cannot work
@@ -1629,8 +1629,8 @@ public class MappingServiceIntegrationTest {
         // BundleContext
         /*
          * for (ServiceReference sr : bc.getAllServiceReferences(null, null)) {
-         * logger.info(sr.getBundle().getSymbolicName());
-         * logger.info(sr.toString()); }
+         * logger.trace(sr.getBundle().getSymbolicName());
+         * logger.trace(sr.toString()); }
          */
     }
 

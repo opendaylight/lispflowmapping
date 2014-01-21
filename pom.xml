@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>lispflowmapping-commons</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>commons/parent</relativePath>
+  </parent>
+
+  <artifactId>lispflowmapping-all</artifactId>
+  <packaging>pom</packaging>
+  <name>LISP Flow Mapping All modules</name>
+
+  <scm>
+    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
+    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
+    <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <modules>
+    <module>commons/parent</module>
+    <module>commons/build_tools</module>
+    <module>commons/code-parent</module>
+    <module>commons/unittest_tools</module>
+    <module>mappingservice</module>
+  </modules>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.build.directory}/generated-resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-shared-resources</id>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+             <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+             <excludeTransitive>true</excludeTransitive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

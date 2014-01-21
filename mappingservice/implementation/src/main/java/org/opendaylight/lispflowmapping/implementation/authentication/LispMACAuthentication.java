@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -36,7 +36,7 @@ public class LispMACAuthentication implements ILispAuthentication {
             authenticationLength = Mac.getInstance(algorithm).getMacLength();
             tempAuthenticationData = new byte[authenticationLength];
         } catch (NoSuchAlgorithmException e) {
-            logger.error("No such MAC algorithm" + algorithm);
+            logger.warn("No such MAC algorithm" + algorithm);
         }
     }
 
@@ -64,9 +64,9 @@ public class LispMACAuthentication implements ILispAuthentication {
 
             return mac.doFinal(data);
         } catch (InvalidKeyException e) {
-            logger.error("Invalid password" + key);
+            logger.warn("Invalid password" + key);
         } catch (NoSuchAlgorithmException e) {
-            logger.error("No such MAC algorithm" + algorithm);
+            logger.warn("No such MAC algorithm" + algorithm);
         }
         return null;
     }

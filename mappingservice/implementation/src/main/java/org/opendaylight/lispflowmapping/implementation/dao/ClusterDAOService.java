@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -58,7 +58,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     }
 
     void unsetClusterContainerService(IClusterContainerServices s) {
-        logger.debug("Cluster Service unset");
+        logger.trace("Cluster Service unset");
         if (this.clusterContainerService == s) {
             this.clusterContainerService = null;
         }
@@ -68,32 +68,32 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     @SuppressWarnings("deprecation")
     private void allocateCache() {
         if (this.clusterContainerService == null) {
-            logger.error("un-initialized clusterContainerService, can't create cache");
+            logger.warn("un-initialized clusterContainerService, can't create cache");
             return;
         }
-        logger.debug("Creating Cache for ClusterDAOService");
+        logger.trace("Creating Cache for ClusterDAOService");
         try {
             this.clusterContainerService.createCache(CACHE_NAME, EnumSet.of(IClusterServices.cacheMode.NON_TRANSACTIONAL));
         } catch (CacheConfigException cce) {
-            logger.error("Cache couldn't be created for ClusterDAOService -  check cache mode");
+            logger.warn("Cache couldn't be created for ClusterDAOService -  check cache mode");
         } catch (CacheExistException cce) {
-            logger.error("Cache for ClusterDAOService already exists, destroy and recreate");
+            logger.warn("Cache for ClusterDAOService already exists, destroy and recreate");
         }
-        logger.debug("Cache successfully created for ClusterDAOService");
+        logger.trace("Cache successfully created for ClusterDAOService");
     }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     private void retrieveCache() {
         if (this.clusterContainerService == null) {
-            logger.error("un-initialized clusterContainerService, can't retrieve cache");
+            logger.warn("un-initialized clusterContainerService, can't retrieve cache");
             return;
         }
-        logger.debug("Retrieving cache for ClusterDAOService");
+        logger.trace("Retrieving cache for ClusterDAOService");
         typeToKeysToValues = (ConcurrentMap<Class<?>, Map<Object, Map<String, Object>>>) this.clusterContainerService.getCache(CACHE_NAME);
         if (typeToKeysToValues == null) {
-            logger.error("Cache couldn't be retrieved for ClusterDAOService");
+            logger.warn("Cache couldn't be retrieved for ClusterDAOService");
         }
-        logger.debug("Cache was successfully retrieved for ClusterDAOService");
+        logger.trace("Cache was successfully retrieved for ClusterDAOService");
     }
 
     public void getAll(IRowVisitor visitor) {

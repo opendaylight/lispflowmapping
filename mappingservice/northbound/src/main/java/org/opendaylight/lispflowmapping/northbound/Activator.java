@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -14,8 +14,6 @@ import java.util.Hashtable;
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main application activator class for registering the dependencies and
@@ -24,11 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 
 public class Activator extends ComponentActivatorAbstractBase {
-
-    /*
-     * Logger instance
-     */
-    protected static final Logger logger = LoggerFactory.getLogger(Activator.class);
 
     /**
      * Function called when the activator starts just after some initializations

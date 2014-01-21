@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -40,40 +40,45 @@ public class MappingServiceRLOC {
         return record;
     }
 
-    public void setRecord(LocatorRecord record) {
+    public MappingServiceRLOC setRecord(LocatorRecord record) {
         this.record = record;
+        return this;
     }
 
     public int getTtl() {
         return ttl;
     }
 
-    public void setTtl(int ttl) {
+    public MappingServiceRLOC setTtl(int ttl) {
         this.ttl = ttl;
+        return this;
     }
 
     public Action getAction() {
         return action;
     }
 
-    public void setAction(Action action) {
+    public MappingServiceRLOC setAction(Action action) {
         this.action = action;
+        return this;
     }
 
     public boolean isAuthoritative() {
         return authoritative;
     }
 
-    public void setAuthoritative(boolean authoritative) {
+    public MappingServiceRLOC setAuthoritative(boolean authoritative) {
         this.authoritative = authoritative;
+        return this;
     }
 
     public Date getRegisterdDate() {
         return registerdDate;
     }
 
-    public void setRegisterdDate(Date registerdDate) {
+    public MappingServiceRLOC setRegisterdDate(Date registerdDate) {
         this.registerdDate = registerdDate;
+        return this;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -58,8 +58,8 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
         buffer.get(rawIPTos);
         builder.setIpTos(ByteUtil.getPartialInt(rawIPTos));
         builder.setProtocol((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setLocalPort(new PortNumber(new Integer(buffer.getShort())));
-        builder.setRemotePort(new PortNumber(new Integer(buffer.getShort())));
+        builder.setLocalPort(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setRemotePort(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());

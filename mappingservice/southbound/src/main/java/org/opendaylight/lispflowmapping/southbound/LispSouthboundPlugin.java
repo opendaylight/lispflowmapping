@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -99,7 +99,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 socket = new DatagramSocket(new InetSocketAddress(bindingAddress, lispPortNumber));
                 socket.setSoTimeout(lispReceiveTimeout);
             } catch (SocketException e) {
-                logger.warn("Cannot open socket on UDP port " + lispPortNumber, e);
+                logger.error("Cannot open socket on UDP port " + lispPortNumber, e);
                 return;
             }
 
@@ -108,23 +108,24 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
                     socket.receive(packet);
-                    logger.debug("Received a packet!");
+                    logger.trace("Received a packet!");
                 } catch (SocketTimeoutException ste) {
                     continue;
                 } catch (IOException e) {
-                    logger.error("IO Exception while trying to recieve packet", e);
+                    logger.warn("IO Exception while trying to recieve packet", e);
                 }
-                logger.debug("Handling packet from {}:{} (len={})", packet.getAddress().getHostAddress(), packet.getPort(), packet.getLength());
+                logger.trace(String.format("Handling packet from {%s}:{%d} (len={%d})", packet.getAddress().getHostAddress(), packet.getPort(),
+                        packet.getLength()));
 
                 try {
                     lispSouthboundService.handlePacket(packet);
                 } catch (Throwable t) {
-                    logger.error("Error while handling packet", t);
+                    logger.warn("Error while handling packet", t);
                 }
             }
 
             socket.close();
-            logger.info("Socket closed");
+            logger.trace("Socket closed");
             stillRunning = false;
         }
 
@@ -160,7 +161,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 lispSouthboundService = new LispSouthboundService();
                 registerWithOSGIConsole();
                 registerRPCs(session);
-                logger.debug("Provider Session initialized");
+                logger.trace("Provider Session initialized");
                 if (bindingAddress == null) {
                     setLispAddress("0.0.0.0");
                 }
@@ -184,7 +185,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
             handleSerializedLispBuffer(address, outBuffer, MAP_NOTIFY);
         } else {
-            logger.debug("MapNotify was null");
+            logger.warn("MapNotify was null");
         }
         return null;
     }
@@ -195,11 +196,11 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         packet.setAddress(address);
         try {
             if (logger.isDebugEnabled()) {
-                logger.debug("Sending " + packetType + " on port " + LispMessage.PORT_NUM + " to address: " + address);
+                logger.trace("Sending " + packetType + " on port " + LispMessage.PORT_NUM + " to address: " + address);
             }
             socket.send(packet);
         } catch (IOException e) {
-            logger.error("Failed to send " + packetType, e);
+            logger.warn("Failed to send " + packetType, e);
         }
     }
 
@@ -209,7 +210,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
             handleSerializedLispBuffer(address, outBuffer, MAP_REPlY);
         } else {
-            logger.debug("MapReply was null");
+            logger.warn("MapReply was null");
         }
         return null;
     }
@@ -228,10 +229,10 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     public void setLispAddress(String address) {
         synchronized (startLock) {
             if (bindingAddress != null && bindingAddress.equals(address)) {
-                logger.debug("configured lisp binding address didn't change.");
+                logger.trace("configured lisp binding address didn't change.");
             } else {
                 String action = (bindingAddress == null ? "Setting" : "Resetting");
-                logger.info(action + " lisp binding address to: " + address);
+                logger.trace(action + " lisp binding address to: " + address);
                 bindingAddress = address;
                 if (thread != null) {
                     thread.stopRunning();
@@ -239,7 +240,6 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
                 }

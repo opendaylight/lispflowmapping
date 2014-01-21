@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -53,16 +53,16 @@ public class LispSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            logger.debug("Recieved packet of type EncapsulatedControlMessage");
+            logger.trace("Recieved packet of type EncapsulatedControlMessage");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
-            logger.debug("Recieved packet of type MapRequest");
+            logger.trace("Recieved packet of type MapRequest");
             handleMapRequest(inBuffer);
         } else if (lispType == LispMessageEnum.MapRegister) {
-            logger.debug("Recieved packet of type MapRegister");
+            logger.trace("Recieved packet of type MapRegister");
             handleMapRegister(inBuffer, packet.getAddress());
         }
-        logger.debug("Recieved unknown packet type");
+        logger.warn("Recieved unknown packet type");
     }
 
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
@@ -106,9 +106,9 @@ public class LispSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
-                logger.debug("MapRequest was published!");
+                logger.trace("MapRequest was published!");
             } else {
-                logger.error("Notification Provider is null!");
+                logger.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
@@ -143,9 +143,9 @@ public class LispSouthboundService implements ILispSouthboundService {
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());
-                logger.debug("MapRegister was published!");
+                logger.trace("MapRegister was published!");
             } else {
-                logger.error("Notification Provider is null!");
+                logger.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);

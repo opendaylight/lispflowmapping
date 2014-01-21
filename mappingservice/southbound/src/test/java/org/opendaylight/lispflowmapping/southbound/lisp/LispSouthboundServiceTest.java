@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -294,7 +294,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         handleMapRegisterPacket(mapRegisterPacket);
 
         EidToLocatorRecord eidToLocator = lastMapRegister().getEidToLocatorRecord().get(0);
-        System.out.println(((Ipv4) LispAFIConvertor.toAFI(eidToLocator.getLispAddressContainer())).getIpv4Address().getValue());
         assertEquals(getIP("153.16.254.1"), LispAFIConvertor.toAFI(eidToLocator.getLispAddressContainer()));
 
         assertEquals(1, eidToLocator.getLocatorRecord().size());
@@ -472,8 +471,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(getIPV6("2610:d0:ffff:192:0:0:0:1"), LispAFIConvertor.toAFI(lastMapRequest().getSourceEid().getLispAddressContainer()));
-        System.out.println(((Ipv6) LispAFIConvertor.toAFI(lastMapRequest().getEidRecord().get(0).getLispAddressContainer())).getIpv6Address()
-                .getValue());
         assertEquals(getIPV6("2610:d0:ffff:192:0:0:0:2"), LispAFIConvertor.toAFI(lastMapRequest().getEidRecord().get(0).getLispAddressContainer()));
     }
 

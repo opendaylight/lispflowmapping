@@ -17,12 +17,6 @@
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
 		<tag>HEAD</tag>
 	</scm>
-	<properties>
-		<!-- Sonar properties using jacoco to retrieve integration test results -->
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
-		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -88,7 +82,6 @@
 							javax.xml.bind.annotation,
 							org.slf4j,
 							org.apache.catalina.filters,
-							org.codehaus.jackson.jaxrs,
 							!org.codehaus.enunciate.jaxrs,
 							org.apache.felix.dm,
 							org.apache.commons.lang3.builder,
@@ -107,29 +100,6 @@
 					</instructions>
 					<manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<configuration>
-					<includes>org.opendaylight.controller.*</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>pre-test</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -150,23 +120,22 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>sal</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>commons.northbound</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
+			<version>0.4.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.opendaylight.controller.thirdparty</groupId>
 			<artifactId>com.sun.jersey.jersey-servlet</artifactId>
-			<version>1.17-SNAPSHOT</version>
+			<version>1.18-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

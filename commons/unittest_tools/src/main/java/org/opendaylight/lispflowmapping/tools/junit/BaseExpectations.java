@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -33,11 +33,14 @@ import org.jmock.syntax.ReceiverClause;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseExpectations extends Expectations {
     protected Mockery context;
     protected boolean showAllExpectations;
     private final Synchroniser synchroniser = new Synchroniser();
+    protected static final Logger logger = LoggerFactory.getLogger(BaseExpectations.class);
 
     @Before
     public void before() throws Exception {
@@ -233,7 +236,7 @@ public class BaseExpectations extends Expectations {
             values.add(lastValue);
             boolean match = match(lastValue);
             if (match && (logMatch != null)) {
-                System.out.println("Match: " + logMatch + " " + value);
+                logger.trace("Match: " + logMatch + " " + value);
             }
             return match;
         }
@@ -259,7 +262,7 @@ public class BaseExpectations extends Expectations {
 
         public Object invoke(Invocation invocation) throws Throwable {
             if (logInvocation) {
-                System.out.println("Invoke: returning " + lastValue);
+                logger.trace("Invoke: returning " + lastValue);
             }
             return lastValue;
         }

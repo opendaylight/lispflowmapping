@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -48,8 +48,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,22 +75,21 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     void setFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("FlowMapping set in LispNorthbound");
+        logger.trace("FlowMapping set in LispNorthbound");
         this.mappingService = mappingService;
     }
 
     void unsetFlowMappingService(IFlowMapping mappingService) {
-        logger.debug("LispDAO was unset in LISP Northbound");
+        logger.trace("LispDAO was unset in LISP Northbound");
         this.mappingService = null;
     }
 
     public void init() {
-        logger.debug("LISP Northbound Service is initialized!");
+        logger.trace("LISP Northbound Service is initialized!");
     }
 
     public void start() {
         logger.info("LISP Northbound Service is up!");
-
     }
 
     public void stop() {
@@ -100,7 +97,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     public void destroy() {
-        logger.debug("LISP Northbound Service is destroyed!");
+        logger.trace("LISP Northbound Service is destroyed!");
         mappingService = null;
     }
 
