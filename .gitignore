@@ -2,6 +2,7 @@
 *.settings
 *.classpath
 *target
+*target-ide
 *logs
 *.ipr
 *.iml
