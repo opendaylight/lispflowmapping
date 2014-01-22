@@ -143,6 +143,7 @@
 		<junit.version>4.8.1</junit.version>
 		<xtend.version>2.4.3</xtend.version>
 		<old-jackson.version>1.9.8</old-jackson.version>
+                <hosttracker.version>0.5.1-SNAPSHOT</hosttracker.version>
 	</properties>
 	<dependencies>
 
