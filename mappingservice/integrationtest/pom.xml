@@ -625,11 +625,6 @@
 			<artifactId>javassist</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.opendaylight.controller.thirdparty</groupId>
-			<artifactId>exificient</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>config-manager</artifactId>
 			<version>0.2.3-SNAPSHOT</version>
