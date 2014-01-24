@@ -143,7 +143,7 @@
 		<junit.version>4.8.1</junit.version>
 		<xtend.version>2.4.3</xtend.version>
 		<old-jackson.version>1.9.8</old-jackson.version>
-                <hosttracker.version>0.5.1-SNAPSHOT</hosttracker.version>
+		<hosttracker.version>0.5.1-SNAPSHOT</hosttracker.version>
 	</properties>
 	<dependencies>
 
@@ -220,11 +220,16 @@
 			<version>${netconf.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>${osgi.core.version}</version>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>netconf-util</artifactId>
+			<version>${netconf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.core.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager.it.implementation</artifactId>
@@ -611,10 +616,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.opendaylight.controller</groupId>
-            <artifactId>config-persister-file-xml-adapter</artifactId>
-            <version>${config.version}</version>
-        </dependency>
+			<groupId>org.opendaylight.controller</groupId>
+			<artifactId>config-persister-file-xml-adapter</artifactId>
+			<version>${config.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller.model</groupId>
 			<artifactId>model-inventory</artifactId>
