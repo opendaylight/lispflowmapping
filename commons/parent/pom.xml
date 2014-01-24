@@ -131,7 +131,6 @@
 				<artifactId>clustering.services</artifactId>
 				<version>0.5.0-SNAPSHOT</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-binding</artifactId>
@@ -222,7 +221,27 @@
 				<artifactId>config-api</artifactId>
 				<version>0.2.3-SNAPSHOT</version>
 			</dependency>
-
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.yangmodel</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.api</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.implementation</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+	        <dependency>
+	        	<groupId>org.opendaylight.lispflowmapping</groupId>
+	        	<artifactId>common.unittest.tools</artifactId>
+	        	<version>${lispflowmapping.version}</version>
+	        	<scope>test</scope>
+	        </dependency>
 		</dependencies>
 	</dependencyManagement>
 

@@ -150,7 +150,6 @@
 	<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
-			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.yangtools</groupId>

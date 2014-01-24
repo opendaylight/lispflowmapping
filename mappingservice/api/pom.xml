@@ -78,7 +78,6 @@
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.yangmodel</artifactId>
-			<version>${lispflowmapping.version}</version>
 		</dependency>
 	</dependencies>
 </project>
