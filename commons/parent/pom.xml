@@ -59,7 +59,7 @@
 		</repository>
 		<!-- OpenDayLight Snapshot artifact -->
 		<repository>
-			<id>opendaylight-snapshot</id>
+			<id>opendaylight-snapshot-release</id>
 			<name>opendaylight-snapshot</name>
 			<url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
 			<snapshots>
