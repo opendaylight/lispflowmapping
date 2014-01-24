@@ -44,33 +44,43 @@
 	</properties>
 	<repositories>
 
-    <!-- OpenDayLight Repo Mirror -->
-    <repository>
-      <id>opendaylight-mirror</id>
-      <name>opendaylight-mirror</name>
-      <url>${nexusproxy}/groups/public/</url>
-      <snapshots>
-          <enabled>false</enabled>
-      </snapshots>
-      <releases>
-          <enabled>true</enabled>
-          <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <repository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-      <snapshots>
-          <enabled>true</enabled>
-      </snapshots>
-      <releases>
-          <enabled>false</enabled>
-      </releases>
-    </repository>
-    
-    <repository>
+		<!-- OpenDayLight Repo Mirror -->
+		<repository>
+			<id>opendaylight-mirror</id>
+			<name>opendaylight-mirror</name>
+			<url>${nexusproxy}/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</repository>
+		<!-- OpenDayLight Snapshot artifact -->
+		<repository>
+			<id>opendaylight-snapshot</id>
+			<name>opendaylight-snapshot</name>
+			<url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>opendaylight-snapshot</id>
+			<name>opendaylight-snapshot</name>
+			<url>${nexusproxy}/repositories/opendaylight.release/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
 			<id>maven-restlet</id>
 			<name>Public online Restlet repository</name>
 			<url>http://maven.restlet.org</url>
@@ -79,35 +89,35 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
-  </repositories>
-  
-    <pluginRepositories>
-    <!-- OpenDayLight Repo Mirror -->
-    <pluginRepository>
-      <id>opendaylight-mirror</id>
-      <name>opendaylight-mirror</name>
-      <url>${nexusproxy}/groups/public/</url>
-      <snapshots>
-          <enabled>false</enabled>
-      </snapshots>
-      <releases>
-          <enabled>true</enabled>
-          <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <pluginRepository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-      <snapshots>
-          <enabled>true</enabled>
-      </snapshots>
-      <releases>
-          <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
+	</repositories>
+
+	<pluginRepositories>
+		<!-- OpenDayLight Repo Mirror -->
+		<pluginRepository>
+			<id>opendaylight-mirror</id>
+			<name>opendaylight-mirror</name>
+			<url>${nexusproxy}/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</pluginRepository>
+		<!-- OpenDayLight Snapshot artifact -->
+		<pluginRepository>
+			<id>opendaylight-snapshot</id>
+			<name>opendaylight-snapshot</name>
+			<url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<distributionManagement>
 		<!-- OpenDayLight Released artifact -->
@@ -220,57 +230,57 @@
 				<artifactId>config-api</artifactId>
 				<version>0.2.3</version>
 			</dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.yangmodel</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.api</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.config</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.implementation</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.southbound</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.notrhbound</artifactId>
-              <version>${lispflowmapping.version}</version>
-            </dependency>
-	        <dependency>
-	        	<groupId>org.opendaylight.lispflowmapping</groupId>
-	        	<artifactId>common.unittest.tools</artifactId>
-	        	<version>${lispflowmapping.version}</version>
-	        	<scope>test</scope>
-	        </dependency>
-	        <dependency>
-	        	<groupId>org.opendaylight.lispflowmapping</groupId>
-	        	<artifactId>common.build.tools</artifactId>
-	        	<version>${lispflowmapping.version}</version>
-	        </dependency>
-	        <dependency>
-	        	<groupId>org.opendaylight.lispflowmapping</groupId>
-	        	<artifactId>lispflowmapping-code-commons</artifactId>
-	        	<version>${lispflowmapping.version}</version>
-	        </dependency>
-	        <dependency>
-	        	<groupId>org.opendaylight.lispflowmapping</groupId>
-	        	<artifactId>lispflowmapping-commons</artifactId>
-	        	<version>${lispflowmapping.version}</version>
-	        </dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.yangmodel</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.api</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.config</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.implementation</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.southbound</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>mappingservice.notrhbound</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>common.unittest.tools</artifactId>
+				<version>${lispflowmapping.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>common.build.tools</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>lispflowmapping-code-commons</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opendaylight.lispflowmapping</groupId>
+				<artifactId>lispflowmapping-commons</artifactId>
+				<version>${lispflowmapping.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -339,11 +349,11 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-			<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${releaseplugin.version}</version>
-        </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${releaseplugin.version}</version>
+				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
