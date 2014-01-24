@@ -20,12 +20,11 @@ http://maven.apache.org/maven-v4_0_0.xsd">
     <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
     <tag>HEAD</tag>
   </scm>
-
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>distribution.opendaylight</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.1</version>
       <type>zip</type>
       <classifier>osgipackage</classifier>
       <!-- Make sure this isn't included on any classpath-->
