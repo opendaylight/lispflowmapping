@@ -233,7 +233,22 @@
             </dependency>
             <dependency>
               <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.config</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
               <artifactId>mappingservice.implementation</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.southbound</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.notrhbound</artifactId>
               <version>${lispflowmapping.version}</version>
             </dependency>
 	        <dependency>
@@ -241,6 +256,21 @@
 	        	<artifactId>common.unittest.tools</artifactId>
 	        	<version>${lispflowmapping.version}</version>
 	        	<scope>test</scope>
+	        </dependency>
+	        <dependency>
+	        	<groupId>org.opendaylight.lispflowmapping</groupId>
+	        	<artifactId>common.build.tools</artifactId>
+	        	<version>${lispflowmapping.version}</version>
+	        </dependency>
+	        <dependency>
+	        	<groupId>org.opendaylight.lispflowmapping</groupId>
+	        	<artifactId>lispflowmapping-code-commons</artifactId>
+	        	<version>${lispflowmapping.version}</version>
+	        </dependency>
+	        <dependency>
+	        	<groupId>org.opendaylight.lispflowmapping</groupId>
+	        	<artifactId>lispflowmapping-commons</artifactId>
+	        	<version>${lispflowmapping.version}</version>
 	        </dependency>
 		</dependencies>
 	</dependencyManagement>
