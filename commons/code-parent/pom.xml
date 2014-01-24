@@ -22,7 +22,6 @@
 	        <dependency>
 	        	<groupId>org.opendaylight.lispflowmapping</groupId>
 	        	<artifactId>common.unittest.tools</artifactId>
-	        	<version>${lispflowmapping.version}</version>
 	        	<scope>test</scope>
 	        </dependency>
        		<dependency>
