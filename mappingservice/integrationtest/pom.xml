@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.opendaylight.controller</groupId>
 		<artifactId>commons.integrationtest</artifactId>
 		<version>0.5.1-SNAPSHOT</version>
-		<relativePath></relativePath>
+		<relativePath />
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
+  <version>0.5.1</version>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
+		<tag>release-1.0.X-tagforprepareonly-lispflowmapping-bulk-release-prepare-only-19</tag>
 	</scm>
 
 	<repositories>
@@ -129,7 +128,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<lispflowmapping.version>1.0.0-SNAPSHOT</lispflowmapping.version>
+		<lispflowmapping.version>1.0.0</lispflowmapping.version>
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.0</url.version>
 		<!-- Sonar jacoco plugin to get integration test coverage info -->
