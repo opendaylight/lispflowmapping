@@ -1,20 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>mappingservice-parent</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.yangmodel</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
+		<tag>master-tagforprepareonly-lispflowmapping-bulk-release-prepare-only-28</tag>
 	</scm>
 	<build>
 		<plugins>
