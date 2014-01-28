@@ -4,17 +4,17 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.api</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>lispflowmapping-all-1.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<build>
 		<plugins>
