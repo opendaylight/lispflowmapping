@@ -266,9 +266,9 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
         ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        keyCheck(nbService.getMappingService(), mapRegisterNB);
-
         try {
+        	keyCheck(nbService.getMappingService(), mapRegisterNB);
+
             LispAddressConvertorNB.convertGenericToLispAddresses(mapRegisterNB.getMapRegister());
         } catch (Exception e) {
             throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
