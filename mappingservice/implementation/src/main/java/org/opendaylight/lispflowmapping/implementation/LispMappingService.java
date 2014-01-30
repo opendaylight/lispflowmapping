@@ -110,6 +110,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     void setLispDao(ILispDAO dao) {
         logger.trace("LispDAO set in LispMappingService");
         basicInit(dao);
+        registerTypes();
+    }
+
+    private void registerTypes() {
         logger.trace("Registering LispIpv4Address");
         lispDao.register(LispIpv4AddressInMemoryConverter.class);
         logger.trace("Registering LispIpv6Address");
@@ -293,6 +297,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     @Override
     public void handleNonProxyMapRequest(MapRequest mapRequest, InetAddress targetAddress) {
         tlsMapRequest.set(new MutablePair<MapRequest, InetAddress>(mapRequest, targetAddress));
+    }
+
+    @Override
+    public void clean() {
+        lispDao.clearAll();
+        registerTypes();
     }
 
 }
