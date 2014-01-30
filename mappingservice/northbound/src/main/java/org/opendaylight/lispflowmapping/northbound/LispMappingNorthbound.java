@@ -548,7 +548,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32
      * 
      * </pre>
      */
@@ -628,7 +628,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * 
      * Request URL:
      * 
-     *      http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32/20.0.0.2/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32/20.0.0.2/32
      * 
      * </pre>
      */
@@ -693,7 +693,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32
      * 
      * </pre>
      */
@@ -765,7 +765,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * Example:
      * 
      * Request URL:
-     * http://localhost:8080/lispflowmapping/nb/v2/default/key/1/10.0.0.1/32/20.0.0.2/32
+     * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32/20.0.0.2/32
      * 
      * </pre>
      */
