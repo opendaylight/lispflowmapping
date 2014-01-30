@@ -256,7 +256,7 @@
             </dependency>
             <dependency>
               <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>mappingservice.notrhbound</artifactId>
+              <artifactId>mappingservice.northbound</artifactId>
               <version>${lispflowmapping.version}</version>
             </dependency>
 	        <dependency>
