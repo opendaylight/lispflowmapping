@@ -3,17 +3,17 @@
 	<parent>
 		<artifactId>mappingservice-parent</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.yangmodel</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>release-1.0.X-tagforprepareonly-lispflowmapping-bulk-release-prepare-only-29</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<build>
 		<plugins>
