@@ -368,6 +368,7 @@ public class MappingServiceIntegrationTest {
                 mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-json-provider").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-base").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.module", "jackson-module-jaxb-annotations").versionAsInProject(),
                 mavenBundle("org.codehaus.jackson", "jackson-core-asl").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-jaxrs").versionAsInProject(),//
                 mavenBundle("org.codehaus.jackson", "jackson-xc").versionAsInProject(),//
