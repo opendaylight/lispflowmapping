@@ -4,16 +4,16 @@
 	<parent>
                 <groupId>org.opendaylight.lispflowmapping</groupId>
                 <artifactId>lispflowmapping-commons</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.1</version>
                 <relativePath>../parent</relativePath>
 	</parent>
 	<artifactId>common.build.tools</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
 		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
+		<tag>lispflowmapping-all-1.0.1</tag>
 	</scm>
 </project>
