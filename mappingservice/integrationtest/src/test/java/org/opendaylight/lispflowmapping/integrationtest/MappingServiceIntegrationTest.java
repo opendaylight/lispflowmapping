@@ -362,16 +362,12 @@ public class MappingServiceIntegrationTest {
                 mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
                 mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
                 mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
-                mavenBundle(JERSEY, "jersey-json").versionAsInProject().startLevel(2),
                 mavenBundle("com.fasterxml.jackson.core", "jackson-annotations").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-core").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-json-provider").versionAsInProject(),//
                 mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-base").versionAsInProject(),//
-                mavenBundle("org.codehaus.jackson", "jackson-core-asl").versionAsInProject(),//
-                mavenBundle("org.codehaus.jackson", "jackson-jaxrs").versionAsInProject(),//
-                mavenBundle("org.codehaus.jackson", "jackson-xc").versionAsInProject(),//
-                mavenBundle("org.codehaus.jackson", "jackson-mapper-asl").versionAsInProject(),//
+                mavenBundle("com.fasterxml.jackson.module", "jackson-module-jaxb-annotations").versionAsInProject(),
                 mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),//
                 mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//
@@ -713,7 +709,7 @@ public class MappingServiceIntegrationTest {
         JSONObject json = new JSONObject(jt);
 
         // With just one locator, locators is not a JSONArray
-        String rlocRetrieved = json.getJSONObject("locators").getJSONObject("locatorGeneric").getString("ipAddress");
+        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric").getString("ipAddress");
 
         assertEquals(rloc.getIpv4Address().getValue(), rlocRetrieved);
 
@@ -765,7 +761,7 @@ public class MappingServiceIntegrationTest {
         JSONObject json = new JSONObject(jt);
 
         // With just one locator, locators is not a JSONArray
-        String rlocRetrieved = json.getJSONObject("locators").getJSONObject("locatorGeneric").getString("ipAddress");
+        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric").getString("ipAddress");
 
         assertEquals(rloc.getIpv4Address().getValue(), rlocRetrieved);
 
