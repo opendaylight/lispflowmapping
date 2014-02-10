@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
+
+import com.google.common.collect.Range;
 
 /**
  * <pre>
@@ -66,7 +71,7 @@ public class LocatorRecord {
      * Weight values.
      */
     @XmlElement
-    private byte weight;
+    private short weight;
     /**
      * M Priority: Each RLOC is assigned a multicast Priority used by an ETR in
      * a receiver multicast site to select an ITR in a source multicast site for
@@ -86,7 +91,7 @@ public class LocatorRecord {
      * state across ITRs. For more details, see [RFC6831].
      */
     @XmlElement
-    private byte multicastWeight;
+    private short multicastWeight;
     /**
      * L: When this bit is set, the Locator is flagged as a local Locator to the
      * ETR that is sending the Map-Reply. When a Map-Server is doing proxy
@@ -153,11 +158,24 @@ public class LocatorRecord {
         return this;
     }
 
-    public byte getWeight() {
+    public short getWeight() {
         return weight;
     }
 
-    public LocatorRecord setWeight(byte weight) {
+    public LocatorRecord setWeight(short weight) {
+    	if (weight != 0) {
+            boolean isValidRange = false;
+            List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+            rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+            for (Range<Short> r : rangeConstraints) {
+                if (r.contains(weight)) {
+                isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", weight, rangeConstraints));
+            }
+        }    
         this.weight = weight;
         return this;
     }
@@ -171,11 +189,24 @@ public class LocatorRecord {
         return this;
     }
 
-    public byte getMulticastWeight() {
+    public short getMulticastWeight() {
         return multicastWeight;
     }
 
-    public LocatorRecord setMulticastWeight(byte multicastWeight) {
+    public LocatorRecord setMulticastWeight(short multicastWeight) {
+    	if (multicastWeight != 0) {
+            boolean isValidRange = false;
+            List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+            rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+            for (Range<Short> r : rangeConstraints) {
+                if (r.contains(multicastWeight)) {
+                isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", multicastWeight, rangeConstraints));
+            }
+        }    
         this.multicastWeight = multicastWeight;
         return this;
     }
