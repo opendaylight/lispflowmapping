@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
+
+import com.google.common.collect.Range;
 
 /**
  * <pre>
@@ -51,7 +56,7 @@ public class LocatorRecord {
      * for unicast forwarding.
      */
     @XmlElement
-    private byte priority;
+    private short priority;
     /**
      * Weight: When priorities are the same for multiple RLOCs, the Weight
      * indicates how to balance unicast traffic between them. Weight is encoded
@@ -75,7 +80,7 @@ public class LocatorRecord {
      * see [RFC6831].
      */
     @XmlElement
-    private byte multicastPriority;
+    private short multicastPriority;
     /**
      * M Weight: When priorities are the same for multiple RLOCs, the Weight
      * indicates how to balance building multicast distribution trees across
@@ -144,13 +149,26 @@ public class LocatorRecord {
         return locatorGeneric;
     }
 
-    public byte getPriority() {
+    public short getPriority() {
         return priority;
     }
 
-    public LocatorRecord setPriority(byte priority) {
-        this.priority = priority;
-        return this;
+    public LocatorRecord setPriority(short priority) {
+    	 if (priority != 0) {
+             boolean isValidRange = false;
+             List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+             rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+             for (Range<Short> r : rangeConstraints) {
+                 if (r.contains(priority)) {
+                 isValidRange = true;
+                 }
+             }
+             if (!isValidRange) {
+                 throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", priority, rangeConstraints));
+             }
+         }    
+         this.priority = priority;
+         return this;
     }
 
     public byte getWeight() {
@@ -162,12 +180,25 @@ public class LocatorRecord {
         return this;
     }
 
-    public byte getMulticastPriority() {
+    public short getMulticastPriority() {
         return multicastPriority;
     }
 
-    public LocatorRecord setMulticastPriority(byte multicastPriority) {
-        this.multicastPriority = multicastPriority;
+    public LocatorRecord setMulticastPriority(short value) {
+    	if (value != 0) {
+            boolean isValidRange = false;
+            List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+            rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+            for (Range<Short> r : rangeConstraints) {
+                if (r.contains(value)) {
+                isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", value, rangeConstraints));
+            }
+        }    
+        this.multicastPriority = value;
         return this;
     }
 
