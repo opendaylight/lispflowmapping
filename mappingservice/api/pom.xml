@@ -48,7 +48,8 @@
 							javax.xml.bind,
 							javax.xml.bind.annotation,
 							org.slf4j,
-							org.opendaylight.yangtools.yang.common
+							org.opendaylight.yangtools.yang.common,
+							com.google.common.collect
 						</Import-Package>
 						<Bundle-Activator>
 						</Bundle-Activator>
@@ -56,6 +57,10 @@
 						</Service-Component>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
