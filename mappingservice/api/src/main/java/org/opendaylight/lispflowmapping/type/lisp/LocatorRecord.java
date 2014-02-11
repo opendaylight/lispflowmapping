@@ -8,6 +8,9 @@
 
 package org.opendaylight.lispflowmapping.type.lisp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
+
+import com.google.common.collect.Range;
 
 /**
  * <pre>
@@ -51,7 +56,7 @@ public class LocatorRecord {
      * for unicast forwarding.
      */
     @XmlElement
-    private byte priority;
+    private short priority;
     /**
      * Weight: When priorities are the same for multiple RLOCs, the Weight
      * indicates how to balance unicast traffic between them. Weight is encoded
@@ -66,7 +71,7 @@ public class LocatorRecord {
      * Weight values.
      */
     @XmlElement
-    private byte weight;
+    private short weight;
     /**
      * M Priority: Each RLOC is assigned a multicast Priority used by an ETR in
      * a receiver multicast site to select an ITR in a source multicast site for
@@ -75,7 +80,7 @@ public class LocatorRecord {
      * see [RFC6831].
      */
     @XmlElement
-    private byte multicastPriority;
+    private short multicastPriority;
     /**
      * M Weight: When priorities are the same for multiple RLOCs, the Weight
      * indicates how to balance building multicast distribution trees across
@@ -86,7 +91,7 @@ public class LocatorRecord {
      * state across ITRs. For more details, see [RFC6831].
      */
     @XmlElement
-    private byte multicastWeight;
+    private short multicastWeight;
     /**
      * L: When this bit is set, the Locator is flagged as a local Locator to the
      * ETR that is sending the Map-Reply. When a Map-Server is doing proxy
@@ -135,6 +140,23 @@ public class LocatorRecord {
      */
     @XmlElement
     private LispAddressGeneric locatorGeneric;
+    
+    public short rangeValidation(short value){
+    	if (value != 0) {
+            boolean isValidRange = false;
+            List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+            rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+            for (Range<Short> r : rangeConstraints) {
+                if (r.contains(value)) {
+                isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", value, rangeConstraints));
+            }
+        }    
+    	return value;
+    }
 
     public void setLocatorGeneric(LispAddressGeneric locatorGeneric) {
         this.locatorGeneric = locatorGeneric;
@@ -144,39 +166,43 @@ public class LocatorRecord {
         return locatorGeneric;
     }
 
-    public byte getPriority() {
+    public short getPriority() {
         return priority;
     }
 
-    public LocatorRecord setPriority(byte priority) {
-        this.priority = priority;
-        return this;
+    public LocatorRecord setPriority(short priority) {
+    	 short value = rangeValidation(priority);
+         this.priority = value;
+         return this;
     }
 
-    public byte getWeight() {
+    public short getWeight() {
         return weight;
     }
 
-    public LocatorRecord setWeight(byte weight) {
-        this.weight = weight;
+    public LocatorRecord setWeight(short weight) {
+    	short value = rangeValidation(weight);
+        this.weight = value;
         return this;
     }
 
-    public byte getMulticastPriority() {
+    public short getMulticastPriority() {
         return multicastPriority;
     }
 
-    public LocatorRecord setMulticastPriority(byte multicastPriority) {
-        this.multicastPriority = multicastPriority;
+    public LocatorRecord setMulticastPriority(short multicastPriority) {
+    	short value = rangeValidation(multicastPriority);
+        this.multicastPriority = value;
         return this;
     }
 
-    public byte getMulticastWeight() {
+    public short getMulticastWeight() {
         return multicastWeight;
     }
 
-    public LocatorRecord setMulticastWeight(byte multicastWeight) {
-        this.multicastWeight = multicastWeight;
+    public LocatorRecord setMulticastWeight(short multicastWeight) {
+    	short value = rangeValidation(multicastWeight);
+        this.multicastWeight = value;
         return this;
     }
 
