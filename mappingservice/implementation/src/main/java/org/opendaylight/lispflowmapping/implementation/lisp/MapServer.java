@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class MapServer implements IMapServerAsync {
     private ILispDAO dao;
     private volatile boolean shouldAuthenticate;
+    private volatile boolean shouldOverwriteRlocs;
     private volatile boolean shouldIterateMask;
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
 
@@ -77,9 +78,8 @@ public class MapServer implements IMapServerAsync {
                 }
                 if (value == null) {
                     value = new MappingServiceValue();
-                    value.setRlocs(new ArrayList<MappingServiceRLOC>());
                 }
-                if (value.getRlocs() == null) {
+                if (value.getRlocs() == null || shouldOverwriteRlocs) {
                     value.setRlocs(new ArrayList<MappingServiceRLOC>());
                 }
 
@@ -190,13 +190,21 @@ public class MapServer implements IMapServerAsync {
     public boolean shouldIterateMask() {
         return shouldIterateMask;
     }
-
+    
+    public boolean shouldOverwriteRlocs() {
+        return shouldOverwriteRlocs;
+    }
+    
     public void setShouldIterateMask(boolean shouldIterateMask) {
         this.shouldIterateMask = shouldIterateMask;
     }
 
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
         this.shouldAuthenticate = shouldAuthenticate;
+    }
+    
+    public void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs) {
+        this.shouldOverwriteRlocs = shouldOverwriteRlocs;
     }
 
 }

@@ -65,6 +65,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
+    private volatile boolean shouldOverwriteRLocs;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, InetAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, InetAddress>>();
@@ -154,6 +155,17 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void _removeEid(final CommandInterpreter ci) {
         lispDao.remove(LispAFIConvertor.asIPAfiAddress(ci.nextArgument()));
     }
+    
+    public void _setShouldOverwriteRloc(final CommandInterpreter ci) {
+        try {
+            boolean shouldOverwriteRloc = Boolean.parseBoolean(ci.nextArgument());
+            setShouldOverwriteRlocs(shouldOverwriteRloc);
+        } catch (Exception e) {
+            ci.println("Bad Usage!!");
+        }
+        
+        
+    }
 
     public void _dumpAll(final CommandInterpreter ci) {
         ci.println("EID\tRLOCs");
@@ -189,6 +201,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         help.append("---LISP Mapping Service---\n");
         help.append("\t dumpAll        - Dump all current EID -> RLOC mapping\n");
         help.append("\t removeEid      - Remove a single LispIPv4Address Eid\n");
+        help.append("\t setShouldOverwritingRloc(true/false)      - set the map server's behaivior regarding existing RLOCs\n");
         return help.toString();
     }
 
@@ -230,11 +243,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public boolean shouldIterateMask() {
         return this.shouldIterateMask;
     }
+    
+    public boolean shouldOverwriteRlocs() {
+        return this.shouldOverwriteRLocs;
+    }
 
     public void setShouldIterateMask(boolean shouldIterateMask) {
         this.shouldIterateMask = shouldIterateMask;
         this.mapResolver.setShouldIterateMask(shouldIterateMask);
         this.mapServer.setShouldIterateMask(shouldIterateMask);
+    }
+    
+    public void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs) {
+        this.shouldOverwriteRLocs = shouldOverwriteRlocs;
+        this.mapServer.setShouldOverwriteRlocs(shouldOverwriteRlocs);
     }
 
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
@@ -250,8 +272,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void onSessionInitialized(ConsumerContext session) {
         logger.info("Lisp Consumer session initialized!");
         NotificationService notificationService = session.getSALService(NotificationService.class);
-        // notificationService.registerNotificationListener(LispNotification.class,
-        // this);
         notificationService.registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         notificationService.registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         this.session = session;

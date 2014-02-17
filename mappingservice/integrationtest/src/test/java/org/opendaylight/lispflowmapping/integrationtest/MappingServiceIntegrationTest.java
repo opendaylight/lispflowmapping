@@ -273,7 +273,6 @@ public class MappingServiceIntegrationTest {
         mapRegisterWithMapNotify();
         mapRegisterWithMapNotifyAndMapRequest();
         registerAndQuery__MAC();
-        mapRegisterMapRegisterAndMapRequest();
         mapRequestMapRegisterAndMapRequest();
         mapRegisterWithAuthenticationWithoutConfiguringAKey();
         mapRegisterWithoutMapNotify();
@@ -310,6 +309,12 @@ public class MappingServiceIntegrationTest {
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();
+    }
+    
+    @Test
+    public void testOverWriting() throws Exception {
+        testMapRegisterDosntOverwrites();
+        testMapRegisterOverwrites();
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -397,10 +402,33 @@ public class MappingServiceIntegrationTest {
 
     }
 
-    public void mapRegisterMapRegisterAndMapRequest() throws SocketTimeoutException {
+    public void testMapRegisterDosntOverwrites() throws SocketTimeoutException {
         cleanUP();
         LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
-        MapRegister mb = createMapRegister(eid, asIPAfiAddress("4.3.2.1"));
+        LispIpv4Address rloc1 = asIPAfiAddress("4.3.2.1");
+        Ipv4 rloc2 = asIPAfiAddress("4.3.2.2");
+        MapReply mapReply = sendMapRegisterTwice(eid, rloc1, rloc2);
+        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        assertEquals(LispAFIConvertor.toContainer(rloc1), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+        assertEquals(LispAFIConvertor.toContainer(rloc2), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(1).getLispAddressContainer());
+    }
+    
+    public void testMapRegisterOverwrites() throws SocketTimeoutException {
+        cleanUP();
+        this.lms.setShouldOverwriteRlocs(true);
+        LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
+        LispIpv4Address rloc1 = asIPAfiAddress("4.3.2.1");
+        Ipv4 rloc2 = asIPAfiAddress("4.3.2.2");
+        MapReply mapReply = sendMapRegisterTwice(eid, rloc1, rloc2);
+        assertEquals(1, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        assertEquals(LispAFIConvertor.toContainer(rloc2), mapReply.getEidToLocatorRecord().get(0)
+                .getLocatorRecord().get(0).getLispAddressContainer());
+    }
+
+    private MapReply sendMapRegisterTwice(LispIpv4Address eid, LispIpv4Address rloc1, Ipv4 rloc2) throws SocketTimeoutException {
+        MapRegister mb = createMapRegister(eid, rloc1);
         sendMapRegister(mb);
         MapNotify mapNotify = receiveMapNotify();
         MapRequest mr = createMapRequest(eid);
@@ -408,18 +436,14 @@ public class MappingServiceIntegrationTest {
         MapReply mapReply = receiveMapReply();
         assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
                 .getLocatorRecord().get(0).getLispAddressContainer());
-        MapRegister mb2 = createMapRegister(eid, asIPAfiAddress("4.3.2.2"));
+        MapRegister mb2 = createMapRegister(eid, rloc2);
         sendMapRegister(mb2);
         mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
         mr = createMapRequest(eid);
         sendMapRequest(mr);
         mapReply = receiveMapReply();
-        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
-        assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
-                .getLocatorRecord().get(0).getLispAddressContainer());
-        assertEquals(mb2.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
-                .getLocatorRecord().get(1).getLispAddressContainer());
+        return mapReply;
     }
 
     public void mapRegisterWithAuthenticationWithoutConfiguringAKey() throws SocketTimeoutException {
@@ -1329,7 +1353,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private MapRequest receiveMapRequest() throws SocketTimeoutException {
-        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(10000).getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
@@ -1524,13 +1548,10 @@ public class MappingServiceIntegrationTest {
                 .setMacAddress(new MacAddress(mac)).setAfi((short) AddressFamilyNumberEnum.MAC.getIanaCode()).build();
     }
 
-    private Ipv6 asIPv6AfiAddress(String ip) {
-        return new Ipv6Builder().setIpv6Address(new Ipv6Address(ip)).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode()).build();
-    }
-
     private void cleanUP() {
         after();
         lms.clean();
+        lms.setShouldOverwriteRlocs(false);
         socket = initSocket(socket);
 
     }
