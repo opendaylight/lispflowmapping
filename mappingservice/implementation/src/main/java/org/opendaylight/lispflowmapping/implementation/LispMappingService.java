@@ -65,7 +65,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
-    private volatile boolean shouldOverwriteRLocs;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, InetAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, InetAddress>>();
@@ -245,7 +244,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
     
     public boolean shouldOverwriteRlocs() {
-        return this.shouldOverwriteRLocs;
+        return mapServer.shouldOverwriteRlocs();
     }
 
     public void setShouldIterateMask(boolean shouldIterateMask) {
@@ -255,7 +254,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
     
     public void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs) {
-        this.shouldOverwriteRLocs = shouldOverwriteRlocs;
         this.mapServer.setShouldOverwriteRlocs(shouldOverwriteRlocs);
     }
 
