@@ -44,7 +44,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop,
-							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddresses
 						</Export-Package>
 						<Import-Package>
 							com.google.common.collect,

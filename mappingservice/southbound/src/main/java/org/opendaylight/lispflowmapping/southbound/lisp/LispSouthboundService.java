@@ -34,7 +34,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddresses.TransportAddressesBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
@@ -101,9 +101,9 @@ public class LispSouthboundService implements ILispSouthboundService {
 
             RequestMappingBuilder requestMappingBuilder = new RequestMappingBuilder();
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
-            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
-            requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
+            TransportAddressesBuilder transportAddressesBuilder = new TransportAddressesBuilder();
+            transportAddressesBuilder.setDstIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            requestMappingBuilder.setTransportAddresses(transportAddressesBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
                 logger.trace("MapRequest was published!");
@@ -138,9 +138,9 @@ public class LispSouthboundService implements ILispSouthboundService {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
             AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
-            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
-            addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
+            TransportAddressesBuilder transportAddressesBuilder = new TransportAddressesBuilder();
+            transportAddressesBuilder.setDstIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            addMappingBuilder.setTransportAddresses(transportAddressesBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());
                 logger.trace("MapRegister was published!");

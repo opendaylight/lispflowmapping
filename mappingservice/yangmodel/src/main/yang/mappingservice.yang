@@ -30,17 +30,24 @@
       description
         "mapping service";
     }
-    
-    grouping TransportAddress{
-	container TransportAddress {	    	
-	    leaf ipAddress {	
-	    	type inet:ip-address;	
-	        reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";	    	
-	    }	
-	     leaf port {	
-   			type inet:port-number;	
-	   	}	
-	}
+
+    grouping TransportAddresses{
+        container TransportAddresses {
+            leaf dstIpAddress {
+                type inet:ip-address;
+                reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
+            }
+            leaf srcIpAddress {
+                type inet:ip-address;
+                reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
+            }
+            leaf dstPort {
+                type inet:port-number;
+            }
+            leaf srcPort {
+                type inet:port-number;
+            }
+        }
     }
 
     grouping LispAFIAddress {
@@ -464,7 +471,7 @@
     	container MapRegister {
     		uses MapRegister;
     	}
-    	uses TransportAddress;
+        uses TransportAddresses;
     	
     }
     
@@ -472,45 +479,55 @@
     	container MapNotify {
     		uses MapNotify;
     	}
-    	uses TransportAddress;
-    	
+        uses TransportAddresses;
     }
     
     grouping MapRequestNotification {
     	container MapRequest {
     		uses MapRequest;
     	}
-    	uses TransportAddress;
-    
+        uses TransportAddresses;
     }
-    
-    
+
+
     grouping MapReplyMessage {
     	container MapReply {
     		uses MapReply;
     	}
-    	uses TransportAddress;
-    	
+        uses TransportAddresses;
     }
-    
+
+    grouping MapRequestMessage {
+        container MapRequest {
+            uses MapRequest;
+        }
+        uses TransportAddresses;
+    }
+
     rpc sendMapNotify {
     	input {
     		uses MapNotifyMessage;
     	}
     }
-    
+
     rpc sendMapReply {
     	input {
     		uses MapReplyMessage;
     	}
     }
-    
+
+    rpc sendMapRequest {
+        input {
+            uses MapRequestMessage;
+        }
+    }
+
     notification addMapping {
-    	uses MapRegisterNotification;
+        uses MapRegisterNotification;
     }
     
     notification requestMapping {
-    	uses MapRequestNotification;
+        uses MapRequestNotification;
     }
     
 }

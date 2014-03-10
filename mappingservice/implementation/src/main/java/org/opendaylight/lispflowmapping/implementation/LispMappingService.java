@@ -283,7 +283,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         public void onNotification(AddMapping mapRegisterNotification) {
             MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
             getLispSB().handleMapNotify(mapNotify,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress()));
+                    LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddresses().getDstIpAddress()));
 
         }
     }
@@ -294,7 +294,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         public void onNotification(RequestMapping mapRequestNotification) {
             MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
             getLispSB().handleMapReply(mapReply,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRequestNotification.getTransportAddress().getIpAddress()));
+                    LispNotificationHelper.getInetAddressFromIpAddress(mapRequestNotification.getTransportAddresses().getDstIpAddress()));
         }
 
     }
