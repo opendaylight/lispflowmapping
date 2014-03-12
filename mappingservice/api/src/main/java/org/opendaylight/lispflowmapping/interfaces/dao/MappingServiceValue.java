@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A value in the mapping service. It contains a list of the RLOCs, and a
@@ -16,6 +17,7 @@ import java.util.List;
 public class MappingServiceValue {
 
     private List<MappingServiceRLOC> rlocs;
+    private Set<MappingServiceRequestRLOC> requestRlocs;
     private String key;
 
     private final static MappingServiceValue EMPTY_MAPPING_SERVICE_VALUE = new MappingServiceValue();
@@ -34,6 +36,14 @@ public class MappingServiceValue {
 
     public void setRlocs(List<MappingServiceRLOC> rlocs) {
         this.rlocs = rlocs;
+    }
+
+    public Set<MappingServiceRequestRLOC> getRequestRlocs() {
+        return requestRlocs;
+    }
+
+    public void setRequestRlocs(Set<MappingServiceRequestRLOC> requestRlocs) {
+        this.requestRlocs = requestRlocs;
     }
 
     public String getKey() {
@@ -82,7 +92,7 @@ public class MappingServiceValue {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        return sb.append("MappingServiceValue: Password: ").append(key).append(" RLOCs: ").append(rlocs).toString();
+        return sb.append("MappingServiceValue: Password: ").append(key).append(" RLOCs: ").append(rlocs).append(" Request RLOCs: ").append(requestRlocs).toString();
     }
 
 }
