@@ -53,16 +53,17 @@ public class LispSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            logger.trace("Recieved packet of type EncapsulatedControlMessage");
+            logger.trace("Received packet of type EncapsulatedControlMessage");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
-            logger.trace("Recieved packet of type MapRequest");
+            logger.trace("Received packet of type MapRequest");
             handleMapRequest(inBuffer);
         } else if (lispType == LispMessageEnum.MapRegister) {
-            logger.trace("Recieved packet of type MapRegister");
+            logger.trace("Received packet of type MapRegister");
             handleMapRegister(inBuffer, packet.getAddress());
+        } else {
+            logger.warn("Received unknown packet type");
         }
-        logger.warn("Recieved unknown packet type");
     }
 
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
