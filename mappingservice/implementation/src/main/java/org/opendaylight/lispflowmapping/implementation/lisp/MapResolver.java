@@ -9,14 +9,19 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.net.InetAddress;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRequestRLOC;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
@@ -55,6 +60,8 @@ public class MapResolver implements IMapResolverAsync {
             logger.warn("handleMapRequest called while dao is uninitialized");
             return;
         }
+        InetAddress itrRloc = MapRequestUtil.selectItrRloc(request);
+        logger.trace("Map-Request itrRloc is " + ((itrRloc == null) ? "MISSING" : itrRloc.toString()));
         if (request.isPitr()) {
             if (request.getEidRecord().size() > 0) {
                 EidRecord eid = request.getEidRecord().get(0);
@@ -93,6 +100,21 @@ public class MapResolver implements IMapResolverAsync {
                                 .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
                         recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                     }
+
+                    if (itrRloc != null) {
+                        MappingServiceRequestRLOC requestRloc = new MappingServiceRequestRLOC(itrRloc);
+                        if (value.getRequestRlocs() == null) {
+                            value.setRequestRlocs(new HashSet<MappingServiceRequestRLOC>());
+                        } else if (value.getRequestRlocs().contains(requestRloc)) {
+                            /* If there is an entry already for this requestRloc, remove it, so that it gets the new timestamp */
+                            value.getRequestRlocs().remove(requestRloc);
+                        }
+                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+                        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
+                        value.getRequestRlocs().add(requestRloc);
+                        dao.put(key, entry);
+                    }
+
                 } else {
                     recordBuilder
                             .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
