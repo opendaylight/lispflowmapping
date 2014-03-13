@@ -10,14 +10,19 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.net.InetAddress;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
@@ -51,6 +56,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             logger.warn("handleMapRequest called while dao is uninitialized");
             return;
         }
+        InetAddress itrRloc = MapRequestUtil.selectItrRloc(request);
+        logger.trace("Map-Request itrRloc is " + ((itrRloc == null) ? "MISSING" : itrRloc.toString()));
         if (request.isPitr()) {
             if (request.getEidRecord().size() > 0) {
                 EidRecord eid = request.getEidRecord().get(0);
@@ -83,6 +90,19 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 List<MappingServiceRLOCGroup> locators = getLocators(eid);
                 if (locators != null && locators.size() > 0) {
                     addLocatorGroups(recordBuilder, locators);
+                    if (itrRloc != null) {
+                        MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
+                        HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eid.getLispAddressContainer(), eid.getMask());
+                        if (subscribers == null) {
+                            subscribers = new HashSet<MappingServiceSubscriberRLOC>();
+                        } else if (subscribers.contains(subscriberRloc)) {
+                            /* If there is an entry already for this subscriberRloc, remove it, so that it gets the new timestamp */
+                            subscribers.remove(subscriberRloc);
+                        }
+                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+                        subscribers.add(subscriberRloc);
+                        dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                    }
                 } else {
                     recordBuilder
                             .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
