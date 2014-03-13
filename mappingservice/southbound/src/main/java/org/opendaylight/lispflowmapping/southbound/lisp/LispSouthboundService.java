@@ -21,6 +21,7 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSer
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMappingBuilder;
@@ -78,24 +79,7 @@ public class LispSouthboundService implements ILispSouthboundService {
     private void handleMapRequest(ByteBuffer inBuffer) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
-            InetAddress finalSourceAddress = null;
-            for (ItrRloc itr : request.getItrRloc()) {
-                Address addr = itr.getLispAddressContainer().getAddress();
-                if (addr instanceof LispIpv4Address) {
-                    try {
-                        finalSourceAddress = InetAddress.getByName(((LispIpv4Address) addr).getIpv4Address().getValue());
-                    } catch (UnknownHostException e) {
-                    }
-                    break;
-                }
-                if (addr instanceof LispIpv6Address) {
-                    try {
-                        finalSourceAddress = InetAddress.getByName((((LispIpv6Address) addr).getIpv6Address().getValue()));
-                    } catch (UnknownHostException e) {
-                    }
-                    break;
-                }
-            }
+            InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
             }
