@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_41d176cc",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingServiceValue.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-03-14T21:30:42Z",
+      "side": 1,
+      "message": "requestRlocs is a bit confusing name, maybe include a subscriber in there: subscribingRlocs..or maybe even requestingRlocs I think would be easier to understand.\nSame for the class name (MappingServiceRequestRloc).",
+      "revId": "b6610be3bea4fa2e0071a6d662fe86c31de0bb54",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
