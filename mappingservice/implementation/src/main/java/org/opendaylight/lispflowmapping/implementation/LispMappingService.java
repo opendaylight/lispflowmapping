@@ -9,7 +9,6 @@
 package org.opendaylight.lispflowmapping.implementation;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,7 +19,6 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ConsumerCo
 import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
-import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
@@ -54,8 +52,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.net.InetAddresses;
-
 public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
         IMapRequestResultHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
@@ -65,7 +61,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
-    private volatile boolean shouldOverwriteRLocs;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, InetAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, InetAddress>>();
@@ -73,12 +68,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private ILispSouthboundPlugin lispSB = null;
 
     private ConsumerContext session;
-
-    public static void main(String[] args) throws Exception {
-        LispMappingService serv = new LispMappingService();
-        serv.setLispDao(new InMemoryDAO());
-        serv.init();
-    }
 
     class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
@@ -155,17 +144,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void _removeEid(final CommandInterpreter ci) {
         lispDao.remove(LispAFIConvertor.asIPAfiAddress(ci.nextArgument()));
     }
-    
-    public void _setShouldOverwriteRloc(final CommandInterpreter ci) {
-        try {
-            boolean shouldOverwriteRloc = Boolean.parseBoolean(ci.nextArgument());
-            setShouldOverwriteRlocs(shouldOverwriteRloc);
-        } catch (Exception e) {
-            ci.println("Bad Usage!!");
-        }
-        
-        
-    }
 
     public void _dumpAll(final CommandInterpreter ci) {
         ci.println("EID\tRLOCs");
@@ -188,6 +166,16 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
             ci.println("Not implemented by this DAO");
         }
         return;
+    }
+
+    public void _setShouldOverwriteRlocs(final CommandInterpreter ci) {
+        try {
+            boolean shouldOverwriteRloc = Boolean.parseBoolean(ci.nextArgument());
+            setOverwrite(shouldOverwriteRloc);
+        } catch (Exception e) {
+            ci.println("Bad Usage!!");
+        }
+
     }
 
     public void _addDefaultPassword(final CommandInterpreter ci) {
@@ -243,20 +231,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public boolean shouldIterateMask() {
         return this.shouldIterateMask;
     }
-    
-    public boolean shouldOverwriteRlocs() {
-        return this.shouldOverwriteRLocs;
-    }
 
     public void setShouldIterateMask(boolean shouldIterateMask) {
         this.shouldIterateMask = shouldIterateMask;
         this.mapResolver.setShouldIterateMask(shouldIterateMask);
         this.mapServer.setShouldIterateMask(shouldIterateMask);
-    }
-    
-    public void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs) {
-        this.shouldOverwriteRLocs = shouldOverwriteRlocs;
-        this.mapServer.setShouldOverwriteRlocs(shouldOverwriteRlocs);
     }
 
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
@@ -323,6 +302,17 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void clean() {
         lispDao.clearAll();
         registerTypes();
+        setOverwrite(true);
+    }
+
+    @Override
+    public boolean shouldOverwrite() {
+        return mapServer.shouldOverwrite();
+    }
+
+    @Override
+    public void setOverwrite(boolean overwrite) {
+        mapServer.setOverwrite(overwrite);
     }
 
 }
