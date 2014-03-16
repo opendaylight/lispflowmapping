@@ -9,8 +9,8 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -20,38 +20,39 @@ import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelp
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServerAsync {
-    private ILispDAO dao;
-    private volatile boolean shouldAuthenticate;
-    private volatile boolean shouldOverwriteRlocs;
-    private volatile boolean shouldIterateMask;
+public class MapServer extends AbstractLispComponent implements IMapServerAsync {
+
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
+    private boolean overwrite;
 
     public MapServer(ILispDAO dao) {
         this(dao, true);
     }
 
-    public MapServer(ILispDAO dao, boolean authenticate) {
-        this(dao, authenticate, true);
+    public MapServer(ILispDAO dao, boolean overwrite) {
+        this(dao, overwrite, true);
     }
 
-    public MapServer(ILispDAO dao, boolean authenticate, boolean iterateAuthenticationMask) {
-        this.dao = dao;
-        this.shouldAuthenticate = authenticate;
-        this.shouldIterateMask = iterateAuthenticationMask;
+    public MapServer(ILispDAO dao, boolean overwrite, boolean authenticate) {
+        this(dao, overwrite, authenticate, true);
+    }
+
+    public MapServer(ILispDAO dao, boolean overwrite, boolean authenticate, boolean iterateAuthenticationMask) {
+        super(dao, authenticate, iterateAuthenticationMask);
+        this.overwrite = overwrite;
     }
 
     public void handleMapRegister(MapRegister mapRegister, IMapNotifyHandler callback) {
@@ -61,7 +62,7 @@ public class MapServer implements IMapServerAsync {
             boolean failed = false;
             String password = null;
             for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecord()) {
-                if (shouldAuthenticate) {
+                if (shouldAuthenticate()) {
                     password = getPassword(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
                     if (!LispAuthenticationUtil.validate(mapRegister, password)) {
                         logger.warn("Authentication failed");
@@ -69,40 +70,7 @@ public class MapServer implements IMapServerAsync {
                         break;
                     }
                 }
-                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
-                        eidRecord.getMaskLength());
-                MappingServiceValue value = null;
-                Map<String, ?> locators = dao.get(key);
-                if (locators != null) {
-                    value = (MappingServiceValue) locators.get("value");
-                }
-                if (value == null) {
-                    value = new MappingServiceValue();
-                }
-                if (value.getRlocs() == null || shouldOverwriteRlocs) {
-                    value.setRlocs(new ArrayList<MappingServiceRLOC>());
-                }
-
-                MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-                if (eidRecord.getLocatorRecord() != null) {
-                    Map<LocatorRecord, MappingServiceRLOC> currentRLOCs = new HashMap<LocatorRecord, MappingServiceRLOC>();
-                    for (MappingServiceRLOC msr : value.getRlocs()) {
-                        currentRLOCs.put(msr.getRecord(), msr);
-                    }
-
-                    for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
-                        if (currentRLOCs.containsKey(locatorRecord)) {
-                            currentRLOCs.get(locatorRecord).setAction(eidRecord.getAction()).setAuthoritative(eidRecord.isAuthoritative())
-                                    .setRegisterdDate(new Date(System.currentTimeMillis())).setTtl(eidRecord.getRecordTtl());
-                        } else {
-
-                            value.getRlocs().add(
-                                    new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord
-                                            .isAuthoritative()));
-                        }
-                    }
-                }
-                dao.put(key, entry);
+                saveRlocs(eidRecord);
 
             }
             if (!failed) {
@@ -110,7 +78,7 @@ public class MapServer implements IMapServerAsync {
                 if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
                     logger.trace("MapRegister wants MapNotify");
                     MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
-                    if (shouldAuthenticate) {
+                    if (shouldAuthenticate()) {
                         builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(), password));
                     }
                     callback.handleMapNotify(builder.build());
@@ -119,25 +87,37 @@ public class MapServer implements IMapServerAsync {
         }
     }
 
-    private String getPassword(LispAddressContainer prefix, int maskLength) {
-        while (maskLength >= 0) {
-            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
-            Map<String, ?> daoMap = dao.get(key);
-            if (daoMap != null) {
-                MappingServiceValue value = (MappingServiceValue) daoMap.get("value");
-                if (value != null && value.getKey() != null) {
-                    return value.getKey();
-                } else if (shouldIterateMask()) {
-                    maskLength -= 1;
-                } else {
-                    return null;
+    public void saveRlocs(EidToLocatorRecord eidRecord) {
+        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
+        Map<String, MappingServiceRLOCGroup> rlocGroups = new HashMap<String, MappingServiceRLOCGroup>();
+        if (eidRecord.getLocatorRecord() != null) {
+            for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
+                String subkey = getLocatorKey(locatorRecord);
+                if (!rlocGroups.containsKey(subkey)) {
+                    rlocGroups.put(subkey, new MappingServiceRLOCGroup(eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
                 }
-            } else {
-                maskLength -= 1;
-
+                rlocGroups.get(subkey).addRecord(locatorRecord);
             }
         }
-        return null;
+        List<MappingEntry<MappingServiceRLOCGroup>> entries = new ArrayList<>();
+        for (String subkey : rlocGroups.keySet()) {
+            entries.add(new MappingEntry<>(subkey, rlocGroups.get(subkey)));
+        }
+        dao.put(key, entries.toArray(new MappingEntry[entries.size()]));
+    }
+
+    private String getLocatorKey(LocatorRecord locatorRecord) {
+        if (locatorRecord.getLispAddressContainer().getAddress() instanceof LcafKeyValue) {
+            LcafKeyValue keyVal = (LcafKeyValue) locatorRecord.getLispAddressContainer().getAddress();
+            if (keyVal.getKey().getPrimitiveAddress() instanceof DistinguishedName) {
+                return ((DistinguishedName) keyVal.getKey().getPrimitiveAddress()).getDistinguishedName();
+            }
+        }
+        if (shouldOverwrite()) {
+            return ADDRESS_SUBKEY;
+        } else {
+            return String.valueOf(locatorRecord.getLispAddressContainer().getAddress().hashCode());
+        }
     }
 
     public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
@@ -146,65 +126,22 @@ public class MapServer implements IMapServerAsync {
 
     public boolean removeAuthenticationKey(LispAddressContainer address, int maskLen) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        Map<String, ?> daoMap = dao.get(key);
-        if (daoMap != null) {
-            MappingServiceValue value = (MappingServiceValue) daoMap.get("value");
-            if (value != null) {
-                value.setKey(null);
-                if (value.isEmpty()) {
-                    dao.remove(key);
-                } else {
-                    dao.put(key, new MappingEntry<MappingServiceValue>("value", value));
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        dao.removeSpecific(key, PASSWORD_SUBKEY);
+        return true;
     }
 
     public boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        Map<String, ?> daoMap = dao.get(mappingServiceKey);
-        MappingServiceValue value = null;
-        if (daoMap != null) {
-            value = (MappingServiceValue) daoMap.get("value");
-            if (value == null) {
-                value = new MappingServiceValue();
-            }
-        } else {
-            value = new MappingServiceValue();
-        }
-        value.setKey(key);
-        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-        dao.put(mappingServiceKey, entry);
+        dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
         return true;
     }
 
-    public boolean shouldAuthenticate() {
-        return shouldAuthenticate;
+    public boolean shouldOverwrite() {
+        return overwrite;
     }
 
-    public boolean shouldIterateMask() {
-        return shouldIterateMask;
-    }
-    
-    public boolean shouldOverwriteRlocs() {
-        return shouldOverwriteRlocs;
-    }
-    
-    public void setShouldIterateMask(boolean shouldIterateMask) {
-        this.shouldIterateMask = shouldIterateMask;
-    }
-
-    public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        this.shouldAuthenticate = shouldAuthenticate;
-    }
-    
-    public void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs) {
-        this.shouldOverwriteRlocs = shouldOverwriteRlocs;
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
     }
 
 }

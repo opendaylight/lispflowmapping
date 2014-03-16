@@ -23,11 +23,11 @@ public interface IGeneralMapServer {
      * @return Should the map server use masking.
      */
     boolean shouldIterateMask();
-    
+
     /**
-     * @return Should the map server overwrite Rlocs.
+     * @return Should the map server use overwrite.
      */
-    boolean shouldOverwriteRlocs();
+    boolean shouldOverwrite();
 
     /**
      * This method returns the authentication key of the address.
@@ -41,8 +41,8 @@ public interface IGeneralMapServer {
     void setShouldIterateMask(boolean shouldIterateMask);
 
     void setShouldAuthenticate(boolean shouldAuthenticate);
-    
-    void setShouldOverwriteRlocs(boolean shouldOverwriteRlocs);
+
+    public void setOverwrite(boolean overwrite);
 
     /**
      * This method removes the given authentication key from the map server.

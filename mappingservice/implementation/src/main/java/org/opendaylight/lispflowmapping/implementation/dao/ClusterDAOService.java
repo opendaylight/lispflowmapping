@@ -11,7 +11,6 @@ package org.opendaylight.lispflowmapping.implementation.dao;
 import java.lang.reflect.ParameterizedType;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -27,8 +26,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,11 +106,12 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
 
     public <K> void put(K key, MappingEntry<?>... values) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        Map<String, Object> keyToValues = new HashMap<String, Object>();
-        for (MappingEntry<?> entry : values) {
-            keyToValues.put(entry.getKey(), entry.getValue());
+        if (!keysToValues.containsKey(key)) {
+            keysToValues.put(key, new HashMap<String, Object>());
         }
-        keysToValues.put(key, keyToValues);
+        for (MappingEntry<?> entry : values) {
+            keysToValues.get(key).put(entry.getKey(), entry.getValue());
+        }
     }
 
     private <K> Map<Object, Map<String, Object>> getTypeMap(K key) {
@@ -139,21 +138,15 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
-                if (value instanceof MappingServiceValue) {
-                    MappingServiceValue msv = (MappingServiceValue) value;
-                    for (Iterator<MappingServiceRLOC> it = msv.getRlocs().iterator(); it.hasNext();) {
-                        MappingServiceRLOC rloc = it.next();
-                        if (isExpired(rloc)) {
-                            it.remove();
-                        }
-                    }
-                    if (msv.getKey() == null && msv.getRlocs().size() == 0) {
-                        remove(keyId);
+                if (value instanceof MappingServiceRLOCGroup) {
+                    MappingServiceRLOCGroup rloc = (MappingServiceRLOCGroup) value;
+                    if (isExpired(rloc)) {
+                        removeSpecific(keyId, valueKey);
                     }
                 }
             }
 
-            private boolean isExpired(MappingServiceRLOC rloc) {
+            private boolean isExpired(MappingServiceRLOCGroup rloc) {
                 return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });
@@ -171,6 +164,14 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public <K> boolean remove(K key) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
         return keysToValues.remove(key) != null;
+    }
+
+    public <K> boolean removeSpecific(K key, String valueKey) {
+        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
+        if (!keysToValues.containsKey(key) || !keysToValues.get(key).containsKey(valueKey)) {
+            return false;
+        }
+        return keysToValues.get(key).remove(valueKey) != null;
     }
 
     public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType) {
