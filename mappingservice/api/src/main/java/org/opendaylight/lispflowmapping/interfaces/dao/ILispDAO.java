@@ -11,7 +11,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public interface ILispDAO {
+public interface ILispDAO extends IQueryAll {
 
     /**
      * Put a entry into the DAO.
@@ -62,6 +62,17 @@ public interface ILispDAO {
      * @return true if success, false otherwise
      */
     public <K> boolean remove(K key);
+
+    /**
+     * Remove an entry from the DAO
+     * 
+     * @param key
+     *            The key of the entry
+     * @param valueKey
+     *            The value to delete
+     * @return true if success, false otherwise
+     */
+    public <K> boolean removeSpecific(K key, String valueKey);
 
     /**
      * Clear the DAO and remove all of the entries.

@@ -17,6 +17,7 @@ public enum LispCanonicalAddressFormatEnum {
     APPLICATION_DATA(4), //
     SOURCE_DEST(12), //
     TRAFFIC_ENGINEERING(10), //
+    KEY_VALUE(15), //
     UNKNOWN(-1);
 
     private byte lispCode;
