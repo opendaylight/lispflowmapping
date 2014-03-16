@@ -17,8 +17,8 @@ import junitx.framework.StringAssert;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.tools.junit.MockCommandInterpreter;
@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 
 public class LispMappingServiceCliTest extends BaseTestCase {
     private LispMappingService testedLispMappingService;
-    private InMemoryDAO dao;
+    private ILispDAO dao;
     private Map<Object, Object> visitorExecutions;
     private MockCommandInterpreter mockCommandInterpreter;
 
@@ -36,7 +36,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
         super.before();
 
         testedLispMappingService = new LispMappingService();
-        dao = context.mock(InMemoryDAO.class);
+        dao = context.mock(ILispDAO.class);
         inject(testedLispMappingService, "lispDao", dao);
         mockCommandInterpreter = new MockCommandInterpreter();
 

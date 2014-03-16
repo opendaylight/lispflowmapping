@@ -229,6 +229,21 @@
               }
         }
         
+        grouping LcafKeyValueAddress {
+       		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-04#section-4.14";
+       		uses LispLcafAddress{
+    			refine lcafType {
+    				default 15;
+    			}
+    		}
+            container key {
+            	uses LispSimpleAddress;
+             }
+             container value {
+                uses LispSimpleAddress;
+             }
+        }
+        
         grouping LcafApplicationDataAddress {
        		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
        		uses LispLcafAddress{
@@ -280,6 +295,9 @@
                        }
                        case LcafSourceDest {
                                uses LcafSourceDestAddress;
+                       }
+                       case LcafKeyValue {
+                               uses LcafKeyValueAddress;
                        }
                        case LcafList {
                                uses LcafListAddress;

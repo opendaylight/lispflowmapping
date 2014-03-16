@@ -47,7 +47,7 @@ public class MappingEntry<V> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MappingEntry<?> other = (MappingEntry<?>) obj;
+        MappingEntry other = (MappingEntry) obj;
         if (mappingValueKey == null) {
             if (other.mappingValueKey != null)
                 return false;
@@ -63,6 +63,6 @@ public class MappingEntry<V> {
 
     @Override
     public String toString() {
-        return "MappingServiceEntry: " + value.toString();
+        return "MappingEntry: " + value.toString();
     }
 }

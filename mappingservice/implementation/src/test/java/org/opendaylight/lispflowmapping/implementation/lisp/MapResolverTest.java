@@ -18,16 +18,13 @@ import junit.framework.Assert;
 
 import org.jmock.api.Invocation;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.authentication.LispKeyIDEnum;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
@@ -35,8 +32,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
@@ -53,7 +50,7 @@ public class MapResolverTest extends BaseTestCase {
     private LispAFIAddress v4Address;
     private LispAFIAddress v6Address;
 
-    private HashMap<IMappingServiceKey, Map<String, MappingServiceValue>> daoResults;
+    private HashMap<IMappingServiceKey, Map<String, MappingServiceRLOCGroup>> daoResults;
 
     @Override
     @Before
@@ -66,7 +63,7 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest = new MapRequestBuilder();
         v4Address = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
         v6Address = LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1");
-        daoResults = new HashMap<IMappingServiceKey, Map<String, MappingServiceValue>>();
+        daoResults = new HashMap<IMappingServiceKey, Map<String, MappingServiceRLOCGroup>>();
     }
 
     @Test
@@ -207,10 +204,8 @@ public class MapResolverTest extends BaseTestCase {
     public void handleMapRequest_VerifyNativelyForwardAutherized() {
         MapRequest mr = getDefaultMapRequest();
 
-        MappingServiceValue value = new MappingServiceValue();
-        value.setKey("pass");
-        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-        result.put("value", value);
+        Map<String, List<MappingServiceRLOCGroup>> result = new HashMap<String, List<MappingServiceRLOCGroup>>();
+        result.put(AbstractLispComponent.ADDRESS_SUBKEY, new ArrayList<MappingServiceRLOCGroup>());
 
         MapReply mapReply = getNativelyForwardMapReply(mr, result);
 
@@ -219,9 +214,11 @@ public class MapResolverTest extends BaseTestCase {
         assertEquals(Action.NativelyForward, eidToLocators.getAction());
     }
 
-    private MapReply getNativelyForwardMapReply(MapRequest mr, Map<String, MappingServiceValue> result) {
-        allowing(lispDAO).get(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(v4Address), 32));
+    private MapReply getNativelyForwardMapReply(MapRequest mr, Map<String, List<MappingServiceRLOCGroup>> result) {
+        allowing(lispDAO).get(wany(IMappingServiceKey.class));
         ret(result);
+        allowing(lispDAO).getSpecific(wany(IMappingServiceKey.class), with(AbstractLispComponent.PASSWORD_SUBKEY));
+        ret("pass");
         MapReply mapReply = testedMapResolver.handleMapRequest(mr);
         return mapReply;
     }
@@ -335,18 +332,16 @@ public class MapResolverTest extends BaseTestCase {
         Assert.assertTrue(locatorRecord.isRouted());
     }
 
-    private Map<String, MappingServiceValue> prepareMapping(EidToLocatorRecord... records) {
+    private Map<String, MappingServiceRLOCGroup> prepareMapping(EidToLocatorRecord... records) {
         if (records.length > 0) {
             for (EidToLocatorRecord eidToLocatorRecord : records) {
-                MappingServiceValue value = new MappingServiceValue();
-                Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-                result.put("value", value);
-                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
+                Map<String, MappingServiceRLOCGroup> result = new HashMap<String, MappingServiceRLOCGroup>();
+                MappingServiceRLOCGroup rlocs = new MappingServiceRLOCGroup(eidToLocatorRecord.getRecordTtl(), eidToLocatorRecord.getAction(),
+                        eidToLocatorRecord.isAuthoritative());
                 for (LocatorRecord locator : eidToLocatorRecord.getLocatorRecord()) {
-                    rlocs.add(new MappingServiceRLOC(locator, eidToLocatorRecord.getRecordTtl(), eidToLocatorRecord.getAction(), eidToLocatorRecord
-                            .isAuthoritative()));
+                    rlocs.addRecord(locator);
                 }
-                value.setRlocs(rlocs);
+                result.put(AbstractLispComponent.ADDRESS_SUBKEY, rlocs);
 
                 daoResults.put(
                         MappingServiceKeyUtil.generateMappingServiceKey(eidToLocatorRecord.getLispAddressContainer(),
@@ -368,6 +363,7 @@ public class MapResolverTest extends BaseTestCase {
 
         allowing(lispDAO).get(with(daoGetSaverAction));
         will(daoGetSaverAction);
+        allowing(lispDAO).getSpecific(wany(IMappingServiceKey.class), with(AbstractLispComponent.PASSWORD_SUBKEY));
 
         return daoResults.get(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(v4Address)));
     }
