@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
@@ -16,8 +17,7 @@ import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelp
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
@@ -32,12 +32,10 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.Ma
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapResolver implements IMapResolverAsync {
+public class MapResolver extends AbstractLispComponent implements IMapResolverAsync {
+
     private static final int TTL_RLOC_TIMED_OUT = 1;
     private static final int TTL_NO_RLOC_KNOWN = 15;
-    private ILispDAO dao;
-    private volatile boolean shouldAuthenticate;
-    private volatile boolean shouldIterateMask;
     protected static final Logger logger = LoggerFactory.getLogger(MapResolver.class);
 
     public MapResolver(ILispDAO dao) {
@@ -45,9 +43,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     public MapResolver(ILispDAO dao, boolean authenticate, boolean iterateMask) {
-        this.dao = dao;
-        this.shouldAuthenticate = authenticate;
-        this.shouldIterateMask = iterateMask;
+        super(dao, authenticate, iterateMask);
     }
 
     public void handleMapRequest(MapRequest request, IMapRequestResultHandler callback) {
@@ -58,11 +54,13 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isPitr()) {
             if (request.getEidRecord().size() > 0) {
                 EidRecord eid = request.getEidRecord().get(0);
-                Map<String, ?> locators = getLocators(eid);
-                MappingServiceValue value = (MappingServiceValue) locators.get("value");
-                if (value.getRlocs() != null && value.getRlocs().size() > 0) {
-                    callback.handleNonProxyMapRequest(request,
-                            LispNotificationHelper.getInetAddressFromContainer(value.getRlocs().get(0).getRecord().getLispAddressContainer()));
+                Object result = getLocatorsSpecific(eid, ADDRESS_SUBKEY);
+                if (result != null && result instanceof MappingServiceRLOCGroup) {
+                    MappingServiceRLOCGroup locatorsGroup = (MappingServiceRLOCGroup) result;
+                    if (locatorsGroup != null && locatorsGroup.getRecords().size() > 0) {
+                        callback.handleNonProxyMapRequest(request,
+                                LispNotificationHelper.getInetAddressFromContainer(locatorsGroup.getRecords().get(0).getLispAddressContainer()));
+                    }
                 }
             }
 
@@ -82,44 +80,66 @@ public class MapResolver implements IMapResolverAsync {
                 recordBuilder.setMaskLength(eid.getMask());
                 recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                Map<String, ?> locators = getLocators(eid);
-                if (locators != null) {
-                    MappingServiceValue value = (MappingServiceValue) locators.get("value");
-
-                    if (value.getRlocs() != null && value.getRlocs().size() > 0) {
-                        addLocators(recordBuilder, value);
-                    } else {
-                        recordBuilder
-                                .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
-                        recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
-                    }
+                List<MappingServiceRLOCGroup> locators = getLocators(eid);
+                if (locators != null && locators.size() > 0) {
+                    addLocatorGroups(recordBuilder, locators);
                 } else {
                     recordBuilder
                             .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
-                    recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+                    if (getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
+                        recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+                    } else {
+                        recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+
+                    }
                 }
                 builder.getEidToLocatorRecord().add(recordBuilder.build());
             }
+
             callback.handleMapReply(builder.build());
         }
     }
 
-    private Map<String, ?> getLocators(EidRecord eid) {
+    private List<MappingServiceRLOCGroup> getLocators(EidRecord eid) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
         Map<String, ?> locators = dao.get(key);
+        List<MappingServiceRLOCGroup> result = aggregateLocators(locators);
+        if (shouldIterateMask() && result.isEmpty() && MaskUtil.isMaskable(key.getEID().getAddress())) {
+            result = findMaskLocators(key);
+        }
+        return result;
+    }
+
+    private List<MappingServiceRLOCGroup> aggregateLocators(Map<String, ?> locators) {
+        List<MappingServiceRLOCGroup> result = new ArrayList<MappingServiceRLOCGroup>();
+        if (locators != null) {
+            for (Object value : locators.values()) {
+                if (value != null && value instanceof MappingServiceRLOCGroup) {
+                    if (!((MappingServiceRLOCGroup) value).getRecords().isEmpty()) {
+                        result.add((MappingServiceRLOCGroup) value);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private Object getLocatorsSpecific(EidRecord eid, String subkey) {
+        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+        Object locators = dao.getSpecific(key, subkey);
         if (shouldIterateMask() && locators == null && MaskUtil.isMaskable(key.getEID().getAddress())) {
-            locators = findMaskLocators(key);
+            locators = findMaskLocatorsSpecific(key, subkey);
         }
         return locators;
     }
 
-    private Map<String, ?> findMaskLocators(IMappingServiceKey key) {
+    private Object findMaskLocatorsSpecific(IMappingServiceKey key, String subkey) {
         int mask = key.getMask();
         while (mask > 0) {
             key = MappingServiceKeyUtil.generateMappingServiceKey(
                     new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
             mask--;
-            Map<String, ?> locators = dao.get(key);
+            Object locators = dao.getSpecific(key, subkey);
             if (locators != null) {
                 return locators;
             }
@@ -127,45 +147,47 @@ public class MapResolver implements IMapResolverAsync {
         return null;
     }
 
-    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceValue value) {
-        for (MappingServiceRLOC rloc : value.getRlocs()) {
-            addLocator(recordBuilder, rloc);
+    private List<MappingServiceRLOCGroup> findMaskLocators(IMappingServiceKey key) {
+        int mask = key.getMask();
+        while (mask > 0) {
+            key = MappingServiceKeyUtil.generateMappingServiceKey(
+                    new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
+            mask--;
+            Map<String, ?> locators = dao.get(key);
+            if (locators != null) {
+                List<MappingServiceRLOCGroup> result = aggregateLocators(locators);
+                if (result != null && !result.isEmpty()) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs) {
+        for (MappingServiceRLOCGroup rloc : rlocs) {
+            addLocators(recordBuilder, rloc);
             recordBuilder.setRecordTtl(rloc.getTtl());
         }
     }
 
-    private void addLocator(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOC locatorObject) {
+    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOCGroup locatorObject) {
         if (locatorObject == null) {
             return;
         }
         try {
-            recordBuilder.getLocatorRecord().add(
-                    new LocatorRecordBuilder().setLocalLocator(locatorObject.getRecord().isLocalLocator())
-                            .setRlocProbed(locatorObject.getRecord().isRlocProbed()).setWeight(locatorObject.getRecord().getWeight())
-                            .setPriority(locatorObject.getRecord().getPriority()).setMulticastWeight(locatorObject.getRecord().getMulticastWeight())
-                            .setMulticastPriority(locatorObject.getRecord().getMulticastPriority()).setRouted(true)
-                            .setLispAddressContainer(locatorObject.getRecord().getLispAddressContainer()).build());
+            for (LocatorRecord record : locatorObject.getRecords()) {
+                recordBuilder.getLocatorRecord().add(
+                        new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
+                                .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
+                                .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
+                                .setLispAddressContainer(record.getLispAddressContainer()).build());
+            }
             recordBuilder.setAction(locatorObject.getAction());
             recordBuilder.setAuthoritative(locatorObject.isAuthoritative());
             recordBuilder.setRecordTtl(locatorObject.getTtl());
         } catch (ClassCastException cce) {
         }
-    }
-
-    public boolean shouldIterateMask() {
-        return shouldIterateMask;
-    }
-
-    public boolean shouldAuthenticate() {
-        return shouldAuthenticate;
-    }
-
-    public void setShouldIterateMask(boolean shouldIterateMask) {
-        this.shouldIterateMask = shouldIterateMask;
-    }
-
-    public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        this.shouldAuthenticate = shouldAuthenticate;
     }
 
 }
