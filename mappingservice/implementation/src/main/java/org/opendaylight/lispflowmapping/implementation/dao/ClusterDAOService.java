@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.dao;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +29,6 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,16 +139,18 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
-                if (value instanceof MappingServiceValue) {
-                    MappingServiceValue msv = (MappingServiceValue) value;
-                    for (Iterator<MappingServiceRLOC> it = msv.getRlocs().iterator(); it.hasNext();) {
-                        MappingServiceRLOC rloc = it.next();
-                        if (isExpired(rloc)) {
-                            it.remove();
+                if (value instanceof Collection) {
+                    for (Iterator<?> it = ((Collection<?>) value).iterator(); it.hasNext();) {
+                        Object obj = it.next();
+                        if (obj instanceof MappingServiceRLOC) {
+                            MappingServiceRLOC rloc = (MappingServiceRLOC) obj;
+                            if (isExpired(rloc)) {
+                                it.remove();
+                            }
                         }
                     }
-                    if (msv.getKey() == null && msv.getRlocs().size() == 0) {
-                        remove(keyId);
+                    if (((Collection<?>) value).isEmpty()) {
+                        put(keyId, new MappingEntry<>(valueKey, null));
                     }
                 }
             }
@@ -171,6 +173,14 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public <K> boolean remove(K key) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
         return keysToValues.remove(key) != null;
+    }
+
+    public <K> boolean removeSpecific(K key, String valueKey) {
+        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
+        if (!keysToValues.containsKey(key) || !keysToValues.get(key).containsKey(valueKey)) {
+            return false;
+        }
+        return keysToValues.get(key).remove(valueKey) != null;
     }
 
     public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType) {

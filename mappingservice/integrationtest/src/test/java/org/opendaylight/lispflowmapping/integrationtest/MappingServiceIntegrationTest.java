@@ -11,11 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemPackages;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,8 +44,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opendaylight.controller.test.sal.binding.it.TestHelper;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
@@ -91,8 +85,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAd
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv6;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv6Builder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSegmentBuilder;
@@ -112,14 +104,11 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotifica
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.Hop;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.HopBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.util.Filter;
-import org.ops4j.pax.exam.util.PathUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -310,12 +299,6 @@ public class MappingServiceIntegrationTest {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();
     }
-    
-    @Test
-    public void testOverWriting() throws Exception {
-        testMapRegisterDosntOverwrites();
-        testMapRegisterOverwrites();
-    }
 
     // ------------------------------- Simple Tests ---------------------------
 
@@ -400,31 +383,6 @@ public class MappingServiceIntegrationTest {
         assertEquals(recordBuilder.getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
                 .getLispAddressContainer());
 
-    }
-
-    public void testMapRegisterDosntOverwrites() throws SocketTimeoutException {
-        cleanUP();
-        LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
-        LispIpv4Address rloc1 = asIPAfiAddress("4.3.2.1");
-        Ipv4 rloc2 = asIPAfiAddress("4.3.2.2");
-        MapReply mapReply = sendMapRegisterTwice(eid, rloc1, rloc2);
-        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), mapReply.getEidToLocatorRecord().get(0)
-                .getLocatorRecord().get(0).getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc2), mapReply.getEidToLocatorRecord().get(0)
-                .getLocatorRecord().get(1).getLispAddressContainer());
-    }
-    
-    public void testMapRegisterOverwrites() throws SocketTimeoutException {
-        cleanUP();
-        this.lms.setShouldOverwriteRlocs(true);
-        LispIpv4Address eid = asIPAfiAddress("1.2.3.4");
-        LispIpv4Address rloc1 = asIPAfiAddress("4.3.2.1");
-        Ipv4 rloc2 = asIPAfiAddress("4.3.2.2");
-        MapReply mapReply = sendMapRegisterTwice(eid, rloc1, rloc2);
-        assertEquals(1, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
-        assertEquals(LispAFIConvertor.toContainer(rloc2), mapReply.getEidToLocatorRecord().get(0)
-                .getLocatorRecord().get(0).getLispAddressContainer());
     }
 
     private MapReply sendMapRegisterTwice(LispIpv4Address eid, LispIpv4Address rloc1, Ipv4 rloc2) throws SocketTimeoutException {
@@ -1551,7 +1509,6 @@ public class MappingServiceIntegrationTest {
     private void cleanUP() {
         after();
         lms.clean();
-        lms.setShouldOverwriteRlocs(false);
         socket = initSocket(socket);
 
     }

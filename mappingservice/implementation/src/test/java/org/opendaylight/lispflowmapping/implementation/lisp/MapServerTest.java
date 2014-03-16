@@ -12,12 +12,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 
 import junitx.framework.ArrayAssert;
 
-import org.eclipse.osgi.baseadaptor.bundlefile.MRUBundleFileList;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
@@ -28,7 +27,6 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceValue;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
@@ -36,7 +34,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
@@ -92,95 +89,9 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals("value", entries[0].getKey());
-        assertEquals(rloc, ((MappingServiceValue) entries[0].getValue()).getRlocs().get(0).getRecord().getLispAddressContainer().getAddress());
-    }
-
-    @Test
-    public void handleMapRegister__TestOtherKeyExists() throws Exception {
-        mapRegisterBuilder.setWantMapNotify(false);
-
-        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-        MappingServiceValue value = new MappingServiceValue();
-        value.setRlocs(new ArrayList<MappingServiceRLOC>());
-        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build();
-        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
-        value.getRlocs().add(msr);
-        result.put("value", value);
-        allowing(lispDAO)
-                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
-                        32)));
-        ret(result);
-        addGetExpectations(eid, 32);
-        msr = new MappingServiceRLOC(new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build(), 60,
-                Action.NoAction, false);
-        value.getRlocs().add(msr);
-        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-        allowing(lispDAO).put(
-                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
-                entry);
-
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-
-    }
-
-    @Test
-    public void handleMapRegister__TestKeyExistsAndOther() throws Exception {
-        mapRegisterBuilder.setWantMapNotify(false);
-
-        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-        MappingServiceValue value = new MappingServiceValue();
-        value.setRlocs(new ArrayList<MappingServiceRLOC>());
-        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build();
-        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
-        value.getRlocs().add(msr);
-        rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build();
-        msr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
-        value.getRlocs().add(msr);
-        result.put("value", value);
-        allowing(lispDAO)
-                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
-                        32)));
-        ret(result);
-        addGetExpectations(eid, 32);
-        msr = new MappingServiceRLOC(new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build(), 60,
-                Action.NoAction, false);
-        value.getRlocs().add(msr);
-        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-        allowing(lispDAO).put(
-                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
-                entry);
-
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-
-    }
-
-    @Test
-    public void handleMapRegister__TestSameKeyExists() throws Exception {
-        mapRegisterBuilder.setWantMapNotify(false);
-
-        Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-        MappingServiceValue value = new MappingServiceValue();
-        value.setRlocs(new ArrayList<MappingServiceRLOC>());
-        LocatorRecord rec = new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(rloc)).build();
-        MappingServiceRLOC msr = new MappingServiceRLOC(rec, 40, Action.Drop, true);
-        value.getRlocs().add(msr);
-        result.put("value", value);
-        allowing(lispDAO)
-                .get(weq(MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(),
-                        32)));
-        ret(result);
-        addGetExpectations(eid, 32);
-        MappingServiceRLOC expectedMsr = new MappingServiceRLOC(rec, 60, Action.NoAction, false);
-        value = new MappingServiceValue();
-        value.setRlocs(Arrays.asList(expectedMsr));
-        MappingEntry<MappingServiceValue> entry = new MappingEntry<MappingServiceValue>("value", value);
-        allowing(lispDAO).put(
-                MappingServiceKeyUtil.generateMappingServiceKey(mapRegisterBuilder.getEidToLocatorRecord().get(0).getLispAddressContainer(), 32),
-                entry);
-
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-
+        assertEquals("address", entries[0].getKey());
+        assertEquals(1, ((List<MappingServiceRLOC>) entries[0].getValue()).size());
+        assertEquals(rloc, ((List<MappingServiceRLOC>) entries[0].getValue()).get(0).getRecord().getLispAddressContainer().getAddress());
     }
 
     @Test
@@ -501,10 +412,10 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals("value", entries[0].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc0), ((MappingServiceValue) entries[0].getValue()).getRlocs().get(0).getRecord()
+        assertEquals("address", entries[0].getKey());
+        assertEquals(LispAFIConvertor.toContainer(rloc0), ((List<MappingServiceRLOC>) entries[0].getValue()).get(0).getRecord()
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), ((MappingServiceValue) entries[0].getValue()).getRlocs().get(1).getRecord()
+        assertEquals(LispAFIConvertor.toContainer(rloc1), ((List<MappingServiceRLOC>) entries[0].getValue()).get(1).getRecord()
                 .getLispAddressContainer());
 
     }
@@ -545,119 +456,74 @@ public class MapServerTest extends BaseTestCase {
 
     }
 
-    // @Test
-    // public void handleMapRegisterIpv4__ChekWrongPassword() throws Exception {
-    //
-    // addGetExpectations(new LispIpv4Address("153.16.254.1"), 32, 0, 31,
-    // "bla");
-    // MapNotify mapNotify =
-    // testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
-    // assertEquals(null, mapNotify);
-    // }
-    //
-    // @Test
-    // public void handleMapRegisterIpv4__ChcekNoPasswordAndThenPassword()
-    // throws Exception {
-    //
-    // addGetExpectations(new LispIpv4Address("153.16.254.1"), 32, 30, 25,
-    // "password");
-    // addPutExpectations(new LispIpv4Address("153.16.254.1"), 32);
-    // MapNotify mapNotify =
-    // testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
-    // assertEquals(mapRegisterWithAuthentication.getEidToLocatorRecords(),
-    // mapNotify.getEidToLocatorRecords());
-    // assertEquals(mapRegisterWithAuthentication.getKeyId(),
-    // mapNotify.getKeyId());
-    // assertEquals(mapRegisterWithAuthentication.getNonce(),
-    // mapNotify.getNonce());
-    // }
-    //
-    // @Test
-    // public void handleMapRegisterIpv4__ChcekNoPassword() throws Exception {
-    //
-    // addGetExpectations(new LispIpv4Address("153.16.254.1"), 32, 30, 0,
-    // "password");
-    // MapNotify mapNotify =
-    // testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
-    // assertEquals(null, mapNotify);
-    // }
-    //
-    // @Test
-    // public void handleMapRegisterIpv4__ChcekNoreturn() throws Exception {
-    //
-    // addGetExpectations(new LispIpv4Address("153.16.254.1"), 32);
-    // MapNotify mapNotify =
-    // testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
-    // assertEquals(mapNotify, null);
-    // }
-    //
-    // @Test
-    // public void handleAddAuthenticationKey() throws Exception {
-    // IMappingServiceKey key = getDefualtKey();
-    // MappingServiceValue value = getDefualtValue();
-    // MappingEntry<MappingServiceValue> mappingEntry = new
-    // MappingEntry<MappingServiceValue>("value", value);
-    // oneOf(lispDAO).get(weq(key));
-    // oneOf(lispDAO).put(weq(key), weq(convertToArray(mappingEntry)));
-    // assertEquals(true, testedMapServer.addAuthenticationKey(eid,
-    // key.getMask(), value.getKey()));
-    // }
-    //
-    // @Test
-    // public void handleGetAuthenticationKey() throws Exception {
-    // IMappingServiceKey key = getDefualtKey();
-    // MappingServiceValue value = getDefualtValue();
-    // Map<String, MappingServiceValue> map = new HashMap<String,
-    // MappingServiceValue>();
-    // map.put("value", value);
-    // atLeast(1).of(lispDAO).get(weq(key));
-    // ret(map);
-    // assertEquals(value.getKey(), testedMapServer.getAuthenticationKey(eid,
-    // key.getMask()));
-    // }
-    //
-    // @Test
-    // public void handleGetAuthenticationKeyNoIteration() throws Exception {
-    // testedMapServer.setShouldIterateMask(false);
-    // IMappingServiceKey key = getDefualtKey();
-    // IMappingServiceKey passKey = getKey(30);
-    // MappingServiceValue value = getDefualtValue();
-    // Map<String, MappingServiceValue> map = new HashMap<String,
-    // MappingServiceValue>();
-    // map.put("value", value);
-    // oneOf(lispDAO).get(weq(key));
-    // allowing(lispDAO).get(weq(passKey));
-    // ret(map);
-    // assertEquals(null, testedMapServer.getAuthenticationKey(eid,
-    // key.getMask()));
-    // }
-    //
-    // @Test
-    // public void handleRemoveAuthenticationKey() throws Exception {
-    // IMappingServiceKey key = getDefualtKey();
-    // MappingServiceValue value = new MappingServiceValue();
-    // Map<String, MappingServiceValue> map = new HashMap<String,
-    // MappingServiceValue>();
-    // map.put("value", value);
-    // oneOf(lispDAO).get(weq(key));
-    // ret(map);
-    // oneOf(lispDAO).remove(weq(key));
-    // assertEquals(true, testedMapServer.removeAuthenticationKey(eid,
-    // key.getMask()));
-    // }
-    //
-    // @Test
-    // public void handleRemoveAuthenticationKeyWhereKeyDosntExist() throws
-    // Exception {
-    // IMappingServiceKey key = getDefualtKey();
-    // MappingServiceValue value = new MappingServiceValue();
-    // Map<String, MappingServiceValue> map = new HashMap<String,
-    // MappingServiceValue>();
-    // map.put("value", value);
-    // oneOf(lispDAO).get(weq(key));
-    // assertEquals(false, testedMapServer.removeAuthenticationKey(eid,
-    // key.getMask()));
-    // }
+    @Test
+    public void handleMapRegisterIpv4__ChekWrongPassword() throws Exception {
+
+        addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 0, 31, "bla");
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        assertEquals(null, mapNotify);
+    }
+
+    @Test
+    public void handleMapRegisterIpv4__ChcekNoPasswordAndThenPassword() throws Exception {
+
+        addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 30, 25, "password");
+        addPutExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        assertEquals(mapRegisterWithAuthentication.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
+        assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
+        assertEquals(mapRegisterWithAuthentication.getNonce(), mapNotify.getNonce());
+    }
+
+    @Test
+    public void handleMapRegisterIpv4__ChcekNoPassword() throws Exception {
+
+        addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 30, 0, "password");
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        assertEquals(null, mapNotify);
+    }
+
+    @Test
+    public void handleMapRegisterIpv4__ChcekNoreturn() throws Exception {
+
+        addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        assertEquals(mapNotify, null);
+    }
+
+    @Test
+    public void handleAddAuthenticationKey() throws Exception {
+        String password = "pass";
+        IMappingServiceKey key = getDefualtKey();
+        oneOf(lispDAO).put(weq(key), weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>("password", password)).toArray())));
+        assertEquals(true, testedMapServer.addAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask(), password));
+    }
+
+    @Test
+    public void handleGetAuthenticationKey() throws Exception {
+        IMappingServiceKey key = getDefualtKey();
+        oneOf(lispDAO).getSpecific(weq(key), with("password"));
+        ret("password");
+        assertEquals("password", testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
+    }
+
+    @Test
+    public void handleGetAuthenticationKeyNoIteration() throws Exception {
+        testedMapServer.setShouldIterateMask(false);
+        IMappingServiceKey key = getDefualtKey();
+        IMappingServiceKey passKey = getKey(30);
+        oneOf(lispDAO).getSpecific(weq(key), with("password"));
+        allowing(lispDAO).getSpecific(weq(passKey), with("password"));
+        ret("password");
+        assertEquals(null, testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
+    }
+
+    @Test
+    public void handleRemoveAuthenticationKey() throws Exception {
+        IMappingServiceKey key = getDefualtKey();
+        oneOf(lispDAO).removeSpecific(weq(key), with("password"));
+        assertEquals(true, testedMapServer.removeAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
+    }
 
     private void addDefaultPutAndGetExpectations(LispAFIAddress addr, int mask) {
         addPutExpectations(addr, mask);
@@ -665,7 +531,7 @@ public class MapServerTest extends BaseTestCase {
     }
 
     @SuppressWarnings("rawtypes")
-    private MappingEntry[] convertToArray(MappingEntry<MappingServiceValue> entry) {
+    private MappingEntry[] convertToArray(MappingEntry<Collection<MappingServiceRLOC>> entry) {
         MappingEntry[] arr = new MappingEntry[1];
         arr[0] = entry;
         return arr;
@@ -682,22 +548,23 @@ public class MapServerTest extends BaseTestCase {
 
     private void addGetExpectations(LispAFIAddress address, int mask, int withoutPassword, int withPassword, String password) {
         if (withoutPassword > 0) {
-            Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-            result.put("value", new MappingServiceValue());
+            String result = null;
+            result = null;
             allowing(lispDAO).getSpecific(
-                    with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withoutPassword)), with("value"));
+                    with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withoutPassword)), with("password"));
             ret(result);
         }
         if (withPassword > 0) {
-            Map<String, MappingServiceValue> result = new HashMap<String, MappingServiceValue>();
-            result.put("value", new MappingServiceValue());
-            result.get("value").setKey(password);
-            allowing(lispDAO).get(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withPassword)));
+            String result = null;
+            result = password;
+            allowing(lispDAO).getSpecific(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withPassword)),
+                    with("password"));
             ret(result);
         }
         for (int i = mask; i >= 0; i--) {
-            allowing(lispDAO).get(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), i)));
-            ret(new HashMap<String, MappingServiceValue>());
+            allowing(lispDAO).getSpecific(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), i)),
+                    with("password"));
+            ret(null);
         }
     }
 
@@ -708,13 +575,6 @@ public class MapServerTest extends BaseTestCase {
     private IMappingServiceKey getKey(int mask) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(eid), mask);
         return key;
-    }
-
-    private MappingServiceValue getDefualtValue() {
-        MappingServiceValue value = new MappingServiceValue();
-        String password = "pass";
-        value.setKey(password);
-        return value;
     }
 
     private MapRegisterBuilder getDefaultMapRegisterBuilder() {
