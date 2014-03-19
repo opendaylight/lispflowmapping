@@ -106,11 +106,12 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
 
     public <K> void put(K key, MappingEntry<?>... values) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        Map<String, Object> keyToValues = new HashMap<String, Object>();
-        for (MappingEntry<?> entry : values) {
-            keyToValues.put(entry.getKey(), entry.getValue());
+        if (!keysToValues.containsKey(key)) {
+            keysToValues.put(key, new HashMap<String, Object>());
         }
-        keysToValues.put(key, keyToValues);
+        for (MappingEntry<?> entry : values) {
+            keysToValues.get(key).put(entry.getKey(), entry.getValue());
+        }
     }
 
     private <K> Map<Object, Map<String, Object>> getTypeMap(K key) {
