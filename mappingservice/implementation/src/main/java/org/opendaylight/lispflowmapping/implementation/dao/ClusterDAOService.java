@@ -9,10 +9,8 @@
 package org.opendaylight.lispflowmapping.implementation.dao;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
@@ -28,7 +26,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,23 +137,15 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
-                if (value instanceof Collection) {
-                    for (Iterator<?> it = ((Collection<?>) value).iterator(); it.hasNext();) {
-                        Object obj = it.next();
-                        if (obj instanceof MappingServiceRLOC) {
-                            MappingServiceRLOC rloc = (MappingServiceRLOC) obj;
-                            if (isExpired(rloc)) {
-                                it.remove();
-                            }
-                        }
-                    }
-                    if (((Collection<?>) value).isEmpty()) {
-                        put(keyId, new MappingEntry<>(valueKey, null));
+                if (value instanceof MappingServiceRLOCGroup) {
+                    MappingServiceRLOCGroup rloc = (MappingServiceRLOCGroup) value;
+                    if (isExpired(rloc)) {
+                        removeSpecific(keyId, valueKey);
                     }
                 }
             }
 
-            private boolean isExpired(MappingServiceRLOC rloc) {
+            private boolean isExpired(MappingServiceRLOCGroup rloc) {
                 return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });

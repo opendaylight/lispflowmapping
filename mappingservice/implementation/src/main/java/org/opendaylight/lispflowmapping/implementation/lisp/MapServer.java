@@ -8,9 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
@@ -18,7 +15,7 @@ import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelp
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
@@ -30,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapServer extends AbstractLispComponent implements IMapServerAsync {
+
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
 
     public MapServer(ILispDAO dao) {
@@ -61,12 +59,12 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 }
                 IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
                         eidRecord.getMaskLength());
-                List<MappingServiceRLOC> rlocs = new ArrayList<MappingServiceRLOC>();
-                MappingEntry<List<MappingServiceRLOC>> entry = new MappingEntry<>("address", rlocs);
+                MappingServiceRLOCGroup rlocs = new MappingServiceRLOCGroup(eidRecord.getRecordTtl(), eidRecord.getAction(),
+                        eidRecord.isAuthoritative());
+                MappingEntry<MappingServiceRLOCGroup> entry = new MappingEntry<>(ADDRESS_SUBKEY, rlocs);
                 if (eidRecord.getLocatorRecord() != null) {
                     for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
-
-                        rlocs.add(new MappingServiceRLOC(locatorRecord, eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
+                        rlocs.addRecord(locatorRecord);
                     }
                 }
                 dao.put(key, entry);
@@ -92,13 +90,13 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
 
     public boolean removeAuthenticationKey(LispAddressContainer address, int maskLen) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        dao.removeSpecific(key, "password");
+        dao.removeSpecific(key, PASSWORD_SUBKEY);
         return true;
     }
 
     public boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        dao.put(mappingServiceKey, new MappingEntry<String>("password", key));
+        dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
         return true;
     }
 

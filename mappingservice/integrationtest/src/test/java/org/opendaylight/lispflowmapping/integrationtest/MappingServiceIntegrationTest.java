@@ -1311,7 +1311,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private MapRequest receiveMapRequest() throws SocketTimeoutException {
-        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(10000).getData()));
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(20000).getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {

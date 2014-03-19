@@ -14,6 +14,9 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAd
 
 public abstract class AbstractLispComponent {
 
+    public static final String PASSWORD_SUBKEY = "password";
+    public static final String ADDRESS_SUBKEY = "address";
+
     protected ILispDAO dao;
     protected volatile boolean iterateMask;
     protected volatile boolean authenticate;

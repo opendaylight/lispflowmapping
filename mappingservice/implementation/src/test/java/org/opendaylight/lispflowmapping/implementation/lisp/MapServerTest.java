@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import junitx.framework.ArrayAssert;
 
@@ -26,7 +25,7 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
@@ -89,9 +88,9 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals("address", entries[0].getKey());
-        assertEquals(1, ((List<MappingServiceRLOC>) entries[0].getValue()).size());
-        assertEquals(rloc, ((List<MappingServiceRLOC>) entries[0].getValue()).get(0).getRecord().getLispAddressContainer().getAddress());
+        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
+        assertEquals(1, ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().size());
+        assertEquals(rloc, ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0).getLispAddressContainer().getAddress());
     }
 
     @Test
@@ -412,10 +411,10 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals("address", entries[0].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc0), ((List<MappingServiceRLOC>) entries[0].getValue()).get(0).getRecord()
+        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
+        assertEquals(LispAFIConvertor.toContainer(rloc0), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), ((List<MappingServiceRLOC>) entries[0].getValue()).get(1).getRecord()
+        assertEquals(LispAFIConvertor.toContainer(rloc1), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(1)
                 .getLispAddressContainer());
 
     }
@@ -495,14 +494,15 @@ public class MapServerTest extends BaseTestCase {
     public void handleAddAuthenticationKey() throws Exception {
         String password = "pass";
         IMappingServiceKey key = getDefualtKey();
-        oneOf(lispDAO).put(weq(key), weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>("password", password)).toArray())));
+        oneOf(lispDAO).put(weq(key),
+                weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>(AbstractLispComponent.PASSWORD_SUBKEY, password)).toArray())));
         assertEquals(true, testedMapServer.addAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask(), password));
     }
 
     @Test
     public void handleGetAuthenticationKey() throws Exception {
         IMappingServiceKey key = getDefualtKey();
-        oneOf(lispDAO).getSpecific(weq(key), with("password"));
+        oneOf(lispDAO).getSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
         ret("password");
         assertEquals("password", testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
     }
@@ -512,8 +512,8 @@ public class MapServerTest extends BaseTestCase {
         testedMapServer.setShouldIterateMask(false);
         IMappingServiceKey key = getDefualtKey();
         IMappingServiceKey passKey = getKey(30);
-        oneOf(lispDAO).getSpecific(weq(key), with("password"));
-        allowing(lispDAO).getSpecific(weq(passKey), with("password"));
+        oneOf(lispDAO).getSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
+        allowing(lispDAO).getSpecific(weq(passKey), with(AbstractLispComponent.PASSWORD_SUBKEY));
         ret("password");
         assertEquals(null, testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
     }
@@ -521,7 +521,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleRemoveAuthenticationKey() throws Exception {
         IMappingServiceKey key = getDefualtKey();
-        oneOf(lispDAO).removeSpecific(weq(key), with("password"));
+        oneOf(lispDAO).removeSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
         assertEquals(true, testedMapServer.removeAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
     }
 
@@ -531,7 +531,7 @@ public class MapServerTest extends BaseTestCase {
     }
 
     @SuppressWarnings("rawtypes")
-    private MappingEntry[] convertToArray(MappingEntry<Collection<MappingServiceRLOC>> entry) {
+    private MappingEntry[] convertToArray(MappingEntry<Collection<MappingServiceRLOCGroup>> entry) {
         MappingEntry[] arr = new MappingEntry[1];
         arr[0] = entry;
         return arr;
