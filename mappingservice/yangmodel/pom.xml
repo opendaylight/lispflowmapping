@@ -28,6 +28,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsegmentaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress,

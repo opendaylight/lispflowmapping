@@ -420,6 +420,42 @@ public class MapServerTest extends BaseTestCase {
     }
 
     @Test
+    public void handleMapRegister__MultipleTypes() throws Exception {
+        addDefaultPutAndGetExpectations(eid, 32);
+
+        mapRegisterBuilder = getDefaultMapRegisterBuilder();
+        LispAFIAddress rloc0 = rloc;
+        // LispAFIAddress rloc1 =
+        // LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:7");
+        String subkey = "bla";
+        LispAFIAddress rloc1 = LispAFIConvertor
+                .asKeyValue(subkey, LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:7")));
+        EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
+        locatorBuilder1.setLispAddressContainer(LispAFIConvertor.toContainer(rloc0));
+        LocatorRecordBuilder locatorBuilder2 = getDefaultLocatorBuilder();
+        locatorBuilder2.setLispAddressContainer(LispAFIConvertor.toContainer(rloc1));
+        recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
+        recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
+
+        mapRegisterBuilder.getEidToLocatorRecord().add(recordBuilder.build());
+
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+
+        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
+        assertEquals(2, entries.length);
+
+        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
+        assertEquals(subkey, entries[1].getKey());
+        assertEquals(LispAFIConvertor.toContainer(rloc0), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
+                .getLispAddressContainer());
+        assertEquals(LispAFIConvertor.toContainer(rloc1), ((MappingServiceRLOCGroup) entries[1].getValue()).getRecords().get(0)
+                .getLispAddressContainer());
+
+    }
+
+    @Test
     public void handleMapRegister__MultipleEIDs() throws Exception {
         addDefaultPutAndGetExpectations(eid, 32);
 
