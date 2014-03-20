@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_f085d1ad",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-03-20T02:38:07Z",
+      "side": 1,
+      "message": "Shouldnt this if/else be reversed? if shouldOverwrite is true, you want a unique key, right?",
+      "revId": "cd2d2cec991e207d6c3f52d48163c91818ab5aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
