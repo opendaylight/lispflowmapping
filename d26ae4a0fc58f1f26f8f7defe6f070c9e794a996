@@ -16,6 +16,24 @@
       "revId": "d26ae4a0fc58f1f26f8f7defe6f070c9e794a996",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_536ee7ca",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2014-03-20T15:25:51Z",
+      "side": 1,
+      "message": "The class already has a setLastRequestDate() method that could be used, that\u0027s not the issue.  Since I\u0027m using a HashSet (we agreed on using a Set, to make RLOCs unique), I can\u0027t directly look up an RLOC, I would have to iterate, and I\u0027m not sure that\u0027s more efficient.  Maybe we need to switch to some kind of Map instead?",
+      "parentUuid": "9a5c5d37_509ffd03",
+      "revId": "d26ae4a0fc58f1f26f8f7defe6f070c9e794a996",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
