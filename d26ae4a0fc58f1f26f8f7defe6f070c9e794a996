@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_509ffd03",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-03-20T01:45:26Z",
+      "side": 1,
+      "message": "Perhaps adding a updateTimeStamp() or setTimeStamp() in the MappingServiceSubscriberRLOC class would be cleaner, so you dont have to delete and add. This way we wont need to build a new value entry at all.",
+      "revId": "d26ae4a0fc58f1f26f8f7defe6f070c9e794a996",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
