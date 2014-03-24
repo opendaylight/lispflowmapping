@@ -7,31 +7,33 @@
  */
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
-import java.net.InetAddress;
 import java.util.Date;
+
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
 /**
  * Request source RLOC in the mapping service with it's properties.
  */
 public class MappingServiceSubscriberRLOC {
-    private InetAddress rloc;
+    private LispAddressContainer rloc;
     private Date lastRequestDate;
+    private static final long SUBSCRIBER_TIMEOUT = 600000;    /* milliseconds */
 
-    public MappingServiceSubscriberRLOC(InetAddress srcRloc) {
+    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc) {
         this(srcRloc, new Date(System.currentTimeMillis()));
     }
 
-    public MappingServiceSubscriberRLOC(InetAddress srcRloc, Date lastRequestDate) {
+    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc, Date lastRequestDate) {
         super();
         this.rloc = srcRloc;
         this.lastRequestDate = lastRequestDate;
     }
 
-    public InetAddress getSrcRloc() {
+    public LispAddressContainer getSrcRloc() {
         return rloc;
     }
 
-    public void setSrcRloc(InetAddress srcRloc) {
+    public void setSrcRloc(LispAddressContainer srcRloc) {
         this.rloc = srcRloc;
     }
 
@@ -41,6 +43,10 @@ public class MappingServiceSubscriberRLOC {
 
     public void setLastRequestDate(Date lastRequestDate) {
         this.lastRequestDate = lastRequestDate;
+    }
+
+    public boolean timedOut() {
+        return System.currentTimeMillis() - lastRequestDate.getTime() > SUBSCRIBER_TIMEOUT;
     }
 
     @Override
@@ -64,6 +70,6 @@ public class MappingServiceSubscriberRLOC {
 
     @Override
     public String toString() {
-        return "Src " + rloc.getHostAddress() + ", last request @ " + lastRequestDate.toString();
+        return rloc.toString() + ", last request @ " + lastRequestDate.toString();
     }
 }

@@ -82,7 +82,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder.setWantMapNotify(false);
 
         addDefaultPutAndGetExpectations(eid, 32);
-        assertNull(testedMapServer.handleMapRegister(mapRegisterBuilder.build()));
+        assertNull(testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false));
 
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
@@ -101,7 +101,7 @@ public class MapServerTest extends BaseTestCase {
         addDefaultPutAndGetExpectations(eid, 32);
         addDefaultPutAndGetExpectations(new NoBuilder().build(), 32);
         MapRegister mr = mapRegisterBuilder.build();
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr, false);
         assertEquals(mr.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mr.getKeyId(), mapNotify.getKeyId());
@@ -126,7 +126,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid, 32);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false);
 
         EidToLocatorRecord actualEidToLocator = mapNotify.getEidToLocatorRecord().get(0);
         assertEquals(LispAFIConvertor.toContainer(eid), actualEidToLocator.getLispAddressContainer());
@@ -149,7 +149,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid, mask);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr, false);
         assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.31.0.5")), mapNotify.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
@@ -175,7 +175,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -200,7 +200,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -223,7 +223,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid, mask);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr, false);
         assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.31.0.5")), mapNotify.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
@@ -247,7 +247,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid, mask);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr, false);
         assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.31.0.5")), mapNotify.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
@@ -273,7 +273,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -298,7 +298,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -323,7 +323,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -348,7 +348,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -378,7 +378,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister, false);
         assertEquals(LispAFIConvertor.toContainer(eid), mapNotify.getEidToLocatorRecord().get(0).getLispAddressContainer());
         assertEquals(LispAFIConvertor.toContainer(addr), mapNotify.getEidToLocatorRecord().get(1).getLispAddressContainer());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
@@ -405,7 +405,7 @@ public class MapServerTest extends BaseTestCase {
 
         mapRegisterBuilder.getEidToLocatorRecord().add(recordBuilder.build());
 
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false);
 
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
@@ -440,7 +440,7 @@ public class MapServerTest extends BaseTestCase {
 
         mapRegisterBuilder.getEidToLocatorRecord().add(recordBuilder.build());
 
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false);
 
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(2, entries.length);
@@ -493,7 +493,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         mapRegisterBuilder.getEidToLocatorRecord().add(recordBuilder.build());
 
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false);
     }
 
     @Test
@@ -519,7 +519,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder.getEidToLocatorRecord().add(etlrBuilder.build());
         mapRegisterBuilder.getEidToLocatorRecord().add(etlr2Builder.build());
         addDefaultPutAndGetExpectations(address, 32);
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build(), false);
 
         assertEquals(LispAFIConvertor.toContainer(rloc1), mapNotify.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
                 .getLispAddressContainer());
@@ -535,7 +535,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__ChekWrongPassword() throws Exception {
 
         addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 0, 31, "bla");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication, false);
         assertEquals(null, mapNotify);
     }
 
@@ -544,7 +544,7 @@ public class MapServerTest extends BaseTestCase {
 
         addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 30, 25, "password");
         addPutExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32);
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication, false);
         assertEquals(mapRegisterWithAuthentication.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
         assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegisterWithAuthentication.getNonce(), mapNotify.getNonce());
@@ -554,7 +554,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__ChcekNoPassword() throws Exception {
 
         addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32, 30, 0, "password");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication, false);
         assertEquals(null, mapNotify);
     }
 
@@ -562,7 +562,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__ChcekNoreturn() throws Exception {
 
         addGetExpectations(LispAFIConvertor.asIPAfiAddress("153.16.254.1"), 32);
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication, false);
         assertEquals(mapNotify, null);
     }
 

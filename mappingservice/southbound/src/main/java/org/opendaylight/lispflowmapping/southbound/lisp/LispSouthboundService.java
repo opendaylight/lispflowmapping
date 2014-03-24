@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
