@@ -6,12 +6,13 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation;
+package org.opendaylight.lispflowmapping.clusterdao;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.apache.felix.dm.Component;
+import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -54,7 +55,7 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public Object[] getImplementations() {
-        Object[] res = { LispMappingService.class };
+        Object[] res = { ClusterDAOService.class };
         return res;
     }
 
@@ -75,15 +76,13 @@ public class Activator extends ComponentActivatorAbstractBase {
      */
     @Override
     public void configureInstance(Component c, Object imp, String containerName) {
-        if (imp.equals(LispMappingService.class)) {
+        if (imp.equals(ClusterDAOService.class)) {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
-            props.put("name", "mappingservice");
-            c.setInterface(new String[] { IFlowMapping.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao")
-                    .setRequired(true));
-            c.add(createServiceDependency().setService(BindingAwareBroker.class).setRequired(true)
-                    .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker"));
+            props.put("name", "clusterosgiservice");
+            c.setInterface(new String[] { ILispDAO.class.getName() }, props);
+            c.add(createContainerServiceDependency(containerName).setService(IClusterContainerServices.class)
+                    .setCallbacks("setClusterContainerService", "unsetClusterContainerService").setRequired(true));
         }
     }
 

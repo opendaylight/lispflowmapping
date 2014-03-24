@@ -44,7 +44,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opendaylight.lispflowmapping.implementation.dao.ClusterDAOService;
+import org.opendaylight.lispflowmapping.clusterdao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
@@ -253,7 +253,7 @@ public class MappingServiceIntegrationTest {
     // Configure the OSGi container
     @Configuration
     public Option[] config() {
-        return options(MappingServiceTestHelper.mappingServiceBundles());
+        return options(MappingServiceTestHelper.mappingServiceBundlesWithClusterDAO());
     }
 
     @Test

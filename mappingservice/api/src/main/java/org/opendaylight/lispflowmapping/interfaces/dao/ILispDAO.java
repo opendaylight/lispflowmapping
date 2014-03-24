@@ -32,17 +32,6 @@ public interface ILispDAO extends IQueryAll {
      *            The value to fetch
      * @return The value from the DAO.
      */
-    public <K, V> V getSpecific(K key, MappingValueKey<V> valueKey);
-
-    /**
-     * Get a specific value from the DAO.
-     * 
-     * @param key
-     *            The key of the value to fetch
-     * @param valueKey
-     *            The value to fetch
-     * @return The value from the DAO.
-     */
     public <K> Object getSpecific(K key, String valueKey);
 
     /**
@@ -52,7 +41,7 @@ public interface ILispDAO extends IQueryAll {
      *            The key.
      * @return The value from the DAO.
      */
-    public <K> Map<String, ?> get(K key);
+    public <K> Map<String, Object> get(K key);
 
     /**
      * Remove an entry from the DAO

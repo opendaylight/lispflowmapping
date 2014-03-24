@@ -168,17 +168,24 @@ public class MappingServiceTestHelper {
                         .versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.parser.manifest").versionAsInProject(),
 
                 // Our bundles
-                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(), mavenBundle("org.opendaylight.controller",
-                        "clustering.services").versionAsInProject(), mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
-
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.yangmodel").versionAsInProject(), mavenBundle(
-                        "org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(), mavenBundle(
-                        "org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(), mavenBundle(
-                        "org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.yangmodel").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.northbound").versionAsInProject(), //
 
                 junitBundles());
+    }
+
+    public static Option mappingServiceBundlesWithClusterDAO() {
+        return new DefaultCompositeOption( //
+                mappingServiceBundles(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.clusterdao").versionAsInProject() //
+                );
     }
 
 }

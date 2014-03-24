@@ -69,7 +69,6 @@
 							org.opendaylight.lispflowmapping.type,
 							org.opendaylight.lispflowmapping.type.lisp,
 							org.opendaylight.lispflowmapping.type.sbplugin,
-							org.opendaylight.controller.clustering.services,
 							javax.crypto,
 							javax.crypto.spec,
 							org.opendaylight.controller.sal.binding.api,
@@ -106,10 +105,6 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>clustering.services</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>

@@ -201,6 +201,11 @@
 			<version>${lispflowmapping.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.opendaylight.lispflowmapping</groupId>
+			<artifactId>mappingservice.clusterdao</artifactId>
+			<version>${lispflowmapping.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
 		</dependency>

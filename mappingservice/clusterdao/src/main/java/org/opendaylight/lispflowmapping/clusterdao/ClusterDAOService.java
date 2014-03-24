@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.dao;
+package org.opendaylight.lispflowmapping.clusterdao;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.EnumSet;
@@ -126,7 +126,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     }
 
     @SuppressWarnings("unchecked")
-    public <K, V> V getSpecific(K key, MappingValueKey<V> valueKey) {
+    private <K, V> V getSpecific(K key, MappingValueKey<V> valueKey) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
         Map<String, Object> keyToValues = keysToValues.get(key);
         if (keyToValues == null) {
@@ -156,7 +156,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         return getSpecific(key, new MappingValueKey<Object>(valueKey));
     }
 
-    public <K> Map<String, ?> get(K key) {
+    public <K> Map<String, Object> get(K key) {
         Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
         return keysToValues.get(key);
     }
@@ -198,5 +198,4 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
-
 }
