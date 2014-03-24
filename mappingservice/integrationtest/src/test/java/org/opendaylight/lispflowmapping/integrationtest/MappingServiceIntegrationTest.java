@@ -464,13 +464,13 @@ public class MappingServiceIntegrationTest {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(LispAFIAddress eid, LispAFIAddress rloc1, LispAFIAddress rloc2)
             throws SocketTimeoutException {
         MapRegister mb = createMapRegister(eid, rloc1);
-        MapNotify mapNotify = lms.handleMapRegister(mb);
+        MapNotify mapNotify = lms.handleMapRegister(mb, false);
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
         assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
                 .getLocatorRecord().get(0).getLispAddressContainer());
         mb = createMapRegister(eid, rloc2);
-        mapNotify = lms.handleMapRegister(mb);
+        mapNotify = lms.handleMapRegister(mb, false);
         assertEquals(8, mapNotify.getNonce().longValue());
         mr = createMapRequest(eid);
         sendMapRequest(mr);
@@ -639,7 +639,7 @@ public class MappingServiceIntegrationTest {
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapRegister.getEidToLocatorRecord().add(etlr.build());
-        lms.handleMapRegister(mapRegister.build());
+        lms.handleMapRegister(mapRegister.build(), false);
 
         // Get mapping using NB interface. No IID used
         URL url = createGetMappingIPv4URL(0, eid, mask);
@@ -689,7 +689,7 @@ public class MappingServiceIntegrationTest {
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapRegister.getEidToLocatorRecord().add(etlr.build());
-        lms.handleMapRegister(mapRegister.build());
+        lms.handleMapRegister(mapRegister.build(), false);
 
         // Get mapping using NB interface. No IID used
         URL url = createGetMappingSourceDestURL(address1.getAfi(), address1.getIpv4Address().getValue(), mask1, address2.getIpv4Address().getValue(),
