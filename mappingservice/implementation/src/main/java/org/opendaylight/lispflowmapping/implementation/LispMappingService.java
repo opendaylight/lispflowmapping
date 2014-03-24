@@ -191,9 +191,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister) {
+    public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
         tlsMapNotify.set(null);
-        mapServer.handleMapRegister(mapRegister, this);
+        mapServer.handleMapRegister(mapRegister, smr, this);
         // After this invocation we assume that the thread local is filled with
         // the reply
         return tlsMapNotify.get();
@@ -243,7 +243,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
-            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), false);
             getLispSB().handleMapNotify(mapNotify,
                     LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress()));
 
@@ -274,6 +274,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public void handleMapNotify(MapNotify notify) {
         tlsMapNotify.set(notify);
+    }
+
+    public void handleSMR(MapRequest smr, InetAddress subscriber) {
+        logger.debug("Sending SMR to " + subscriber.getHostAddress());
+        getLispSB().handleMapRequest(smr, subscriber);
     }
 
     @Override
