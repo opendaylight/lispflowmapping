@@ -57,7 +57,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             return;
         }
         InetAddress itrRloc = MapRequestUtil.selectItrRloc(request);
-        logger.trace("Map-Request itrRloc is " + ((itrRloc == null) ? "MISSING" : itrRloc.toString()));
+        logger.trace("Map-Request ITR-RLOC is " + ((itrRloc == null) ? "MISSING" : itrRloc.getHostAddress()));
         if (request.isPitr()) {
             if (request.getEidRecord().size() > 0) {
                 EidRecord eid = request.getEidRecord().get(0);
