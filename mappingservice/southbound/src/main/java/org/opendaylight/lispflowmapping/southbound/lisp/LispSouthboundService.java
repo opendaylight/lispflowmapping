@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
@@ -19,13 +20,16 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSer
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMappingBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMappingBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.slf4j.Logger;
@@ -70,7 +74,24 @@ public class LispSouthboundService implements ILispSouthboundService {
     private void handleMapRequest(ByteBuffer inBuffer) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
-            InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
+            InetAddress finalSourceAddress = null;
+            for (ItrRloc itr : request.getItrRloc()) {
+                Address addr = itr.getLispAddressContainer().getAddress();
+                if (addr instanceof LispIpv4Address) {
+                    try {
+                        finalSourceAddress = InetAddress.getByName(((LispIpv4Address) addr).getIpv4Address().getValue());
+                    } catch (UnknownHostException e) {
+                    }
+                    break;
+                }
+                if (addr instanceof LispIpv6Address) {
+                    try {
+                        finalSourceAddress = InetAddress.getByName((((LispIpv6Address) addr).getIpv6Address().getValue()));
+                    } catch (UnknownHostException e) {
+                    }
+                    break;
+                }
+            }
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
             }

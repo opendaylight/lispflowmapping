@@ -8,10 +8,16 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
@@ -21,15 +27,26 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +72,56 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         this.overwrite = overwrite;
     }
 
-    public void handleMapRegister(MapRegister mapRegister, IMapNotifyHandler callback) {
+    private static InetAddress getLocalAddress() {
+        // XXX This may not return the best local address
+        // TODO Maybe return list of IPs, and include all in ITR-RLOC? We still need to determine which are usable...
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()){
+                NetworkInterface current = interfaces.nextElement();
+                logger.debug("Interface " + current.toString());
+                if (!current.isUp() || current.isLoopback() || current.isVirtual()) continue;
+                Enumeration<InetAddress> addresses = current.getInetAddresses();
+                while (addresses.hasMoreElements()){
+                    InetAddress current_addr = addresses.nextElement();
+                    // Skip loopback addresses but not link local or RFC 1918 addresses
+                    if (current_addr.isLoopbackAddress()) continue;
+                    logger.debug(current_addr.getHostAddress());
+                    return current_addr;
+                }
+            }
+        } catch (SocketException se) {
+        }
+        return null;
+    }
+    private static MapRequest buildSMR(EidToLocatorRecord eidRecord) {
+        MapRequestBuilder builder = new MapRequestBuilder();
+        builder.setAuthoritative(false);
+        builder.setMapDataPresent(false);
+        builder.setPitr(false);
+        builder.setProbe(false);
+        builder.setSmr(true);
+        builder.setSmrInvoked(false);
+
+        builder.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord>());
+        LispAddressContainer container = eidRecord.getLispAddressContainer();
+        builder.getEidRecord().add(new EidRecordBuilder().setMask((short) eidRecord.getMaskLength()).setLispAddressContainer(container).build());
+
+        builder.setItrRloc(new ArrayList<ItrRloc>());
+        builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(
+                new LispAddressContainerBuilder().setAddress(
+                new Ipv4Builder().setIpv4Address(
+                new Ipv4Address(getLocalAddress().getHostAddress())).setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).build()).build()).build());
+
+        builder.setMapReply(null);
+        builder.setNonce(new Random().nextLong());
+
+        // XXX For now we set source EID to queried EID...
+        builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(container).build());
+        return builder.build();
+    }
+
+    public void handleMapRegister(MapRegister mapRegister, boolean smr, IMapNotifyHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRegister called while dao is uninitialized");
         } else {
@@ -71,6 +137,24 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                     }
                 }
                 saveRlocs(eidRecord);
+
+                if (smr) {
+                    HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
+                    if (subscribers != null) {
+                        MapRequest mapRequest = buildSMR(eidRecord);
+                        logger.trace("Built SMR packet: " + mapRequest.toString());
+                        for (MappingServiceSubscriberRLOC rloc : subscribers) {
+                            if (rloc.timedOut()) {
+                                logger.trace("Lazy removing expired subscriber entry " + rloc.toString());
+                                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
+                                subscribers.remove(rloc);
+                                dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                            } else {
+                                callback.handleSMR(mapRequest, rloc.getSrcRloc());
+                            }
+                        }
+                    }
+                }
 
             }
             if (!failed) {

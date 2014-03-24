@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
-import java.net.InetAddress;
-
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -23,7 +21,6 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -52,12 +49,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.M
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -207,9 +200,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister) {
+    public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
         tlsMapNotify.set(null);
-        mapServer.handleMapRegister(mapRegister, this);
+        mapServer.handleMapRegister(mapRegister, smr, this);
         // After this invocation we assume that the thread local is filled with
         // the reply
         return tlsMapNotify.get();
@@ -259,7 +252,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
-            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), false);
             if (mapNotify != null) {
                 SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
                 smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
@@ -301,6 +294,15 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public void handleMapNotify(MapNotify notify) {
         tlsMapNotify.set(notify);
+    }
+
+    public void handleSMR(MapRequest smr, LispAddressContainer subscriber) {
+        logger.debug("Sending SMR to " + subscriber.toString());
+        SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
+        smrib.setMapRequest(new MapRequestBuilder(smr).build());
+        smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));
+        getLispSB().sendMapRequest(smrib.build());
+
     }
 
     @Override
