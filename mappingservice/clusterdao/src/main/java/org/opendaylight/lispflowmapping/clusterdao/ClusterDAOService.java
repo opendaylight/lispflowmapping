@@ -21,14 +21,13 @@ import org.opendaylight.controller.clustering.services.CacheExistException;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.clustering.services.IClusterServices;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClusterDAOService implements ILispDAO, IQueryAll {
+public class ClusterDAOService implements ILispDAO {
 
     protected static final Logger logger = LoggerFactory.getLogger(ClusterDAOService.class);
     private IClusterContainerServices clusterContainerService = null;
@@ -60,7 +59,6 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         scheduler.shutdownNow();
     }
 
-    @SuppressWarnings("deprecation")
     private void allocateCache() {
         if (this.clusterContainerService == null) {
             logger.warn("un-initialized clusterContainerService, can't create cache");
@@ -77,7 +75,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         logger.trace("Cache successfully created for ClusterDAOService");
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({ "unchecked" })
     private void retrieveCache() {
         if (this.clusterContainerService == null) {
             logger.warn("un-initialized clusterContainerService, can't retrieve cache");
@@ -133,22 +131,21 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         return keyToValues.get(valueKey);
     }
 
-    public <K> Map<String, Object> get(K key) {
+    public Map<String, Object> get(Object key) {
         return data.get(key);
     }
 
-    public boolean remove(Object key) {
-        return data.remove(key) != null;
+    public void remove(Object key) {
+        data.remove(key);
     }
 
-    public boolean removeSpecific(Object key, String valueKey) {
-        if (!data.containsKey(key) || !data.get(key).containsKey(valueKey)) {
-            return false;
+    public void removeSpecific(Object key, String valueKey) {
+        if (data.containsKey(key) && data.get(key).containsKey(valueKey)) {
+            data.get(key).remove(valueKey);
         }
-        return data.get(key).remove(valueKey) != null;
     }
 
-    public void clearAll() {
+    public void removeAll() {
         data.clear();
     }
 

@@ -82,7 +82,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddr
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.HopsBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
@@ -139,7 +138,6 @@ public class MappingServiceIntegrationTest {
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
-    private static final String DEBUG_PORT = "8005";
     private static final int MAX_SERVICE_LOAD_RETRIES = 45;
 
     @After
@@ -907,8 +905,7 @@ public class MappingServiceIntegrationTest {
 
         sendMapRegister(mapRegister.build());
 
-        // this will fail if no MapNotify arrives for 6 seconds
-        MapNotify notify = receiveMapNotify();
+        assertMapNotifyRecieved();
     }
 
     public void testPasswordMaskMatch() throws Exception {
@@ -947,8 +944,7 @@ public class MappingServiceIntegrationTest {
 
         sendMapRegister(mapRegister.build());
 
-        // this will fail if no MapNotify arrives for 6 seconds
-        MapNotify notify = receiveMapNotify();
+        assertMapNotifyRecieved();
 
         etlr.setLispAddressContainer(LispAFIConvertor.toContainer(addressOutOfRange));
         mapRegister
@@ -1279,7 +1275,7 @@ public class MappingServiceIntegrationTest {
     private void registerForTTL(LispIpv4Address eid) throws SocketTimeoutException {
         MapRegister mapRegister = createMapRegister(eid);
         sendMapRegister(mapRegister);
-        receiveMapNotify();
+        assertMapNotifyRecieved();
     }
 
     private void testTTLBeforeRegister(MapRequest mapRequest) throws SocketTimeoutException {
@@ -1352,7 +1348,7 @@ public class MappingServiceIntegrationTest {
                 LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(rloc))).build();
         mr.getEidToLocatorRecord().get(0).getLocatorRecord().set(0, record);
         sendMapRegister(mr);
-        receiveMapNotify();
+        assertMapNotifyRecieved();
         MapRequest mapRequest = createMapRequest(LispAFIConvertor.asIPAfiAddress(eid));
         MapRequestBuilder builder = new MapRequestBuilder(mapRequest);
         builder.setPitr(true);
@@ -1365,6 +1361,10 @@ public class MappingServiceIntegrationTest {
         assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
         assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
 
+    }
+
+    private void assertMapNotifyRecieved() throws SocketTimeoutException {
+        receiveMapNotify();
     }
 
     private MapReply receiveMapReply() throws SocketTimeoutException {
@@ -1466,6 +1466,7 @@ public class MappingServiceIntegrationTest {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void areWeReady() throws InvalidSyntaxException {
         assertNotNull(bc);
         boolean debugit = false;
@@ -1543,10 +1544,6 @@ public class MappingServiceIntegrationTest {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
         }
-    }
-
-    private LispAddressContainer getIPContainer(String ip) {
-        return new LispAddressContainerBuilder().setAddress(asIPAfiAddress(ip)).build();
     }
 
     private Ipv4 asIPAfiAddress(String ip) {

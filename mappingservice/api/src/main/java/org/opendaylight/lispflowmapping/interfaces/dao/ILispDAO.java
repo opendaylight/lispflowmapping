@@ -9,9 +9,8 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-public interface ILispDAO extends IQueryAll {
+public interface ILispDAO {
 
     /**
      * Put a entry into the DAO.
@@ -41,16 +40,19 @@ public interface ILispDAO extends IQueryAll {
      *            The key.
      * @return The value from the DAO.
      */
-    public <K> Map<String, Object> get(K key);
+    public Map<String, Object> get(Object key);
+
+    /**
+     * Enumerate all the entries from the DAO
+     * 
+     * @param visitor
+     */
+    public void getAll(IRowVisitor visitor);
 
     /**
      * Remove an entry from the DAO
-     * 
-     * @param key
-     *            The key of the entry
-     * @return true if success, false otherwise
      */
-    public boolean remove(Object key);
+    public void remove(Object key);
 
     /**
      * Remove an entry from the DAO
@@ -59,25 +61,12 @@ public interface ILispDAO extends IQueryAll {
      *            The key of the entry
      * @param valueKey
      *            The value to delete
-     * @return true if success, false otherwise
      */
-    public boolean removeSpecific(Object key, String valueKey);
+    public void removeSpecific(Object key, String valueKey);
 
     /**
      * Clear the DAO and remove all of the entries.
      */
-    public void clearAll();
-
-    /**
-     * @return The time unit of the DAO cleaner
-     */
-    public TimeUnit getTimeUnit();
-
-    /**
-     * Set the time unit of the DAO cleaner
-     * 
-     * @param timeUnit
-     */
-    public void setTimeUnit(TimeUnit timeUnit);
+    public void removeAll();
 
 }

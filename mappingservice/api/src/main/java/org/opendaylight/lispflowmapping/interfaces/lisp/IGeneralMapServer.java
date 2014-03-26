@@ -42,7 +42,7 @@ public interface IGeneralMapServer {
 
     void setShouldAuthenticate(boolean shouldAuthenticate);
 
-    public void setOverwrite(boolean overwrite);
+    void setOverwrite(boolean overwrite);
 
     /**
      * This method removes the given authentication key from the map server.
@@ -51,7 +51,7 @@ public interface IGeneralMapServer {
      * @param maskLen
      * @return
      */
-    boolean removeAuthenticationKey(LispAddressContainer address, int maskLen);
+    void removeAuthenticationKey(LispAddressContainer address, int maskLen);
 
     /**
      * This method adds an authentication key to the address.
@@ -61,5 +61,5 @@ public interface IGeneralMapServer {
      * @param key
      * @return
      */
-    boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
+    void addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
 }

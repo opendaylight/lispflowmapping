@@ -18,8 +18,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.codehaus.enunciate.jaxrs.ResponseCode;
 import org.codehaus.enunciate.jaxrs.StatusCodes;
@@ -27,10 +27,10 @@ import org.codehaus.enunciate.jaxrs.TypeHint;
 import org.opendaylight.controller.containermanager.IContainerManager;
 import org.opendaylight.controller.northbound.commons.RestMessages;
 import org.opendaylight.controller.northbound.commons.exception.BadRequestException;
+import org.opendaylight.controller.northbound.commons.exception.InternalServerErrorException;
 import org.opendaylight.controller.northbound.commons.exception.ResourceNotFoundException;
 import org.opendaylight.controller.northbound.commons.exception.ServiceUnavailableException;
 import org.opendaylight.controller.northbound.commons.exception.UnauthorizedException;
-import org.opendaylight.controller.northbound.commons.exception.InternalServerErrorException;
 import org.opendaylight.controller.northbound.commons.utils.NorthboundUtils;
 import org.opendaylight.controller.sal.authorization.Privilege;
 import org.opendaylight.controller.sal.utils.ServiceHelper;
@@ -38,8 +38,6 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.lisp.EidRecord;
-import org.opendaylight.lispflowmapping.type.lisp.LocatorRecord;
-import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
@@ -146,11 +144,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
             throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error looking up the EID");
         }
 
-        EidToLocatorRecord record = null;
-
-        record = mapReply.getEidToLocatorRecord().get(0);
-
-        return record;
+        return mapReply.getEidToLocatorRecord().get(0);
     }
 
     private void keyCheck(IFlowMapping mappingService, MapRegisterNB mapRegisterNB) {
@@ -267,7 +261,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
         try {
-        	keyCheck(nbService.getMappingService(), mapRegisterNB);
+            keyCheck(nbService.getMappingService(), mapRegisterNB);
 
             LispAddressConvertorNB.convertGenericToLispAddresses(mapRegisterNB.getMapRegister());
         } catch (Exception e) {
@@ -510,16 +504,11 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         }
         ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        boolean success = false;
-
         try {
 
-            success = nbService.getMappingService().addAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress),
-                    authKeyNB.getMaskLength(), authKeyNB.getKey());
+            nbService.getMappingService().addAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), authKeyNB.getMaskLength(),
+                    authKeyNB.getKey());
         } catch (Exception e) {
-            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while adding the key");
-        }
-        if (!success) {
             throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while adding the key");
         }
 
@@ -723,14 +712,9 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
         ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
 
-        boolean success = false;
         try {
-            success = nbService.getMappingService().removeAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), mask);
+            nbService.getMappingService().removeAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), mask);
         } catch (Exception e) {
-            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while deleting the key");
-        }
-
-        if (!success) {
             throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while deleting the key");
         }
 
@@ -797,14 +781,9 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
         int mask = 0; // Not used here
 
-        boolean success = false;
         try {
-            success = nbService.getMappingService().removeAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), mask);
+            nbService.getMappingService().removeAuthenticationKey(YangTransformerNB.transformLispAddress(lispAddress), mask);
         } catch (Exception e) {
-            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while deleting the key");
-        }
-
-        if (!success) {
             throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while deleting the key");
         }
 

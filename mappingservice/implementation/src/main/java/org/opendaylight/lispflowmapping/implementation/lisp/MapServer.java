@@ -124,16 +124,14 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         return getPassword(address, maskLen);
     }
 
-    public boolean removeAuthenticationKey(LispAddressContainer address, int maskLen) {
+    public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
         dao.removeSpecific(key, PASSWORD_SUBKEY);
-        return true;
     }
 
-    public boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
+    public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
         dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
-        return true;
     }
 
     public boolean shouldOverwrite() {

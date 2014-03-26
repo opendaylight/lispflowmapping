@@ -27,7 +27,6 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
-import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -135,24 +134,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public void _dumpAll(final CommandInterpreter ci) {
         ci.println("EID\tRLOCs");
-        if (lispDao instanceof IQueryAll) {
-            ((IQueryAll) lispDao).getAll(new IRowVisitor() {
-                String lastKey = "";
+        lispDao.getAll(new IRowVisitor() {
+            String lastKey = "";
 
-                public void visitRow(Object keyId, String valueKey, Object value) {
-                    String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                    if (!lastKey.equals(key)) {
-                        ci.println();
-                        ci.print(key + "\t");
-                    }
-                    ci.print(valueKey + "=" + value + "\t");
-                    lastKey = key;
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
+                    ci.println();
+                    ci.print(key + "\t");
                 }
-            });
-            ci.println();
-        } else {
-            ci.println("Not implemented by this DAO");
-        }
+                ci.print(valueKey + "=" + value + "\t");
+                lastKey = key;
+            }
+        });
+        ci.println();
         return;
     }
 
@@ -208,12 +203,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         return mapServer.getAuthenticationKey(address, maskLen);
     }
 
-    public boolean removeAuthenticationKey(LispAddressContainer address, int maskLen) {
-        return mapServer.removeAuthenticationKey(address, maskLen);
+    public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
+        mapServer.removeAuthenticationKey(address, maskLen);
     }
 
-    public boolean addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
-        return mapServer.addAuthenticationKey(address, maskLen, key);
+    public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
+        mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
     public boolean shouldIterateMask() {
@@ -288,7 +283,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     @Override
     public void clean() {
-        lispDao.clearAll();
+        lispDao.removeAll();
     }
 
     @Override

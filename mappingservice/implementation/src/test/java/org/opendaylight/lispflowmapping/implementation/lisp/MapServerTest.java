@@ -566,13 +566,14 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(mapNotify, null);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void handleAddAuthenticationKey() throws Exception {
         String password = "pass";
         IMappingServiceKey key = getDefualtKey();
         oneOf(lispDAO).put(weq(key),
                 weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>(AbstractLispComponent.PASSWORD_SUBKEY, password)).toArray())));
-        assertEquals(true, testedMapServer.addAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask(), password));
+        testedMapServer.addAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask(), password);
     }
 
     @Test
@@ -598,7 +599,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleRemoveAuthenticationKey() throws Exception {
         IMappingServiceKey key = getDefualtKey();
         oneOf(lispDAO).removeSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
-        assertEquals(true, testedMapServer.removeAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
+        testedMapServer.removeAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask());
     }
 
     private void addDefaultPutAndGetExpectations(LispAFIAddress addr, int mask) {
