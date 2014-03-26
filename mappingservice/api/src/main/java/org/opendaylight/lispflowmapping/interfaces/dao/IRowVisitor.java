@@ -12,5 +12,5 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
  *
  */
 public interface IRowVisitor {
-    void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value);
+    void visitRow(Object keyId, String valueKey, Object value);
 }

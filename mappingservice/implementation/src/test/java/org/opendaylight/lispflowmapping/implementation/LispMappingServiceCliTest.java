@@ -22,7 +22,6 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.tools.junit.MockCommandInterpreter;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 
 public class LispMappingServiceCliTest extends BaseTestCase {
     private LispMappingService testedLispMappingService;
@@ -47,7 +46,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
             public Object invoke(Invocation invocation) throws Throwable {
                 IRowVisitor visitor = (IRowVisitor) invocation.getParameter(0);
                 for (Entry<Object, Object> entry : visitorExecutions.entrySet()) {
-                    visitor.visitRow(Ipv4.class, entry.getKey(), "IP", entry.getValue());
+                    visitor.visitRow(entry.getKey(), "IP", entry.getValue());
                 }
                 return null;
             }

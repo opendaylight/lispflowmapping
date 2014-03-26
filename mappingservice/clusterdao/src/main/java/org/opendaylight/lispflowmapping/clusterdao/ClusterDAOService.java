@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.clusterdao;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +21,10 @@ import org.opendaylight.controller.clustering.services.CacheExistException;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
 import org.opendaylight.controller.clustering.services.IClusterServices;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IQueryAll;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingValueKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +32,7 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
 
     protected static final Logger logger = LoggerFactory.getLogger(ClusterDAOService.class);
     private IClusterContainerServices clusterContainerService = null;
-    private ConcurrentMap<Class<?>, Map<Object, Map<String, Object>>> typeToKeysToValues;
+    private ConcurrentMap<Object, Map<String, Object>> data;
     private final String CACHE_NAME = "mappingServiceCache";
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int recordTimeOut = 240;
@@ -87,57 +84,33 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
             return;
         }
         logger.trace("Retrieving cache for ClusterDAOService");
-        typeToKeysToValues = (ConcurrentMap<Class<?>, Map<Object, Map<String, Object>>>) this.clusterContainerService.getCache(CACHE_NAME);
-        if (typeToKeysToValues == null) {
+        data = (ConcurrentMap<Object, Map<String, Object>>) this.clusterContainerService.getCache(CACHE_NAME);
+        if (data == null) {
             logger.warn("Cache couldn't be retrieved for ClusterDAOService");
         }
         logger.trace("Cache was successfully retrieved for ClusterDAOService");
     }
 
     public void getAll(IRowVisitor visitor) {
-        for (Map.Entry<Class<?>, Map<Object, Map<String, Object>>> typeEntry : typeToKeysToValues.entrySet()) {
-            for (Map.Entry<Object, Map<String, Object>> keyEntry : typeEntry.getValue().entrySet()) {
-                for (Map.Entry<String, Object> valueEntry : keyEntry.getValue().entrySet()) {
-                    visitor.visitRow(typeEntry.getKey(), keyEntry.getKey(), valueEntry.getKey(), valueEntry.getValue());
-                }
+        for (Map.Entry<Object, Map<String, Object>> keyEntry : data.entrySet()) {
+            for (Map.Entry<String, Object> valueEntry : keyEntry.getValue().entrySet()) {
+                visitor.visitRow(keyEntry.getKey(), valueEntry.getKey(), valueEntry.getValue());
             }
         }
     }
 
-    public <K> void put(K key, MappingEntry<?>... values) {
-        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        if (!keysToValues.containsKey(key)) {
-            keysToValues.put(key, new HashMap<String, Object>());
+    public void put(Object key, MappingEntry<?>... values) {
+        if (!data.containsKey(key)) {
+            data.put(key, new HashMap<String, Object>());
         }
         for (MappingEntry<?> entry : values) {
-            keysToValues.get(key).put(entry.getKey(), entry.getValue());
+            data.get(key).put(entry.getKey(), entry.getValue());
         }
-    }
-
-    private <K> Map<Object, Map<String, Object>> getTypeMap(K key) {
-        if (key == null) {
-            throw new IllegalArgumentException("Illegal null key.");
-        }
-        Map<Object, Map<String, Object>> keysToValues = typeToKeysToValues.get(key.getClass());
-        if (keysToValues == null) {
-            throw new IllegalArgumentException("Unknown key type " + key.getClass() + ". must register with IConverter first.");
-        }
-        return keysToValues;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <K, V> V getSpecific(K key, MappingValueKey<V> valueKey) {
-        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        Map<String, Object> keyToValues = keysToValues.get(key);
-        if (keyToValues == null) {
-            return null;
-        }
-        return (V) keyToValues.get(valueKey.getKey());
     }
 
     public void cleanOld() {
         getAll(new IRowVisitor() {
-            public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
+            public void visitRow(Object keyId, String valueKey, Object value) {
                 if (value instanceof MappingServiceRLOCGroup) {
                     MappingServiceRLOCGroup rloc = (MappingServiceRLOCGroup) value;
                     if (isExpired(rloc)) {
@@ -152,35 +125,31 @@ public class ClusterDAOService implements ILispDAO, IQueryAll {
         });
     }
 
-    public <K> Object getSpecific(K key, String valueKey) {
-        return getSpecific(key, new MappingValueKey<Object>(valueKey));
+    public Object getSpecific(Object key, String valueKey) {
+        Map<String, Object> keyToValues = data.get(key);
+        if (keyToValues == null) {
+            return null;
+        }
+        return keyToValues.get(valueKey);
     }
 
     public <K> Map<String, Object> get(K key) {
-        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        return keysToValues.get(key);
+        return data.get(key);
     }
 
-    public <K> boolean remove(K key) {
-        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        return keysToValues.remove(key) != null;
+    public boolean remove(Object key) {
+        return data.remove(key) != null;
     }
 
-    public <K> boolean removeSpecific(K key, String valueKey) {
-        Map<Object, Map<String, Object>> keysToValues = getTypeMap(key);
-        if (!keysToValues.containsKey(key) || !keysToValues.get(key).containsKey(valueKey)) {
+    public boolean removeSpecific(Object key, String valueKey) {
+        if (!data.containsKey(key) || !data.get(key).containsKey(valueKey)) {
             return false;
         }
-        return keysToValues.get(key).remove(valueKey) != null;
-    }
-
-    public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType) {
-        Class<?> eidType = (Class<?>) ((ParameterizedType) userType.getGenericInterfaces()[0]).getActualTypeArguments()[0];
-        typeToKeysToValues.put(eidType, new HashMap<Object, Map<String, Object>>());
+        return data.get(key).remove(valueKey) != null;
     }
 
     public void clearAll() {
-        typeToKeysToValues.clear();
+        data.clear();
     }
 
     public TimeUnit getTimeUnit() {

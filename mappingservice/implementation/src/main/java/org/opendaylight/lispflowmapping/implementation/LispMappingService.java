@@ -100,18 +100,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     void setLispDao(ILispDAO dao) {
         logger.trace("LispDAO set in LispMappingService");
         basicInit(dao);
-        registerTypes();
-    }
-
-    private void registerTypes() {
-        logger.trace("Registering LispIpv4Address");
-        lispDao.register(LispIpv4AddressInMemoryConverter.class);
-        logger.trace("Registering LispIpv6Address");
-        lispDao.register(LispIpv6AddressInMemoryConverter.class);
-        logger.trace("Registering MappingServiceKey");
-        lispDao.register(MappingServiceKeyConvertor.class);
-        logger.trace("Registering MappingServiceNoMaskKey");
-        lispDao.register(MappingServiceNoMaskKeyConvertor.class);
     }
 
     void unsetLispDao(ILispDAO dao) {
@@ -151,8 +139,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
             ((IQueryAll) lispDao).getAll(new IRowVisitor() {
                 String lastKey = "";
 
-                public void visitRow(Class<?> keyType, Object keyId, String valueKey, Object value) {
-                    String key = keyType.getSimpleName() + "#" + keyId;
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    String key = keyId.getClass().getSimpleName() + "#" + keyId;
                     if (!lastKey.equals(key)) {
                         ci.println();
                         ci.print(key + "\t");
@@ -301,8 +289,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     @Override
     public void clean() {
         lispDao.clearAll();
-        registerTypes();
-        setOverwrite(true);
     }
 
     @Override

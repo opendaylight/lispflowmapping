@@ -21,7 +21,7 @@ public interface ILispDAO extends IQueryAll {
      * @param values
      *            The entry's value.
      */
-    public <K> void put(K key, MappingEntry<?>... values);
+    public void put(Object key, MappingEntry<?>... values);
 
     /**
      * Get a specific value from the DAO.
@@ -32,7 +32,7 @@ public interface ILispDAO extends IQueryAll {
      *            The value to fetch
      * @return The value from the DAO.
      */
-    public <K> Object getSpecific(K key, String valueKey);
+    public Object getSpecific(Object key, String valueKey);
 
     /**
      * Get the entries from the DAO
@@ -50,7 +50,7 @@ public interface ILispDAO extends IQueryAll {
      *            The key of the entry
      * @return true if success, false otherwise
      */
-    public <K> boolean remove(K key);
+    public boolean remove(Object key);
 
     /**
      * Remove an entry from the DAO
@@ -61,20 +61,12 @@ public interface ILispDAO extends IQueryAll {
      *            The value to delete
      * @return true if success, false otherwise
      */
-    public <K> boolean removeSpecific(K key, String valueKey);
+    public boolean removeSpecific(Object key, String valueKey);
 
     /**
      * Clear the DAO and remove all of the entries.
      */
     public void clearAll();
-
-    /**
-     * Register a type converter to the DAO
-     * 
-     * @param userType
-     *            The type converter to register
-     */
-    public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType);
 
     /**
      * @return The time unit of the DAO cleaner
