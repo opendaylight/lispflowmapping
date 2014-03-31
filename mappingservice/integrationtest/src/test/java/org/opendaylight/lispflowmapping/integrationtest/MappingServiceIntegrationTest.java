@@ -436,9 +436,9 @@ public class MappingServiceIntegrationTest {
         LispAFIAddress rloc2Value = asIPAfiAddress("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
         assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
-        assertEquals(LispAFIConvertor.toContainer(rloc1Value), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
+        assertEquals(LispAFIConvertor.toContainer(rloc1Value), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(1)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc2Value), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(1)
+        assertEquals(LispAFIConvertor.toContainer(rloc2Value), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
                 .getLispAddressContainer());
     }
 

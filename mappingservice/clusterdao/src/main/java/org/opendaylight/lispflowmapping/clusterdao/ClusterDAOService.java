@@ -9,8 +9,8 @@
 package org.opendaylight.lispflowmapping.clusterdao;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,7 +31,7 @@ public class ClusterDAOService implements ILispDAO {
 
     protected static final Logger logger = LoggerFactory.getLogger(ClusterDAOService.class);
     private IClusterContainerServices clusterContainerService = null;
-    private ConcurrentMap<Object, Map<String, Object>> data;
+    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data;
     private final String CACHE_NAME = "mappingServiceCache";
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int recordTimeOut = 240;
@@ -82,7 +82,7 @@ public class ClusterDAOService implements ILispDAO {
             return;
         }
         logger.trace("Retrieving cache for ClusterDAOService");
-        data = (ConcurrentMap<Object, Map<String, Object>>) this.clusterContainerService.getCache(CACHE_NAME);
+        data = (ConcurrentMap<Object, ConcurrentMap<String, Object>>) this.clusterContainerService.getCache(CACHE_NAME);
         if (data == null) {
             logger.warn("Cache couldn't be retrieved for ClusterDAOService");
         }
@@ -90,7 +90,7 @@ public class ClusterDAOService implements ILispDAO {
     }
 
     public void getAll(IRowVisitor visitor) {
-        for (Map.Entry<Object, Map<String, Object>> keyEntry : data.entrySet()) {
+        for (ConcurrentMap.Entry<Object, ConcurrentMap<String, Object>> keyEntry : data.entrySet()) {
             for (Map.Entry<String, Object> valueEntry : keyEntry.getValue().entrySet()) {
                 visitor.visitRow(keyEntry.getKey(), valueEntry.getKey(), valueEntry.getValue());
             }
@@ -99,7 +99,7 @@ public class ClusterDAOService implements ILispDAO {
 
     public void put(Object key, MappingEntry<?>... values) {
         if (!data.containsKey(key)) {
-            data.put(key, new HashMap<String, Object>());
+            data.put(key, new ConcurrentHashMap<String, Object>());
         }
         for (MappingEntry<?> entry : values) {
             data.get(key).put(entry.getKey(), entry.getValue());
