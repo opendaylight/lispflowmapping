@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_5925e1a9",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 656
+      },
+      "writtenOn": "2014-03-31T14:03:08Z",
+      "side": 1,
+      "message": "why is the order different?\nmaybe we should check it contains both of the values without looking at the order...",
+      "revId": "1e4d94c9f75c01eaf41cca676054a74e85f2d2ad",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
