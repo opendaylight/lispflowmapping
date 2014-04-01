@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAd
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
 
@@ -101,6 +102,13 @@ public class MapRequestSerializer {
                 LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) record.getLispAddressContainer().getAddress());
             }
         }
+        if (mapRequest.getMapReply() != null) {
+            ByteBuffer replyBuffer = MapReplySerializer.getInstance().serialize(mapRequest.getMapReply());
+            ByteBuffer combinedBuffer = ByteBuffer.allocate(requestBuffer.capacity() + replyBuffer.capacity());
+            combinedBuffer.put(requestBuffer.array());
+            combinedBuffer.put(replyBuffer.array());
+            return combinedBuffer;
+        }
         return requestBuffer;
     }
 
@@ -140,6 +148,9 @@ public class MapRequestSerializer {
             }
             for (int i = 0; i < recordCount; i++) {
                 builder.getEidRecord().add(EidRecordSerializer.getInstance().deserialize(requestBuffer));
+            }
+            if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
+                builder.setMapReply(new MapReplyBuilder(MapReplySerializer.getInstance().deserialize(requestBuffer)).build());
             }
             return builder.build();
         } catch (RuntimeException re) {
