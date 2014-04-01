@@ -57,6 +57,7 @@ import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafKeyValueAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSegmentAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSourceDestAddress;
@@ -74,6 +75,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidReco
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.KeyBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.ValueBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.Addresses;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.AddressesBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsegmentaddress.AddressBuilder;
@@ -85,6 +88,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAd
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValueBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSegmentBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSourceDest;
@@ -268,10 +272,11 @@ public class MappingServiceIntegrationTest {
     @Test
     public void testLCAFs() throws Exception {
         registerAndQuery__SrcDestLCAF();
+        registerAndQuery__KeyValueLCAF();
         registerAndQuery__ListLCAF();
-        registerAndQuery__SrcDestLCAF();
         registerAndQuery__ApplicationData();
         registerAndQuery__TrafficEngineering();
+        registerAndQuery__SegmentLCAF();
     }
 
     @Test
@@ -438,10 +443,10 @@ public class MappingServiceIntegrationTest {
         assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
         LispAddressContainer rloc1ReturnValueContainer = mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer();
         LispAddressContainer rloc2ReturnValueContainer = mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(1).getLispAddressContainer();
-        assertTrue((LispAFIConvertor.toContainer(rloc1Value).equals(rloc1ReturnValueContainer) &&
-                   LispAFIConvertor.toContainer(rloc2Value).equals(rloc2ReturnValueContainer)) ||
-                   (LispAFIConvertor.toContainer(rloc1Value).equals(rloc2ReturnValueContainer) &&
-                   LispAFIConvertor.toContainer(rloc2Value).equals(rloc1ReturnValueContainer)));
+        assertTrue((LispAFIConvertor.toContainer(rloc1Value).equals(rloc1ReturnValueContainer) && LispAFIConvertor.toContainer(rloc2Value).equals(
+                rloc2ReturnValueContainer))
+                || (LispAFIConvertor.toContainer(rloc1Value).equals(rloc2ReturnValueContainer) && LispAFIConvertor.toContainer(rloc2Value).equals(
+                        rloc1ReturnValueContainer)));
     }
 
     private MapReply sendMapRegisterTwiceWithDiffrentValues(LispAFIAddress eid, LispAFIAddress rloc1, LispAFIAddress rloc2)
@@ -1051,6 +1056,38 @@ public class MappingServiceIntegrationTest {
         assertEquals(macString, receivedMAC.getMacAddress().getValue());
     }
 
+    @Test
+    public void registerAndQuery__KeyValueLCAF() throws SocketTimeoutException {
+        cleanUP();
+        String ipString = "10.20.30.200";
+        String macString = "01:02:03:04:05:06";
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = asPrimitiveIPAfiAddress(ipString);
+        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = asPrimitiveMacAfiAddress(macString);
+        LcafKeyValueBuilder builder = new LcafKeyValueBuilder();
+        builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
+        builder.setLcafType((short) LispCanonicalAddressFormatEnum.KEY_VALUE.getLispCode());
+        builder.setKey(new KeyBuilder().setPrimitiveAddress(addrToSend1).build());
+        builder.setValue(new ValueBuilder().setPrimitiveAddress(addrToSend2).build());
+
+        MapReply reply = registerAddressAndQuery(builder.build());
+
+        LispAddressContainer fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
+        assertTrue(fromNetwork.getAddress() instanceof LcafKeyValueAddress);
+        LcafKeyValueAddress keyValueFromNetwork = (LcafKeyValueAddress) fromNetwork.getAddress();
+
+        LispAFIAddress receivedAddr1 = (LispAFIAddress) keyValueFromNetwork.getKey().getPrimitiveAddress();
+        LispAFIAddress receivedAddr2 = (LispAFIAddress) keyValueFromNetwork.getValue().getPrimitiveAddress();
+
+        assertTrue(receivedAddr1 instanceof LispIpv4Address);
+        assertTrue(receivedAddr2 instanceof LispMacAddress);
+
+        LispIpv4Address receivedIP = (LispIpv4Address) receivedAddr1;
+        LispMacAddress receivedMAC = (LispMacAddress) receivedAddr2;
+
+        assertEquals(ipString, receivedIP.getIpv4Address().getValue());
+        assertEquals(macString, receivedMAC.getMacAddress().getValue());
+    }
+
     public void registerAndQuery__ListLCAF() throws SocketTimeoutException {
         cleanUP();
         String macString = "01:02:03:04:05:06";
@@ -1078,7 +1115,7 @@ public class MappingServiceIntegrationTest {
         assertEquals(ipString, ((LispIpv4Address) receivedAddr1).getIpv4Address().getValue());
     }
 
-    public void registerAndQuerySegmentLCAF() throws SocketTimeoutException {
+    public void registerAndQuery__SegmentLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipString = "10.20.255.30";
         int instanceId = 6;
