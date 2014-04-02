@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import junitx.framework.ArrayAssert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;

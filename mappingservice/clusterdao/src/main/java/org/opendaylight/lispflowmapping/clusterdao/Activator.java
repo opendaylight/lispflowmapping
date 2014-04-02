@@ -13,10 +13,8 @@ import java.util.Hashtable;
 
 import org.apache.felix.dm.Component;
 import org.opendaylight.controller.clustering.services.IClusterContainerServices;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 
 /**
  * Main application activator class for registering the dependencies and
