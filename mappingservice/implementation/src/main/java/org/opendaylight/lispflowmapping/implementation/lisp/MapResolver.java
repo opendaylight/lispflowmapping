@@ -106,7 +106,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 } else {
                     recordBuilder
                             .setAction(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
-                    if (getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
+                    if (shouldAuthenticate() && getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
                         recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                     } else {
                         recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
