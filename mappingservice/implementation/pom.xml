@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.1-1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.implementation</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.1-1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
