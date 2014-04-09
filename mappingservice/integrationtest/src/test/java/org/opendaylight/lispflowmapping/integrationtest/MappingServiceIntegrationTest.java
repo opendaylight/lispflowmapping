@@ -142,7 +142,7 @@ public class MappingServiceIntegrationTest {
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
-    private static final int MAX_SERVICE_LOAD_RETRIES = 45;
+    private static final int MAX_SERVICE_LOAD_RETRIES = 60;
 
     @After
     public void after() {
