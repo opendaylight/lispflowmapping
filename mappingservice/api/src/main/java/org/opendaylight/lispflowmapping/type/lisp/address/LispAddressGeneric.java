@@ -196,7 +196,7 @@ public class LispAddressGeneric{
 	private void segmentGeneric(LispLCAFAddress lcafAddress){
 		LispSegmentLCAFAddress segmentAddress = (LispSegmentLCAFAddress) lcafAddress;
 		instanceId = segmentAddress.getInstanceId();
-		address = new LispAddressGeneric(segmentAddress);
+		address = new LispAddressGeneric(segmentAddress.getAddress());
 	}
 	
 	private void srcDstGeneric(LispLCAFAddress lcafAddress){
