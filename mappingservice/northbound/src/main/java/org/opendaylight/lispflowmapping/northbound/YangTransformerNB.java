@@ -583,12 +583,12 @@ public class YangTransformerNB {
             legacyLocatorRecord.setLocator(YangTransformerNB.transformToLispAddress(rloc));
 
             legacyLocatorRecord.setLocalLocator(locatorRecord.isLocalLocator())
-            				   .setPriority(locatorRecord.getPriority().byteValue())
-            				   .setWeight(locatorRecord.getWeight().byteValue())
-            				   .setMulticastPriority(locatorRecord.getMulticastPriority().byteValue())
-            				   .setMulticastWeight(locatorRecord.getMulticastWeight().byteValue())
-            				   .setRlocProbed(locatorRecord.isRlocProbed())
-            				   .setRouted(locatorRecord.isRouted());
+                               .setPriority(locatorRecord.getPriority())
+                               .setWeight(locatorRecord.getWeight())
+                               .setMulticastPriority(locatorRecord.getMulticastPriority())
+                               .setMulticastWeight(locatorRecord.getMulticastWeight())
+                               .setRlocProbed(locatorRecord.isRlocProbed())
+                               .setRouted(locatorRecord.isRouted());
 
             legacyRecord.addLocator(legacyLocatorRecord);
         }
