@@ -12,6 +12,8 @@ import java.nio.ByteBuffer;
 
 public class ByteUtil {
 
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     public static int getUnsignedByte(byte[] inBuffer, int pos) {
         return inBuffer[pos] & 0xFF;
     }
@@ -79,5 +81,15 @@ public class ByteUtil {
 
     public static byte boolToBit(boolean flag, int bit) {
         return (byte) (flag ? bit : 0x00);
+    }
+
+    public static String bytesToHex(byte[] bytes, int length) {
+        char[] hexChars = new char[length * 2];
+        for ( int j = 0; j < length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
