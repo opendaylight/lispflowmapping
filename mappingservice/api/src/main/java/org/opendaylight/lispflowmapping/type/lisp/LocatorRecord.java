@@ -71,7 +71,7 @@ public class LocatorRecord {
      * Weight values.
      */
     @XmlElement
-    private byte weight;
+    private short weight;
     /**
      * M Priority: Each RLOC is assigned a multicast Priority used by an ETR in
      * a receiver multicast site to select an ITR in a source multicast site for
@@ -91,7 +91,7 @@ public class LocatorRecord {
      * state across ITRs. For more details, see [RFC6831].
      */
     @XmlElement
-    private byte multicastWeight;
+    private short multicastWeight;
     /**
      * L: When this bit is set, the Locator is flagged as a local Locator to the
      * ETR that is sending the Map-Reply. When a Map-Server is doing proxy
@@ -171,11 +171,11 @@ public class LocatorRecord {
          return this;
     }
 
-    public byte getWeight() {
+    public short getWeight() {
         return weight;
     }
 
-    public LocatorRecord setWeight(byte weight) {
+    public LocatorRecord setWeight(short weight) {
         this.weight = weight;
         return this;
     }
@@ -202,11 +202,11 @@ public class LocatorRecord {
         return this;
     }
 
-    public byte getMulticastWeight() {
+    public short getMulticastWeight() {
         return multicastWeight;
     }
 
-    public LocatorRecord setMulticastWeight(byte multicastWeight) {
+    public LocatorRecord setMulticastWeight(short multicastWeight) {
         this.multicastWeight = multicastWeight;
         return this;
     }
