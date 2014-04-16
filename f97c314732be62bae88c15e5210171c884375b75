@@ -16,6 +16,24 @@
       "revId": "f97c314732be62bae88c15e5210171c884375b75",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7fb668de",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/ByteUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2014-04-16T05:43:32Z",
+      "side": 1,
+      "message": "Probably yes, but this is for performance reasons.  Right now this code path is not performance critical, but the function name is very clear and I don\u0027t thing we need to touch it, so I didn\u0027t considered readability in this case of high priority.  I can change it though, if you insist :)",
+      "parentUuid": "fa82b9bf_7f8f4824",
+      "revId": "f97c314732be62bae88c15e5210171c884375b75",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
