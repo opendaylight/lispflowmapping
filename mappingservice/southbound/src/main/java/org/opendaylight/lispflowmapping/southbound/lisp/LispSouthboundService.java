@@ -41,7 +41,8 @@ public class LispSouthboundService implements ILispSouthboundService {
 
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
-        Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
+        int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
+        Object lispType = LispMessageEnum.valueOf((byte) (type));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
             logger.trace("Received packet of type EncapsulatedControlMessage");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
@@ -52,7 +53,8 @@ public class LispSouthboundService implements ILispSouthboundService {
             logger.trace("Received packet of type MapRegister");
             handleMapRegister(inBuffer, packet.getAddress());
         } else {
-            logger.warn("Received unknown packet type");
+            logger.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
+            logger.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
         }
     }
 

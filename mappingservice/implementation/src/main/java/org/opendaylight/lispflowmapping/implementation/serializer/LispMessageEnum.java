@@ -13,6 +13,8 @@ public enum LispMessageEnum {
     MapReply((byte) 2), //
     MapRegister((byte) 3), //
     MapNotify((byte) 4), //
+    MapReferral((byte) 6), //
+    Info((byte) 7), //
     EncapsulatedControlMessage((byte) 8);
 
     private byte value;
