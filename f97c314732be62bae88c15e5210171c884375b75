@@ -34,6 +34,24 @@
       "revId": "f97c314732be62bae88c15e5210171c884375b75",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_227443ce",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/ByteUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-04-16T19:03:33Z",
+      "side": 1,
+      "message": "Just a thought, this is fine.",
+      "parentUuid": "fa82b9bf_7fb668de",
+      "revId": "f97c314732be62bae88c15e5210171c884375b75",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
