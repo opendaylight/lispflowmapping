@@ -11,15 +11,22 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationData;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 
 public class LispNotificationHelper {
 
@@ -62,9 +69,18 @@ public class LispNotificationHelper {
         return address;
     }
 
-    public static InetAddress getInetAddressFromContainer(LispAddressContainer container) {
-        Ipv4Address ipAddress = ((Ipv4) LispAFIConvertor.toAFI(container)).getIpv4Address();
-        return getAddressByName(ipAddress.getValue());
+    public static TransportAddress getTransportAddressFromContainer(LispAddressContainer container) {
+        TransportAddressBuilder tab = new TransportAddressBuilder();
+        LispAFIAddress address = LispAFIConvertor.toAFI(container);
+        if (address instanceof Ipv4) {
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) address).getIpv4Address().getValue()));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+        } else if (address instanceof LcafApplicationData) {
+            LcafApplicationData appData = (LcafApplicationData) address;
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) appData.getAddress().getPrimitiveAddress()).getIpv4Address().getValue()));
+            tab.setPort(new PortNumber(appData.getLocalPort()));
+        }
+        return tab.build();
     }
 
     public static InetAddress getAddressByName(String IPAddress) {

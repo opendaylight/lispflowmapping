@@ -494,6 +494,14 @@
     	
     }
     
+    grouping MapRequestMessage {
+    	container MapRequest {
+    		uses MapRequest;
+    	}
+    	uses TransportAddress;
+    	
+    }
+    
     grouping MapRequestNotification {
     	container MapRequest {
     		uses MapRequest;
@@ -514,6 +522,12 @@
     rpc sendMapNotify {
     	input {
     		uses MapNotifyMessage;
+    	}
+    }
+    
+    rpc sendMapRequest {
+    	input {
+    		uses MapRequestMessage;
     	}
     }
     

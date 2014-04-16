@@ -27,6 +27,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,6 +77,7 @@ public class LispSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
@@ -113,6 +115,7 @@ public class LispSouthboundService implements ILispSouthboundService {
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());
