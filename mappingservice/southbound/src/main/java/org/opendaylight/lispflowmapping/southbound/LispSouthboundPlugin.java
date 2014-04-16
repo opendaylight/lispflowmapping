@@ -28,17 +28,20 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerial
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
-import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInput;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInput;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements ILispSouthboundPlugin, IConfigLispPlugin, CommandProvider {
+import com.google.common.net.InetAddresses;
+
+public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispPlugin, CommandProvider, LispflowmappingService {
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -173,57 +176,25 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private void registerRPCs(ProviderContext session) {
         try {
             lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
-            session.addRpcImplementation(ILispSouthboundPlugin.class, this);
+            session.addRpcImplementation(LispflowmappingService.class, this);
         } catch (Throwable t) {
             logger.error(t.getMessage(), t);
         }
     }
 
-    public Future<RpcResult<Void>> handleMapNotify(MapNotify mapNotify, InetAddress address) {
-        logger.trace("handleMapNotify called!!");
-        if (mapNotify != null) {
-            ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
-            handleSerializedLispBuffer(address, outBuffer, MAP_NOTIFY);
-        } else {
-            logger.warn("MapNotify was null");
-        }
-        return null;
-    }
-
-    private void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer, String packetType) {
+    private void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer, String packetType) {
         DatagramPacket packet = new DatagramPacket(outBuffer.array(), outBuffer.limit());
-        packet.setPort(LispMessage.PORT_NUM);
-        packet.setAddress(address);
+        packet.setPort(address.getPort().getValue());
+        InetAddress ip = InetAddresses.forString(address.getIpAddress().getIpv4Address().getValue());
+        packet.setAddress(ip);
         try {
             if (logger.isDebugEnabled()) {
-                logger.trace("Sending " + packetType + " on port " + LispMessage.PORT_NUM + " to address: " + address);
+                logger.trace("Sending " + packetType + " on port " + address.getPort().getValue() + " to address: " + ip);
             }
             socket.send(packet);
         } catch (IOException e) {
             logger.warn("Failed to send " + packetType, e);
         }
-    }
-
-    public Future<RpcResult<Void>> handleMapReply(MapReply mapReply, InetAddress address) {
-        logger.trace("handleMapReply called!!");
-        if (mapReply != null) {
-            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);
-            handleSerializedLispBuffer(address, outBuffer, MAP_REPlY);
-        } else {
-            logger.warn("MapReply was null");
-        }
-        return null;
-    }
-
-    public Future<RpcResult<Void>> handleMapRequest(MapRequest mapRequest, InetAddress address) {
-        logger.trace("handleMapRequest called!!");
-        if (mapRequest != null) {
-            ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequest);
-            handleSerializedLispBuffer(address, outBuffer, MAP_REQUEST);
-        } else {
-            logger.debug("MapRequest was null");
-        }
-        return null;
     }
 
     public void setLispAddress(String address) {
@@ -246,5 +217,41 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 startIOThread();
             }
         }
+    }
+
+    @Override
+    public Future<RpcResult<Void>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
+        logger.trace("sendMapNotify called!!");
+        if (mapNotifyInput != null) {
+            ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotifyInput.getMapNotify());
+            handleSerializedLispBuffer(mapNotifyInput.getTransportAddress(), outBuffer, MAP_NOTIFY);
+        } else {
+            logger.warn("MapNotify was null");
+        }
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> sendMapReply(SendMapReplyInput mapReplyInput) {
+        logger.trace("sendMapReply called!!");
+        if (mapReplyInput != null) {
+            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReplyInput.getMapReply());
+            handleSerializedLispBuffer(mapReplyInput.getTransportAddress(), outBuffer, MAP_REPlY);
+        } else {
+            logger.warn("MapReply was null");
+        }
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> sendMapRequest(SendMapRequestInput mapRequestInput) {
+        logger.trace("sendMapRequest called!!");
+        if (mapRequestInput != null) {
+            ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequestInput.getMapRequest());
+            handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer, MAP_REQUEST);
+        } else {
+            logger.debug("MapRequest was null");
+        }
+        return null;
     }
 }

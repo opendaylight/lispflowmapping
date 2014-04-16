@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -33,19 +34,30 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
-import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMapping;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInputBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInputBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -62,9 +74,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private volatile boolean shouldAuthenticate;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
-    private ThreadLocal<Pair<MapRequest, InetAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, InetAddress>>();
+    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
-    private ILispSouthboundPlugin lispSB = null;
+    private LispflowmappingService lispSB = null;
 
     private ConsumerContext session;
 
@@ -183,7 +195,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         // After this invocation we assume that the thread local is filled with
         // the reply
         if (tlsMapRequest.get() != null) {
-            getLispSB().handleMapRequest(tlsMapRequest.get().getLeft(), tlsMapRequest.get().getRight());
+            SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
+            new MapRequestBuilder(tlsMapRequest.get().getLeft());
+            smrib.setMapRequest(new MapRequestBuilder(tlsMapRequest.get().getLeft()).build());
+            smrib.setTransportAddress(tlsMapRequest.get().getRight());
+            getLispSB().sendMapRequest(smrib.build());
             return null;
         } else {
             return tlsMapReply.get();
@@ -244,8 +260,14 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
             MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
-            getLispSB().handleMapNotify(mapNotify,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress()));
+            if (mapNotify != null) {
+                SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
+                smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
+                smnib.setTransportAddress(mapRegisterNotification.getTransportAddress());
+                getLispSB().sendMapNotify(smnib.build());
+            } else {
+                logger.warn("got null map notify");
+            }
 
         }
     }
@@ -255,15 +277,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         @Override
         public void onNotification(RequestMapping mapRequestNotification) {
             MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
-            getLispSB().handleMapReply(mapReply,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRequestNotification.getTransportAddress().getIpAddress()));
+            if (mapReply != null) {
+                SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
+                smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
+                smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
+                getLispSB().sendMapReply(smrib.build());
+            } else {
+                logger.warn("got null map reply");
+            }
         }
-
     }
 
-    private ILispSouthboundPlugin getLispSB() {
+    private LispflowmappingService getLispSB() {
         if (lispSB == null) {
-            lispSB = session.getRpcService(ILispSouthboundPlugin.class);
+            lispSB = session.getRpcService(LispflowmappingService.class);
         }
         return lispSB;
     }
@@ -277,8 +304,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     @Override
-    public void handleNonProxyMapRequest(MapRequest mapRequest, InetAddress targetAddress) {
-        tlsMapRequest.set(new MutablePair<MapRequest, InetAddress>(mapRequest, targetAddress));
+    public void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress) {
+        tlsMapRequest.set(new MutablePair<MapRequest, TransportAddress>(mapRequest, transportAddress));
     }
 
     @Override

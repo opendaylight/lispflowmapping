@@ -66,7 +66,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                     MappingServiceRLOCGroup locatorsGroup = (MappingServiceRLOCGroup) result;
                     if (locatorsGroup != null && locatorsGroup.getRecords().size() > 0) {
                         callback.handleNonProxyMapRequest(request,
-                                LispNotificationHelper.getInetAddressFromContainer(locatorsGroup.getRecords().get(0).getLispAddressContainer()));
+                                LispNotificationHelper.getTransportAddressFromContainer(locatorsGroup.getRecords().get(0).getLispAddressContainer()));
                     }
                 }
             }
