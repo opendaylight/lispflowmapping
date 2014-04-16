@@ -87,6 +87,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficenginee
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationData;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationDataBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValueBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
@@ -97,6 +98,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Mac;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
@@ -309,6 +311,12 @@ public class MappingServiceIntegrationTest {
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();
+    }
+
+    @Test
+    public void testNonProxy() throws Exception {
+        testSimpleNonProxy();
+        testNonProxyOtherPort();
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -1377,14 +1385,34 @@ public class MappingServiceIntegrationTest {
         return mr;
     }
 
-    @Test
-    public void testNonProxy() throws SocketTimeoutException, SocketException {
+    public void testSimpleNonProxy() throws SocketTimeoutException, SocketException {
         cleanUP();
-        String eid = "10.0.0.1";
         String rloc = "127.0.0.3";
+        int port = LispMessage.PORT_NUM;
+        Ipv4 ipRloc = LispAFIConvertor.asIPAfiAddress(rloc);
+        sendProxyMapRequest(rloc, port, ipRloc);
+
+    }
+
+    public void testNonProxyOtherPort() throws SocketTimeoutException, SocketException {
+        cleanUP();
+        String rloc = "127.0.0.3";
+        int port = 4343;
+        LcafApplicationData adLcaf = new LcafApplicationDataBuilder()
+                .setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
+                .setAddress(
+                        new org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
+                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPort(new PortNumber(port)).build();
+        sendProxyMapRequest(rloc, port, adLcaf);
+
+    }
+
+    private void sendProxyMapRequest(String rloc, int port, LispAFIAddress adLcaf) throws SocketTimeoutException, SocketException {
+        String eid = "10.0.0.1";
         MapRegister mr = createMapRegister(LispAFIConvertor.asIPAfiAddress(eid));
         LocatorRecord record = new LocatorRecordBuilder(mr.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)).setLispAddressContainer(
-                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(rloc))).build();
+                LispAFIConvertor.toContainer(adLcaf)).build();
         mr.getEidToLocatorRecord().get(0).getLocatorRecord().set(0, record);
         sendMapRegister(mr);
         assertMapNotifyRecieved();
@@ -1393,13 +1421,13 @@ public class MappingServiceIntegrationTest {
         builder.setPitr(true);
         mapRequest = builder.build();
         sendMapRequest(mapRequest);
-        socket = new DatagramSocket(new InetSocketAddress(rloc, LispMessage.PORT_NUM));
-        MapRequest recievedMapRequest = receiveMapRequest();
+        DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
+        MapRequest recievedMapRequest = receiveMapRequest(nonProxySocket);
         assertEquals(mapRequest.getNonce(), recievedMapRequest.getNonce());
         assertEquals(mapRequest.getSourceEid(), recievedMapRequest.getSourceEid());
         assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
         assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
-
+        nonProxySocket.close();
     }
 
     private void assertMapNotifyRecieved() throws SocketTimeoutException {
@@ -1410,8 +1438,8 @@ public class MappingServiceIntegrationTest {
         return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
     }
 
-    private MapRequest receiveMapRequest() throws SocketTimeoutException {
-        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(30000).getData()));
+    private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
@@ -1442,12 +1470,16 @@ public class MappingServiceIntegrationTest {
     }
 
     private DatagramPacket receivePacket(int timeout) throws SocketTimeoutException {
+        return receivePacket(socket, timeout);
+    }
+
+    private DatagramPacket receivePacket(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
         try {
             byte[] buffer = new byte[4096];
             DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
             logger.trace("Waiting for packet from socket...");
-            socket.setSoTimeout(timeout);
-            socket.receive(receivePacket);
+            receivedSocket.setSoTimeout(timeout);
+            receivedSocket.receive(receivePacket);
             logger.trace("Recieved packet from socket!");
             return receivePacket;
         } catch (SocketTimeoutException ste) {
@@ -1467,6 +1499,7 @@ public class MappingServiceIntegrationTest {
         try {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, LispMessage.PORT_NUM));
         } catch (SocketException e) {
+            e.printStackTrace();
             fail();
         }
         return socket;

@@ -12,7 +12,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationData;
@@ -75,9 +77,10 @@ public class LispNotificationHelper {
         if (address instanceof Ipv4) {
             tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) address).getIpv4Address().getValue()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-        } else if (address instanceof LcafApplicationData) {
-            LcafApplicationData appData = (LcafApplicationData) address;
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) appData.getAddress().getPrimitiveAddress()).getIpv4Address().getValue()));
+        } else if (address instanceof LcafApplicationDataAddress) {
+            LcafApplicationDataAddress appData = (LcafApplicationDataAddress) address;
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((LispIpv4Address) appData.getAddress().getPrimitiveAddress()).getIpv4Address()
+                    .getValue()));
             tab.setPort(new PortNumber(appData.getLocalPort()));
         }
         return tab.build();

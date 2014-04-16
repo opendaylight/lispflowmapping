@@ -42,10 +42,18 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
     @Override
     protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         LcafApplicationDataAddress applicationDataAddress = ((LcafApplicationDataAddress) lispAddress);
-        buffer.put(ByteUtil.partialIntToByteArray(applicationDataAddress.getIpTos(), Length.TOC));
-        buffer.put(NumberUtil.asByte(applicationDataAddress.getProtocol().byteValue()));
-        buffer.putShort(applicationDataAddress.getLocalPort().getValue().shortValue());
-        buffer.putShort(applicationDataAddress.getRemotePort().getValue().shortValue());
+        buffer.put(ByteUtil.partialIntToByteArray(NumberUtil.asInt(applicationDataAddress.getIpTos()), Length.TOC));
+        buffer.put((byte) NumberUtil.asShort(applicationDataAddress.getProtocol()));
+        if (applicationDataAddress.getLocalPort() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getLocalPort().getValue().shortValue()));
+        } else {
+            buffer.putShort((short) 0);
+        }
+        if (applicationDataAddress.getRemotePort() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getRemotePort().getValue().shortValue()));
+        } else {
+            buffer.putShort((short) 0);
+        }
         LispAddressSerializer.getInstance().serialize(buffer,
                 (LispAFIAddress) ((LcafApplicationDataAddress) lispAddress).getAddress().getPrimitiveAddress());
     }
