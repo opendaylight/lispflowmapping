@@ -25,6 +25,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class deals with deserializing map request from udp to the java object.
@@ -32,6 +34,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotifica
 public class MapRequestSerializer {
 
     private static final MapRequestSerializer INSTANCE = new MapRequestSerializer();
+    protected static final Logger logger = LoggerFactory.getLogger(MapRequestSerializer.class);
 
     // Private constructor prevents instantiation from other classes
     private MapRequestSerializer() {
@@ -150,7 +153,11 @@ public class MapRequestSerializer {
                 builder.getEidRecord().add(EidRecordSerializer.getInstance().deserialize(requestBuffer));
             }
             if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
-                builder.setMapReply(new MapReplyBuilder(MapReplySerializer.getInstance().deserialize(requestBuffer)).build());
+                try {
+                    builder.setMapReply(new MapReplyBuilder(MapReplySerializer.getInstance().deserialize(requestBuffer)).build());
+                } catch (RuntimeException re) {
+                    logger.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());
+                }
             }
             return builder.build();
         } catch (RuntimeException re) {
