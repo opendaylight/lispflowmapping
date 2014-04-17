@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
@@ -79,6 +80,18 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertTrue(mr.isMapDataPresent());
         assertFalse(mr.isProbe());
         assertFalse(mr.isSmr());
+    }
+
+    @Test
+    public void deserialize__LispMobMapRequestWithReply() throws Exception {
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("14 00 00 01 3e f7 " //
+                + "7f 5b 41 7c 77 3c 00 01 01 01 01 01 00 01 c0 a8 " //
+                + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 " //
+                + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 " //
+                + "00 01 c0 a8 38 66"));
+        assertEquals("1.1.1.1", ((LispIpv4Address) mr.getSourceEid().getLispAddressContainer().getAddress()).getIpv4Address().getValue());
+        assertEquals("1.2.3.4", ((LispIpv4Address) mr.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getValue());
+
     }
 
     @Test
