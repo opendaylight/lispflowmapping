@@ -44,7 +44,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.lispflowmapping.clusterdao.ClusterDAOService;
+import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
@@ -70,6 +72,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.ReencapHop;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
@@ -98,7 +101,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Mac;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
@@ -134,7 +136,6 @@ public class MappingServiceIntegrationTest {
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
     private IConfigLispPlugin configLispPlugin;
-    int lispPortNumber = LispMessage.PORT_NUM;
     String lispBindAddress = "127.0.0.1";
     String ourAddress = "127.0.0.2";
     private LispAFIAddress locatorEid;
@@ -145,6 +146,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final int MAX_SERVICE_LOAD_RETRIES = 45;
+    private static final int MAX_NOTIFICATION_RETRYS = 20;
 
     @After
     public void after() {
@@ -160,7 +162,7 @@ public class MappingServiceIntegrationTest {
     public void before() throws Exception {
         areWeReady();
         locatorEid = asIPAfiAddress("4.3.2.1");
-        socket = initSocket(socket);
+        socket = initSocket(socket, LispMessage.PORT_NUM);
 
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)
@@ -253,6 +255,7 @@ public class MappingServiceIntegrationTest {
     @Inject
     private BundleContext bc;
     private HttpURLConnection connection;
+    protected static boolean notificationCalled;
 
     // Configure the OSGi container
     @Configuration
@@ -314,9 +317,10 @@ public class MappingServiceIntegrationTest {
     }
 
     @Test
-    public void testNonProxy() throws Exception {
+    public void testNonProxy() throws Throwable {
         testSimpleNonProxy();
         testNonProxyOtherPort();
+        testRecievingNonProxyOnXtrPort();
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -1397,7 +1401,7 @@ public class MappingServiceIntegrationTest {
     public void testNonProxyOtherPort() throws SocketTimeoutException, SocketException {
         cleanUP();
         String rloc = "127.0.0.3";
-        int port = 4343;
+        int port = 4350;
         LcafApplicationData adLcaf = new LcafApplicationDataBuilder()
                 .setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
@@ -1408,8 +1412,58 @@ public class MappingServiceIntegrationTest {
 
     }
 
+    public void testRecievingNonProxyOnXtrPort() throws SocketTimeoutException, SocketException, Throwable {
+        cleanUP();
+        lms.shouldListenOnXtrPort(true);
+        notificationCalled = false;
+        final String eid = "10.10.10.10";
+        String rloc = "127.0.0.3";
+        int port = LispMessage.XTR_PORT_NUM;
+        LcafApplicationData adLcaf = new LcafApplicationDataBuilder()
+                .setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+                .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
+                .setAddress(
+                        new org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
+                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPort(new PortNumber(port)).build();
+        final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
+        ((LispMappingService) lms).registerNotificationListener(XtrRequestMapping.class, new NotificationListener<XtrRequestMapping>() {
+
+            @Override
+            public void onNotification(XtrRequestMapping notification) {
+                assertEquals(((LispIpv4Address) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getValue(),
+                        eid);
+                notificationCalled = true;
+                logger.warn("notification arrived");
+            }
+        });
+        sendMapRequest(mapRequest, port);
+        for (int i = 0; i < MAX_NOTIFICATION_RETRYS; i++) {
+            if (notificationCalled) {
+                return;
+            } else {
+                logger.warn("notification hasn't arrived, sleeping...");
+                Thread.sleep(500);
+            }
+        }
+
+        fail("Notification hasn't arrived");
+
+    }
+
     private void sendProxyMapRequest(String rloc, int port, LispAFIAddress adLcaf) throws SocketTimeoutException, SocketException {
-        String eid = "10.0.0.1";
+        String eid = "10.1.0.1";
+        MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
+        sendMapRequest(mapRequest);
+        DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
+        MapRequest recievedMapRequest = receiveMapRequest(nonProxySocket);
+        assertEquals(mapRequest.getNonce(), recievedMapRequest.getNonce());
+        assertEquals(mapRequest.getSourceEid(), recievedMapRequest.getSourceEid());
+        assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
+        assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
+        nonProxySocket.close();
+    }
+
+    private MapRequest createNonProxyMapRequest(String eid, LispAFIAddress adLcaf) throws SocketTimeoutException {
         MapRegister mr = createMapRegister(LispAFIConvertor.asIPAfiAddress(eid));
         LocatorRecord record = new LocatorRecordBuilder(mr.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)).setLispAddressContainer(
                 LispAFIConvertor.toContainer(adLcaf)).build();
@@ -1420,14 +1474,7 @@ public class MappingServiceIntegrationTest {
         MapRequestBuilder builder = new MapRequestBuilder(mapRequest);
         builder.setPitr(true);
         mapRequest = builder.build();
-        sendMapRequest(mapRequest);
-        DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
-        MapRequest recievedMapRequest = receiveMapRequest(nonProxySocket);
-        assertEquals(mapRequest.getNonce(), recievedMapRequest.getNonce());
-        assertEquals(mapRequest.getSourceEid(), recievedMapRequest.getSourceEid());
-        assertEquals(mapRequest.getItrRloc(), recievedMapRequest.getItrRloc());
-        assertEquals(mapRequest.getEidRecord(), recievedMapRequest.getEidRecord());
-        nonProxySocket.close();
+        return mapRequest;
     }
 
     private void assertMapNotifyRecieved() throws SocketTimeoutException {
@@ -1447,7 +1494,11 @@ public class MappingServiceIntegrationTest {
     }
 
     private void sendMapRequest(MapRequest mapRequest) {
-        sendPacket(MapRequestSerializer.getInstance().serialize(mapRequest).array());
+        sendMapRequest(mapRequest, LispMessage.PORT_NUM);
+    }
+
+    private void sendMapRequest(MapRequest mapRequest, int port) {
+        sendPacket(MapRequestSerializer.getInstance().serialize(mapRequest).array(), port);
     }
 
     private void sendMapRegister(MapRegister mapRegister) {
@@ -1455,9 +1506,13 @@ public class MappingServiceIntegrationTest {
     }
 
     private void sendPacket(byte[] bytesToSend) {
+        sendPacket(bytesToSend, LispMessage.PORT_NUM);
+    }
+
+    private void sendPacket(byte[] bytesToSend, int port) {
         try {
             DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
-            initPacketAddress(packet);
+            initPacketAddress(packet, port);
             logger.trace("Sending MapRegister to LispPlugin on socket");
             socket.send(packet);
         } catch (Throwable t) {
@@ -1490,14 +1545,14 @@ public class MappingServiceIntegrationTest {
         }
     }
 
-    private void initPacketAddress(DatagramPacket packet) throws UnknownHostException {
+    private void initPacketAddress(DatagramPacket packet, int port) throws UnknownHostException {
         packet.setAddress(InetAddress.getByName(lispBindAddress));
-        packet.setPort(lispPortNumber);
+        packet.setPort(port);
     }
 
-    private DatagramSocket initSocket(DatagramSocket socket) {
+    private DatagramSocket initSocket(DatagramSocket socket, int port) {
         try {
-            socket = new DatagramSocket(new InetSocketAddress(ourAddress, LispMessage.PORT_NUM));
+            socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
         } catch (SocketException e) {
             e.printStackTrace();
             fail();
@@ -1639,7 +1694,8 @@ public class MappingServiceIntegrationTest {
     private void cleanUP() {
         after();
         lms.clean();
-        socket = initSocket(socket);
+        lms.shouldListenOnXtrPort(false);
+        socket = initSocket(socket, LispMessage.PORT_NUM);
 
     }
 
