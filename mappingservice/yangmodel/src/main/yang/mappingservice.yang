@@ -537,11 +537,31 @@
     	}
     }
     
+    rpc shouldListenOnXtrPort {
+    	input {
+    		leaf shouldListenOnXtrPort {
+               type boolean;
+       	}
+    	}
+    }
+    
+    rpc setXtrPort {
+    	input {
+    		leaf xtrPort {
+               type inet:port-number;
+       	}
+    	}
+    }
+    
     notification addMapping {
     	uses MapRegisterNotification;
     }
     
     notification requestMapping {
+    	uses MapRequestNotification;
+    }
+    
+    notification xtrRequestMapping {
     	uses MapRequestNotification;
     }
     

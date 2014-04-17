@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
-import java.net.InetAddress;
-
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -23,9 +21,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -44,6 +40,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInputBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SetXtrPortInputBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.ShouldListenOnXtrPortInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
@@ -52,12 +50,10 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.M
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -79,6 +75,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private LispflowmappingService lispSB = null;
 
     private ConsumerContext session;
+
+    private NotificationService notificationService;
 
     class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
@@ -249,10 +247,14 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public void onSessionInitialized(ConsumerContext session) {
         logger.info("Lisp Consumer session initialized!");
-        NotificationService notificationService = session.getSALService(NotificationService.class);
-        notificationService.registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
-        notificationService.registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
+        notificationService = session.getSALService(NotificationService.class);
+        registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
+        registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         this.session = session;
+    }
+
+    public <T extends Notification> void registerNotificationListener(Class<T> notificationType, NotificationListener<T> listener) {
+        notificationService.registerNotificationListener(notificationType, listener);
     }
 
     private class MapRegisterNotificationHandler implements NotificationListener<AddMapping> {
@@ -321,6 +323,16 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     @Override
     public void setOverwrite(boolean overwrite) {
         mapServer.setOverwrite(overwrite);
+    }
+
+    @Override
+    public void shouldListenOnXtrPort(boolean listenOnXtrPort) {
+        getLispSB().shouldListenOnXtrPort(new ShouldListenOnXtrPortInputBuilder().setShouldListenOnXtrPort(listenOnXtrPort).build());
+    }
+
+    @Override
+    public void setXtrPort(int port) {
+        getLispSB().setXtrPort(new SetXtrPortInputBuilder().setXtrPort(new PortNumber(port)).build());
     }
 
 }

@@ -13,4 +13,8 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 public interface IFlowMapping extends IMapResolver, IMapServer {
 
     public void clean();
+
+    public void shouldListenOnXtrPort(boolean listenOnXtrPort);
+
+    public void setXtrPort(int port);
 }
