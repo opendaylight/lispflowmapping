@@ -15,6 +15,7 @@ import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
 
 /**
@@ -84,7 +85,8 @@ public class MapNotifySerializer {
 
             builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
             for (int i = 0; i < recordCount; i++) {
-                builder.getEidToLocatorRecord().add(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer));
+                builder.getEidToLocatorRecord().add(
+                        new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
             }
             notifyBuffer.limit(notifyBuffer.position());
             return builder.build();

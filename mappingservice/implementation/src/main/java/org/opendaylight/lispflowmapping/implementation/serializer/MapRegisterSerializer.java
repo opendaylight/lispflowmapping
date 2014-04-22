@@ -16,6 +16,7 @@ import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 
 /**
@@ -82,7 +83,8 @@ public class MapRegisterSerializer {
             builder.setAuthenticationData(authenticationData);
 
             for (int i = 0; i < recordCount; i++) {
-                builder.getEidToLocatorRecord().add(EidToLocatorRecordSerializer.getInstance().deserialize(registerBuffer));
+                builder.getEidToLocatorRecord().add(
+                        new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(registerBuffer)).build());
             }
             registerBuffer.limit(registerBuffer.position());
             byte[] mapRegisterBytes = new byte[registerBuffer.position()];

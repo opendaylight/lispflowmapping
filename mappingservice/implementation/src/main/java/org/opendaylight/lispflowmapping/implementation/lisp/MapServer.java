@@ -36,10 +36,10 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
@@ -75,15 +75,18 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     private static InetAddress getLocalAddress() {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()){
+            while (interfaces.hasMoreElements()) {
                 NetworkInterface current = interfaces.nextElement();
                 logger.debug("Interface " + current.toString());
-                if (!current.isUp() || current.isLoopback() || current.isVirtual()) continue;
+                if (!current.isUp() || current.isLoopback() || current.isVirtual())
+                    continue;
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
-                while (addresses.hasMoreElements()){
+                while (addresses.hasMoreElements()) {
                     InetAddress current_addr = addresses.nextElement();
-                    // Skip loopback addresses but not link local or RFC 1918 addresses
-                    if (current_addr.isLoopbackAddress()) continue;
+                    // Skip loopback addresses but not link local or RFC 1918
+                    // addresses
+                    if (current_addr.isLoopbackAddress())
+                        continue;
                     logger.debug(current_addr.getHostAddress());
                     return current_addr;
                 }
@@ -92,6 +95,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         }
         return null;
     }
+
     private static MapRequest buildSMR(EidToLocatorRecord eidRecord) {
         MapRequestBuilder builder = new MapRequestBuilder();
         builder.setAuthoritative(false);
@@ -106,10 +110,11 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.getEidRecord().add(new EidRecordBuilder().setMask((short) eidRecord.getMaskLength()).setLispAddressContainer(container).build());
 
         builder.setItrRloc(new ArrayList<ItrRloc>());
-        builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(
-                new LispAddressContainerBuilder().setAddress(
-                new Ipv4Builder().setIpv4Address(
-                new Ipv4Address(getLocalAddress().getHostAddress())).setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).build()).build()).build());
+        builder.getItrRloc().add(
+                new ItrRlocBuilder().setLispAddressContainer(
+                        new LispAddressContainerBuilder().setAddress(
+                                new Ipv4Builder().setIpv4Address(new Ipv4Address(getLocalAddress().getHostAddress()))
+                                        .setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).build()).build()).build());
 
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
@@ -149,7 +154,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                                 callback.handleSMR(mapRequest, rloc.getSrcRloc());
                             }
                         }
-                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
+                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
+                                eidRecord.getMaskLength());
                         dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
                     }
                 }

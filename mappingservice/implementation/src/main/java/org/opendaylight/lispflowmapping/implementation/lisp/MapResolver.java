@@ -9,9 +9,10 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
@@ -22,10 +23,10 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
@@ -93,7 +94,11 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                         if (subscribers == null) {
                             subscribers = new HashSet<MappingServiceSubscriberRLOC>();
                         } else if (subscribers.contains(subscriberRloc)) {
-                            /* If there is an entry already for this subscriberRloc, remove it, so that it gets the new timestamp */
+                            /*
+                             * If there is an entry already for this
+                             * subscriberRloc, remove it, so that it gets the
+                             * new timestamp
+                             */
                             subscribers.remove(subscriberRloc);
                         }
                         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());

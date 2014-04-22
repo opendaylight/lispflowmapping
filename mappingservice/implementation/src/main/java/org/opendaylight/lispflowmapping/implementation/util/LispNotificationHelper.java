@@ -17,7 +17,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafApplicationData;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequest;

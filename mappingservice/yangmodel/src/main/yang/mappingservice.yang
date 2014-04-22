@@ -354,8 +354,7 @@
     }	
     }
     
-    grouping EidToLocatorRecords {
-    list EidToLocatorRecord {    	
+    grouping EidToLocatorRecord {    	
     	leaf recordTtl {
     		type int32;
     	}
@@ -382,6 +381,11 @@
         // locator record list
         uses LocatorRecords;
     }
+    
+    grouping EidToLocatorRecords {
+    	list eidToLocatorRecord {
+    		uses EidToLocatorRecord;
+    	}
     }
     
     grouping MapRegister {
@@ -456,8 +460,8 @@
     		uses LispAddress; 
     	}
     	uses EidRecords;
-    	container MapReply {
-    		uses MapReply;
+    	container MapReply{ 
+    		uses EidToLocatorRecord;
     	}
     }
     
