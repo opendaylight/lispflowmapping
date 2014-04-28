@@ -53,10 +53,11 @@ import org.slf4j.LoggerFactory;
 public class MapServer extends AbstractLispComponent implements IMapServerAsync {
 
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
+    protected static final String overwriteConfigString = System.getProperty("lisp.mappingOverwrite");
     private boolean overwrite;
 
     public MapServer(ILispDAO dao) {
-        this(dao, true);
+        this(dao, (overwriteConfigString != null) ? !overwriteConfigString.trim().equalsIgnoreCase("false") : true);
     }
 
     public MapServer(ILispDAO dao, boolean overwrite) {
