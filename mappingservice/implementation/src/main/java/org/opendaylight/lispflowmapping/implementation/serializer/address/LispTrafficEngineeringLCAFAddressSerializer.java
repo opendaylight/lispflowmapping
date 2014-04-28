@@ -52,11 +52,11 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
     protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         if (((LcafTrafficEngineeringAddress) lispAddress).getHops() != null) {
             for (Hops hop : ((LcafTrafficEngineeringAddress) lispAddress).getHops()) {
-                serializeAFIAddressHeader(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
                 buffer.put((byte) 0);
                 buffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isLookup()), Flags.LOOKUP) | //
                         ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isRLOCProbe()), Flags.RLOC_PROBE) | //
                 ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isStrict()), Flags.STRICT)));
+                serializeAFIAddressHeader(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
                 LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum
                         .valueOf(((LispAFIAddress) hop.getHop().getPrimitiveAddress()).getAfi()));
                 serializer.serializeData(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
@@ -68,12 +68,12 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
     protected LcafTrafficEngineeringAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         List<Hops> hops = new ArrayList<Hops>();
         while (length > 0) {
-            short afi = buffer.getShort();
-            LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum.valueOf(afi));
             byte flags = (byte) buffer.getShort();
             boolean lookup = ByteUtil.extractBit(flags, Flags.LOOKUP);
             boolean RLOCProbe = ByteUtil.extractBit(flags, Flags.RLOC_PROBE);
             boolean strict = ByteUtil.extractBit(flags, Flags.STRICT);
+            short afi = buffer.getShort();
+            LispAddressSerializer serializer = LispAFIAddressSerializerFactory.getSerializer(AddressFamilyNumberEnum.valueOf(afi));
             LispAFIAddress address = serializer.deserializeData(buffer);
             HopsBuilder builder = new HopsBuilder();
             builder.setLookup(lookup);
