@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_9eff9934",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispTrafficEngineeringLCAFAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 656
+      },
+      "writtenOn": "2014-04-28T12:30:37Z",
+      "side": 1,
+      "message": "we can now use the regular LispAddressSerializer.getInstance().deserialize(buffer) instaed of first finding the right serializer, and then deserializing.\n\nwe can do the same thing in the serialization process.",
+      "revId": "5c44fb5be4d3d865b311ebd4c27da33a5a0e4eff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
