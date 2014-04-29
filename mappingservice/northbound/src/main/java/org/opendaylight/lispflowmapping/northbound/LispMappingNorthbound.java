@@ -279,7 +279,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         }
         MapNotify mapNotify;
         try {
-            mapNotify = nbService.getMappingService().handleMapRegister(mr, true);
+            mapNotify = nbService.getMappingService().handleMapRegister(mr);
         } catch (Exception e) {
             throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while registering the mapping");
         }

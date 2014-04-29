@@ -69,6 +69,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
+    private volatile boolean smr;
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
@@ -188,9 +189,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public MapReply handleMapRequest(MapRequest request) {
+        return handleMapRequest(request, smr);
+    }
+
+    public MapReply handleMapRequest(MapRequest request, boolean smr) {
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
-        mapResolver.handleMapRequest(request, this);
+        mapResolver.handleMapRequest(request, smr, this);
         // After this invocation we assume that the thread local is filled with
         // the reply
         if (tlsMapRequest.get() != null) {
@@ -204,6 +209,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
             return tlsMapReply.get();
         }
 
+    }
+
+    public MapNotify handleMapRegister(MapRegister mapRegister) {
+        return handleMapRegister(mapRegister, smr);
     }
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
@@ -228,6 +237,14 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
     public boolean shouldIterateMask() {
         return this.shouldIterateMask;
+    }
+
+    public boolean shouldUseSmr() {
+        return this.smr;
+    }
+
+    public void setShouldUseSmr(boolean smr) {
+        this.smr = smr;
     }
 
     public void setShouldIterateMask(boolean shouldIterateMask) {
@@ -262,7 +279,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
-            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), false);
+            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), smr);
             if (mapNotify != null) {
                 SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
                 smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());

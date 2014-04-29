@@ -464,7 +464,7 @@ public class MappingServiceIntegrationTest {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(LispAFIAddress eid, LispAFIAddress rloc1, LispAFIAddress rloc2)
             throws SocketTimeoutException {
         MapRegister mb = createMapRegister(eid, rloc1);
-        MapNotify mapNotify = lms.handleMapRegister(mb, false);
+        MapNotify mapNotify = lms.handleMapRegister(mb);
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
         assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)

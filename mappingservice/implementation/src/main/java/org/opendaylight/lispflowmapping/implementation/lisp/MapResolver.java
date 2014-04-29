@@ -50,7 +50,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         super(dao, authenticate, iterateMask);
     }
 
-    public void handleMapRequest(MapRequest request, IMapRequestResultHandler callback) {
+    public void handleMapRequest(MapRequest request, boolean smr, IMapRequestResultHandler callback) {
         if (dao == null) {
             logger.warn("handleMapRequest called while dao is uninitialized");
             return;
@@ -101,10 +101,12 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                              */
                             subscribers.remove(subscriberRloc);
                         }
-                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
-                        logger.trace("Adding new subscriber: " + subscriberRloc.toString());
-                        subscribers.add(subscriberRloc);
-                        dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                        if (smr) {
+                            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+                            logger.trace("Adding new subscriber: " + subscriberRloc.toString());
+                            subscribers.add(subscriberRloc);
+                            dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                        }
                     }
                 } else {
                     recordBuilder
