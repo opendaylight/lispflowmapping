@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_059b2d19",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-04-30T22:30:26Z",
+      "side": 1,
+      "message": "Can we simplify this to if (X.equals..(\"false\")) this.X \u003d false else this.X \u003d true ? Same simplification can apply to the initSmr method below.",
+      "revId": "d6a84dd8b76dbd3ca23d921eb31d551202c471e5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e595e9e4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-04-30T22:30:26Z",
+      "side": 1,
+      "message": "Did you mean to set the smr here? looks like a copy-paste issue.",
+      "revId": "d6a84dd8b76dbd3ca23d921eb31d551202c471e5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
