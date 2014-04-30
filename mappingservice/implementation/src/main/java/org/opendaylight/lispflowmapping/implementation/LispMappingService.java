@@ -17,6 +17,7 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ConsumerCo
 import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
@@ -64,12 +65,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         IMapRequestResultHandler, IMapNotifyHandler {
     protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
 
+    private static final ConfigIni configIni = new ConfigIni();
     private ILispDAO lispDao = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
     private volatile boolean shouldIterateMask;
     private volatile boolean shouldAuthenticate;
-    private volatile boolean smr;
+    private volatile boolean smr = configIni.smrIsSet();
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();

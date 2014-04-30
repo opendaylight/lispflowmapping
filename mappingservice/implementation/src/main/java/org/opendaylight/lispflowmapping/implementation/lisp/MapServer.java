@@ -21,6 +21,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -53,11 +54,13 @@ import org.slf4j.LoggerFactory;
 public class MapServer extends AbstractLispComponent implements IMapServerAsync {
 
     protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
-    protected static final String overwriteConfigString = System.getProperty("lisp.mappingOverwrite");
+
+    private static final ConfigIni configIni = new ConfigIni();
+    private static final boolean overwriteConfig = configIni.mappingOverwriteIsSet();
     private boolean overwrite;
 
     public MapServer(ILispDAO dao) {
-        this(dao, (overwriteConfigString != null) ? !overwriteConfigString.trim().equalsIgnoreCase("false") : true);
+        this(dao, overwriteConfig);
     }
 
     public MapServer(ILispDAO dao, boolean overwrite) {
