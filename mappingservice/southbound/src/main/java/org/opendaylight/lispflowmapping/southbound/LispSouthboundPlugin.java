@@ -30,11 +30,14 @@ import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
 import org.opendaylight.lispflowmapping.type.sbplugin.ILispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.net.InetAddresses;
 
 public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements ILispSouthboundPlugin, IConfigLispPlugin, CommandProvider {
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -176,7 +179,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         }
     }
 
-    public Future<RpcResult<Void>> handleMapNotify(MapNotify mapNotify, InetAddress address) {
+    public Future<RpcResult<Void>> handleMapNotify(MapNotify mapNotify, TransportAddress address) {
         logger.trace("handleMapNotify called!!");
         if (mapNotify != null) {
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotify);
@@ -187,13 +190,14 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         return null;
     }
 
-    private void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer, String packetType) {
+    private void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer, String packetType) {
         DatagramPacket packet = new DatagramPacket(outBuffer.array(), outBuffer.limit());
-        packet.setPort(LispMessage.PORT_NUM);
-        packet.setAddress(address);
+        packet.setPort(address.getPort().getValue());
+        InetAddress ip = InetAddresses.forString(address.getIpAddress().getIpv4Address().getValue());
+        packet.setAddress(ip);
         try {
             if (logger.isDebugEnabled()) {
-                logger.trace("Sending " + packetType + " on port " + LispMessage.PORT_NUM + " to address: " + address);
+                logger.trace("Sending " + packetType + " on port " + address.getPort().getValue() + " to address: " + ip);
             }
             socket.send(packet);
         } catch (IOException e) {
@@ -201,7 +205,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         }
     }
 
-    public Future<RpcResult<Void>> handleMapReply(MapReply mapReply, InetAddress address) {
+    public Future<RpcResult<Void>> handleMapReply(MapReply mapReply, TransportAddress address) {
         logger.trace("handleMapReply called!!");
         if (mapReply != null) {
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReply);

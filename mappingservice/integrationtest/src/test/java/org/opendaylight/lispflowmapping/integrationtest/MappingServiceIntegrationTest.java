@@ -171,7 +171,7 @@ public class MappingServiceIntegrationTest {
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)
         // IP: 192.168.136.10 -> 1.2.3.4
-        // UDP: 56756
+        // UDP: 4342
         // LISP(Type = 1 Map-Request
         // Record Count: 1
         // ITR-RLOC count: 0
@@ -184,7 +184,7 @@ public class MappingServiceIntegrationTest {
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
                 + "0030   00 38 d4 31 00 00 ff 11 56 f3 7f 00 00 02 01 02 "
-                + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
+                + "0040   03 04 10 f6 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
                 + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 00 02 00 20 " //
                 + "0060   00 01 01 02 03 04"));
 

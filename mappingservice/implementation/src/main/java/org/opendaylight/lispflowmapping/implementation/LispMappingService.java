@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -45,8 +46,11 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAd
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
@@ -249,8 +253,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
             MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
-            getLispSB().handleMapNotify(mapNotify,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress()));
+            TransportAddressBuilder tab = new TransportAddressBuilder();
+            tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            getLispSB().handleMapNotify(mapNotify, tab.build());
 
         }
     }
@@ -260,8 +266,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         @Override
         public void onNotification(RequestMapping mapRequestNotification) {
             MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
-            getLispSB().handleMapReply(mapReply,
-                    LispNotificationHelper.getInetAddressFromIpAddress(mapRequestNotification.getTransportAddress().getIpAddress()));
+            getLispSB().handleMapReply(mapReply, mapRequestNotification.getTransportAddress());
         }
 
     }
