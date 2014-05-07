@@ -313,13 +313,17 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
     @Override
     public Future<RpcResult<Void>> shouldListenOnXtrPort(ShouldListenOnXtrPortInput input) {
+	logger.debug("got a call to shouldListenOnXtrPort");
         if (listenOnXtrPort == input.isShouldListenOnXtrPort()) {
+	    logger.debug("no action done, ond and new value are identical, " + listenOnXtrPort); 
             return null;
         }
         listenOnXtrPort = input.isShouldListenOnXtrPort();
         if (listenOnXtrPort) {
+	    logger.debug("restarting xtr thread");
             restartXtrThread();
         } else {
+	    logger.debug("terminating thread");
             stopXtrThread();
         }
         return null;
