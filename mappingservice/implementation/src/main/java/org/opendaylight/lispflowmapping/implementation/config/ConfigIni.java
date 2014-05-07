@@ -14,10 +14,9 @@ public class ConfigIni {
         if (str != null) {
             if (str.trim().equalsIgnoreCase("false")) {
                 this.mappingOverwrite = false;
-            } else {
-                this.mappingOverwrite = true;
             }
         }
+        this.mappingOverwrite = true;
     }
 
     private void initSmr() {
@@ -25,10 +24,9 @@ public class ConfigIni {
         if (str != null) {
             if (str.trim().equalsIgnoreCase("true")) {
                 this.smr = true;
-            } else {
-                this.smr = false;
             }
         }
+        this.smr = false;
     }
 
     public boolean mappingOverwriteIsSet() {
