@@ -327,6 +327,14 @@ public class MappingServiceIntegrationTest {
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
+
+        // This Map-Request is sent from a source port different from 4342
+        // We close and bind the socket on the correct port
+        if (socket != null) {
+            socket.close();
+        }
+        socket = initSocket(socket, 56756);
+
         sendPacket(mapRequestPacket);
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
         MapReply reply = MapReplySerializer.getInstance().deserialize(readBuf);
@@ -464,7 +472,7 @@ public class MappingServiceIntegrationTest {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(LispAFIAddress eid, LispAFIAddress rloc1, LispAFIAddress rloc2)
             throws SocketTimeoutException {
         MapRegister mb = createMapRegister(eid, rloc1);
-        MapNotify mapNotify = lms.handleMapRegister(mb);
+        MapNotify mapNotify = lms.handleMapRegister(mb, false);
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
         assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
