@@ -48,10 +48,10 @@ public class LispSouthboundService implements ILispSouthboundService {
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
             logger.trace("Received packet of type MapRequest");
-            handleMapRequest(inBuffer);
+            handleMapRequest(inBuffer, packet.getPort());
         } else if (lispType == LispMessageEnum.MapRegister) {
             logger.trace("Received packet of type MapRegister");
-            handleMapRegister(inBuffer, packet.getAddress());
+            handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
         } else {
             logger.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
             logger.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
@@ -60,14 +60,13 @@ public class LispSouthboundService implements ILispSouthboundService {
 
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
-            extractEncapsulatedSourcePort(inBuffer);
-            handleMapRequest(inBuffer);
+            handleMapRequest(inBuffer, extractEncapsulatedSourcePort(inBuffer));
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
 
-    private void handleMapRequest(ByteBuffer inBuffer) {
+    private void handleMapRequest(ByteBuffer inBuffer, int port) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
             InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
@@ -79,7 +78,7 @@ public class LispSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
+            transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
@@ -98,8 +97,10 @@ public class LispSouthboundService implements ILispSouthboundService {
             int ipType = (inBuffer.get() >> 4);
             if (ipType == 4) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV4 - 1);
-            } else {
+            } else if (ipType == 6) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV6_NO_EXT - 1);
+            } else {
+                throw new LispMalformedPacketException("Couldn't deserialize Map-Request: inner packet has unknown IP version: " + ipType);
             }
 
             int encapsulatedSourcePort = inBuffer.getShort() & 0xFFFF;
@@ -110,14 +111,14 @@ public class LispSouthboundService implements ILispSouthboundService {
         }
     }
 
-    private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress) {
+    private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
             AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
+            transportAddressBuilder.setPort(new PortNumber(port));
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());

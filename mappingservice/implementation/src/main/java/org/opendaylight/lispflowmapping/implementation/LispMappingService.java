@@ -22,6 +22,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
+import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -52,6 +53,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.M
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
@@ -283,9 +285,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         public void onNotification(AddMapping mapRegisterNotification) {
             MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), smr);
             if (mapNotify != null) {
+                TransportAddressBuilder tab = new TransportAddressBuilder();
+                tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
                 SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
                 smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
-                smnib.setTransportAddress(mapRegisterNotification.getTransportAddress());
+                smnib.setTransportAddress(tab.build());
                 getLispSB().sendMapNotify(smnib.build());
             } else {
                 logger.warn("got null map notify");
