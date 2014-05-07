@@ -725,12 +725,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private DatagramPacket handleMapRequestPacket(byte[] inPacket) {
-        testedLispService.handlePacket(new DatagramPacket(inPacket, inPacket.length));
+        DatagramPacket dp = new DatagramPacket(inPacket, inPacket.length);
+        // Unless we explicitly set the source port, it will be -1, which breaks some tests
+        // This is till not the real port number, but it's better
+        dp.setPort(LispMessage.PORT_NUM);
+        testedLispService.handlePacket(dp);
         return lastMapReplyPacket();
     }
 
     private DatagramPacket handleMapRegisterPacket(byte[] inPacket) {
-        testedLispService.handlePacket(new DatagramPacket(inPacket, inPacket.length));
+        DatagramPacket dp = new DatagramPacket(inPacket, inPacket.length);
+        // Unless we explicitly set the source port, it will be -1, which breaks some tests
+        // This is till not the real port number, but it's better
+        dp.setPort(LispMessage.PORT_NUM);
+        testedLispService.handlePacket(dp);
         if (mapNotifyBuilder == null) {
             return null;
         } else {
