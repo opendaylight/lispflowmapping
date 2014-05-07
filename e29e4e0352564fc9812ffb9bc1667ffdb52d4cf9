@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_0f6fc3c6",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-05-07T21:59:50Z",
+      "side": 1,
+      "message": "this transport address is MapRegister\u0027s Source address right? why are you setting the source port to PORT_NUM ? Shouldnt it be taken from the packet itself? We generally dont need the source port, since Map-Notify always goes to 4342, so it may not be important at this time. Just wondering now that you are fixing this, if we should go all the way, and pass the packet\u0027s source port to handleMapRegister() as well as the source IP address, to set it correctly.",
+      "revId": "e29e4e0352564fc9812ffb9bc1667ffdb52d4cf9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
