@@ -14,6 +14,7 @@ public class ConfigIni {
         if (str != null) {
             if (str.trim().equalsIgnoreCase("false")) {
                 this.mappingOverwrite = false;
+                return;
             }
         }
         this.mappingOverwrite = true;
@@ -24,6 +25,7 @@ public class ConfigIni {
         if (str != null) {
             if (str.trim().equalsIgnoreCase("true")) {
                 this.smr = true;
+                return;
             }
         }
         this.smr = false;
