@@ -113,11 +113,6 @@ public class MappingServiceRLOCGroup {
                 return false;
         } else if (!records.equals(other.records))
             return false;
-        if (registerdDate == null) {
-            if (other.registerdDate != null)
-                return false;
-        } else if (!registerdDate.equals(other.registerdDate))
-            return false;
         if (ttl != other.ttl)
             return false;
         return true;
