@@ -11,11 +11,10 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
+import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -29,7 +28,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidReco
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
@@ -58,7 +56,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         if (request.isPitr()) {
             if (request.getEidRecord().size() > 0) {
                 EidRecord eid = request.getEidRecord().get(0);
-                Object result = getLocatorsSpecific(eid, ADDRESS_SUBKEY);
+                Object result = DAOMappingUtil.getLocatorsSpecificByEidRecord(eid, dao, ADDRESS_SUBKEY, shouldIterateMask());
                 if (result != null && result instanceof MappingServiceRLOCGroup) {
                     MappingServiceRLOCGroup locatorsGroup = (MappingServiceRLOCGroup) result;
                     if (locatorsGroup != null && locatorsGroup.getRecords().size() > 0) {
@@ -84,7 +82,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 recordBuilder.setMaskLength(eid.getMask());
                 recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                List<MappingServiceRLOCGroup> locators = getLocators(eid);
+                List<MappingServiceRLOCGroup> locators = DAOMappingUtil.getLocatorsByEidRecord(eid, dao, shouldIterateMask());
                 if (locators != null && locators.size() > 0) {
                     addLocatorGroups(recordBuilder, locators);
                     if (request.getItrRloc() != null && request.getItrRloc().size() > 0) {
@@ -123,70 +121,6 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
 
             callback.handleMapReply(builder.build());
         }
-    }
-
-    private List<MappingServiceRLOCGroup> getLocators(EidRecord eid) {
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
-        Map<String, ?> locators = dao.get(key);
-        List<MappingServiceRLOCGroup> result = aggregateLocators(locators);
-        if (shouldIterateMask() && result.isEmpty() && MaskUtil.isMaskable(key.getEID().getAddress())) {
-            result = findMaskLocators(key);
-        }
-        return result;
-    }
-
-    private List<MappingServiceRLOCGroup> aggregateLocators(Map<String, ?> locators) {
-        List<MappingServiceRLOCGroup> result = new ArrayList<MappingServiceRLOCGroup>();
-        if (locators != null) {
-            for (Object value : locators.values()) {
-                if (value != null && value instanceof MappingServiceRLOCGroup) {
-                    if (!((MappingServiceRLOCGroup) value).getRecords().isEmpty()) {
-                        result.add((MappingServiceRLOCGroup) value);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    private Object getLocatorsSpecific(EidRecord eid, String subkey) {
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
-        Object locators = dao.getSpecific(key, subkey);
-        if (shouldIterateMask() && locators == null && MaskUtil.isMaskable(key.getEID().getAddress())) {
-            locators = findMaskLocatorsSpecific(key, subkey);
-        }
-        return locators;
-    }
-
-    private Object findMaskLocatorsSpecific(IMappingServiceKey key, String subkey) {
-        int mask = key.getMask();
-        while (mask > 0) {
-            key = MappingServiceKeyUtil.generateMappingServiceKey(
-                    new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
-            mask--;
-            Object locators = dao.getSpecific(key, subkey);
-            if (locators != null) {
-                return locators;
-            }
-        }
-        return null;
-    }
-
-    private List<MappingServiceRLOCGroup> findMaskLocators(IMappingServiceKey key) {
-        int mask = key.getMask();
-        while (mask > 0) {
-            key = MappingServiceKeyUtil.generateMappingServiceKey(
-                    new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
-            mask--;
-            Map<String, ?> locators = dao.get(key);
-            if (locators != null) {
-                List<MappingServiceRLOCGroup> result = aggregateLocators(locators);
-                if (result != null && !result.isEmpty()) {
-                    return result;
-                }
-            }
-        }
-        return null;
     }
 
     private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs) {

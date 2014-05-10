@@ -23,6 +23,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
+import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
@@ -143,9 +144,9 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                         break;
                     }
                 }
-                saveRlocs(eidRecord);
+                boolean mappingChanged = saveRlocs(eidRecord, smr);
 
-                if (smr) {
+                if (smr && mappingChanged) {
                     HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
                     if (subscribers != null) {
                         MapRequest mapRequest = buildSMR(eidRecord);
@@ -179,7 +180,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         }
     }
 
-    public void saveRlocs(EidToLocatorRecord eidRecord) {
+    public boolean saveRlocs(EidToLocatorRecord eidRecord, boolean smr) {
+        List<MappingServiceRLOCGroup> oldLocators = null, newLocators = null;
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
         Map<String, MappingServiceRLOCGroup> rlocGroups = new HashMap<String, MappingServiceRLOCGroup>();
         if (eidRecord.getLocatorRecord() != null) {
@@ -195,7 +197,17 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         for (String subkey : rlocGroups.keySet()) {
             entries.add(new MappingEntry<>(subkey, rlocGroups.get(subkey)));
         }
+        if (smr) {
+            oldLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
+        }
         dao.put(key, entries.toArray(new MappingEntry[entries.size()]));
+        if (smr) {
+            newLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
+            if (!newLocators.equals(oldLocators)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getLocatorKey(LocatorRecord locatorRecord) {
