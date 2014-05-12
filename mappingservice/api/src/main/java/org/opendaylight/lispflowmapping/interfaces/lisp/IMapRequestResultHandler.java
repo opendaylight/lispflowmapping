@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
-import java.net.InetAddress;
-
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
