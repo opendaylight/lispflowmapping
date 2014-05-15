@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ba7da9e9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-05-15T06:42:29Z",
+      "side": 1,
+      "message": "You are checking the smr twice here, the saveRlocs() already takes smr into account. I think it would be cleaner if you remove the smr from saveRlocks() so it always returns true if new records are being saved. And then check for smr in the if above as you do now. The way it is right now, saveRlocks() may have better performance if smr is false, but I suspect the gain would be negligible.",
+      "revId": "c3e3e4aeeefaea7bc91edcf67284982e1fb6d524",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
