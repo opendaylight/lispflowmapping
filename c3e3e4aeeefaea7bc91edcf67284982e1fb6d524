@@ -16,6 +16,24 @@
       "revId": "c3e3e4aeeefaea7bc91edcf67284982e1fb6d524",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5ab7bd86",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2014-05-15T11:56:40Z",
+      "side": 1,
+      "message": "While I haven\u0027t measured performance to be able to comment on the impact, I still prefer to leave smr in saveRlocs(), otherwise we have two DAO lookups for each map-register instead of one.  If we have lots of ETRs registering, that may be signifiant, and fix is simple :)\n\nWhat we can do to make it cleaner/more elegant, is call the argument \"checkForMappingChange\" or something like that instead of \"smr\".\n\nEven then, I would still check for smr in the if statement, to make things less confusing, as this really has no performance impact.",
+      "parentUuid": "fa82b9bf_ba7da9e9",
+      "revId": "c3e3e4aeeefaea7bc91edcf67284982e1fb6d524",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
