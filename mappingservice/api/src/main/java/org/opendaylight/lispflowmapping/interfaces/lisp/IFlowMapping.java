@@ -19,13 +19,9 @@ public interface IFlowMapping extends IMapResolver, IMapServer {
 
     public void clean();
 
-    public void shouldListenOnXtrPort(boolean listenOnXtrPort);
-
     public void setShouldUseSmr(boolean smr);
 
     public boolean shouldUseSmr();
-
-    public void setXtrPort(int port);
 
     public MapNotify handleMapRegister(MapRegister mb);
 

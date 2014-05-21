@@ -29,13 +29,11 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSeri
 import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
-import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
+import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInput;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SetXtrPortInput;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.ShouldListenOnXtrPortInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
@@ -45,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
-public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispPlugin, CommandProvider, LispflowmappingService {
+public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispSouthboundPlugin, CommandProvider, LispflowmappingService {
     protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -67,7 +65,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private void registerWithOSGIConsole() {
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bundleContext.registerService(CommandProvider.class.getName(), this, null);
-        bundleContext.registerService(IConfigLispPlugin.class.getName(), this, null);
+        bundleContext.registerService(IConfigLispSouthboundPlugin.class.getName(), this, null);
     }
 
     protected void stopImpl(BundleContext context) {
@@ -312,29 +310,22 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     }
 
     @Override
-    public Future<RpcResult<Void>> shouldListenOnXtrPort(ShouldListenOnXtrPortInput input) {
-	logger.debug("got a call to shouldListenOnXtrPort");
-        if (listenOnXtrPort == input.isShouldListenOnXtrPort()) {
-	    logger.debug("no action done, ond and new value are identical, " + listenOnXtrPort); 
-            return null;
-        }
-        listenOnXtrPort = input.isShouldListenOnXtrPort();
+    public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort) {
+        listenOnXtrPort = shouldListenOnXtrPort;
         if (listenOnXtrPort) {
-	    logger.debug("restarting xtr thread");
+            logger.debug("restarting xtr thread");
             restartXtrThread();
         } else {
-	    logger.debug("terminating thread");
+            logger.debug("terminating thread");
             stopXtrThread();
         }
-        return null;
     }
 
     @Override
-    public Future<RpcResult<Void>> setXtrPort(SetXtrPortInput input) {
-        this.xtrPort = input.getXtrPort().getValue();
+    public void setXtrPort(int port) {
+        this.xtrPort = port;
         if (listenOnXtrPort) {
             restartXtrThread();
         }
-        return null;
     }
 }

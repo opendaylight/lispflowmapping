@@ -43,8 +43,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInputBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SetXtrPortInputBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.ShouldListenOnXtrPortInputBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
@@ -357,16 +355,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     @Override
     public void setOverwrite(boolean overwrite) {
         mapServer.setOverwrite(overwrite);
-    }
-
-    @Override
-    public void shouldListenOnXtrPort(boolean listenOnXtrPort) {
-        getLispSB().shouldListenOnXtrPort(new ShouldListenOnXtrPortInputBuilder().setShouldListenOnXtrPort(listenOnXtrPort).build());
-    }
-
-    @Override
-    public void setXtrPort(int port) {
-        getLispSB().setXtrPort(new SetXtrPortInputBuilder().setXtrPort(new PortNumber(port)).build());
     }
 
 }

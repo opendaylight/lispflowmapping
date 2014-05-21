@@ -57,7 +57,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispPlugin;
+import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafKeyValueAddress;
@@ -135,7 +135,7 @@ public class MappingServiceIntegrationTest {
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
-    private IConfigLispPlugin configLispPlugin;
+    private IConfigLispSouthboundPlugin configLispPlugin;
     String lispBindAddress = "127.0.0.1";
     String ourAddress = "127.0.0.2";
     private LispAFIAddress locatorEid;
@@ -1422,7 +1422,7 @@ public class MappingServiceIntegrationTest {
 
     public void testRecievingNonProxyOnXtrPort() throws SocketTimeoutException, SocketException, Throwable {
         cleanUP();
-        lms.shouldListenOnXtrPort(true);
+        configLispPlugin.shouldListenOnXtrPort(true);
         notificationCalled = false;
         final String eid = "10.10.10.10";
         String rloc = "127.0.0.3";
@@ -1660,12 +1660,12 @@ public class MappingServiceIntegrationTest {
         }
 
         assertNotNull(ILispDAO.class.getName() + " service wasn't found in bundle context ", this.clusterService);
-        r = bc.getServiceReference(IConfigLispPlugin.class.getName());
+        r = bc.getServiceReference(IConfigLispSouthboundPlugin.class.getName());
         if (r != null) {
-            this.configLispPlugin = (IConfigLispPlugin) bc.getService(r);
+            this.configLispPlugin = (IConfigLispSouthboundPlugin) bc.getService(r);
         }
 
-        assertNotNull(IConfigLispPlugin.class.getName() + " service wasn't found in bundle context ", this.configLispPlugin);
+        assertNotNull(IConfigLispSouthboundPlugin.class.getName() + " service wasn't found in bundle context ", this.configLispPlugin);
         configLispPlugin.setLispAddress(lispBindAddress);
 
         // Uncomment this code to Know which services were actually loaded to
@@ -1702,7 +1702,7 @@ public class MappingServiceIntegrationTest {
     private void cleanUP() {
         after();
         lms.clean();
-        lms.shouldListenOnXtrPort(false);
+        configLispPlugin.shouldListenOnXtrPort(false);
         socket = initSocket(socket, LispMessage.PORT_NUM);
 
     }
