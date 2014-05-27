@@ -166,7 +166,7 @@ public class MappingServiceIntegrationTest {
 
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)
-        // IP: 192.168.136.10 -> 1.2.3.4
+        // IP: 192.168.136.10 -> 153.16.254.1
         // UDP: 56756
         // LISP(Type = 1 Map-Request
         // Record Count: 1
@@ -175,14 +175,14 @@ public class MappingServiceIntegrationTest {
         // Source EID not present
         // Nonce: 0x3d8d2acd39c8d608
         // ITR-RLOC AFI=1 Address=192.168.136.10
-        // Record 1: 1.2.3.4/32
+        // Record 1: 153.16.254.1/32
         mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
-                + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 01 02 "
-                + "0040   03 04 dd b4 10 f6 00 28 ef 3a 10 00 00 01 3d 8d "
+                + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
+                + "0040   fe 01 dd b4 10 f6 00 28 ef 3a 10 00 00 01 3d 8d "
                 + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 00 02 00 20 " //
-                + "0060   00 01 01 02 03 04"));
+                + "0060   00 01 99 10 fe 01"));
 
         // IP: 192.168.136.10 -> 128.223.156.35
         // UDP: 49289 -> 4342
@@ -321,6 +321,11 @@ public class MappingServiceIntegrationTest {
         testSimpleNonProxy();
         testNonProxyOtherPort();
         testRecievingNonProxyOnXtrPort();
+    }
+
+    @Test
+    public void testSmr() throws Exception {
+        registerQueryRegisterWithSmr();
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -506,6 +511,22 @@ public class MappingServiceIntegrationTest {
             fail();
         } catch (SocketTimeoutException ste) {
         }
+    }
+
+    public void registerQueryRegisterWithSmr() throws SocketTimeoutException {
+        cleanUP();
+        lms.setShouldUseSmr(true);
+
+        sendPacket(mapRegisterPacketWithoutNotify);
+        sendPacket(mapRequestPacket);
+        mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
+        sendPacket(mapRegisterPacketWithoutNotify);
+
+        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf);
+        assertTrue(smr.isSmr());
+        LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
+        assertTrue(LispAFIConvertor.toContainer(asIPAfiAddress("153.16.254.1")).equals(smrEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
@@ -1521,7 +1542,7 @@ public class MappingServiceIntegrationTest {
         try {
             DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
             initPacketAddress(packet, port);
-            logger.trace("Sending MapRegister to LispPlugin on socket");
+            logger.trace("Sending packet to LispPlugin on socket, port {}", port);
             socket.send(packet);
         } catch (Throwable t) {
             fail();
