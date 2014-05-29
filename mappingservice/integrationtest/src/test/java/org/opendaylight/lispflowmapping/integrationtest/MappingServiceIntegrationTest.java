@@ -1536,18 +1536,21 @@ public class MappingServiceIntegrationTest {
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 logger.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
-                try {
-                    String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                    if (host != null) {
-                        logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                        logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                    } else {
-                        element.start();
-                    }
-                } catch (BundleException e) {
-                    logger.error("BundleException:", e);
-                    fail();
-                }
+                // try {
+                // String host =
+                // element.getHeaders().get(Constants.FRAGMENT_HOST);
+                // if (host != null) {
+                // logger.warn("Bundle " + element.getSymbolicName() +
+                // " is a fragment which is part of: " + host);
+                // logger.warn("Required imports are: " +
+                // element.getHeaders().get(Constants.IMPORT_PACKAGE));
+                // } else {
+                // element.start();
+                // }
+                // } catch (BundleException e) {
+                // logger.error("BundleException:", e);
+                // fail();
+                // }
 
                 debugit = true;
 
