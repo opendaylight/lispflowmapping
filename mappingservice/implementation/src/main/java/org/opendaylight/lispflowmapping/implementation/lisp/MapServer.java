@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthen
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
@@ -88,9 +89,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress current_addr = addresses.nextElement();
-                    // Skip loopback addresses but not link local or RFC 1918
-                    // addresses
-                    if (current_addr.isLoopbackAddress())
+                    // Skip loopback and link local addresses
+                    if (current_addr.isLoopbackAddress() || current_addr.isLinkLocalAddress())
                         continue;
                     logger.debug(current_addr.getHostAddress());
                     return current_addr;
@@ -117,9 +117,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.setItrRloc(new ArrayList<ItrRloc>());
         builder.getItrRloc().add(
                 new ItrRlocBuilder().setLispAddressContainer(
-                        new LispAddressContainerBuilder().setAddress(
-                                new Ipv4Builder().setIpv4Address(new Ipv4Address(getLocalAddress().getHostAddress()))
-                                        .setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).build()).build()).build());
+                        new LispAddressContainerBuilder().setAddress(LispAFIConvertor.asIPAfiAddress(getLocalAddress().getHostAddress())).build()).build());
 
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
