@@ -4,7 +4,7 @@
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>lispflowmapping-commons</artifactId>
     <relativePath>../commons/parent</relativePath>
-    <version>1.1.10-SNAPSHOT</version>
+    <version>1.1.10</version>
   </parent>
 
   <artifactId>lispflowmapping-distribution</artifactId>
@@ -15,7 +15,7 @@
     <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
     <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
     <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-    <tag>HEAD</tag>
+    <tag>lispflowmapping-all-1.1.10</tag>
   </scm>
   <dependencies>
     <dependency>
