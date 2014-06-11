@@ -28,7 +28,7 @@
 				<plugin>
 					<groupId>org.opendaylight.yangtools</groupId>
 					<artifactId>yang-maven-plugin</artifactId>
-					<version>${yang.version}</version>
+					<version>0.6.2-SNAPSHOT</version>
 					<executions>
 						<execution>
 							<goals>
@@ -64,12 +64,12 @@
 						<dependency>
 							<groupId>org.opendaylight.controller</groupId>
 							<artifactId>yang-jmx-generator-plugin</artifactId>
-							<version>0.2.3</version>
+							<version>0.2.5-SNAPSHOT</version>
 						</dependency>
 						<dependency>
 							<groupId>org.opendaylight.yangtools</groupId>
 							<artifactId>maven-sal-api-gen-plugin</artifactId>
-							<version>${yang.version}</version>
+							<version>0.6.2-SNAPSHOT</version>
 							<type>jar</type>
 						</dependency>
 					</dependencies>
