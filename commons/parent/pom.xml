@@ -142,27 +142,27 @@
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-binding</artifactId>
-				<version>${yang.binding.version}</version>
+				<version>0.6.1-1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-common</artifactId>
-				<version>${yang.version}</version>
+				<version>0.6.1-1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-data-api</artifactId>
-				<version>${yang.version}</version>
+				<version>0.6.1-1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-model-api</artifactId>
-				<version>${yang.version}</version>
+				<version>0.6.1-1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.yangtools</groupId>
 				<artifactId>yang-data-util</artifactId>
-				<version>${yang.version}</version>
+				<version>0.6.1-1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.opendaylight.yangtools.model</groupId>
@@ -394,7 +394,7 @@
 				<plugin>
 					<groupId>org.opendaylight.yangtools</groupId>
 					<artifactId>yang-maven-plugin</artifactId>
-					<version>${yang.version}</version>
+					<version>0.6.1-1-SNAPSHOT</version>
 					<executions>
 						<execution>
 							<goals>
@@ -420,7 +420,7 @@
 						<dependency>
 							<groupId>org.opendaylight.yangtools</groupId>
 							<artifactId>maven-sal-api-gen-plugin</artifactId>
-							<version>${yang.codegen.version}</version>
+							<version>0.6.1-1-SNAPSHOT</version>
 							<type>jar</type>
 						</dependency>
 					</dependencies>

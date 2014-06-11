@@ -28,7 +28,7 @@
 				<plugin>
 					<groupId>org.opendaylight.yangtools</groupId>
 					<artifactId>yang-maven-plugin</artifactId>
-					<version>${yang.version}</version>
+					<version>0.6.1-1-SNAPSHOT</version>
 					<executions>
 						<execution>
 							<goals>
@@ -69,7 +69,7 @@
 						<dependency>
 							<groupId>org.opendaylight.yangtools</groupId>
 							<artifactId>maven-sal-api-gen-plugin</artifactId>
-							<version>${yang.version}</version>
+							<version>0.6.1-1-SNAPSHOT</version>
 							<type>jar</type>
 						</dependency>
 					</dependencies>
