@@ -409,6 +409,13 @@
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-it</artifactId>
       <version>1.0-1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <!-- declare the exclusion here -->
+          <groupId>org.ops4j.pax.exam</groupId>
+          <artifactId>pax-exam-container-native</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
