@@ -311,14 +311,14 @@
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>commons.integrationtest</artifactId>
       <version>0.5.2-SNAPSHOT</version>
-      <exclusions>	
-        <exclusion>	
-          <!-- declare the exclusion here -->	
-          <groupId>org.ops4j.pax.exam</groupId>	
-          <artifactId>pax-exam-container-native</artifactId>	
-        </exclusion>	
-      </exclusions>
       <type>pom</type>
+      <exclusions>
+        <exclusion>
+          <!-- declare the exclusion here -->
+          <groupId>org.ops4j.pax.exam</groupId>
+          <artifactId>pax-exam-container-native</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
@@ -415,6 +415,13 @@
       <artifactId>sal-binding-it</artifactId>
       <version>1.1-SNAPSHOT</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <!-- declare the exclusion here -->
+          <groupId>org.ops4j.pax.exam</groupId>
+          <artifactId>pax-exam-container-native</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
