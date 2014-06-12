@@ -309,6 +309,7 @@
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>commons.integrationtest</artifactId>
       <version>0.5.1-1-SNAPSHOT</version>
+      <type>pom</type>
       <exclusions>
         <exclusion>
           <!-- declare the exclusion here -->
@@ -317,7 +318,6 @@
 
         </exclusion>
       </exclusions>
-      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
