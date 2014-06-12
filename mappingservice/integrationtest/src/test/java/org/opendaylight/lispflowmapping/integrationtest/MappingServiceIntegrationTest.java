@@ -124,8 +124,6 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aQute.lib.osgi.Constants;
-
 @RunWith(PaxExam.class)
 public class MappingServiceIntegrationTest {
 
@@ -1634,18 +1632,20 @@ public class MappingServiceIntegrationTest {
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 logger.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
-                try {
-                    String host = element.getHeaders().get(Constants.FRAGMENT_HOST);
-                    if (host != null) {
-                        logger.warn("Bundle " + element.getSymbolicName() + " is a fragment which is part of: " + host);
-                        logger.warn("Required imports are: " + element.getHeaders().get(Constants.IMPORT_PACKAGE));
-                    } else {
-                        element.start();
-                    }
-                } catch (BundleException e) {
-                    logger.error("BundleException:", e);
-                    fail();
-                }
+                // try {
+                // String host = element.getHeaders().get("FRAGMENT-HOST");
+                // if (host != null) {
+                // logger.warn("Bundle " + element.getSymbolicName() +
+                // " is a fragment which is part of: " + host);
+                // logger.warn("Required imports are: " +
+                // element.getHeaders().get("IMPORT-PACKAGE"));
+                // } else {
+                // element.start();
+                // }
+                // } catch (BundleException e) {
+                // logger.error("BundleException:", e);
+                // fail();
+                // }
 
                 debugit = true;
 
