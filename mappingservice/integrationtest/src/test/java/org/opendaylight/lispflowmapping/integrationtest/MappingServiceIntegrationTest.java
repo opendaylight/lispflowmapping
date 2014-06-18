@@ -148,7 +148,7 @@ public class MappingServiceIntegrationTest {
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
     private static final String DEBUG_PORT = "8005";
-    private static final int MAX_SERVICE_LOAD_RETRIES = 45;
+    private static final int MAX_SERVICE_LOAD_RETRIES = 60;
 
     @After
     public void after() {
@@ -277,7 +277,7 @@ public class MappingServiceIntegrationTest {
                 // + DEBUG_PORT),
 
                 // Set the systemPackages (used by clustering)
-                systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec"),
+                systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec", "sun.nio.ch"),
 
                 // OSGI infra
                 mavenBundle("org.jboss.spec.javax.transaction", "jboss-transaction-api_1.1_spec").versionAsInProject(),
