@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>lispflowmapping-commons</artifactId>
@@ -103,10 +104,16 @@
 							org.apache.commons.lang3,
 							org.slf4j,
 							org.osgi.framework,
-							org.opendaylight.lispflowmapping.type.sbplugin
+							org.opendaylight.lispflowmapping.type.sbplugin,
+							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.rpc.context.rev130617,
+							org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.rev130405,
+							org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.rev130405.modules.module,
+							org.opendaylight.yangtools.yang.binding,
+							org.opendaylight.yangtools.yang.common
 						</Import-Package>
 						<Export-Package>
-							org.opendaylight.lispflowmapping.config.yang
+							org.opendaylight.lispflowmapping.config.yang,
+							org.opendaylight.yang.gen.v1.lispconfig.rev131107.*
 						</Export-Package>
 					</instructions>
 				</configuration>
@@ -137,7 +144,7 @@
 		</plugins>
 	</build>
 	<dependencies>
-	<dependency>
+		<dependency>
 			<groupId>org.opendaylight.yangtools.model</groupId>
 			<artifactId>ietf-inet-types</artifactId>
 		</dependency>
@@ -145,7 +152,7 @@
 			<groupId>org.opendaylight.yangtools.model</groupId>
 			<artifactId>ietf-yang-types</artifactId>
 		</dependency>
-	<dependency>
+		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.api</artifactId>
 		</dependency>

@@ -31,7 +31,7 @@ public class MappingServiceTestHelper {
                 // + DEBUG_PORT),
 
                 // Set the systemPackages (used by clustering)
-                systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec"),
+                systemPackages("sun.reflect", "sun.reflect.misc", "sun.misc", "javax.crypto", "javax.crypto.spec", "sun.nio.ch"),
 
                 // OSGI infra
                 mavenBundle("org.jboss.spec.javax.transaction", "jboss-transaction-api_1.1_spec").versionAsInProject(),
@@ -105,6 +105,7 @@ public class MappingServiceTestHelper {
                 TestHelper.bindingAwareSalBundles(),
                 TestHelper.mdSalCoreBundles(),
                 TestHelper.junitAndMockitoBundles(),
+                TestHelper.flowCapableModelBundles(),
 
                 mavenBundle("org.javassist", "javassist").versionAsInProject(), //
 
@@ -185,7 +186,7 @@ public class MappingServiceTestHelper {
         return new DefaultCompositeOption( //
                 mappingServiceBundles(), //
                 mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.clusterdao").versionAsInProject() //
-                );
+        );
     }
 
 }
