@@ -516,7 +516,15 @@ public class MappingServiceIntegrationTest {
         lms.setShouldUseSmr(true);
 
         sendPacket(mapRegisterPacketWithoutNotify);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
         sendPacket(mapRequestPacket);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
         sendPacket(mapRegisterPacketWithoutNotify);
 
