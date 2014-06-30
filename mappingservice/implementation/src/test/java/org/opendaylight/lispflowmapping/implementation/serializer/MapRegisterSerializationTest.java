@@ -19,6 +19,7 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer.Length;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
@@ -48,10 +49,16 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         mrBuilder.setKeyId((short) 0x0001);
         mrBuilder.setWantMapNotify(true);
         mrBuilder.setProxyMapReply(true);
+        mrBuilder.setXtrSiteIdPresent(true);
         byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88, (byte) 0x2d, (byte) 0x4d,
                 (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64, (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba,
                 (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
         mrBuilder.setAuthenticationData(authenticationData);
+        byte[] xtrId  = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01 };
+        mrBuilder.setXtrId(xtrId);
+        byte[] siteId = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01 };
+        mrBuilder.setSiteId(siteId);
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
         assertHexEquals((byte) 0x38, bb.get()); // Type + MSByte of reserved
@@ -70,6 +77,14 @@ public class MapRegisterSerializationTest extends BaseTestCase {
 
         bb.position(bb.position() + 12); /* EID in second record */
         assertEquals(73, bb.getInt());
+
+        byte[] actualXtrId  = new byte[Length.XTRID_SIZE];
+        bb.get(actualXtrId);
+        ArrayAssert.assertEquals(xtrId, actualXtrId);
+
+        byte[] actualSiteId = new byte[Length.SITEID_SIZE];
+        bb.get(actualSiteId);
+        ArrayAssert.assertEquals(siteId, actualSiteId);
 
         assertEquals(bb.position(), bb.capacity());
     }

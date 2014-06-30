@@ -38,6 +38,10 @@ public class MapNotifySerializer {
         if (mapNotify.getAuthenticationData() != null) {
             size += mapNotify.getAuthenticationData().length;
         }
+        if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
+            size += org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer.Length.XTRID_SIZE +
+                    org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
+        }
         for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecord()) {
             size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
         }
@@ -64,6 +68,11 @@ public class MapNotifySerializer {
                 EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
             }
         }
+
+        if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
+            replyBuffer.put(mapNotify.getXtrId());
+            replyBuffer.put(mapNotify.getSiteId());
+        }
         replyBuffer.clear();
         return replyBuffer;
     }
@@ -71,7 +80,10 @@ public class MapNotifySerializer {
     public MapNotify deserialize(ByteBuffer notifyBuffer) {
         try {
             MapNotifyBuilder builder = new MapNotifyBuilder();
-            builder.setProxyMapReply(ByteUtil.extractBit(notifyBuffer.get(), Flags.PROXY));
+
+            byte typeAndFlags = notifyBuffer.get();
+            boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
+            builder.setXtrSiteIdPresent(xtrSiteIdPresent);
 
             notifyBuffer.position(notifyBuffer.position() + Length.RES);
 
@@ -88,6 +100,15 @@ public class MapNotifySerializer {
                 builder.getEidToLocatorRecord().add(
                         new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
             }
+
+            if (xtrSiteIdPresent) {
+                byte[] xtrId  = new byte[org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer.Length.XTRID_SIZE];
+                notifyBuffer.get(xtrId);
+                byte[] siteId = new byte[org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer.Length.SITEID_SIZE];
+                notifyBuffer.get(siteId);
+                builder.setXtrId(xtrId);
+                builder.setSiteId(siteId);
+            }
             notifyBuffer.limit(notifyBuffer.position());
             return builder.build();
         } catch (RuntimeException re) {
@@ -96,7 +117,7 @@ public class MapNotifySerializer {
     }
 
     private interface Flags {
-        byte PROXY = 0x08;
+        byte XTRSITEID = 0x08;
     }
 
     private interface Length {

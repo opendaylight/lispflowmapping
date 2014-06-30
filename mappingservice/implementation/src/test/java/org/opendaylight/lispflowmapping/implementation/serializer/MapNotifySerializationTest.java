@@ -99,7 +99,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__AllFields() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1
+        // LISP(Type = 4 Map-Notify, I=1
         // Record Counter: 1
         // Nonce: (something)
         // Key ID: 0x0000
@@ -108,14 +108,19 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // No-Action
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
-        //
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 FF BB "
+        // xTR-ID 1
+        // Site-ID 1
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 00 01 FF BB "
         //
                 + "00 00 00 00 00 00 00 00 00 00 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a "
+                + "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 " // xTR-ID
+                + "00 00 00 00 00 00 00 01 " // Site-ID
+                ));
 
-        assertTrue(mn.isProxyMapReply());
+
+        assertTrue(mn.isXtrSiteIdPresent());
 
         assertEquals(1, mn.getEidToLocatorRecord().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
@@ -175,14 +180,14 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__MultipleRecords() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1, M=1
+        // LISP(Type = 4 Map-Notify, I=1
         // Record Counter: 4
         // EID prefixes: 153.16.254.1 -- 152.16.254.1 -- 151.16.254.1 --
         // 150.16.254.1
         // Local RLOCs: 192.168.136.10 -- 192.168.136.11 -- 192.168.136.12 --
         // 192.168.136.13
         //
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 "
         //
                 + "04 " // Record count
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 87 c1 33 cd " //
@@ -214,7 +219,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__Locators() throws Exception {
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 01 01 "
         //
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 f1 b8 ab f0 " //
                 + "66 bb 2e ef 12 70 74 46 6f 6b 8e ca bf 1e 68 40 " //
@@ -275,14 +280,14 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__SomeEidToLocatorFiels() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1, M=1
+        // LISP(Type = 4 Map-Notify, I=0
         // Record Counter: 4
         // EID prefixes: 153.16.254.1 -- 152.16.254.1 -- 151.16.254.1 --
         // 150.16.254.1
         // Local RLOCs: 192.168.136.10 -- 192.168.136.11 -- 192.168.136.12 --
         // 192.168.136.13
         //
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 "
         //
                 + "04 " // Record count
                 + "FF BB 00 00 00 00 00 00 00 01 00 14 b9 cd 7b 89 " //
@@ -332,7 +337,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__IllegalAction() throws Exception {
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 FF BB "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 01 01 FF BB "
         //
                 + "00 00 00 00 00 00 00 01 00 14 ec 47 1e 53 25 91 " //
                 + "2f 68 10 75 13 dd 2c e8 6e 3c ac 94 ed e4 00 00 " //
@@ -345,7 +350,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize_WrongAuthenticationLength() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1, M=1
+        // LISP(Type = 4 Map-Notify, I=0
         // Record Counter: 1
         // Nonce: (something)
         // Key ID: 0x0000
@@ -356,7 +361,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 FF BB "
+        MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 00 01 FF BB "
         //
                 + "00 00 00 00 00 00 00 00 00 14 e8 f5 0b c5 c5 f2 " //
                 + "b0 21 27 a8 21 a5 68 89 ec 00 00 " //
@@ -366,7 +371,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__SHA1() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1, M=1
+        // LISP(Type = 4 Map-Notify, I=0
         // Record Counter: 1
         // Nonce: (something)
         // Key ID: 0x0001
@@ -377,14 +382,14 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 FF BB "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 01 FF BB "
         //
                 + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 " //
                 + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
-        assertTrue(mn.isProxyMapReply());
+        assertFalse(mn.isXtrSiteIdPresent());
 
         assertEquals(1, mn.getEidToLocatorRecord().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
@@ -397,7 +402,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__SHA256() throws Exception {
-        // LISP(Type = 4 Map-Notify, P=1, M=1
+        // LISP(Type = 4 Map-Notify, I=0
         // Record Counter: 1
         // Nonce: (something)
         // Key ID: 0x0002
@@ -409,7 +414,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 01 01 FF BB "
+        MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 01 FF BB "
         //
                 + "00 00 00 00 00 00 00 02 00 20 70 30 d4 c6 10 44 0d 83 be 4d bf fd a9 8c 57 6d 68 a5 bf 32 "
                 //
@@ -417,7 +422,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
-        assertTrue(mn.isProxyMapReply());
+        assertFalse(mn.isXtrSiteIdPresent());
 
         assertEquals(1, mn.getEidToLocatorRecord().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
