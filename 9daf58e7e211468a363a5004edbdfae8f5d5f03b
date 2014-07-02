@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_838eeece",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapNotifySerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-07-02T01:10:29Z",
+      "side": 1,
+      "message": "FYI. if (Boolean.TRUE.equals( mapNotify.isXtrSiteIdPresent() ) ) wont throw nullpointerexceptions and only passes if the object is non-null and true.",
+      "revId": "9daf58e7e211468a363a5004edbdfae8f5d5f03b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
