@@ -16,6 +16,24 @@
       "revId": "9daf58e7e211468a363a5004edbdfae8f5d5f03b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4339c6f1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapNotifySerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2014-07-02T02:52:58Z",
+      "side": 1,
+      "message": "Cool, good to know! Thanks!",
+      "parentUuid": "fa82b9bf_838eeece",
+      "revId": "9daf58e7e211468a363a5004edbdfae8f5d5f03b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
