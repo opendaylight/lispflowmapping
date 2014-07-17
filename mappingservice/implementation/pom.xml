@@ -32,6 +32,7 @@
 						</Export-Package>
 						<Import-Package>
 							javax.xml.bind,
+							javax.xml.bind.annotation,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords,
@@ -58,6 +59,8 @@
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
 							org.opendaylight.controller.sal.core,
+							org.opendaylight.controller.sal.inventory,
+							org.opendaylight.controller.sal.utils,
 							org.apache.felix.dm,
 							org.apache.commons.lang3,
 							org.apache.commons.lang3.tuple,
