@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.net.InetAddress;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -20,6 +22,7 @@ import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
+import org.opendaylight.lispflowmapping.implementation.inventory.IAdSalLispInventoryService;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
@@ -81,6 +84,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     private ConsumerContext session;
 
     private NotificationService notificationService;
+    private IAdSalLispInventoryService inventoryService;
 
     class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
@@ -94,8 +98,24 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingServiceNoMaskKey, Integer> {
     }
 
+    public IAdSalLispInventoryService getInventoryService() {
+        return inventoryService;
+    }
+
+    public void setInventoryService(IAdSalLispInventoryService inventoryService) {
+        logger.debug("Setting inventoryService");
+        this.inventoryService = inventoryService;
+    }
+
+    public void unsetInventoryService(IAdSalLispInventoryService inventoryService) {
+        logger.debug("Unsetting inventoryService");
+        if (this.inventoryService == inventoryService) {
+            this.inventoryService = null;
+        }
+    }
+
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.trace("BindingAwareBroker set!");
+        logger.debug("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerConsumer(this, bundleContext);
     }
@@ -111,12 +131,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setLispDao(ILispDAO dao) {
-        logger.trace("LispDAO set in LispMappingService");
+        logger.debug("LispDAO set in LispMappingService");
         basicInit(dao);
     }
 
     void unsetLispDao(ILispDAO dao) {
-        logger.trace("LispDAO was unset in LispMappingService");
+        logger.debug("LispDAO was unset in LispMappingService");
         mapServer = null;
         mapResolver = null;
         lispDao = null;
@@ -281,7 +301,16 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
 
         @Override
         public void onNotification(AddMapping mapRegisterNotification) {
-            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), smr);
+            MapRegister mapRegister = mapRegisterNotification.getMapRegister();
+            InetAddress address = LispNotificationHelper.getInetAddressFromIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+            if (mapRegister.isXtrSiteIdPresent()) {
+                byte[] xtrId = mapRegister.getXtrId();
+                inventoryService.addNode(address, xtrId);
+            } else {
+                inventoryService.addNode(address, null);
+            }
+
+            MapNotify mapNotify = handleMapRegister(mapRegister, smr);
             if (mapNotify != null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
