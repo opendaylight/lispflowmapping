@@ -24,6 +24,7 @@
     <module>commons/code-parent</module>
     <module>commons/unittest_tools</module>
     <module>mappingservice</module>
+    <module>features</module>
     <module>distribution</module>
   </modules>
 
