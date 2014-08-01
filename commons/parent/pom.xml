@@ -2,6 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>lispflowmapping-commons</artifactId>
+        <name>Parent POM</name>
 	<version>1.1.11-SNAPSHOT</version>
 	<description />
 	<packaging>pom</packaging>

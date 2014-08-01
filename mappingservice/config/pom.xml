@@ -9,7 +9,7 @@
 		<relativePath>../../commons/parent</relativePath>
 	</parent>
 	<artifactId>mappingservice.config</artifactId>
-	<name>${project.artifactId}</name>
+	<name>LISP Flow Mapping Config Subsystem</name>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>

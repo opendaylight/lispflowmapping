@@ -8,6 +8,7 @@
 		<relativePath>../commons/code-parent</relativePath>
 	</parent>
 	<artifactId>mappingservice-parent</artifactId>
+        <name>LISP Flow Mapping Parent POM</name>
 	<packaging>pom</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>

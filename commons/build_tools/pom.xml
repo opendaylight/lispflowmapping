@@ -8,6 +8,7 @@
                 <relativePath>../parent</relativePath>
 	</parent>
 	<artifactId>common.build.tools</artifactId>
+        <name>Build Tools</name>
 	<packaging>jar</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>

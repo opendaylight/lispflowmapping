@@ -9,6 +9,7 @@
 	</parent>
 
 	<artifactId>mappingservice.neutron</artifactId>
+        <name>LISP Flow Mapping Neutron APIs</name>
 	<version>1.1.11-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<scm>

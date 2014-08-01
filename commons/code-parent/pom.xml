@@ -8,6 +8,7 @@
 		<relativePath>../parent</relativePath>
 	</parent>
 	<artifactId>lispflowmapping-code-commons</artifactId>
+        <name>Code Parent POM</name>
 	<packaging>pom</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
