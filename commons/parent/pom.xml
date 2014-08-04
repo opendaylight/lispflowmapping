@@ -31,9 +31,6 @@
 		<sonar.branch>${user.name}-develop</sonar.branch>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.language>java</sonar.language>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.Reportpath>target/jacoco.exec</sonar.jacoco.Reportpath>
-		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
 		<statisticsmanager.version>0.5.0</statisticsmanager.version>
 		<maven.compile.plugin.version>2.5.1</maven.compile.plugin.version>
