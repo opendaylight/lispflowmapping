@@ -28,7 +28,7 @@
 		<yang.version>0.6.1</yang.version>
 		<yang.codegen.version>0.6.1</yang.codegen.version>
 		<sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
-		<sonar.branch>${user.name}-private-view</sonar.branch>
+		<sonar.branch>${user.name}-develop</sonar.branch>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.language>java</sonar.language>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
