@@ -12,15 +12,14 @@
   <name>LISP Flow Mapping Integration Tests</name>
   <version>1.1.11-SNAPSHOT</version>
   <properties>
+  		<sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
+		<sonar.branch>${user.name}-develop</sonar.branch>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.language>java</sonar.language>
     <exam.version>3.0.0</exam.version>
     <!-- Dependency Versions -->
     <junit.version>4.8.1</junit.version>
     <lispflowmapping.version>1.1.11-SNAPSHOT</lispflowmapping.version>
-    <sonar.jacoco.itReportPath>../implementaiton/target/jacoco-it.exec</sonar.jacoco.itReportPath>
-    <sonar.jacoco.reportPath>../implementation/target/jacoco.exec</sonar.jacoco.reportPath>
-    <!-- Sonar jacoco plugin to get integration test coverage info -->
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.language>java</sonar.language>
     <url.version>1.5.0</url.version>
   </properties>
   <dependencies>
@@ -768,29 +767,29 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.5.3.201107060350</version>
-        <configuration>
-          <destFile>../implementation/target/jacoco-it.exec</destFile>
-          <includes>org.opendaylight.controller.*</includes>
-          <includes>org.opendaylight.lispflowmapping.*</includes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>pre-test</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>post-test</id>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+       <groupId>org.jacoco</groupId>
+       <artifactId>jacoco-maven-plugin</artifactId>
+       <configuration>
+         <includes>
+           <include>org.opendaylight.org.opendaylight.lispflowmapping.*.*</include> 
+         </includes>
+       </configuration>
+       <executions>
+         <execution>
+           <id>pre-test</id>
+           <goals>
+             <goal>prepare-agent</goal>
+           </goals>
+         </execution>
+         <execution>
+           <id>post-test</id>
+           <goals>
+             <goal>report</goal>
+           </goals>
+           <phase>test</phase>
+         </execution>
+       </executions>
+     </plugin>
       <plugin>
         <groupId>org.ops4j.pax.exam</groupId>
         <artifactId>maven-paxexam-plugin</artifactId>
