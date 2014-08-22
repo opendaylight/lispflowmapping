@@ -65,7 +65,12 @@
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>
 			<artifactId>mappingservice.neutron</artifactId>
-		</dependency>		
+		</dependency>	
+		
+		<dependency>
+            <groupId>org.opendaylight.lispflowmapping</groupId>
+            <artifactId>mappingservice.netconf</artifactId>
+        </dependency>   	
 		
   </dependencies>
 
