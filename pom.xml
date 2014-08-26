@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -24,8 +25,8 @@
     <module>commons/code-parent</module>
     <module>commons/unittest_tools</module>
     <module>mappingservice</module>
-    <module>features</module>
     <module>distribution</module>
+    <module>features</module>
   </modules>
 
   <build>
