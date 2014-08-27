@@ -27,6 +27,7 @@
     <module>mappingservice</module>
     <module>distribution</module>
     <module>features</module>
+    <module>distribution-karaf</module>
   </modules>
 
   <build>
