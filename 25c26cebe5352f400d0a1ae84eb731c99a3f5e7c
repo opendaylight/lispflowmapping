@@ -1,0 +1,7 @@
+Verified+1: jenkins-lispflowmapping <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+2: David Goldberg <david.goldberg@contextream.com>
+Submitted-by: Lori Jakab <lojakab@cisco.com>
+Submitted-at: Wed, 27 Aug 2014 06:26:30 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/10313
+Project: lispflowmapping
+Branch: refs/heads/develop
