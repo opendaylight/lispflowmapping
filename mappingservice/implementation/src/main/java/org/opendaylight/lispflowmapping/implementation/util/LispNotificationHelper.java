@@ -38,7 +38,8 @@ public class LispNotificationHelper {
     public static MapRegister convertMapRegister(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister mapRegister) {
         return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
                 .setEidToLocatorRecord(mapRegister.getEidToLocatorRecord()).setKeyId(mapRegister.getKeyId()).setNonce(mapRegister.getNonce())
-                .setProxyMapReply(mapRegister.isProxyMapReply()).setWantMapNotify(mapRegister.isWantMapNotify()).build();
+                .setProxyMapReply(mapRegister.isProxyMapReply()).setWantMapNotify(mapRegister.isWantMapNotify())
+                .setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent()).setXtrId(mapRegister.getXtrId()).setSiteId(mapRegister.getSiteId()).build();
     }
 
     public static MapRequest convertMapRequest(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest mapRequest) {
