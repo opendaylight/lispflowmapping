@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_340b3325",
+        "filename": "mappingservice/netconf/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "Is this accurate?",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_14562f06",
+        "filename": "mappingservice/netconf/src/main/java/org/opendaylight/lispflowmapping/config/yang/netconf/impl/LfmNccProviderModule.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "Please add copy right text to all java files in this patch. You can copy them from other files in the project. Thanks.",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f4370be1",
+        "filename": "mappingservice/netconf/src/main/java/org/opendaylight/lispflowmapping/config/yang/netconf/impl/LfmNccProviderModule.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "I would drop the Module from the name and spell out what ncc is. More readable that way :)",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f465cbe0",
+        "filename": "mappingservice/netconf/src/main/java/org/opendaylight/lispflowmapping/netconf/impl/LispDeviceNetconfConnector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "Please change LOG to logger (same in all lispflowmapping)",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_948ebf77",
+        "filename": "mappingservice/netconf/src/main/java/org/opendaylight/lispflowmapping/netconf/impl/LispDeviceNetconfConnector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "generally I think it would be better to spell out some of the field names to avoid cryptic like like req\u003dconn. would be more readable that way (open source ;) ).",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_54d3575f",
+        "filename": "mappingservice/netconf/src/main/java/org/opendaylight/lispflowmapping/netconf/impl/LispNetconfConnector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2014-08-28T16:02:07Z",
+      "side": 1,
+      "message": "Please use java docs compatible commenting for metthods so we can use to generate java docs. Please apply everywhere in the patch.",
+      "revId": "55955e658229e22b24d1f2bf4a52097431f0d4cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
