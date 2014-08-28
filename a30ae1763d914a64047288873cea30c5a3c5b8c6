@@ -1,0 +1,7 @@
+Code-Review+2: Lori Jakab <lojakab@cisco.com>
+Verified+1: jenkins-lispflowmapping <jenkins-lispflowmapping@opendaylight.org>
+Submitted-by: Lori Jakab <lojakab@cisco.com>
+Submitted-at: Thu, 28 Aug 2014 19:51:10 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/10420
+Project: lispflowmapping
+Branch: refs/heads/develop
