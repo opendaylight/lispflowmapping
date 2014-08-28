@@ -272,6 +272,11 @@
               <artifactId>mappingservice.northbound</artifactId>
               <version>${lispflowmapping.version}</version>
             </dependency>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>mappingservice.neutron</artifactId>
+              <version>${lispflowmapping.version}</version>
+            </dependency>            
 	        <dependency>
 	        	<groupId>org.opendaylight.lispflowmapping</groupId>
 	        	<artifactId>common.unittest.tools</artifactId>
