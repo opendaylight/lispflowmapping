@@ -36,6 +36,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification,
 							com.google.common.net,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.controller.sal.core,

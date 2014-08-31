@@ -15,12 +15,15 @@ import java.nio.ByteBuffer;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessageEnum;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.XtrReplyMappingBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.XtrRequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
@@ -41,6 +44,9 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
         if (lispType == LispMessageEnum.MapRequest) {
             logger.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer);
+        } else if (lispType ==  LispMessageEnum.MapReply){
+            logger.trace("Received packet of type MapReply for xTR");
+            handleMapReply(inBuffer);
         } else {
             logger.warn("Received unknown packet type");
         }
@@ -69,5 +75,24 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
+    }
+
+    private void handleMapReply(ByteBuffer buffer) {
+        try {
+            MapReply reply = MapReplySerializer.getInstance().deserialize(buffer);
+
+            XtrReplyMappingBuilder replyMappingBuilder = new XtrReplyMappingBuilder();
+            replyMappingBuilder.setMapReply(LispNotificationHelper.convertMapReply(reply));
+            
+            if (notificationProvider != null) {
+                notificationProvider.publish(replyMappingBuilder.build());
+                logger.trace("MapReply was published!");
+            } else {
+                logger.warn("Notification Provider is null!");
+            }
+        } catch (RuntimeException re) {
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + buffer.capacity() + ")", re);
+        }
+
     }
 }
