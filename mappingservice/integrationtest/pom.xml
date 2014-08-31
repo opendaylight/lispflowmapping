@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.opendaylight.lispflowmapping</groupId>
 	<artifactId>mappingservice.integrationtest</artifactId>
-	<version>1.1.11-SNAPSHOT</version>
+	<version>1.1.10.1-SNAPSHOT</version>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
 		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
@@ -141,7 +141,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<lispflowmapping.version>1.1.11-SNAPSHOT</lispflowmapping.version>
+		<lispflowmapping.version>1.1.10.1-SNAPSHOT</lispflowmapping.version>
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.0</url.version>
 		<!-- Sonar jacoco plugin to get integration test coverage info -->

@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>mappingservice-parent</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>1.1.11-SNAPSHOT</version>
+		<version>1.1.10.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.yangmodel</artifactId>
@@ -41,6 +41,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage,
