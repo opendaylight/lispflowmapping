@@ -534,6 +534,14 @@
     	
     }
     
+    grouping MapReplyNotification {
+    	container MapReply {
+    		uses MapReply;
+    	}
+    
+    }
+    
+    
     rpc sendMapNotify {
     	input {
     		uses MapNotifyMessage;
@@ -564,6 +572,9 @@
     	uses MapRequestNotification;
     }
     
+    notification xtrReplyMapping {
+    	uses MapReplyNotification;
+    }
 }
 	 
 	 
