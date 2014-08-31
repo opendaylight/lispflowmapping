@@ -23,6 +23,8 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispad
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
@@ -46,6 +48,11 @@ public class LispNotificationHelper {
                 .setItrRloc(mapRequest.getItrRloc()).setMapDataPresent(mapRequest.isMapDataPresent()).setMapReply(mapRequest.getMapReply())
                 .setNonce(mapRequest.getNonce()).setPitr(mapRequest.isPitr()).setProbe(mapRequest.isProbe()).setSmr(mapRequest.isSmr())
                 .setSmrInvoked(mapRequest.isSmrInvoked()).setSourceEid(mapRequest.getSourceEid()).build();
+    }
+
+    public static MapReply convertMapReply(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply mapReply) {
+        return new MapReplyBuilder().setEchoNonceEnabled(mapReply.isEchoNonceEnabled()).setEidToLocatorRecord(mapReply.getEidToLocatorRecord())
+                .setNonce(mapReply.getNonce()).setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
 
     public static IpAddress getIpAddressFromInetAddress(InetAddress inetAddress) {
