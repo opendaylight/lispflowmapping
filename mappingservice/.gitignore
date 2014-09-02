@@ -6,3 +6,4 @@ integrationtest/META-INF
 northbound/src/main/resources/META-INF
 neutron/src/main/resources/META-INF
 config/META-INF
+netconf/META-INF
