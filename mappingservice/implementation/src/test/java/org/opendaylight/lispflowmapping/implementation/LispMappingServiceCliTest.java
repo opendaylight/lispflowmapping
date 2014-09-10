@@ -17,6 +17,7 @@ import junitx.framework.StringAssert;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -56,7 +57,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
     @Test
     public void remove__Basic() throws Exception {
         mockCommandInterpreter.addArgument("1.2.3.4");
-        oneOf(dao).remove(LispAFIConvertor.asIPAfiAddress("1.2.3.4"));
+        oneOf(dao).remove(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.getIPContainer("1.2.3.4")));
         testedLispMappingService._removeEid(mockCommandInterpreter);
     }
 

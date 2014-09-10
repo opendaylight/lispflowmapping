@@ -21,6 +21,7 @@ import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
+import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.inventory.IAdSalLispInventoryService;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
@@ -163,7 +164,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void _removeEid(final CommandInterpreter ci) {
-        lispDao.remove(LispAFIConvertor.asIPAfiAddress(ci.nextArgument()));
+        LispAddressContainer eid = LispAFIConvertor.getIPContainer(ci.nextArgument());
+        lispDao.remove(MappingServiceKeyUtil.generateMappingServiceKey(eid));
     }
 
     public void _dumpAll(final CommandInterpreter ci) {
@@ -204,9 +206,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public String getHelp() {
         StringBuffer help = new StringBuffer();
         help.append("---LISP Mapping Service---\n");
-        help.append("\t dumpAll        - Dump all current EID -> RLOC mapping\n");
-        help.append("\t removeEid      - Remove a single LispIPv4Address Eid\n");
-        help.append("\t setShouldOverwritingRloc(true/false)      - set the map server's behaivior regarding existing RLOCs\n");
+        help.append("\t dumpAll                               - Dump all current EID -> RLOC mappings\n");
+        help.append("\t removeEid <EID>                       - Remove a single EID (/32 or /128)\n");
+        help.append("\t setShouldOverwriteRlocs <true|false>  - Set the map server's behavior regarding existing RLOCs\n");
+        help.append("\t addDefaultPassword                    - Add \"password\" as default password for IPv4 EIDs");
         return help.toString();
     }
 
