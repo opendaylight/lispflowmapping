@@ -182,64 +182,64 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Add a mapping to the LISP mapping system
-     * 
+     *
      * @param containerName
      *            name of the container context in which the mapping needs to be
      *            added
      * @param mapRegisterNB
      *            JSON object that contains the mapping information
-     * 
+     *
      * @return Text plain confirming reception
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/mapping
-     * 
+     *
      * Request body in JSON:
-     * 
-     * { 
-     * "key" : "asdf", 
-     * "mapregister" : 
-     *   { 
-     *   "wantMapNotify" : true, 
-     *   "proxyMapReply" : false, 
-     *   "eidToLocatorRecords" : 
-     *     [ 
-     *       { 
-     *       "authoritative" : true, 
-     *       "prefixGeneric" : 
-     *         { 
-     *         "ipAddress" : "10.0.0.1", 
+     *
+     * {
+     * "key" : "asdf",
+     * "mapregister" :
+     *   {
+     *   "wantMapNotify" : true,
+     *   "proxyMapReply" : false,
+     *   "eidToLocatorRecords" :
+     *     [
+     *       {
+     *       "authoritative" : true,
+     *       "prefixGeneric" :
+     *         {
+     *         "ipAddress" : "10.0.0.1",
      *         "afi" : 1
      *         },
-     *       "mapVersion" : 3, 
-     *       "maskLength" : 32, 
-     *       "action" : "NoAction", 
-     *       "locators" : 
-     *         [ 
-     *           { 
-     *           "multicastPriority" : 3, 
-     *           "locatorGeneric" : 
-     *             { 
-     *             "ipAddress" : "3.3.3.3", 
+     *       "mapVersion" : 3,
+     *       "maskLength" : 32,
+     *       "action" : "NoAction",
+     *       "locators" :
+     *         [
+     *           {
+     *           "multicastPriority" : 3,
+     *           "locatorGeneric" :
+     *             {
+     *             "ipAddress" : "3.3.3.3",
      *             "afi" : 1
-     *             }, 
-     *           "routed" : true, 
-     *           "multicastWeight" : 3, 
-     *           "rlocProbed" : false, 
-     *           "localLocator" : false, 
-     *           "priority" : 3, 
-     *           "weight" : 3 
-     *           } 
-     *         ], 
-     *       "recordTtl" : 3 
-     *       } 
-     *     ], 
-     *   "nonce" : 3, 
-     *   "keyId" : 0 
-     *   } 
+     *             },
+     *           "routed" : true,
+     *           "multicastWeight" : 3,
+     *           "rlocProbed" : false,
+     *           "localLocator" : false,
+     *           "priority" : 3,
+     *           "weight" : 3
+     *           }
+     *         ],
+     *       "recordTtl" : 3
+     *       }
+     *     ],
+     *   "nonce" : 3,
+     *   "keyId" : 0
+     *   }
      * }
      * </pre>
      */
@@ -292,30 +292,30 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Retrieve a mapping from the LISP mapping system
-     * 
+     *
      * @param containerName
      *            name of the container context from which the mapping is going
      *            to be retrieved
      * @param iid
      *            Instance-ID of the address (0 if none)
-     * 
+     *
      * @param afi
      *            Address Family of the address (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param address
      *            Address of type defined by afi
-     * 
+     *
      * @param mask
      *            Network mask length
-     * 
+     *
      * @return EidToLocatorRecord as a JSON object
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/mapping/0/1/10.0.0.1/32
-     * 
+     *
      * </pre>
      */
 
@@ -391,37 +391,37 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     /**
      * Retrieve a mapping from the LISP mapping system, using Source-Destination
      * LCAF as EID
-     * 
+     *
      * @param containerName
      *            name of the container context from which the mapping is going
      *            to be retrieved
      * @param iid
      *            Instance-ID of the addresses (0 if none)
-     * 
+     *
      * @param afi
      *            Address Family of the addresses (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param srcAdd
      *            Source address of type defined by afi
-     * 
+     *
      * @param srcML
      *            Network mask length of the source address
-     * 
+     *
      * @param dstAdd
      *            Destination address of type defined by afi
-     * 
+     *
      * @param dstML
      *            Network mask length of the destination address
-     * 
+     *
      * @return EidToLocatorRecord as a JSON object
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
-     * 
+     *
      *      http://localhost:8080/lispflowmapping/nb/v2/default/mapping/0/1/10.0.0.1/32/20.0.0.2/32
-     * 
+     *
      * </pre>
      */
 
@@ -453,22 +453,22 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Set the authentication key for an EID prefix
-     * 
+     *
      * @param containerName
      *            name of the container context in which the key needs to be set
      * @param authKeyNB
      *            JSON object that contains the key information
-     * 
+     *
      * @return Text plain confirming reception
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/key
-     * 
+     *
      * Request body in JSON:
-     * 
+     *
      * {
      * "key" : "asdf",
      * "maskLength" : 24,
@@ -478,7 +478,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
      * "afi" : 1
      * }
      * }
-     * 
+     *
      * </pre>
      */
 
@@ -517,28 +517,28 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Retrieve the key used to register an EID prefix
-     * 
+     *
      * @param containerName
      *            name of the container context from which the key is going to
      *            be retrieved
-     * 
+     *
      * @param afi
      *            Address Family of the address (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param address
      *            Address of type defined by afi
-     * 
+     *
      * @param mask
      *            Network mask length
-     * 
+     *
      * @return AuthKeyNB as a JSON object
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32
-     * 
+     *
      * </pre>
      */
 
@@ -576,7 +576,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         }
 
         if (key == null) {
-            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while retrieving the key");
+            throw new ResourceNotFoundException(RestMessages.NORESOURCE.toString() + " : The requested key was not found");
         }
 
         AuthKeyNB authKeyNB = new AuthKeyNB();
@@ -590,35 +590,35 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Retrieve a key used to register a Source-Destination LCAF EID prefix
-     * 
+     *
      * @param containerName
      *            name of the container context from which the key is going to
      *            be retrieved
-     * 
+     *
      * @param afi
      *            Address Family of the addresses (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param srcAdd
      *            Source address of type defined by afi
-     * 
+     *
      * @param srcML
      *            Network mask length of the source address
-     * 
+     *
      * @param dstAdd
      *            Destination address of type defined by afi
-     * 
+     *
      * @param dstML
      *            Network mask length of the destination address
-     * 
+     *
      * @return AuthKeyNB as a JSON object
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
-     * 
+     *
      * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32/20.0.0.2/32
-     * 
+     *
      * </pre>
      */
 
@@ -648,7 +648,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         String key = nbService.getMappingService().getAuthenticationKey(yangAddress, mask);
 
         if (key == null) {
-            return null;
+            throw new ResourceNotFoundException(RestMessages.NORESOURCE.toString() + " : The requested key was not found");
         }
 
         AuthKeyNB authKeyNB = new AuthKeyNB();
@@ -662,28 +662,28 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Delete the key used to register an EID prefix
-     * 
+     *
      * @param containerName
      *            name of the container context from which the key is going to
      *            be deleted
-     * 
+     *
      * @param afi
      *            Address Family of the address (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param address
      *            Address of type defined by afi
-     * 
+     *
      * @param mask
      *            Network mask length
-     * 
+     *
      * @return Text plain confirming deletion
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32
-     * 
+     *
      * </pre>
      */
 
@@ -723,34 +723,34 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
 
     /**
      * Delete the key used to register an EID prefix
-     * 
+     *
      * @param containerName
      *            name of the container context from which the key is going to
      *            be retrieved
-     * 
+     *
      * @param afi
      *            Address Family of the addresses (IPv4, IPv6 or MAC)
-     * 
+     *
      * @param srcAdd
      *            Source address of type defined by afi
-     * 
+     *
      * @param srcML
      *            Network mask length of the source address
-     * 
+     *
      * @param dstAdd
      *            Destination address of type defined by afi
-     * 
+     *
      * @param dstML
      *            Network mask length of the destination address
-     * 
+     *
      * @return AuthKeyNB as a JSON object
-     * 
+     *
      *         <pre>
      * Example:
-     * 
+     *
      * Request URL:
      * http://localhost:8080/lispflowmapping/nb/v2/default/key/0/1/10.0.0.1/32/20.0.0.2/32
-     * 
+     *
      * </pre>
      */
 
