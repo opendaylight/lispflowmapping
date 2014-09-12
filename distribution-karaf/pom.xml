@@ -166,6 +166,7 @@
           <bootFeatures>
             <feature>standard</feature>
             <feature>odl-restconf</feature>
+            <feature>odl-lispflowmapping-all</feature>
           </bootFeatures>
         </configuration>
         <executions>
