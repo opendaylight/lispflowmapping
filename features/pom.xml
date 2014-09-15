@@ -102,6 +102,11 @@
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.netconf</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.neutron</artifactId>
+    </dependency>
     <!-- error : java.lang.NoSuchMethodError: org.slf4j.helpers.MessageFormatter.format(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)Lorg/slf4j/helpers/FormattingTuple; -->
     <dependency>
       <groupId>org.slf4j</groupId>

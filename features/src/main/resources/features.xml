@@ -21,6 +21,7 @@
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-southbound</feature>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-northbound</feature>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-netconf</feature>
+        <feature version="${lispflowmapping.version}">odl-lispflowmapping-neutron</feature>
     </feature>
 
     <feature name="odl-lispflowmapping-mappingservice" description="OpenDaylight :: LISP Flow Mapping :: Mapping Service" version='${lispflowmapping.version}'>
@@ -49,5 +50,11 @@
         <feature version="${mdsal.version}">odl-netconf-connector-ssh</feature>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-mappingservice</feature>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.netconf/${lispflowmapping.version}</bundle>
+    </feature>
+
+    <feature name="odl-lispflowmapping-neutron" description="OpenDaylight :: LISP Flow Mapping :: Neutron Integration" version='${lispflowmapping.version}'>
+        <feature version="${nsf.version}">odl-adsal-northbound</feature>
+        <feature version="${lispflowmapping.version}">odl-lispflowmapping-mappingservice</feature>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.neutron/${lispflowmapping.version}</bundle>
     </feature>
 </features>
