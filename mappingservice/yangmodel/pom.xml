@@ -57,10 +57,6 @@
 							org.opendaylight.yangtools.yang.binding,
 							org.opendaylight.yangtools.yang.common
 						</Import-Package>
-						<Bundle-Activator>
-						</Bundle-Activator>
-						<Service-Component>
-						</Service-Component>
 					</instructions>
 				</configuration>
 			</plugin>
