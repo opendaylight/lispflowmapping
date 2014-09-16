@@ -53,10 +53,6 @@
 							org.opendaylight.yangtools.yang.common,
 							com.google.common.collect
 						</Import-Package>
-						<Bundle-Activator>
-						</Bundle-Activator>
-						<Service-Component>
-						</Service-Component>
 					</instructions>
 				</configuration>
 			</plugin>
