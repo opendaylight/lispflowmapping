@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<artifactId>mappingservice-parent</artifactId>
-		<version>1.1.11-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>mappingservice.neutron</artifactId>
-        <name>LISP Flow Mapping Neutron APIs</name>
-<!--        <version>0.4.2-SNAPSHOT</version> -->         
-		<packaging>bundle</packaging>		
-	<scm>
-		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
-	</scm>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>
-						</Export-Package>
-						<Import-Package>
-							org.opendaylight.controller.sal.core,
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>mappingservice-parent</artifactId>
+    <version>1.1.11-SNAPSHOT</version>
+  </parent>
+  <artifactId>mappingservice.neutron</artifactId>
+  <packaging>bundle</packaging>
+  <name>LISP Flow Mapping Neutron APIs</name>
+  <dependencies>
+    <dependency>
+      <groupId>equinoxSDK381</groupId>
+      <artifactId>org.eclipse.osgi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>commons.northbound</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>containermanager</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>networkconfig.neutron</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.yangmodel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.yangtools.model</groupId>
+      <artifactId>ietf-inet-types</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package></Export-Package>
+            <Import-Package>org.opendaylight.controller.sal.core,
 							org.opendaylight.controller.sal.utils,
 							org.opendaylight.controller.containermanager,
 							org.opendaylight.controller.switchmanager,
@@ -55,55 +79,14 @@
 							org.apache.commons.lang3.builder,
 							org.osgi.service.component,
 							org.eclipse.osgi.framework.console,
-							org.osgi.framework,
-						</Import-Package>
-						<Bundle-Activator>
-							org.opendaylight.lispflowmapping.neutron.Activator
-						</Bundle-Activator>
+							org.osgi.framework,</Import-Package>
+            <Bundle-Activator>org.opendaylight.lispflowmapping.neutron.Activator</Bundle-Activator>
 
-						<Export-Package>
-						</Export-Package>
-					</instructions>
-					<manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>	
-		<dependency>
-			<groupId>equinoxSDK381</groupId>
-			<artifactId>org.eclipse.osgi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.lispflowmapping</groupId>
-			<artifactId>mappingservice.api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>containermanager</artifactId>
-			<version>0.5.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>commons.northbound</artifactId>
-			<version>0.4.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>networkconfig.neutron</artifactId>
-			<version>0.4.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.lispflowmapping</groupId>
-			<artifactId>mappingservice.yangmodel</artifactId>
-		</dependency>		
-		<dependency>
-			<groupId>org.opendaylight.yangtools.model</groupId>
-			<artifactId>ietf-inet-types</artifactId>
-		</dependency>
-	</dependencies>		
+            <Export-Package></Export-Package>
+          </instructions>
+          <manifestLocation>${project.basedir}/src/main/resources/META-INF</manifestLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
