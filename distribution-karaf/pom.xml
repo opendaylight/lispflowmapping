@@ -15,9 +15,8 @@
     <relativePath>../commons/parent</relativePath>
   </parent>
   <artifactId>distribution-karaf</artifactId>
-  <name>LISP Flow Mapping Project - Karaf Distribution</name>
-  <groupId>org.opendaylight.lispflowmapping</groupId>
   <packaging>pom</packaging>
+  <name>LISP Flow Mapping Project - Karaf Distribution</name>
   <prerequisites>
     <maven>3.0</maven>
   </prerequisites>
@@ -29,14 +28,6 @@
       <artifactId>framework</artifactId>
       <version>${karaf.version}</version>
       <type>kar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf.features</groupId>
-      <artifactId>standard</artifactId>
-      <version>${karaf.version}</version>
-      <classifier>features</classifier>
-      <type>xml</type>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- ODL Branding -->
@@ -53,17 +44,16 @@
       <artifactId>opendaylight-karaf-resources</artifactId>
       <version>${karaf.resources.version}</version>
     </dependency>
-
-    <!-- Project local feautures -->
-    <!--
     <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>features-mdsal</artifactId>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>standard</artifactId>
+      <version>${karaf.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
-    -->
+
+    <!-- Project local feautures -->
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>features-lispflowmapping</artifactId>
@@ -187,8 +177,34 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <tasks>
+                <chmod perm="755">
+                  <fileset dir="${project.build.directory}/assembly/bin">
+                    <include name="karaf"></include>
+                    <include name="instance"></include>
+                    <include name="start"></include>
+                    <include name="stop"></include>
+                    <include name="status"></include>
+                    <include name="client"></include>
+                    <include name="shell"></include>
+                  </fileset>
+                </chmod>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.6</version>
         <executions>
           <execution>
             <id>copy</id>
@@ -215,49 +231,16 @@
             </goals>
             <phase>prepare-package</phase>
             <configuration>
-             <outputDirectory>${project.build.directory}/assembly</outputDirectory>
-             <groupId>org.opendaylight.controller</groupId>
-             <includeArtifactIds>opendaylight-karaf-resources</includeArtifactIds>
-             <excludes>META-INF\/**</excludes>
-             <excludeTransitive>true</excludeTransitive>
-             <ignorePermissions>false</ignorePermissions>
+              <outputDirectory>${project.build.directory}/assembly</outputDirectory>
+              <groupId>org.opendaylight.controller</groupId>
+              <includeArtifactIds>opendaylight-karaf-resources</includeArtifactIds>
+              <excludes>META-INF\/**</excludes>
+              <excludeTransitive>true</excludeTransitive>
+              <ignorePermissions>false</ignorePermissions>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-            <execution>
-                <phase>prepare-package</phase>
-                <goals>
-                    <goal>run</goal>
-                </goals>
-                <configuration>
-                  <tasks>
-                    <chmod perm="755">
-                        <fileset dir="${project.build.directory}/assembly/bin">
-                          <include name="karaf" />
-                          <include name="instance" />
-                          <include name="start" />
-                          <include name="stop" />
-                          <include name="status" />
-                          <include name="client" />
-                          <include name="shell" />
-                        </fileset>
-                    </chmod>
-                  </tasks>
-                </configuration>
-            </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
-  <scm>
-    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-    <tag>HEAD</tag>
-    <url>https://git.opendaylight.org/gerrit/gitweb?p=lispflowmapping.git;a=summary</url>
-  </scm>
 </project>
