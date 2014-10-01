@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<artifactId>mappingservice-parent</artifactId>
-		<version>1.1.11-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>mappingservice.southbound</artifactId>
-        <name>LISP Flow Mapping Southbound Plugin</name>
-	<packaging>bundle</packaging>
-	<scm>
-		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
-	</scm>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>
-						</Export-Package>
-						<Import-Package>
-							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>mappingservice-parent</artifactId>
+    <version>1.1.11-SNAPSHOT</version>
+  </parent>
+  <artifactId>mappingservice.southbound</artifactId>
+  <packaging>bundle</packaging>
+  <name>LISP Flow Mapping Southbound Plugin</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-binding-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-common-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.implementation</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package></Export-Package>
+            <Import-Package>org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer,
@@ -56,34 +65,12 @@
 							org.opendaylight.lispflowmapping.implementation.util,
 							org.opendaylight.controller.sal.binding.api,
 							org.opendaylight.yangtools.yang.binding,
-							org.opendaylight.yangtools.yang.common
-						</Import-Package>
-						<Bundle-Activator>
-							org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin
-						</Bundle-Activator>
-						<Service-Component>
-						</Service-Component>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal-binding-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal-common-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.lispflowmapping</groupId>
-			<artifactId>mappingservice.api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.lispflowmapping</groupId>
-			<artifactId>mappingservice.implementation</artifactId>
-		</dependency>
-	</dependencies>
+							org.opendaylight.yangtools.yang.common</Import-Package>
+            <Bundle-Activator>org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin</Bundle-Activator>
+            <Service-Component></Service-Component>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

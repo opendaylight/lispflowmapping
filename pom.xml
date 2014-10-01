@@ -12,17 +12,9 @@
   <packaging>pom</packaging>
   <name>LISP Flow Mapping All modules</name>
 
-  <scm>
-    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-    <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <modules>
     <module>commons/parent</module>
     <module>commons/build_tools</module>
-    <module>commons/code-parent</module>
     <module>commons/unittest_tools</module>
     <module>mappingservice</module>
     <module>distribution</module>
@@ -30,14 +22,14 @@
     <module>distribution-karaf</module>
   </modules>
 
-  <build>
+  <!--  <build>
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
       </resource>
       <resource>
-        <directory>${project.build.directory}/generated-resources</directory>
         <filtering>true</filtering>
+        <directory>${project.build.directory}/generated-resources</directory>
       </resource>
     </resources>
     <plugins>
@@ -52,12 +44,13 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-             <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
-             <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+              <excludeTransitive>true</excludeTransitive>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
-  </build>
+  </build> -->
+
 </project>
