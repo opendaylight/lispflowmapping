@@ -12,13 +12,6 @@
   <packaging>pom</packaging>
   <name>LISP Flow Mapping All modules</name>
 
-  <scm>
-    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-    <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <modules>
     <module>commons/parent</module>
     <module>commons/build_tools</module>
@@ -36,8 +29,8 @@
         <directory>${basedir}/src/main/resources</directory>
       </resource>
       <resource>
-        <directory>${project.build.directory}/generated-resources</directory>
         <filtering>true</filtering>
+        <directory>${project.build.directory}/generated-resources</directory>
       </resource>
     </resources>
     <plugins>
@@ -52,12 +45,19 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-             <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
-             <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+              <excludeTransitive>true</excludeTransitive>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
+    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
+  </scm>
 </project>
