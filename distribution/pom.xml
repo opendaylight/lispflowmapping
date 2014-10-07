@@ -4,7 +4,7 @@
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>lispflowmapping-commons</artifactId>
     <relativePath>../commons/parent</relativePath>
-    <version>1.1.11-SNAPSHOT</version>
+    <version>1.1.11-Helium</version>
   </parent>
 
   <artifactId>lispflowmapping-distribution</artifactId>
@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>distribution.opendaylight</artifactId>
-      <version>0.1.2-SNAPSHOT</version>
+      <version>0.1.2-Helium</version>
       <type>zip</type>
       <classifier>osgipackage</classifier>
       <!-- Make sure this isn't included on any classpath-->
