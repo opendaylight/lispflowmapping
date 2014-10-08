@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_473ac237",
+        "filename": "mappingservice/neutron/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2014-10-08T20:58:03Z",
+      "side": 1,
+      "message": "Trailing white space here too.",
+      "revId": "478bd3f86c7000bd80fc8b825fc1a94328433020",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
