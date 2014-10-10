@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<artifactId>mappingservice-parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>mappingservice.api</artifactId>
-        <name>LISP Flow Mapping Public APIs</name>
-	<packaging>bundle</packaging>
-	<scm>
-		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
-		<developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
-		<url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
-		<tag>HEAD</tag>
-	</scm>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<!--version>2.3.6</version -->
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>
-							org.opendaylight.lispflowmapping.interfaces.dao,
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>mappingservice-parent</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>mappingservice.api</artifactId>
+  <packaging>bundle</packaging>
+  <name>LISP Flow Mapping Public APIs</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-binding-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-common-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.yangmodel</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>org.opendaylight.lispflowmapping.interfaces.dao,
 							org.opendaylight.lispflowmapping.interfaces.lisp,
 							org.opendaylight.lispflowmapping.type,
 							org.opendaylight.lispflowmapping.type.lisp,
 							org.opendaylight.lispflowmapping.type.lisp.address,
-							org.opendaylight.lispflowmapping.type.sbplugin
-						</Export-Package>
-						<Import-Package>
-							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
+							org.opendaylight.lispflowmapping.type.sbplugin</Export-Package>
+            <Import-Package>org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords,
@@ -51,33 +58,10 @@
 							javax.xml.bind.annotation,
 							org.slf4j,
 							org.opendaylight.yangtools.yang.common,
-							com.google.common.collect
-						</Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal-binding-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal-common-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.controller</groupId>
-			<artifactId>sal</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.opendaylight.lispflowmapping</groupId>
-			<artifactId>mappingservice.yangmodel</artifactId>
-		</dependency>
-	</dependencies>
+							com.google.common.collect</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
