@@ -17,9 +17,11 @@ public class ConfigIni {
     protected static final Logger logger = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingOverwrite;
     private boolean smr;
+    private String elpPolicy;
 
-    private static final String LISP_MAPPINGOVERWRITE = "lisp.mappingOverwrite";
+    private static final String LISP_MAPPING_OVERWRITE = "lisp.mappingOverwrite";
     private static final String LISP_SMR = "lisp.smr";
+    private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
 
     public ConfigIni() {
         Bundle b = FrameworkUtil.getBundle(this.getClass());
@@ -30,6 +32,7 @@ public class ConfigIni {
 
         initMappingOverwrite(context);
         initSmr(context);
+        initElpPolicy(context);
     }
 
     private void initMappingOverwrite(BundleContext context) {
@@ -39,21 +42,21 @@ public class ConfigIni {
         String str = null;
 
         if (context != null)
-            str = context.getProperty(LISP_MAPPINGOVERWRITE);
+            str = context.getProperty(LISP_MAPPING_OVERWRITE);
 
         if (str == null) {
-            str = System.getProperty(LISP_MAPPINGOVERWRITE);
+            str = System.getProperty(LISP_MAPPING_OVERWRITE);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: true", LISP_MAPPINGOVERWRITE);
+                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_MAPPING_OVERWRITE);
                 return;
             }
         }
 
         if (str.trim().equalsIgnoreCase("false")) {
             this.mappingOverwrite = false;
-            logger.debug("Setting configuration variable '{}' to false", LISP_MAPPINGOVERWRITE);
+            logger.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_OVERWRITE);
         } else {
-            logger.debug("Setting configuration variable '{}' to true", LISP_MAPPINGOVERWRITE);
+            logger.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_OVERWRITE);
         }
     }
 
@@ -69,16 +72,45 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_SMR);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: false", LISP_SMR);
+                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'false'", LISP_SMR);
                 return;
             }
         }
 
         if (str.trim().equalsIgnoreCase("true")) {
             this.smr = true;
-            logger.debug("Setting configuration variable '{}' to true", LISP_SMR);
+            logger.debug("Setting configuration variable '{}' to 'true'", LISP_SMR);
         } else {
-            logger.debug("Setting configuration variable '{}' to false", LISP_SMR);
+            logger.debug("Setting configuration variable '{}' to 'false'", LISP_SMR);
+        }
+    }
+
+    private void initElpPolicy(BundleContext context) {
+        // set the default value first
+        this.elpPolicy = "default";
+
+        String str = null;
+
+        if (context != null)
+            str = context.getProperty(LISP_ELP_POLICY);
+
+        if (str == null) {
+            str = System.getProperty(LISP_ELP_POLICY);
+            if (str == null) {
+                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'default' (ELP only)",
+                        LISP_ELP_POLICY);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("both")) {
+            this.elpPolicy = "both";
+            logger.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
+        } else if (str.trim().equalsIgnoreCase("replace")) {
+            this.elpPolicy = "replace";
+            logger.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
+        } else {
+            logger.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
         }
     }
 
@@ -88,5 +120,9 @@ public class ConfigIni {
 
     public boolean smrIsSet() {
         return smr;
+    }
+
+    public String getElpPolicy() {
+        return elpPolicy;
     }
 }
