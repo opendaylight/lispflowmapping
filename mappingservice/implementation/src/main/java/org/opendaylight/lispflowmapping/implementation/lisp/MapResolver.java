@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
@@ -23,14 +24,17 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberR
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafTrafficEngineeringAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,9 +88,10 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
                 List<MappingServiceRLOCGroup> locators = DAOMappingUtil.getLocatorsByEidRecord(eid, dao, shouldIterateMask());
                 if (locators != null && locators.size() > 0) {
-                    addLocatorGroups(recordBuilder, locators);
-                    if (request.getItrRloc() != null && request.getItrRloc().size() > 0) {
-                        LispAddressContainer itrRloc = request.getItrRloc().get(0).getLispAddressContainer();
+                    List<ItrRloc> itrRlocs = request.getItrRloc();
+                    addLocatorGroups(recordBuilder, locators, itrRlocs);
+                    if (itrRlocs != null && itrRlocs.size() > 0) {
+                        LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
                         MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
                         HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eid.getLispAddressContainer(), eid.getMask());
                         if (subscribers == null) {
@@ -123,30 +128,74 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         }
     }
 
-    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs) {
+    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs, List<ItrRloc> itrRlocs) {
         for (MappingServiceRLOCGroup rloc : rlocs) {
-            addLocators(recordBuilder, rloc);
+            addLocators(recordBuilder, rloc, itrRlocs);
             recordBuilder.setRecordTtl(rloc.getTtl());
         }
     }
 
-    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOCGroup locatorObject) {
+    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOCGroup locatorObject, List<ItrRloc> itrRlocs) {
         if (locatorObject == null) {
             return;
         }
         try {
             for (LocatorRecord record : locatorObject.getRecords()) {
+                LispAddressContainer container = record.getLispAddressContainer();
+                // If we have an ELP, extract the next hop
+                if (container.getAddress() instanceof LcafTrafficEngineeringAddress) {
+                    LispAddressContainer nextHop = getNextELPHop((LcafTrafficEngineeringAddress) container.getAddress(), itrRlocs);
+                    if (nextHop != null) {
+                        // Make the priority of the added simple locator lower so that ELP is used by default if
+                        // the xTR understands ELP.  Exclude 255, since that means don't use for unicast forwarding
+                        // XXX Complex cases like several ELPs with different priorities are not handled
+                        java.lang.Short priority = record.getPriority();
+                        if (priority != 254 || priority !=255) {
+                            priority++;
+                        }
+                        // Build and add the simple RLOC
+                        recordBuilder.getLocatorRecord().add(
+                                new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
+                                        .setWeight(record.getWeight()).setPriority(priority).setMulticastWeight(record.getMulticastWeight())
+                                        .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
+                                        .setLispAddressContainer(nextHop).build());
+                    }
+                }
                 recordBuilder.getLocatorRecord().add(
                         new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                 .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
                                 .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
-                                .setLispAddressContainer(record.getLispAddressContainer()).build());
+                                .setLispAddressContainer(container).build());
             }
             recordBuilder.setAction(locatorObject.getAction());
             recordBuilder.setAuthoritative(locatorObject.isAuthoritative());
             recordBuilder.setRecordTtl(locatorObject.getTtl());
         } catch (ClassCastException cce) {
         }
+    }
+
+    private LispAddressContainer getNextELPHop(LcafTrafficEngineeringAddress elp, List<ItrRloc> itrRlocs) {
+        LispAddressContainer nextHop = null;
+        List<Hops> hops = elp.getHops();
+
+        if (hops != null && hops.size() > 0) {
+            // By default we return the first hop
+            nextHop = LispAFIConvertor.toContainer(LispAFIConvertor.toAFIfromPrimitive(hops.get(0).getHop().getPrimitiveAddress()));
+            for (Hops hop : hops) {
+                LispAddressContainer hopContainer = LispAFIConvertor.toContainer(LispAFIConvertor.toAFIfromPrimitive(hop.getHop().getPrimitiveAddress()));
+                for (ItrRloc itrRloc : itrRlocs) {
+                    if (itrRloc.getLispAddressContainer().equals(hopContainer)) {
+                        int i = hops.indexOf(hop);
+                        if (i < hops.size() - 1) {
+                            nextHop = LispAFIConvertor.toContainer(LispAFIConvertor.toAFIfromPrimitive(hops.get(i+1).getHop().getPrimitiveAddress()));
+                            return nextHop;
+                        }
+                    }
+                }
+            }
+        }
+
+        return nextHop;
     }
 
 }
