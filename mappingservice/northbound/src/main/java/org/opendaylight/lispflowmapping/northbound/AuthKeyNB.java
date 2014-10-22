@@ -18,14 +18,14 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 @XmlAccessorType(XmlAccessType.NONE)
 
 public class AuthKeyNB {
- 
-	
+
+
 	@XmlElement
 	String key;
-	
+
 	@XmlElement
 	int maskLength;
-	
+
 	@XmlElement
 	LispAddressGeneric address;
 
@@ -36,7 +36,7 @@ public class AuthKeyNB {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
+
 	public int getMaskLength() {
 		return maskLength;
 	}
@@ -56,7 +56,7 @@ public class AuthKeyNB {
 
 
 
-	
-    
-    
+
+
+
 }

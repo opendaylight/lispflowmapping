@@ -40,9 +40,9 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
  *        |                   Map-Reply RecMapReplyord  ...                       |
  *        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 public class MapRequest {
     /**
@@ -99,7 +99,7 @@ public class MapRequest {
     /**
      * Source-EID-AFI: This is the address family of the 'Source EID Address'
      * field.
-     * 
+     *
      * Source EID Address: This is the EID of the source host that originated
      * the packet that caused the Map-Request. When Map-Requests are used for
      * refreshing a Map-Cache entry or for RLOC-Probing, an AFI value 0 is used
@@ -110,7 +110,7 @@ public class MapRequest {
     /**
      * ITR-RLOC-AFI: This is the address family of the 'ITR-RLOC Address' field
      * that follows this field.
-     * 
+     *
      * ITR-RLOC Address: This is used to give the ETR the option of selecting
      * the destination address from any address family for the Map-Reply
      * message. This address MUST be a routable RLOC address of the sender of
@@ -125,17 +125,17 @@ public class MapRequest {
      * value ranges from 0 to 31. For a value of 0, there is 1 ITR-RLOC address
      * encoded; for a value of 1, there are 2 ITR-RLOC addresses encoded, and so
      * on up to 31, which encodes a total of 32 ITR-RLOC addresses.
-     * 
+     *
      * private byte itrRlocCount;
      */
     private List<LispAddress> itrRlocs;
 
     /**
      * EID mask-len: This is the mask length for the EID-Prefix.
-     * 
+     *
      * EID-Prefix-AFI: This is the address family of the EID-Prefix according to
      * [AFI].
-     * 
+     *
      * EID-Prefix: This prefix is 4 octets for an IPv4 address family and 16
      * octets for an IPv6 address family. When a Map-Request is sent by an ITR
      * because a data packet is received for a destination where there is no
@@ -155,7 +155,7 @@ public class MapRequest {
      * Map-Requests containing one record. Support for requesting multiple EIDs
      * in a single Map-Request message will be specified in a future version of
      * the protocol.
-     * 
+     *
      * private byte recordCount;
      */
     private List<EidRecord> eids;

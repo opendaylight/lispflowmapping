@@ -19,7 +19,7 @@ public class EidRecord {
     /**
      * EID-Prefix-AFI: This is the address family of the EID-Prefix according to
      * [AFI].
-     * 
+     *
      * EID-Prefix: This prefix is 4 octets for an IPv4 address family and 16
      * octets for an IPv6 address family. When a Map-Request is sent by an ITR
      * because a data packet is received for a destination where there is no

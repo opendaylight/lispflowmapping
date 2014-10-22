@@ -83,7 +83,7 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
 
             XtrReplyMappingBuilder replyMappingBuilder = new XtrReplyMappingBuilder();
             replyMappingBuilder.setMapReply(LispNotificationHelper.convertMapReply(reply));
-            
+
             if (notificationProvider != null) {
                 notificationProvider.publish(replyMappingBuilder.build());
                 logger.trace("MapReply was published!");

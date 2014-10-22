@@ -6,7 +6,7 @@ module lfm-netconf-connector {
 
     import config { prefix config; revision-date 2013-04-05; }
     import ietf-inet-types {prefix inet; revision-date "2010-09-24";}
-    
+
     organization "Cisco Systems, Inc.";
 
     contact
@@ -16,15 +16,15 @@ module lfm-netconf-connector {
         description
           "Data model for lispflowmapping netconf connector";
     }
-    
+
     container nc-connector {
         presence
         "Indicates the netconf connector service is available";
-        
+
         description
         "Top-level container for all connector database objects.";
     }
-    
+
     rpc build-connector {
         description
            "Build netconf connector";
@@ -38,24 +38,24 @@ module lfm-netconf-connector {
                  type inet:host;
                  description "Device address";
             }
-            
+
             leaf port {
                 type inet:port-number;
                 description "Device port";
             }
-            
+
             leaf username {
                 type string;
                 description "Username for netconf connection";
             }
-            
+
             leaf password {
                 type string;
                 description "Password for netconf connection";
             }
         }
     }
-    
+
     rpc remove-connector {
         description
             "Removes a given netconf connector";

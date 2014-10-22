@@ -42,9 +42,9 @@ import java.util.List;
  *    |  \|                             Locator                           |
  *    +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 public class MapNotify {
 
@@ -99,7 +99,7 @@ public class MapNotify {
      * Record Count: This is the number of records in this Map-Register message.
      * A record is comprised of that portion of the packet labeled 'Record'
      * above and occurs the number of times equal to Record Count.
-     * 
+     *
      * private byte recordCount;
      */
     private List<EidToLocatorRecord> eidToLocatorRecords;
@@ -162,7 +162,7 @@ public class MapNotify {
         eidToLocatorRecords.add(record);
     }
 
-    
+
 
     public void setFromMapRegister(MapRegister mapRegister) {
         setNonce(mapRegister.getNonce());

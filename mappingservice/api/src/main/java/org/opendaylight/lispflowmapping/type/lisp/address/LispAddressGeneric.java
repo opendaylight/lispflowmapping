@@ -24,80 +24,80 @@ public class LispAddressGeneric{
 
 	@XmlElement
 	int afi;
-	
+
 	@XmlElement
 	String ipAddress;
-	
+
 	@XmlElement
 	byte[] mac;
-	
+
 	@XmlElement
 	int instanceId;
-	
+
 	@XmlElement
 	int asNum;
-	
+
 	@XmlElement
 	int lcafType;
-	
+
 	@XmlElement
     byte protocol;
-	
+
 	@XmlElement
     int ipTos;
-	
+
 	@XmlElement
     short localPort;
-	
+
 	@XmlElement
     short remotePort;
-	
+
 	@XmlElement
     LispAddressGeneric address;
-	
+
 	@XmlElement
     LispAddressGeneric srcAddress;
-	
+
 	@XmlElement
     LispAddressGeneric dstAddress;
-	
+
 	@XmlElement
     byte srcMaskLength;
-	
+
 	@XmlElement
     byte dstMaskLength;
-	
+
 	@XmlElement
     boolean lookup;
-	
+
 	@XmlElement
     boolean RLOCProbe;
-	
+
 	@XmlElement
     boolean strict;
-	
+
 	@XmlElement
 	List<LispAddressGeneric> hops;
-	
+
 	@XmlElement
 	List<LispAddressGeneric> addresses;
-	
+
 	@XmlElement
 	String distinguishedName;
-	
-	
+
+
 	public LispAddressGeneric(){}
-	
-	
+
+
 	public LispAddressGeneric(int afi) {
 		this.afi = afi;
 	}
-	
+
 	public LispAddressGeneric(int afi, String address) {
 		this.afi = afi;
-		
+
 		AddressFamilyNumberEnum afiEnum = AddressFamilyNumberEnum.valueOf((short) afi);
-		
+
 		switch (afiEnum) {
 		case AS:
 			asNum = Integer.valueOf(address);
@@ -105,25 +105,25 @@ public class LispAddressGeneric{
 		case IP:
 		case IP6:
 			ipAddress = address;
-			break;			
+			break;
 		default:
-			throw new IllegalArgumentException("AFI " + afi + 
+			throw new IllegalArgumentException("AFI " + afi +
 					" not supported by this constructor: LispAddressGeneric(int afi, String address)");
 		}
 	}
-	
+
 	public LispAddressGeneric(int afi, LispAddressGeneric address) {
 		this.afi = afi;
 		this.address = address;
 	}
-	
-	
 
-	
+
+
+
 	public LispAddressGeneric(LispAddress lispAddress) {
-		
+
 		afi = lispAddress.getAfi().getIanaCode();
-		
+
 		switch (lispAddress.getAfi()){
 		case IP:
 			LispIpv4Address ipv4Address = (LispIpv4Address) lispAddress;
@@ -148,7 +148,7 @@ public class LispAddressGeneric{
 		case LCAF:
 			LispLCAFAddress lcafAddress = (LispLCAFAddress) lispAddress;
 			lcafType = lcafAddress.getType().getLispCode();
-			
+
 			switch (lcafAddress.getType()){
 			case APPLICATION_DATA:
 				applicationDataGeneric(lcafAddress);
@@ -166,25 +166,25 @@ public class LispAddressGeneric{
 				trafficEngineeringGeneric(lcafAddress);
 				break;
 			default:
-				throw new IllegalArgumentException("LCAF type " + lcafAddress.getType() + 
+				throw new IllegalArgumentException("LCAF type " + lcafAddress.getType() +
 						" not supported by this constructor: LispAddressGeneric(LispAddress lispAddress)");
 			}
 			break;
 		default:
-			throw new IllegalArgumentException("AFI " + afi + 
+			throw new IllegalArgumentException("AFI " + afi +
 					" not supported by this constructor: LispAddressGeneric(LispAddress lispAddress)");
 		}
 	}
-	
+
 	private void applicationDataGeneric(LispLCAFAddress lcafAddress){
-		LispApplicationDataLCAFAddress appDataAddress = (LispApplicationDataLCAFAddress) lcafAddress; 
+		LispApplicationDataLCAFAddress appDataAddress = (LispApplicationDataLCAFAddress) lcafAddress;
 	    protocol = appDataAddress.getProtocol();
 	    ipTos = appDataAddress.getIPTos();
 	    localPort = appDataAddress.getLocalPort();
 	    remotePort = appDataAddress.getLocalPort();
 	    address = new LispAddressGeneric(appDataAddress.getAddress());
 	}
-	
+
 	private void listGeneric(LispLCAFAddress lcafAddress){
 		LispListLCAFAddress listAddress = (LispListLCAFAddress) lcafAddress;
 		addresses = new ArrayList<LispAddressGeneric>();
@@ -192,13 +192,13 @@ public class LispAddressGeneric{
 			addresses.add(new LispAddressGeneric(listAddress.getAddresses().get(i)));
 		}
 	}
-	
+
 	private void segmentGeneric(LispLCAFAddress lcafAddress){
 		LispSegmentLCAFAddress segmentAddress = (LispSegmentLCAFAddress) lcafAddress;
 		instanceId = segmentAddress.getInstanceId();
 		address = new LispAddressGeneric(segmentAddress.getAddress());
 	}
-	
+
 	private void srcDstGeneric(LispLCAFAddress lcafAddress){
 		LispSourceDestLCAFAddress srcDstAddress = (LispSourceDestLCAFAddress) lcafAddress;
 	    srcAddress = new LispAddressGeneric(srcDstAddress.getSrcAddress());
@@ -206,10 +206,10 @@ public class LispAddressGeneric{
 	    srcMaskLength = srcDstAddress.getSrcMaskLength();
 	    dstMaskLength = srcDstAddress.getDstMaskLength();
 	}
-	
+
 	private void trafficEngineeringGeneric(LispLCAFAddress lcafAddress){
 		LispTrafficEngineeringLCAFAddress teAddress = (LispTrafficEngineeringLCAFAddress) lcafAddress;
-		
+
 		hops = new ArrayList<LispAddressGeneric>();
 		for(int i=0;i<teAddress.getHops().size();i++){
 			LispAddressGeneric hop = new LispAddressGeneric(AddressFamilyNumberEnum.UNKNOWN.getIanaCode());
@@ -221,10 +221,10 @@ public class LispAddressGeneric{
 		}
 	}
 
-	
-	
-	
-	
+
+
+
+
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -240,7 +240,7 @@ public class LispAddressGeneric{
 	public void setAfi(int afi) {
 		this.afi = afi;
 	}
-	
+
     public int getInstanceId() {
 		return instanceId;
 	}
@@ -360,7 +360,7 @@ public class LispAddressGeneric{
 	public void setHops(List<LispAddressGeneric> hops) {
 		this.hops = hops;
 	}
-	
+
 	public LispAddressGeneric getAddress() {
 		return address;
 	}
@@ -397,5 +397,5 @@ public class LispAddressGeneric{
 		this.distinguishedName = distinguishedName;
 	}
 
-    
+
 }

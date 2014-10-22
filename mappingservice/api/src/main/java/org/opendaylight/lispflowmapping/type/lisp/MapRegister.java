@@ -46,9 +46,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  *    |  \|                             Locator                           |
  *    +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 
 @XmlRootElement
@@ -115,7 +115,7 @@ public class MapRegister {
      * Record Count: This is the number of records in this Map-Register message.
      * A record is comprised of that portion of the packet labeled 'Record'
      * above and occurs the number of times equal to Record Count.
-     * 
+     *
      * private byte recordCount;
      */
     @XmlElement

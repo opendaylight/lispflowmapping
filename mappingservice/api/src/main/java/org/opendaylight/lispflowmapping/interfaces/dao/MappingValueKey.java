@@ -10,7 +10,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 /**
  * A value in the mapping service DAO
- * 
+ *
  * @param <V>
  *            The value type.
  */

@@ -28,9 +28,9 @@ module config-lisp {
     augment "/config:modules/config:module/config:configuration" {
         case lispconfig {
             when "/config:modules/config:module/config:type = 'lispconfig'";
-            
+
             leaf bind-address {
-   				type string;	
+   				type string;
             	mandatory true;
             }
         }
