@@ -33,6 +33,7 @@
 		<build.suffix>1.0.0</build.suffix>
 		<clustering.services.version>0.6.0-SNAPSHOT</clustering.services.version>
 		<config.version>0.3.0-SNAPSHOT</config.version>
+		<controller.checkstyle.version>0.1.0-SNAPSHOT</controller.checkstyle.version>
 		<enforcer.version>1.3.1</enforcer.version>
 		<enunciate.version>1.26.2</enunciate.version>
 		<feature.test.version>0.7.0-SNAPSHOT</feature.test.version>
@@ -712,6 +713,38 @@
 						</execution>
 					</executions>
 				</plugin>
+      <plugin>
+        <!-- Define the configuration for the checkstyle plugin.  Import the rules from the controller project, which
+             is defined as a dependency.  Print rule violations to the console, but don't fail the build if violations
+             are found. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${checkstyle.version}</version>
+        <configuration>
+          <failOnViolation>false</failOnViolation>
+          <configLocation>controller/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <sourceDirectory>${project.basedir}</sourceDirectory>
+          <includes>**\/*.java,**\/*.xml,**\/*.yang</includes>
+          <excludes>**\/target\/,**\/target-ide\/,**\/${jmxGeneratorPath}\/,**\/${salGeneratorPath}\/</excludes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${controller.checkstyle.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
