@@ -14,7 +14,7 @@ public interface ILispDAO {
 
     /**
      * Put a entry into the DAO.
-     * 
+     *
      * @param key
      *            The entry's key.
      * @param values
@@ -24,7 +24,7 @@ public interface ILispDAO {
 
     /**
      * Get a specific value from the DAO.
-     * 
+     *
      * @param key
      *            The key of the value to fetch
      * @param valueKey
@@ -35,7 +35,7 @@ public interface ILispDAO {
 
     /**
      * Get the entries from the DAO
-     * 
+     *
      * @param key
      *            The key.
      * @return The value from the DAO.
@@ -44,7 +44,7 @@ public interface ILispDAO {
 
     /**
      * Enumerate all the entries from the DAO
-     * 
+     *
      * @param visitor
      */
     public void getAll(IRowVisitor visitor);
@@ -56,7 +56,7 @@ public interface ILispDAO {
 
     /**
      * Remove an entry from the DAO
-     * 
+     *
      * @param key
      *            The key of the entry
      * @param valueKey

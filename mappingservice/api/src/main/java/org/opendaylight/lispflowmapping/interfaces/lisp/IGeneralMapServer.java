@@ -31,7 +31,7 @@ public interface IGeneralMapServer {
 
     /**
      * This method returns the authentication key of the address.
-     * 
+     *
      * @param address
      * @param maskLen
      * @return The correct key.
@@ -46,7 +46,7 @@ public interface IGeneralMapServer {
 
     /**
      * This method removes the given authentication key from the map server.
-     * 
+     *
      * @param address
      * @param maskLen
      * @return
@@ -55,7 +55,7 @@ public interface IGeneralMapServer {
 
     /**
      * This method adds an authentication key to the address.
-     * 
+     *
      * @param address
      * @param maskLen
      * @param key

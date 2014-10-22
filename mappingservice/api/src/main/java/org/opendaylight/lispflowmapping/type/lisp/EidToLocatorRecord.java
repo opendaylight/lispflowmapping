@@ -40,9 +40,9 @@ import org.opendaylight.lispflowmapping.type.lisp.address.LispNoAddress;
  *   |  \|                             Locator                           |
  *   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 
 @XmlRootElement
@@ -98,7 +98,7 @@ public class EidToLocatorRecord {
 
     /**
      * EID-Prefix-AFI: Address family of the EID-Prefix according to [AFI].
-     * 
+     *
      * EID-Prefix: This prefix is 4 octets for an IPv4 address family and 16
      * octets for an IPv6 address family.
      */
@@ -124,7 +124,7 @@ public class EidToLocatorRecord {
      * Locator Count: This is the number of Locator entries. A Locator entry
      * comprises what is labeled above as 'Loc'. The Locator count can be 0,
      * indicating that there are no Locators for the EID-Prefix.
-     * 
+     *
      * private byte locatorCount;
      */
     @XmlElement

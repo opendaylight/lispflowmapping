@@ -579,7 +579,7 @@
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam</artifactId>
       <version>${exam.version}</version>
-      <!-- Compile scope here is intentional, it is used in TestHelper class 
+      <!-- Compile scope here is intentional, it is used in TestHelper class
 				which could be downloaded via nexus and reused in other integration tests. -->
       <scope>compile</scope>
     </dependency>
@@ -775,7 +775,7 @@
        <artifactId>jacoco-maven-plugin</artifactId>
        <configuration>
          <includes>
-           <include>org.opendaylight.org.opendaylight.lispflowmapping.*.*</include> 
+           <include>org.opendaylight.org.opendaylight.lispflowmapping.*.*</include>
          </includes>
        </configuration>
        <executions>

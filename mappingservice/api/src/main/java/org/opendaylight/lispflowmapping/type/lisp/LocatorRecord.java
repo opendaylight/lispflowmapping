@@ -41,9 +41,9 @@ import com.google.common.collect.Range;
  *   |  \|                             Locator                           |
  *   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 
 @XmlRootElement
@@ -156,7 +156,7 @@ public class LocatorRecord {
     public LocatorRecord setPriority(short priority) {
     	 if (priority != 0) {
              boolean isValidRange = false;
-             List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+             List<Range<Short>> rangeConstraints = new ArrayList<>();
              rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
              for (Range<Short> r : rangeConstraints) {
                  if (r.contains(priority)) {
@@ -166,7 +166,7 @@ public class LocatorRecord {
              if (!isValidRange) {
                  throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", priority, rangeConstraints));
              }
-         }    
+         }
          this.priority = priority;
          return this;
     }
@@ -187,7 +187,7 @@ public class LocatorRecord {
     public LocatorRecord setMulticastPriority(short value) {
     	if (value != 0) {
             boolean isValidRange = false;
-            List<Range<Short>> rangeConstraints = new ArrayList<>(); 
+            List<Range<Short>> rangeConstraints = new ArrayList<>();
             rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
             for (Range<Short> r : rangeConstraints) {
                 if (r.contains(value)) {
@@ -197,7 +197,7 @@ public class LocatorRecord {
             if (!isValidRange) {
                 throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", value, rangeConstraints));
             }
-        }    
+        }
         this.multicastPriority = value;
         return this;
     }

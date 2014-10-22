@@ -20,7 +20,7 @@ public abstract class LispAddress {
     public AddressFamilyNumberEnum getAfi() {
         return afi;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

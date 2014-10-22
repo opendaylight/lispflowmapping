@@ -16,7 +16,7 @@ public class ReencapHop extends LispAddress{
     private boolean lookup;
     private boolean RLOCProbe;
     private boolean strict;
-    
+
     public ReencapHop(LispAddress hop, short resv3, boolean lookup, boolean RLOCProbe, boolean strict) {
         super(hop.getAfi());
         this.hop = hop;
@@ -65,13 +65,13 @@ public class ReencapHop extends LispAddress{
     public void setStrict(boolean strict) {
         this.strict = strict;
     }
-    
+
     @Override
     public String toString() {
         return "ReencapHop#[hop=" + hop + "]" + super.toString();
     }
 
-    
-    
+
+
 
 }

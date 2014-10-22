@@ -18,11 +18,11 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRegister;
 @XmlAccessorType(XmlAccessType.NONE)
 
 public class MapRegisterNB {
- 
-	
+
+
 	@XmlElement
 	String key;
-	
+
 	@XmlElement
 	MapRegister mapregister;
 
@@ -33,7 +33,7 @@ public class MapRegisterNB {
 	public MapRegister getMapRegister() {
 		return mapregister;
 	}
-	
-    
-    
+
+
+
 }

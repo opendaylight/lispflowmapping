@@ -37,9 +37,9 @@ import java.util.List;
  *   |  \|                             Locator                           |
  *   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  * </pre>
- * 
+ *
  * @author gmainzer
- * 
+ *
  */
 public class MapReply {
     /**
@@ -59,7 +59,7 @@ public class MapReply {
      * S: This is the Security bit. When set to 1, the following authentication
      * information will be appended to the end of the Map-Reply. The detailed
      * format of the Authentication Data Content is for further study.
-     * 
+     *
      * <pre>
      *  0                   1                   2                   3
      *  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -82,7 +82,7 @@ public class MapReply {
      * Record Count: This is the number of records in this reply message. A
      * record is comprised of that portion of the packet labeled 'Record' above
      * and occurs the number of times equal to Record Count.
-     * 
+     *
      * private byte recordCount;
      */
     private List<EidToLocatorRecord> eidToLocatorRecords;
@@ -139,5 +139,5 @@ public class MapReply {
         this.eidToLocatorRecords = eidToLocatorRecords;
     }
 
-    
+
 }

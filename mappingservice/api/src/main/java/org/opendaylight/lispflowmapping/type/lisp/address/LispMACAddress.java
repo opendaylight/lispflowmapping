@@ -15,7 +15,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 
 public class LispMACAddress extends LispAddress {
-    
+
 	private byte[] mac = new byte[6];
 
     public LispMACAddress(byte[] mac) {

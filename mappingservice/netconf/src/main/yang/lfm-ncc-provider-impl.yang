@@ -22,7 +22,7 @@ module lfm-ncc-provider-impl {
     augment "/config:modules/config:module/config:configuration" {
         case lfm-ncc-provider-impl {
             when "/config:modules/config:module/config:type = 'lfm-ncc-provider-impl'";
-            
+
             container rpc-registry {
                 uses config:service-ref {
                     refine type {
