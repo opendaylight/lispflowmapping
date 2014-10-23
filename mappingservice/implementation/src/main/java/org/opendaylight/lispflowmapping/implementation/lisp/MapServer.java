@@ -39,7 +39,6 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
@@ -115,9 +114,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.getEidRecord().add(new EidRecordBuilder().setMask((short) eidRecord.getMaskLength()).setLispAddressContainer(container).build());
 
         builder.setItrRloc(new ArrayList<ItrRloc>());
-        builder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(
-                        new LispAddressContainerBuilder().setAddress(LispAFIConvertor.asIPAfiAddress(getLocalAddress().getHostAddress())).build()).build());
+        builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(getLocalAddress())).build());
 
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
