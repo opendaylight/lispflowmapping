@@ -7,6 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
@@ -38,6 +42,18 @@ public class LispAFIConvertor {
         } else {
             return null;
         }
+    }
+
+    public static LispAddressContainer toContainer(InetAddress address) {
+        if (address instanceof Inet4Address) {
+            return new LispAddressContainerBuilder().setAddress(asIPAfiAddress(address.getHostAddress())).build();
+        }
+
+        if (address instanceof Inet6Address) {
+            return new LispAddressContainerBuilder().setAddress(asIPv6AfiAddress(address.getHostAddress())).build();
+        }
+
+        return null;
     }
 
     public static LispAFIAddress toAFI(LispAddressContainer container) {
