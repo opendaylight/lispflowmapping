@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.opendaylight.controller</groupId>
     <artifactId>commons.integrationtest</artifactId>
-    <version>0.5.3-Helium-SR1</version>
+    <version>0.5.4-SNAPSHOT</version>
     <relativePath></relativePath>
   </parent>
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.integrationtest</artifactId>
   <name>LISP Flow Mapping Integration Tests</name>
-  <version>1.1.12-Helium-SR1</version>
+  <version>1.1.13-SNAPSHOT</version>
   <properties>
   		<sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
 		<sonar.branch>${user.name}-develop</sonar.branch>
@@ -19,7 +19,7 @@
     <exam.version>3.0.0</exam.version>
     <!-- Dependency Versions -->
     <junit.version>4.8.1</junit.version>
-    <lispflowmapping.version>1.1.12-Helium-SR1</lispflowmapping.version>
+    <lispflowmapping.version>1.1.13-SNAPSHOT</lispflowmapping.version>
     <url.version>1.5.0</url.version>
   </properties>
   <dependencies>
@@ -310,7 +310,7 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>commons.integrationtest</artifactId>
-      <version>0.5.3-Helium-SR1</version>
+      <version>0.5.4-SNAPSHOT</version>
       <type>pom</type>
       <exclusions>
         <exclusion>
@@ -757,7 +757,7 @@
           <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>0.0.4-Helium-SR1</version>
+            <version>0.0.5-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
