@@ -1,0 +1,10 @@
+Code-Review+2: Lori Jakab <lojakab@cisco.com>
+Verified+1: Lori Jakab <lojakab@cisco.com>
+Verified+1: jenkins-lispflowmapping <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+2: Vina Ermagan <vermagan@cisco.com>
+Verified+1: Vina Ermagan <vermagan@cisco.com>
+Submitted-by: Vina Ermagan <vermagan@cisco.com>
+Submitted-at: Tue, 11 Nov 2014 23:22:45 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/12738
+Project: lispflowmapping
+Branch: refs/heads/stable/helium
