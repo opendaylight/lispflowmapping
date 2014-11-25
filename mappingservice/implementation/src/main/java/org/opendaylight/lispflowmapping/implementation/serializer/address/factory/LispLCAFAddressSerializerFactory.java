@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispApplicationDataLCAFAddressSerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.address.LispKeyValueLCAFSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispLCAFAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispListLCAFAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispSegmentLCAFAddressSerializer;
@@ -30,6 +31,7 @@ public class LispLCAFAddressSerializerFactory {
         lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.APPLICATION_DATA, LispApplicationDataLCAFAddressSerializer.getInstance());
         lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING, LispTrafficEngineeringLCAFAddressSerializer.getInstance());
         lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.SOURCE_DEST, LispSourceDestLCAFAddressSerializer.getInstance());
+        lcafToSearializerMap.put(LispCanonicalAddressFormatEnum.KEY_VALUE, LispKeyValueLCAFSerializer.getInstance());
     }
 
     public static LispLCAFAddressSerializer getLCAFSerializer(LispCanonicalAddressFormatEnum lcaf) {

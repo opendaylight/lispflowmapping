@@ -229,6 +229,21 @@
               }
         }
         
+        grouping LcafKeyValueAddress {
+       		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-04#section-4.14";
+       		uses LispLcafAddress{
+    			refine lcafType {
+    				default 15;
+    			}
+    		}
+            container key {
+            	uses LispSimpleAddress;
+             }
+             container value {
+                uses LispSimpleAddress;
+             }
+        }
+        
         grouping LcafApplicationDataAddress {
        		reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
        		uses LispLcafAddress{
@@ -280,6 +295,9 @@
                        }
                        case LcafSourceDest {
                                uses LcafSourceDestAddress;
+                       }
+                       case LcafKeyValue {
+                               uses LcafKeyValueAddress;
                        }
                        case LcafList {
                                uses LcafListAddress;
@@ -336,8 +354,7 @@
     }	
     }
     
-    grouping EidToLocatorRecords {
-    list EidToLocatorRecord {    	
+    grouping EidToLocatorRecord {    	
     	leaf recordTtl {
     		type int32;
     	}
@@ -364,13 +381,31 @@
         // locator record list
         uses LocatorRecords;
     }
+    
+    grouping EidToLocatorRecords {
+    	list eidToLocatorRecord {
+    		uses EidToLocatorRecord;
+    	}
     }
     
+    grouping xtrSiteId {
+        leaf xtrId {
+            type binary;
+        }
+        leaf siteId {
+            type binary;
+        }
+    }
+
     grouping MapRegister {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.6";
+        reference "http://tools.ietf.org/html/draft-ermagan-lisp-nat-traversal-05#section-4.3";
     	leaf proxyMapReply {
     		type boolean;
     	}
+        leaf xtrSiteIdPresent {
+            type boolean;
+        }
     	leaf wantMapNotify {
     		type boolean;
     	}
@@ -383,19 +418,16 @@
     	leaf authenticationData {
     		type binary;
     	}
-    	
     	uses EidToLocatorRecords;
-    	
+        uses xtrSiteId;
     }
     
     grouping MapNotify {
     	reference "http://tools.ietf.org/html/rfc6830#section-6.1.7";
-    	leaf proxyMapReply {
-    		type boolean;
-    	}
-    	leaf wantMapNotify {
-    		type boolean;
-    	}
+        reference "http://tools.ietf.org/html/draft-ermagan-lisp-nat-traversal-05#section-4.3";
+        leaf xtrSiteIdPresent {
+            type boolean;
+        }
     	leaf nonce {
     		type int64;
     	}
@@ -406,6 +438,7 @@
     		type binary;
     	}
     	uses EidToLocatorRecords;
+        uses xtrSiteId;
     }
     
     grouping MapRequest {
@@ -438,8 +471,8 @@
     		uses LispAddress; 
     	}
     	uses EidRecords;
-    	container MapReply {
-    		uses MapReply;
+    	container MapReply{ 
+    		uses EidToLocatorRecord;
     	}
     }
     
@@ -476,6 +509,14 @@
     	
     }
     
+    grouping MapRequestMessage {
+    	container MapRequest {
+    		uses MapRequest;
+    	}
+    	uses TransportAddress;
+    	
+    }
+    
     grouping MapRequestNotification {
     	container MapRequest {
     		uses MapRequest;
@@ -493,9 +534,23 @@
     	
     }
     
+    grouping MapReplyNotification {
+    	container MapReply {
+    		uses MapReply;
+    	}
+    
+    }
+    
+    
     rpc sendMapNotify {
     	input {
     		uses MapNotifyMessage;
+    	}
+    }
+    
+    rpc sendMapRequest {
+    	input {
+    		uses MapRequestMessage;
     	}
     }
     
@@ -513,6 +568,13 @@
     	uses MapRequestNotification;
     }
     
+    notification xtrRequestMapping {
+    	uses MapRequestNotification;
+    }
+    
+    notification xtrReplyMapping {
+    	uses MapReplyNotification;
+    }
 }
 	 
 	 

@@ -7,41 +7,43 @@
  */
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 
 /**
  * A RLOC in the mapping service with it's properties.
  */
-public class MappingServiceRLOC {
+public class MappingServiceRLOCGroup {
 
-    private LocatorRecord record;
+    private List<LocatorRecord> records;
     private int ttl;
     private Action action;
     private boolean authoritative;
     private Date registerdDate;
 
-    public MappingServiceRLOC(LocatorRecord record, int ttl, Action action, boolean authoritative) {
-        this(record, ttl, action, authoritative, new Date(System.currentTimeMillis()));
+    public MappingServiceRLOCGroup(int ttl, Action action, boolean authoritative) {
+        this(ttl, action, authoritative, new Date(System.currentTimeMillis()));
     }
 
-    public MappingServiceRLOC(LocatorRecord record, int ttl, Action action, boolean authoritative, Date registerdDate) {
+    public MappingServiceRLOCGroup(int ttl, Action action, boolean authoritative, Date registerdDate) {
         super();
-        this.record = record;
+        this.records = new ArrayList<>();
         this.ttl = ttl;
         this.action = action;
         this.authoritative = authoritative;
         this.registerdDate = registerdDate;
     }
 
-    public LocatorRecord getRecord() {
-        return record;
+    public List<LocatorRecord> getRecords() {
+        return records;
     }
 
-    public MappingServiceRLOC setRecord(LocatorRecord record) {
-        this.record = record;
+    public MappingServiceRLOCGroup addRecord(LocatorRecord record) {
+        this.records.add(record);
         return this;
     }
 
@@ -49,7 +51,7 @@ public class MappingServiceRLOC {
         return ttl;
     }
 
-    public MappingServiceRLOC setTtl(int ttl) {
+    public MappingServiceRLOCGroup setTtl(int ttl) {
         this.ttl = ttl;
         return this;
     }
@@ -58,7 +60,7 @@ public class MappingServiceRLOC {
         return action;
     }
 
-    public MappingServiceRLOC setAction(Action action) {
+    public MappingServiceRLOCGroup setAction(Action action) {
         this.action = action;
         return this;
     }
@@ -67,7 +69,7 @@ public class MappingServiceRLOC {
         return authoritative;
     }
 
-    public MappingServiceRLOC setAuthoritative(boolean authoritative) {
+    public MappingServiceRLOCGroup setAuthoritative(boolean authoritative) {
         this.authoritative = authoritative;
         return this;
     }
@@ -76,7 +78,7 @@ public class MappingServiceRLOC {
         return registerdDate;
     }
 
-    public MappingServiceRLOC setRegisterdDate(Date registerdDate) {
+    public MappingServiceRLOCGroup setRegisterdDate(Date registerdDate) {
         this.registerdDate = registerdDate;
         return this;
     }
@@ -87,7 +89,9 @@ public class MappingServiceRLOC {
         int result = 1;
         result = prime * result + ((action == null) ? 0 : action.hashCode());
         result = prime * result + (authoritative ? 1231 : 1237);
-        result = prime * result + ((record == null) ? 0 : record.hashCode());
+        result = prime * result + ((records == null) ? 0 : records.hashCode());
+        result = prime * result + ((registerdDate == null) ? 0 : registerdDate.hashCode());
+        result = prime * result + ttl;
         return result;
     }
 
@@ -99,22 +103,25 @@ public class MappingServiceRLOC {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MappingServiceRLOC other = (MappingServiceRLOC) obj;
+        MappingServiceRLOCGroup other = (MappingServiceRLOCGroup) obj;
         if (action != other.action)
             return false;
         if (authoritative != other.authoritative)
             return false;
-        if (record == null) {
-            if (other.record != null)
+        if (records == null) {
+            if (other.records != null)
                 return false;
-        } else if (!record.equals(other.record))
+        } else if (!records.equals(other.records))
+            return false;
+        if (ttl != other.ttl)
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return record.getLispAddressContainer().getAddress().toString();
+        return "MappingServiceRLOCGroup [records=" + records + ", ttl=" + ttl + ", action=" + action + ", authoritative=" + authoritative
+                + ", registerdDate=" + registerdDate + "]";
     }
 
 }

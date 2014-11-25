@@ -1,0 +1,18 @@
+This folder contains the supporting files for the Hydrogen release tutorial
+[1].  The demo/tutorial show how to use the LISP Flow Mapping project in
+cunjunction with two open source LISP data plane implementations: LISPmob and
+Open vSwitch.  The demo was first delivered at the February 2014 OpenDaylight
+Summit, and the slides are available at [2].
+
+Here's a short description of each file:
+
+ODL_Summit_LISP_Demo.json - This is a collection of northbound API requests
+    that can be imported into the Postman Chrome extension.  While the
+    tutorial shows how to use cURL for talking to the northbound REST API, it
+    is much more convenient to use Postman.
+
+lispd.conf.{client|server1} - The lispd.conf configuration files used on the
+    client and server1 VMs running LISPmob
+
+[1] https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:User_Guide_for_Hydrogen#Tutorial
+[2] http://events.linuxfoundation.org/sites/events/files/slides/LISP_ODLSummit_2014.pdf

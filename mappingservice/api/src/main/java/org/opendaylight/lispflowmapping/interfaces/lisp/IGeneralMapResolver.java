@@ -24,4 +24,5 @@ public interface IGeneralMapResolver {
     void setShouldIterateMask(boolean iterateMask);
 
     void setShouldAuthenticate(boolean shouldAuthenticate);
+
 }

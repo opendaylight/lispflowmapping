@@ -18,12 +18,15 @@ import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class deals with deserializing map request from udp to the java object.
@@ -31,6 +34,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotifica
 public class MapRequestSerializer {
 
     private static final MapRequestSerializer INSTANCE = new MapRequestSerializer();
+    protected static final Logger logger = LoggerFactory.getLogger(MapRequestSerializer.class);
 
     // Private constructor prevents instantiation from other classes
     private MapRequestSerializer() {
@@ -101,6 +105,14 @@ public class MapRequestSerializer {
                 LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) record.getLispAddressContainer().getAddress());
             }
         }
+        if (mapRequest.getMapReply() != null) {
+            ByteBuffer replyBuffer = ByteBuffer.allocate(EidToLocatorRecordSerializer.getInstance().getSerializationSize(mapRequest.getMapReply()));
+            EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, mapRequest.getMapReply());
+            ByteBuffer combinedBuffer = ByteBuffer.allocate(requestBuffer.capacity() + replyBuffer.capacity());
+            combinedBuffer.put(requestBuffer.array());
+            combinedBuffer.put(replyBuffer.array());
+            return combinedBuffer;
+        }
         return requestBuffer;
     }
 
@@ -140,6 +152,14 @@ public class MapRequestSerializer {
             }
             for (int i = 0; i < recordCount; i++) {
                 builder.getEidRecord().add(EidRecordSerializer.getInstance().deserialize(requestBuffer));
+            }
+            if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
+                try {
+                    builder.setMapReply(new org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder(
+                            new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(requestBuffer)).build()).build());
+                } catch (RuntimeException re) {
+                    logger.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());
+                }
             }
             return builder.build();
         } catch (RuntimeException re) {

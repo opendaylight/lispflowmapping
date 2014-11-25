@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.1.12-Helium-SR1</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.northbound</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+        <name>LISP Flow Mapping Northbound APIs</name>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
@@ -34,7 +34,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.6</version>
+				<version>2.4.0</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -121,12 +121,12 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
-			<version>0.5.1</version>
+			<version>0.5.3-Helium-SR1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>commons.northbound</artifactId>
-			<version>0.4.1</version>
+			<version>0.4.3-Helium-SR1</version>
 		</dependency>
 
 		<dependency>

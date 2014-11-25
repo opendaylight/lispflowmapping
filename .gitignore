@@ -2,4 +2,11 @@
 *.settings
 *.classpath
 *target
+*target-ide
+*yang-gen-config
+*yang-gen-sal
 *logs
+*.ipr
+*.iml
+*.iws
+.idea

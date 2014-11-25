@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>lispflowmapping-code-commons</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.1.12-Helium-SR1</version>
 		<relativePath>../commons/code-parent</relativePath>
 	</parent>
 	<artifactId>mappingservice-parent</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+        <name>LISP Flow Mapping Parent POM</name>
 	<packaging>pom</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
@@ -20,9 +20,12 @@
         	<module>yangmodel</module>
                 <module>api</module>
                 <module>config</module>
+                <module>clusterdao</module>
                 <module>implementation</module>
                 <module>southbound</module>
                 <module>northbound</module>
+                <module>neutron</module>
+                <module>netconf</module>
                 <module>integrationtest</module>
         </modules>
 	<dependencies>

@@ -17,16 +17,16 @@ import junitx.framework.StringAssert;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.implementation.dao.InMemoryDAO;
+import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.tools.junit.MockCommandInterpreter;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
 
 public class LispMappingServiceCliTest extends BaseTestCase {
     private LispMappingService testedLispMappingService;
-    private InMemoryDAO dao;
+    private ILispDAO dao;
     private Map<Object, Object> visitorExecutions;
     private MockCommandInterpreter mockCommandInterpreter;
 
@@ -36,7 +36,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
         super.before();
 
         testedLispMappingService = new LispMappingService();
-        dao = context.mock(InMemoryDAO.class);
+        dao = context.mock(ILispDAO.class);
         inject(testedLispMappingService, "lispDao", dao);
         mockCommandInterpreter = new MockCommandInterpreter();
 
@@ -47,7 +47,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
             public Object invoke(Invocation invocation) throws Throwable {
                 IRowVisitor visitor = (IRowVisitor) invocation.getParameter(0);
                 for (Entry<Object, Object> entry : visitorExecutions.entrySet()) {
-                    visitor.visitRow(Ipv4.class, entry.getKey(), "IP", entry.getValue());
+                    visitor.visitRow(entry.getKey(), "IP", entry.getValue());
                 }
                 return null;
             }
@@ -57,7 +57,7 @@ public class LispMappingServiceCliTest extends BaseTestCase {
     @Test
     public void remove__Basic() throws Exception {
         mockCommandInterpreter.addArgument("1.2.3.4");
-        oneOf(dao).remove(LispAFIConvertor.asIPAfiAddress("1.2.3.4"));
+        oneOf(dao).remove(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.getIPContainer("1.2.3.4")));
         testedLispMappingService._removeEid(mockCommandInterpreter);
     }
 

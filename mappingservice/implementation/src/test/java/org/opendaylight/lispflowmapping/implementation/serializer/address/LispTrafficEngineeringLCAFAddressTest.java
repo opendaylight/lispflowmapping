@@ -34,8 +34,8 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
     public void deserialize__Simple() throws Exception {
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
-                "00 01 00 00 AA BB CC DD " + // IPv4
-                "00 01 00 00 11 22 33 44")); // IPv4
+                "00 00 00 01 AA BB CC DD " + // IPv4
+                "00 00 00 01 11 22 33 44")); // IPv4
 
         assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
         LcafTrafficEngineeringAddress trafficEngineering = (LcafTrafficEngineeringAddress) address;
@@ -53,8 +53,8 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
     public void deserialize__Bits() throws Exception {
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
-                "00 01 00 05 AA BB CC DD " + // IPv4
-                "00 01 00 02 11 22 33 44")); // IPv4
+                "00 05 00 01 AA BB CC DD " + // IPv4
+                "00 02 00 01 11 22 33 44")); // IPv4
 
         assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
         LcafTrafficEngineeringAddress trafficEngineering = (LcafTrafficEngineeringAddress) address;
@@ -118,8 +118,8 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
         LispAddressSerializer.getInstance().serialize(buf, trafficBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "0A 00 00 10 " + //
-                "00 01 00 00 AA BB CC DD " + // IPv4
-                "00 01 00 00 11 22 33 44"); // IPv4
+                "00 00 00 01 AA BB CC DD " + // IPv4
+                "00 00 00 01 11 22 33 44"); // IPv4
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 

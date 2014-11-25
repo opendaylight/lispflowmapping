@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>mappingservice-parent</artifactId>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.1.12-Helium-SR1</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.yangmodel</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+        <name>LISP Flow Mapping YANG Model</name>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
@@ -29,6 +29,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafapplicationdataaddress,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsegmentaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress,
@@ -41,8 +42,10 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress
@@ -54,10 +57,6 @@
 							org.opendaylight.yangtools.yang.binding,
 							org.opendaylight.yangtools.yang.common
 						</Import-Package>
-						<Bundle-Activator>
-						</Bundle-Activator>
-						<Service-Component>
-						</Service-Component>
 					</instructions>
 				</configuration>
 			</plugin>

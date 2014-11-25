@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.lispflowmapping</groupId>
+    <artifactId>lispflowmapping-commons</artifactId>
+    <version>1.1.12-Helium-SR1</version>
+    <relativePath>../commons/parent</relativePath>
+  </parent>
+  <artifactId>features-lispflowmapping</artifactId>
+  <name>LISP Flow Mapping Project - Karaf Features</name>
+  <packaging>jar</packaging>
+  <properties>
+    <features.file>features.xml</features.file>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>features-mdsal</artifactId>
+      <version>${mdsal.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>features-adsal</artifactId>
+      <version>${sal.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>features-nsf</artifactId>
+      <version>${nsf.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>features-netconf-connector</artifactId>
+      <version>${mdsal.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <!-- test to validate features.xml -->
+    <dependency>
+      <groupId>org.opendaylight.yangtools</groupId>
+      <artifactId>features-test</artifactId>
+      <version>${feature.test.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- dependency for opendaylight-karaf-empty for use by testing -->
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>opendaylight-karaf-empty</artifactId>
+      <version>${karaf.empty.version}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.yangmodel</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.config</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.implementation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.clusterdao</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.southbound</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.northbound</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.netconf</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.neutron</artifactId>
+    </dependency>
+    <!-- error : java.lang.NoSuchMethodError: org.slf4j.helpers.MessageFormatter.format(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)Lorg/slf4j/helpers/FormattingTuple; -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.2</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+       <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <executions>
+             <execution>
+                <id>filter</id>
+                <phase>generate-resources</phase>
+                <goals>
+                   <goal>resources</goal>
+                </goals>
+             </execution>
+          </executions>
+       </plugin>
+       <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+             <execution>
+                <id>attach-artifacts</id>
+                <phase>package</phase>
+                <goals>
+                   <goal>attach-artifact</goal>
+                </goals>
+                <configuration>
+                   <artifacts>
+                      <artifact>
+                         <file>${project.build.directory}/classes/${features.file}</file>
+                         <type>xml</type>
+                         <classifier>features</classifier>
+                      </artifact>
+                   </artifacts>
+                </configuration>
+             </execution>
+          </executions>
+       </plugin>
+       <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire.version}</version>
+          <configuration>
+            <systemPropertyVariables>
+              <karaf.distro.groupId>org.opendaylight.controller</karaf.distro.groupId>
+              <karaf.distro.artifactId>opendaylight-karaf-empty</karaf.distro.artifactId>
+              <karaf.distro.version>${karaf.empty.version}</karaf.distro.version>
+            </systemPropertyVariables>
+            <dependenciesToScan>
+             <dependency>org.opendaylight.yangtools:features-test</dependency>
+            </dependenciesToScan>
+          </configuration>
+        </plugin>
+    </plugins>
+  </build>
+  <scm>
+    <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
+    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/lispflowmapping.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://wiki.opendaylight.org/view/OpenDaylight_Lisp_Flow_Mapping:Main</url>
+   </scm>
+</project>

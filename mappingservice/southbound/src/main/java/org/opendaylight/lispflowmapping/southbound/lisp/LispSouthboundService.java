@@ -9,9 +9,7 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.net.DatagramPacket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
@@ -21,23 +19,15 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSer
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMappingBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMappingBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,50 +41,35 @@ public class LispSouthboundService implements ILispSouthboundService {
 
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
-        Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
+        int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
+        Object lispType = LispMessageEnum.valueOf((byte) (type));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            logger.trace("Recieved packet of type EncapsulatedControlMessage");
+            logger.trace("Received packet of type EncapsulatedControlMessage");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
-            logger.trace("Recieved packet of type MapRequest");
-            handleMapRequest(inBuffer);
+            logger.trace("Received packet of type MapRequest");
+            handleMapRequest(inBuffer, packet.getPort());
         } else if (lispType == LispMessageEnum.MapRegister) {
-            logger.trace("Recieved packet of type MapRegister");
-            handleMapRegister(inBuffer, packet.getAddress());
+            logger.trace("Received packet of type MapRegister");
+            handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
+        } else {
+            logger.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
+            logger.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
         }
-        logger.warn("Recieved unknown packet type");
     }
 
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
-            extractEncapsulatedSourcePort(inBuffer);
-            handleMapRequest(inBuffer);
+            handleMapRequest(inBuffer, extractEncapsulatedSourcePort(inBuffer));
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
 
-    private void handleMapRequest(ByteBuffer inBuffer) {
+    private void handleMapRequest(ByteBuffer inBuffer, int port) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
-            InetAddress finalSourceAddress = null;
-            for (ItrRloc itr : request.getItrRloc()) {
-                Address addr = itr.getLispAddressContainer().getAddress();
-                if (addr instanceof LispIpv4Address) {
-                    try {
-                        finalSourceAddress = InetAddress.getByName(((LispIpv4Address) addr).getIpv4Address().getValue());
-                    } catch (UnknownHostException e) {
-                    }
-                    break;
-                }
-                if (addr instanceof LispIpv6Address) {
-                    try {
-                        finalSourceAddress = InetAddress.getByName((((LispIpv6Address) addr).getIpv6Address().getValue()));
-                    } catch (UnknownHostException e) {
-                    }
-                    break;
-                }
-            }
+            InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
             }
@@ -103,6 +78,7 @@ public class LispSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
@@ -121,8 +97,10 @@ public class LispSouthboundService implements ILispSouthboundService {
             int ipType = (inBuffer.get() >> 4);
             if (ipType == 4) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV4 - 1);
-            } else {
+            } else if (ipType == 6) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV6_NO_EXT - 1);
+            } else {
+                throw new LispMalformedPacketException("Couldn't deserialize Map-Request: inner packet has unknown IP version: " + ipType);
             }
 
             int encapsulatedSourcePort = inBuffer.getShort() & 0xFFFF;
@@ -133,13 +111,14 @@ public class LispSouthboundService implements ILispSouthboundService {
         }
     }
 
-    private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress) {
+    private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
             AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            transportAddressBuilder.setPort(new PortNumber(port));
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());

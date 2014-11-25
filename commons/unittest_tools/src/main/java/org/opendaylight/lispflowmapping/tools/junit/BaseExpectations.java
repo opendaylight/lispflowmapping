@@ -273,6 +273,7 @@ public class BaseExpectations extends Expectations {
         }
     }
 
+    @SafeVarargs
     protected final static <T> Matcher<T[]> contains(final T... expected) {
         return new BaseMatcher<T[]>() {
             @SuppressWarnings("unchecked")
@@ -298,6 +299,7 @@ public class BaseExpectations extends Expectations {
         };
     }
 
+    @SafeVarargs
     protected final static <T> Matcher<T[]> sameArbitraryArray(final T... expectedArr) {
         return new TypeSafeMatcher<T[]>() {
             @Override
@@ -317,6 +319,7 @@ public class BaseExpectations extends Expectations {
         };
     }
 
+    @SafeVarargs
     protected final static <T> Matcher<T[]> doseNotContain(final T... forbiddenValues) {
         return new TypeSafeMatcher<T[]>() {
             @Override

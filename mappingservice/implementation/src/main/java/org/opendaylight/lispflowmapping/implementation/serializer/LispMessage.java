@@ -9,7 +9,8 @@
 package org.opendaylight.lispflowmapping.implementation.serializer;
 
 public interface LispMessage {
-    int PORT_NUM =  4342;
+    int PORT_NUM = 4342;
+    int XTR_PORT_NUM = 4343;
 
     interface Pos {
         int TYPE = 0;

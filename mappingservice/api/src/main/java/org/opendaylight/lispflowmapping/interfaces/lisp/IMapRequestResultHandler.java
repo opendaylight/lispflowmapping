@@ -8,10 +8,14 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
 
 /**
  * An interface for dealing with a map reply message.
  */
-public interface IMapReplyHandler {
+public interface IMapRequestResultHandler {
     public void handleMapReply(MapReply mapReply);
+
+    public void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress);
 }

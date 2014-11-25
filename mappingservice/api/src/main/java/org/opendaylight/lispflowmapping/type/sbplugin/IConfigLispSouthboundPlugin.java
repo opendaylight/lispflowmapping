@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.opendaylight.lispflowmapping.interfaces.dao;
+package org.opendaylight.lispflowmapping.type.sbplugin;
 
 /**
- * An interface for allowing iteration over all of the entries in the DAO
+ * An interface for configuring the lisp plugin address.
  */
-public interface IQueryAll {
-    public void getAll(IRowVisitor visitor);
+public interface IConfigLispSouthboundPlugin {
+    public void setLispAddress(String address);
+
+    public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort);
+    public void setXtrPort(int port);
 }

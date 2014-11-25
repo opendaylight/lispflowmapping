@@ -9,7 +9,6 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public interface ILispDAO {
 
@@ -21,7 +20,7 @@ public interface ILispDAO {
      * @param values
      *            The entry's value.
      */
-    public <K> void put(K key, MappingEntry<?>... values);
+    public void put(Object key, MappingEntry<?>... values);
 
     /**
      * Get a specific value from the DAO.
@@ -32,18 +31,7 @@ public interface ILispDAO {
      *            The value to fetch
      * @return The value from the DAO.
      */
-    public <K, V> V getSpecific(K key, MappingValueKey<V> valueKey);
-
-    /**
-     * Get a specific value from the DAO.
-     * 
-     * @param key
-     *            The key of the value to fetch
-     * @param valueKey
-     *            The value to fetch
-     * @return The value from the DAO.
-     */
-    public <K> Object getSpecific(K key, String valueKey);
+    public Object getSpecific(Object key, String valueKey);
 
     /**
      * Get the entries from the DAO
@@ -52,40 +40,33 @@ public interface ILispDAO {
      *            The key.
      * @return The value from the DAO.
      */
-    public <K> Map<String, ?> get(K key);
+    public Map<String, Object> get(Object key);
+
+    /**
+     * Enumerate all the entries from the DAO
+     * 
+     * @param visitor
+     */
+    public void getAll(IRowVisitor visitor);
+
+    /**
+     * Remove an entry from the DAO
+     */
+    public void remove(Object key);
 
     /**
      * Remove an entry from the DAO
      * 
      * @param key
      *            The key of the entry
-     * @return true if success, false otherwise
+     * @param valueKey
+     *            The value to delete
      */
-    public <K> boolean remove(K key);
+    public void removeSpecific(Object key, String valueKey);
 
     /**
      * Clear the DAO and remove all of the entries.
      */
-    public void clearAll();
-
-    /**
-     * Register a type converter to the DAO
-     * 
-     * @param userType
-     *            The type converter to register
-     */
-    public <UserType, DbType> void register(Class<? extends ILispTypeConverter<UserType, DbType>> userType);
-
-    /**
-     * @return The time unit of the DAO cleaner
-     */
-    public TimeUnit getTimeUnit();
-
-    /**
-     * Set the time unit of the DAO cleaner
-     * 
-     * @param timeUnit
-     */
-    public void setTimeUnit(TimeUnit timeUnit);
+    public void removeAll();
 
 }

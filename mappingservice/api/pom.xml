@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.1.12-Helium-SR1</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.api</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+        <name>LISP Flow Mapping Public APIs</name>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
@@ -42,6 +42,7 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
 							org.opendaylight.controller.sal.binding.api,
@@ -49,14 +50,15 @@
 							javax.xml.bind,
 							javax.xml.bind.annotation,
 							org.slf4j,
-							org.opendaylight.yangtools.yang.common
+							org.opendaylight.yangtools.yang.common,
+							com.google.common.collect
 						</Import-Package>
-						<Bundle-Activator>
-						</Bundle-Activator>
-						<Service-Component>
-						</Service-Component>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
