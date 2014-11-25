@@ -59,7 +59,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder.setKeyId((short) 0);
         mapRegisterBuilder.setAuthenticationData(new byte[0]);
         eid = LispAFIConvertor.asIPAfiAddress("10.31.0.5");
-        rloc = LispAFIConvertor.asIPAfiAddress("0x192.168.136.10");
+        rloc = LispAFIConvertor.asIPAfiAddress("192.168.136.10");
         EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
         recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid)).setMaskLength((short) 32);
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
