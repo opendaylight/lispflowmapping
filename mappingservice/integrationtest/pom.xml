@@ -417,7 +417,6 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-it</artifactId>
-      <version>${mdsal.version}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -430,7 +429,6 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-util</artifactId>
-      <version>${mdsal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
@@ -568,12 +566,10 @@
     <dependency>
       <groupId>org.opendaylight.yangtools.thirdparty</groupId>
       <artifactId>antlr4-runtime-osgi-nohead</artifactId>
-      <version>4.0</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.yangtools.thirdparty</groupId>
       <artifactId>xtend-lib-osgi</artifactId>
-      <version>2.4.3</version>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
@@ -668,7 +664,6 @@
     <dependency>
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
@@ -749,7 +744,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${checkstyle.version}</version>
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -764,7 +758,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
         <configuration>
           <skipTests>false</skipTests>
           <skip>${skipIntegrationTest}</skip>
