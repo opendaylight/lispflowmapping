@@ -12,7 +12,6 @@ package org.opendaylight.lispflowmapping.neutron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.controller.containermanager.IContainerManager;
 
 
 
