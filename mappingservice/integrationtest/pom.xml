@@ -570,6 +570,7 @@
     <dependency>
       <groupId>org.opendaylight.yangtools.thirdparty</groupId>
       <artifactId>xtend-lib-osgi</artifactId>
+      <version>${xtend.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
