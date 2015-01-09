@@ -10,7 +10,7 @@
 
   <artifactId>lispflowmapping-all</artifactId>
   <packaging>pom</packaging>
-  <name>LISP Flow Mapping All modules</name>
+  <name>lispflowmapping</name> <!-- Used by Sonar to set project name -->
 
   <scm>
     <connection>scm:git:https://git.opendaylight.org/gerrit/p/lispflowmapping.git</connection>
