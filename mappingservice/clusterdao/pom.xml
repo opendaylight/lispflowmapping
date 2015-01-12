@@ -33,9 +33,9 @@
           <instructions>
             <Export-Package>org.opendaylight.lispflowmapping.clusterdao</Export-Package>
             <Import-Package>org.apache.felix.dm,
-							org.opendaylight.controller.clustering.services,
-							org.opendaylight.controller.sal.core,
-							org.opendaylight.lispflowmapping.interfaces.dao, org.slf4j</Import-Package>
+              org.opendaylight.controller.clustering.services,
+              org.opendaylight.controller.sal.core,
+              org.opendaylight.lispflowmapping.interfaces.dao, org.slf4j</Import-Package>
             <Bundle-Activator>org.opendaylight.lispflowmapping.clusterdao.Activator</Bundle-Activator>
             <Service-Component></Service-Component>
           </instructions>

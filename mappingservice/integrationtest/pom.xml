@@ -12,10 +12,10 @@
   <name>LISP Flow Mapping Integration Tests</name>
   <version>1.2.0-SNAPSHOT</version>
   <properties>
-  		<sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
-		<sonar.branch>${user.name}-develop</sonar.branch>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.language>java</sonar.language>
+      <sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
+    <sonar.branch>${user.name}-develop</sonar.branch>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.language>java</sonar.language>
     <exam.version>3.0.0</exam.version>
     <!-- Dependency Versions -->
     <junit.version>4.8.1</junit.version>
@@ -577,7 +577,7 @@
       <artifactId>pax-exam</artifactId>
       <version>${exam.version}</version>
       <!-- Compile scope here is intentional, it is used in TestHelper class
-				which could be downloaded via nexus and reused in other integration tests. -->
+        which could be downloaded via nexus and reused in other integration tests. -->
       <scope>compile</scope>
     </dependency>
     <dependency>

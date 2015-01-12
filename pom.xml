@@ -10,7 +10,8 @@
 
   <artifactId>lispflowmapping-all</artifactId>
   <packaging>pom</packaging>
-  <name>lispflowmapping</name> <!-- Used by Sonar to set project name -->
+  <!-- Used by Sonar to set project name -->
+  <name>lispflowmapping</name>
 
   <modules>
     <module>commons/parent</module>
