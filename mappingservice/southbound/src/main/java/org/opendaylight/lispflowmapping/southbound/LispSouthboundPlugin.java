@@ -136,8 +136,8 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
                 try {
                     this.service.handlePacket(packet);
-                } catch (Throwable t) {
-                    logger.warn("Error while handling packet", t);
+                } catch (Exception e) {
+                    logger.warn("Error while handling packet", e);
                 }
             }
 
@@ -218,8 +218,8 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
             lispXtrSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
             session.addRpcImplementation(LispflowmappingService.class, this);
-        } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 

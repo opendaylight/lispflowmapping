@@ -147,8 +147,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         try {
             registerWithOSGIConsole();
             logger.info("LISP (RFC6830) Mapping Service init finished");
-        } catch (Throwable t) {
-            logger.error(t.getStackTrace().toString());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace().toString());
         }
     }
 
