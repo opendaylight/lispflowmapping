@@ -12,10 +12,12 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRegisterInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapReplyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRequestInput;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -40,6 +42,7 @@ public class LfmControlPlaneRpc implements LfmControlPlaneService {
     private final String MAP_NOTIFY = "MapNotify";
     private final String MAP_REPlY = "MapReply";
     private final String MAP_REQUEST = "MapRequest";
+    private final String MAP_REGISTER = "MapRegister";
     private final LispSouthboundPlugin lispSbPlugin;
 
     public LfmControlPlaneRpc(LispSouthboundPlugin lispSbPlugin) {
@@ -81,6 +84,19 @@ public class LfmControlPlaneRpc implements LfmControlPlaneService {
             lispSbPlugin.handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer, MAP_REQUEST);
         } else {
             LOG.debug("MapRequest was null");
+            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
+        }
+        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+    }
+
+    @Override
+    public Future<RpcResult<Void>> sendMapRegister(SendMapRegisterInput mapRegisterInput) {
+        LOG.trace("sendMapRegister called!!");
+        if (mapRegisterInput != null) {
+            ByteBuffer outBuffer = MapRegisterSerializer.getInstance().serialize(mapRegisterInput.getMapRegister());
+            lispSbPlugin.handleSerializedLispBuffer(mapRegisterInput.getTransportAddress(), outBuffer, MAP_REGISTER);
+        } else {
+            LOG.debug("MapRegister was null");
             return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
         }
         return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());

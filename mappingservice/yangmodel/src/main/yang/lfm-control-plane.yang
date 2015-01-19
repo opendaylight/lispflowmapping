@@ -531,6 +531,13 @@ module lfm-control-plane {
         uses EidToLocatorRecords;
     }
 
+    grouping MapRegisterMessage {
+        container MapRegister {
+            uses MapRegister;
+        }
+        uses TransportAddress;
+    }
+
     grouping MapRegisterNotification {
         container MapRegister {
             uses MapRegister;
@@ -539,6 +546,13 @@ module lfm-control-plane {
     }
 
     grouping MapNotifyMessage {
+        container MapNotify {
+            uses MapNotify;
+        }
+        uses TransportAddress;
+    }
+
+    grouping MapNotifyNotification {
         container MapNotify {
             uses MapNotify;
         }
@@ -570,6 +584,13 @@ module lfm-control-plane {
         container MapReply {
             uses MapReply;
         }
+        uses TransportAddress;
+    }
+
+    rpc sendMapRegister {
+        input {
+            uses MapRegisterMessage;
+        }
     }
 
     rpc sendMapNotify {
@@ -594,8 +615,16 @@ module lfm-control-plane {
         uses MapRegisterNotification;
     }
 
+    notification gotMapNotify {
+        uses MapNotifyNotification;
+    }
+
     notification requestMapping {
         uses MapRequestNotification;
+    }
+
+    notification gotMapReply {
+        uses MapReplyNotification;
     }
 
     notification xtrRequestMapping {
