@@ -24,6 +24,7 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderCo
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
@@ -32,6 +33,7 @@ import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRegisterInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInput;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
@@ -55,6 +57,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private final String MAP_NOTIFY = "MapNotify";
     private final String MAP_REPlY = "MapReply";
     private final String MAP_REQUEST = "MapRequest";
+    private final String MAP_REGISTER = "MapRegister";
     private volatile String bindingAddress = null;
     private volatile boolean alreadyInit = false;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
@@ -308,7 +311,19 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         }
         return null;
     }
-
+    
+    @Override
+    public Future<RpcResult<Void>> sendMapRegister(SendMapRegisterInput input) {
+        logger.trace("sendMapRequest called!!");
+        if (input != null) {
+            ByteBuffer outBuffer = MapRegisterSerializer.getInstance().serialize(input.getMapRegister());
+            handleSerializedLispBuffer(input.getTransportAddress(), outBuffer, MAP_REGISTER);
+        } else {
+            logger.debug("MapRequest was null");
+        }
+        return null;
+    }
+    
     @Override
     public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort) {
         listenOnXtrPort = shouldListenOnXtrPort;
@@ -328,4 +343,6 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             restartXtrThread();
         }
     }
+
+    
 }
