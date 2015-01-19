@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
@@ -37,6 +38,8 @@
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage,
 							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifynotification,
+							org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregistermessage,
 							com.google.common.net,
 							org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
 							org.opendaylight.controller.sal.core,
