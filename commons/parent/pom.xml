@@ -43,10 +43,7 @@
     <nsf.version>0.5.0-SNAPSHOT</nsf.version>
     <sal.version>0.9.0-SNAPSHOT</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
-    <sonar.branch>${user.name}-develop</sonar.branch>
-    <sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.language>java</sonar.language>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <xtend.dstdir>src/main/xtend-gen</xtend.dstdir>
     <yang-jmx-generator.version>1.1.0-SNAPSHOT</yang-jmx-generator.version>
