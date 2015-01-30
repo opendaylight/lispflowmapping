@@ -12,11 +12,10 @@
   <name>LISP Flow Mapping Integration Tests</name>
   <version>1.2.0-SNAPSHOT</version>
   <properties>
-      <sonar.host.url>https://sonar.opendaylight.org/</sonar.host.url>
-    <sonar.branch>${user.name}-develop</sonar.branch>
-    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <sonar.language>java</sonar.language>
     <exam.version>3.0.0</exam.version>
+    <sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
+    <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <!-- Dependency Versions -->
     <junit.version>4.8.1</junit.version>
     <lispflowmapping.version>1.2.0-SNAPSHOT</lispflowmapping.version>
@@ -765,29 +764,38 @@
         </configuration>
       </plugin>
       <plugin>
-       <groupId>org.jacoco</groupId>
-       <artifactId>jacoco-maven-plugin</artifactId>
-       <configuration>
-         <includes>
-           <include>org.opendaylight.org.opendaylight.lispflowmapping.*.*</include>
-         </includes>
-       </configuration>
-       <executions>
-         <execution>
-           <id>pre-test</id>
-           <goals>
-             <goal>prepare-agent</goal>
-           </goals>
-         </execution>
-         <execution>
-           <id>post-test</id>
-           <goals>
-             <goal>report</goal>
-           </goals>
-           <phase>test</phase>
-         </execution>
-       </executions>
-     </plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-ut-agent</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <destFile>${sonar.jacoco.reportPath}</destFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>prepare-it-agent</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <destFile>${sonar.jacoco.itReportPath}</destFile>
+            </configuration>
+          </execution>
+           <execution>
+             <id>post-test</id>
+             <phase>test</phase>
+             <goals>
+               <goal>report</goal>
+             </goals>
+           </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.ops4j.pax.exam</groupId>
         <artifactId>maven-paxexam-plugin</artifactId>
