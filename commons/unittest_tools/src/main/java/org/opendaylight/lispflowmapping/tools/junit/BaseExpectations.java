@@ -162,7 +162,6 @@ public class BaseExpectations extends Expectations {
                 e = se;
             } catch (IllegalAccessException iae) {
                 e = iae;
-                iae.printStackTrace();
             } catch (InvocationTargetException ite) {
                 throw ite.getTargetException();
             }

@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.type.lisp.address;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -254,7 +255,7 @@ public class LispAddressGeneric{
 	}
 
 	public void setMac(byte[] mac) {
-		this.mac = mac;
+		this.mac = Arrays.copyOf(mac, mac.length);
 	}
 
 	public int getAsNum() {

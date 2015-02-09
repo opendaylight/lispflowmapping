@@ -179,7 +179,6 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             }
         } catch (SocketException e) {
             logger.error("couldn't start socket {}", e.getMessage());
-            e.printStackTrace();
         }
     }
 

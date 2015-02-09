@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.type.lisp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -183,7 +184,7 @@ public class MapRegister {
     }
 
     public MapRegister setMapRegisterBytes(byte[] mapRegisterBytes) {
-        this.mapRegisterBytes = mapRegisterBytes;
+        this.mapRegisterBytes = Arrays.copyOf(mapRegisterBytes, mapRegisterBytes.length);
         return this;
     }
 

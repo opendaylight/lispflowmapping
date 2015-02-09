@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation.inventory;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,7 +36,7 @@ public class XtrIdNodeProperty extends Property implements Cloneable {
 
     public XtrIdNodeProperty(byte[] xtrId) {
         super(name);
-        this.xtrId = xtrId;
+        this.xtrId = Arrays.copyOf(xtrId, xtrId.length);
     }
 
     @Override
