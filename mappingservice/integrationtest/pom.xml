@@ -567,11 +567,6 @@
       <artifactId>antlr4-runtime-osgi-nohead</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.yangtools.thirdparty</groupId>
-      <artifactId>xtend-lib-osgi</artifactId>
-      <version>${xtend.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam</artifactId>
       <version>${exam.version}</version>
