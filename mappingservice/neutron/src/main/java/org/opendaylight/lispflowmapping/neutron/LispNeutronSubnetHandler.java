@@ -15,8 +15,6 @@ import org.apache.commons.net.util.SubnetUtils;
 import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
 import org.opendaylight.controller.networkconfig.neutron.INeutronSubnetAware;
 import org.opendaylight.controller.networkconfig.neutron.NeutronSubnet;
-
-import org.opendaylight.controller.sal.utils.ServiceHelper;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
@@ -32,6 +30,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
  *
  */
 public class LispNeutronSubnetHandler extends LispNeutronService implements INeutronSubnetAware {
+
+    // The implementation for each of these services is resolved by the OSGi Service Manager
+    private volatile ILispNeutronService lispNeutronService;
 
 	@Override
 	public int canCreateSubnet(NeutronSubnet subnet) {
@@ -70,10 +71,8 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         LispAFIAddress lispAddress = new Ipv4Builder().setIpv4Address(new Ipv4Address(info.getNetworkAddress())).setAfi(ianaCode).build();
         LispAddressContainer addressContainer =	new LispAddressContainerBuilder().setAddress((Address) lispAddress).build();
 
-        ILispNeutronService lispService = (ILispNeutronService) ServiceHelper.getGlobalInstance(ILispNeutronService.class, this);
-
         try{
-        	lispService.getMappingService().addAuthenticationKey(addressContainer, masklen, subnet.getNetworkUUID());
+        	lispNeutronService.getMappingService().addAuthenticationKey(addressContainer, masklen, subnet.getNetworkUUID());
 
         	logger.debug("Neutron Subnet Added to MapServer : Subnet name: " + subnet.getName() + " EID Prefix: " +
             		addressContainer.toString() + " Key: " + subnet.getNetworkUUID());
@@ -140,11 +139,9 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         LispAFIAddress lispAddress = new Ipv4Builder().setIpv4Address(new Ipv4Address(info.getNetworkAddress())).setAfi(ianaCode).build();
         LispAddressContainer addressContainer = new LispAddressContainerBuilder().setAddress((Address) lispAddress).build();
 
-        ILispNeutronService lispService = (ILispNeutronService) ServiceHelper.getGlobalInstance(ILispNeutronService.class, this);
-
         // if subnet does not exist in MapServer, return error
         try{
-	        if (lispService.getMappingService().getAuthenticationKey(addressContainer, masklen) == null){
+	        if (lispNeutronService.getMappingService().getAuthenticationKey(addressContainer, masklen) == null){
 
 	        	logger.error("Neutron canDeleteSubnet rejected : Subnet does not exist: Subnet name: " +
 	        			subnet.getName() +
@@ -186,16 +183,14 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         LispAddressContainer addressContainer = new LispAddressContainerBuilder().setAddress((Address) lispAddress).build();
 
         try{
-	        ILispNeutronService lispService = (ILispNeutronService) ServiceHelper.getGlobalInstance(ILispNeutronService.class, this);
-
 	        // if subnet does not exist in MapServer, return error
-	        if (lispService.getMappingService().getAuthenticationKey(addressContainer,masklen) == null){
+	        if (lispNeutronService.getMappingService().getAuthenticationKey(addressContainer,masklen) == null){
 	            logger.error("Neutron Delete Subnet Failed: Subnet does not exist: Subnet name: " + subnet.getName() +
 	            		" Eid Prefix: " + addressContainer.toString() +
 	            		"Key: " + subnet.getNetworkUUID());
 	            return;
 	        }
-	        lispService.getMappingService().removeAuthenticationKey(addressContainer, masklen);
+	        lispNeutronService.getMappingService().removeAuthenticationKey(addressContainer, masklen);
 
 	        logger.debug("Neutron Subnet Deleted from MapServer : Subnet name: " + subnet.getName() +
 	        		" Eid Prefix: " + addressContainer.toString() +
