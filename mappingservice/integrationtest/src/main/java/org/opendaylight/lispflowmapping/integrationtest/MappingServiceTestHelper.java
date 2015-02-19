@@ -175,9 +175,6 @@ public class MappingServiceTestHelper {
                         "org.eclipse.virgo.util.osgi").versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.osgi.manifest")
                         .versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.parser.manifest").versionAsInProject(),
 
-                // AD-SAL for Inventory
-                mavenBundle("org.opendaylight.controller", "sal.implementation").versionAsInProject(),
-
                 // Our bundles
                 mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(), //
                 mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(), //
