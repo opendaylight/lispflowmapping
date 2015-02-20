@@ -18,9 +18,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <artifactId>distribution-karaf</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <name>LISP Flow Mapping Project - Karaf Distribution</name>
-  <prerequisites>
-    <maven>3.1.1</maven>
-  </prerequisites>
   <properties>
     <karaf.localFeature>odl-lispflowmapping-all</karaf.localFeature>
   </properties>

@@ -9,9 +9,6 @@
   <artifactId>mappingservice.config</artifactId>
   <packaging>bundle</packaging>
   <name>LISP Flow Mapping Config Subsystem</name>
-  <prerequisites>
-    <maven>3.0.4</maven>
-  </prerequisites>
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
