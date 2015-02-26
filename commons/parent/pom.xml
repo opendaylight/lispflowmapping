@@ -148,7 +148,7 @@
         <type>xml</type>
       </dependency>
       <dependency>
-        <groupId>org.opendaylight.controller</groupId>
+        <groupId>org.opendaylight.neutron</groupId>
         <artifactId>features-neutron</artifactId>
         <version>${neutron.version}</version>
         <classifier>features</classifier>
@@ -175,7 +175,7 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.neutron</groupId>
-        <artifactId>networkconfig.neutron</artifactId>
+        <artifactId>neutron-spi</artifactId>
         <version>0.5.0-SNAPSHOT</version>
       </dependency>
       <dependency>

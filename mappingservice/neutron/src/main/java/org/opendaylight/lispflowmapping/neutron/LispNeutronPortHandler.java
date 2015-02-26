@@ -10,8 +10,8 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import java.net.HttpURLConnection;
 
-import org.opendaylight.controller.networkconfig.neutron.INeutronPortAware;
-import org.opendaylight.controller.networkconfig.neutron.NeutronPort;
+import org.opendaylight.neutron.spi.INeutronPortAware;
+import org.opendaylight.neutron.spi.NeutronPort;
 
 /**
  * Lisp Service implementation of NeutronPortAware API

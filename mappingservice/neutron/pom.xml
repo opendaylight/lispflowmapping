@@ -20,7 +20,7 @@
     </dependency>
     <dependency>
       <groupId>org.opendaylight.neutron</groupId>
-      <artifactId>networkconfig.neutron</artifactId>
+      <artifactId>neutron-spi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.yangtools.model</groupId>
@@ -38,7 +38,7 @@
             <Export-Package></Export-Package>
             <Import-Package>org.apache.commons.net.util,
               org.apache.felix.dm,
-              org.opendaylight.controller.networkconfig.neutron,
+              org.opendaylight.neutron.spi,
               org.opendaylight.lispflowmapping.type,
               org.opendaylight.lispflowmapping.type.lisp,
               org.opendaylight.lispflowmapping.type.lisp.address,

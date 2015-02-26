@@ -13,7 +13,7 @@
 
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-adsal/${sal.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.controller/features-neutron/${neutron.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-nsf/${nsf.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-netconf-connector/${mdsal.version}/xml/features</repository>
 
@@ -54,7 +54,7 @@
     </feature>
 
     <feature name="odl-lispflowmapping-neutron" description="OpenDaylight :: LISP Flow Mapping :: Neutron Integration" version='${lispflowmapping.version}'>
-        <feature version="${neutron.version}">odl-neutron-all</feature>
+        <feature version="${neutron.version}">odl-neutron-service</feature>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-mappingservice</feature>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.neutron/${lispflowmapping.version}</bundle>
     </feature>

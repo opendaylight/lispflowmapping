@@ -13,8 +13,8 @@ import java.net.HttpURLConnection;
 
 import org.apache.commons.net.util.SubnetUtils;
 import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
-import org.opendaylight.controller.networkconfig.neutron.INeutronSubnetAware;
-import org.opendaylight.controller.networkconfig.neutron.NeutronSubnet;
+import org.opendaylight.neutron.spi.INeutronSubnetAware;
+import org.opendaylight.neutron.spi.NeutronSubnet;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
