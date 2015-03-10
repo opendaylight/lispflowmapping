@@ -120,14 +120,6 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
-        <artifactId>distribution.opendaylight</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
-        <classifier>osgipackage</classifier>
-        <type>zip</type>
-        <!-- Make sure this isn't included on any classpath -->
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
         <artifactId>features-adsal</artifactId>
         <version>${sal.version}</version>
         <classifier>features</classifier>
