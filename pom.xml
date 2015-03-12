@@ -18,23 +18,12 @@
     <module>commons/build_tools</module>
     <module>commons/unittest_tools</module>
     <module>mappingservice</module>
-    <module>distribution</module>
     <module>features</module>
     <module>artifacts</module>
     <module>distribution-karaf</module>
   </modules>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- we are overriding the default version of this plugin here... not sure why. -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.8</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <!-- In this project we want to automatically sort all poms, thus we
