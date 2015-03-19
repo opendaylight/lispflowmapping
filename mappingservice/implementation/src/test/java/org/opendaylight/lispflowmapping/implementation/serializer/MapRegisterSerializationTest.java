@@ -61,7 +61,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         mrBuilder.setSiteId(siteId);
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
-        assertHexEquals((byte) 0x38, bb.get()); // Type + MSByte of reserved
+        assertHexEquals((byte) 0x3a, bb.get()); // Type + MSByte of reserved
         assertEquals(1, bb.getShort()); // Rest of reserved + want map notify
         assertEquals(2, bb.get()); // Record Count
         assertEquals(6161616161L, bb.getLong()); // Nonce
@@ -198,6 +198,22 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         assertEquals(0x0000, mr.getKeyId().shortValue());
         byte[] expectedAuthenticationData = {};
         ArrayAssert.assertEquals(expectedAuthenticationData, mr.getAuthenticationData());
+    }
+
+    @Test
+    public void deserialize__serialize() throws Exception {
+        ByteBuffer bb = hexToByteBuffer("32 00 01 01 a6 89 "
+                + "94 55 b4 bc 83 6d 00 01 00 14 86 cc 0a 9c 0d ec "
+                + "0f 54 9d c3 90 c3 8b f0 ab dd e4 e6 41 8e 00 00 "
+                + "05 a0 01 20 10 00 00 00 00 01 c3 a8 c8 01 0a 32 "
+                + "ff 00 00 05 00 01 ac 10 01 02 db 0a 82 ef ae 16 "
+                + "42 17 6b e4 5a 1e bd 6a 05 f1 00 00 00 00 00 00 "
+                + "00 00 ");
+        MapRegister mr = MapRegisterSerializer.getInstance().deserialize(bb);
+
+        assertTrue(mr.isXtrSiteIdPresent());
+
+        ArrayAssert.assertEquals(bb.array(), MapRegisterSerializer.getInstance().serialize(mr).array());
     }
 
     @Test
