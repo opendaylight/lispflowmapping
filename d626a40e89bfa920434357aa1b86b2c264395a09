@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e031530c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/MapRegisterSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-03-19T12:02:41Z",
+      "side": 1,
+      "message": "Please change TABs to spaces",
+      "revId": "d626a40e89bfa920434357aa1b86b2c264395a09",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
