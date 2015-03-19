@@ -47,8 +47,9 @@ public class MapRegisterSerializer {
         }
 
         ByteBuffer registerBuffer = ByteBuffer.allocate(size);
-        registerBuffer.put((byte) ((byte) (LispMessageEnum.MapRegister.getValue() << 4) | ByteUtil.boolToBit(
-                BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY)));
+        registerBuffer.put((byte) ((byte) (LispMessageEnum.MapRegister.getValue() << 4) |
+                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY) |
+                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isXtrSiteIdPresent()), Flags.XTRSITEID)));
         registerBuffer.position(registerBuffer.position() + Length.RES);
         registerBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_REPLY));
         registerBuffer.put((byte) mapRegister.getEidToLocatorRecord().size());
