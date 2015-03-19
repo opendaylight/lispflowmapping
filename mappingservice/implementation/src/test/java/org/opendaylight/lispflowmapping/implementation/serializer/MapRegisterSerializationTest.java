@@ -61,7 +61,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         mrBuilder.setSiteId(siteId);
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
-        assertHexEquals((byte) 0x38, bb.get()); // Type + MSByte of reserved
+        assertHexEquals((byte) 0x3a, bb.get()); // Type + MSByte of reserved
         assertEquals(1, bb.getShort()); // Rest of reserved + want map notify
         assertEquals(2, bb.get()); // Record Count
         assertEquals(6161616161L, bb.getLong()); // Nonce
