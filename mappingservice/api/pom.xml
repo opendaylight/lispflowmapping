@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.1.14-SNAPSHOT</version>
+		<version>1.1.14-Helium-SR3</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.api</artifactId>
