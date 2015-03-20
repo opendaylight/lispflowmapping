@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>lispflowmapping-commons</artifactId>
-    <version>1.1.14-Helium-SR3</version>
+    <version>1.1.15-SNAPSHOT</version>
     <relativePath>../commons/parent</relativePath>
   </parent>
   <artifactId>features-lispflowmapping</artifactId>
