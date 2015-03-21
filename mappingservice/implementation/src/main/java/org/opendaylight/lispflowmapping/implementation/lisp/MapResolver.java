@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
@@ -32,6 +33,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecord
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
@@ -83,21 +85,22 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
             for (EidRecord eid : request.getEidRecord()) {
                 EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
+                Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMappingForEidRecord(eid, dao);
                 recordBuilder.setRecordTtl(0);
                 recordBuilder.setAction(Action.NoAction);
                 recordBuilder.setAuthoritative(false);
                 recordBuilder.setMapVersion((short) 0);
-                recordBuilder.setMaskLength(eid.getMask());
-                recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
+                recordBuilder.setMaskLength((short) mapping.getKey().getMask());
+                recordBuilder.setLispAddressContainer(mapping.getKey().getEID());
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                List<MappingServiceRLOCGroup> locators = DAOMappingUtil.getLocatorsByEidRecord(eid, dao, shouldIterateMask());
+                List<MappingServiceRLOCGroup> locators = mapping.getValue();
                 if (locators != null && locators.size() > 0) {
                     List<ItrRloc> itrRlocs = request.getItrRloc();
                     addLocatorGroups(recordBuilder, locators, itrRlocs);
                     if (itrRlocs != null && itrRlocs.size() > 0) {
                         LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
                         MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
-                        HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eid.getLispAddressContainer(), eid.getMask());
+                        HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
                         if (subscribers == null) {
                             subscribers = new HashSet<MappingServiceSubscriberRLOC>();
                         } else if (subscribers.contains(subscriberRloc)) {
@@ -109,7 +112,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                             subscribers.remove(subscriberRloc);
                         }
                         if (smr) {
-                            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+                            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(mapping.getKey().getEID(),
+                                    mapping.getKey().getMask());
                             logger.trace("Adding new subscriber: " + subscriberRloc.toString());
                             subscribers.add(subscriberRloc);
                             dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));

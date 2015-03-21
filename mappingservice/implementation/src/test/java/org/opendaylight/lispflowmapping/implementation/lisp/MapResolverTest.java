@@ -149,8 +149,8 @@ public class MapResolverTest extends BaseTestCase {
 
         assertEquals(mr.getNonce(), mapReply.getNonce());
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
-        assertEquals((byte) 32, eidToLocators.getMaskLength().byteValue());
-        assertEquals(v4Address, LispAFIConvertor.toAFI(eidToLocators.getLispAddressContainer()));
+        assertEquals((byte) 24, eidToLocators.getMaskLength().byteValue());
+        assertEquals(LispAFIConvertor.asIPAfiAddress("1.2.3.0"), LispAFIConvertor.toAFI(eidToLocators.getLispAddressContainer()));
     }
 
     @Test
