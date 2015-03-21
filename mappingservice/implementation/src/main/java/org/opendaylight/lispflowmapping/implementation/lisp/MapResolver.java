@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
@@ -83,14 +84,15 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
             for (EidRecord eid : request.getEidRecord()) {
                 EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
+                Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMappingForEidRecord(eid, dao);
                 recordBuilder.setRecordTtl(0);
                 recordBuilder.setAction(Action.NoAction);
                 recordBuilder.setAuthoritative(false);
                 recordBuilder.setMapVersion((short) 0);
-                recordBuilder.setMaskLength(eid.getMask());
+                recordBuilder.setMaskLength((short) mapping.getKey().getMask());
                 recordBuilder.setLispAddressContainer(eid.getLispAddressContainer());
                 recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                List<MappingServiceRLOCGroup> locators = DAOMappingUtil.getLocatorsByEidRecord(eid, dao, shouldIterateMask());
+                List<MappingServiceRLOCGroup> locators = mapping.getValue();
                 if (locators != null && locators.size() > 0) {
                     List<ItrRloc> itrRlocs = request.getItrRloc();
                     addLocatorGroups(recordBuilder, locators, itrRlocs);
