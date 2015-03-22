@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
  *
  */
 public class LispNeutronSubnetHandler extends LispNeutronService implements INeutronSubnetAware {
+    private static final Integer SIX = Integer.valueOf(6);
 
     // The implementation for each of these services is resolved by the OSGi Service Manager
     private volatile ILispNeutronService lispNeutronService;
@@ -65,7 +66,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         // Default is set to IPv4 for neutron subnets
 
         short ianaCode = 1;
-        if ( (new Integer(6)).equals(subnet.getIpVersion()) )
+        if ( SIX.equals(subnet.getIpVersion()) )
         	ianaCode = 2;
 
         LispAFIAddress lispAddress = new Ipv4Builder().setIpv4Address(new Ipv4Address(info.getNetworkAddress())).setAfi(ianaCode).build();
@@ -133,7 +134,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         // Determine the IANA code for the subnet IP version
         // Default is set to IPv4 for neutron subnets
         short ianaCode = 1;
-        if ( (new Integer(6)).equals(subnet.getIpVersion()) )
+        if ( SIX.equals(subnet.getIpVersion()) )
         	ianaCode = 2;
 
         LispAFIAddress lispAddress = new Ipv4Builder().setIpv4Address(new Ipv4Address(info.getNetworkAddress())).setAfi(ianaCode).build();
@@ -176,7 +177,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         // Default is set to IPv4 for neutron subnets
 
         short ianaCode = 1;
-        if ( (new Integer(6)).equals(subnet.getIpVersion()) )
+        if ( SIX.equals(subnet.getIpVersion()) )
         	ianaCode = 2;
 
         LispAFIAddress lispAddress = new Ipv4Builder().setIpv4Address(new Ipv4Address(info.getNetworkAddress())).setAfi(ianaCode).build();
