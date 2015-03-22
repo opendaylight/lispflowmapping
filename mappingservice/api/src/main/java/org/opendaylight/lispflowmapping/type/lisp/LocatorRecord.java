@@ -157,7 +157,7 @@ public class LocatorRecord {
     	 if (priority != 0) {
              boolean isValidRange = false;
              List<Range<Short>> rangeConstraints = new ArrayList<>();
-             rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+             rangeConstraints.add(Range.closed((short)0, (short)255));
              for (Range<Short> r : rangeConstraints) {
                  if (r.contains(priority)) {
                  isValidRange = true;
@@ -188,7 +188,7 @@ public class LocatorRecord {
     	if (value != 0) {
             boolean isValidRange = false;
             List<Range<Short>> rangeConstraints = new ArrayList<>();
-            rangeConstraints.add(Range.closed(new Short("0"), new Short("255")));
+            rangeConstraints.add(Range.closed((short) 0, (short)255));
             for (Range<Short> r : rangeConstraints) {
                 if (r.contains(value)) {
                 isValidRange = true;
