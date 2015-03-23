@@ -8,9 +8,11 @@
 
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -19,6 +21,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
 
 public class DAOMappingUtil {
 
@@ -102,5 +105,33 @@ public class DAOMappingUtil {
             }
         }
         return null;
+    }
+
+    public static Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> getMappingForEidRecord(EidRecord eid, ILispDAO dao) {
+        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+        if (MaskUtil.isMaskable(key.getEID().getAddress())) {
+            int mask = eid.getMask();
+            while (mask > 0) {
+                Address eidAddress = MaskUtil.normalize(key.getEID().getAddress(), mask);
+                key = MappingServiceKeyUtil.generateMappingServiceKey(
+                        new LispAddressContainerBuilder().setAddress(eidAddress).build(), mask);
+                mask--;
+                Map<String, ?> locators = dao.get(key);
+                if (locators != null) {
+                    List<MappingServiceRLOCGroup> locatorsList = aggregateLocators(locators);
+                    if (locatorsList != null && !locatorsList.isEmpty()) {
+                        Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> result = new AbstractMap.SimpleImmutableEntry<>(key, locatorsList);
+                        return result;
+                    }
+                }
+            }
+            // empty mapping
+            key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
+            return new AbstractMap.SimpleImmutableEntry<>(key, null);
+        } else {
+            Map<String, ?> locators = dao.get(key);
+            List<MappingServiceRLOCGroup> aggLocators = aggregateLocators(locators);
+            return new AbstractMap.SimpleImmutableEntry<>(key, aggLocators);
+        }
     }
 }
