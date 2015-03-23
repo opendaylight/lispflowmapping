@@ -59,7 +59,7 @@ public class ConfigIni {
 
     private void initSmr(BundleContext context) {
         // set the default value first
-        this.smr = false;
+        this.smr = true;
 
         String str = null;
 
@@ -69,16 +69,16 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_SMR);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: false", LISP_SMR);
+                logger.debug("Configuration variable '{}' is unset. Setting to default value: true", LISP_SMR);
                 return;
             }
         }
 
-        if (str.trim().equalsIgnoreCase("true")) {
-            this.smr = true;
-            logger.debug("Setting configuration variable '{}' to true", LISP_SMR);
-        } else {
+        if (str.trim().equalsIgnoreCase("false")) {
+            this.smr = false;
             logger.debug("Setting configuration variable '{}' to false", LISP_SMR);
+        } else {
+            logger.debug("Setting configuration variable '{}' to true", LISP_SMR);
         }
     }
 
