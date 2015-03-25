@@ -151,7 +151,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                                 try {
                                     callback.handleSMR(mapRequest, rloc.getSrcRloc());
                                 } catch (Exception e) {
-                                    logger.error("Errors encountered while handling SMR:" + e.getStackTrace());
+                                    LOG.error("Errors encountered while handling SMR:" + e.getStackTrace());
                                 }
                             }
                         }
