@@ -45,7 +45,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
 
     private static final int TTL_RLOC_TIMED_OUT = 1;
     private static final int TTL_NO_RLOC_KNOWN = 15;
-    protected static final Logger logger = LoggerFactory.getLogger(MapResolver.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
 
     private static final ConfigIni configIni = new ConfigIni();
     private static final String elpPolicy = configIni.getElpPolicy();
@@ -60,7 +60,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
 
     public void handleMapRequest(MapRequest request, boolean smr, IMapRequestResultHandler callback) {
         if (dao == null) {
-            logger.warn("handleMapRequest called while dao is uninitialized");
+            LOG.warn("handleMapRequest called while dao is uninitialized");
             return;
         }
         if (request.isPitr()) {
@@ -114,7 +114,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                         if (smr) {
                             IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(mapping.getKey().getEID(),
                                     mapping.getKey().getMask());
-                            logger.trace("Adding new subscriber: " + subscriberRloc.toString());
+                            LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
                             subscribers.add(subscriberRloc);
                             dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
                         }

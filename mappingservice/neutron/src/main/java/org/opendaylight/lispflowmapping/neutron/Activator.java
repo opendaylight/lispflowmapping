@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class Activator extends DependencyActivatorBase {
 
-    protected static final Logger logger = LoggerFactory.getLogger(Activator.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     @Override
     public void init(BundleContext context, DependencyManager manager) throws Exception {
@@ -55,13 +55,13 @@ public class Activator extends DependencyActivatorBase {
                 .setInterface(new String[] { ILispNeutronService.class.getName(), INeutronPortAware.class.getName()}, props)
                 .setImplementation(LispNeutronPortHandler.class));
 
-        logger.debug("LISP Neutron Service is initialized!");
+        LOG.debug("LISP Neutron Service is initialized!");
 
     }
 
     @Override
     public void destroy(BundleContext context, DependencyManager manager) throws Exception {
-        logger.debug("LISP Neutron Service is destroyed!");
+        LOG.debug("LISP Neutron Service is destroyed!");
     }
 
 }

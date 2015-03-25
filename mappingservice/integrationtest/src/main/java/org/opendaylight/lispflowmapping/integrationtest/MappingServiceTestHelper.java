@@ -45,7 +45,7 @@ public class MappingServiceTestHelper {
                 mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject(),
                 mavenBundle("org.apache.felix", "org.apache.felix.dependencymanager").versionAsInProject(),
 
-                // List logger bundles
+                // List LOG bundles
                 mavenBundle("org.slf4j", "jcl-over-slf4j").versionAsInProject(),
                 mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
                 mavenBundle("org.slf4j", "log4j-over-slf4j").versionAsInProject(),

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class MapRequestSerializer {
 
     private static final MapRequestSerializer INSTANCE = new MapRequestSerializer();
-    protected static final Logger logger = LoggerFactory.getLogger(MapRequestSerializer.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MapRequestSerializer.class);
 
     // Private constructor prevents instantiation from other classes
     private MapRequestSerializer() {
@@ -158,7 +158,7 @@ public class MapRequestSerializer {
                     builder.setMapReply(new org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder(
                             new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(requestBuffer)).build()).build());
                 } catch (RuntimeException re) {
-                    logger.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());
+                    LOG.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());
                 }
             }
             return builder.build();

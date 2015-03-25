@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
         IMapRequestResultHandler, IMapNotifyHandler {
-    protected static final Logger logger = LoggerFactory.getLogger(LispMappingService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
     private ILispDAO lispDao = null;
@@ -96,13 +96,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.trace("BindingAwareBroker set!");
+        LOG.trace("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerConsumer(this, bundleContext);
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        logger.debug("BindingAwareBroker was unset in LispMappingService");
+        LOG.debug("BindingAwareBroker was unset in LispMappingService");
     }
 
     public void basicInit(ILispDAO dao) {
@@ -112,12 +112,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     void setLispDao(ILispDAO dao) {
-        logger.trace("LispDAO set in LispMappingService");
+        LOG.trace("LispDAO set in LispMappingService");
         basicInit(dao);
     }
 
     void unsetLispDao(ILispDAO dao) {
-        logger.trace("LispDAO was unset in LispMappingService");
+        LOG.trace("LispDAO was unset in LispMappingService");
         mapServer = null;
         mapResolver = null;
         lispDao = null;
@@ -126,9 +126,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     public void init() {
         try {
             registerWithOSGIConsole();
-            logger.info("LISP (RFC6830) Mapping Service init finished");
+            LOG.info("LISP (RFC6830) Mapping Service init finished");
         } catch (Exception e) {
-            logger.error(e.getStackTrace().toString());
+            LOG.error(e.getStackTrace().toString());
         }
     }
 
@@ -138,7 +138,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void destroy() {
-        logger.info("LISP (RFC6830) Mapping Service is destroyed!");
+        LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
     }
@@ -269,7 +269,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void onSessionInitialized(ConsumerContext session) {
-        logger.info("Lisp Consumer session initialized!");
+        LOG.info("Lisp Consumer session initialized!");
         notificationService = session.getSALService(NotificationService.class);
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
@@ -294,7 +294,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
                 smnib.setTransportAddress(tab.build());
                 getLispSB().sendMapNotify(smnib.build());
             } else {
-                logger.warn("got null map notify");
+                LOG.warn("got null map notify");
             }
 
         }
@@ -311,7 +311,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
                 smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
                 getLispSB().sendMapReply(smrib.build());
             } else {
-                logger.warn("got null map reply");
+                LOG.warn("got null map reply");
             }
         }
     }
@@ -332,7 +332,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void handleSMR(MapRequest smr, LispAddressContainer subscriber) {
-        logger.debug("Sending SMR to " + subscriber.toString());
+        LOG.debug("Sending SMR to " + subscriber.toString());
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));

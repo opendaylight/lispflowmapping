@@ -128,7 +128,7 @@ public class MappingServiceIntegrationTest {
 
     private IFlowMapping lms;
     private ClusterDAOService clusterService;
-    protected static final Logger logger = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
@@ -805,8 +805,8 @@ public class MappingServiceIntegrationTest {
         Integer httpResponseCode = connection.getResponseCode();
 
         if (httpResponseCode > 299) {
-            logger.trace("HTTP Address: " + url);
-            logger.trace("HTTP Response Code: " + httpResponseCode);
+            LOG.trace("HTTP Address: " + url);
+            LOG.trace("HTTP Response Code: " + httpResponseCode);
             fail();
         }
 
@@ -922,8 +922,8 @@ public class MappingServiceIntegrationTest {
 
         String jsonAuthData = createAuthKeyJSON(pass, address, mask);
 
-        logger.trace("Sending this JSON to LISP server: \n" + jsonAuthData);
-        logger.trace("Address: " + address);
+        LOG.trace("Sending this JSON to LISP server: \n" + jsonAuthData);
+        LOG.trace("Address: " + address);
 
         byte[] expectedSha = new byte[] { (byte) 146, (byte) 234, (byte) 52, (byte) 247, (byte) 186, (byte) 232, (byte) 31, (byte) 249, (byte) 87,
                 (byte) 73, (byte) 234, (byte) 54, (byte) 225, (byte) 160, (byte) 129, (byte) 251, (byte) 73, (byte) 53, (byte) 196, (byte) 62 };
@@ -1466,7 +1466,7 @@ public class MappingServiceIntegrationTest {
                 assertEquals(((LispIpv4Address) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getValue(),
                         eid);
                 notificationCalled = true;
-                logger.warn("notification arrived");
+                LOG.warn("notification arrived");
             }
         });
         sendMapRequest(mapRequest, port);
@@ -1474,7 +1474,7 @@ public class MappingServiceIntegrationTest {
             if (notificationCalled) {
                 return;
             } else {
-                logger.warn("notification hasn't arrived, sleeping...");
+                LOG.warn("notification hasn't arrived, sleeping...");
                 Thread.sleep(500);
             }
         }
@@ -1546,7 +1546,7 @@ public class MappingServiceIntegrationTest {
         try {
             DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
             initPacketAddress(packet, port);
-            logger.trace("Sending packet to LispPlugin on socket, port {}", port);
+            LOG.trace("Sending packet to LispPlugin on socket, port {}", port);
             socket.send(packet);
         } catch (Throwable t) {
             fail();
@@ -1565,10 +1565,10 @@ public class MappingServiceIntegrationTest {
         try {
             byte[] buffer = new byte[4096];
             DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-            logger.trace("Waiting for packet from socket...");
+            LOG.trace("Waiting for packet from socket...");
             receivedSocket.setSoTimeout(timeout);
             receivedSocket.receive(receivePacket);
-            logger.trace("Recieved packet from socket!");
+            LOG.trace("Recieved packet from socket!");
             return receivePacket;
         } catch (SocketTimeoutException ste) {
             throw ste;
@@ -1633,23 +1633,23 @@ public class MappingServiceIntegrationTest {
         Bundle b[] = bc.getBundles();
         for (Bundle element : b) {
             int state = element.getState();
-            logger.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
+            LOG.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
                     + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
-                logger.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
+                LOG.trace("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 
                 // try {
                 // String host = element.getHeaders().get("FRAGMENT-HOST");
                 // if (host != null) {
-                // logger.warn("Bundle " + element.getSymbolicName() +
+                // LOG.warn("Bundle " + element.getSymbolicName() +
                 // " is a fragment which is part of: " + host);
-                // logger.warn("Required imports are: " +
+                // LOG.warn("Required imports are: " +
                 // element.getHeaders().get("IMPORT-PACKAGE"));
                 // } else {
                 // element.start();
                 // }
                 // } catch (BundleException e) {
-                // logger.error("BundleException:", e);
+                // LOG.error("BundleException:", e);
                 // fail();
                 // }
 
@@ -1658,7 +1658,7 @@ public class MappingServiceIntegrationTest {
             }
         }
         if (debugit) {
-            logger.warn(("Do some debugging because some bundle is unresolved"));
+            LOG.warn(("Do some debugging because some bundle is unresolved"));
         }
         // assertNotNull(broker);
 
@@ -1699,8 +1699,8 @@ public class MappingServiceIntegrationTest {
         // BundleContext
         /*
          * for (ServiceReference sr : bc.getAllServiceReferences(null, null)) {
-         * logger.trace(sr.getBundle().getSymbolicName());
-         * logger.trace(sr.toString()); }
+         * LOG.trace(sr.getBundle().getSymbolicName());
+         * LOG.trace(sr.toString()); }
          */
         try {
             Thread.sleep(1000);

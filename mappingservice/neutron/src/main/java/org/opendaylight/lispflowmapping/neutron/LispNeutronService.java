@@ -17,7 +17,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 
 public class LispNeutronService implements ILispNeutronService {
 
-	protected static final Logger logger = LoggerFactory.getLogger(LispNeutronService.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
     protected IFlowMapping mappingService;
 
     public IFlowMapping getMappingService() {
@@ -25,12 +25,12 @@ public class LispNeutronService implements ILispNeutronService {
     }
 
     public void setMappingService(IFlowMapping mappingService) {
-        logger.debug("MappingService set in Lisp Neutron");
+        LOG.debug("MappingService set in Lisp Neutron");
         this.mappingService = mappingService;
     }
 
     public void unsetMappingService(IFlowMapping mappingService) {
-        logger.debug("MappingService was unset in LISP Neutron");
+        LOG.debug("MappingService was unset in LISP Neutron");
         this.mappingService = null;
     }
 
@@ -51,11 +51,11 @@ public class LispNeutronService implements ILispNeutronService {
     }
 */
     public void stop() {
-        logger.info("LISP Neutron Service is down!");
+        LOG.info("LISP Neutron Service is down!");
     }
 
     public void destroy() {
-        logger.debug("LISP Neutron Service is destroyed!");
+        LOG.debug("LISP Neutron Service is destroyed!");
         mappingService = null;
     }
 
