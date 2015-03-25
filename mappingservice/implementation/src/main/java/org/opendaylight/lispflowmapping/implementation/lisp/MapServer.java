@@ -151,7 +151,11 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                                 logger.trace("Lazy removing expired subscriber entry " + rloc.toString());
                                 subscribers.remove(rloc);
                             } else {
-                                callback.handleSMR(mapRequest, rloc.getSrcRloc());
+                                try {
+                                    callback.handleSMR(mapRequest, rloc.getSrcRloc());
+                                } catch (Exception e) {
+                                    logger.error("Errors encountered while handling SMR:" + e.getStackTrace());
+                                }
                             }
                         }
                         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
