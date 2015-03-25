@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class LispXtrSouthboundService implements ILispSouthboundService {
     private NotificationProviderService notificationProvider;
-    protected static final Logger logger = LoggerFactory.getLogger(LispXtrSouthboundService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundService.class);
 
     public void setNotificationProvider(NotificationProviderService nps) {
         this.notificationProvider = nps;
@@ -42,13 +42,13 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = LispMessageEnum.valueOf((byte) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == LispMessageEnum.MapRequest) {
-            logger.trace("Received packet of type MapRequest for xTR");
+            LOG.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer);
         } else if (lispType ==  LispMessageEnum.MapReply){
-            logger.trace("Received packet of type MapReply for xTR");
+            LOG.trace("Received packet of type MapReply for xTR");
             handleMapReply(inBuffer);
         } else {
-            logger.warn("Received unknown packet type");
+            LOG.warn("Received unknown packet type");
         }
     }
 
@@ -68,9 +68,9 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
-                logger.trace("MapRequest was published!");
+                LOG.trace("MapRequest was published!");
             } else {
-                logger.warn("Notification Provider is null!");
+                LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
@@ -86,9 +86,9 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
 
             if (notificationProvider != null) {
                 notificationProvider.publish(replyMappingBuilder.build());
-                logger.trace("MapReply was published!");
+                LOG.trace("MapReply was published!");
             } else {
-                logger.warn("Notification Provider is null!");
+                LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + buffer.capacity() + ")", re);

@@ -35,7 +35,7 @@ import com.google.common.util.concurrent.SettableFuture;
 
 public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConnectorService {
 
-       private static final Logger logger = LoggerFactory.getLogger(LispDeviceNetconfConnector.class);
+       private static final Logger LOG = LoggerFactory.getLogger(LispDeviceNetconfConnector.class);
 
        private final ExecutorService executor;
        private LispNetconfConnector nconfConnector;
@@ -47,7 +47,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
        public LispDeviceNetconfConnector(ExecutorService executor, LispNetconfConnector nconfConnector) {
            this.executor = executor;
            this.nconfConnector = nconfConnector;
-           logger.info( "LispDeviceNetconfConnector constructed" );
+           LOG.info( "LispDeviceNetconfConnector constructed" );
        }
 
        /**
@@ -66,7 +66,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
         public Future<RpcResult<Void>> buildConnector(final BuildConnectorInput input) {
             SettableFuture<RpcResult<Void>> futureResult = SettableFuture.create();
 
-            logger.trace("Received RPC to buildConnector: " + input);
+            LOG.trace("Received RPC to buildConnector: " + input);
 
             if (verifyBuildInput(input, futureResult) != true) {
                 return futureResult;
@@ -90,7 +90,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
 
         private boolean verifyBuildInput(final BuildConnectorInput req, SettableFuture<RpcResult<Void>> futureResult ) {
             if (req.getInstance() == null) {
-                logger.error("Instance name not initialized");
+                LOG.error("Instance name not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "Instance name not initialized")
                         .build());
@@ -98,7 +98,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
             }
 
             if (req.getAddress() == null) {
-                logger.error("IP address not initialized");
+                LOG.error("IP address not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "IP address not initialized")
                         .build());
@@ -106,7 +106,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
             }
 
             if (req.getPort() == null) {
-                logger.error("Port not initialized");
+                LOG.error("Port not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "Port not initialized")
                         .build());
@@ -114,7 +114,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
             }
 
             if (req.getUsername() == null) {
-                logger.error("Username not initialized");
+                LOG.error("Username not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "Username not initialized")
                         .build());
@@ -122,7 +122,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
             }
 
             if (req.getPassword() == null) {
-                logger.error("Password not initialized");
+                LOG.error("Password not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "Password not initialized")
                         .build());
@@ -134,7 +134,7 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
 
         private boolean verifyRemoveInput(final RemoveConnectorInput conn, SettableFuture<RpcResult<Void>> futureResult) {
             if (conn.getInstance() == null) {
-                logger.error("Instance name not initialized");
+                LOG.error("Instance name not initialized");
                 futureResult.set(RpcResultBuilder.<Void> failed()
                         .withError(ErrorType.APPLICATION, "exception", "Instance name not initialized")
                         .build());
@@ -159,20 +159,20 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
                 try {
                     nconfConnector.createNetconfConnector(buildConnectorInput.getInstance(), buildConnectorInput.getAddress(),
                             buildConnectorInput.getPort().getValue(), buildConnectorInput.getUsername(), buildConnectorInput.getPassword());
-                    logger.info("LispNetconfConnector {} built", buildConnectorInput.getInstance());
+                    LOG.info("LispNetconfConnector {} built", buildConnectorInput.getInstance());
                     return RpcResultBuilder.<Void>success().build();
                 } catch( InstanceAlreadyExistsException e ) {
-                    logger.error("LispNetconfConnector {} already exists!", buildConnectorInput.getInstance());
+                    LOG.error("LispNetconfConnector {} already exists!", buildConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "exists", "LispNetconfConnector exists")
                             .build();
                 } catch (ConflictingVersionException ex) {
-                    logger.error("LispNetconfConnector {} version exception", buildConnectorInput.getInstance());
+                    LOG.error("LispNetconfConnector {} version exception", buildConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "exception", "LispNetconfConnector version exception")
                             .build();
                 } catch ( ValidationException ex) {
-                    logger.error("LispNetconfConnector {} validation exception", buildConnectorInput.getInstance());
+                    LOG.error("LispNetconfConnector {} validation exception", buildConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "exception", "LispNetconfConnector validation exception")
                             .build();
@@ -193,25 +193,25 @@ public class LispDeviceNetconfConnector implements AutoCloseable, LfmNetconfConn
             public RpcResult<Void> call() {
                 try {
                     nconfConnector.removeNetconfConnector(removeConnectorInput.getInstance());
-                    logger.info("LispNetconfConnector {} removed!", removeConnectorInput.getInstance());
+                    LOG.info("LispNetconfConnector {} removed!", removeConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> success().build();
                 } catch( InstanceNotFoundException e ) {
-                    logger.info("LispNetconfConnector {} doesn't exists!", removeConnectorInput.getInstance());
+                    LOG.info("LispNetconfConnector {} doesn't exists!", removeConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "no-exist", "LispNetconfConnector doesn't exist")
                             .build();
                 } catch( ValidationException e ) {
-                    logger.info("LispNetconfConnector {}: Could not validate remove transactions!", removeConnectorInput.getInstance());
+                    LOG.info("LispNetconfConnector {}: Could not validate remove transactions!", removeConnectorInput.getInstance());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "fail", "LispNetconfConnector doesn't exist")
                             .build();
                 } catch (ConflictingVersionException e) {
-                    logger.error("LispNetconfConnector {}: Cannot remove due to conflicting version", removeConnectorInput.getInstance() );
+                    LOG.error("LispNetconfConnector {}: Cannot remove due to conflicting version", removeConnectorInput.getInstance() );
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "fail", "Conflicting version exception")
                             .build();
                 } catch (Exception e) {
-                    logger.error("LispNetconfConnector {} exception while removing: {}", removeConnectorInput.getInstance(), e.getClass());
+                    LOG.error("LispNetconfConnector {} exception while removing: {}", removeConnectorInput.getInstance(), e.getClass());
                     return RpcResultBuilder.<Void> failed()
                             .withError(ErrorType.APPLICATION, "fail", "Cannot remove LispNetconfConnector: " + removeConnectorInput.getInstance())
                             .build();

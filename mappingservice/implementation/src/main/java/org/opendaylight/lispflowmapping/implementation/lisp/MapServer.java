@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 public class MapServer extends AbstractLispComponent implements IMapServerAsync {
 
-    protected static final Logger logger = LoggerFactory.getLogger(MapServer.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
 
     private static final ConfigIni configIni = new ConfigIni();
     private static final boolean overwriteConfig = configIni.mappingOverwriteIsSet();
@@ -79,7 +79,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface current = interfaces.nextElement();
-                logger.debug("Interface " + current.toString());
+                LOG.debug("Interface " + current.toString());
                 if (!current.isUp() || current.isLoopback() || current.isVirtual())
                     continue;
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
@@ -88,7 +88,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                     // Skip loopback and link local addresses
                     if (current_addr.isLoopbackAddress() || current_addr.isLinkLocalAddress())
                         continue;
-                    logger.debug(current_addr.getHostAddress());
+                    LOG.debug(current_addr.getHostAddress());
                     return current_addr;
                 }
             }
@@ -123,7 +123,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
 
     public void handleMapRegister(MapRegister mapRegister, boolean smr, IMapNotifyHandler callback) {
         if (dao == null) {
-            logger.warn("handleMapRegister called while dao is uninitialized");
+            LOG.warn("handleMapRegister called while dao is uninitialized");
         } else {
             boolean failed = false;
             String password = null;
@@ -131,7 +131,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 if (shouldAuthenticate()) {
                     password = getPassword(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
                     if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                        logger.warn("Authentication failed");
+                        LOG.warn("Authentication failed");
                         failed = true;
                         break;
                     }
@@ -142,10 +142,10 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                     HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
                     if (subscribers != null) {
                         MapRequest mapRequest = buildSMR(eidRecord);
-                        logger.trace("Built SMR packet: " + mapRequest.toString());
+                        LOG.trace("Built SMR packet: " + mapRequest.toString());
                         for (MappingServiceSubscriberRLOC rloc : subscribers) {
                             if (rloc.timedOut()) {
-                                logger.trace("Lazy removing expired subscriber entry " + rloc.toString());
+                                LOG.trace("Lazy removing expired subscriber entry " + rloc.toString());
                                 subscribers.remove(rloc);
                             } else {
                                 callback.handleSMR(mapRequest, rloc.getSrcRloc());
@@ -161,7 +161,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             if (!failed) {
                 MapNotifyBuilder builder = new MapNotifyBuilder();
                 if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
-                    logger.trace("MapRegister wants MapNotify");
+                    LOG.trace("MapRegister wants MapNotify");
                     MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
                     if (shouldAuthenticate()) {
                         builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(), password));

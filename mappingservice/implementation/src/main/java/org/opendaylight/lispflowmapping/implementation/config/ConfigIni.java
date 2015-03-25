@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigIni {
-    protected static final Logger logger = LoggerFactory.getLogger(ConfigIni.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingOverwrite;
     private boolean smr;
     private String elpPolicy;
@@ -47,16 +47,16 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_MAPPING_OVERWRITE);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_MAPPING_OVERWRITE);
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_MAPPING_OVERWRITE);
                 return;
             }
         }
 
         if (str.trim().equalsIgnoreCase("false")) {
             this.mappingOverwrite = false;
-            logger.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_OVERWRITE);
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_OVERWRITE);
         } else {
-            logger.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_OVERWRITE);
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_OVERWRITE);
         }
     }
 
@@ -72,16 +72,16 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_SMR);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_SMR);
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_SMR);
                 return;
             }
         }
 
         if (str.trim().equalsIgnoreCase("false")) {
             this.smr = false;
-            logger.debug("Setting configuration variable '{}' to 'false'", LISP_SMR);
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_SMR);
         } else {
-            logger.debug("Setting configuration variable '{}' to 'true'", LISP_SMR);
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_SMR);
         }
     }
 
@@ -97,7 +97,7 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_ELP_POLICY);
             if (str == null) {
-                logger.debug("Configuration variable '{}' is unset. Setting to default value: 'default' (ELP only)",
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'default' (ELP only)",
                         LISP_ELP_POLICY);
                 return;
             }
@@ -105,12 +105,12 @@ public class ConfigIni {
 
         if (str.trim().equalsIgnoreCase("both")) {
             this.elpPolicy = "both";
-            logger.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
+            LOG.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
         } else if (str.trim().equalsIgnoreCase("replace")) {
             this.elpPolicy = "replace";
-            logger.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
+            LOG.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
         } else {
-            logger.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
+            LOG.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
         }
     }
 

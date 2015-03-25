@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 
 public class LispAddressConvertorNB {
 
-	protected static final Logger logger = LoggerFactory.getLogger(LispAddressConvertorNB.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(LispAddressConvertorNB.class);
 
 
 public static LispAddress convertToLispAddress(LispAddressGeneric generic){
 
 	if (generic == null){
-		logger.warn("Couldn't convert address, generic address is null");
+		LOG.warn("Couldn't convert address, generic address is null");
 		return null;
 	}
 
@@ -161,7 +161,7 @@ public static void convertGenericToLispAddresses(MapRegister mapRegister){
 	LispAddressGeneric RLOCGeneric;
 
 	if (mapRegister == null){
-		logger.warn("Couldn't convert addresses, mapRegister is null");
+		LOG.warn("Couldn't convert addresses, mapRegister is null");
 		return;
 	}
 
@@ -194,7 +194,7 @@ public static void convertRecordToGenericAddress(EidToLocatorRecord record){
 	LispAddress RLOC;
 
 	if (record == null){
-		logger.warn("Couldn't convert addresses, record is null");
+		LOG.warn("Couldn't convert addresses, record is null");
 		return;
 	}
 

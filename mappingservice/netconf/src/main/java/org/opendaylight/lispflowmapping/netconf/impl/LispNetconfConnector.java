@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class LispNetconfConnector {
     private ConfigRegistryJMXClient configRegistryClient;
 
-    private static final Logger logger = LoggerFactory.getLogger(LispNetconfConnector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LispNetconfConnector.class);
 
     private MBeanServer platformMBeanServer;
 
@@ -66,7 +66,7 @@ public class LispNetconfConnector {
         ConfigTransactionJMXClient transaction = configRegistryClient.createTransaction();
 
         if (transaction == null) {
-            logger.error("Could not create transaction with ConfigRegistry! Cannot build NETCONF connector!");
+            LOG.error("Could not create transaction with ConfigRegistry! Cannot build NETCONF connector!");
             return;
         }
 
@@ -82,7 +82,7 @@ public class LispNetconfConnector {
         mxBean.setTcpOnly(false);
 
         if (solveDependencies(transaction, mxBean) != true) {
-            logger.error("Failed to solve dependencies! Aborting!");
+            LOG.error("Failed to solve dependencies! Aborting!");
             return;
         }
 
@@ -110,7 +110,7 @@ public class LispNetconfConnector {
         if (bindingBrokerRegistry != null ) {
             mxBean.setBindingRegistry(bindingBrokerRegistry);
         } else {
-            logger.debug("No BindingBroker instance found");
+            LOG.debug("No BindingBroker instance found");
             return false;
         }
 
@@ -118,7 +118,7 @@ public class LispNetconfConnector {
         if (domRegistry != null) {
             mxBean.setDomRegistry(domRegistry);
         } else {
-            logger.debug("No DomRegistryBroker instance found");
+            LOG.debug("No DomRegistryBroker instance found");
             return false;
         }
 
@@ -126,7 +126,7 @@ public class LispNetconfConnector {
         if (eventExecutor != null) {
             mxBean.setEventExecutor(eventExecutor);
         } else {
-            logger.debug("No EventExecutor instance found");
+            LOG.debug("No EventExecutor instance found");
             return false;
         }
 
@@ -134,7 +134,7 @@ public class LispNetconfConnector {
         if (threadpool != null) {
             mxBean.setProcessingExecutor(threadpool);
         } else {
-            logger.debug("No ThreadPool instance found");
+            LOG.debug("No ThreadPool instance found");
             return false;
         }
 
@@ -142,7 +142,7 @@ public class LispNetconfConnector {
         if (clientDispatcher != null) {
             mxBean.setClientDispatcher(clientDispatcher);
         } else {
-            logger.debug("No ClientDispatcher instance found");
+            LOG.debug("No ClientDispatcher instance found");
             return false;
         }
 

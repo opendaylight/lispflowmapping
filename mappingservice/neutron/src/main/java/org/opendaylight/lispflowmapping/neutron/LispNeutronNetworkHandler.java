@@ -22,46 +22,46 @@ public class LispNeutronNetworkHandler extends LispNeutronService implements INe
 
 	@Override
 	public int canCreateNetwork(NeutronNetwork network) {
-        logger.info("Neutron canCreateNetwork : Network name: " + network.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + network.toString());
+        LOG.info("Neutron canCreateNetwork : Network name: " + network.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return HttpURLConnection.HTTP_OK;
 	}
 
 	@Override
 	public void neutronNetworkCreated(NeutronNetwork network) {
-        logger.info("Neutron Network Created : Network name: " + network.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + network.toString());
+        LOG.info("Neutron Network Created : Network name: " + network.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + network.toString());
 
 	}
 
 	@Override
 	public int canUpdateNetwork(NeutronNetwork delta, NeutronNetwork original) {
-        logger.info("Neutron canUpdateNetwork : Network name: " + original.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + original.toString());
+        LOG.info("Neutron canUpdateNetwork : Network name: " + original.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + original.toString());
 
         return HttpURLConnection.HTTP_OK;
 	}
 
 	@Override
 	public void neutronNetworkUpdated(NeutronNetwork network) {
-        logger.info("Neutron Network Updated : Network name: " + network.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + network.toString());
+        LOG.info("Neutron Network Updated : Network name: " + network.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + network.toString());
 
 	}
 
 	@Override
 	public int canDeleteNetwork(NeutronNetwork network) {
-        logger.info("Neutron canDeleteNetwork : Network name: " + network.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + network.toString());
+        LOG.info("Neutron canDeleteNetwork : Network name: " + network.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return HttpURLConnection.HTTP_OK;
 	}
 
 	@Override
 	public void neutronNetworkDeleted(NeutronNetwork network) {
-        logger.info("Neutron Network Deleted : Network name: " + network.getNetworkName());
-        logger.debug("Lisp Neutron Network: " + network.toString());
+        LOG.info("Neutron Network Deleted : Network name: " + network.getNetworkName());
+        LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return;
 	}

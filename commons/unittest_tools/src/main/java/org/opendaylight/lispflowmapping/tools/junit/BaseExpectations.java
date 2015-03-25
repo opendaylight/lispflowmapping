@@ -40,7 +40,7 @@ public class BaseExpectations extends Expectations {
     protected Mockery context;
     protected boolean showAllExpectations;
     private final Synchroniser synchroniser = new Synchroniser();
-    protected static final Logger logger = LoggerFactory.getLogger(BaseExpectations.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseExpectations.class);
 
     @Before
     public void before() throws Exception {
@@ -235,7 +235,7 @@ public class BaseExpectations extends Expectations {
             values.add(lastValue);
             boolean match = match(lastValue);
             if (match && (logMatch != null)) {
-                logger.trace("Match: " + logMatch + " " + value);
+                LOG.trace("Match: " + logMatch + " " + value);
             }
             return match;
         }
@@ -261,7 +261,7 @@ public class BaseExpectations extends Expectations {
 
         public Object invoke(Invocation invocation) throws Throwable {
             if (logInvocation) {
-                logger.trace("Invoke: returning " + lastValue);
+                LOG.trace("Invoke: returning " + lastValue);
             }
             return lastValue;
         }

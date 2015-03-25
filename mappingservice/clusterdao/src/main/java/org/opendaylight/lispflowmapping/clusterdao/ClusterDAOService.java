@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class ClusterDAOService implements ILispDAO {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ClusterDAOService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ClusterDAOService.class);
     private IClusterContainerServices clusterContainerService = null;
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data;
     private final String CACHE_NAME = "mappingServiceCache";
@@ -52,7 +52,7 @@ public class ClusterDAOService implements ILispDAO {
     }
 
     void unsetClusterContainerService(IClusterContainerServices s) {
-        logger.trace("Cluster Service unset");
+        LOG.trace("Cluster Service unset");
         if (this.clusterContainerService == s) {
             this.clusterContainerService = null;
         }
@@ -61,32 +61,32 @@ public class ClusterDAOService implements ILispDAO {
 
     private void allocateCache() {
         if (this.clusterContainerService == null) {
-            logger.warn("un-initialized clusterContainerService, can't create cache");
+            LOG.warn("un-initialized clusterContainerService, can't create cache");
             return;
         }
-        logger.trace("Creating Cache for ClusterDAOService");
+        LOG.trace("Creating Cache for ClusterDAOService");
         try {
             this.clusterContainerService.createCache(CACHE_NAME, EnumSet.of(IClusterServices.cacheMode.NON_TRANSACTIONAL));
         } catch (CacheConfigException cce) {
-            logger.warn("Cache couldn't be created for ClusterDAOService -  check cache mode");
+            LOG.warn("Cache couldn't be created for ClusterDAOService -  check cache mode");
         } catch (CacheExistException cce) {
-            logger.warn("Cache for ClusterDAOService already exists, destroy and recreate");
+            LOG.warn("Cache for ClusterDAOService already exists, destroy and recreate");
         }
-        logger.trace("Cache successfully created for ClusterDAOService");
+        LOG.trace("Cache successfully created for ClusterDAOService");
     }
 
     @SuppressWarnings({ "unchecked" })
     private void retrieveCache() {
         if (this.clusterContainerService == null) {
-            logger.warn("un-initialized clusterContainerService, can't retrieve cache");
+            LOG.warn("un-initialized clusterContainerService, can't retrieve cache");
             return;
         }
-        logger.trace("Retrieving cache for ClusterDAOService");
+        LOG.trace("Retrieving cache for ClusterDAOService");
         data = (ConcurrentMap<Object, ConcurrentMap<String, Object>>) this.clusterContainerService.getCache(CACHE_NAME);
         if (data == null) {
-            logger.warn("Cache couldn't be retrieved for ClusterDAOService");
+            LOG.warn("Cache couldn't be retrieved for ClusterDAOService");
         }
-        logger.trace("Cache was successfully retrieved for ClusterDAOService");
+        LOG.trace("Cache was successfully retrieved for ClusterDAOService");
     }
 
     public void getAll(IRowVisitor visitor) {

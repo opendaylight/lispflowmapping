@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class LispSouthboundService implements ILispSouthboundService {
     private NotificationProviderService notificationProvider;
-    protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundService.class);
 
     public void setNotificationProvider(NotificationProviderService nps) {
         this.notificationProvider = nps;
@@ -44,17 +44,17 @@ public class LispSouthboundService implements ILispSouthboundService {
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
         Object lispType = LispMessageEnum.valueOf((byte) (type));
         if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            logger.trace("Received packet of type EncapsulatedControlMessage");
+            LOG.trace("Received packet of type EncapsulatedControlMessage");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
         } else if (lispType == LispMessageEnum.MapRequest) {
-            logger.trace("Received packet of type MapRequest");
+            LOG.trace("Received packet of type MapRequest");
             handleMapRequest(inBuffer, packet.getPort());
         } else if (lispType == LispMessageEnum.MapRegister) {
-            logger.trace("Received packet of type MapRegister");
+            LOG.trace("Received packet of type MapRegister");
             handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
         } else {
-            logger.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
-            logger.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
+            LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
+            LOG.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
         }
     }
 
@@ -82,9 +82,9 @@ public class LispSouthboundService implements ILispSouthboundService {
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(requestMappingBuilder.build());
-                logger.trace("MapRequest was published!");
+                LOG.trace("MapRequest was published!");
             } else {
-                logger.warn("Notification Provider is null!");
+                LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
@@ -122,9 +122,9 @@ public class LispSouthboundService implements ILispSouthboundService {
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationProvider != null) {
                 notificationProvider.publish(addMappingBuilder.build());
-                logger.trace("MapRegister was published!");
+                LOG.trace("MapRegister was published!");
             } else {
-                logger.warn("Notification Provider is null!");
+                LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);

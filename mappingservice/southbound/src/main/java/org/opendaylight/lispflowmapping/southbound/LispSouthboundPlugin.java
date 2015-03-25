@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.net.InetAddresses;
 
 public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispSouthboundPlugin, CommandProvider, LispflowmappingService {
-    protected static final Logger logger = LoggerFactory.getLogger(LispSouthboundPlugin.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
     private LispIoThread lispThread;
@@ -80,7 +80,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         lispXtrSouthboundService = null;
         lispThread = null;
         xtrThread = null;
-        logger.info("LISP (RFC6830) Mapping Service is down!");
+        LOG.info("LISP (RFC6830) Mapping Service is down!");
         try {
             Thread.sleep(1100);
         } catch (InterruptedException e) {
@@ -110,13 +110,13 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
             int lispReceiveTimeout = 1000;
 
-            logger.info("LISP (RFC6830) Mapping Service is running and listening on address: " + bindingAddress + " port: "
+            LOG.info("LISP (RFC6830) Mapping Service is running and listening on address: " + bindingAddress + " port: "
                     + threadSocket.getLocalPort());
             try {
 
                 threadSocket.setSoTimeout(lispReceiveTimeout);
             } catch (SocketException e) {
-                logger.error("Cannot open socket on UDP port " + threadSocket.getLocalPort(), e);
+                LOG.error("Cannot open socket on UDP port " + threadSocket.getLocalPort(), e);
                 return;
             }
 
@@ -125,24 +125,24 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
                     threadSocket.receive(packet);
-                    logger.trace("Received a packet!");
+                    LOG.trace("Received a packet!");
                 } catch (SocketTimeoutException ste) {
                     continue;
                 } catch (IOException e) {
-                    logger.warn("IO Exception while trying to recieve packet", e);
+                    LOG.warn("IO Exception while trying to recieve packet", e);
                 }
-                logger.trace(String.format("Handling packet from {%s}:{%d} (len={%d})", packet.getAddress().getHostAddress(), packet.getPort(),
+                LOG.trace(String.format("Handling packet from {%s}:{%d} (len={%d})", packet.getAddress().getHostAddress(), packet.getPort(),
                         packet.getLength()));
 
                 try {
                     this.service.handlePacket(packet);
                 } catch (Exception e) {
-                    logger.warn("Error while handling packet", e);
+                    LOG.warn("Error while handling packet", e);
                 }
             }
 
             threadSocket.close();
-            logger.trace("Socket closed");
+            LOG.trace("Socket closed");
             running = false;
         }
 
@@ -173,12 +173,12 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             socket = new DatagramSocket(new InetSocketAddress(bindingAddress, LispMessage.PORT_NUM));
             lispThread = new LispIoThread(socket, lispSouthboundService);
             lispThread.start();
-            logger.info("LISP (RFC6830) Mapping Service Southbound Plugin is up!");
+            LOG.info("LISP (RFC6830) Mapping Service Southbound Plugin is up!");
             if (listenOnXtrPort) {
                 restartXtrThread();
             }
         } catch (SocketException e) {
-            logger.error("couldn't start socket {}", e.getMessage());
+            LOG.error("couldn't start socket {}", e.getMessage());
         }
     }
 
@@ -188,14 +188,14 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             xtrSocket = new DatagramSocket(new InetSocketAddress(bindingAddress, xtrPort));
             xtrThread = new LispIoThread(xtrSocket, lispXtrSouthboundService);
             xtrThread.start();
-            logger.info("xTR Southbound Plugin is up!");
+            LOG.info("xTR Southbound Plugin is up!");
         } catch (SocketException e) {
-            logger.warn("failed to start xtr thread: {}", e.getMessage());
+            LOG.warn("failed to start xtr thread: {}", e.getMessage());
         }
     }
 
     public void onSessionInitiated(ProviderContext session) {
-        logger.info("LISP (RFC6830) Mapping Service is up!");
+        LOG.info("LISP (RFC6830) Mapping Service is up!");
         synchronized (startLock) {
             if (!alreadyInit) {
                 alreadyInit = true;
@@ -203,7 +203,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
                 lispXtrSouthboundService = new LispXtrSouthboundService();
                 registerWithOSGIConsole();
                 registerRPCs(session);
-                logger.trace("Provider Session initialized");
+                LOG.trace("Provider Session initialized");
                 if (bindingAddress == null) {
                     setLispAddress("0.0.0.0");
                 }
@@ -218,7 +218,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             lispXtrSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
             session.addRpcImplementation(LispflowmappingService.class, this);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -228,22 +228,22 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         InetAddress ip = InetAddresses.forString(address.getIpAddress().getIpv4Address().getValue());
         packet.setAddress(ip);
         try {
-            if (logger.isDebugEnabled()) {
-                logger.trace("Sending " + packetType + " on port " + address.getPort().getValue() + " to address: " + ip);
+            if (LOG.isDebugEnabled()) {
+                LOG.trace("Sending " + packetType + " on port " + address.getPort().getValue() + " to address: " + ip);
             }
             socket.send(packet);
         } catch (IOException e) {
-            logger.warn("Failed to send " + packetType, e);
+            LOG.warn("Failed to send " + packetType, e);
         }
     }
 
     public void setLispAddress(String address) {
         synchronized (startLock) {
             if (bindingAddress != null && bindingAddress.equals(address)) {
-                logger.trace("configured lisp binding address didn't change.");
+                LOG.trace("configured lisp binding address didn't change.");
             } else {
                 String action = (bindingAddress == null ? "Setting" : "Resetting");
-                logger.trace(action + " lisp binding address to: " + address);
+                LOG.trace(action + " lisp binding address to: " + address);
                 bindingAddress = address;
                 if (lispThread != null) {
                     lispThread.stopRunning();
@@ -274,36 +274,36 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
 
     @Override
     public Future<RpcResult<Void>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
-        logger.trace("sendMapNotify called!!");
+        LOG.trace("sendMapNotify called!!");
         if (mapNotifyInput != null) {
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotifyInput.getMapNotify());
             handleSerializedLispBuffer(mapNotifyInput.getTransportAddress(), outBuffer, MAP_NOTIFY);
         } else {
-            logger.warn("MapNotify was null");
+            LOG.warn("MapNotify was null");
         }
         return null;
     }
 
     @Override
     public Future<RpcResult<Void>> sendMapReply(SendMapReplyInput mapReplyInput) {
-        logger.trace("sendMapReply called!!");
+        LOG.trace("sendMapReply called!!");
         if (mapReplyInput != null) {
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReplyInput.getMapReply());
             handleSerializedLispBuffer(mapReplyInput.getTransportAddress(), outBuffer, MAP_REPlY);
         } else {
-            logger.warn("MapReply was null");
+            LOG.warn("MapReply was null");
         }
         return null;
     }
 
     @Override
     public Future<RpcResult<Void>> sendMapRequest(SendMapRequestInput mapRequestInput) {
-        logger.trace("sendMapRequest called!!");
+        LOG.trace("sendMapRequest called!!");
         if (mapRequestInput != null) {
             ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequestInput.getMapRequest());
             handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer, MAP_REQUEST);
         } else {
-            logger.debug("MapRequest was null");
+            LOG.debug("MapRequest was null");
         }
         return null;
     }
@@ -312,10 +312,10 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort) {
         listenOnXtrPort = shouldListenOnXtrPort;
         if (listenOnXtrPort) {
-            logger.debug("restarting xtr thread");
+            LOG.debug("restarting xtr thread");
             restartXtrThread();
         } else {
-            logger.debug("terminating thread");
+            LOG.debug("terminating thread");
             stopXtrThread();
         }
     }

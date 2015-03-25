@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 @Path("/")
 public class LispMappingNorthbound implements ILispmappingNorthbound {
-    protected static final Logger logger = LoggerFactory.getLogger(LispMappingNorthbound.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispMappingNorthbound.class);
     private IFlowMapping mappingService;
 
     private String userName;
@@ -73,29 +73,29 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     void setFlowMappingService(IFlowMapping mappingService) {
-        logger.trace("FlowMapping set in LispNorthbound");
+        LOG.trace("FlowMapping set in LispNorthbound");
         this.mappingService = mappingService;
     }
 
     void unsetFlowMappingService(IFlowMapping mappingService) {
-        logger.trace("LispDAO was unset in LISP Northbound");
+        LOG.trace("LispDAO was unset in LISP Northbound");
         this.mappingService = null;
     }
 
     public void init() {
-        logger.trace("LISP Northbound Service is initialized!");
+        LOG.trace("LISP Northbound Service is initialized!");
     }
 
     public void start() {
-        logger.info("LISP Northbound Service is up!");
+        LOG.info("LISP Northbound Service is up!");
     }
 
     public void stop() {
-        logger.info("LISP Northbound Service is down!");
+        LOG.info("LISP Northbound Service is down!");
     }
 
     public void destroy() {
-        logger.trace("LISP Northbound Service is destroyed!");
+        LOG.trace("LISP Northbound Service is destroyed!");
         mappingService = null;
     }
 

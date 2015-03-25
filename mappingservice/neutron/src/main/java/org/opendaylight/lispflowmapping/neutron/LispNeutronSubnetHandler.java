@@ -37,9 +37,9 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 
 	@Override
 	public int canCreateSubnet(NeutronSubnet subnet) {
-		logger.info("Neutron canCreateSubnet : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
+		LOG.info("Neutron canCreateSubnet : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
         		subnet.getCidr());
-        logger.debug("Lisp Neutron Subnet: " + subnet.toString());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
         return HttpURLConnection.HTTP_OK;
 	}
@@ -54,9 +54,9 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 	public void neutronSubnetCreated(NeutronSubnet subnet) {
 		//TODO update for multi-tenancy
 
-		logger.info("Neutron Subnet Created request : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
+		LOG.info("Neutron Subnet Created request : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
         		subnet.getCidr());
-        logger.debug("Lisp Neutron Subnet: " + subnet.toString());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
 	    int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
 	    SubnetUtils util = new SubnetUtils(subnet.getCidr());
@@ -75,11 +75,11 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         try{
         	lispNeutronService.getMappingService().addAuthenticationKey(addressContainer, masklen, subnet.getNetworkUUID());
 
-        	logger.debug("Neutron Subnet Added to MapServer : Subnet name: " + subnet.getName() + " EID Prefix: " +
+        	LOG.debug("Neutron Subnet Added to MapServer : Subnet name: " + subnet.getName() + " EID Prefix: " +
             		addressContainer.toString() + " Key: " + subnet.getNetworkUUID());
         }
         catch (Exception e){
-        	logger.error("Adding new subnet to lisp service mapping service failed. Subnet : " + subnet.toString());
+        	LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : " + subnet.toString());
         }
 
 	}
@@ -93,17 +93,17 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 	@Override
 	public int canUpdateSubnet(NeutronSubnet delta, NeutronSubnet original) {
 		if (delta == null || original == null){
-	        logger.error("Neutron canUpdateSubnet rejected: subnet objects were null");
+	        LOG.error("Neutron canUpdateSubnet rejected: subnet objects were null");
 	        return HttpURLConnection.HTTP_BAD_REQUEST;
 		}
-		logger.info("Neutron canUpdateSubnet : Subnet name: " + original.getName() + " Subnet Cidr: " +
+		LOG.info("Neutron canUpdateSubnet : Subnet name: " + original.getName() + " Subnet Cidr: " +
         		original.getCidr());
-        logger.debug("Lisp Neutron Subnet update: original : " + original.toString() + " delta : " + delta.toString());
+        LOG.debug("Lisp Neutron Subnet update: original : " + original.toString() + " delta : " + delta.toString());
 
 
 		// We do not accept a Subnet update that changes the cidr. If cider or network UUID is changed, return error.
 		if ( !(original.getCidr().equals(delta.getCidr())) ){
-			logger.error("Neutron canUpdateSubnet rejected: Subnet name: " + original.getName() + " Subnet Cidr: " +
+			LOG.error("Neutron canUpdateSubnet rejected: Subnet name: " + original.getName() + " Subnet Cidr: " +
 	        		original.getCidr());
 			return HttpURLConnection.HTTP_CONFLICT;
 		}
@@ -122,9 +122,9 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 	 */
 	@Override
 	public int canDeleteSubnet(NeutronSubnet subnet) {
-        logger.info("Neutron canDeleteSubnet : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
+        LOG.info("Neutron canDeleteSubnet : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
         		subnet.getCidr() + "Key: " + subnet.getNetworkUUID());
-        logger.debug("Lisp Neutron Subnet: " + subnet.toString());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
         int result;
 	    int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
@@ -144,7 +144,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         try{
 	        if (lispNeutronService.getMappingService().getAuthenticationKey(addressContainer, masklen) == null){
 
-	        	logger.error("Neutron canDeleteSubnet rejected : Subnet does not exist: Subnet name: " +
+	        	LOG.error("Neutron canDeleteSubnet rejected : Subnet does not exist: Subnet name: " +
 	        			subnet.getName() +
 	        			" Eid Prefix: " + addressContainer.toString() +
 	        			" Key: " + subnet.getNetworkUUID());
@@ -153,7 +153,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 	        result =  HttpURLConnection.HTTP_OK;
         }
         catch (Exception e){
-        	logger.error("canDeleteSubnet request rejected. Subnet : " + subnet.toString());
+        	LOG.error("canDeleteSubnet request rejected. Subnet : " + subnet.toString());
 	        result =  HttpURLConnection.HTTP_BAD_REQUEST;
         }
         return result;
@@ -165,9 +165,9 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
 	 */
 	@Override
 	public void neutronSubnetDeleted(NeutronSubnet subnet) {
-  		logger.info("Neutron Subnet Deleted Request : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
+  		LOG.info("Neutron Subnet Deleted Request : Subnet name: " + subnet.getName() + " Subnet Cidr: " +
         		subnet.getCidr() + "Key: " + subnet.getNetworkUUID());
-        logger.debug("Lisp Neutron Subnet: " + subnet.toString());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
         int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
 	    SubnetUtils util = new SubnetUtils(subnet.getCidr());
@@ -186,19 +186,19 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements INeu
         try{
 	        // if subnet does not exist in MapServer, return error
 	        if (lispNeutronService.getMappingService().getAuthenticationKey(addressContainer,masklen) == null){
-	            logger.error("Neutron Delete Subnet Failed: Subnet does not exist: Subnet name: " + subnet.getName() +
+	            LOG.error("Neutron Delete Subnet Failed: Subnet does not exist: Subnet name: " + subnet.getName() +
 	            		" Eid Prefix: " + addressContainer.toString() +
 	            		"Key: " + subnet.getNetworkUUID());
 	            return;
 	        }
 	        lispNeutronService.getMappingService().removeAuthenticationKey(addressContainer, masklen);
 
-	        logger.debug("Neutron Subnet Deleted from MapServer : Subnet name: " + subnet.getName() +
+	        LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: " + subnet.getName() +
 	        		" Eid Prefix: " + addressContainer.toString() +
 	        		" Key: " + subnet.getNetworkUUID());
         }
         catch (Exception e){
-        	logger.error("Deleting subnet's EID prefix from mapping service failed + Subnet: " + subnet.toString());
+        	LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: " + subnet.toString());
         }
 	}
 

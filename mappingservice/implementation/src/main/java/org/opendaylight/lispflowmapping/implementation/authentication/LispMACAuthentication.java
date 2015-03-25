@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class LispMACAuthentication implements ILispAuthentication {
 
-    protected static final Logger logger = LoggerFactory.getLogger(LispMACAuthentication.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispMACAuthentication.class);
 
     protected String algorithm;
     private byte[] tempAuthenticationData;
@@ -36,7 +36,7 @@ public class LispMACAuthentication implements ILispAuthentication {
             authenticationLength = Mac.getInstance(algorithm).getMacLength();
             tempAuthenticationData = new byte[authenticationLength];
         } catch (NoSuchAlgorithmException e) {
-            logger.warn("No such MAC algorithm" + algorithm);
+            LOG.warn("No such MAC algorithm" + algorithm);
         }
     }
 
@@ -64,9 +64,9 @@ public class LispMACAuthentication implements ILispAuthentication {
 
             return mac.doFinal(data);
         } catch (InvalidKeyException e) {
-            logger.warn("Invalid password" + key);
+            LOG.warn("Invalid password" + key);
         } catch (NoSuchAlgorithmException e) {
-            logger.warn("No such MAC algorithm" + algorithm);
+            LOG.warn("No such MAC algorithm" + algorithm);
         }
         return null;
     }
