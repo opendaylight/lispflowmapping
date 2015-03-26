@@ -5,7 +5,7 @@
     <groupId>org.opendaylight.controller</groupId>
     <artifactId>commons.integrationtest</artifactId>
     <version>0.6.0-SNAPSHOT</version>
-    <relativePath>../../../controller/opendaylight/adsal/commons/integrationtest</relativePath>
+    <relativePath></relativePath>
   </parent>
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.integrationtest</artifactId>
