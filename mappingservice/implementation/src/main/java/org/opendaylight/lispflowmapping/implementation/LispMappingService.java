@@ -240,6 +240,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
         mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
+    public void removeMapping(LispAddressContainer address, int maskLen) {
+        mapServer.removeMapping(address, maskLen);
+    }
+
     public boolean shouldIterateMask() {
         return this.shouldIterateMask;
     }

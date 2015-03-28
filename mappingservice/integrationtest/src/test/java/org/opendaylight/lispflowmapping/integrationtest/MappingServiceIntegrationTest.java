@@ -293,6 +293,7 @@ public class MappingServiceIntegrationTest {
     public void testNorthbound() throws Exception {
         northboundAddKey();
         northboundAddMapping();
+        northboundDeleteMapping();
         northboundRetrieveKey();
         northboundRetrieveMapping();
         northboundRetrieveSourceDestKey();
@@ -687,6 +688,48 @@ public class MappingServiceIntegrationTest {
 
     }
 
+    private void northboundDeleteMapping() throws Exception {
+        cleanUP();
+        LispIpv4Address eid = LispAFIConvertor.asIPAfiAddress("10.0.0.1");
+        int mask = 32;
+        LispIpv4Address rloc = LispAFIConvertor.asIPAfiAddress("20.0.0.2");
+        // Insert mapping in the database
+        MapRegisterBuilder mapRegister = new MapRegisterBuilder();
+        EidToLocatorRecordBuilder etlr = new EidToLocatorRecordBuilder();
+        etlr.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        etlr.setMaskLength((short) mask);
+        etlr.setRecordTtl(254);
+        etlr.setAuthoritative(false);
+        etlr.setAction(Action.NoAction);
+        LocatorRecordBuilder record = new LocatorRecordBuilder();
+        record.setLispAddressContainer(LispAFIConvertor.toContainer(rloc));
+        record.setRouted(true);
+        record.setRlocProbed(false);
+        record.setLocalLocator(false);
+        record.setPriority((short) 1);
+        record.setWeight((short) 50);
+        record.setMulticastPriority((short) 1);
+        record.setMulticastWeight((short) 1);
+        etlr.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlr.getLocatorRecord().add(record.build());
+        mapRegister.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapRegister.getEidToLocatorRecord().add(etlr.build());
+        lms.handleMapRegister(mapRegister.build(), false);
+
+        // Get mapping using NB interface. No IID used
+        URL url = createDeleteMappingIPv4URL(0, eid, mask);
+        String reply = callURL("DELETE", null, "application/json", null, url);
+
+        // Get mapping using NB interface. No IID used
+        url = createGetMappingIPv4URL(0, eid, mask);
+        reply = callURL("GET", null, "application/json", null, url);
+        JSONTokener jt = new JSONTokener(reply);
+        JSONObject json = new JSONObject(jt);
+
+        // With just one locator, locators is not a JSONArray
+        assertEquals(json.getJSONArray("locators").length(), 0);
+    }
+
     private void northboundRetrieveSourceDestMapping() throws Exception {
         cleanUP();
         org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
@@ -760,6 +803,13 @@ public class MappingServiceIntegrationTest {
     }
 
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi()
+                .shortValue(), address.getIpv4Address().getValue(), mask);
+        URL url = new URL(restUrl);
+        return url;
+    }
+
+    private URL createDeleteMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
         String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi()
                 .shortValue(), address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);

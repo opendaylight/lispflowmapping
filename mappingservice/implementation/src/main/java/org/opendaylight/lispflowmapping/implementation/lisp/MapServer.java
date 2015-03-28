@@ -234,6 +234,11 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
     }
 
+    public void removeMapping(LispAddressContainer address, int maskLen) {
+        IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
+        dao.remove(mappingServiceKey);
+    }
+
     public boolean shouldOverwrite() {
         return overwrite;
     }

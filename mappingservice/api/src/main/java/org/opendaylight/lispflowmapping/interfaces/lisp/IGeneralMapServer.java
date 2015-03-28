@@ -62,4 +62,6 @@ public interface IGeneralMapServer {
      * @return
      */
     void addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
+
+    void removeMapping(LispAddressContainer address, int maskLen);
 }
