@@ -11,6 +11,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
 /**
  * A mapping service.
@@ -26,4 +27,5 @@ public interface IFlowMapping extends IMapResolver, IMapServer {
     public MapNotify handleMapRegister(MapRegister mb);
 
     public MapReply handleMapRequest(MapRequest mr);
+    void removeMapping(LispAddressContainer address, int maskLen);
 }

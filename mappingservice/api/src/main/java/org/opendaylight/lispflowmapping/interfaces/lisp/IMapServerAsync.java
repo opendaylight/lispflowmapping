@@ -8,10 +8,13 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 
 /**
  * The async map server interface for dealing with async map register calls.
  */
 public interface IMapServerAsync extends IGeneralMapServer {
     public void handleMapRegister(MapRegister request, boolean smr, IMapNotifyHandler callback);
+    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback);
+
 }

@@ -37,6 +37,7 @@ import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.DistinguishedName;
@@ -137,30 +138,9 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                     }
                 }
                 boolean mappingChanged = saveRlocs(eidRecord, smr);
-
                 if (smr && mappingChanged) {
-                    HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
-                    if (subscribers != null) {
-                        MapRequest mapRequest = buildSMR(eidRecord);
-                        LOG.trace("Built SMR packet: " + mapRequest.toString());
-                        for (MappingServiceSubscriberRLOC rloc : subscribers) {
-                            if (rloc.timedOut()) {
-                                LOG.trace("Lazy removing expired subscriber entry " + rloc.toString());
-                                subscribers.remove(rloc);
-                            } else {
-                                try {
-                                    callback.handleSMR(mapRequest, rloc.getSrcRloc());
-                                } catch (Exception e) {
-                                    LOG.error("Errors encountered while handling SMR:" + e.getStackTrace());
-                                }
-                            }
-                        }
-                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
-                                eidRecord.getMaskLength());
-                        dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
-                    }
+                    handleSmr(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength(), callback);
                 }
-
             }
             if (!failed) {
                 MapNotifyBuilder builder = new MapNotifyBuilder();
@@ -232,6 +212,39 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
         dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
+    }
+
+    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback) {
+        IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
+        if (smr) {
+            handleSmr(address, maskLen, callback);
+        }
+        dao.remove(mappingServiceKey);
+    }
+
+    private void handleSmr(LispAddressContainer address, int maskLen, IMapNotifyHandler callback) {
+        HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(address, maskLen);
+        if (subscribers != null) {
+            MapRequest mapRequest = buildSMR(new EidToLocatorRecordBuilder().
+                                   setLispAddressContainer(address).
+                                   setMaskLength((short) maskLen).
+                                   build());
+            LOG.trace("Built SMR packet: " + mapRequest.toString());
+            for (MappingServiceSubscriberRLOC rloc : subscribers) {
+                if (rloc.timedOut()) {
+                    LOG.trace("Lazy removing expired subscriber entry " + rloc.toString());
+                    subscribers.remove(rloc);
+                } else {
+                    try {
+                        callback.handleSMR(mapRequest, rloc.getSrcRloc());
+                    } catch (Exception e) {
+                        LOG.error("Errors encountered while handling SMR:" + e.getStackTrace());
+                    }
+                }
+            }
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
+            dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+        }
     }
 
     public boolean shouldOverwrite() {
