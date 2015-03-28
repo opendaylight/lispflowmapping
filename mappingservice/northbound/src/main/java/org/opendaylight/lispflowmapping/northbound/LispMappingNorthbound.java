@@ -291,6 +291,67 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
     }
 
     /**
+     * Delete a mapping from the LISP Map-Server database
+     *
+     * @param containerName
+     *            name of the container context from which the key is going to
+     *            be deleted
+     *
+     * @param afi
+     *            Address Family of the address (IPv4, IPv6 or MAC)
+     *
+     * @param address
+     *            Address of type defined by afi
+     *
+     * @param mask
+     *            Network mask length
+     *
+     * @return Text plain confirming deletion
+     *
+     *         <pre>
+     * Example:
+     *
+     * Request URL:
+     * http://localhost:8080/lispflowmapping/nb/v2/default/mapping/0/1/10.0.0.1/32
+     *
+     * </pre>
+     */
+
+    @Path("/{containerName}/mapping/{iid}/{afi}/{address}/{mask}")
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @StatusCodes({ @ResponseCode(code = 400, condition = "Invalid data passed"),
+            @ResponseCode(code = 401, condition = "User not authorized to perform this operation"),
+            @ResponseCode(code = 404, condition = "The containerName passed was not found"),
+            @ResponseCode(code = 500, condition = "Internal Server Error: Addition of mapping failed"),
+            @ResponseCode(code = 503, condition = "Service unavailable") })
+    public Response deleteMapping(@PathParam("containerName") String containerName, @PathParam("iid") int iid,
+            @PathParam("afi") int afi, @PathParam("address") String address, @PathParam("mask") int mask) {
+
+        handleContainerDoesNotExist(containerName);
+        authorizationCheck(containerName, Privilege.WRITE);
+
+        LispAddressGeneric eidGeneric = parseAddressURL(iid, afi, address, mask);
+        LispAddress eid;
+        try {
+            eid = LispAddressConvertorNB.convertToLispAddress(eidGeneric);
+        } catch (Exception e) {
+            throw new BadRequestException(RestMessages.INVALIDDATA.toString() + " : Address is not valid");
+        }
+
+        ILispmappingNorthbound nbService = (ILispmappingNorthbound) ServiceHelper.getInstance(ILispmappingNorthbound.class, containerName, this);
+
+        try {
+            nbService.getMappingService().removeMapping(YangTransformerNB.transformLispAddress(eid), mask);
+        } catch (Exception e) {
+            throw new InternalServerErrorException(RestMessages.INTERNALERROR.toString() + " : There was an error while deleting the key");
+        }
+
+        return Response.status(Response.Status.OK).build();
+    }
+
+
+    /**
      * Retrieve a mapping from the LISP mapping system
      *
      * @param containerName
