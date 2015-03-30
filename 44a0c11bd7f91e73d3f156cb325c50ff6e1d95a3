@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_17f82748",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IFlowMapping.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-30T21:22:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_01f225d2",
+      "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_c1bbdde3",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IGeneralMapServer.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-30T10:54:34Z",
       "side": 1,
       "message": "If this is the only change we should drop it, and include it in a different patch which only deals with style/whitespace issues.",
+      "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_378a03c0",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IGeneralMapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-30T21:22:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_c1bbdde3",
       "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_f203490b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-30T21:22:46Z",
+      "side": 1,
+      "message": "Glad you like it! :-)",
+      "parentUuid": "5a93c517_e1be19d4",
+      "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_81b5d5ef",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 2
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_973f57d6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-30T21:22:46Z",
+      "side": 1,
+      "message": "Good point and, in fact, I thought about it while writing the code. But what I finally tried to avoid was the dependence on the calling method having/creating an EidToLocatorRecord. As you\u0027ve noted, the removeMapping doesn\u0027t and I didn\u0027t want to create the record within it since it\u0027s the job of the handler to create the datastructures it needs. However, this is not a strong opinion and therefore I updated the code to follow your suggestion.",
+      "parentUuid": "5a93c517_81b5d5ef",
+      "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_41cfcd7f",
         "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 2
@@ -81,6 +153,24 @@
       "writtenOn": "2015-03-30T10:54:34Z",
       "side": 1,
       "message": "I assume you meant s/Get/Delete/ ?",
+      "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_172b4795",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-30T21:22:46Z",
+      "side": 1,
+      "message": "Good catch! Thanks!",
+      "parentUuid": "5a93c517_41cfcd7f",
       "revId": "44a0c11bd7f91e73d3f156cb325c50ff6e1d95a3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
