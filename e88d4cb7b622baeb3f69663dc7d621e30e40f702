@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_61ca0970",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/LispMappingNorthbound.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-03-30T10:54:34Z",
+      "side": 0,
+      "message": "Can you please add the typical Javadoc stuff for \"delete mapping\" above the new code block?",
+      "revId": "e88d4cb7b622baeb3f69663dc7d621e30e40f702",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
