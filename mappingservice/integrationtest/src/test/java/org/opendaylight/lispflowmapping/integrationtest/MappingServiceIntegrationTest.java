@@ -1167,6 +1167,7 @@ public class MappingServiceIntegrationTest {
         int instanceId = 6;
         LcafSegmentBuilder builder = new LcafSegmentBuilder();
         builder.setInstanceId((long) instanceId);
+        builder.setIidMaskLength((short) 32);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
         builder.setAddress(new AddressBuilder().setPrimitiveAddress(LispAFIConvertor.toPrimitive(asIPAfiAddress(ipString))).build());
 

@@ -41,6 +41,9 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer 
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
+        // The IID mask-len field is in the LCAF header on the res2 position
+        buffer.put(buffer.position() - 3, ((LcafSegmentAddress) lispAddress).getIidMaskLength().byteValue());
+
         buffer.putInt(((LcafSegmentAddress) lispAddress).getInstanceId().intValue());
         LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) ((LcafSegmentAddress) lispAddress).getAddress().getPrimitiveAddress());
     }
@@ -55,6 +58,7 @@ public class LispSegmentLCAFAddressSerializer extends LispLCAFAddressSerializer 
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         LcafSegmentBuilder builder = new LcafSegmentBuilder();
         builder.setInstanceId(instanceId);
+        builder.setIidMaskLength((short) res2);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
 

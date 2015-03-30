@@ -180,6 +180,9 @@
                		range "0 .. 16777215";
                }
        }
+        leaf iidMaskLength {
+            type uint8;
+        }
        container Address {
                uses LispSimpleAddress;
        }
