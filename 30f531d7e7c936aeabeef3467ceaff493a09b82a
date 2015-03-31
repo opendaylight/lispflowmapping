@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_cda22cae",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispSegmentLCAFAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-03-31T08:34:58Z",
+      "side": 1,
+      "message": "Yeap, thanks for caching the typo.",
+      "parentUuid": "5a93c517_ed51280f",
+      "revId": "30f531d7e7c936aeabeef3467ceaff493a09b82a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0d4c946f",
         "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 1
@@ -42,6 +60,24 @@
         "endLine": 1219,
         "endChar": 42
       },
+      "revId": "30f531d7e7c936aeabeef3467ceaff493a09b82a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_eda5a8b5",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-03-31T08:34:58Z",
+      "side": 1,
+      "message": "You\u0027re right, will fix in the next patch set.",
+      "parentUuid": "5a93c517_0d4c946f",
       "revId": "30f531d7e7c936aeabeef3467ceaff493a09b82a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
