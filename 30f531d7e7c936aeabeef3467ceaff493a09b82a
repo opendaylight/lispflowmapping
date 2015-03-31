@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ed51280f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/address/LispSegmentLCAFAddressSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-31T05:45:33Z",
+      "side": 1,
+      "message": "This should be IID, right?",
+      "range": {
+        "startLine": 44,
+        "startChar": 15,
+        "endLine": 44,
+        "endChar": 18
+      },
+      "revId": "30f531d7e7c936aeabeef3467ceaff493a09b82a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d4c946f",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-03-31T05:45:33Z",
+      "side": 1,
+      "message": "Maybe it\u0027d be better to use a value different from 0 here to catch errors. Say 32 for IPv4?",
+      "range": {
+        "startLine": 1219,
+        "startChar": 8,
+        "endLine": 1219,
+        "endChar": 42
+      },
+      "revId": "30f531d7e7c936aeabeef3467ceaff493a09b82a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
