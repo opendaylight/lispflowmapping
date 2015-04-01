@@ -280,6 +280,11 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
+        <artifactId>mappingservice.shell</artifactId>
+        <version>${lispflowmapping.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.southbound</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
