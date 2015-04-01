@@ -16,11 +16,12 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
 
 /**
  * Main application activator class for registering the dependencies and
  * initialising the Mapping Service application.
- * 
+ *
  */
 
 public class Activator extends ComponentActivatorAbstractBase {
@@ -28,7 +29,7 @@ public class Activator extends ComponentActivatorAbstractBase {
     /**
      * Function called when the activator starts just after some initializations
      * are done by the ComponentActivatorAbstractBase.
-     * 
+     *
      */
     @Override
     public void init() {
@@ -37,7 +38,7 @@ public class Activator extends ComponentActivatorAbstractBase {
     /**
      * Function called when the activator stops just before the cleanup done by
      * ComponentActivatorAbstractBase
-     * 
+     *
      */
     @Override
     public void destroy() {
@@ -46,8 +47,8 @@ public class Activator extends ComponentActivatorAbstractBase {
     /**
      * Function that is used to communicate to dependency manager the list of
      * known implementations for services inside a container
-     * 
-     * 
+     *
+     *
      * @return An array containing all the CLASS objects that will be
      *         instantiated in order to get an fully working implementation
      *         Object
@@ -61,7 +62,7 @@ public class Activator extends ComponentActivatorAbstractBase {
     /**
      * Function that is called when configuration of the dependencies is
      * required.
-     * 
+     *
      * @param c
      *            dependency manager Component object, used for configuring the
      *            dependencies exported and imported
@@ -79,7 +80,7 @@ public class Activator extends ComponentActivatorAbstractBase {
             // export the service
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
-            c.setInterface(new String[] { IFlowMapping.class.getName() }, props);
+            c.setInterface(new String[] { IFlowMapping.class.getName(), IFlowMappingShell.class.getName() }, props);
             c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao")
                     .setRequired(true));
             c.add(createServiceDependency().setService(BindingAwareBroker.class).setRequired(true)
@@ -94,8 +95,8 @@ public class Activator extends ComponentActivatorAbstractBase {
      * destroyed only at time of bundle destruction, this is the major
      * difference with the implementation retrieved via getImplementations where
      * all of them are assumed to be in a container !
-     * 
-     * 
+     *
+     *
      * @return The list of implementations the bundle will support, in Global
      *         version
      */
@@ -106,7 +107,7 @@ public class Activator extends ComponentActivatorAbstractBase {
 
     /**
      * Configure the dependency for a given instance Global
-     * 
+     *
      * @param c
      *            Component assigned for this instance, this will be what will
      *            be used for configuration

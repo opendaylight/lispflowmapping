@@ -30,6 +30,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
@@ -62,7 +63,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping, BindingAwareConsumer, //
+public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareConsumer,
         IMapRequestResultHandler, IMapNotifyHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
@@ -149,22 +150,26 @@ public class LispMappingService implements CommandProvider, IFlowMapping, Bindin
     }
 
     public void _dumpAll(final CommandInterpreter ci) {
-        ci.println("EID\tRLOCs");
+        ci.print(printMappings());
+    }
+
+    public String printMappings() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("EID\tRLOCs\n");
         lispDao.getAll(new IRowVisitor() {
             String lastKey = "";
 
             public void visitRow(Object keyId, String valueKey, Object value) {
                 String key = keyId.getClass().getSimpleName() + "#" + keyId;
                 if (!lastKey.equals(key)) {
-                    ci.println();
-                    ci.print(key + "\t");
+                    sb.append("\n" + key + "\t");
                 }
-                ci.print(valueKey + "=" + value + "\t");
+                sb.append(valueKey + "=" + value + "\t");
                 lastKey = key;
             }
         });
-        ci.println();
-        return;
+        sb.append("\n");
+        return sb.toString();
     }
 
     public void _setShouldOverwriteRlocs(final CommandInterpreter ci) {

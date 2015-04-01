@@ -20,6 +20,7 @@
     <module>northbound</module>
     <module>neutron</module>
     <module>netconf</module>
+    <module>shell</module>
     <module>integrationtest</module>
   </modules>
   <dependencies>
