@@ -228,8 +228,10 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             removeMappingRlocs(mapping);
             handleSmr(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
                     setMaskLength((short) maskLen).build(), subscribers, callback);
+            dao.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
         } else {
             removeMappingRlocs(mapping);
+            dao.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
         }
     }
 
