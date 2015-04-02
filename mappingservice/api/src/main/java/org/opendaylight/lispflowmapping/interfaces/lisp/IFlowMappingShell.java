@@ -20,5 +20,10 @@ public interface IFlowMappingShell {
      *
      * @return the text to be printed on the Karaf console.
      */
-    public String printMappings();
+    String printMappings();
+
+    /**
+     * Add the default key "password" for the IPv4 prefix 0.0.0.0/0.
+     */
+    void addDefaultKeyIPv4();
 }

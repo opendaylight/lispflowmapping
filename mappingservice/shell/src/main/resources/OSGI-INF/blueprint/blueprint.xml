@@ -6,5 +6,10 @@
         <property name="lispShellService" ref="lispShellServiceRef"/>
       </action>
     </command>
+    <command>
+      <action class="org.opendaylight.lispflowmapping.shell.LispAddKey">
+        <property name="lispShellService" ref="lispShellServiceRef"/>
+      </action>
+    </command>
   </command-bundle>
 </blueprint>

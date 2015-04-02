@@ -183,6 +183,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public void _addDefaultPassword(final CommandInterpreter ci) {
+        addDefaultKeyIPv4();
+    }
+
+    public void addDefaultKeyIPv4() {
         LispAddressContainerBuilder builder = new LispAddressContainerBuilder();
         builder.setAddress((Address) (new Ipv4Builder().setIpv4Address(new Ipv4Address("0.0.0.0")).build()));
         addAuthenticationKey(builder.build(), 0, "password");

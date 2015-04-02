@@ -13,18 +13,18 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
 
 /**
- * This class implements the "lisp:mappings" Karaf shell command
+ * This class implements the "lisp:addkey" Karaf shell command
  *
  * @author Lorand Jakab
  *
  */
-@Command(scope = "lisp", name = "mappings", description="Print LISP mapping database")
-public class LispMappings  extends OsgiCommandSupport {
+@Command(scope = "lisp", name = "addkey", description="Add an authentication key")
+public class LispAddKey  extends OsgiCommandSupport {
     private IFlowMappingShell lispShellService;
 
     @Override
     protected Object doExecute() throws Exception {
-        System.out.print(lispShellService.printMappings());
+        lispShellService.addDefaultKeyIPv4();
         return null;
     }
 
