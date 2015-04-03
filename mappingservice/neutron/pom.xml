@@ -43,10 +43,10 @@
               org.opendaylight.lispflowmapping.type.lisp,
               org.opendaylight.lispflowmapping.type.lisp.address,
               org.opendaylight.lispflowmapping.interfaces.lisp,
-              org.opendaylight.yang.gen.v1.lispflowmapping.rev131031,
-              org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress,
-              org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer,
-              org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address,
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
               org.slf4j</Import-Package>
             <Bundle-Activator>org.opendaylight.lispflowmapping.neutron.Activator</Bundle-Activator>

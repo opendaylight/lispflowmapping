@@ -26,25 +26,24 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapregisternotification.MapRegisterBuilder;
 
 public class MapServerTest extends BaseTestCase {
 
     private LispMappingService testedMapServer;
     private ILispDAO lispDAO;
     private MapRegisterBuilder mapRegisterBuilder;
-    private Ipv4 eid;
-    private Ipv4 rloc;
+    private LispAFIAddress eid;
+    private LispAFIAddress rloc;
     private ValueSaverAction<MappingEntry<?>[]> mappingEntriesSaver;
     private MapRegister mapRegisterWithAuthentication;
 
@@ -89,17 +88,17 @@ public class MapServerTest extends BaseTestCase {
 
         assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
         assertEquals(1, ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().size());
-        assertEquals(rloc, ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0).getLispAddressContainer().getAddress());
+        assertEquals(rloc, LispAFIConvertor.toAFI(((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0).getLispAddressContainer()));
     }
 
     @Test
     public void handleMapRegisterIpv4__ValidNotifyEchoesRegister() throws Exception {
         mapRegisterBuilder.getEidToLocatorRecord().add(
-                getDefaultEidToLocatorBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(new NoBuilder().build())).build());
+                getDefaultEidToLocatorBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(new NoAddressBuilder().build())).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(eid, 32);
-        addDefaultPutAndGetExpectations(new NoBuilder().build(), 32);
+        addDefaultPutAndGetExpectations(new NoAddressBuilder().build(), 32);
         MapRegister mr = mapRegisterBuilder.build();
         MapNotify mapNotify = testedMapServer.handleMapRegister(mr, false);
         assertEquals(mr.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -470,6 +469,8 @@ public class MapServerTest extends BaseTestCase {
 
     @Test
     public void handleMapRegister__TestDontOverwrite() throws Exception {
+        int hc = LispAFIConvertor.toContainer(rloc).getAddress().hashCode();
+
         addDefaultPutAndGetExpectations(eid, 32);
         testedMapServer.setOverwrite(false);
 
@@ -478,7 +479,7 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals(String.valueOf(rloc.hashCode()), entries[0].getKey());
+        assertEquals(String.valueOf(hc), entries[0].getKey());
         assertEquals(LispAFIConvertor.toContainer(rloc), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
     }

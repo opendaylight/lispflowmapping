@@ -13,27 +13,27 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address;
 
 public class MaskUtil {
 
-    public static boolean isMaskable(Address address) {
-        if (address instanceof LispIpv4Address || address instanceof LispIpv6Address) {
+    public static boolean isMaskable(LispAFIAddress address) {
+        if (address instanceof Ipv4Address || address instanceof Ipv6Address) {
             return true;
         }
         return false;
     }
 
-    public static Address normalize(Address address, int mask) {
+    public static LispAFIAddress normalize(LispAFIAddress address, int mask) {
         try {
-            if (address instanceof LispIpv4Address) {
-                return LispAFIConvertor.asIPAfiAddress(normalizeIP(Inet4Address.getByName(((LispIpv4Address) address).getIpv4Address().getValue()),
+            if (address instanceof Ipv4Address) {
+                return LispAFIConvertor.asIPAfiAddress(normalizeIP(Inet4Address.getByName(((Ipv4Address) address).getIpv4Address().getValue()),
                         mask).getHostAddress());
             }
-            if (address instanceof LispIpv6Address) {
-                return LispAFIConvertor.asIPv6AfiAddress(normalizeIP(Inet6Address.getByName(((LispIpv6Address) address).getIpv6Address().getValue()),
+            if (address instanceof Ipv6Address) {
+                return  LispAFIConvertor.asIPv6AfiAddress(normalizeIP(Inet6Address.getByName(((Ipv6Address) address).getIpv6Address().getValue()),
                         mask).getHostAddress());
             }
 
@@ -61,11 +61,11 @@ public class MaskUtil {
         return InetAddress.getByAddress(byteRepresentation.array());
     }
 
-    public static int getMaxMask(Address address) {
-        if (address instanceof LispIpv4Address) {
+    public static int getMaxMask(LispAFIAddress address) {
+        if (address instanceof Ipv4Address) {
             return 32;
         }
-        if (address instanceof LispIpv6Address) {
+        if (address instanceof Ipv6Address) {
             return 128;
         }
         return -1;

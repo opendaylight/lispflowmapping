@@ -12,23 +12,22 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafApplicationDataAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispDistinguishedNameAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.DistinguishedName;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValue;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegister;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapregisternotification.MapRegisterBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification.MapReply;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplynotification.MapReplyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequest;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafApplicationDataAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispIpv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedName;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddr;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapregisternotification.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplynotification.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplynotification.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -37,21 +36,21 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 
 public class LispNotificationHelper {
 
-    public static MapRegister convertMapRegister(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister mapRegister) {
+    public static MapRegister convertMapRegister(org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister mapRegister) {
         return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
                 .setEidToLocatorRecord(mapRegister.getEidToLocatorRecord()).setKeyId(mapRegister.getKeyId()).setNonce(mapRegister.getNonce())
                 .setProxyMapReply(mapRegister.isProxyMapReply()).setWantMapNotify(mapRegister.isWantMapNotify())
                 .setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent()).setXtrId(mapRegister.getXtrId()).setSiteId(mapRegister.getSiteId()).build();
     }
 
-    public static MapRequest convertMapRequest(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest mapRequest) {
+    public static MapRequest convertMapRequest(org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest mapRequest) {
         return new MapRequestBuilder().setAuthoritative(mapRequest.isAuthoritative()).setEidRecord(mapRequest.getEidRecord())
                 .setItrRloc(mapRequest.getItrRloc()).setMapDataPresent(mapRequest.isMapDataPresent()).setMapReply(mapRequest.getMapReply())
                 .setNonce(mapRequest.getNonce()).setPitr(mapRequest.isPitr()).setProbe(mapRequest.isProbe()).setSmr(mapRequest.isSmr())
                 .setSmrInvoked(mapRequest.isSmrInvoked()).setSourceEid(mapRequest.getSourceEid()).build();
     }
 
-    public static MapReply convertMapReply(org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply mapReply) {
+    public static MapReply convertMapReply(org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapReply mapReply) {
         return new MapReplyBuilder().setEchoNonceEnabled(mapReply.isEchoNonceEnabled()).setEidToLocatorRecord(mapReply.getEidToLocatorRecord())
                 .setNonce(mapReply.getNonce()).setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
@@ -85,11 +84,11 @@ public class LispNotificationHelper {
     public static TransportAddress getTransportAddressFromContainer(LispAddressContainer container) {
         TransportAddressBuilder tab = new TransportAddressBuilder();
         LispAFIAddress address = LispAFIConvertor.toAFI(container);
-        if (address instanceof Ipv4) {
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) address).getIpv4Address().getValue()));
+        if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) {
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) address).getIpv4Address().getValue()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-        } else if (address instanceof LcafKeyValue) {
-            PrimitiveAddress primitiveAddress = ((LcafKeyValue) address).getValue().getPrimitiveAddress();
+        } else if (address instanceof LcafKeyValueAddressAddr) {
+            PrimitiveAddress primitiveAddress = ((LcafKeyValueAddressAddr) address).getValue().getPrimitiveAddress();
             if (primitiveAddress instanceof LispDistinguishedNameAddress) {
                 String value = ((LispDistinguishedNameAddress) primitiveAddress).getDistinguishedName();
                 String ip = value.split(":")[0];

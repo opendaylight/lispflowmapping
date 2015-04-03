@@ -20,21 +20,22 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.NoBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReply;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.NoBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification.MapRequestBuilder;
 
 public class MapRequestSerializationTest extends BaseTestCase {
 
@@ -44,7 +45,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.setEidRecord(new ArrayList<EidRecord>());
         mrBuilder.getEidRecord().add(
                 new EidRecordBuilder().setLispAddressContainer(
-                        new LispAddressContainerBuilder().setAddress(new NoBuilder().setAfi((short) 0).build()).build()).build());
+                        new LispAddressContainerBuilder().setAddress(
+                                new NoBuilder().setNoAddress(
+                                        new NoAddressBuilder().setAfi((short) 0)
+                                        .build()).build()).build()).build());
+
 
         assertEquals(AddressFamilyNumberEnum.NO_ADDRESS.getIanaCode(),
                 LispAFIConvertor.toAFI(mrBuilder.getEidRecord().get(0).getLispAddressContainer()).getAfi().shortValue());
@@ -87,8 +92,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 " //
                 + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 " //
                 + "00 01 c0 a8 38 66"));
-        assertEquals("1.1.1.1", ((LispIpv4Address) mr.getSourceEid().getLispAddressContainer().getAddress()).getIpv4Address().getValue());
-        assertEquals("1.2.3.4", ((LispIpv4Address) mr.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getValue());
+        assertEquals("1.1.1.1", ((Ipv4) mr.getSourceEid().getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue());
+        assertEquals("1.2.3.4", ((Ipv4) mr.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue());
 
     }
 

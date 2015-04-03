@@ -8,13 +8,15 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.concurrent.Future;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ConsumerContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareConsumer;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
+import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
@@ -35,36 +37,57 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.AddMapping;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.RequestMapping;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInputBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInputBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInputBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapnotifymessage.MapNotifyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.mapreplymessage.MapReplyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestmessage.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapNotifyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapReplyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRequestInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddMappingOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyWithRefInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyWithRefOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingWithRefInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingWithRefOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyWithRefInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingWithRefInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyWithRefInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateMappingWithRefInput;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareConsumer,
-        IMapRequestResultHandler, IMapNotifyHandler {
+public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareProvider,
+        IMapRequestResultHandler, IMapNotifyHandler, LfmMappingDatabaseService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
@@ -78,9 +101,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
-    private LispflowmappingService lispSB = null;
+    private LfmControlPlaneService lispSB = null;
 
-    private ConsumerContext session;
+    private ProviderContext session;
 
     private NotificationService notificationService;
 
@@ -99,7 +122,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
         LOG.trace("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bindingAwareBroker.registerConsumer(this, bundleContext);
+        bindingAwareBroker.registerProvider(this, bundleContext);
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
@@ -187,9 +210,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public void addDefaultKeyIPv4() {
-        LispAddressContainerBuilder builder = new LispAddressContainerBuilder();
-        builder.setAddress((Address) (new Ipv4Builder().setIpv4Address(new Ipv4Address("0.0.0.0")).build()));
-        addAuthenticationKey(builder.build(), 0, "password");
+        LispAddressContainer address = LispAFIConvertor.toContainer(
+                new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).build());
+        addAuthenticationKey(address, 0, "password");
     }
 
     public String getHelp() {
@@ -281,11 +304,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         return shouldAuthenticate;
     }
 
-    public void onSessionInitialized(ConsumerContext session) {
+    @Override
+    public void onSessionInitiated(ProviderContext session) {
         LOG.info("Lisp Consumer session initialized!");
         notificationService = session.getSALService(NotificationService.class);
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
+        session.addRpcImplementation(LfmMappingDatabaseService.class, this);
         this.session = session;
     }
 
@@ -329,9 +354,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         }
     }
 
-    private LispflowmappingService getLispSB() {
+    private LfmControlPlaneService getLispSB() {
         if (lispSB == null) {
-            lispSB = session.getRpcService(LispflowmappingService.class);
+            lispSB = session.getRpcService(LfmControlPlaneService.class);
         }
         return lispSB;
     }
@@ -373,4 +398,91 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         mapServer.setOverwrite(overwrite);
     }
 
+    @Override
+    public Future<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetKeyWithRefOutput>> getKeyWithRef(
+            GetKeyWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetMappingWithRefOutput>> getMappingWithRef(
+            GetMappingWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeKeyWithRef(RemoveKeyWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeMappingWithRef(
+            RemoveMappingWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateKeyWithRef(UpdateKeyWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateMappingWithRef(
+            UpdateMappingWithRefInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

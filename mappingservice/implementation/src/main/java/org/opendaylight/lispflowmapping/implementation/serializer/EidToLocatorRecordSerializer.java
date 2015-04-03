@@ -15,12 +15,12 @@ import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAd
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.EidToLocatorRecord.Action;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
 
 public class EidToLocatorRecordSerializer {
 
@@ -78,7 +78,7 @@ public class EidToLocatorRecordSerializer {
         replyBuffer.position(replyBuffer.position() + Length.RESERVED);
         replyBuffer.putShort(NumberUtil.asShort(record.getMapVersion()));
         if (record.getLispAddressContainer() != null && record.getLispAddressContainer().getAddress() != null) {
-            LispAddressSerializer.getInstance().serialize(replyBuffer, (LispAFIAddress) record.getLispAddressContainer().getAddress());
+            LispAddressSerializer.getInstance().serialize(replyBuffer, LispAFIConvertor.toAFI(record.getLispAddressContainer()));
         }
 
         if (record.getLocatorRecord() != null) {
@@ -91,7 +91,7 @@ public class EidToLocatorRecordSerializer {
     public int getSerializationSize(EidToLocatorRecord record) {
         int size = Length.HEADER_SIZE;
         if (record.getLispAddressContainer() != null) {
-            size += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) record.getLispAddressContainer().getAddress());
+            size += LispAddressSerializer.getInstance().getAddressSize((LispAFIConvertor.toAFI(record.getLispAddressContainer())));
         }
         if (record.getLocatorRecord() != null) {
             for (LocatorRecord locatorRecord : record.getLocatorRecord()) {

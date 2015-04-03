@@ -14,13 +14,13 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address;
 
 public class LispIpv6AddressTest extends BaseTestCase {
 
     @Test
     public void constructor__Name() throws Exception {
-        Ipv6 ip = LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:0");
+        Ipv6Address ip = (Ipv6Address) LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:0");
 
         assertEquals(AddressFamilyNumberEnum.IP6.getIanaCode(), ip.getAfi().shortValue());
         assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(ip));
@@ -29,7 +29,7 @@ public class LispIpv6AddressTest extends BaseTestCase {
 
     @Test
     public void constructor__Buffer() throws Exception {
-        Ipv6 ip = LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1");
+        Ipv6Address ip = (Ipv6Address) LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1");
 
         assertEquals(AddressFamilyNumberEnum.IP6.getIanaCode(), ip.getAfi().shortValue());
         assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(ip));

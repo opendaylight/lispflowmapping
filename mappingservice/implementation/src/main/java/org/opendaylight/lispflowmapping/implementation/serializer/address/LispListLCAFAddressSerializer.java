@@ -14,12 +14,12 @@ import java.util.List;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.Addresses;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.AddressesBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafListAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaflistaddress.Addresses;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaflistaddress.AddressesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.PrimitiveAddress;
 
 public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
@@ -37,7 +37,7 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer {
     protected short getLcafLength(LispAFIAddress lispAddress) {
         short totalSize = 0;
         for (Addresses address : ((LcafListAddress) lispAddress).getAddresses()) {
-            totalSize += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) address.getPrimitiveAddress());
+            totalSize += LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(address.getPrimitiveAddress()));
         }
         return totalSize;
     }
@@ -45,7 +45,7 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer {
     @Override
     protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         for (Addresses address : ((LcafListAddress) lispAddress).getAddresses()) {
-            LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) address.getPrimitiveAddress());
+            LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(address.getPrimitiveAddress()));
         }
     }
 
@@ -54,10 +54,10 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer {
         List<Addresses> addresses = new ArrayList<Addresses>();
         while (length > 0) {
             PrimitiveAddress address = LispAFIConvertor.toPrimitive(LispAddressSerializer.getInstance().deserialize(buffer));
-            length -= LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) address);
+            length -= LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(address));
             addresses.add(new AddressesBuilder().setPrimitiveAddress((PrimitiveAddress) address).build());
         }
-        return new LcafListBuilder().setAddresses(addresses).setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+        return new LcafListAddrBuilder().setAddresses(addresses).setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode()).build();
     }
 }

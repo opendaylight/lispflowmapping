@@ -30,5 +30,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.yangtools.model</groupId>
       <artifactId>ietf-yang-types</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.opendaylight.yangtools.model</groupId>
+      <artifactId>yang-ext</artifactId>
+    </dependency>
   </dependencies>
 </project>

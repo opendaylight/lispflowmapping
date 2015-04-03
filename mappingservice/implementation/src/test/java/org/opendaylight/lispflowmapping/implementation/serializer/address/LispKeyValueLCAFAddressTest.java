@@ -19,11 +19,11 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafKeyValueAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.KeyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.ValueBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValueBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafKeyValueAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafkeyvalueaddress.KeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafkeyvalueaddress.ValueBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
 
 public class LispKeyValueLCAFAddressTest extends BaseTestCase {
 
@@ -73,7 +73,7 @@ public class LispKeyValueLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        LcafKeyValueBuilder addressBuilder = new LcafKeyValueBuilder();
+        LcafKeyValueAddressAddrBuilder addressBuilder = new LcafKeyValueAddressAddrBuilder();
         addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.KEY_VALUE.getLispCode());
         addressBuilder.setKey(new KeyBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build());
         addressBuilder.setValue(new ValueBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("34.51.68.85")).build());

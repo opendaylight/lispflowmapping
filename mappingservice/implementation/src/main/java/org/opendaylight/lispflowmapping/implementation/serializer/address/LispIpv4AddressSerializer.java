@@ -13,9 +13,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispIpv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 
 public class LispIpv4AddressSerializer extends LispAddressSerializer {
@@ -53,7 +53,7 @@ public class LispIpv4AddressSerializer extends LispAddressSerializer {
             address = InetAddress.getByAddress(ipBuffer);
         } catch (UnknownHostException e) {
         }
-        return new Ipv4Builder().setIpv4Address(new Ipv4Address(address.getHostAddress())).setAfi(AddressFamilyNumberEnum.IP.getIanaCode()).build();
+        return new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address(address.getHostAddress())).setAfi(AddressFamilyNumberEnum.IP.getIanaCode()).build();
     }
 
     private interface Length {

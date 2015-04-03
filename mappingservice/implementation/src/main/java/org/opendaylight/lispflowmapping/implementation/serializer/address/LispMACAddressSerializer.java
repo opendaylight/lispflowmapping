@@ -11,9 +11,9 @@ import java.nio.ByteBuffer;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispMacAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.MacBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispMacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.mac.MacAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 
 public class LispMACAddressSerializer extends LispAddressSerializer {
@@ -43,7 +43,7 @@ public class LispMACAddressSerializer extends LispAddressSerializer {
                 sb.append(':');
             sb.append(String.format("%02x", b));
         }
-        return new MacBuilder().setMacAddress(new MacAddress(sb.toString())).setAfi((short) 16389).build();
+        return new MacAddressBuilder().setMacAddress(new MacAddress(sb.toString())).setAfi((short) 16389).build();
     }
 
     @Override

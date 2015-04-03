@@ -12,6 +12,7 @@
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-restconf/${mdsal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-adsal/${sal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-nsf/${nsf.version}/xml/features</repository>
@@ -27,6 +28,7 @@
 
     <feature name="odl-lispflowmapping-mappingservice" description="OpenDaylight :: LISP Flow Mapping :: Mapping Service" version='${lispflowmapping.version}'>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
+        <feature version="${mdsal.version}">odl-mdsal-apidocs</feature>
         <feature version="${sal.version}">odl-adsal-core</feature>
         <feature version="${clustering.services.version}">odl-adsal-clustering</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>

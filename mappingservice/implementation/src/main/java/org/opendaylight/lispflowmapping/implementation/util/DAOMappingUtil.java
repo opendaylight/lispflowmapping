@@ -18,10 +18,9 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
 
 public class DAOMappingUtil {
 
@@ -48,7 +47,8 @@ public class DAOMappingUtil {
     public static List<MappingServiceRLOCGroup> getLocators(IMappingServiceKey key, ILispDAO dao, boolean iterateMask) {
         Map<String, ?> locators = dao.get(key);
         List<MappingServiceRLOCGroup> result = aggregateLocators(locators);
-        if (iterateMask && result.isEmpty() && MaskUtil.isMaskable(key.getEID().getAddress())) {
+        LispAFIAddress eid = LispAFIConvertor.toAFI(key.getEID());
+        if (iterateMask && result.isEmpty() && MaskUtil.isMaskable(eid)) {
             result = findMaskLocators(dao, key);
         }
         return result;
@@ -70,7 +70,8 @@ public class DAOMappingUtil {
 
     public static Object getLocatorsSpecific(IMappingServiceKey key, ILispDAO dao, String subkey, boolean iterateMask) {
         Object locators = dao.getSpecific(key, subkey);
-        if (iterateMask && locators == null && MaskUtil.isMaskable(key.getEID().getAddress())) {
+        LispAFIAddress eid = LispAFIConvertor.toAFI(key.getEID());
+        if (iterateMask && locators == null && MaskUtil.isMaskable(eid)) {
             locators = findMaskLocatorsSpecific(key, dao, subkey);
         }
         return locators;
@@ -79,8 +80,9 @@ public class DAOMappingUtil {
     private static Object findMaskLocatorsSpecific(IMappingServiceKey key, ILispDAO dao, String subkey) {
         int mask = key.getMask();
         while (mask > 0) {
+            LispAFIAddress eid = LispAFIConvertor.toAFI(key.getEID());
             key = MappingServiceKeyUtil.generateMappingServiceKey(
-                    new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
+                    LispAFIConvertor.toContainer(MaskUtil.normalize(eid, mask)), mask);
             mask--;
             Object locators = dao.getSpecific(key, subkey);
             if (locators != null) {
@@ -93,8 +95,9 @@ public class DAOMappingUtil {
     private static List<MappingServiceRLOCGroup> findMaskLocators(ILispDAO dao, IMappingServiceKey key) {
         int mask = key.getMask();
         while (mask > 0) {
+            LispAFIAddress eid = LispAFIConvertor.toAFI(key.getEID());
             key = MappingServiceKeyUtil.generateMappingServiceKey(
-                    new LispAddressContainerBuilder().setAddress(MaskUtil.normalize(key.getEID().getAddress(), mask)).build(), mask);
+                    LispAFIConvertor.toContainer(MaskUtil.normalize(eid, mask)), mask);
             mask--;
             Map<String, ?> locators = dao.get(key);
             if (locators != null) {
@@ -109,12 +112,12 @@ public class DAOMappingUtil {
 
     public static Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> getMappingForEidRecord(EidRecord eid, ILispDAO dao) {
         IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eid.getLispAddressContainer(), eid.getMask());
-        if (MaskUtil.isMaskable(key.getEID().getAddress())) {
+        LispAFIAddress eidAddress = LispAFIConvertor.toAFI(key.getEID());
+        if (MaskUtil.isMaskable(eidAddress)) {
             int mask = eid.getMask();
             while (mask > 0) {
-                Address eidAddress = MaskUtil.normalize(key.getEID().getAddress(), mask);
                 key = MappingServiceKeyUtil.generateMappingServiceKey(
-                        new LispAddressContainerBuilder().setAddress(eidAddress).build(), mask);
+                        LispAFIConvertor.toContainer(MaskUtil.normalize(eidAddress, mask)), mask);
                 mask--;
                 Map<String, ?> locators = dao.get(key);
                 if (locators != null) {

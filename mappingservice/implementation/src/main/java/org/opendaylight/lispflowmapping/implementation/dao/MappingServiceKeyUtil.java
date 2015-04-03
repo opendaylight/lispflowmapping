@@ -7,26 +7,28 @@
  */
 package org.opendaylight.lispflowmapping.implementation.dao;
 
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 
 public class MappingServiceKeyUtil {
 
     public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer lispAddressContainer, int mask) {
-        if (MaskUtil.isMaskable(lispAddressContainer.getAddress())) {
-            LispAddressContainerBuilder normalizedBuilder = new LispAddressContainerBuilder();
-            normalizedBuilder.setAddress(MaskUtil.normalize(lispAddressContainer.getAddress(), mask));
-            return new MappingServiceKey(normalizedBuilder.build(), mask);
+        LispAFIAddress address = LispAFIConvertor.toAFI(lispAddressContainer);
+        if (MaskUtil.isMaskable(address)) {
+            LispAddressContainer normalizedAddress = LispAFIConvertor.toContainer(MaskUtil.normalize(address, mask));
+            return new MappingServiceKey(normalizedAddress, mask);
         } else {
             return new MappingServiceNoMaskKey(lispAddressContainer);
         }
     }
 
     public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer lispAddressContainer) {
-        if (MaskUtil.isMaskable(lispAddressContainer.getAddress())) {
-            return generateMappingServiceKey(lispAddressContainer, MaskUtil.getMaxMask(lispAddressContainer.getAddress()));
+        LispAFIAddress address = LispAFIConvertor.toAFI(lispAddressContainer);
+        if (MaskUtil.isMaskable(address)) {
+            return generateMappingServiceKey(lispAddressContainer, MaskUtil.getMaxMask(address));
         } else
             return generateMappingServiceKey(lispAddressContainer, 0);
     }

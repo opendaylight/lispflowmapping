@@ -1,0 +1,171 @@
+module lfm-mapping-database {
+
+    yang-version 1;
+    namespace "urn:opendaylight:lfm-mapping-database";
+    prefix "lfm-mapping-database";
+
+    import lfm-control-plane { prefix lfm-cp; revision-date 2015-03-14; }
+
+    contact "Lorand Jakab <lojakab@cisco.com";
+
+    description
+        "An MD-SAL based implementation of a LISP Map-Server database";
+
+    revision "2015-03-14" {
+        description "Initial revision.";
+    }
+
+    typedef key-ref {
+        type instance-identifier;
+    }
+
+    typedef mapping-ref {
+        type instance-identifier;
+    }
+
+    grouping mapping-key {
+        uses lfm-cp:LispAddress;
+        leaf key-type {
+            type uint16;
+        }
+        leaf key {
+            type string;
+        }
+    }
+
+    rpc add-key {
+        input {
+            uses mapping-key;
+        }
+        output {
+            leaf key-ref {
+                type key-ref;
+            }
+        }
+    }
+
+    rpc get-key {
+        input {
+            uses lfm-cp:LispAddress;
+        }
+        output {
+            leaf key-ref {
+                type key-ref;
+            }
+            uses mapping-key;
+        }
+    }
+
+    rpc update-key {
+        input {
+            container eid {
+                uses lfm-cp:LispAddress;
+            }
+            container key {
+                uses mapping-key;
+            }
+        }
+    }
+
+    rpc remove-key {
+        input {
+            uses lfm-cp:LispAddress;
+        }
+    }
+
+    rpc get-key-with-ref {
+        input {
+            leaf key-ref {
+                type key-ref;
+            }
+        }
+        output {
+            uses mapping-key;
+        }
+    }
+
+    rpc update-key-with-ref {
+        input {
+            leaf key-ref {
+                type key-ref;
+            }
+            uses mapping-key;
+        }
+    }
+
+    rpc remove-key-with-ref {
+        input {
+            leaf key-ref {
+                type key-ref;
+            }
+        }
+    }
+
+    rpc add-mapping {
+        input {
+            uses lfm-cp:EidToLocatorRecord;
+        }
+        output {
+            leaf map-ref {
+                type mapping-ref;
+            }
+        }
+    }
+
+    rpc get-mapping {
+        input {
+            uses lfm-cp:LispAddress;
+        }
+        output {
+            leaf map-ref {
+                type mapping-ref;
+            }
+            uses lfm-cp:EidToLocatorRecord;
+        }
+    }
+
+    rpc update-mapping {
+        input {
+            container eid {
+                uses lfm-cp:LispAddress;
+            }
+            container mapping {
+                uses lfm-cp:EidToLocatorRecord;
+            }
+        }
+    }
+
+    rpc remove-mapping {
+        input {
+            uses lfm-cp:LispAddress;
+        }
+    }
+
+    rpc get-mapping-with-ref {
+        input {
+            leaf map-ref {
+                type mapping-ref;
+            }
+        }
+        output {
+            uses lfm-cp:EidToLocatorRecord;
+        }
+    }
+
+    rpc update-mapping-with-ref {
+        input {
+            leaf map-ref {
+                type mapping-ref;
+            }
+            uses lfm-cp:EidToLocatorRecord;
+        }
+    }
+
+    rpc remove-mapping-with-ref {
+        input {
+            leaf map-ref {
+                type mapping-ref;
+            }
+        }
+    }
+}

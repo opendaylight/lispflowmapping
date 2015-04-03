@@ -15,13 +15,14 @@ import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispDistinguishedNameAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.DistinguishedNameBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafListAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedNameBuilder;
 
 public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
@@ -58,8 +59,8 @@ public class LispDistinguishedNameAddressSerializerTest extends BaseTestCase {
 
         assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lispLCAFAddress.getLcafType().byteValue());
 
-        LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) lispLCAFAddress.getAddresses().get(0)
-                .getPrimitiveAddress();
+        LispDistinguishedNameAddress distinguishedNameAddress = (LispDistinguishedNameAddress) LispAFIConvertor.toAFIfromPrimitive(lispLCAFAddress.getAddresses().get(0)
+                .getPrimitiveAddress());
 
         assertEquals("david", distinguishedNameAddress.getDistinguishedName());
 

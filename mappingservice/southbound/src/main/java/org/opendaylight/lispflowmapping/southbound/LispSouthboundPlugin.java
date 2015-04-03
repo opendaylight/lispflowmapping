@@ -30,11 +30,11 @@ import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispflowmappingService;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapNotifyInput;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapReplyInput;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.SendMapRequestInput;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapReplyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRequestInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
-public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispSouthboundPlugin, CommandProvider, LispflowmappingService {
+public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispSouthboundPlugin, CommandProvider, LfmControlPlaneService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -216,7 +216,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         try {
             lispSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
             lispXtrSouthboundService.setNotificationProvider(session.getSALService(NotificationProviderService.class));
-            session.addRpcImplementation(LispflowmappingService.class, this);
+            session.addRpcImplementation(LfmControlPlaneService.class, this);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

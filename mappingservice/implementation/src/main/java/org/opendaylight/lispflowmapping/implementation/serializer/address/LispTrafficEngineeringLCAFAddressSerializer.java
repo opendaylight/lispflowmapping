@@ -16,13 +16,13 @@ import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafTrafficEngineeringAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.HopsBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafTrafficEngineeringBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.Hops;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.HopsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcaftrafficengineering.LcafTrafficEngineeringAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.reencaphop.HopBuilder;
 
 public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
@@ -41,7 +41,7 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
         short totalSize = 0;
         if (((LcafTrafficEngineeringAddress) lispAddress).getHops() != null) {
             for (Hops hop : ((LcafTrafficEngineeringAddress) lispAddress).getHops()) {
-                totalSize += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) hop.getHop().getPrimitiveAddress()) + 2;
+                totalSize += LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(hop.getHop().getPrimitiveAddress())) + 2;
             }
         }
         return totalSize;
@@ -55,7 +55,7 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
                 buffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isLookup()), Flags.LOOKUP) | //
                         ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isRLOCProbe()), Flags.RLOC_PROBE) | //
                 ByteUtil.boolToBit(BooleanUtils.isTrue(hop.isStrict()), Flags.STRICT)));
-                LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) hop.getHop().getPrimitiveAddress());
+                LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(hop.getHop().getPrimitiveAddress()));
             }
         }
     }
@@ -74,10 +74,10 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
             builder.setRLOCProbe(RLOCProbe);
             builder.setStrict(strict);
             builder.setHop(new HopBuilder().setPrimitiveAddress(address).build());
-            length -= LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) address) + 2;
+            length -= LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(address)) + 2;
             hops.add(builder.build());
         }
-        return new LcafTrafficEngineeringBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+        return new LcafTrafficEngineeringAddrBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode()).setHops(hops).build();
     }
 

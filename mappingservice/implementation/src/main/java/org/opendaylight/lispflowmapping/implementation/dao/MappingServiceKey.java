@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.implementation.dao;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 
 public class MappingServiceKey implements IMappingServiceKey {
 

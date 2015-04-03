@@ -42,10 +42,10 @@ import org.opendaylight.lispflowmapping.type.lisp.MapRequest;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddress;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispAddressGeneric;
 import org.opendaylight.lispflowmapping.type.lisp.address.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapNotify;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapReply;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +132,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         mapRequest.addEidRecord(EIDRecord);
         mapRequest.setSourceEid(new LispIpv4Address("127.0.0.1"));
 
-        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest mr = YangTransformerNB.transformMapRequest(mapRequest);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest mr = YangTransformerNB.transformMapRequest(mapRequest);
         MapReply mapReply;
         try {
             mapReply = nbService.getMappingService().handleMapRequest(mr);
@@ -270,7 +270,7 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
         // Always request MapNotify
         mapRegisterNB.getMapRegister().setWantMapNotify(true);
 
-        org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRegister mr = null;
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister mr = null;
         try {
             mr = YangTransformerNB.transformMapRegister(mapRegisterNB.getMapRegister());
         } catch (Exception e) {

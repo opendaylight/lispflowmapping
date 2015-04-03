@@ -21,12 +21,12 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafTrafficEngineeringAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.Hops;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaftrafficengineeringaddress.HopsBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafTrafficEngineeringBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.reencaphop.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.Hops;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.HopsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcaftrafficengineering.LcafTrafficEngineeringAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.reencaphop.HopBuilder;
 
 public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
 
@@ -109,7 +109,7 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
                 .build());
         hops.add(new HopsBuilder().setHop(new HopBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build())
                 .build());
-        LcafTrafficEngineeringBuilder trafficBuilder = new LcafTrafficEngineeringBuilder();
+        LcafTrafficEngineeringAddrBuilder trafficBuilder = new LcafTrafficEngineeringAddrBuilder();
         trafficBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
                 (short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode());
         trafficBuilder.setHops(hops);
@@ -125,7 +125,7 @@ public class LispTrafficEngineeringLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__NoAddresses() throws Exception {
-        LcafTrafficEngineeringBuilder addressBuilder = new LcafTrafficEngineeringBuilder();
+        LcafTrafficEngineeringAddrBuilder addressBuilder = new LcafTrafficEngineeringAddrBuilder();
         addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
                 (short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode());
 

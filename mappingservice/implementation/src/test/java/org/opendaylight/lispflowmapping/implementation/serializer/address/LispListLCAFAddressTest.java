@@ -22,13 +22,13 @@ import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafListAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.Addresses;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcaflistaddress.AddressesBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafList;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafListBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.primitiveaddress.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafListAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaflistaddress.Addresses;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaflistaddress.AddressesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddr;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv6;
 
 public class LispListLCAFAddressTest extends BaseTestCase {
 
@@ -82,7 +82,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        LcafListBuilder listBuilder = new LcafListBuilder();
+        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder();
         listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
         List<Addresses> addressList = new ArrayList<Addresses>();
@@ -102,7 +102,7 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__NoAddresses() throws Exception {
-        LcafListBuilder listBuilder = new LcafListBuilder();
+        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder();
         listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
         List<Addresses> addressList = new ArrayList<Addresses>();
@@ -118,16 +118,16 @@ public class LispListLCAFAddressTest extends BaseTestCase {
     public void equals__Simple() throws Exception {
         Ipv6 ip1 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"));
         Ipv6 ip2 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:2"));
-        LcafListBuilder listBuilder = new LcafListBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode()).setAddresses(new ArrayList<Addresses>());
         listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
-        LcafList address1 = listBuilder.build();
+        LcafListAddr address1 = listBuilder.build();
         listBuilder.setAddresses(new ArrayList<Addresses>());
         listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
-        LcafList address2 = listBuilder.build();
+        LcafListAddr address2 = listBuilder.build();
         listBuilder.setAddresses(new ArrayList<Addresses>());
         listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip2).build());
-        LcafList address3 = listBuilder.build();
+        LcafListAddr address3 = listBuilder.build();
 
         assertEquals(address1, address2);
         Assert.assertNotEquals(address2, address3);

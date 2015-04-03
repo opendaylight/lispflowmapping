@@ -13,12 +13,12 @@ import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafSourceDestAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress.DstAddressBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafsourcedestaddress.SrcAddressBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafSourceDestAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafsourcedestaddress.DstAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafsourcedestaddress.SrcAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.PrimitiveAddress;
 
 public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializer {
 
@@ -36,8 +36,8 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
     protected short getLcafLength(LispAFIAddress lispAddress) {
         return (short) (Length.ALL_FIELDS
                 + LispAddressSerializer.getInstance().getAddressSize(
-                        (LispAFIAddress) ((LcafSourceDestAddress) lispAddress).getSrcAddress().getPrimitiveAddress()) + LispAddressSerializer
-                .getInstance().getAddressSize((LispAFIAddress) ((LcafSourceDestAddress) lispAddress).getDstAddress().getPrimitiveAddress()));
+                        LispAFIConvertor.toAFIfromPrimitive(((LcafSourceDestAddress) lispAddress).getSrcAddress().getPrimitiveAddress())) + LispAddressSerializer
+                .getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(((LcafSourceDestAddress) lispAddress).getDstAddress().getPrimitiveAddress())));
     }
 
     @Override
@@ -46,8 +46,8 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
         buffer.putShort((short) 0);
         buffer.put(lispSourceDestLCAFAddress.getSrcMaskLength().byteValue());
         buffer.put(lispSourceDestLCAFAddress.getDstMaskLength().byteValue());
-        LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) lispSourceDestLCAFAddress.getSrcAddress().getPrimitiveAddress());
-        LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) lispSourceDestLCAFAddress.getDstAddress().getPrimitiveAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(lispSourceDestLCAFAddress.getSrcAddress().getPrimitiveAddress()));
+        LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(lispSourceDestLCAFAddress.getDstAddress().getPrimitiveAddress()));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
         int dstMaskLength = ByteUtil.getUnsignedByte(buffer);
         LispAFIAddress srcAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         LispAFIAddress dstAddress = LispAddressSerializer.getInstance().deserialize(buffer);
-        LcafSourceDestBuilder builder = new LcafSourceDestBuilder();
+        LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setDstMaskLength((short) dstMaskLength).setSrcMaskLength((short) srcMaskLength);
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(srcAddress)).build());
         builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(dstAddress)).build());

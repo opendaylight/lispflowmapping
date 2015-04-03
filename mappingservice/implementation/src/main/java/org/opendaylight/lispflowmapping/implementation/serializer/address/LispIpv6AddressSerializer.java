@@ -13,9 +13,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.Ipv6Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispIpv6Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv6.Ipv6AddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 
 public class LispIpv6AddressSerializer extends LispAddressSerializer {
@@ -53,7 +53,7 @@ public class LispIpv6AddressSerializer extends LispAddressSerializer {
             address = InetAddress.getByAddress(ipBuffer);
         } catch (UnknownHostException e) {
         }
-        return new Ipv6Builder().setIpv6Address(new Ipv6Address(address.getHostAddress())).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode())
+        return new Ipv6AddressBuilder().setIpv6Address(new Ipv6Address(address.getHostAddress())).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode())
                 .build();
     }
 

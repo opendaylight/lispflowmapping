@@ -45,6 +45,12 @@
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>features-restconf</artifactId>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
     <!-- dependency for opendaylight-karaf-empty for use by testing -->
     <dependency>
       <groupId>org.opendaylight.controller</groupId>

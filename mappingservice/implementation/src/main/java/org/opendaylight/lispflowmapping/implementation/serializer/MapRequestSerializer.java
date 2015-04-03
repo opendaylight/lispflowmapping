@@ -14,17 +14,15 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.lisp.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRlocBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.SourceEidBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification.MapRequestBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,18 +46,18 @@ public class MapRequestSerializer {
         int size = Length.HEADER_SIZE;
         if (mapRequest.getSourceEid() != null && mapRequest.getSourceEid().getLispAddressContainer() != null) {
             size += LispAddressSerializer.getInstance().getAddressSize(
-                    (LispAFIAddress) mapRequest.getSourceEid().getLispAddressContainer().getAddress());
+                    LispAFIConvertor.toAFI(mapRequest.getSourceEid().getLispAddressContainer()));
         } else {
             size += 2;
         }
         if (mapRequest.getItrRloc() != null) {
             for (ItrRloc address : mapRequest.getItrRloc()) {
-                size += LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) address.getLispAddressContainer().getAddress());
+                size += LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFI(address.getLispAddressContainer()));
             }
         }
         if (mapRequest.getEidRecord() != null) {
             for (EidRecord record : mapRequest.getEidRecord()) {
-                size += 2 + LispAddressSerializer.getInstance().getAddressSize((LispAFIAddress) record.getLispAddressContainer().getAddress());
+                size += 2 + LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFI(record.getLispAddressContainer()));
             }
         }
         ByteBuffer requestBuffer = ByteBuffer.allocate(size);
@@ -89,20 +87,20 @@ public class MapRequestSerializer {
         requestBuffer.putLong(NumberUtil.asLong(mapRequest.getNonce()));
         if (mapRequest.getSourceEid() != null && mapRequest.getSourceEid().getLispAddressContainer() != null) {
             LispAddressSerializer.getInstance().serialize(requestBuffer,
-                    (LispAFIAddress) mapRequest.getSourceEid().getLispAddressContainer().getAddress());
+                    LispAFIConvertor.toAFI(mapRequest.getSourceEid().getLispAddressContainer()));
         } else {
             requestBuffer.putShort((short) 0);
         }
         if (mapRequest.getItrRloc() != null) {
             for (ItrRloc address : mapRequest.getItrRloc()) {
-                LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) address.getLispAddressContainer().getAddress());
+                LispAddressSerializer.getInstance().serialize(requestBuffer, LispAFIConvertor.toAFI(address.getLispAddressContainer()));
             }
         }
         if (mapRequest.getEidRecord() != null) {
             for (EidRecord record : mapRequest.getEidRecord()) {
                 requestBuffer.put((byte) 0);
                 requestBuffer.put((byte) record.getMask().byteValue());
-                LispAddressSerializer.getInstance().serialize(requestBuffer, (LispAFIAddress) record.getLispAddressContainer().getAddress());
+                LispAddressSerializer.getInstance().serialize(requestBuffer, LispAFIConvertor.toAFI(record.getLispAddressContainer()));
             }
         }
         if (mapRequest.getMapReply() != null) {
@@ -134,7 +132,7 @@ public class MapRequestSerializer {
             int recordCount = ByteUtil.getUnsignedByte(requestBuffer);
             builder.setNonce(requestBuffer.getLong());
             builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
-                    new LispAddressContainerBuilder().setAddress((Address) LispAddressSerializer.getInstance().deserialize(requestBuffer)).build())
+                    LispAFIConvertor.toContainer(LispAddressSerializer.getInstance().deserialize(requestBuffer)))
                     .build());
 
             if (builder.getItrRloc() == null) {
@@ -143,8 +141,8 @@ public class MapRequestSerializer {
             for (int i = 0; i < itrCount; i++) {
                 builder.getItrRloc().add(
                         new ItrRlocBuilder().setLispAddressContainer(
-                                new LispAddressContainerBuilder()
-                                        .setAddress((Address) LispAddressSerializer.getInstance().deserialize(requestBuffer)).build()).build());
+                                LispAFIConvertor.toContainer(LispAddressSerializer.getInstance().deserialize(requestBuffer)))
+                                .build());
             }
 
             if (builder.getEidRecord() == null) {
@@ -155,7 +153,7 @@ public class MapRequestSerializer {
             }
             if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
                 try {
-                    builder.setMapReply(new org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.MapReplyBuilder(
+                    builder.setMapReply(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.MapReplyBuilder(
                             new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(requestBuffer)).build()).build());
                 } catch (RuntimeException re) {
                     LOG.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());

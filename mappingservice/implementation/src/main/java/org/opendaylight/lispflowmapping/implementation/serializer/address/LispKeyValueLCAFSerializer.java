@@ -12,12 +12,12 @@ import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LcafKeyValueAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.KeyBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lcafkeyvalueaddress.ValueBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.address.LcafKeyValueBuilder;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafKeyValueAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafkeyvalueaddress.KeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafkeyvalueaddress.ValueBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.PrimitiveAddress;
 
 public class LispKeyValueLCAFSerializer extends LispLCAFAddressSerializer {
 
@@ -34,22 +34,22 @@ public class LispKeyValueLCAFSerializer extends LispLCAFAddressSerializer {
     @Override
     protected short getLcafLength(LispAFIAddress lispAddress) {
         return (short) (LispAddressSerializer.getInstance().getAddressSize(
-                (LispAFIAddress) ((LcafKeyValueAddress) lispAddress).getKey().getPrimitiveAddress()) + LispAddressSerializer.getInstance()
-                .getAddressSize((LispAFIAddress) ((LcafKeyValueAddress) lispAddress).getValue().getPrimitiveAddress()));
+                LispAFIConvertor.toAFIfromPrimitive(((LcafKeyValueAddress) lispAddress).getKey().getPrimitiveAddress())) + LispAddressSerializer.getInstance()
+                .getAddressSize(LispAFIConvertor.toAFIfromPrimitive(((LcafKeyValueAddress) lispAddress).getValue().getPrimitiveAddress())));
     }
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAFIAddress lispAddress) {
         LcafKeyValueAddress lispKeyValueLCAFAddress = ((LcafKeyValueAddress) lispAddress);
-        LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) lispKeyValueLCAFAddress.getKey().getPrimitiveAddress());
-        LispAddressSerializer.getInstance().serialize(buffer, (LispAFIAddress) lispKeyValueLCAFAddress.getValue().getPrimitiveAddress());
+        LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(lispKeyValueLCAFAddress.getKey().getPrimitiveAddress()));
+        LispAddressSerializer.getInstance().serialize(buffer, LispAFIConvertor.toAFIfromPrimitive(lispKeyValueLCAFAddress.getValue().getPrimitiveAddress()));
     }
 
     @Override
     protected LcafKeyValueAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         LispAFIAddress keyAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         LispAFIAddress valueAddress = LispAddressSerializer.getInstance().deserialize(buffer);
-        LcafKeyValueBuilder builder = new LcafKeyValueBuilder();
+        LcafKeyValueAddressAddrBuilder builder = new LcafKeyValueAddressAddrBuilder();
         builder.setKey(new KeyBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(keyAddress)).build());
         builder.setValue(new ValueBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(valueAddress)).build());
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());

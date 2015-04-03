@@ -10,11 +10,11 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.LispIpv6Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.MapRequest;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.lispflowmapping.rev131031.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest.ItrRloc;
 
 public class MapRequestUtil {
     public static InetAddress selectItrRloc(MapRequest request) {
@@ -24,16 +24,16 @@ public class MapRequestUtil {
         InetAddress selectedItrRloc = null;
         for (ItrRloc itr : request.getItrRloc()) {
             Address addr = itr.getLispAddressContainer().getAddress();
-            if (addr instanceof LispIpv4Address) {
+            if (addr instanceof Ipv4) {
                 try {
-                    selectedItrRloc = InetAddress.getByName(((LispIpv4Address) addr).getIpv4Address().getValue());
+                    selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4Address().getIpv4Address().getValue());
                 } catch (UnknownHostException e) {
                 }
                 break;
             }
-            if (addr instanceof LispIpv6Address) {
+            if (addr instanceof Ipv6) {
                 try {
-                    selectedItrRloc = InetAddress.getByName((((LispIpv6Address) addr).getIpv6Address().getValue()));
+                    selectedItrRloc = InetAddress.getByName((((Ipv6) addr).getIpv6Address().getIpv6Address().getValue()));
                 } catch (UnknownHostException e) {
                 }
                 break;
