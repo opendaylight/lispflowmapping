@@ -33,6 +33,24 @@
       "revId": "b9f60b6b92b9a8248884dd4cd970fd5531bd1f6b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb3a34cc",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/LispMappingNorthbound.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-04-03T09:22:56Z",
+      "side": 1,
+      "message": "Good point. I created a new method in MaskUtil that takes as input the afi.",
+      "parentUuid": "5a93c517_e0012107",
+      "revId": "b9f60b6b92b9a8248884dd4cd970fd5531bd1f6b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
