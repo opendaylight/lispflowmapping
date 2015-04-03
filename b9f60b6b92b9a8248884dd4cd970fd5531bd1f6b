@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2008692c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/authentication/LispMACAuthentication.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-03T08:49:04Z",
+      "side": 1,
+      "message": "Awesome, we need more of these, to help debugging! ;)",
+      "revId": "b9f60b6b92b9a8248884dd4cd970fd5531bd1f6b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e0012107",
+        "filename": "mappingservice/northbound/src/main/java/org/opendaylight/lispflowmapping/northbound/LispMappingNorthbound.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-03T08:49:04Z",
+      "side": 1,
+      "message": "Wel should at least check for the AFI of the enclosed prefix, and set to 32 if it is IPv4 and to 128 if it is IPv6.  Also there is a constant defined somewhere with MAX_MASK_LENGHT, please use that if it is public, Sonar complains if we use \"magic\" numbers like this.",
+      "revId": "b9f60b6b92b9a8248884dd4cd970fd5531bd1f6b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
