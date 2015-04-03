@@ -34,6 +34,7 @@ import org.opendaylight.controller.northbound.commons.exception.UnauthorizedExce
 import org.opendaylight.controller.northbound.commons.utils.NorthboundUtils;
 import org.opendaylight.controller.sal.authorization.Privilege;
 import org.opendaylight.controller.sal.utils.ServiceHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
@@ -387,8 +388,9 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
             eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), eidGeneric);
             eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             eidGeneric.setInstanceId(iid);
+            // XXX since we can't set iid mask length in the URL, set default to max mask corresponding to afi
+            eidGeneric.setIidMaskLength(MaskUtil.getMaxMaskForAfi(afi));
         }
-
         return eidGeneric;
     }
 

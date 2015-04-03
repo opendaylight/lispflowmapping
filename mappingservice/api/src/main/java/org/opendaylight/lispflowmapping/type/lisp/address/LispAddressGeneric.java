@@ -54,6 +54,9 @@ public class LispAddressGeneric{
     short remotePort;
 
 	@XmlElement
+	byte iidMaskLength;
+
+	@XmlElement
     LispAddressGeneric address;
 
 	@XmlElement
@@ -198,6 +201,7 @@ public class LispAddressGeneric{
 		LispSegmentLCAFAddress segmentAddress = (LispSegmentLCAFAddress) lcafAddress;
 		instanceId = segmentAddress.getInstanceId();
 		address = new LispAddressGeneric(segmentAddress.getAddress());
+		iidMaskLength = segmentAddress.getIdMaskLen();
 	}
 
 	private void srcDstGeneric(LispLCAFAddress lcafAddress){
@@ -361,6 +365,14 @@ public class LispAddressGeneric{
 	public void setHops(List<LispAddressGeneric> hops) {
 		this.hops = hops;
 	}
+
+    public byte getIidMaskLength() {
+        return iidMaskLength;
+    }
+
+    public void setIidMaskLength(byte iidMaskLength) {
+        this.iidMaskLength = iidMaskLength;
+    }
 
 	public LispAddressGeneric getAddress() {
 		return address;

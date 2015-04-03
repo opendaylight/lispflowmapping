@@ -71,4 +71,14 @@ public class MaskUtil {
         return -1;
     }
 
+    public static byte getMaxMaskForAfi(int afi) {
+        if (afi == 1) {
+            return (byte) 32;
+        } else if (afi == 2){
+            return (byte) 128;
+        } else {
+            return (byte) -1;
+        }
+    }
+
 }
