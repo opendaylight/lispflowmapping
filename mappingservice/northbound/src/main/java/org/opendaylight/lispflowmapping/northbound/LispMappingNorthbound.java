@@ -387,6 +387,8 @@ public class LispMappingNorthbound implements ILispmappingNorthbound {
             eidGeneric = new LispAddressGeneric(AddressFamilyNumberEnum.LCAF.getIanaCode(), eidGeneric);
             eidGeneric.setLcafType(LispCanonicalAddressFormatEnum.SEGMENT.getLispCode());
             eidGeneric.setInstanceId(iid);
+            // XXX since we can't set iid mask length in the URL, set default to 32
+            eidGeneric.setIidMaskLength((byte)32);
         }
 
         return eidGeneric;

@@ -207,8 +207,8 @@ public class YangTransformerNB {
                 toPrimitive(toAFI(transformLispAddress(lispSegmentLCAFAddress.getAddress())))).build();
 
         return new LcafSegmentAddrBuilder().setAfi(lispLcafAddress.getAfi().getIanaCode()).setLcafType((short) lispLcafAddress.getType().getLispCode())
-                .setInstanceId((long) lispSegmentLCAFAddress.getInstanceId()).setAddress(address).build();
-
+                .setInstanceId((long) lispSegmentLCAFAddress.getInstanceId()).setAddress(address)
+		.setIidMaskLength((short)lispSegmentLCAFAddress.getIdMaskLen()).build();
     }
 
     public static LispAFIAddress transformLispSourceDestLCAFAddress(LispLCAFAddress lispLcafAddress) {

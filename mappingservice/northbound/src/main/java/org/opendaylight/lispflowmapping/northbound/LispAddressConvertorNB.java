@@ -122,8 +122,7 @@ private static LispListLCAFAddress convertToList(LispAddressGeneric generic){
 }
 
 private static LispSegmentLCAFAddress convertToSegment(LispAddressGeneric generic){
-	byte idMaskLen = 0; //Not used here
-	return new LispSegmentLCAFAddress(idMaskLen, generic.getInstanceId(),
+	return new LispSegmentLCAFAddress(generic.getIidMaskLength(), generic.getInstanceId(),
 			convertToLispAddress(generic.getAddress()));
 }
 
