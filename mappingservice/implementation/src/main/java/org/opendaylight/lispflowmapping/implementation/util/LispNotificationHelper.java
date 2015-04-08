@@ -106,8 +106,8 @@ public class LispNotificationHelper {
             tab.setPort(new PortNumber(port));
         } else if (address instanceof LcafApplicationDataAddress) {
             LcafApplicationDataAddress appData = (LcafApplicationDataAddress) address;
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((LispIpv4Address) appData.getAddress().getPrimitiveAddress()).getIpv4Address()
-                    .getValue()));
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv4) appData.getAddress().getPrimitiveAddress()).getIpv4Address()
+                    .getIpv4Address().getValue()));
             tab.setPort(new PortNumber(appData.getLocalPort()));
         }
         return tab.build();

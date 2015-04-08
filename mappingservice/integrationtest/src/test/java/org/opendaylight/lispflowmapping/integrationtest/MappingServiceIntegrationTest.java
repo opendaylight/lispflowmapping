@@ -271,7 +271,7 @@ public class MappingServiceIntegrationTest {
         registerAndQuery__KeyValueLCAF();
         registerAndQuery__ListLCAF();
         registerAndQuery__ApplicationData();
-        //registerAndQuery__TrafficEngineering();
+        registerAndQuery__TrafficEngineering();
         registerAndQuery__SegmentLCAF();
     }
 
@@ -311,8 +311,8 @@ public class MappingServiceIntegrationTest {
     @Test
     public void testNonProxy() throws Throwable {
         testSimpleNonProxy();
-        //testNonProxyOtherPort();
-        //testRecievingNonProxyOnXtrPort();
+        testNonProxyOtherPort();
+        testRecievingNonProxyOnXtrPort();
     }
 
     @Test
@@ -1279,8 +1279,8 @@ public class MappingServiceIntegrationTest {
         assertTrue(receivedHop1.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv4);
         assertTrue(receivedHop2.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Mac);
 
-        assertEquals(ipString, ((LispIpv4Address) receivedHop1.getHop().getPrimitiveAddress()).getIpv4Address().getValue());
-        assertEquals(macString, ((LispMacAddress) receivedHop2.getHop().getPrimitiveAddress()).getMacAddress().getValue());
+        assertEquals(ipString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv4) receivedHop1.getHop().getPrimitiveAddress()).getIpv4Address().getIpv4Address().getValue());
+        assertEquals(macString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Mac) receivedHop2.getHop().getPrimitiveAddress()).getMacAddress().getMacAddress().getValue());
     }
 
     public void registerAndQuery__ApplicationData() throws SocketTimeoutException {
@@ -1512,7 +1512,7 @@ public class MappingServiceIntegrationTest {
 
             @Override
             public void onNotification(XtrRequestMapping notification) {
-                assertEquals(((LispIpv4Address) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getValue(),
+                assertEquals(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue(),
                         eid);
                 notificationCalled = true;
                 LOG.warn("notification arrived");
