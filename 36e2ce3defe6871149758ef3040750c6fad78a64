@@ -22,6 +22,24 @@
       "revId": "36e2ce3defe6871149758ef3040750c6fad78a64",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_716dd797",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1282,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-09T07:28:47Z",
+      "side": 1,
+      "message": "Agree, and I actually added a Trello card for that!",
+      "parentUuid": "5a93c517_dbde4a3f",
+      "revId": "36e2ce3defe6871149758ef3040750c6fad78a64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
