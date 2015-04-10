@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;

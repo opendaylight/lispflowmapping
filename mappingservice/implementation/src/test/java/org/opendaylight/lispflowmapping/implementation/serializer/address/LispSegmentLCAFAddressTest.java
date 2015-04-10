@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.serializer.address;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
 

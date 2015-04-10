@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 import java.net.DatagramPacket;
