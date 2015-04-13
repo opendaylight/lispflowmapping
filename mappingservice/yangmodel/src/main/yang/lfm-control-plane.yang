@@ -651,7 +651,7 @@ module lfm-control-plane {
         list instance-id {
             description "A list of LISP Instance IDs";
             key "iid";
-            ext:context-instance instance-id-context";
+            ext:context-instance "instance-id-context";
             uses db-instance;
         }
     }
