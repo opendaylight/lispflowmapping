@@ -4,6 +4,8 @@ module lfm-mapping-database {
     namespace "urn:opendaylight:lfm-mapping-database";
     prefix "lfm-mapping-database";
 
+    import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
+    import yang-ext { prefix ext; revision-date "2013-07-09"; }
     import lfm-control-plane { prefix lfm-cp; revision-date 2015-03-14; }
 
     contact "Lorand Jakab <lojakab@cisco.com";
@@ -15,89 +17,118 @@ module lfm-mapping-database {
         description "Initial revision.";
     }
 
-    typedef key-ref {
-        type instance-identifier;
+    typedef mapping-origin {
+        description "The originating entity of an EID-to-RLOC mapping";
+        type enumeration {
+            enum northbound;
+            enum southbound;
+        }
     }
 
-    typedef mapping-ref {
-        type instance-identifier;
+    typedef iid-uri {
+        description "IID as a string lookup key in a URI";
+        type inet:uri;
     }
 
-    grouping mapping-key {
+    typedef eid-uri {
+        description "EID as a string lookup key in a URI";
+        type inet:uri;
+    }
+
+    identity instance-id-context {
+        description "A classifier for instance-id elements which allows direct access to a particular element in the data tree.";
+    }
+
+    identity eid-context {
+        description "A classifier for endpoint-id elements which allows direct access to a particular element in the data tree.";
+    }
+
+    grouping lisp-prefix {
         uses lfm-cp:LispAddress;
+        leaf mask-length {
+            type uint8;
+        }
+    }
+
+    grouping mapping-authkey {
         leaf key-type {
             type uint16;
         }
-        leaf key {
+        leaf authkey {
             type string;
+        }
+    }
+
+    grouping db-instance {
+        description "Describes the mappings belonging to the same Instance ID";
+        leaf iid {
+            description "The 24-bit Instance ID";
+            type iid-uri;
+        }
+        list mapping {
+            description "A list of EID-to-RLOC mappings within the same Instance ID";
+            key "eid origin";
+            ext:context-instance "eid-context";
+            leaf eid {
+                type eid-uri;
+            }
+            leaf origin {
+                type mapping-origin;
+            }
+            uses lfm-cp:EidToLocatorRecord;
+        }
+        list authentication-key {
+            description "A list of authentication keys for EID prefixes within the same Instance ID";
+            key "eid";
+            ext:context-instance "eid-context";
+            leaf eid {
+                type eid-uri;
+            }
+            uses lisp-prefix;
+            uses mapping-authkey;
+        }
+    }
+
+    container mapping-database {
+        description "The LISP EID-to-RLOC mapping database";
+        list instance-id {
+            description "A list of LISP Instance IDs";
+            key "iid";
+            ext:context-instance "instance-id-context";
+            uses db-instance;
         }
     }
 
     rpc add-key {
         input {
-            uses mapping-key;
-        }
-        output {
-            leaf key-ref {
-                type key-ref;
-            }
+            uses lisp-prefix;
+            uses mapping-authkey;
         }
     }
 
     rpc get-key {
         input {
-            uses lfm-cp:LispAddress;
+            uses lisp-prefix;
         }
         output {
-            leaf key-ref {
-                type key-ref;
-            }
-            uses mapping-key;
+            uses mapping-authkey;
         }
     }
 
     rpc update-key {
         input {
             container eid {
-                uses lfm-cp:LispAddress;
+                uses lisp-prefix;
             }
             container key {
-                uses mapping-key;
+                uses mapping-authkey;
             }
         }
     }
 
     rpc remove-key {
         input {
-            uses lfm-cp:LispAddress;
-        }
-    }
-
-    rpc get-key-with-ref {
-        input {
-            leaf key-ref {
-                type key-ref;
-            }
-        }
-        output {
-            uses mapping-key;
-        }
-    }
-
-    rpc update-key-with-ref {
-        input {
-            leaf key-ref {
-                type key-ref;
-            }
-            uses mapping-key;
-        }
-    }
-
-    rpc remove-key-with-ref {
-        input {
-            leaf key-ref {
-                type key-ref;
-            }
+            uses lisp-prefix;
         }
     }
 
@@ -105,67 +136,26 @@ module lfm-mapping-database {
         input {
             uses lfm-cp:EidToLocatorRecord;
         }
-        output {
-            leaf map-ref {
-                type mapping-ref;
-            }
-        }
     }
 
     rpc get-mapping {
         input {
-            uses lfm-cp:LispAddress;
+            uses lisp-prefix;
         }
         output {
-            leaf map-ref {
-                type mapping-ref;
-            }
-            uses lfm-cp:EidToLocatorRecord;
+            uses lfm-cp:EidToLocatorRecords;
         }
     }
 
     rpc update-mapping {
         input {
-            container eid {
-                uses lfm-cp:LispAddress;
-            }
-            container mapping {
-                uses lfm-cp:EidToLocatorRecord;
-            }
+            uses lfm-cp:EidToLocatorRecord;
         }
     }
 
     rpc remove-mapping {
         input {
-            uses lfm-cp:LispAddress;
-        }
-    }
-
-    rpc get-mapping-with-ref {
-        input {
-            leaf map-ref {
-                type mapping-ref;
-            }
-        }
-        output {
-            uses lfm-cp:EidToLocatorRecord;
-        }
-    }
-
-    rpc update-mapping-with-ref {
-        input {
-            leaf map-ref {
-                type mapping-ref;
-            }
-            uses lfm-cp:EidToLocatorRecord;
-        }
-    }
-
-    rpc remove-mapping-with-ref {
-        input {
-            leaf map-ref {
-                type mapping-ref;
-            }
+            uses lisp-prefix;
         }
     }
 }
