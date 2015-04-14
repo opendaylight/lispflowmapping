@@ -91,6 +91,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
+    private LfmMappingDatabaseRPCs RPC = new LfmMappingDatabaseRPCs();
     private ILispDAO lispDao = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
@@ -311,6 +312,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         session.addRpcImplementation(LfmMappingDatabaseService.class, this);
+        RPC.setLispMappingService(this);
         this.session = session;
     }
 
@@ -400,14 +402,12 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
 
     @Override
     public Future<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.addKey(input);
     }
 
     @Override
     public Future<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.addMapping(input);
     }
 
     @Override
