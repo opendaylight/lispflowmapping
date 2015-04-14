@@ -59,8 +59,11 @@
               org.opendaylight.lispflowmapping.implementation.dao,
               org.opendaylight.lispflowmapping.implementation.serializer,
               org.opendaylight.lispflowmapping.implementation.util</Export-Package>
-            <Import-Package>javax.xml.bind,
+            <Import-Package>com.google.common.base,
+              com.google.commmon.util.concurrent,
+              javax.xml.bind,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.db.instance,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafapplicationdataaddress,

@@ -25,6 +25,9 @@ module lfm-mapping-database {
 
     grouping mapping-key {
         uses lfm-cp:LispAddress;
+        leaf maskLength {
+            type uint8;
+        }
         leaf key-type {
             type uint16;
         }

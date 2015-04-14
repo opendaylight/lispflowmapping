@@ -90,6 +90,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
+    private LfmMappingDatabaseRPCs RPC = new LfmMappingDatabaseRPCs();
     private ILispDAO lispDao = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
@@ -310,6 +311,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         session.addRpcImplementation(LfmMappingDatabaseService.class, this);
+        RPC.setLispMappingService(this);
         this.session = session;
     }
 
@@ -399,89 +401,71 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
 
     @Override
     public Future<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.addKey(input);
     }
 
     @Override
     public Future<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.addMapping(input);
     }
 
     @Override
     public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.getKey(input);
     }
 
     @Override
-    public Future<RpcResult<GetKeyWithRefOutput>> getKeyWithRef(
-            GetKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<GetKeyWithRefOutput>> getKeyWithRef(GetKeyWithRefInput input) {
+        return RPC.getKeyWithRef(input);
     }
 
     @Override
     public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.getMapping(input);
     }
 
     @Override
-    public Future<RpcResult<GetMappingWithRefOutput>> getMappingWithRef(
-            GetMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<GetMappingWithRefOutput>> getMappingWithRef(GetMappingWithRefInput input) {
+        return RPC.getMappingWithRef(input);
     }
 
     @Override
     public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.removeKey(input);
     }
 
     @Override
     public Future<RpcResult<Void>> removeKeyWithRef(RemoveKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.removeKeyWithRef(input);
     }
 
     @Override
     public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.removeMapping(input);
     }
 
     @Override
-    public Future<RpcResult<Void>> removeMappingWithRef(
-            RemoveMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<Void>> removeMappingWithRef(RemoveMappingWithRefInput input) {
+        return RPC.removeMappingWithRef(input);
     }
 
     @Override
     public Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.updateKey(input);
     }
 
     @Override
     public Future<RpcResult<Void>> updateKeyWithRef(UpdateKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.updateKeyWithRef(input);
     }
 
     @Override
     public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return RPC.updateMapping(input);
     }
 
     @Override
-    public Future<RpcResult<Void>> updateMappingWithRef(
-            UpdateMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<Void>> updateMappingWithRef(UpdateMappingWithRefInput input) {
+        return RPC.updateMappingWithRef(input);
     }
 }
