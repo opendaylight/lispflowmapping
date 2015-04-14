@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_4b465125",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LfmMappingDatabaseRPCs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-04-14T18:57:47Z",
+      "side": 1,
+      "message": "why on two lines?",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 46
+      },
+      "revId": "31e23385d6a269087e1eebc3d9b61e8de7a9b45b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_8b3c5995",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LfmMappingDatabaseRPCs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-04-14T18:57:47Z",
+      "side": 1,
+      "message": "why on two lines?",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 46
+      },
+      "revId": "31e23385d6a269087e1eebc3d9b61e8de7a9b45b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
