@@ -25,6 +25,15 @@ public class MappingServiceKeyUtil {
         }
     }
 
+    public static IMappingServiceKey generateMappingServiceKey(LispAFIAddress address, int mask) {
+        if (MaskUtil.isMaskable(address)) {
+            LispAddressContainer normalizedAddress = LispAFIConvertor.toContainer(MaskUtil.normalize(address, mask));
+            return new MappingServiceKey(normalizedAddress, mask);
+        } else {
+            return new MappingServiceNoMaskKey(LispAFIConvertor.toContainer(address));
+        }
+    }
+
     public static IMappingServiceKey generateMappingServiceKey(LispAddressContainer lispAddressContainer) {
         LispAFIAddress address = LispAFIConvertor.toAFI(lispAddressContainer);
         if (MaskUtil.isMaskable(address)) {
