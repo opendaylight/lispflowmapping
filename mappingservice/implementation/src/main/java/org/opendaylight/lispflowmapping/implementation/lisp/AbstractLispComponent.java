@@ -9,13 +9,17 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.HashSet;
 
+import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafSourceDest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +28,7 @@ public abstract class AbstractLispComponent {
     public static final String PASSWORD_SUBKEY = "password";
     public static final String ADDRESS_SUBKEY = "address";
     public static final String SUBSCRIBERS_SUBKEY = "subscribers";
+    public static final String LCAF_SRCDST_SUBKEY = "lcaf_srcdst";
     public static final Logger LOG = LoggerFactory.getLogger(AbstractLispComponent.class);
 
     protected ILispDAO dao;
@@ -54,18 +59,14 @@ public abstract class AbstractLispComponent {
 
     protected String getPassword(LispAddressContainer prefix, int maskLength) {
         if (MaskUtil.isMaskable(LispAFIConvertor.toAFI(prefix))) {
-            while (maskLength >= 0) {
-                IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
-                Object password = dao.getSpecific(key, PASSWORD_SUBKEY);
-                if (password != null && password instanceof String) {
-                    return (String) password;
-                } else if (shouldIterateMask()) {
-                    maskLength -= 1;
-                } else {
-                    LOG.warn("Failed to find password!");
-                    return null;
-                }
+            return getPasswordForMaskable(prefix, maskLength, dao);
+        } else if (prefix.getAddress() instanceof LcafSourceDest) {
+            ILispDAO srcDstDao = getSrcDstInnerDao(prefix, maskLength);
+            if (srcDstDao != null) {
+                return getPasswordForMaskable(LispAFIConvertor.toContainer(getSrcForLcafSrcDst(prefix)),
+                        getSrcMaskForLcafSrcDst(prefix), srcDstDao);
             }
+            return null;
         } else {
             IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
             Object password = dao.getSpecific(key, PASSWORD_SUBKEY);
@@ -76,16 +77,75 @@ public abstract class AbstractLispComponent {
                 return null;
             }
         }
+    }
+
+    private String getPasswordForMaskable(LispAddressContainer prefix, int maskLength, ILispDAO db) {
+        while (maskLength >= 0) {
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
+            Object password = db.getSpecific(key, PASSWORD_SUBKEY);
+            if (password != null && password instanceof String) {
+                return (String) password;
+            } else if (shouldIterateMask()) {
+                maskLength -= 1;
+            } else {
+                LOG.warn("Failed to find password!");
+                return null;
+            }
+        }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     protected HashSet<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength) {
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
-        Object subscribers = dao.getSpecific(key, SUBSCRIBERS_SUBKEY);
+        Object subscribers;
+        if (prefix.getAddress() instanceof LcafSourceDest) {
+            IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(getSrcForLcafSrcDst(prefix),
+                    getSrcMaskForLcafSrcDst(prefix));
+            ILispDAO srcDstDao = getSrcDstInnerDao(prefix, maskLength);
+            subscribers = srcDstDao.getSpecific(srcKey, SUBSCRIBERS_SUBKEY);
+        } else {
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
+            subscribers = dao.getSpecific(key, SUBSCRIBERS_SUBKEY);
+        }
+
         if (subscribers != null && subscribers instanceof HashSet<?>) {
             return (HashSet<MappingServiceSubscriberRLOC>) subscribers;
         }
         return null;
+    }
+
+    protected LispAFIAddress getSrcForLcafSrcDst(LispAddressContainer container) {
+        return LispAFIConvertor.toAFIfromPrimitive(((LcafSourceDest) container.getAddress()).getLcafSourceDestAddr().
+                getSrcAddress().getPrimitiveAddress());
+    }
+
+    protected LispAFIAddress getDstForLcafSrcDst(LispAddressContainer container) {
+        return LispAFIConvertor.toAFIfromPrimitive(((LcafSourceDest) container.getAddress()).getLcafSourceDestAddr().
+                getDstAddress().getPrimitiveAddress());
+    }
+
+    protected short getSrcMaskForLcafSrcDst(LispAddressContainer container) {
+        return ((LcafSourceDest) container.getAddress()).getLcafSourceDestAddr().getSrcMaskLength();
+    }
+
+    protected short getDstMaskForLcafSrcDst(LispAddressContainer container) {
+        return ((LcafSourceDest) container.getAddress()).getLcafSourceDestAddr().getDstMaskLength();
+    }
+
+    protected ILispDAO getOrInstantiateSrcDstInnerDao(LispAddressContainer address, int maskLen) {
+        IMappingServiceKey dstKey = MappingServiceKeyUtil.generateMappingServiceKey(getDstForLcafSrcDst(address),
+                getDstMaskForLcafSrcDst(address));
+        ILispDAO srcDstDao = (ILispDAO) dao.getSpecific(dstKey, LCAF_SRCDST_SUBKEY);
+        if (srcDstDao == null) {
+            srcDstDao = new HashMapDb();
+            dao.put(dstKey, new MappingEntry<>(LCAF_SRCDST_SUBKEY, srcDstDao));
+        }
+        return srcDstDao;
+    }
+
+    protected ILispDAO getSrcDstInnerDao(LispAddressContainer address, int maskLen) {
+        IMappingServiceKey dstKey = MappingServiceKeyUtil.generateMappingServiceKey(getDstForLcafSrcDst(address),
+                getDstMaskForLcafSrcDst(address));
+        return (ILispDAO) dao.getSpecific(dstKey, LCAF_SRCDST_SUBKEY);
     }
 }

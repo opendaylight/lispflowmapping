@@ -1124,7 +1124,7 @@ public class MappingServiceIntegrationTest {
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        builder.setSrcMaskLength((short) 0);
+        builder.setSrcMaskLength((short) 32);
         builder.setDstMaskLength((short) 0);
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(addrToSend1).build());
         builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(addrToSend2).build());
