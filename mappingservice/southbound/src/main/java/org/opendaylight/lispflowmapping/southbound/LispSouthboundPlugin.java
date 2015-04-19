@@ -36,12 +36,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRequestInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
+import com.google.common.util.concurrent.Futures;
 
 public class LispSouthboundPlugin extends AbstractBindingAwareProvider implements IConfigLispSouthboundPlugin, CommandProvider, LfmControlPlaneService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -280,8 +282,9 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             handleSerializedLispBuffer(mapNotifyInput.getTransportAddress(), outBuffer, MAP_NOTIFY);
         } else {
             LOG.warn("MapNotify was null");
+            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
         }
-        return null;
+        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
     }
 
     @Override
@@ -292,8 +295,9 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             handleSerializedLispBuffer(mapReplyInput.getTransportAddress(), outBuffer, MAP_REPlY);
         } else {
             LOG.warn("MapReply was null");
+            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
         }
-        return null;
+        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
     }
 
     @Override
@@ -304,8 +308,9 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
             handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer, MAP_REQUEST);
         } else {
             LOG.debug("MapRequest was null");
+            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
         }
-        return null;
+        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
     }
 
     @Override
