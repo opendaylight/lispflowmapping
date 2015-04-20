@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+
+    <!--
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+    -->
+
+    <module name="RegexpSingleline">
+        <!-- \s matches whitespace character, $ matches end of line. -->
+        <property name="format" value="\s+$"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
+    <module name="RegexpHeader">
+        <property name="header"
+                  value="^/[*]+\n^ \* Copyright.*. All rights reserved.\n^ \*$\n^ \* This program and the accompanying materials are made available under the\n^ \* terms of the Eclipse Public License v1.0 which accompanies this distribution,\n^ \* and is available at http://www.eclipse.org/legal/epl-v10.html\n^ [*]+/"/>
+        <property name="multiLines" value="2"/>
+    </module>
+
+    <module name="TreeWalker">
+       <module name="RedundantImport"/>
+       <module name="UnusedImports"/>
+       <module name="AvoidStarImport"/>
+       <module name="UpperEll"/>
+       <module name="EmptyStatement"/>
+       <module name="EqualsHashCode"/>
+    </module>
+
+</module>

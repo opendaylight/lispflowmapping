@@ -48,6 +48,33 @@
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+            <configLocation>checkstyle/java_rules.xml</configLocation>
+            <failsOnError>true</failsOnError>
+            <consoleOutput>true</consoleOutput>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>common.build.tools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
