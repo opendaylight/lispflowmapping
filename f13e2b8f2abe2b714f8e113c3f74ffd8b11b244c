@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_a82b49ea",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/dao/HashMapDb.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-20T12:41:28Z",
+      "side": 1,
+      "message": "All new code files need the standard copyright header, because the Linux Foundation mandates it.",
+      "revId": "f13e2b8f2abe2b714f8e113c3f74ffd8b11b244c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_28ddf970",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/AbstractLispComponent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-20T12:41:28Z",
+      "side": 1,
+      "message": "I guess this is just splitting hairs, so I don\u0027t feel strongly about this but the four above \"getter\" methods seem a bit out of place in a class called AbstractLispComponent, since they\u0027re very SrcDstLcaf specific.",
+      "revId": "f13e2b8f2abe2b714f8e113c3f74ffd8b11b244c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_e86b9183",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/AbstractLispComponent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-20T12:41:28Z",
+      "side": 1,
+      "message": "The workings of the DAO is not really described in any type of comments, Javadoc or otherwise.  I think that at least for new code, we should add a bit of explanatory comments.  It may be obvious to us that SrcDstLcaf needs a recursive or inner data structure, but I think this is one of those things that should be documented somewhere.  I\u0027m not sure if this function is the best place, but it\u0027s one option.\n\nI would eventually add a Javadoc style comment to the whole AbstractLispComponent class, to explain things happening here but for this commit, just documenting the above should be great.",
+      "revId": "f13e2b8f2abe2b714f8e113c3f74ffd8b11b244c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_8803ed72",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DAOMappingUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-20T12:41:28Z",
+      "side": 1,
+      "message": "These comments are very helpful, even more of them is welcome ;)",
+      "revId": "f13e2b8f2abe2b714f8e113c3f74ffd8b11b244c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_28f8997b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DAOMappingUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-20T12:41:28Z",
+      "side": 1,
+      "message": "Placement of this comment was confusing to me, I would put if after the next if statement.",
+      "revId": "f13e2b8f2abe2b714f8e113c3f74ffd8b11b244c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
