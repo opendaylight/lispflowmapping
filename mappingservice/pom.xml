@@ -53,4 +53,37 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- Temporarily override the odlparent checkstyle configuration.
+               We want to enforce some simple rules and add more as we clean up code -->
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+            <configLocation>checkstyle/java_rules.xml</configLocation>
+            <sourceDirectory>${project.basedir}</sourceDirectory>
+            <excludes>**/target/,**/${jmxGeneratorPath}/,**/${salGeneratorPath}/</excludes>
+            <failsOnError>true</failsOnError>
+            <consoleOutput>true</consoleOutput>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.opendaylight.lispflowmapping</groupId>
+              <artifactId>common.build.tools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

@@ -10,3 +10,4 @@
 *.iml
 *.iws
 .idea
+.checkstyle
