@@ -62,8 +62,7 @@
           <artifactId>maven-checkstyle-plugin</artifactId>
           <configuration>
             <configLocation>checkstyle/java_rules.xml</configLocation>
-            <sourceDirectory>${project.basedir}</sourceDirectory>
-            <excludes>**/target/,**/${jmxGeneratorPath}/,**/${salGeneratorPath}/</excludes>
+            <excludes>org/opendaylight/yang/gen/**,**/config/yang/**</excludes>
             <failsOnError>true</failsOnError>
             <consoleOutput>true</consoleOutput>
           </configuration>

@@ -21,6 +21,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <packaging>bundle</packaging>
   <name>LISP Flow Mapping YANG Model</name>
 
+  <properties>
+    <checkstyle.excludes>org/opendaylight/yang/gen/**</checkstyle.excludes>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.yangtools.model</groupId>
