@@ -27,6 +27,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
@@ -76,6 +77,10 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             }
 
         } else {
+            LispAFIAddress srcEid = null;
+            if (request.getSourceEid() != null) {
+                srcEid = LispAFIConvertor.toAFI(request.getSourceEid().getLispAddressContainer());
+            }
             MapReplyBuilder builder = new MapReplyBuilder();
             builder.setEchoNonceEnabled(false);
             builder.setProbe(false);
@@ -84,7 +89,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
             for (EidRecord eid : request.getEidRecord()) {
                 EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
-                Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMappingForEidRecord(eid, dao);
+                Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMapping(srcEid, eid, dao);
                 recordBuilder.setRecordTtl(0);
                 recordBuilder.setAction(Action.NoAction);
                 recordBuilder.setAuthoritative(false);
@@ -119,8 +124,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                         }
                     }
                 } else {
-                    recordBuilder
-                            .setAction(org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord.Action.NativelyForward);
+                    recordBuilder.setAction(Action.NativelyForward);
                     if (shouldAuthenticate() && getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
                         recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                     } else {

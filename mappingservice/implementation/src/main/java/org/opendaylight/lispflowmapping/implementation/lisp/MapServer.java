@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
@@ -34,15 +35,16 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafKeyValue;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafSourceDest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.DistinguishedName;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapnotifymessage.MapNotifyBuilder;
@@ -162,8 +164,6 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     }
 
     public boolean saveRlocs(EidToLocatorRecord eidRecord, boolean checkForChanges) {
-        List<MappingServiceRLOCGroup> oldLocators = null, newLocators = null;
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(), eidRecord.getMaskLength());
         Map<String, MappingServiceRLOCGroup> rlocGroups = new HashMap<String, MappingServiceRLOCGroup>();
         if (eidRecord.getLocatorRecord() != null) {
             for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
@@ -178,14 +178,44 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         for (String subkey : rlocGroups.keySet()) {
             entries.add(new MappingEntry<>(subkey, rlocGroups.get(subkey)));
         }
-        if (checkForChanges) {
-            oldLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
-        }
-        dao.put(key, entries.toArray(new MappingEntry[entries.size()]));
-        if (checkForChanges) {
-            newLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
-            if (!newLocators.equals(oldLocators)) {
-                return true;
+
+        if (eidRecord.getLispAddressContainer().getAddress() instanceof LcafSourceDest) {
+            Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> oldMapping= null, newMapping = null;
+            LispAFIAddress srcAddr = getSrcForLcafSrcDst(eidRecord.getLispAddressContainer());
+            LispAFIAddress dstAddr = getDstForLcafSrcDst(eidRecord.getLispAddressContainer());
+            short srcMask = getSrcMaskForLcafSrcDst(eidRecord.getLispAddressContainer());
+            short dstMask = getDstMaskForLcafSrcDst(eidRecord.getLispAddressContainer());
+
+            if (checkForChanges) {
+                oldMapping = DAOMappingUtil.getMappingExact(srcAddr, dstAddr, srcMask, dstMask, dao);
+            }
+            IMappingServiceKey dstKey = MappingServiceKeyUtil.generateMappingServiceKey(dstAddr, dstMask);
+            ILispDAO srcDstDao = (ILispDAO) dao.getSpecific(dstKey, LCAF_SRCDST_SUBKEY);
+            if (srcDstDao == null) {
+                srcDstDao = new HashMapDb();
+                dao.put(dstKey, new MappingEntry<>(LCAF_SRCDST_SUBKEY, srcDstDao));
+            }
+            IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(srcAddr, srcMask);
+            srcDstDao.put(srcKey, entries.toArray(new MappingEntry[entries.size()]));
+            if (checkForChanges) {
+                newMapping = DAOMappingUtil.getMappingExact(srcAddr, dstAddr, srcMask, dstMask, dao);
+                if (!newMapping.getValue().equals(oldMapping.getValue())) {
+                    return true;
+                }
+            }
+        } else {
+            List<MappingServiceRLOCGroup> oldLocators = null, newLocators = null;
+            if (checkForChanges) {
+                oldLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
+            }
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(eidRecord.getLispAddressContainer(),
+                    eidRecord.getMaskLength());
+            dao.put(key, entries.toArray(new MappingEntry[entries.size()]));
+            if (checkForChanges) {
+                newLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
+                if (!newLocators.equals(oldLocators)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -210,35 +240,57 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     }
 
     public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        dao.removeSpecific(key, PASSWORD_SUBKEY);
+        if (address.getAddress() instanceof LcafSourceDest) {
+            ILispDAO srcDstDao = getSrcDstInnerDao(address, maskLen);
+            if (srcDstDao != null) {
+                IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(getSrcForLcafSrcDst(address),
+                        getSrcMaskForLcafSrcDst(address));
+                srcDstDao.removeSpecific(srcKey, PASSWORD_SUBKEY);
+            }
+        } else {
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
+            dao.removeSpecific(key, PASSWORD_SUBKEY);
+        }
     }
 
     public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
         IMappingServiceKey mappingServiceKey = MappingServiceKeyUtil.generateMappingServiceKey(address, maskLen);
-        dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
-    }
-
-    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback) {
-        EidRecord eid = new EidRecordBuilder().setLispAddressContainer(address).setMask((short) maskLen).build();
-        Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMappingForEidRecord(eid, dao);
-        if (smr) {
-            HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(address, maskLen);
-            // mapping is removed before first SMR is sent to avoid inconsistent replies
-            removeMappingRlocs(mapping);
-            handleSmr(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
-                    setMaskLength((short) maskLen).build(), subscribers, callback);
-            dao.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
+        if (address.getAddress() instanceof LcafSourceDest) {
+            IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(getSrcForLcafSrcDst(address),
+                    getSrcMaskForLcafSrcDst(address));
+            ILispDAO srcDstDao = getOrInstantiateSrcDstInnerDao(address, maskLen);
+            srcDstDao.put(srcKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
         } else {
-            removeMappingRlocs(mapping);
-            dao.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
+            dao.put(mappingServiceKey, new MappingEntry<String>(PASSWORD_SUBKEY, key));
         }
     }
 
-    private void removeMappingRlocs(Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping) {
+    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback) {
+        Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.
+                            getMappingForEid(LispAFIConvertor.toAFI(address), maskLen, dao);
+        ILispDAO db;
+        if (address.getAddress() instanceof LcafSourceDest) {
+            db = getSrcDstInnerDao(address, maskLen);
+        } else {
+            db = dao;
+        }
+        if (smr) {
+            HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(address, maskLen);
+            // mapping is removed before first SMR is sent to avoid inconsistent replies
+            removeMappingRlocs(mapping, db);
+            handleSmr(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
+                    setMaskLength((short) maskLen).build(), subscribers, callback);
+            db.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
+        } else {
+            removeMappingRlocs(mapping, db);
+            db.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
+        }
+    }
+
+    private void removeMappingRlocs(Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping, ILispDAO db) {
         for (MappingServiceRLOCGroup group : mapping.getValue()) {
             for (LocatorRecord record : group.getRecords()) {
-                dao.removeSpecific(mapping.getKey(), getAddressKey(record.getLispAddressContainer().getAddress()));
+                db.removeSpecific(mapping.getKey(), getAddressKey(record.getLispAddressContainer().getAddress()));
             }
         }
     }

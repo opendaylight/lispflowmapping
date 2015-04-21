@@ -88,6 +88,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafSourceDest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
@@ -268,6 +269,7 @@ public class MappingServiceIntegrationTest {
     @Test
     public void testLCAFs() throws Exception {
         registerAndQuery__SrcDestLCAF();
+        registerAndQuery__SrcDestLCAFOverlap();
         registerAndQuery__KeyValueLCAF();
         registerAndQuery__ListLCAF();
         registerAndQuery__ApplicationData();
@@ -1057,6 +1059,69 @@ public class MappingServiceIntegrationTest {
         return registerAddressAndQuery(eid, -1);
     }
 
+    // takes an address, packs it in a MapRegister and sends it
+    private void registerAddress(LispAFIAddress eid, int maskLength) throws SocketTimeoutException {
+        MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
+        mapRegisterBuilder.setWantMapNotify(true);
+        mapRegisterBuilder.setKeyId((short) 0);
+        mapRegisterBuilder.setAuthenticationData(new byte[0]);
+        mapRegisterBuilder.setNonce((long) 8);
+        mapRegisterBuilder.setProxyMapReply(false);
+        EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
+        etlrBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        if (maskLength != -1) {
+            etlrBuilder.setMaskLength((short) maskLength);
+        } else {
+            etlrBuilder.setMaskLength((short) 0);
+        }
+        etlrBuilder.setRecordTtl(254);
+        etlrBuilder.setAction(Action.NoAction);
+        etlrBuilder.setAuthoritative(false);
+        etlrBuilder.setMapVersion((short) 0);
+        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
+        recordBuilder.setLocalLocator(false);
+        recordBuilder.setRlocProbed(false);
+        recordBuilder.setRouted(true);
+        recordBuilder.setMulticastPriority((short) 0);
+        recordBuilder.setMulticastWeight((short) 0);
+        recordBuilder.setPriority((short) 0);
+        recordBuilder.setWeight((short) 0);
+        recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(locatorEid));
+        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
+        mapRegisterBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapRegisterBuilder.getEidToLocatorRecord().add(etlrBuilder.build());
+        sendMapRegister(mapRegisterBuilder.build());
+        MapNotify mapNotify = receiveMapNotify();
+        assertEquals(8, mapNotify.getNonce().longValue());
+    }
+
+    private MapReply queryForAddress(LispAFIAddress eid, String srcEid) throws SocketTimeoutException {
+        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
+        mapRequestBuilder.setNonce((long) 4);
+        mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
+        mapRequestBuilder.getEidRecord().add(
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build());
+        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
+        if (srcEid != null) {
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(LispAFIConvertor.
+                    toContainer(LispAFIConvertor.asIPAfiAddress(srcEid))).build());
+        } else {
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(LispAFIConvertor.
+                    toContainer(LispAFIConvertor.asIPAfiAddress(ourAddress))).build());
+        }
+        mapRequestBuilder.getItrRloc().add(
+                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(ourAddress))).build());
+        mapRequestBuilder.setAuthoritative(false);
+        mapRequestBuilder.setMapDataPresent(false);
+        mapRequestBuilder.setPitr(false);
+        mapRequestBuilder.setProbe(false);
+        mapRequestBuilder.setSmr(false);
+        mapRequestBuilder.setSmrInvoked(false);
+        sendMapRequest(mapRequestBuilder.build());
+        return receiveMapReply();
+    }
+
     // takes an address, packs it in a MapRegister, sends it, returns the
     // MapReply
     private MapReply registerAddressAndQuery(LispAFIAddress eid, int maskLength) throws SocketTimeoutException {
@@ -1115,6 +1180,7 @@ public class MappingServiceIntegrationTest {
 
     // ------------------------------- LCAF Tests ---------------------------
 
+    @Test
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipString = "10.20.30.200";
@@ -1124,7 +1190,7 @@ public class MappingServiceIntegrationTest {
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        builder.setSrcMaskLength((short) 0);
+        builder.setSrcMaskLength((short) 32);
         builder.setDstMaskLength((short) 0);
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(addrToSend1).build());
         builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(addrToSend2).build());
@@ -1146,6 +1212,61 @@ public class MappingServiceIntegrationTest {
 
         assertEquals(ipString, receivedIP.getIpv4Address().getValue());
         assertEquals(macString, receivedMAC.getMacAddress().getValue());
+    }
+
+    @Test
+    public void registerAndQuery__SrcDestLCAFOverlap() throws SocketTimeoutException {
+        cleanUP();
+        String ipString1 = "10.10.10.0";
+        String ipString2 = "20.20.20.0";
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString1);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend2 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString2);
+        LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
+        builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
+        builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
+        builder.setSrcMaskLength((short) 24);
+        builder.setDstMaskLength((short) 24);
+        builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(addrToSend1).build());
+        builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(addrToSend2).build());
+
+        LcafSourceDestAddr srcDst = builder.build();
+        registerAddress(LispAFIConvertor.asIPAfiAddress(ipString2), 24);
+        registerAddress(srcDst, -1);
+
+        // exact match
+        MapReply reply = queryForAddress(srcDst, null);
+
+        LispAddressContainer fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
+        assertTrue(fromNetwork.getAddress() instanceof LcafSourceDest);
+        LcafSourceDest sourceDestFromNetwork = (LcafSourceDest) fromNetwork.getAddress();
+
+        LispAFIAddress receivedAddr1 = LispAFIConvertor.toAFIfromPrimitive(sourceDestFromNetwork.getLcafSourceDestAddr().getSrcAddress().getPrimitiveAddress());
+        LispAFIAddress receivedAddr2 = LispAFIConvertor.toAFIfromPrimitive(sourceDestFromNetwork.getLcafSourceDestAddr().getDstAddress().getPrimitiveAddress());
+
+        assertTrue(receivedAddr1 instanceof LispIpv4Address);
+        assertTrue(receivedAddr2 instanceof LispIpv4Address);
+
+        LispIpv4Address receivedIP1 = (LispIpv4Address) receivedAddr1;
+        LispIpv4Address receivedIP2 = (LispIpv4Address) receivedAddr2;
+
+        assertEquals(ipString1, receivedIP1.getIpv4Address().getValue());
+        assertEquals(ipString2, receivedIP2.getIpv4Address().getValue());
+
+        // srcEid/dstEid match
+        reply = queryForAddress(LispAFIConvertor.asIPAfiAddress("20.20.20.1"), "10.10.10.1");
+        fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
+        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4);
+
+        Ipv4Address ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
+        assertEquals(ipString2, ipAddr2.getIpv4Address().getValue());
+
+        // dstEid match only
+        reply = queryForAddress(LispAFIConvertor.asIPAfiAddress("20.20.20.1"), "1.2.3.4");
+        fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
+        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4);
+
+        ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
+        assertEquals(ipString2, ipAddr2.getIpv4Address().getValue());
     }
 
     @Test
