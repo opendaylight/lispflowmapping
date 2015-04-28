@@ -125,6 +125,8 @@
               org.opendaylight.lispflowmapping.type.sbplugin,
               javax.crypto,
               javax.crypto.spec,
+              org.opendaylight.controller.md.sal.binding.api,
+              org.opendaylight.controller.md.sal.common.api.data,
               org.opendaylight.controller.sal.binding.api,
               org.opendaylight.yangtools.yang.binding,
               org.opendaylight.yangtools.yang.common,
