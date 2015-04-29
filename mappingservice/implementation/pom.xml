@@ -59,7 +59,9 @@
               org.opendaylight.lispflowmapping.implementation.dao,
               org.opendaylight.lispflowmapping.implementation.serializer,
               org.opendaylight.lispflowmapping.implementation.util</Export-Package>
-            <Import-Package>javax.xml.bind,
+            <Import-Package>com.google.common.base,
+              com.google.common.util.concurrent,
+              javax.xml.bind,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords,
@@ -103,6 +105,9 @@
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.reencaphop,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.mapping.database,
+              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.update.key.input,
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
               org.opendaylight.controller.sal.core,
@@ -123,6 +128,7 @@
               javax.crypto.spec,
               org.opendaylight.controller.sal.binding.api,
               org.opendaylight.yangtools.yang.binding,
+              org.opendaylight.yangtools.yang.common,
               org.opendaylight.yangtools.concepts</Import-Package>
             <Bundle-Activator>org.opendaylight.lispflowmapping.implementation.Activator</Bundle-Activator>
             <Service-Component></Service-Component>
