@@ -55,26 +55,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyWithRefInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyWithRefOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingWithRefInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingWithRefOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyWithRefInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingWithRefInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyWithRefInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateMappingWithRefInput;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
@@ -90,6 +80,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
+    private LfmMappingDatabaseRPCs rpc = new LfmMappingDatabaseRPCs();
     private ILispDAO lispDao = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
@@ -310,6 +301,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         session.addRpcImplementation(LfmMappingDatabaseService.class, this);
+        rpc.setLispMappingService(this);
         this.session = session;
     }
 
@@ -398,90 +390,42 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     @Override
-    public Future<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<Void>> addKey(AddKeyInput input) {
+        return rpc.addKey(input);
     }
 
     @Override
-    public Future<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
+    public Future<RpcResult<Void>> addMapping(AddMappingInput input) {
+        return rpc.addMapping(input);
     }
 
     @Override
     public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<GetKeyWithRefOutput>> getKeyWithRef(
-            GetKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.getKey(input);
     }
 
     @Override
     public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<GetMappingWithRefOutput>> getMappingWithRef(
-            GetMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.getMapping(input);
     }
 
     @Override
     public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<Void>> removeKeyWithRef(RemoveKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.removeKey(input);
     }
 
     @Override
     public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<Void>> removeMappingWithRef(
-            RemoveMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.removeMapping(input);
     }
 
     @Override
     public Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<Void>> updateKeyWithRef(UpdateKeyWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.updateKey(input);
     }
 
     @Override
     public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Future<RpcResult<Void>> updateMappingWithRef(
-            UpdateMappingWithRefInput input) {
-        // TODO Auto-generated method stub
-        return null;
+        return rpc.updateMapping(input);
     }
 }
