@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
@@ -25,6 +26,8 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
+import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
+import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
@@ -81,6 +84,8 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
 
     private static final ConfigIni configIni = new ConfigIni();
     private LfmMappingDatabaseRPCs RPC = new LfmMappingDatabaseRPCs();
+    private AuthenticationKeyDataListener keyListener;
+    private MappingDataListener mappingListener;
     private ILispDAO lispDao = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
@@ -155,6 +160,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
+        closeDataListeners();
     }
 
     public void _removeEid(final CommandInterpreter ci) {
@@ -300,9 +306,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         notificationService = session.getSALService(NotificationService.class);
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
+        registerDataListeners(session.getSALService(DataBroker.class));
         session.addRpcImplementation(LfmMappingDatabaseService.class, this);
         RPC.setLispMappingService(this);
         this.session = session;
+    }
+
+    private void registerDataListeners(DataBroker broker) {
+        keyListener = new AuthenticationKeyDataListener(broker, this);
+        mappingListener = new MappingDataListener(broker, this);
+    }
+
+    private void closeDataListeners() {
+        keyListener.closeDataChangeListener();
+        mappingListener.closeDataChangeListener();
     }
 
     public <T extends Notification> void registerNotificationListener(Class<T> notificationType, NotificationListener<T> listener) {
