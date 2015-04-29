@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_ad2574c3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-29T17:20:15Z",
+      "side": 1,
+      "message": "Yeap.  I think I initially thought of making it a static final variable and that\u0027s why it;s like that.  Will fix.",
+      "parentUuid": "3aa0d159_0d4a6880",
+      "revId": "06c4c195140aa4a772e92905fd424f8a1deb2738",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_4d371000",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapServerMapResolverUtil.java",
         "patchSetId": 7
@@ -42,6 +60,24 @@
         "endLine": 32,
         "endChar": 44
       },
+      "revId": "06c4c195140aa4a772e92905fd424f8a1deb2738",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_cd2240b9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapServerMapResolverUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-04-29T17:20:15Z",
+      "side": 1,
+      "message": "Hmm, not so sure about that, I\u0027ve seen this \"convention\" used by Devid before, so for consistency I followed that.",
+      "parentUuid": "3aa0d159_4d371000",
       "revId": "06c4c195140aa4a772e92905fd424f8a1deb2738",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
