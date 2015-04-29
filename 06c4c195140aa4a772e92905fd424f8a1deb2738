@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_0d4a6880",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-04-29T17:14:29Z",
+      "side": 1,
+      "message": "Not sure about the convention, but shouldn\u0027t this start in lower case?",
+      "range": {
+        "startLine": 83,
+        "startChar": 35,
+        "endLine": 83,
+        "endChar": 38
+      },
+      "revId": "06c4c195140aa4a772e92905fd424f8a1deb2738",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_4d371000",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapServerMapResolverUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-04-29T17:14:29Z",
+      "side": 1,
+      "message": "General comment for all these methods: for me the \"get\" part of the names should be \"make\"",
+      "range": {
+        "startLine": 32,
+        "startChar": 30,
+        "endLine": 32,
+        "endChar": 44
+      },
+      "revId": "06c4c195140aa4a772e92905fd424f8a1deb2738",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
