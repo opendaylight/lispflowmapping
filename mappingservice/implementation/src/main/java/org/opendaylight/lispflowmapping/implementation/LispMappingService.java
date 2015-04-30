@@ -83,7 +83,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
-    private LfmMappingDatabaseRPCs rpc = new LfmMappingDatabaseRPCs();
+    private LfmMappingDatabaseRPCs rpc;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
     private ILispDAO lispDao = null;
@@ -226,6 +226,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public MapReply handleMapRequest(MapRequest request, boolean smr) {
+        LOG.debug("DAO: Retrieving mapping for {}/{}",
+                LispAFIConvertor.toString(request.getEidRecord().get(0).getLispAddressContainer()),
+                request.getEidRecord().get(0).getMask());
+
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
         mapResolver.handleMapRequest(request, smr, this);
@@ -249,6 +253,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
+        LOG.debug("DAO: Adding mapping for {}/{}",
+                LispAFIConvertor.toString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()),
+                mapRegister.getEidToLocatorRecord().get(0).getMaskLength());
+
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister, smr, this);
         // After this invocation we assume that the thread local is filled with
@@ -257,18 +265,22 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
+        LOG.debug("DAO: Retrieving authentication key for {}/{}", LispAFIConvertor.toString(address), maskLen);
         return mapServer.getAuthenticationKey(address, maskLen);
     }
 
     public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
+        LOG.debug("DAO: Removing authentication key for {}/{}", LispAFIConvertor.toString(address), maskLen);
         mapServer.removeAuthenticationKey(address, maskLen);
     }
 
     public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
+        LOG.debug("DAO: Adding authentication key '{}' for {}/{}", key, LispAFIConvertor.toString(address), maskLen);
         mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
     public void removeMapping(LispAddressContainer address, int maskLen) {
+        LOG.debug("DAO: Removing mapping for {}/{}", LispAFIConvertor.toString(address), maskLen);
         mapServer.removeMapping(address, maskLen, smr, this);
     }
 
@@ -308,7 +320,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         registerDataListeners(session.getSALService(DataBroker.class));
         session.addRpcImplementation(LfmMappingDatabaseService.class, this);
-        rpc.setLispMappingService(this);
+        this.rpc = new LfmMappingDatabaseRPCs(this, session.getSALService(DataBroker.class));
         this.session = session;
     }
 

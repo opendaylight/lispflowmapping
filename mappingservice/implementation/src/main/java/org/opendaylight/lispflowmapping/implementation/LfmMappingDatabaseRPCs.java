@@ -9,9 +9,10 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import java.util.concurrent.Future;
 
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
+import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyInput;
@@ -48,6 +49,14 @@ class LfmMappingDatabaseRPCs {
     private static final String DATA_EXISTS_TAG = "data-exists";
 
     private LispMappingService lispMappingService;
+    private DataBroker dataBroker;
+    private DataStoreBackEnd dsbe;
+
+    LfmMappingDatabaseRPCs(LispMappingService lispMappingService, DataBroker dataBroker) {
+        this.lispMappingService = lispMappingService;
+        this.dataBroker = dataBroker;
+        this.dsbe = new DataStoreBackEnd(this.dataBroker);
+    }
 
     Future<RpcResult<Void>> addKey(AddKeyInput input) {
         Preconditions.checkNotNull(input, "add-key RPC input must be not null!");
@@ -65,8 +74,7 @@ class LfmMappingDatabaseRPCs {
             return Futures.immediateFuture(rpcResultBuilder.build());
         }
 
-        lispMappingService.addAuthenticationKey(input.getLispAddressContainer(),
-                input.getMaskLength(), input.getAuthkey());
+        dsbe.addAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
         rpcResultBuilder = RpcResultBuilder.success();
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -76,7 +84,13 @@ class LfmMappingDatabaseRPCs {
         Preconditions.checkNotNull(input, "add-mapping RPC input must be not null!");
         LOG.debug("RPC received to add the following mapping: " + input.toString());
 
-        return addMapping((EidToLocatorRecord)input);
+        dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
+
+        RpcResultBuilder<Void> rpcResultBuilder;
+
+        rpcResultBuilder = RpcResultBuilder.success();
+
+        return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
     Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
@@ -126,7 +140,7 @@ class LfmMappingDatabaseRPCs {
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        lispMappingService.removeAuthenticationKey(input.getLispAddressContainer(), input.getMaskLength());
+        dsbe.removeAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
 
         rpcResultBuilder = RpcResultBuilder.success();
 
@@ -139,7 +153,7 @@ class LfmMappingDatabaseRPCs {
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        lispMappingService.removeMapping(input.getLispAddressContainer(), input.getMaskLength());
+        dsbe.removeMapping(RPCInputConvertorUtil.toMapping(input));
 
         rpcResultBuilder = RpcResultBuilder.success();
 
@@ -162,8 +176,7 @@ class LfmMappingDatabaseRPCs {
             return Futures.immediateFuture(rpcResultBuilder.build());
         }
 
-        lispMappingService.addAuthenticationKey(input.getEid().getLispAddressContainer(),
-                input.getEid().getMaskLength(), input.getKey().getAuthkey());
+        dsbe.updateAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
         rpcResultBuilder = RpcResultBuilder.success();
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -173,15 +186,9 @@ class LfmMappingDatabaseRPCs {
         LOG.debug("RPC received to update the following mapping: " + input.toString());
         Preconditions.checkNotNull(input, "update-mapping RPC input must be not null!");
 
-        return addMapping((EidToLocatorRecord)input);
-    }
+        RpcResultBuilder<Void> rpcResultBuilder;
 
-    Future<RpcResult<Void>> addMapping(EidToLocatorRecord mapping) {
-        RpcResultBuilder<Void> rpcResultBuilder = null;
-
-        MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-        // SMR is false, since we don't want to subscribe for SMRs (that's for SB Map-Registers)
-        lispMappingService.handleMapRegister(register, false);
+        dsbe.updateMapping(RPCInputConvertorUtil.toMapping(input));
 
         rpcResultBuilder = RpcResultBuilder.success();
 
