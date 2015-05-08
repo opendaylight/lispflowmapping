@@ -21,6 +21,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <properties>
     <karaf.localFeature>odl-lispflowmapping-all</karaf.localFeature>
   </properties>
+  <prerequisites>
+    <maven>3.2</maven>
+  </prerequisites>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -39,6 +42,23 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.apache.karaf.features</groupId>
       <artifactId>framework</artifactId>
       <type>kar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.sshd</groupId>
+          <artifactId>sshd-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>standard</artifactId>
+      <version>${karaf.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
     </dependency>
 
     <dependency>

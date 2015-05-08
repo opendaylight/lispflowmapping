@@ -21,6 +21,14 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.implementation</artifactId>
+      <version>${project.version}</version>
+      <classifier>config</classifier>
+      <type>xml</type>
+    </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>features-adsal</artifactId>
