@@ -5,11 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.implementation;
+package org.opendaylight.lispflowmapping.implementation.provider;
 
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
@@ -23,6 +24,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyInput;
@@ -41,10 +43,11 @@ import com.google.common.util.concurrent.Futures;
  * referenced by {@link LispMappingService}
  *
  * @author Lorand Jakab
+ * @author Florin Coras
  *
  */
-class LfmMappingDatabaseRPCs {
-    protected static final Logger LOG = LoggerFactory.getLogger(LfmMappingDatabaseRPCs.class);
+public class LfmMappingDatabaseProviderRpc implements LfmMappingDatabaseService {
+    protected static final Logger LOG = LoggerFactory.getLogger(LfmMappingDatabaseProviderRpc.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
 
@@ -52,13 +55,15 @@ class LfmMappingDatabaseRPCs {
     private DataBroker dataBroker;
     private DataStoreBackEnd dsbe;
 
-    LfmMappingDatabaseRPCs(LispMappingService lispMappingService, DataBroker dataBroker) {
-        this.lispMappingService = lispMappingService;
+    public LfmMappingDatabaseProviderRpc(DataBroker dataBroker) {
+        this.lispMappingService = LispMappingService.getLispMappingService();
         this.dataBroker = dataBroker;
         this.dsbe = new DataStoreBackEnd(this.dataBroker);
+        LOG.info("LfmMappingDatabaseProviderRpc created!");
     }
 
-    Future<RpcResult<Void>> addKey(AddKeyInput input) {
+    @Override
+    public Future<RpcResult<Void>> addKey(AddKeyInput input) {
         Preconditions.checkNotNull(input, "add-key RPC input must be not null!");
         LOG.debug("RPC received to add the following key: " + input.toString());
 
@@ -80,7 +85,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<Void>> addMapping(AddMappingInput input) {
+    @Override
+    public Future<RpcResult<Void>> addMapping(AddMappingInput input) {
         Preconditions.checkNotNull(input, "add-mapping RPC input must be not null!");
         LOG.debug("RPC received to add the following mapping: " + input.toString());
 
@@ -93,7 +99,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
+    @Override
+    public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
         Preconditions.checkNotNull(input, "get-key RPC input must be not null!");
         LOG.debug("RPC received to get the following key: " + input.toString());
 
@@ -112,7 +119,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
+    @Override
+    public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
         Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
         LOG.debug("RPC received to add get following mapping: " + input.toString());
 
@@ -134,7 +142,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
+    @Override
+    public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
         Preconditions.checkNotNull(input, "remove-key RPC input must be not null!");
         LOG.debug("RPC received to remove the following key: " + input.toString());
 
@@ -147,7 +156,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
+    @Override
+    public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
         Preconditions.checkNotNull(input, "remove-mapping RPC input must be not null!");
         LOG.debug("RPC received to remove the following mapping: " + input.toString());
 
@@ -160,7 +170,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
+    @Override
+    public Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
         Preconditions.checkNotNull(input, "update-key RPC input must be not null!");
         LOG.debug("RPC received to update the following key: " + input.toString());
 
@@ -182,7 +193,8 @@ class LfmMappingDatabaseRPCs {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
+    @Override
+    public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
         LOG.debug("RPC received to update the following mapping: " + input.toString());
         Preconditions.checkNotNull(input, "update-mapping RPC input must be not null!");
 
