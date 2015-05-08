@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>lispflowmapping-all</artifactId>
     <version>1.2.0-SNAPSHOT</version>
-    <!-- <relativePath>../commons/parent</relativePath> -->
   </parent>
+  
   <artifactId>mappingservice-parent</artifactId>
   <packaging>pom</packaging>
   <name>LISP Flow Mapping Parent POM</name>
+  
   <modules>
     <module>yangmodel</module>
     <module>api</module>
@@ -23,14 +25,16 @@
     <module>shell</module>
     <module>integrationtest</module>
   </modules>
+
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common.unittest.tools</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
-      <artifactId>common.unittest.tools</artifactId>
     </dependency>
     <dependency>
       <groupId>junit-addons</groupId>
@@ -53,36 +57,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- Temporarily override the odlparent checkstyle configuration.
-               We want to enforce some simple rules and add more as we clean up code -->
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <configuration>
-            <configLocation>checkstyle/java_rules.xml</configLocation>
-            <excludes>org/opendaylight/yang/gen/**,**/config/yang/**</excludes>
-            <failsOnError>true</failsOnError>
-            <consoleOutput>true</consoleOutput>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>common.build.tools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <phase>process-sources</phase>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>
