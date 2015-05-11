@@ -19,6 +19,7 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
@@ -108,12 +109,17 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         LOG.debug("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerProvider(this, bundleContext);
+
+        // For the time being we initialize variables here. But once we remove the activator, these should
+        // be moved to the constructor.
         lfmService = this;
+        setLispDao(new HashMapDb());
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
         LOG.debug("BindingAwareBroker was unset in LispMappingService");
         lfmService = null;
+        unsetLispDao(lispDao);
     }
 
     public void basicInit(ILispDAO dao) {
@@ -152,6 +158,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
+        unsetLispDao(lispDao);
         closeDataListeners();
     }
 

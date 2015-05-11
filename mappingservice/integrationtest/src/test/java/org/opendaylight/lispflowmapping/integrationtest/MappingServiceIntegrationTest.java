@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -45,7 +44,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
-import org.opendaylight.lispflowmapping.clusterdao.ClusterDAOService;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
@@ -53,7 +51,6 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSer
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
@@ -122,7 +119,6 @@ import org.slf4j.LoggerFactory;
 public class MappingServiceIntegrationTest {
 
     private IFlowMapping lms;
-    private ClusterDAOService clusterService;
     protected static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
@@ -1512,8 +1508,7 @@ public class MappingServiceIntegrationTest {
     }
 
     private void causeEntryToBeCleaned() {
-        clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
-        clusterService.cleanOld();
+        this.lms.clean();
     }
 
     private void testTTLAfterRegister(MapRequest mapRequest) throws SocketTimeoutException {
@@ -1851,12 +1846,6 @@ public class MappingServiceIntegrationTest {
 
         assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
 
-        r = bc.getServiceReference(ILispDAO.class.getName());
-        if (r != null) {
-            this.clusterService = (ClusterDAOService) bc.getService(r);
-        }
-
-        assertNotNull(ILispDAO.class.getName() + " service wasn't found in bundle context ", this.clusterService);
         r = bc.getServiceReference(IConfigLispSouthboundPlugin.class.getName());
         if (r != null) {
             this.configLispPlugin = (IConfigLispSouthboundPlugin) bc.getService(r);
