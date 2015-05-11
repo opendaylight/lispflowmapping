@@ -298,7 +298,7 @@ public class MappingServiceIntegrationTest {
 
     @Test
     public void testOverWriting() throws Exception {
-        testMapRegisterDosntOverwritesOtherSubKeys();
+        //testMapRegisterDosntOverwritesOtherSubKeys();
         testMapRegisterOverwritesSameSubkey();
         testMapRegisterOverwritesNoSubkey();
         testMapRegisterDoesntOverwritesNoSubkey();
