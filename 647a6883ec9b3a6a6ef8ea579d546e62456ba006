@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3aa0d159_f85b1585",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T10:08:18Z",
+      "side": 1,
+      "message": "FWIW, for me southbound, northbound and neutron still don\u0027t come up, they are in the \"Installed\" state.",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_78c5c53a",
         "filename": "distribution-karaf/pom.xml",
         "patchSetId": 4
