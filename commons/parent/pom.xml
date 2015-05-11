@@ -49,12 +49,7 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <xtend.dstdir>src/main/xtend-gen</xtend.dstdir>
-    <yang-jmx-generator.version>1.1.0-SNAPSHOT</yang-jmx-generator.version>
-    <yang.binding.version>0.6.1</yang.binding.version>
-    <yang.codegen.version>0.6.1</yang.codegen.version>
     <yang.src.path>src/main/yang</yang.src.path>
-    <yang.version>0.6.1</yang.version>
-    <yangtools.binding.version>0.6.1</yangtools.binding.version>
     <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
   </properties>
 
@@ -675,6 +670,10 @@
              </goals>
            </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

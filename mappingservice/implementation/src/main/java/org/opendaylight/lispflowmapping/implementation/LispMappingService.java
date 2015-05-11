@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
-import java.util.concurrent.Future;
-
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -57,33 +55,20 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetKeyOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.GetMappingOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.RemoveMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.UpdateMappingInput;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yangtools.yang.binding.Notification;
-import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareProvider,
-        IMapRequestResultHandler, IMapNotifyHandler, LfmMappingDatabaseService {
+        IMapRequestResultHandler, IMapNotifyHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
-    private LfmMappingDatabaseRPCs rpc;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
     private ILispDAO lispDao = null;
@@ -101,6 +86,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     private ProviderContext session;
 
     private NotificationService notificationService;
+    private static LispMappingService lfmService = null;
 
     class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
@@ -114,14 +100,20 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingServiceNoMaskKey, Integer> {
     }
 
+    public static LispMappingService getLispMappingService() {
+        return lfmService;
+    }
+
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        LOG.trace("BindingAwareBroker set!");
+        LOG.debug("BindingAwareBroker set!");
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bindingAwareBroker.registerProvider(this, bundleContext);
+        lfmService = this;
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
         LOG.debug("BindingAwareBroker was unset in LispMappingService");
+        lfmService = null;
     }
 
     public void basicInit(ILispDAO dao) {
@@ -319,8 +311,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         registerDataListeners(session.getSALService(DataBroker.class));
-        session.addRpcImplementation(LfmMappingDatabaseService.class, this);
-        this.rpc = new LfmMappingDatabaseRPCs(this, session.getSALService(DataBroker.class));
         this.session = session;
     }
 
@@ -416,45 +406,5 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     @Override
     public void setOverwrite(boolean overwrite) {
         mapServer.setOverwrite(overwrite);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> addKey(AddKeyInput input) {
-        return rpc.addKey(input);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> addMapping(AddMappingInput input) {
-        return rpc.addMapping(input);
-    }
-
-    @Override
-    public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
-        return rpc.getKey(input);
-    }
-
-    @Override
-    public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
-        return rpc.getMapping(input);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
-        return rpc.removeKey(input);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
-        return rpc.removeMapping(input);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> updateKey(UpdateKeyInput input) {
-        return rpc.updateKey(input);
-    }
-
-    @Override
-    public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
-        return rpc.updateMapping(input);
     }
 }
