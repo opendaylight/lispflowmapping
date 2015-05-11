@@ -61,7 +61,6 @@
               org.opendaylight.lispflowmapping.type,
               org.opendaylight.lispflowmapping.type.lisp,
               org.opendaylight.lispflowmapping.type.sbplugin,
-              org.opendaylight.controller.clustering.services,
               org.opendaylight.lispflowmapping.implementation.serializer,
               org.opendaylight.lispflowmapping.implementation.util,
               org.opendaylight.controller.sal.binding.api,

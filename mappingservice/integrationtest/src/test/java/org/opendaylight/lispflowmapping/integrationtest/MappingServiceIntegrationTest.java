@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -1512,8 +1511,10 @@ public class MappingServiceIntegrationTest {
     }
 
     private void causeEntryToBeCleaned() {
-        clusterService.setTimeUnit(TimeUnit.NANOSECONDS);
-        clusterService.cleanOld();
+        // TODO for the time being, to keep master and stable/lithium in sync, we need to remove the forceful
+        // expiration of DAO entries. Once we're past this, we'll have to expose methods to setTimeUnit(TimeUnit)
+        // and cleanOld() (expired) entries in IFlowMapping (and perhaps ILispDAO) and use them here.
+        this.lms.clean();
     }
 
     private void testTTLAfterRegister(MapRequest mapRequest) throws SocketTimeoutException {
