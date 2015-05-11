@@ -31,7 +31,7 @@
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
         <feature version="${mdsal.version}">odl-mdsal-apidocs</feature>
         <feature version="${sal.version}">odl-adsal-core</feature>
-        <feature version="${clustering.services.version}">odl-adsal-clustering</feature>
+        <!-- <feature version="${clustering.services.version}">odl-adsal-clustering</feature> -->
         <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
@@ -39,7 +39,7 @@
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${lispflowmapping.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/${lispflowmapping.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.shell/${lispflowmapping.version}</bundle>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.clusterdao/${lispflowmapping.version}</bundle>
+        <!-- <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.clusterdao/${lispflowmapping.version}</bundle> -->
         <configfile finalname="${configfile.directory}/lfm-mappingservice.xml">
             mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/${lispflowmapping.version}/xml/config
         </configfile>

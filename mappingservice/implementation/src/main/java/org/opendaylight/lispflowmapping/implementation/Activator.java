@@ -81,8 +81,6 @@ public class Activator extends ComponentActivatorAbstractBase {
             Dictionary<String, String> props = new Hashtable<String, String>();
             props.put("name", "mappingservice");
             c.setInterface(new String[] { IFlowMapping.class.getName(), IFlowMappingShell.class.getName() }, props);
-            c.add(createContainerServiceDependency(containerName).setService(ILispDAO.class).setCallbacks("setLispDao", "unsetLispDao")
-                    .setRequired(true));
             c.add(createServiceDependency().setService(BindingAwareBroker.class).setRequired(true)
                     .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker"));
         }
