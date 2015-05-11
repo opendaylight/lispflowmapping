@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_78c5c53a",
+        "filename": "distribution-karaf/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "whitespace",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_98c0d12b",
+        "filename": "distribution-karaf/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "why?",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_78f3859e",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "Do we really-really need these two features as dependencies?  I don\u0027t see anyone but yangotools and controller\u0027s core features dependening on them?",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_98ee91b3",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "whitespace (and several others below)",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_58300956",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "... and soon this one too!",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_183a8136",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/provider/LfmMappingDatabaseProviderRpc.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "I\u0027d put this at DEBUG level, since INFO is shown on every user\u0027s console. Or if you consider this message is that important, the text could be changed to something more meaningful like \"LISP Mapping Service RPCs registered.\"",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_38141d9f",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "whitespace (and below)",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_f80d5591",
+        "filename": "mappingservice/yangmodel/.gitignore",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "This is some Eclipse weirdness, should not be committed.",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_181121ac",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "whitespace",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_b827cd11",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-11T09:54:04Z",
+      "side": 1,
+      "message": "why?",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
