@@ -18,6 +18,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <artifactId>distribution-karaf</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <name>LISP Flow Mapping Project - Karaf Distribution</name>
+  <prerequisites>
+    <maven>3.1.1</maven>
+  </prerequisites>
   <properties>
     <karaf.localFeature>odl-lispflowmapping-all</karaf.localFeature>
   </properties>
@@ -40,7 +43,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>framework</artifactId>
       <type>kar</type>
     </dependency>
-
+    
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>features-lispflowmapping</artifactId>
@@ -49,4 +52,23 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <scope>runtime</scope>
     </dependency>
   </dependencies>
+    <!-- DO NOT install or deploy the karaf artifact -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build> 
 </project>
