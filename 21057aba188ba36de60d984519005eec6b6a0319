@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_1ed6e9c5",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 0,
+      "message": "I know ;-)",
+      "parentUuid": "3aa0d159_382dfdfe",
+      "revId": "21057aba188ba36de60d984519005eec6b6a0319",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_5817a9a3",
         "filename": "mappingservice/pom.xml",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-11T09:54:04Z",
       "side": 0,
       "message": "Please, please don\u0027t remove this.  We need at least some rules to be enforced.  Checkstyle in ODLparent does only warnings.",
+      "revId": "21057aba188ba36de60d984519005eec6b6a0319",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_9eed19f2",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 0,
+      "message": "Good catch! Not sure why this is out. I was cleaning the poms and probably I took it out by mistake.",
+      "parentUuid": "3aa0d159_5817a9a3",
       "revId": "21057aba188ba36de60d984519005eec6b6a0319",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false

@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_de85e1ad",
+        "filename": "distribution-karaf/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "Just for clarity. But I can remove them if you think it\u0027s better.",
+      "parentUuid": "3aa0d159_78c5c53a",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_98c0d12b",
         "filename": "distribution-karaf/pom.xml",
         "patchSetId": 4
@@ -47,6 +65,24 @@
       "writtenOn": "2015-05-11T09:54:04Z",
       "side": 1,
       "message": "why?",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_9e8f59cc",
+        "filename": "distribution-karaf/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "I think I tested withouth these and things still worked. I gleaned them from archetype project so I figured they might serve some, for now unknown, purpose. :-)\nNo strong feelings towards them.",
+      "parentUuid": "3aa0d159_98c0d12b",
       "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_de3ba136",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "I use them to have some visual separation between logical blocks. Can thake them out though.",
+      "parentUuid": "3aa0d159_98ee91b3",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_58300956",
         "filename": "mappingservice/implementation/pom.xml",
         "patchSetId": 4
@@ -104,6 +158,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_bedc95e5",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "soon!",
+      "parentUuid": "3aa0d159_58300956",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_183a8136",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/provider/LfmMappingDatabaseProviderRpc.java",
         "patchSetId": 4
@@ -115,6 +187,24 @@
       "writtenOn": "2015-05-11T09:54:04Z",
       "side": 1,
       "message": "I\u0027d put this at DEBUG level, since INFO is shown on every user\u0027s console. Or if you consider this message is that important, the text could be changed to something more meaningful like \"LISP Mapping Service RPCs registered.\"",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_3eb885c7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/provider/LfmMappingDatabaseProviderRpc.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "Will change!",
+      "parentUuid": "3aa0d159_183a8136",
       "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -149,6 +239,24 @@
       "writtenOn": "2015-05-11T09:54:04Z",
       "side": 1,
       "message": "This is some Eclipse weirdness, should not be committed.",
+      "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_decac16d",
+        "filename": "mappingservice/yangmodel/.gitignore",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-11T16:39:11Z",
+      "side": 1,
+      "message": "will remove",
+      "parentUuid": "3aa0d159_f80d5591",
       "revId": "647a6883ec9b3a6a6ef8ea579d546e62456ba006",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
