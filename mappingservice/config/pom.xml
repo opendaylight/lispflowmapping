@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
   </parent>
   <artifactId>mappingservice.config</artifactId>
   <packaging>bundle</packaging>
@@ -41,17 +41,17 @@
         <plugin>
           <groupId>org.opendaylight.yangtools</groupId>
           <artifactId>yang-maven-plugin</artifactId>
-          <version>0.7.0-SNAPSHOT</version>
+          <version>0.8.0-SNAPSHOT</version>
           <dependencies>
             <dependency>
               <groupId>org.opendaylight.controller</groupId>
               <artifactId>yang-jmx-generator-plugin</artifactId>
-              <version>0.3.0-SNAPSHOT</version>
+              <version>0.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
               <groupId>org.opendaylight.yangtools</groupId>
               <artifactId>maven-sal-api-gen-plugin</artifactId>
-              <version>0.7.0-SNAPSHOT</version>
+              <version>0.8.0-SNAPSHOT</version>
               <type>jar</type>
             </dependency>
           </dependencies>
