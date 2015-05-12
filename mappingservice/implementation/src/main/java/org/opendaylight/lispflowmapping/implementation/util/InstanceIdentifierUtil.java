@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import com.google.common.base.Preconditions;
 
 /**
- * Utility class to create InstanceIdentifier<?> path objects based on EID.
+ * Utility class to create InstanceIdentifier path objects based on EID.
  * Used for storing RPC data to the config datastore.
  *
  * @author Lorand Jakab
