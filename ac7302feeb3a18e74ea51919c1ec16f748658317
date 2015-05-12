@@ -22,6 +22,30 @@
       "revId": "ac7302feeb3a18e74ea51919c1ec16f748658317",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_0c0ec38d",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-12T03:57:50Z",
+      "side": 1,
+      "message": "Yes, it\u0027s an unused import. Clustering services used to be imported in features-lispflowmapping but are not any longer since we\u0027re taking clusterdao out. Practically, if we don\u0027t remove this, features-lispflowmapping test fails :-)",
+      "parentUuid": "3aa0d159_ccf9bb81",
+      "range": {
+        "startLine": 63,
+        "startChar": 19,
+        "endLine": 63,
+        "endChar": 66
+      },
+      "revId": "ac7302feeb3a18e74ea51919c1ec16f748658317",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
