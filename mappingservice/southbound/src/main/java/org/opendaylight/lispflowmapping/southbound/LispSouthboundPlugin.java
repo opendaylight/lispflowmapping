@@ -58,7 +58,6 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private final String MAP_REPlY = "MapReply";
     private final String MAP_REQUEST = "MapRequest";
     private volatile String bindingAddress = null;
-    private volatile boolean alreadyInit = false;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
 
@@ -82,6 +81,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
         lispXtrSouthboundService = null;
         lispThread = null;
         xtrThread = null;
+        bindingAddress = null;
         LOG.info("LISP (RFC6830) Mapping Service is down!");
         try {
             Thread.sleep(1100);
@@ -171,6 +171,14 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     }
 
     private void startIOThread() {
+        if (socket != null) {
+            while (!socket.isClosed()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
         try {
             socket = new DatagramSocket(new InetSocketAddress(bindingAddress, LispMessage.PORT_NUM));
             lispThread = new LispIoThread(socket, lispSouthboundService);
@@ -197,20 +205,16 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     }
 
     public void onSessionInitiated(ProviderContext session) {
-        LOG.info("LISP (RFC6830) Mapping Service is up!");
         synchronized (startLock) {
-            if (!alreadyInit) {
-                alreadyInit = true;
-                lispSouthboundService = new LispSouthboundService();
-                lispXtrSouthboundService = new LispXtrSouthboundService();
-                registerWithOSGIConsole();
-                registerRPCs(session);
-                LOG.trace("Provider Session initialized");
-                if (bindingAddress == null) {
-                    setLispAddress("0.0.0.0");
-                }
+            lispSouthboundService = new LispSouthboundService();
+            lispXtrSouthboundService = new LispXtrSouthboundService();
+            registerWithOSGIConsole();
+            registerRPCs(session);
+            LOG.trace("Provider Session initialized");
+            if (bindingAddress == null) {
+                setLispAddress("0.0.0.0");
             }
-
+            LOG.info("LISP (RFC6830) Mapping Service is up!");
         }
     }
 

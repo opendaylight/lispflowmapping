@@ -48,6 +48,7 @@
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage,
               org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplynotification,
               com.google.common.net,
+              com.google.common.util.concurrent,
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
               org.opendaylight.controller.sal.core,
               org.apache.felix.dm,
