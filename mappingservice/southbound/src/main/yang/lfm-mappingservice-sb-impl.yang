@@ -1,0 +1,65 @@
+module lfm-mappingservice-sb-impl {
+
+  yang-version 1;
+  namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl";
+  prefix "lfm-mappingservice-sb-impl";
+
+  import config { prefix config; revision-date 2013-04-05; }
+  import rpc-context { prefix rpcx; revision-date 2013-06-17; }
+  import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+
+  description
+      "This module contains the base YANG definitions for
+      mappingservice southbound plugin implementation.";
+
+  revision "2015-05-17" {
+      description
+          "Initial revision.";
+  }
+
+  identity lfm-mappingservice-sb {
+      base "config:service-type";
+      config:java-class "org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin";
+  }
+
+  identity lfm-mappingservice-sb-impl {
+      base config:module-type;
+      config:provided-service lfm-mappingservice-sb;
+      config:java-name-prefix LfmMappingServiceSb;
+  }
+
+
+  // Augments the 'configuration' choice node under modules/module.
+  augment "/config:modules/config:module/config:configuration" {
+    case lfm-mappingservice-sb-impl {
+      when "/config:modules/config:module/config:type = 'lfm-mappingservice-sb-impl'";
+
+      container broker {
+          uses config:service-ref {
+              refine type {
+                  mandatory true;
+                  config:required-identity mdsal:binding-broker-osgi-registry;
+              }
+          }
+      }
+
+      container notification-service {
+          uses config:service-ref {
+              refine type {
+                  mandatory true;
+                  config:required-identity mdsal:binding-notification-service;
+              }
+          }
+      }
+
+      container rpc-registry {
+        uses config:service-ref {
+          refine type {
+              mandatory true;
+              config:required-identity mdsal:binding-rpc-registry;
+          }
+        }
+      }
+    }
+  }
+}

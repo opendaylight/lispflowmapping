@@ -52,7 +52,6 @@ import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSer
 import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.type.LispCanonicalAddressFormatEnum;
@@ -110,6 +109,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.util.Filter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -126,7 +126,6 @@ public class MappingServiceIntegrationTest {
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
-    private IConfigLispSouthboundPlugin configLispPlugin;
     String lispBindAddress = "127.0.0.1";
     String ourAddress = "127.0.0.2";
     private LispAFIAddress locatorEid;
@@ -247,6 +246,9 @@ public class MappingServiceIntegrationTest {
     private BundleContext bc;
     private HttpURLConnection connection;
     protected static boolean notificationCalled;
+    @Inject @Filter(timeout=5000)
+    private IConfigLispSouthboundPlugin configLispPlugin;
+
 
     // Configure the OSGi container
     @Configuration
@@ -1852,18 +1854,6 @@ public class MappingServiceIntegrationTest {
 
         assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
 
-        r = bc.getServiceReference(ILispDAO.class.getName());
-        if (r != null) {
-            this.clusterService = (ClusterDAOService) bc.getService(r);
-        }
-
-        assertNotNull(ILispDAO.class.getName() + " service wasn't found in bundle context ", this.clusterService);
-        r = bc.getServiceReference(IConfigLispSouthboundPlugin.class.getName());
-        if (r != null) {
-            this.configLispPlugin = (IConfigLispSouthboundPlugin) bc.getService(r);
-        }
-
-        assertNotNull(IConfigLispSouthboundPlugin.class.getName() + " service wasn't found in bundle context ", this.configLispPlugin);
         configLispPlugin.setLispAddress(lispBindAddress);
 
         // Uncomment this code to Know which services were actually loaded to
