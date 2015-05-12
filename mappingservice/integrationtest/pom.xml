@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.opendaylight.controller</groupId>
     <artifactId>commons.integrationtest</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
     <relativePath></relativePath>
   </parent>
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.integrationtest</artifactId>
   <name>LISP Flow Mapping Integration Tests</name>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <properties>
     <exam.version>3.0.0</exam.version>
     <sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
@@ -18,7 +18,7 @@
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <!-- Dependency Versions -->
     <junit.version>4.8.1</junit.version>
-    <lispflowmapping.version>1.2.0-SNAPSHOT</lispflowmapping.version>
+    <lispflowmapping.version>1.3.0-SNAPSHOT</lispflowmapping.version>
     <url.version>1.5.0</url.version>
   </properties>
   <dependencies>
@@ -309,7 +309,7 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>commons.integrationtest</artifactId>
-      <version>0.6.0-SNAPSHOT</version>
+      <version>0.7.0-SNAPSHOT</version>
       <type>pom</type>
       <exclusions>
         <exclusion>
