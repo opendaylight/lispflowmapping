@@ -1,76 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <groupId>org.opendaylight.lispflowmapping</groupId>
-    <artifactId>mappingservice-parent</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <groupId>org.opendaylight.controller</groupId>
+    <artifactId>config-parent</artifactId>
+    <version>0.4.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
+
   <artifactId>mappingservice.southbound</artifactId>
+  <groupId>org.opendaylight.lispflowmapping</groupId>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>LISP Flow Mapping Southbound Plugin</name>
+
   <dependencies>
     <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal-binding-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal-common-util</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.implementation</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Export-Package></Export-Package>
-            <Import-Package>org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequest,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapregisternotification,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapnotifymessage,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplymessage,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplynotification,
-              com.google.common.net,
-              com.google.common.util.concurrent,
-              org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
-              org.opendaylight.controller.sal.core,
-              org.apache.felix.dm,
-              org.apache.commons.lang3.builder,
-              org.osgi.service.component,
-              org.slf4j,
-              org.eclipse.osgi.framework.console,
-              org.osgi.framework,
-              org.opendaylight.lispflowmapping.interfaces.lisp,
-              org.opendaylight.lispflowmapping.type,
-              org.opendaylight.lispflowmapping.type.lisp,
-              org.opendaylight.lispflowmapping.type.sbplugin,
-              org.opendaylight.lispflowmapping.implementation.serializer,
-              org.opendaylight.lispflowmapping.implementation.util,
-              org.opendaylight.controller.sal.binding.api,
-              org.opendaylight.yangtools.yang.binding,
-              org.opendaylight.yangtools.yang.common</Import-Package>
-            <Bundle-Activator>org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin</Bundle-Activator>
-            <Service-Component></Service-Component>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
