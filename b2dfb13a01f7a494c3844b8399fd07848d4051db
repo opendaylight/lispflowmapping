@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_aec53c8f",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-13T09:08:44Z",
+      "side": 1,
+      "message": "Why do we need this new dependency?",
+      "range": {
+        "startLine": 51,
+        "startChar": 14,
+        "endLine": 51,
+        "endChar": 47
+      },
+      "revId": "b2dfb13a01f7a494c3844b8399fd07848d4051db",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
