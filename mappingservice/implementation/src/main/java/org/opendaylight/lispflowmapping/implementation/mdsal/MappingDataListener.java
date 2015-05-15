@@ -16,6 +16,7 @@ import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.mapping.database.InstanceId;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -56,8 +57,12 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", mapping);
 
-                MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                msmr.handleMapRegister(register, false);
+                if (mapping.getOrigin() != MappingOrigin.Southbound) {
+                    MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
+                    msmr.handleMapRegister(register, false);
+                } else {
+                    LOG.trace("Mapping is coming from the southbound plugin, already handled");
+                }
             }
         }
 
@@ -71,8 +76,12 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", entry.getValue());
 
-                MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                msmr.handleMapRegister(register, false);
+                if (mapping.getOrigin() != MappingOrigin.Southbound) {
+                    MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
+                    msmr.handleMapRegister(register, false);
+                } else {
+                    LOG.trace("Mapping is coming from the southbound plugin, already handled");
+                }
             }
         }
 
