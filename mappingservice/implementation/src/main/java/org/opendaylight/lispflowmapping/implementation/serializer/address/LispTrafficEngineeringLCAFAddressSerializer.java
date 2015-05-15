@@ -74,6 +74,7 @@ public class LispTrafficEngineeringLCAFAddressSerializer extends LispLCAFAddress
             builder.setRLOCProbe(RLOCProbe);
             builder.setStrict(strict);
             builder.setHop(new HopBuilder().setPrimitiveAddress(address).build());
+            builder.setName("Hop " + (hops.size()+1));
             length -= LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(address)) + 2;
             hops.add(builder.build());
         }
