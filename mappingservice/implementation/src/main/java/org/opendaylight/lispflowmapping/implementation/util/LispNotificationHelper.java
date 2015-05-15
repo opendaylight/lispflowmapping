@@ -10,8 +10,12 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispDistinguishedNameAddress;
@@ -27,6 +31,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.EidUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -119,5 +127,24 @@ public class LispNotificationHelper {
         } catch (UnknownHostException e) {
             return null;
         }
+    }
+
+    public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
+        List<Mapping> mappings = new ArrayList<Mapping>();
+        for (int i=0; i<mapRegisterNotification.getMapRegister().getEidToLocatorRecord().size(); i++) {
+            EidToLocatorRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i);
+            MappingBuilder mb = new MappingBuilder();
+            mb.setEid(new EidUri(LispAFIConvertor.toString(record.getLispAddressContainer())));
+            mb.setOrigin(MappingOrigin.Southbound);
+            mb.setRecordTtl(record.getRecordTtl());
+            mb.setMaskLength(record.getMaskLength());
+            mb.setMapVersion(record.getMapVersion());
+            mb.setAction(record.getAction());
+            mb.setAuthoritative(record.isAuthoritative());
+            mb.setLispAddressContainer(record.getLispAddressContainer());
+            mb.setLocatorRecord(record.getLocatorRecord());
+            mappings.add(mb.build());
+        }
+        return mappings;
     }
 }
