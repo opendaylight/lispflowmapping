@@ -326,6 +326,18 @@
     </dependency>
     -->
     <dependency>
+      <groupId>org.openexi</groupId>
+      <artifactId>nagasena</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openexi</groupId>
+      <artifactId>nagasena-rta</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>config-api</artifactId>
     </dependency>
@@ -340,6 +352,16 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>config-persister-file-xml-adapter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>config-persister-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>config-persister-impl</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>

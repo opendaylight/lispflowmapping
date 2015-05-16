@@ -15,11 +15,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
@@ -60,6 +61,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
@@ -71,7 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareProvider,
-        IMapRequestResultHandler, IMapNotifyHandler {
+        IMapRequestResultHandler, IMapNotifyHandler, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private static final ConfigIni configIni = new ConfigIni();
@@ -88,12 +90,53 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
     private LfmControlPlaneService lispSB = null;
-
     private ProviderContext session;
 
     private DataStoreBackEnd dsbe;
     private NotificationService notificationService;
     private static LispMappingService lfmService = null;
+    private BindingAwareBroker.RpcRegistration<LfmMappingDatabaseService> lfmDbRpc;
+    private DataBroker dataBrokerService;
+    private RpcProviderRegistry rpcRegistry;
+    private BindingAwareBroker broker;
+
+    public LispMappingService() {
+        LOG.debug("LispMappingService Module starting!");
+        lfmService = this;
+    }
+
+    public void setDataBrokerService(DataBroker dataBrokerService) {
+        this.dataBrokerService = dataBrokerService;
+    }
+
+    public void setRpcProviderRegistry(RpcProviderRegistry rpcRegistry) {
+        this.rpcRegistry = rpcRegistry;
+    }
+
+    public void setBindingAwareBroker(BindingAwareBroker broker) {
+        this.broker = broker;
+    }
+
+    public void initialize() {
+        broker.registerProvider(this);
+
+        LfmMappingDatabaseRpc mappingDbProviderRpc = new LfmMappingDatabaseRpc(dataBrokerService);
+        lfmDbRpc = rpcRegistry.addRpcImplementation(LfmMappingDatabaseService.class, mappingDbProviderRpc);
+
+        setLispDao(new HashMapDb());
+        registerWithOSGIConsole();
+    }
+
+    @Override
+    public void onSessionInitiated(ProviderContext session) {
+        LOG.info("Lisp Consumer session initialized!");
+        notificationService = session.getSALService(NotificationService.class);
+        registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
+        registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
+        registerDataListeners(session.getSALService(DataBroker.class));
+        this.session = session;
+        LOG.info("LISP (RFC6830) Mapping Service init finished");
+    }
 
     class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
     }
@@ -109,22 +152,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
 
     public static LispMappingService getLispMappingService() {
         return lfmService;
-    }
-
-    void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        LOG.debug("BindingAwareBroker set!");
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bindingAwareBroker.registerProvider(this, bundleContext);
-
-        // For the time being we initialize variables here. But once we remove the activator, these should
-        // be moved to the constructor.
-        lfmService = this;
-        setLispDao(new HashMapDb());
-    }
-
-    void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        LOG.debug("BindingAwareBroker was unset in LispMappingService");
-        lfmService = null;
     }
 
     public void basicInit(ILispDAO dao) {
@@ -145,18 +172,13 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         lispDao = null;
     }
 
-    public void init() {
+    private void registerWithOSGIConsole() {
         try {
-            registerWithOSGIConsole();
-            LOG.info("LISP (RFC6830) Mapping Service init finished");
+            BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+            bundleContext.registerService(CommandProvider.class.getName(), this, null);
         } catch (Exception e) {
             LOG.error(e.getStackTrace().toString());
         }
-    }
-
-    private void registerWithOSGIConsole() {
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bundleContext.registerService(CommandProvider.class.getName(), this, null);
     }
 
     public void destroy() {
@@ -316,17 +338,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         return shouldAuthenticate;
     }
 
-    @Override
-    public void onSessionInitiated(ProviderContext session) {
-        LOG.info("Lisp Consumer session initialized!");
-        notificationService = session.getSALService(NotificationService.class);
-        dsbe = new DataStoreBackEnd(session.getSALService(DataBroker.class));
-        registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
-        registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
-        registerDataListeners(session.getSALService(DataBroker.class));
-        this.session = session;
-    }
-
     private void registerDataListeners(DataBroker broker) {
         keyListener = new AuthenticationKeyDataListener(broker, this);
         mappingListener = new MappingDataListener(broker, this);
@@ -423,5 +434,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     @Override
     public void setOverwrite(boolean overwrite) {
         mapServer.setOverwrite(overwrite);
+    }
+
+    @Override
+    public void close() throws Exception {
+        lfmDbRpc.close();
+        destroy();
     }
 }

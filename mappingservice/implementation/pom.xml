@@ -74,8 +74,6 @@
 
   <build>
      <plugins>
-        <!-- We still need the activator for interacting with services that rely on activators for 
-             service discovery, but it should be deprecated soon -->
        <plugin>
          <groupId>org.apache.felix</groupId>
          <artifactId>maven-bundle-plugin</artifactId>
@@ -87,7 +85,6 @@
                org.opendaylight.lispflowmapping.implementation.serializer,
                org.opendaylight.lispflowmapping.implementation.util
              </Export-Package>
-             <Bundle-Activator>org.opendaylight.lispflowmapping.implementation.Activator</Bundle-Activator>
            </instructions>
          </configuration>
        </plugin>

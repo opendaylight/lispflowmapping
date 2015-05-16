@@ -119,7 +119,6 @@ import org.slf4j.LoggerFactory;
 @RunWith(PaxExam.class)
 public class MappingServiceIntegrationTest {
 
-    private IFlowMapping lms;
     protected static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
@@ -244,6 +243,10 @@ public class MappingServiceIntegrationTest {
     private BundleContext bc;
     private HttpURLConnection connection;
     protected static boolean notificationCalled;
+
+    @Inject @Filter(timeout=10000)
+    private IFlowMapping lms;
+
     @Inject @Filter(timeout=10000)
     private IConfigLispSouthboundPlugin configLispPlugin;
 
@@ -1805,6 +1808,11 @@ public class MappingServiceIntegrationTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void areWeReady() throws InvalidSyntaxException {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+        }
+
         assertNotNull(bc);
         boolean debugit = false;
         Bundle b[] = bc.getBundles();
@@ -1839,34 +1847,19 @@ public class MappingServiceIntegrationTest {
         }
         // assertNotNull(broker);
 
-        int retry = 0;
         ServiceReference r = null;
-        while (this.lms == null && retry < MAX_SERVICE_LOAD_RETRIES) {
-
-            r = bc.getServiceReference(IFlowMapping.class.getName());
-            // r.getPropertyKeys();
-            if (r != null) {
-                this.lms = (IFlowMapping) bc.getService(r);
-            } else {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
-            }
-            retry += 1;
-        }
-
-        assertNotNull(IFlowMapping.class.getName() + " service wasn't found in bundle context ", this.lms);
-
         configLispPlugin.setLispAddress(lispBindAddress);
 
         // Uncomment this code to Know which services were actually loaded to
         // BundleContext
+
         /*
-         * for (ServiceReference sr : bc.getAllServiceReferences(null, null)) {
-         * LOG.trace(sr.getBundle().getSymbolicName());
-         * LOG.trace(sr.toString()); }
-         */
+        for (ServiceReference sr : bc.getAllServiceReferences(null, null)) {
+            LOG.info(sr.getBundle().getSymbolicName());
+            LOG.info(sr.toString());
+        }
+        */
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

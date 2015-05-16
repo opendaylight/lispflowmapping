@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.implementation.provider;
+package org.opendaylight.lispflowmapping.implementation;
 
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
@@ -45,8 +44,8 @@ import com.google.common.util.concurrent.Futures;
  * @author Florin Coras
  *
  */
-public class LfmMappingDatabaseProviderRpc implements LfmMappingDatabaseService {
-    protected static final Logger LOG = LoggerFactory.getLogger(LfmMappingDatabaseProviderRpc.class);
+public class LfmMappingDatabaseRpc implements LfmMappingDatabaseService {
+    protected static final Logger LOG = LoggerFactory.getLogger(LfmMappingDatabaseRpc.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
 
@@ -54,7 +53,7 @@ public class LfmMappingDatabaseProviderRpc implements LfmMappingDatabaseService 
     private DataBroker dataBroker;
     private DataStoreBackEnd dsbe;
 
-    public LfmMappingDatabaseProviderRpc(DataBroker dataBroker) {
+    public LfmMappingDatabaseRpc(DataBroker dataBroker) {
         this.lispMappingService = LispMappingService.getLispMappingService();
         this.dataBroker = dataBroker;
         this.dsbe = new DataStoreBackEnd(this.dataBroker);
