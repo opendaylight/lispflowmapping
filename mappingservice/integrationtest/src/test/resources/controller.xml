@@ -32,7 +32,7 @@
                     urn:opendaylight:params:xml:ns:yang:controller:md:sal:common?module=opendaylight-md-sal-common&amp;revision=2013-10-28
                 </capability>
                 <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl?module=lfm-mappingservice-sb-impl&amp;revision=2015-05-17</capability>
-
+                <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl?module=lfm-mappingservice-impl&amp;revision=2015-05-17</capability>
             </required-capabilities>
             <configuration>
 
@@ -232,6 +232,32 @@
                             <name>binding-notification-broker</name>
                           </notification-service>
                         </module>
+                        <!-- mappingservice.implementation module -->
+                        <module>
+                          <type
+                            xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">
+                            prefix:lfm-mappingservice-impl
+                          </type>
+                          <name>lfm-mappingservice-default</name>
+
+                          <rpc-registry>
+                            <type
+                              xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-rpc-registry</type>
+                            <name>binding-rpc-broker</name>
+                          </rpc-registry>
+
+                          <data-broker>
+                            <type
+                              xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-async-data-broker</type>
+                            <name>binding-data-broker</name>
+                          </data-broker>
+
+                          <broker>
+                            <type
+                              xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-broker-osgi-registry</type>
+                            <name>binding-osgi-broker</name>
+                          </broker>
+                        </module>
                     </modules>
 
                     <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
@@ -339,6 +365,7 @@
                                 <provider>/modules/module[type='pingpong-data-broker'][name='pingpong-data-broker']</provider>
                             </instance>
                         </service>
+
                         <!-- lfm mappingservice southbound -->
                         <service>
                           <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl">prefix:lfm-mappingservice-sb</type>
@@ -347,6 +374,17 @@
                             <provider>/modules/module[type='lfm-mappingservice-sb-impl'][name='lfm-mappingservice-sb-impl-default']</provider>
                           </instance>
                         </service>
+                        <!-- lfm mappingservice implementation -->
+                        <service>
+                          <type
+                            xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">prefix:lfm-mappingservice</type>
+                          <instance>
+                            <name>lfm-mappingservice</name>
+                            <provider>/modules/module[type='lfm-mappingservice-impl'][name='lfm-mappingservice-default']
+                            </provider>
+                          </instance>
+                        </service>
+
                     </services>
                 </data>
 

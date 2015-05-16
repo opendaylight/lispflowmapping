@@ -2,14 +2,14 @@
 <snapshot>
     <required-capabilities>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl?module=lfm-mappingservice-impl&amp;revision=2015-05-07</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl?module=lfm-mappingservice-impl&amp;revision=2015-05-17</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <modules xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
                 <module>
                     <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">
-                        prefix:lfm-mappingservice
+                        prefix:lfm-mappingservice-impl
                     </type>
                     <name>lfm-mappingservice-default</name>
 
@@ -29,6 +29,16 @@
                     </broker>
                 </module>
             </modules>
+            <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
+              <service>
+                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">prefix:lfm-mappingservice</type>
+                <instance>
+                  <name>lfm-mappingservice</name>
+                  <provider>/modules/module[type='lfm-mappingservice-impl'][name='lfm-mappingservice-default']
+                  </provider>
+                </instance>
+              </service>
+            </services>
         </data>
 
     </configuration>

@@ -23,6 +23,7 @@ public class MappingServiceTestHelper {
     public static final String LISP = "org.opendaylight.lispflowmapping";
     public static final String YANG = "org.opendaylight.yangtools";
     public static final String JERSEY = "com.sun.jersey";
+    public static final String YANGTOOLS = "org.opendaylight.yangtools";
 
     public static Option mappingServiceBundles() {
         return new DefaultCompositeOption(
@@ -123,21 +124,25 @@ public class MappingServiceTestHelper {
                 mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),
 
                 // Our bundles
-                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(),
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(),
-
+                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
+                mavenBundle("org.openexi", "nagasena").versionAsInProject(),
+                mavenBundle("org.openexi", "nagasena-rta").versionAsInProject(),
+                mavenBundle(YANGTOOLS + ".thirdparty", "antlr4-runtime-osgi-nohead").versionAsInProject(),
+                // Set fail if unresolved bundle present
+                systemProperty("pax.exam.osgi.unresolved.fail").value("true"),
                 junitBundles());
     }
 
     public static Option mappingServiceBundlesWithClusterDAO() {
         return new DefaultCompositeOption( //
-                mappingServiceBundles(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.clusterdao").versionAsInProject() //
+                mappingServiceBundles() //
+//                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.clusterdao").versionAsInProject() //
         );
     }
 
