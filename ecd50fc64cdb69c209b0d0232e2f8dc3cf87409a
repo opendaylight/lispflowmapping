@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a9dcd25_eeede2f0",
+        "filename": "mappingservice/integrationtest/src/test/resources/controller.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-18T17:36:25Z",
+      "side": 1,
+      "message": "I guess there are two ways to solve this. First, figure out the pom where controller.xml is configured and see if we can add a lfm specific config snapshot file. Second, have two local xml files, one for modules and another for services, and import them into controller.xml. The drawback is that on each controller.xml update, we\u0027d have to reimport the two files.",
+      "parentUuid": "1a9dcd25_93ba47e0",
+      "revId": "ecd50fc64cdb69c209b0d0232e2f8dc3cf87409a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a9dcd25_33925358",
         "filename": "mappingservice/southbound/src/main/yang/lfm-mappingservice-sb-impl.yang",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-18T13:57:19Z",
       "side": 1,
       "message": "The ususal empty line + space thingy :)",
+      "revId": "ecd50fc64cdb69c209b0d0232e2f8dc3cf87409a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_8eba1ee0",
+        "filename": "mappingservice/southbound/src/main/yang/lfm-mappingservice-sb-impl.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-18T17:36:25Z",
+      "side": 1,
+      "message": "Will solve. Thanks!",
+      "parentUuid": "1a9dcd25_33925358",
       "revId": "ecd50fc64cdb69c209b0d0232e2f8dc3cf87409a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
