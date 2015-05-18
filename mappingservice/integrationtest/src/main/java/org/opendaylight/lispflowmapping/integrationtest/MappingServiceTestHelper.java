@@ -102,9 +102,14 @@ public class MappingServiceTestHelper {
                 mavenBundle("orbit", "javax.servlet.jsp.jstl").versionAsInProject(),
                 mavenBundle("orbit", "javax.servlet.jsp.jstl.impl").versionAsInProject(),
 
+                // Load this ASAP, or it won't be available soon enough
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.yangmodel").versionAsInProject(),
+
                 // Basic bundles needed
                 mavenBundle("org.opendaylight.controller", "containermanager").versionAsInProject(),
                 mavenBundle("org.opendaylight.controller", "containermanager.it.implementation").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "configuration.implementation").versionAsInProject(),
 
                 TestHelper.baseModelBundles(),
                 TestHelper.configMinumumBundles(),
@@ -114,77 +119,17 @@ public class MappingServiceTestHelper {
                 TestHelper.junitAndMockitoBundles(),
                 TestHelper.flowCapableModelBundles(),
 
-                mavenBundle("org.javassist", "javassist").versionAsInProject(), //
-
-                // Northbound bundles
-                mavenBundle("org.opendaylight.controller", "commons.northbound").versionAsInProject(), //
-                mavenBundle(ODL + ".thirdparty", "com.sun.jersey.jersey-servlet").versionAsInProject(), //
-                mavenBundle(ODL + ".thirdparty", "net.sf.jung2").versionAsInProject(), //
-                mavenBundle(ODL + ".thirdparty", "org.apache.catalina.filters.CorsFilter").versionAsInProject().noStart(),
-                mavenBundle(JERSEY, "jersey-client").versionAsInProject(),
-                mavenBundle(JERSEY, "jersey-server").versionAsInProject().startLevel(2),
-                mavenBundle(JERSEY, "jersey-core").versionAsInProject().startLevel(2),
-                mavenBundle("com.fasterxml.jackson.core", "jackson-annotations").versionAsInProject(),//
-                mavenBundle("com.fasterxml.jackson.core", "jackson-core").versionAsInProject(),//
-                mavenBundle("com.fasterxml.jackson.core", "jackson-databind").versionAsInProject(),//
-                mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-json-provider").versionAsInProject(),//
-                mavenBundle("com.fasterxml.jackson.jaxrs", "jackson-jaxrs-base").versionAsInProject(),//
-                mavenBundle("com.fasterxml.jackson.module", "jackson-module-jaxb-annotations").versionAsInProject(),
-                mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),//
-                mavenBundle("org.ow2.asm", "asm-all").versionAsInProject(), //
-                mavenBundle("org.opendaylight.controller", "bundlescanner").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "bundlescanner.implementation").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "topologymanager").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "hosttracker").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "forwardingrulesmanager.implementation").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "statisticsmanager").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "statisticsmanager.implementation").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "switchmanager").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "switchmanager.implementation").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "connectionmanager").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "connectionmanager.implementation").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "configuration").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "configuration.implementation").versionAsInProject(),//
-                mavenBundle("org.opendaylight.controller", "usermanager").versionAsInProject(), //
-                mavenBundle("org.opendaylight.controller", "usermanager.implementation").versionAsInProject(), //
-                mavenBundle("org.springframework", "org.springframework.asm").versionAsInProject(), mavenBundle("org.springframework",
-                        "org.springframework.aop").versionAsInProject(), mavenBundle("org.springframework", "org.springframework.context")
-                        .versionAsInProject(), mavenBundle("org.springframework", "org.springframework.context.support").versionAsInProject(),
-                mavenBundle("org.springframework", "org.springframework.core").versionAsInProject(), mavenBundle("org.springframework",
-                        "org.springframework.beans").versionAsInProject(), mavenBundle("org.springframework", "org.springframework.expression")
-                        .versionAsInProject(), mavenBundle("org.springframework", "org.springframework.web").versionAsInProject(),
-
-                mavenBundle("org.aopalliance", "com.springsource.org.aopalliance").versionAsInProject(), mavenBundle("org.springframework",
-                        "org.springframework.web.servlet").versionAsInProject(),
-                mavenBundle("org.springframework.security", "spring-security-config").versionAsInProject(), mavenBundle(
-                        "org.springframework.security", "spring-security-core").versionAsInProject(), mavenBundle("org.springframework.security",
-                        "spring-security-web").versionAsInProject(), mavenBundle("org.springframework.security", "spring-security-taglibs")
-                        .versionAsInProject(), mavenBundle("org.springframework", "org.springframework.transaction").versionAsInProject(),
-                mavenBundle("org.opendaylight.controller", "sal.connection").versionAsInProject(), mavenBundle("org.opendaylight.controller",
-                        "sal.connection.implementation").versionAsInProject(), mavenBundle("org.opendaylight.controller", "security")
-                        .versionAsInProject().noStart(),
-
-                // Tomcat for northbound
-                mavenBundle("geminiweb", "org.eclipse.gemini.web.core").versionAsInProject(), mavenBundle("geminiweb",
-                        "org.eclipse.gemini.web.extender").versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.gemini.web.tomcat")
-                        .versionAsInProject(),
-                mavenBundle("geminiweb", "org.eclipse.virgo.kernel.equinox.extensions").versionAsInProject().noStart(), mavenBundle("geminiweb",
-                        "org.eclipse.virgo.util.common").versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.io")
-                        .versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.math").versionAsInProject(), mavenBundle("geminiweb",
-                        "org.eclipse.virgo.util.osgi").versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.osgi.manifest")
-                        .versionAsInProject(), mavenBundle("geminiweb", "org.eclipse.virgo.util.parser.manifest").versionAsInProject(),
+                mavenBundle("org.javassist", "javassist").versionAsInProject(),
+                mavenBundle("org.codehaus.jettison", "jettison").versionAsInProject(),
 
                 // Our bundles
-                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(), //
-                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(), //
-                mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.yangmodel").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(), //
-                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.northbound").versionAsInProject(), //
+                mavenBundle("org.opendaylight.controller", "clustering.stub").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "clustering.services").versionAsInProject(),
+                mavenBundle("org.opendaylight.controller", "sal").versionAsInProject(),
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.config").versionAsInProject(),
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.api").versionAsInProject(),
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.implementation").versionAsInProject(),
+                mavenBundle("org.opendaylight.lispflowmapping", "mappingservice.southbound").versionAsInProject(),
 
                 junitBundles());
     }
