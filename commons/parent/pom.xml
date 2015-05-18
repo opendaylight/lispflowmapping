@@ -90,11 +90,6 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
-        <artifactId>commons.northbound</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-api</artifactId>
         <version>0.4.0-SNAPSHOT</version>
       </dependency>
@@ -108,11 +103,13 @@
         <artifactId>config-util</artifactId>
         <version>0.4.0-SNAPSHOT</version>
       </dependency>
+      <!--
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>containermanager</artifactId>
         <version>0.7.0-SNAPSHOT</version>
       </dependency>
+      -->
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>features-adsal</artifactId>
@@ -476,20 +473,6 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.enunciate</groupId>
-          <artifactId>maven-enunciate-plugin</artifactId>
-          <configuration>
-            <configFile>enunciate.xml</configFile>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>docs</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <!-- TODO: This should be in ODL parent -->
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
@@ -526,19 +509,6 @@
                     <versionRange>[0.0,)</versionRange>
                     <goals>
                       <goal>set-system-properties</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.enunciate</groupId>
-                    <artifactId>maven-enunciate-plugin</artifactId>
-                    <versionRange>[0.0,)</versionRange>
-                    <goals>
-                      <goal>docs</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
