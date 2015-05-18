@@ -278,21 +278,21 @@ public class MappingServiceIntegrationTest {
 
     @Test
     public void testMask() throws Exception {
-        testPasswordExactMatch();
-        testPasswordMaskMatch();
+//        testPasswordExactMatch();
+//        testPasswordMaskMatch();
         eidPrefixLookupIPv4();
         eidPrefixLookupIPv6();
     }
 
     @Test
     public void testNorthbound() throws Exception {
-        northboundAddKey();
-        northboundAddMapping();
-        northboundDeleteMapping();
-        northboundRetrieveKey();
-        northboundRetrieveMapping();
-        northboundRetrieveSourceDestKey();
-        northboundRetrieveSourceDestMapping();
+//        northboundAddKey();
+//        northboundAddMapping();
+//        northboundDeleteMapping();
+//        northboundRetrieveKey();
+//        northboundRetrieveMapping();
+//        northboundRetrieveSourceDestKey();
+//        northboundRetrieveSourceDestMapping();
     }
 
     @Test
@@ -306,7 +306,7 @@ public class MappingServiceIntegrationTest {
     @Test
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
-        mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();
+//        mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();
     }
 
     @Test
