@@ -56,7 +56,7 @@ public class DataStoreBackEnd {
                 LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -81,7 +81,7 @@ public class DataStoreBackEnd {
                 LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.delete(LogicalDatastoreType.CONFIGURATION, path);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -106,7 +106,7 @@ public class DataStoreBackEnd {
                 LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();

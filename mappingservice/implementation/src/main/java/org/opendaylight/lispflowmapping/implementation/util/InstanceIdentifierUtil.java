@@ -41,11 +41,11 @@ public class InstanceIdentifierUtil {
                 .child(InstanceId.class, iidKey).child(AuthenticationKey.class, authKeyKey);
     }
 
-    public static InstanceIdentifier<Mapping> createMappingIid(LispAddressContainer eid) {
+    public static InstanceIdentifier<Mapping> createMappingIid(LispAddressContainer eid, MappingOrigin orig) {
         Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
 
         InstanceIdKey iidKey = new InstanceIdKey(new IidUri(Long.toString(getLispInstanceId(eid))));
-        MappingKey eidKey = new MappingKey(new EidUri(getAddressString(eid)),MappingOrigin.Northbound);
+        MappingKey eidKey = new MappingKey(new EidUri(getAddressString(eid)), orig);
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(InstanceId.class, iidKey).child(Mapping.class, eidKey);
     }
