@@ -42,6 +42,7 @@ public class LocatorRecordSerializer {
         builder.setRouted(ByteUtil.extractBit(flags, Flags.ROUTED));
         LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         builder.setLispAddressContainer(LispAFIConvertor.toContainer(afiAddress));
+        builder.setName(LispAFIConvertor.toString(LispAFIConvertor.toContainer(afiAddress)));
         return builder.build();
     }
 
