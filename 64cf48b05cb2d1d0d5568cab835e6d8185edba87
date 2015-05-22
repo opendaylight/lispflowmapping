@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_282c0b99",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/LocatorRecordSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-22T23:28:02Z",
+      "side": 1,
+      "message": "This is rather expensive since we convert two times afiAddress to a container (and this is not very efficient itself). Maybe it would be better to just use a local variable to store the result of the first conversion to a container and then reuse that when setting the name.",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 92
+      },
+      "revId": "64cf48b05cb2d1d0d5568cab835e6d8185edba87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
