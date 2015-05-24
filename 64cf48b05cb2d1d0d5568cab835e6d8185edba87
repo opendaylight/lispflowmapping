@@ -22,6 +22,24 @@
       "revId": "64cf48b05cb2d1d0d5568cab835e6d8185edba87",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_68e213a1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/serializer/LocatorRecordSerializer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-05-24T18:32:15Z",
+      "side": 1,
+      "message": "Agree.  To address the comment, I was trying to decide between changing the type of afiAddress to LispAddressContainer and have a long line that needs to be broken (since it exceeds 120 characters) and introducing another local variable.  For readability I chose option 2.",
+      "parentUuid": "1a9dcd25_282c0b99",
+      "revId": "64cf48b05cb2d1d0d5568cab835e6d8185edba87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
