@@ -194,6 +194,7 @@ module lfm-control-plane {
         }
         list Hops {
             key "name";
+            ordered-by user;
             leaf name {
                 type string;
             }
