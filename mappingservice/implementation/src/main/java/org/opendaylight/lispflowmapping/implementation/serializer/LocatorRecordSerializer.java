@@ -15,6 +15,7 @@ import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecordBuilder;
 
@@ -41,7 +42,9 @@ public class LocatorRecordSerializer {
         builder.setRlocProbed(ByteUtil.extractBit(flags, Flags.RLOC_PROBED));
         builder.setRouted(ByteUtil.extractBit(flags, Flags.ROUTED));
         LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
-        builder.setLispAddressContainer(LispAFIConvertor.toContainer(afiAddress));
+        LispAddressContainer locator = LispAFIConvertor.toContainer(afiAddress);
+        builder.setLispAddressContainer(locator);
+        builder.setName(LispAFIConvertor.toString(locator));
         return builder.build();
     }
 

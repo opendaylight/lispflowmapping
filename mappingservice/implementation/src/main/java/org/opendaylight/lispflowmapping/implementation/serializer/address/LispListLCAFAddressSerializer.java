@@ -55,7 +55,8 @@ public class LispListLCAFAddressSerializer extends LispLCAFAddressSerializer {
         while (length > 0) {
             PrimitiveAddress address = LispAFIConvertor.toPrimitive(LispAddressSerializer.getInstance().deserialize(buffer));
             length -= LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFIfromPrimitive(address));
-            addresses.add(new AddressesBuilder().setPrimitiveAddress((PrimitiveAddress) address).build());
+            addresses.add(new AddressesBuilder().setName("Address " + (addresses.size()+1))
+                    .setPrimitiveAddress((PrimitiveAddress) address).build());
         }
         return new LcafListAddrBuilder().setAddresses(addresses).setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode()).build();
