@@ -346,8 +346,10 @@ public class LispAFIConvertor {
         } else if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafApplicationData) {
             LcafApplicationDataAddr appData = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafApplicationData) address)
                     .getLcafApplicationDataAddr();
-            return ("AppData:" + toString(appData.getAddress().getPrimitiveAddress())
-                    + ":" + appData.getProtocol() + ":" + appData.getIpTos() + ":" + appData.getLocalPort() + ":" + appData.getRemotePort());
+            return ("AppData:" + toString(appData.getAddress().getPrimitiveAddress()) + ":"
+                    + appData.getProtocol() + ":" + appData.getIpTos() + ":"
+                    + appData.getLocalPortLow() + "-" + appData.getLocalPortHigh() + ":"
+                    + appData.getRemotePortLow() + "-" + appData.getRemotePortHigh());
         } else if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafKeyValue) {
             PrimitiveAddress key = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafKeyValue) address)
                     .getLcafKeyValueAddressAddr().getKey()

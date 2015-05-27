@@ -48,10 +48,16 @@ public class LispAddressGeneric{
     int ipTos;
 
 	@XmlElement
-    short localPort;
+    short localPortLow;
 
 	@XmlElement
-    short remotePort;
+    short localPortHigh;
+
+    @XmlElement
+    short remotePortLow;
+
+    @XmlElement
+    short remotePortHigh;
 
 	@XmlElement
 	byte iidMaskLength;
@@ -184,8 +190,10 @@ public class LispAddressGeneric{
 		LispApplicationDataLCAFAddress appDataAddress = (LispApplicationDataLCAFAddress) lcafAddress;
 	    protocol = appDataAddress.getProtocol();
 	    ipTos = appDataAddress.getIPTos();
-	    localPort = appDataAddress.getLocalPort();
-	    remotePort = appDataAddress.getLocalPort();
+	    localPortLow = appDataAddress.getLocalPortLow();
+        localPortLow = appDataAddress.getLocalPortHigh();
+	    remotePortLow = appDataAddress.getRemotePortLow();
+        remotePortHigh = appDataAddress.getRemotePortHigh();
 	    address = new LispAddressGeneric(appDataAddress.getAddress());
 	}
 
@@ -286,21 +294,37 @@ public class LispAddressGeneric{
 		this.protocol = protocol;
 	}
 
-	public short getLocalPort() {
-		return localPort;
+	public short getLocalPortLow() {
+		return localPortLow;
 	}
 
-	public void setLocalPort(short localPort) {
-		this.localPort = localPort;
+	public void setLocalPortLow(short localPortLow) {
+		this.localPortLow = localPortLow;
 	}
 
-	public short getRemotePort() {
-		return remotePort;
+    public short getLocalPortHigh() {
+        return localPortHigh;
+    }
+
+    public void setLocalPortHigh(short localPortHigh) {
+        this.localPortHigh = localPortHigh;
+    }
+
+	public short getRemotePortLow() {
+		return remotePortLow;
 	}
 
-	public void setRemotePort(short remotePort) {
-		this.remotePort = remotePort;
+	public void setRemotePortLow(short remotePortLow) {
+		this.remotePortLow = remotePortLow;
 	}
+
+    public short getRemotePortHigh() {
+        return remotePortHigh;
+    }
+
+    public void setRemotePortHigh(short remotePortHigh) {
+        this.remotePortHigh = remotePortHigh;
+    }
 
 	public LispAddressGeneric getSrcAddress() {
 		return srcAddress;

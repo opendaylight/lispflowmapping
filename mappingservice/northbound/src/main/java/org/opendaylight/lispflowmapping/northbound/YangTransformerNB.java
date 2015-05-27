@@ -179,8 +179,11 @@ public class YangTransformerNB {
                 toPrimitive(toAFI(transformLispAddress(lispApplicationDataLCAFAddress.getAddress())))).build();
         return new LcafApplicationDataAddrBuilder().setAfi(lispLcafAddress.getAfi().getIanaCode())
                 .setLcafType((short) lispLcafAddress.getType().getLispCode()).setIpTos(lispApplicationDataLCAFAddress.getIPTos())
-                .setLocalPort(new PortNumber((int) lispApplicationDataLCAFAddress.getLocalPort()))
-                .setRemotePort(new PortNumber((int) lispApplicationDataLCAFAddress.getRemotePort())).setAddress(address).build();
+                .setLocalPortLow(new PortNumber((int) lispApplicationDataLCAFAddress.getLocalPortLow()))
+                .setLocalPortHigh(new PortNumber((int) lispApplicationDataLCAFAddress.getLocalPortHigh()))
+                .setRemotePortLow(new PortNumber((int) lispApplicationDataLCAFAddress.getRemotePortLow()))
+                .setRemotePortHigh(new PortNumber((int) lispApplicationDataLCAFAddress.getRemotePortHigh()))
+                .setAddress(address).build();
     }
 
     public static LispAFIAddress transformLispListLCAFAddress(LispLCAFAddress lispLcafAddress) {
@@ -326,7 +329,8 @@ public class YangTransformerNB {
         lcafApplicationDataAddress = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafApplicationDataAddress) lispLcafAddress;
 
         return new LispApplicationDataLCAFAddress((byte) 0, lcafApplicationDataAddress.getProtocol().byteValue(), lcafApplicationDataAddress
-                .getIpTos().intValue(), lcafApplicationDataAddress.getLocalPort().getValue().shortValue(), lcafApplicationDataAddress.getRemotePort()
+                .getIpTos().intValue(), lcafApplicationDataAddress.getLocalPortLow().getValue().shortValue(), lcafApplicationDataAddress.getLocalPortHigh()
+                .getValue().shortValue(), lcafApplicationDataAddress.getRemotePortLow().getValue().shortValue(), lcafApplicationDataAddress.getRemotePortHigh()
                 .getValue().shortValue(), transformToLispAddress(LispAFIConvertor.toContainer(toAFIfromPrimitive(lcafApplicationDataAddress.getAddress()
                 .getPrimitiveAddress()))));
     }
