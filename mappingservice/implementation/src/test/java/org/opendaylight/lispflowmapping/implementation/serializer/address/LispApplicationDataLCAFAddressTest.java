@@ -31,9 +31,10 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
     @Test
     public void deserialize__Simple() throws Exception {
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
-                "04 20 00 0A " + //
+                "04 20 00 0E " + //
                 "AA BB CC DD " + // IPTOS & protocol
-                "A6 A1 FF DD " + // local port & remote port
+                "A6 A1 A6 A2 " + // local port range
+                "FF DD FF DE " + // remote port range
                 "00 01 11 22 33 44")); // AFI=1, IP=0x11223344
 
         assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
@@ -42,8 +43,10 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
         assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), appAddress.getAddress().getPrimitiveAddress());
         assertEquals(ByteUtil.getPartialInt(new byte[] { (byte) 0xAA, (byte) 0xBB, (byte) 0xCC }), appAddress.getIpTos().intValue());
         assertEquals((byte) 0xDD, appAddress.getProtocol().byteValue());
-        assertEquals((short) 0xA6A1, appAddress.getLocalPort().getValue().shortValue());
-        assertEquals((short) 0xFFDD, appAddress.getRemotePort().getValue().shortValue());
+        assertEquals((short) 0xA6A1, appAddress.getLocalPortLow().getValue().shortValue());
+        assertEquals((short) 0xA6A2, appAddress.getLocalPortHigh().getValue().shortValue());
+        assertEquals((short) 0xFFDD, appAddress.getRemotePortLow().getValue().shortValue());
+        assertEquals((short) 0xFFDE, appAddress.getRemotePortHigh().getValue().shortValue());
         assertEquals(LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode(), appAddress.getLcafType().byteValue());
     }
 
@@ -57,9 +60,10 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
         LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
-                "AA 20 00 0A " + // Type AA is unknown
+                "AA 20 00 12 " + // Type AA is unknown
                 "AA BB CC DD " + // IPTOS & protocol
-                "A6 A1 FF DD " + // local port & remote port
+                "A6 A1 A6 A2 " + // local port range
+                "FF DD FF DE " + // remote port range
                 "00 01 11 22 33 44")); // AFI=1, IP=0x11223344
     }
 
@@ -67,9 +71,10 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
     public void deserialize__Ipv6() throws Exception {
         LcafApplicationDataAddress appAddress = (LcafApplicationDataAddress) LispAddressSerializer.getInstance().deserialize(
                 hexToByteBuffer("40 03 00 00 " + //
-                        "04 20 00 0A " + //
+                        "04 20 00 1E " + //
                         "AA BB CC DD " + // IPTOS & protocol
-                        "A6 A1 FF DD " + // local port & remote port
+                        "A6 A1 A6 A2 " + // local port range
+                        "FF DD FF DE " + // remote port range
                         "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD")); // AFI=2,
         // IPv6
 
@@ -85,15 +90,18 @@ public class LispApplicationDataLCAFAddressTest extends BaseTestCase {
         addressBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType(
                 (short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode());
         addressBuilder.setProtocol((short) 0xDD);
-        addressBuilder.setLocalPort(new PortNumber(0xA6A1));
-        addressBuilder.setRemotePort(new PortNumber(0xFFDD));
+        addressBuilder.setLocalPortLow(new PortNumber(0xA6A1));
+        addressBuilder.setLocalPortHigh(new PortNumber(0xA6A2));
+        addressBuilder.setRemotePortLow(new PortNumber(0xFFDD));
+        addressBuilder.setRemotePortHigh(new PortNumber(0xFFDE));
         addressBuilder.setAddress(new AddressBuilder().setPrimitiveAddress(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68")).build());
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(addressBuilder.build()));
         LispAddressSerializer.getInstance().serialize(buf, addressBuilder.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "04 00 00 0E " + //
+                "04 00 00 12 " + //
                 "AA BB CC DD " + // IPTOS & protocol
-                "A6 A1 FF DD " + // local port & remote port
+                "A6 A1 A6 A2 " + // local port range
+                "FF DD FF DE " + // remote port range
                 "00 01 11 22 33 44"); // AFI=1, IP=0x11223344
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }

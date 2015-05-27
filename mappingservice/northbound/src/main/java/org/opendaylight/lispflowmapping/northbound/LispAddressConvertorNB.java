@@ -107,8 +107,8 @@ public static LispAddress convertToLispAddress(LispAddressGeneric generic){
 
 private static LispApplicationDataLCAFAddress convertToApplicationData(LispAddressGeneric generic){
 	return new LispApplicationDataLCAFAddress(
-			(byte) 0, generic.getProtocol(), generic.getIpTos(), generic.getLocalPort(),
-			generic.getRemotePort(), convertToLispAddress(generic.getAddress()));
+			(byte) 0, generic.getProtocol(), generic.getIpTos(), generic.getLocalPortLow(), generic.getLocalPortHigh(),
+			generic.getRemotePortLow(), generic.getRemotePortHigh(), convertToLispAddress(generic.getAddress()));
 }
 
 private static LispListLCAFAddress convertToList(LispAddressGeneric generic){

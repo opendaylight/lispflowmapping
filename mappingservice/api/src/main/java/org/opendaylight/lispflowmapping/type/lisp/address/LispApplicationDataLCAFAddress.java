@@ -13,8 +13,10 @@ public class LispApplicationDataLCAFAddress extends LispLCAFAddress {
 
     private byte protocol;
     private int IPTos;
-    private short localPort;
-    private short remotePort;
+    private short localPortLow;
+    private short localPortHigh;
+    private short remotePortLow;
+    private short remotePortHigh;
     private LispAddress address;
 
     public LispApplicationDataLCAFAddress(byte res2) {
@@ -22,12 +24,15 @@ public class LispApplicationDataLCAFAddress extends LispLCAFAddress {
 
     }
 
-    public LispApplicationDataLCAFAddress(byte res2, byte protocol, int iPTos, short localPort, short remotePort, LispAddress address) {
+    public LispApplicationDataLCAFAddress(byte res2, byte protocol, int iPTos, short localPortLow, short localPortHigh,
+            short remotePortLow, short remotePortHigh, LispAddress address) {
         super(LispCanonicalAddressFormatEnum.APPLICATION_DATA, res2);
         this.protocol = protocol;
         this.IPTos = iPTos;
-        this.localPort = localPort;
-        this.remotePort = remotePort;
+        this.localPortLow = localPortLow;
+        this.localPortHigh = localPortHigh;
+        this.remotePortLow = remotePortLow;
+        this.remotePortHigh = remotePortHigh;
         this.address = address;
     }
 
@@ -47,20 +52,36 @@ public class LispApplicationDataLCAFAddress extends LispLCAFAddress {
         IPTos = iPTos;
     }
 
-    public short getLocalPort() {
-        return localPort;
+    public short getLocalPortLow() {
+        return localPortLow;
     }
 
-    public void setLocalPort(short localPort) {
-        this.localPort = localPort;
+    public void setLocalPortLow(short localPortLow) {
+        this.localPortLow = localPortLow;
     }
 
-    public short getRemotePort() {
-        return remotePort;
+    public short getLocalPortHigh() {
+        return localPortHigh;
     }
 
-    public void setRemotePort(short remotePort) {
-        this.remotePort = remotePort;
+    public void setLocalPortHigh(short localPortHigh) {
+        this.localPortHigh = localPortHigh;
+    }
+
+    public short getRemotePortLow() {
+        return remotePortLow;
+    }
+
+    public void setRemotePortLow(short remotePortLow) {
+        this.remotePortLow = remotePortLow;
+    }
+
+    public short getRemotePortHigh() {
+        return remotePortHigh;
+    }
+
+    public void setRemotePortHigh(short remotePortHigh) {
+        this.remotePortHigh = remotePortHigh;
     }
 
     public LispAddress getAddress() {
@@ -73,8 +94,10 @@ public class LispApplicationDataLCAFAddress extends LispLCAFAddress {
 
     @Override
     public String toString() {
-        return "LispApplicationDataLCAFAddress [protocol=" + protocol + ", IPTos=" + IPTos + ", localPort=" + localPort + ", remotePort="
-                + remotePort + ", address=" + address + "]";
+        return "LispApplicationDataLCAFAddress [protocol=" + protocol + ", IPTos=" + IPTos
+                + ", localPortLow=" + localPortLow + ", localPortHigh=" + localPortHigh
+                + ", remotePortLow=" + remotePortLow + ", remotePortHigh=" + remotePortHigh
+                + ", address=" + address + "]";
     }
 
 }
