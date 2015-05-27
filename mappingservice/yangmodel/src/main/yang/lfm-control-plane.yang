@@ -166,7 +166,7 @@ module lfm-control-plane {
     }
 
     grouping LcafSegmentAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.1";
         uses LispLcafAddress {
             refine lcafType {
                 default 2;
@@ -186,7 +186,7 @@ module lfm-control-plane {
     }
 
     grouping LcafTrafficEngineeringAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-09#section-4.9";
         uses LispLcafAddress {
             refine lcafType {
                 default 10;
@@ -203,7 +203,7 @@ module lfm-control-plane {
     }
 
     grouping LcafListAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.1";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.15.1";
         uses LispLcafAddress {
             refine lcafType {
                 default 1;
@@ -219,7 +219,7 @@ module lfm-control-plane {
     }
 
     grouping LcafSourceDestAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.11";
         uses LispLcafAddress {
             refine lcafType {
                 default 12;
@@ -240,7 +240,7 @@ module lfm-control-plane {
     }
 
     grouping LcafKeyValueAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-04#section-4.14";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.14";
         uses LispLcafAddress {
             refine lcafType {
                 default 15;
@@ -255,7 +255,7 @@ module lfm-control-plane {
     }
 
     grouping LcafApplicationDataAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03#section-4.11";
+        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.3";
         uses LispLcafAddress {
             refine lcafType {
                 default 4;
@@ -270,10 +270,16 @@ module lfm-control-plane {
         leaf ipTos {
             type int32;
         }
-        leaf localPort {
+        leaf localPortLow {
             type inet:port-number;
         }
-        leaf remotePort {
+        leaf localPortHigh {
+            type inet:port-number;
+        }
+        leaf remotePortLow {
+            type inet:port-number;
+        }
+        leaf remotePortHigh {
             type inet:port-number;
         }
     }

@@ -44,13 +44,23 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
         LcafApplicationDataAddress applicationDataAddress = ((LcafApplicationDataAddress) lispAddress);
         buffer.put(ByteUtil.partialIntToByteArray(NumberUtil.asInt(applicationDataAddress.getIpTos()), Length.TOC));
         buffer.put((byte) NumberUtil.asShort(applicationDataAddress.getProtocol()));
-        if (applicationDataAddress.getLocalPort() != null) {
-            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getLocalPort().getValue().shortValue()));
+        if (applicationDataAddress.getLocalPortLow() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getLocalPortLow().getValue().shortValue()));
         } else {
             buffer.putShort((short) 0);
         }
-        if (applicationDataAddress.getRemotePort() != null) {
-            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getRemotePort().getValue().shortValue()));
+        if (applicationDataAddress.getLocalPortHigh() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getLocalPortHigh().getValue().shortValue()));
+        } else {
+            buffer.putShort((short) 0);
+        }
+        if (applicationDataAddress.getRemotePortLow() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getRemotePortLow().getValue().shortValue()));
+        } else {
+            buffer.putShort((short) 0);
+        }
+        if (applicationDataAddress.getRemotePortHigh() != null) {
+            buffer.putShort(NumberUtil.asShort(applicationDataAddress.getRemotePortHigh().getValue().shortValue()));
         } else {
             buffer.putShort((short) 0);
         }
@@ -66,8 +76,10 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
         buffer.get(rawIPTos);
         builder.setIpTos(ByteUtil.getPartialInt(rawIPTos));
         builder.setProtocol((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setLocalPort(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
-        builder.setRemotePort(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setLocalPortLow(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setLocalPortHigh(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setRemotePortLow(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setRemotePortHigh(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
         LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(buffer);
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(new AddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(address)).build());
@@ -76,11 +88,13 @@ public class LispApplicationDataLCAFAddressSerializer extends LispLCAFAddressSer
     }
 
     private interface Length {
-        int LOCAL_PORT = 2;
-        int REMOTE_PORT = 2;
+        int LOCAL_PORT_LOW = 2;
+        int LOCAL_PORT_HIGH = 2;
+        int REMOTE_PORT_LOW = 2;
+        int REMOTE_PORT_HIGH = 2;
         int TOC = 3;
         int PROTOCOL = 1;
-        int ALL_FIELDS = LOCAL_PORT + REMOTE_PORT + TOC + PROTOCOL;
+        int ALL_FIELDS = LOCAL_PORT_LOW + LOCAL_PORT_HIGH + REMOTE_PORT_LOW + REMOTE_PORT_HIGH + TOC + PROTOCOL;
     }
 
 }

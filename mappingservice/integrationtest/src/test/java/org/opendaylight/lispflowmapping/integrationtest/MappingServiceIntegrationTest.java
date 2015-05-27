@@ -1408,15 +1408,19 @@ public class MappingServiceIntegrationTest {
         String ipString = "1.2.3.4";
         short protocol = 1;
         int ipTOs = 2;
-        int localPort = 3;
-        int remotePort = 4;
+        int localPortLow = 3;
+        int localPortHigh = 4;
+        int remotePortLow = 4;
+        int remotePortHigh = 5;
 
         LcafApplicationDataAddrBuilder builder = new LcafApplicationDataAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode()).setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode());
         builder.setIpTos(ipTOs);
         builder.setProtocol(protocol);
-        builder.setLocalPort(new PortNumber(localPort));
-        builder.setRemotePort(new PortNumber(remotePort));
+        builder.setLocalPortLow(new PortNumber(localPortLow));
+        builder.setLocalPortHigh(new PortNumber(localPortHigh));
+        builder.setRemotePortLow(new PortNumber(remotePortLow));
+        builder.setRemotePortHigh(new PortNumber(remotePortHigh));
         builder.setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafapplicationdataaddress.AddressBuilder()
                 .setPrimitiveAddress(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress(ipString))).build());
 
@@ -1431,8 +1435,10 @@ public class MappingServiceIntegrationTest {
         LcafApplicationDataAddress receivedApplicationDataAddress = (LcafApplicationDataAddress) receivedAddress;
         assertEquals(protocol, receivedApplicationDataAddress.getProtocol().intValue());
         assertEquals(ipTOs, receivedApplicationDataAddress.getIpTos().intValue());
-        assertEquals(localPort, receivedApplicationDataAddress.getLocalPort().getValue().intValue());
-        assertEquals(remotePort, receivedApplicationDataAddress.getRemotePort().getValue().intValue());
+        assertEquals(localPortLow, receivedApplicationDataAddress.getLocalPortLow().getValue().intValue());
+        assertEquals(localPortHigh, receivedApplicationDataAddress.getLocalPortHigh().getValue().intValue());
+        assertEquals(remotePortLow, receivedApplicationDataAddress.getRemotePortLow().getValue().intValue());
+        assertEquals(remotePortHigh, receivedApplicationDataAddress.getRemotePortHigh().getValue().intValue());
 
         LispIpv4Address ipAddressReceived = (LispIpv4Address) LispAFIConvertor.toAFIfromPrimitive(receivedApplicationDataAddress.getAddress().getPrimitiveAddress());
         assertEquals(ipString, ipAddressReceived.getIpv4Address().getValue());
@@ -1610,7 +1616,7 @@ public class MappingServiceIntegrationTest {
                 .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(
                         new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
-                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPort(new PortNumber(port)).build();
+                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPortLow(new PortNumber(port)).build();
         LOG.info("testNonProxyOtherPort:" + adLcaf.toString());
         sendProxyMapRequest(rloc, port, adLcaf);
 
@@ -1628,7 +1634,7 @@ public class MappingServiceIntegrationTest {
                 .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(
                         new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
-                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPort(new PortNumber(port)).build();
+                                LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPortLow(new PortNumber(port)).build();
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         ((LispMappingService) lms).registerNotificationListener(XtrRequestMapping.class, new NotificationListener<XtrRequestMapping>() {
 
