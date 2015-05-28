@@ -13,6 +13,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.implementation.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.implementation.util.ByteUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.implementation.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
@@ -44,7 +45,7 @@ public class LocatorRecordSerializer {
         LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
         LispAddressContainer locator = LispAFIConvertor.toContainer(afiAddress);
         builder.setLispAddressContainer(locator);
-        builder.setName(LispAFIConvertor.toString(locator));
+        builder.setName(LispAddressStringifier.getString(locator));
         return builder.build();
     }
 
