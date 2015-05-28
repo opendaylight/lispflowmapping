@@ -134,7 +134,8 @@ public class LispNotificationHelper {
         for (int i=0; i<mapRegisterNotification.getMapRegister().getEidToLocatorRecord().size(); i++) {
             EidToLocatorRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i);
             MappingBuilder mb = new MappingBuilder();
-            mb.setEid(new EidUri(LispAFIConvertor.toString(record.getLispAddressContainer())));
+            mb.setEid(new EidUri(LispAddressStringifier.getURIString(
+                    record.getLispAddressContainer(), record.getMaskLength())));
             mb.setOrigin(MappingOrigin.Southbound);
             mb.setRecordTtl(record.getRecordTtl());
             mb.setMaskLength(record.getMaskLength());

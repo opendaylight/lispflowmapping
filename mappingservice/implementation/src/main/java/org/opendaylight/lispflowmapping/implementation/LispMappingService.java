@@ -32,6 +32,7 @@ import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
@@ -228,9 +229,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public MapReply handleMapRequest(MapRequest request, boolean smr) {
-        LOG.debug("DAO: Retrieving mapping for {}/{}",
-                LispAFIConvertor.toString(request.getEidRecord().get(0).getLispAddressContainer()),
-                request.getEidRecord().get(0).getMask());
+        LOG.debug("DAO: Retrieving mapping for {}",
+                LispAddressStringifier.getString(request.getEidRecord().get(0).getLispAddressContainer(),
+                request.getEidRecord().get(0).getMask()));
 
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
@@ -255,9 +256,9 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
-        LOG.debug("DAO: Adding mapping for {}/{}",
-                LispAFIConvertor.toString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()),
-                mapRegister.getEidToLocatorRecord().get(0).getMaskLength());
+        LOG.debug("DAO: Adding mapping for {}",
+                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer(),
+                mapRegister.getEidToLocatorRecord().get(0).getMaskLength()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister, smr, this);
@@ -267,22 +268,23 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     }
 
     public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Retrieving authentication key for {}/{}", LispAFIConvertor.toString(address), maskLen);
+        LOG.debug("DAO: Retrieving authentication key for {}", LispAddressStringifier.getString(address, maskLen));
         return mapServer.getAuthenticationKey(address, maskLen);
     }
 
     public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Removing authentication key for {}/{}", LispAFIConvertor.toString(address), maskLen);
+        LOG.debug("DAO: Removing authentication key for {}", LispAddressStringifier.getString(address, maskLen));
         mapServer.removeAuthenticationKey(address, maskLen);
     }
 
     public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
-        LOG.debug("DAO: Adding authentication key '{}' for {}/{}", key, LispAFIConvertor.toString(address), maskLen);
+        LOG.debug("DAO: Adding authentication key '{}' for {}", key,
+                LispAddressStringifier.getString(address, maskLen));
         mapServer.addAuthenticationKey(address, maskLen, key);
     }
 
     public void removeMapping(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Removing mapping for {}/{}", LispAFIConvertor.toString(address), maskLen);
+        LOG.debug("DAO: Removing mapping for {}", LispAddressStringifier.getString(address, maskLen));
         mapServer.removeMapping(address, maskLen, smr, this);
     }
 

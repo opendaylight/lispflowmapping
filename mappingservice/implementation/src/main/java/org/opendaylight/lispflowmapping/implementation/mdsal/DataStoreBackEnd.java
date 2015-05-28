@@ -14,7 +14,7 @@ import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -39,12 +39,13 @@ public class DataStoreBackEnd {
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Adding authentication key '{}' for {}/{}", authenticationKey.getAuthkey(),
-                LispAFIConvertor.toString(authenticationKey.getLispAddressContainer()),
-                authenticationKey.getMaskLength());
+        LOG.debug("MD-SAL: Adding authentication key '{}' for {}", authenticationKey.getAuthkey(),
+                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer(),
+                authenticationKey.getMaskLength()));
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
+                        authenticationKey.getMaskLength());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, authenticationKey, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -52,11 +53,11 @@ public class DataStoreBackEnd {
     }
 
     public void addMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Adding mapping for {}/{}",
-                LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
+        LOG.debug("MD-SAL: Adding mapping for {}",
+                LispAddressStringifier.getString(mapping.getLispAddressContainer(), mapping.getMaskLength()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -64,12 +65,13 @@ public class DataStoreBackEnd {
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Removing authentication key for {}/{}",
-                LispAFIConvertor.toString(authenticationKey.getLispAddressContainer()),
-                authenticationKey.getMaskLength());
+        LOG.debug("MD-SAL: Removing authentication key for {}",
+                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer(),
+                authenticationKey.getMaskLength()));
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
+                        authenticationKey.getMaskLength());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.delete(LogicalDatastoreType.CONFIGURATION, path);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -77,11 +79,11 @@ public class DataStoreBackEnd {
     }
 
     public void removeMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Removing mapping for {}/{}",
-                LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
+        LOG.debug("MD-SAL: Removing mapping for {}",
+                LispAddressStringifier.getString(mapping.getLispAddressContainer(), mapping.getMaskLength()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.delete(LogicalDatastoreType.CONFIGURATION, path);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -89,12 +91,13 @@ public class DataStoreBackEnd {
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Updating authentication key for {}/{} with '{}'",
-                LispAFIConvertor.toString(authenticationKey.getLispAddressContainer()),
-                authenticationKey.getMaskLength(), authenticationKey.getAuthkey());
+        LOG.debug("MD-SAL: Updating authentication key for {} with '{}'",
+                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer(),
+                authenticationKey.getMaskLength()), authenticationKey.getAuthkey());
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
+                        authenticationKey.getMaskLength());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, authenticationKey, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
@@ -102,11 +105,11 @@ public class DataStoreBackEnd {
     }
 
     public void updateMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Updating mapping for {}/{}",
-                LispAFIConvertor.toString(mapping.getLispAddressContainer()), mapping.getMaskLength());
+        LOG.debug("MD-SAL: Updating mapping for {}",
+                LispAddressStringifier.getString(mapping.getLispAddressContainer(), mapping.getMaskLength()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
         WriteTransaction transaction = broker.newWriteOnlyTransaction();
         transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
         CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
