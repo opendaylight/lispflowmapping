@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_bd6844bb",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-05-29T22:22:35Z",
+      "side": 1,
+      "message": "Just put a comment here to know we should remove it once we remove activators.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 119
+      },
+      "revId": "ecd669bae03de628d416dd3b3b6c59eb5a745431",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
