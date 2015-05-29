@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
@@ -26,6 +28,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskK
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
+import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
@@ -56,6 +59,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
@@ -86,6 +90,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
 
     private ProviderContext session;
 
+    private DataStoreBackEnd dsbe;
     private NotificationService notificationService;
     private static LispMappingService lfmService = null;
 
@@ -313,6 +318,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     public void onSessionInitiated(ProviderContext session) {
         LOG.info("Lisp Consumer session initialized!");
         notificationService = session.getSALService(NotificationService.class);
+        dsbe = new DataStoreBackEnd(session.getSALService(DataBroker.class));
         registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
         registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         registerDataListeners(session.getSALService(DataBroker.class));
@@ -350,6 +356,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
                 LOG.warn("got null map notify");
             }
 
+            List<Mapping> mappings = LispNotificationHelper.getMapping(mapRegisterNotification);
+            for (Mapping mapping : mappings) {
+                dsbe.updateMapping(mapping);
+            }
         }
     }
 
