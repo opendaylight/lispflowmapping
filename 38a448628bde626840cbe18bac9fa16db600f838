@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a9dcd25_497f02e1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-01T16:42:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a9dcd25_ae724c7a",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a9dcd25_ce6f9891",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-06-01T09:40:03Z",
       "side": 1,
       "message": "This is one of the things that I found confusing so far in the logs, and never really got around to fix it.  I think this kind of message should be logged only after onSessionInitiated() finished, but I guess we could work on improving our logging separately, so this is more of a note, than an actual change request.",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_892c2aad",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-01T16:42:04Z",
+      "side": 1,
+      "message": "I don\u0027t have a strong opinion about this. So done :)",
+      "parentUuid": "1a9dcd25_ce6f9891",
       "revId": "38a448628bde626840cbe18bac9fa16db600f838",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a9dcd25_29195688",
+        "filename": "mappingservice/implementation/src/main/yang/lfm-mappingservice-impl.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-01T16:42:04Z",
+      "side": 1,
+      "message": "We should set the checkstyle plugin for these. Thanks!",
+      "parentUuid": "1a9dcd25_8e69908d",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a9dcd25_2e063ccf",
         "filename": "mappingservice/integrationtest/src/main/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceTestHelper.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-06-01T09:40:03Z",
       "side": 1,
       "message": "Why the slashes at the end?",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_292cf601",
+        "filename": "mappingservice/integrationtest/src/main/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceTestHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-01T16:42:04Z",
+      "side": 1,
+      "message": "I think I got these from an older version of the file and for some reason they were written then with /// at the end. I\u0027ll remove them.",
+      "parentUuid": "1a9dcd25_2e063ccf",
       "revId": "38a448628bde626840cbe18bac9fa16db600f838",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
