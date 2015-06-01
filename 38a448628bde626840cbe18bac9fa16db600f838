@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_ae724c7a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-01T09:40:03Z",
+      "side": 1,
+      "message": "I think I would put this at DEBUG level and do s/started/starting/",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_ce6f9891",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-01T09:40:03Z",
+      "side": 1,
+      "message": "This is one of the things that I found confusing so far in the logs, and never really got around to fix it.  I think this kind of message should be logged only after onSessionInitiated() finished, but I guess we could work on improving our logging separately, so this is more of a note, than an actual change request.",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_8e69908d",
+        "filename": "mappingservice/implementation/src/main/yang/lfm-mappingservice-impl.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-01T09:40:03Z",
+      "side": 1,
+      "message": "The usual YANG whitespace complaint :)",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_2e063ccf",
+        "filename": "mappingservice/integrationtest/src/main/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceTestHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-01T09:40:03Z",
+      "side": 1,
+      "message": "Why the slashes at the end?",
+      "revId": "38a448628bde626840cbe18bac9fa16db600f838",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
