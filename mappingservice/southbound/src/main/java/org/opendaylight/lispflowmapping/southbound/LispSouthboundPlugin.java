@@ -17,7 +17,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
@@ -30,14 +29,12 @@ import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, CommandProvider, AutoCloseable, BindingAwareProvider {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, BindingAwareProvider {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -65,7 +62,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, Comman
         synchronized (startLock) {
             lispSouthboundService = new LispSouthboundService();
             lispXtrSouthboundService = new LispXtrSouthboundService();
-            registerWithOSGIConsole();
             lispSouthboundService.setNotificationProvider(this.notificationService);
             lispXtrSouthboundService.setNotificationProvider(this.notificationService);
             LOG.trace("Provider Session initialized");
@@ -86,12 +82,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, Comman
 
     public void setBindingAwareBroker(BindingAwareBroker broker) {
         this.broker = broker;
-    }
-
-    private void registerWithOSGIConsole() {
-        BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-        bundleContext.registerService(CommandProvider.class.getName(), this, null);
-        bundleContext.registerService(IConfigLispSouthboundPlugin.class.getName(), this, null);
     }
 
     private void unloadActions() {

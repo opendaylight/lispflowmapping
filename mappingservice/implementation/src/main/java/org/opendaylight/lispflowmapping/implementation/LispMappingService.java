@@ -12,8 +12,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.osgi.framework.console.CommandInterpreter;
-import org.eclipse.osgi.framework.console.CommandProvider;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -24,7 +22,6 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
-import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -67,12 +64,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yangtools.yang.binding.Notification;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements CommandProvider, IFlowMapping, IFlowMappingShell, BindingAwareProvider,
+public class LispMappingService implements IFlowMapping, IFlowMappingShell, BindingAwareProvider,
         IMapRequestResultHandler, IMapNotifyHandler, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
@@ -124,7 +119,6 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         lfmDbRpc = rpcRegistry.addRpcImplementation(LfmMappingDatabaseService.class, mappingDbProviderRpc);
 
         setLispDao(new HashMapDb());
-        registerWithOSGIConsole();
     }
 
     @Override
@@ -172,29 +166,11 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         lispDao = null;
     }
 
-    private void registerWithOSGIConsole() {
-        try {
-            BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-            bundleContext.registerService(CommandProvider.class.getName(), this, null);
-        } catch (Exception e) {
-            LOG.error(e.getStackTrace().toString());
-        }
-    }
-
     public void destroy() {
         LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;
         closeDataListeners();
-    }
-
-    public void _removeEid(final CommandInterpreter ci) {
-        LispAddressContainer eid = LispAFIConvertor.getIPContainer(ci.nextArgument());
-        lispDao.remove(MappingServiceKeyUtil.generateMappingServiceKey(eid));
-    }
-
-    public void _dumpAll(final CommandInterpreter ci) {
-        ci.print(printMappings());
     }
 
     public String printMappings() {
@@ -216,34 +192,10 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
         return sb.toString();
     }
 
-    public void _setShouldOverwriteRlocs(final CommandInterpreter ci) {
-        try {
-            boolean shouldOverwriteRloc = Boolean.parseBoolean(ci.nextArgument());
-            setOverwrite(shouldOverwriteRloc);
-        } catch (Exception e) {
-            ci.println("Bad Usage!!");
-        }
-
-    }
-
-    public void _addDefaultPassword(final CommandInterpreter ci) {
-        addDefaultKeyIPv4();
-    }
-
     public void addDefaultKeyIPv4() {
         LispAddressContainer address = LispAFIConvertor.toContainer(
                 new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).build());
         addAuthenticationKey(address, 0, "password");
-    }
-
-    public String getHelp() {
-        StringBuffer help = new StringBuffer();
-        help.append("---LISP Mapping Service---\n");
-        help.append("\t dumpAll                               - Dump all current EID -> RLOC mappings\n");
-        help.append("\t removeEid <EID>                       - Remove a single EID (/32 or /128)\n");
-        help.append("\t setShouldOverwriteRlocs <true|false>  - Set the map server's behavior regarding existing RLOCs\n");
-        help.append("\t addDefaultPassword                    - Add \"password\" as default password for IPv4 EIDs");
-        return help.toString();
     }
 
     public MapReply handleMapRequest(MapRequest request) {
