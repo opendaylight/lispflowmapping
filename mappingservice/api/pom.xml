@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
     <version>1.2.0-SNAPSHOT</version>
   </parent>
+
+  <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.api</artifactId>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
-  <name>LISP Flow Mapping Public APIs</name>
+  <name>Mapping Service Public APIs</name>
+
   <dependencies>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-api</artifactId>
@@ -27,6 +28,7 @@
       <artifactId>mappingservice.yangmodel</artifactId>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>

@@ -32,8 +32,8 @@ public interface IGeneralMapServer {
     /**
      * This method returns the authentication key of the address.
      *
-     * @param address
-     * @param maskLen
+     * @param address EID to look up
+     * @param maskLen EID mask length
      * @return The correct key.
      */
     String getAuthenticationKey(LispAddressContainer address, int maskLen);
@@ -47,19 +47,17 @@ public interface IGeneralMapServer {
     /**
      * This method removes the given authentication key from the map server.
      *
-     * @param address
-     * @param maskLen
-     * @return
+     * @param address EID to remove
+     * @param maskLen EID mask length
      */
     void removeAuthenticationKey(LispAddressContainer address, int maskLen);
 
     /**
      * This method adds an authentication key to the address.
      *
-     * @param address
-     * @param maskLen
-     * @param key
-     * @return
+     * @param address EID to add
+     * @param maskLen EID mask length
+     * @param key Value of the key for the EID
      */
     void addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
 }
