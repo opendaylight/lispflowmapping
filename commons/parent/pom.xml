@@ -24,7 +24,6 @@
   <version>1.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Parent POM</name>
-  <description></description>
 
   <properties>
     <branding.version>1.1.0-SNAPSHOT</branding.version>
@@ -85,16 +84,6 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
-        <artifactId>clustering.services</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>commons.northbound</artifactId>
-        <version>0.5.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-api</artifactId>
         <version>0.3.0-SNAPSHOT</version>
       </dependency>
@@ -107,11 +96,6 @@
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-util</artifactId>
         <version>0.3.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>containermanager</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
@@ -161,11 +145,6 @@
         <version>${config.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opendaylight.neutron</groupId>
-        <artifactId>neutron-spi</artifactId>
-        <version>0.5.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>opendaylight-karaf-empty</artifactId>
         <version>${karaf.empty.version}</version>
@@ -176,11 +155,6 @@
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>opendaylight-karaf-resources</artifactId>
         <version>${karaf.resources.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>sal</artifactId>
-        <version>0.9.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
