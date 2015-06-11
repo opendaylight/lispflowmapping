@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_591a7f6f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/lisp/MapRegister.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 1,
+      "message": "Well, it\u0027s part of a Javadoc comment, and it turns out Java 8 doesn\u0027t like it.  You can take a look at the Jenkins build failure from Patch Set 1",
+      "parentUuid": "9a6a9dd7_139b8819",
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_73b0c48b",
         "filename": "mappingservice/pom.xml",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 45,
         "endChar": 19
       },
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_993ed7b7",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 1,
+      "message": "Not sure :) I\u0027ll move it.",
+      "parentUuid": "9a6a9dd7_73b0c48b",
       "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_59483f5b",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 1,
+      "message": "Well, commons/parent should be removed eventually, so this is becoming the common pom for most of our bundles, especially those depending on config-parent.  Since there are two bundles depending on sal, I prefer to have the dependencyManagement section here.  In general I would like to avoid specifying \u003cversion\u003es in the \u003cdependencies\u003e section.",
+      "parentUuid": "9a6a9dd7_f331340c",
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_d340b058",
         "filename": "pom.xml",
         "patchSetId": 2
@@ -88,6 +142,24 @@
         "endLine": 25,
         "endChar": 30
       },
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_f974b39d",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 1,
+      "message": "Best practice from Ed\u0027s startup archetype, recommended for karaf.  Useful for other stuff as well.",
+      "parentUuid": "9a6a9dd7_d340b058",
       "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false

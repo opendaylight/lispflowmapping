@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_59311feb",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 0,
+      "message": "I\u0027m not sure why we still have this bundle :) but I guess I didn\u0027t want experimenting with removal this late in the cycle.  We can try if you want.\n\nYou\u0027re right about the pluginManagement vs plugin stuff, but I think I removed everything, and then things broke.  I\u0027ll try again, maybe the breakage was unrelated.  I\u0027d love to get rid of all \u003cbuild\u003e stuff.",
+      "parentUuid": "9a6a9dd7_d3a43059",
+      "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_d3bbd070",
         "filename": "mappingservice/netconf/pom.xml",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 130,
         "endChar": 20
       },
+      "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_d95c4f28",
+        "filename": "mappingservice/netconf/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T11:28:34Z",
+      "side": 0,
+      "message": "Same as with the config bundle... I tried removing, but there are some hardcoded lfm things here in the pom file, and things break if I remove them.  I\u0027ll test again, but if it doesn\u0027t work out, you can take a deeper look, since NETCONF is your work ;)",
+      "parentUuid": "9a6a9dd7_d3bbd070",
       "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
