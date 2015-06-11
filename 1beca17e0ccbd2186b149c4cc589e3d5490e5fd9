@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_d3a43059",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-11T06:35:06Z",
+      "side": 0,
+      "message": "Why are you removing only this part and not the whole plugin? Lower you removed the pluging and this is part of pluginManagement, so it won\u0027t be used at all. And btw, why do we still have this bundle? :-)",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 25
+      },
+      "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_d3bbd070",
+        "filename": "mappingservice/netconf/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-11T06:35:06Z",
+      "side": 0,
+      "message": "I think you can remove the whole plugin.",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 20
+      },
+      "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
