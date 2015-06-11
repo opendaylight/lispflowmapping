@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_7995033f",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T12:40:30Z",
+      "side": 0,
+      "message": "Looking at it again I remembered that even-though I removed yang-maven-plugin from \u003cplugins\u003e, it is still in the effective pom, because it is inherited from config-parent. Previously, this pom file had another parent, so it needed the \u003cplugin\u003e explicitly. However, the configuration for the plugin inherited from config-parent is not going to cut it, here and in the netconf bundle, because the wiring to the config subsystem is done differently.",
+      "parentUuid": "9a6a9dd7_59311feb",
+      "revId": "1beca17e0ccbd2186b149c4cc589e3d5490e5fd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_d3bbd070",
         "filename": "mappingservice/netconf/pom.xml",
         "patchSetId": 2

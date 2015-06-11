@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_399f8b61",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T12:40:30Z",
+      "side": 1,
+      "message": "Actually, I\u0027d like to keep this as-is, and here\u0027s the reason: I would like to get to place where we have \u003cversion\u003es only in parent pom files in \u003cdependencyManagement\u003e, and the actual dependencies are where needed, but without the version number.",
+      "parentUuid": "9a6a9dd7_993ed7b7",
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_f331340c",
         "filename": "mappingservice/pom.xml",
         "patchSetId": 2
@@ -119,6 +137,24 @@
       "side": 1,
       "message": "Well, commons/parent should be removed eventually, so this is becoming the common pom for most of our bundles, especially those depending on config-parent.  Since there are two bundles depending on sal, I prefer to have the dependencyManagement section here.  In general I would like to avoid specifying \u003cversion\u003es in the \u003cdependencies\u003e section.",
       "parentUuid": "9a6a9dd7_f331340c",
+      "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_f9883324",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-11T12:40:30Z",
+      "side": 1,
+      "message": "Se second comment above.",
+      "parentUuid": "9a6a9dd7_59483f5b",
       "revId": "5b18f4b38020d2d52e34746338f6ac50ba4e27c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
