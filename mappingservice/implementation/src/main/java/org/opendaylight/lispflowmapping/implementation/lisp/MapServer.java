@@ -266,13 +266,16 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     }
 
     public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback) {
-        Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.
-                            getMappingForEid(LispAFIConvertor.toAFI(address), maskLen, dao);
+        Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping;
         ILispDAO db;
         if (address.getAddress() instanceof LcafSourceDest) {
             db = getSrcDstInnerDao(address, maskLen);
+            LispAFIAddress srcAddr = getSrcForLcafSrcDst(address);
+            short srcMask = getSrcMaskForLcafSrcDst(address);
+            mapping = DAOMappingUtil.getMappingForEid(srcAddr, srcMask, db);
         } else {
             db = dao;
+            mapping = DAOMappingUtil.getMappingForEid(LispAFIConvertor.toAFI(address), maskLen, db);
         }
         if (smr) {
             HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(address, maskLen);
