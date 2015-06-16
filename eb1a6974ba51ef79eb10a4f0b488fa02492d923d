@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_a0bff3cf",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-16T16:42:32Z",
+      "side": 1,
+      "message": "Is this needed?",
+      "range": {
+        "startLine": 227,
+        "startChar": 49,
+        "endLine": 227,
+        "endChar": 59
+      },
+      "revId": "eb1a6974ba51ef79eb10a4f0b488fa02492d923d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
