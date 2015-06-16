@@ -310,6 +310,15 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         public void onNotification(AddMapping mapRegisterNotification) {
             MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister(), smr);
             if (mapNotify != null) {
+                // store mappings in md-sal datastore only if we have a MapNotify
+                // XXX: this assumes that null MapNotifys are equivalent to authentication/registration errors
+                //      however notifies may be disabled with a flag (by the registering router). This should
+                //      be solved by moving southbound authentication of registrations out of handleMapRegister().
+                List<Mapping> mappings = LispNotificationHelper.getMapping(mapRegisterNotification);
+                for (Mapping mapping : mappings) {
+                    dsbe.updateMapping(mapping);
+                }
+
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
                 tab.setPort(new PortNumber(LispMessage.PORT_NUM));
@@ -321,10 +330,6 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
                 LOG.warn("got null map notify");
             }
 
-            List<Mapping> mappings = LispNotificationHelper.getMapping(mapRegisterNotification);
-            for (Mapping mapping : mappings) {
-                dsbe.updateMapping(mapping);
-            }
         }
     }
 
