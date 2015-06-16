@@ -226,7 +226,7 @@ public class LispSouthboundPlugin extends AbstractBindingAwareProvider implement
     private void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer, String packetType) {
         DatagramPacket packet = new DatagramPacket(outBuffer.array(), outBuffer.limit());
         packet.setPort(address.getPort().getValue());
-        InetAddress ip = InetAddresses.forString(address.getIpAddress().getIpv4Address().getValue());
+        InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
         packet.setAddress(ip);
         try {
             if (logger.isDebugEnabled()) {
