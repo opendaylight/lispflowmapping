@@ -40,6 +40,24 @@
       "revId": "eb1a6974ba51ef79eb10a4f0b488fa02492d923d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_a017f3a2",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-16T17:01:33Z",
+      "side": 1,
+      "message": "Geez :-)",
+      "parentUuid": "7a7fa997_a0a613c0",
+      "revId": "eb1a6974ba51ef79eb10a4f0b488fa02492d923d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
