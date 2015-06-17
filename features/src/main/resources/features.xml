@@ -13,16 +13,18 @@
 
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-restconf/${mdsal.version}/xml/features</repository>
-    <!-- <repository>mvn:org.opendaylight.controller/features-adsal/${sal.version}/xml/features</repository> -->
     <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.controller/features-nsf/${nsf.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-netconf-connector/${mdsal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
+    <!-- AD-SAL Northbound deps
+    <repository>mvn:org.opendaylight.controller/features-adsal/${sal.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-nsf/${nsf.version}/xml/features</repository>
+    -->
 
     <feature name="odl-lispflowmapping-all" description="OpenDaylight :: LISP Flow Mapping :: All" version='${lispflowmapping.version}'>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-mappingservice</feature>
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-southbound</feature>
-        <feature version="${lispflowmapping.version}">odl-lispflowmapping-netconf</feature>
+        <!-- <feature version="${lispflowmapping.version}">odl-lispflowmapping-netconf</feature> -->
         <feature version="${lispflowmapping.version}">odl-lispflowmapping-neutron</feature>
     </feature>
 
