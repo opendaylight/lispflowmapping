@@ -34,6 +34,7 @@ import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -60,6 +61,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
@@ -137,6 +140,7 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     void setLispDao(ILispDAO dao) {
         LOG.trace("LispDAO set in LispMappingService");
         basicInit(dao);
+        restoreDaoFromDatastore();
     }
 
     void unsetLispDao(ILispDAO dao) {
@@ -158,6 +162,33 @@ public class LispMappingService implements CommandProvider, IFlowMapping, IFlowM
     private void registerWithOSGIConsole() {
         BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
         bundleContext.registerService(CommandProvider.class.getName(), this, null);
+    }
+
+    private void restoreDaoFromDatastore() {
+        List<Mapping> mappings = dsbe.getAllMappings();
+        List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
+
+        LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
+
+        // restore southbound registered entries first ...
+        for (Mapping mapping : mappings) {
+            if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
+                handleMapRegister(register, false);
+            }
+        }
+
+        // because northbound registrations have priority
+        for (Mapping mapping : mappings) {
+            if (mapping.getOrigin() == MappingOrigin.Northbound) {
+                MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
+                handleMapRegister(register, false);
+            }
+        }
+
+        for (AuthenticationKey authKey : authKeys) {
+            addAuthenticationKey(authKey.getLispAddressContainer(), authKey.getMaskLength(), authKey.getAuthkey());
+        }
     }
 
     public void destroy() {

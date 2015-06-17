@@ -7,20 +7,26 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.mapping.database.InstanceId;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 
 /**
@@ -46,10 +52,8 @@ public class DataStoreBackEnd {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
                         authenticationKey.getMaskLength());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.put(LogicalDatastoreType.CONFIGURATION, path, authenticationKey, true);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Adding authentication key to config datastrore failed");
+        writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
+                "Adding authentication key to config datastrore failed");
     }
 
     public void addMapping(Mapping mapping) {
@@ -58,10 +62,8 @@ public class DataStoreBackEnd {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Adding mapping to config datastrore failed");
+        writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
+                "Adding mapping to config datastrore failed");
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -72,10 +74,8 @@ public class DataStoreBackEnd {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
                         authenticationKey.getMaskLength());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.delete(LogicalDatastoreType.CONFIGURATION, path);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Deleting authentication key from config datastrore failed");
+        deleteTransaction(path, LogicalDatastoreType.CONFIGURATION,
+                "Deleting authentication key from config datastrore failed");
     }
 
     public void removeMapping(Mapping mapping) {
@@ -84,10 +84,7 @@ public class DataStoreBackEnd {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.delete(LogicalDatastoreType.CONFIGURATION, path);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Deleting mapping from config datastrore failed");
+        deleteTransaction(path, LogicalDatastoreType.CONFIGURATION, "Deleting mapping from config datastrore failed");
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -98,10 +95,8 @@ public class DataStoreBackEnd {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer(),
                         authenticationKey.getMaskLength());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.put(LogicalDatastoreType.CONFIGURATION, path, authenticationKey, true);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Updating authentication key in config datastrore failed");
+        writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
+                "Updating authentication key in config datastrore failed");
     }
 
     public void updateMapping(Mapping mapping) {
@@ -110,17 +105,89 @@ public class DataStoreBackEnd {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getLispAddressContainer(), mapping.getMaskLength(), mapping.getOrigin());
-        WriteTransaction transaction = broker.newWriteOnlyTransaction();
-        transaction.put(LogicalDatastoreType.CONFIGURATION, path, mapping, true);
-        CheckedFuture<Void, TransactionCommitFailedException> future = transaction.submit();
-        checkTransaction(future, "Updating mapping in config datastrore failed");
+        writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
+                "Updating mapping in config datastrore failed");
     }
 
-    void checkTransaction(CheckedFuture<Void, TransactionCommitFailedException> future, String errMsg) {
-        try {
-            future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.warn(errMsg + e);
+    public List<Mapping> getAllMappings() {
+        LOG.debug("MD-SAL: Get all mappings from datastore");
+        List<Mapping> mappings = new ArrayList<Mapping>();
+        InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
+        MappingDatabase mdb = readTransaction(path, LogicalDatastoreType.CONFIGURATION);
+
+        if (mdb != null) {
+            for (InstanceId id : mdb.getInstanceId()) {
+                mappings.addAll(id.getMapping());
+            }
         }
+
+        return mappings;
+    }
+
+    public List<AuthenticationKey> getAllAuthenticationKeys() {
+        LOG.debug("MD-SAL: Get all authentication keys from datastore");
+        List<AuthenticationKey> keys = new ArrayList<AuthenticationKey>();
+        InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
+        MappingDatabase mdb = readTransaction(path, LogicalDatastoreType.CONFIGURATION);
+
+        if (mdb != null) {
+            for (InstanceId id : mdb.getInstanceId()) {
+                keys.addAll(id.getAuthenticationKey());
+            }
+        }
+
+        return keys;
+    }
+
+    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> boolean writePutTransaction(
+            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+        boolean ret;
+        WriteTransaction writeTx = broker.newWriteOnlyTransaction();
+        writeTx.put(logicalDatastoreType, addIID, data, true);
+        CheckedFuture<Void, TransactionCommitFailedException> submitFuture = writeTx.submit();
+        try {
+            submitFuture.checkedGet();
+            ret = true;
+        } catch (TransactionCommitFailedException e) {
+            LOG.error("{} : {}", errMsg, e.getMessage());
+            ret = false;
+        }
+        return ret;
+    }
+
+    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
+            InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
+        U ret = null;
+        ReadOnlyTransaction readTx = broker.newReadOnlyTransaction();
+        Optional<U> optionalDataObject;
+        CheckedFuture<Optional<U>, ReadFailedException> submitFuture = readTx.read(logicalDatastoreType, readIID);
+        try {
+            optionalDataObject = submitFuture.checkedGet();
+            if (optionalDataObject != null && optionalDataObject.isPresent()) {
+                ret = optionalDataObject.get();
+            } else {
+                LOG.debug("{}: Failed to read", Thread.currentThread().getStackTrace()[1]);
+            }
+        } catch (ReadFailedException e) {
+            LOG.warn("Failed to ....", e);
+        }
+        return ret;
+    }
+
+    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> boolean deleteTransaction(
+            InstanceIdentifier<U> deleteIID, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+        boolean ret = false;
+
+        WriteTransaction writeTx = broker.newWriteOnlyTransaction();
+        writeTx.delete(logicalDatastoreType, deleteIID);
+        CheckedFuture<Void, TransactionCommitFailedException> submitFuture = writeTx.submit();
+        try {
+            submitFuture.checkedGet();
+            ret = true;
+        } catch (TransactionCommitFailedException e) {
+            LOG.error("{} : {}", errMsg, e.getMessage());
+            ret = false;
+        }
+        return ret;
     }
 }
