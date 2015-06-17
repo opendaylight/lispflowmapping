@@ -46,11 +46,15 @@ public interface ILispDAO {
      * Enumerate all the entries from the DAO
      *
      * @param visitor
+     *            The visitor object.
      */
     public void getAll(IRowVisitor visitor);
 
     /**
      * Remove an entry from the DAO
+     *
+     * @param key
+     *            The key of the entry to delete
      */
     public void remove(Object key);
 
