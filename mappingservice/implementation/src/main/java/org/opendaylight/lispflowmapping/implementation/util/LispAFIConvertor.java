@@ -250,7 +250,8 @@ public class LispAFIConvertor {
     public static org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedName asDistinguishedNameAddress(
             String distName) {
         return new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedNameBuilder()
-                .setDistinguishedName(distName).build();
+            .setAfi(AddressFamilyNumberEnum.DISTINGUISHED_NAME.getIanaCode())
+            .setDistinguishedName(distName).build();
     }
 
     public static org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address asIPAfiAddress(
