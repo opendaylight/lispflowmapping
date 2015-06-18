@@ -13,6 +13,7 @@ import java.util.Set;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingDatabase;
@@ -33,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public class MappingDataListener extends AbstractDataListener {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private LispMappingService msmr;
+    private static final ConfigIni configIni = new ConfigIni();
+    private volatile boolean smr = configIni.smrIsSet();
 
     public MappingDataListener(DataBroker broker, LispMappingService msmr) {
         setBroker(broker);
@@ -59,7 +62,7 @@ public class MappingDataListener extends AbstractDataListener {
 
                 if (mapping.getOrigin() != MappingOrigin.Southbound) {
                     MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                    msmr.handleMapRegister(register, false);
+                    msmr.handleMapRegister(register, smr);
                 } else {
                     LOG.trace("Mapping is coming from the southbound plugin, already handled");
                 }
@@ -78,7 +81,7 @@ public class MappingDataListener extends AbstractDataListener {
 
                 if (mapping.getOrigin() != MappingOrigin.Southbound) {
                     MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                    msmr.handleMapRegister(register, false);
+                    msmr.handleMapRegister(register, smr);
                 } else {
                     LOG.trace("Mapping is coming from the southbound plugin, already handled");
                 }
