@@ -32,7 +32,7 @@ public class Activator extends DependencyActivatorBase {
         props.put("name", "mappingservice");
         manager.add(createComponent().setInterface(new String[] { IFlowMapping.class.getName(), IFlowMappingShell.class.getName() }, props)
                 .setImplementation(LispMappingService.class)
-                .add(createServiceDependency().setService(BindingAwareBroker.class).setRequired(true)
+                .add(createServiceDependency().setService(BindingAwareBroker.class)
                         .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker")));
 
     }

@@ -166,8 +166,11 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     public boolean saveRlocs(EidToLocatorRecord eidRecord, boolean checkForChanges) {
         Map<String, MappingServiceRLOCGroup> rlocGroups = new HashMap<String, MappingServiceRLOCGroup>();
         if (eidRecord.getLocatorRecord() != null) {
+            LOG.debug("DAO: the eidrecord is {}", eidRecord);
             for (LocatorRecord locatorRecord : eidRecord.getLocatorRecord()) {
+                LOG.debug("DAO: the locatorRecord is {}", locatorRecord);
                 String subkey = getAddressKey(locatorRecord.getLispAddressContainer().getAddress());
+                LOG.debug("DAO: the key is {}", subkey);
                 if (!rlocGroups.containsKey(subkey)) {
                     rlocGroups.put(subkey, new MappingServiceRLOCGroup(eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
                 }
