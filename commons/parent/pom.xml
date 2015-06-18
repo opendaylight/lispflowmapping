@@ -28,7 +28,6 @@
   <properties>
     <branding.version>1.1.0-SNAPSHOT</branding.version>
     <build.suffix>1.0.0</build.suffix>
-    <clustering.services.version>0.6.0-SNAPSHOT</clustering.services.version>
     <config.version>0.3.0-SNAPSHOT</config.version>
     <feature.test.version>0.7.0-SNAPSHOT</feature.test.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
@@ -40,13 +39,10 @@
     <mdsal.version>1.2.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.5.0-SNAPSHOT</neutron.version>
     <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-    <nsf.version>0.5.0-SNAPSHOT</nsf.version>
-    <sal.version>0.9.0-SNAPSHOT</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
     <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-    <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <xtend.dstdir>src/main/xtend-gen</xtend.dstdir>
     <yang.src.path>src/main/yang</yang.src.path>
     <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
@@ -125,14 +121,6 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>features-nsf</artifactId>
-        <version>${nsf.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>karaf.branding</artifactId>
