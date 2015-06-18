@@ -17,16 +17,14 @@ import org.opendaylight.neutron.spi.INeutronSubnetAware;
 import org.opendaylight.neutron.spi.NeutronSubnet;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 
 /**
  * Lisp Service implementation of NeutronSubnetAware API Creation of a new
  * Subnet results in defining the subnet as an EID prefix in the LISP Mapping
  * System with subnet's network UUID as the key to use for registering mappings
  * for the subnet.
+ *
+ * @author Vina Ermagan
  *
  */
 public class LispNeutronSubnetHandler extends LispNeutronService implements
@@ -69,19 +67,12 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 		// Determine the IANA code for the subnet IP version
 		// Default is set to IPv4 for neutron subnets
 
-		short ianaCode = 1;
-		if (SIX.equals(subnet.getIpVersion())) {
-			ianaCode = 2;
-			LOG.error("Adding new subnet to lisp mapping service failed. No support for IPv6 addresses. Subnet : "
-					+ subnet.toString());
-			return;
-		}
 		LispAFIAddress lispAddress = LispAFIConvertor.asIPAfiAddress(info.getNetworkAddress());
 		LispAddressContainer addressContainer = LispAFIConvertor.toContainer(lispAddress);
 
 		try {
-			lispNeutronService.getMappingService().addAuthenticationKey(
-					addressContainer, masklen, subnet.getNetworkUUID());
+
+            lispNeutronService.getMappingDbService().addKey((LispUtil.buildAddKeyInput(addressContainer,subnet.getNetworkUUID(), masklen)));
 
 			LOG.debug("Neutron Subnet Added to MapServer : Subnet name: "
 					+ subnet.getName() + " EID Prefix: "
@@ -89,8 +80,10 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 					+ subnet.getNetworkUUID());
 		} catch (Exception e) {
 			LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
-					+ subnet.toString());
+					+ subnet.toString() + "Error: "+ e);
 		}
+        LOG.info("Neutron Subnet Created request : Subnet name: "
+                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
 
 	}
 
@@ -138,43 +131,8 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 				+ subnet.getNetworkUUID());
 		LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
-		int result;
-		int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
-		SubnetUtils util = new SubnetUtils(subnet.getCidr());
-		SubnetInfo info = util.getInfo();
 
-		// Determine the IANA code for the subnet IP version
-		// Default is set to IPv4 for neutron subnets
-		short ianaCode = 1;
-		if (SIX.equals(subnet.getIpVersion()))
-			ianaCode = 2;
-
-		LispAFIAddress lispAddress = new Ipv4AddressBuilder()
-				.setIpv4Address(new Ipv4Address(info.getNetworkAddress()))
-				.setAfi(ianaCode).build();
-		LispAddressContainer addressContainer = new LispAddressContainerBuilder()
-				.setAddress((Address) lispAddress).build();
-
-		// if subnet does not exist in MapServer, return error
-		try {
-			if (lispNeutronService.getMappingService().getAuthenticationKey(
-					addressContainer, masklen) == null) {
-
-				LOG.error("Neutron canDeleteSubnet rejected : Subnet does not exist: Subnet name: "
-						+ subnet.getName()
-						+ " Eid Prefix: "
-						+ addressContainer.toString()
-						+ " Key: "
-						+ subnet.getNetworkUUID());
-				return HttpURLConnection.HTTP_BAD_REQUEST;
-			}
-			result = HttpURLConnection.HTTP_OK;
-		} catch (Exception e) {
-			LOG.error("canDeleteSubnet request rejected. Subnet : "
-					+ subnet.toString());
-			result = HttpURLConnection.HTTP_BAD_REQUEST;
-		}
-		return result;
+			return HttpURLConnection.HTTP_OK;
 	}
 
 	/**
@@ -195,30 +153,12 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 		// Determine the IANA code for the subnet IP version
 		// Default is set to IPv4 for neutron subnets
 
-		short ianaCode = 1;
-		if (SIX.equals(subnet.getIpVersion()))
-			ianaCode = 2;
+        LispAFIAddress lispAddress = LispAFIConvertor.asIPAfiAddress(info.getNetworkAddress());
+        LispAddressContainer addressContainer = LispAFIConvertor.toContainer(lispAddress);
 
-		LispAFIAddress lispAddress = new Ipv4AddressBuilder()
-				.setIpv4Address(new Ipv4Address(info.getNetworkAddress()))
-				.setAfi(ianaCode).build();
-		LispAddressContainer addressContainer = new LispAddressContainerBuilder()
-				.setAddress((Address) lispAddress).build();
+        try {
 
-		try {
-			// if subnet does not exist in MapServer, return error
-			if (lispNeutronService.getMappingService().getAuthenticationKey(
-					addressContainer, masklen) == null) {
-				LOG.error("Neutron Delete Subnet Failed: Subnet does not exist: Subnet name: "
-						+ subnet.getName()
-						+ " Eid Prefix: "
-						+ addressContainer.toString()
-						+ "Key: "
-						+ subnet.getNetworkUUID());
-				return;
-			}
-			lispNeutronService.getMappingService().removeAuthenticationKey(
-					addressContainer, masklen);
+            lispNeutronService.getMappingDbService().removeKey(LispUtil.buildRemoveKeyInput(addressContainer, masklen));
 
 			LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: "
 					+ subnet.getName() + " Eid Prefix: "
