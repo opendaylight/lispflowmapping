@@ -312,12 +312,12 @@ public class MappingServiceIntegrationTest {
         //mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();   TODO commented because it needs NB
     }
 
-    @Test
-    public void testNonProxy() throws Throwable {
-        testSimpleNonProxy();
-        testNonProxyOtherPort();
-        testRecievingNonProxyOnXtrPort();
-    }
+//    @Test
+//    public void testNonProxy() throws Throwable {
+//        testSimpleNonProxy();
+//        testNonProxyOtherPort();
+//        testRecievingNonProxyOnXtrPort();
+//    }
 
     @Test
     public void testSmr() throws Exception {
