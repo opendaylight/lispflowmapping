@@ -11,17 +11,43 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
 
 
-
-public class LispNeutronService implements ILispNeutronService {
+public class LispNeutronService implements ILispNeutronService, BindingAwareProvider  {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
-    protected IFlowMapping mappingService;
+    private IFlowMapping mappingService;
+    private LfmMappingDatabaseService lfmDbService;
+    private static ILispNeutronService neutronService;
+
+
+    void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
+        LOG.debug("LISP NEUTRON BindingAwareBroker set!");
+        bindingAwareBroker.registerProvider(this);
+        neutronService = this;
+    }
+
+    void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
+
+    }
+
+    public static ILispNeutronService getLispNeutronService() {
+        return neutronService;
+    }
+
 
     public IFlowMapping getMappingService() {
         return this.mappingService;
+    }
+
+    public LfmMappingDatabaseService getMappingDbService() {
+        return this.lfmDbService;
     }
 
     public void setMappingService(IFlowMapping mappingService) {
@@ -33,6 +59,19 @@ public class LispNeutronService implements ILispNeutronService {
         LOG.debug("MappingService was unset in LISP Neutron");
         this.mappingService = null;
     }
+
+    @Override
+    public void onSessionInitiated(ProviderContext session) {
+        LOG.debug("LFMDBSERVICE IS BEING FILLED! SESSION INITIATED");
+        RpcProviderRegistry rpcRegistry = session.getSALService(RpcProviderRegistry.class);
+        lfmDbService = rpcRegistry.getRpcService(LfmMappingDatabaseService.class);
+        LOG.debug("LFMDBSERVICE was FILLED! SESSION INITIATED");
+        if (lfmDbService == null){
+            LOG.debug("lfmDbService IS NULLLL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+        }
+
+    }
+
 
  /*   protected IContainerManager containerManager;
 

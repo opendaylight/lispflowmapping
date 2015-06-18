@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import org.apache.felix.dm.DependencyActivatorBase;
 import org.apache.felix.dm.DependencyManager;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.neutron.spi.INeutronNetworkAware;
 import org.opendaylight.neutron.spi.INeutronSubnetAware;
@@ -35,25 +36,28 @@ public class Activator extends DependencyActivatorBase {
     @Override
     public void init(BundleContext context, DependencyManager manager) throws Exception {
         Dictionary<String, String> props = new Hashtable<String, String>();
-        props.put("name", "mappingservice");
+        props.put("name", "LISPNeutronService");
 
         manager.add(createComponent()
-                .setInterface(ILispNeutronService.class.getName(), null)
+                .setInterface(new String[] { ILispNeutronService.class.getName()}, props)
                 .setImplementation(LispNeutronService.class)
-                .add(createServiceDependency().setService(IFlowMapping.class)));
+                .add(createServiceDependency().setService(IFlowMapping.class))
+                .add(createServiceDependency().setService(BindingAwareBroker.class)
+                .setCallbacks("setBindingAwareBroker", "unsetBindingAwareBroker")));
 
         manager.add(createComponent()
-                .setInterface(new String[] { ILispNeutronService.class.getName(), INeutronNetworkAware.class.getName()}, props)
+                .setInterface(new String[] {  INeutronNetworkAware.class.getName()}, props)
                 .setImplementation(LispNeutronNetworkHandler.class));
 
         manager.add(createComponent()
-                .setInterface(new String[] { ILispNeutronService.class.getName(), INeutronSubnetAware.class.getName()}, props)
+                .setInterface(new String[] {  INeutronSubnetAware.class.getName()}, props)
                 .setImplementation(LispNeutronSubnetHandler.class)
                 .add(createServiceDependency().setService(ILispNeutronService.class)));
 
         manager.add(createComponent()
-                .setInterface(new String[] { ILispNeutronService.class.getName(), INeutronPortAware.class.getName()}, props)
-                .setImplementation(LispNeutronPortHandler.class));
+                .setInterface(new String[] { INeutronPortAware.class.getName()}, props)
+                .setImplementation(LispNeutronPortHandler.class)
+                .add(createServiceDependency().setService(ILispNeutronService.class)));
 
         LOG.debug("LISP Neutron Service is initialized!");
 
