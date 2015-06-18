@@ -35,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafTrafficEngineering;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplymessage.MapReplyBuilder;
@@ -161,7 +162,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 LispAddressContainer container = record.getLispAddressContainer();
 
                 // For non-ELP RLOCs, or when ELP policy is default, just add the locator and be done
-                if ((!(container.getAddress() instanceof LcafTrafficEngineeringAddress)) || elpPolicy.equalsIgnoreCase("default")) {
+                if ((!(container.getAddress() instanceof LcafTrafficEngineering)) || elpPolicy.equalsIgnoreCase("default")) {
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                     .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
@@ -171,7 +172,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                     continue;
                 }
 
-                LispAddressContainer nextHop = getNextELPHop((LcafTrafficEngineeringAddress) container.getAddress(), itrRlocs);
+                LcafTrafficEngineeringAddress teAddress = ((LcafTrafficEngineering) container.getAddress()).getLcafTrafficEngineeringAddr();
+                LispAddressContainer nextHop = getNextELPHop(teAddress, itrRlocs);
                 if (nextHop != null) {
                     java.lang.Short priority = record.getPriority();
                     if (elpPolicy.equalsIgnoreCase("both")) {
@@ -196,6 +198,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 }
             }
         } catch (ClassCastException cce) {
+            LOG.error("Class Cast Exception while building EidToLocatorRecord: {}", cce);
         }
     }
 
