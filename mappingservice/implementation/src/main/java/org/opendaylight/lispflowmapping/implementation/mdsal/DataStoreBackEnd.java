@@ -117,7 +117,10 @@ public class DataStoreBackEnd {
 
         if (mdb != null) {
             for (InstanceId id : mdb.getInstanceId()) {
-                mappings.addAll(id.getMapping());
+                List<Mapping> ms = id.getMapping();
+                if (ms != null) {
+                    mappings.addAll(ms);
+                }
             }
         }
 
@@ -126,17 +129,20 @@ public class DataStoreBackEnd {
 
     public List<AuthenticationKey> getAllAuthenticationKeys() {
         LOG.debug("MD-SAL: Get all authentication keys from datastore");
-        List<AuthenticationKey> keys = new ArrayList<AuthenticationKey>();
+        List<AuthenticationKey> authKeys = new ArrayList<AuthenticationKey>();
         InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
         MappingDatabase mdb = readTransaction(path, LogicalDatastoreType.CONFIGURATION);
 
         if (mdb != null) {
             for (InstanceId id : mdb.getInstanceId()) {
-                keys.addAll(id.getAuthenticationKey());
+                List<AuthenticationKey> keys = id.getAuthenticationKey();
+                if (keys != null) {
+                    authKeys.addAll(keys);
+                }
             }
         }
 
-        return keys;
+        return authKeys;
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> boolean writePutTransaction(
