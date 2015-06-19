@@ -17,7 +17,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 public class MappingServiceSubscriberRLOC {
     private LispAddressContainer rloc;
     private Date lastRequestDate;
-    private static final long SUBSCRIBER_TIMEOUT = 600000;    /* milliseconds */
+    private static final long SUBSCRIBER_TIMEOUT = 1800000;    /* milliseconds */
 
     public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc) {
         this(srcRloc, new Date(System.currentTimeMillis()));
