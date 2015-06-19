@@ -18,7 +18,6 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
-import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -65,80 +64,67 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             LOG.warn("handleMapRequest called while dao is uninitialized");
             return;
         }
-        if (request.isPitr()) {
-            if (request.getEidRecord().size() > 0) {
-                EidRecord eid = request.getEidRecord().get(0);
-                Object result = DAOMappingUtil.getLocatorsSpecificByEidRecord(eid, dao, ADDRESS_SUBKEY, shouldIterateMask());
-                if (result != null && result instanceof MappingServiceRLOCGroup) {
-                    MappingServiceRLOCGroup locatorsGroup = (MappingServiceRLOCGroup) result;
-                    if (locatorsGroup != null && locatorsGroup.getRecords().size() > 0) {
-                        callback.handleNonProxyMapRequest(request,
-                                LispNotificationHelper.getTransportAddressFromContainer(locatorsGroup.getRecords().get(0).getLispAddressContainer()));
-                    }
-                }
-            }
 
-        } else {
-            LispAFIAddress srcEid = null;
-            if (request.getSourceEid() != null) {
-                srcEid = LispAFIConvertor.toAFI(request.getSourceEid().getLispAddressContainer());
-            }
-            MapReplyBuilder builder = new MapReplyBuilder();
-            builder.setEchoNonceEnabled(false);
-            builder.setProbe(false);
-            builder.setSecurityEnabled(false);
-            builder.setNonce(request.getNonce());
-            builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-            for (EidRecord eid : request.getEidRecord()) {
-                EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
-                Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMapping(srcEid, eid, dao);
-                recordBuilder.setRecordTtl(0);
-                recordBuilder.setAction(Action.NoAction);
-                recordBuilder.setAuthoritative(false);
-                recordBuilder.setMapVersion((short) 0);
-                recordBuilder.setMaskLength((short) mapping.getKey().getMask());
-                recordBuilder.setLispAddressContainer(mapping.getKey().getEID());
-                recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-                List<MappingServiceRLOCGroup> locators = mapping.getValue();
-                if (locators != null && locators.size() > 0) {
-                    List<ItrRloc> itrRlocs = request.getItrRloc();
-                    addLocatorGroups(recordBuilder, locators, itrRlocs);
-                    if (itrRlocs != null && itrRlocs.size() > 0) {
-                        LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
-                        MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
-                        HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
-                        if (subscribers == null) {
-                            subscribers = new HashSet<MappingServiceSubscriberRLOC>();
-                        } else if (subscribers.contains(subscriberRloc)) {
-                            /*
-                             * If there is an entry already for this
-                             * subscriberRloc, remove it, so that it gets the
-                             * new timestamp
-                             */
-                            subscribers.remove(subscriberRloc);
-                        }
-                        if (smr) {
-                            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(mapping.getKey().getEID(),
-                                    mapping.getKey().getMask());
-                            LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
-                            subscribers.add(subscriberRloc);
-                            dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
-                        }
-                    }
-                } else {
-                    recordBuilder.setAction(Action.NativelyForward);
-                    if (shouldAuthenticate() && getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
-                        recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
-                    } else {
-                        recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
-
-                    }
-                }
-                builder.getEidToLocatorRecord().add(recordBuilder.build());
-            }
-
-            callback.handleMapReply(builder.build());
+        LispAFIAddress srcEid = null;
+        if (request.getSourceEid() != null) {
+            srcEid = LispAFIConvertor.toAFI(request.getSourceEid().getLispAddressContainer());
         }
+        MapReplyBuilder builder = new MapReplyBuilder();
+        builder.setEchoNonceEnabled(false);
+        builder.setProbe(false);
+        builder.setSecurityEnabled(false);
+        builder.setNonce(request.getNonce());
+        builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        for (EidRecord eid : request.getEidRecord()) {
+            EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
+            Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMapping(srcEid, eid, dao);
+            recordBuilder.setRecordTtl(0);
+            recordBuilder.setAction(Action.NoAction);
+            recordBuilder.setAuthoritative(false);
+            recordBuilder.setMapVersion((short) 0);
+            recordBuilder.setMaskLength((short) mapping.getKey().getMask());
+            recordBuilder.setLispAddressContainer(mapping.getKey().getEID());
+            recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+            List<MappingServiceRLOCGroup> locators = mapping.getValue();
+            if (locators != null && locators.size() > 0) {
+                List<ItrRloc> itrRlocs = request.getItrRloc();
+                addLocatorGroups(recordBuilder, locators, itrRlocs);
+                if (itrRlocs != null && itrRlocs.size() > 0) {
+                    LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
+                    MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
+                    HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
+                    if (subscribers == null) {
+                        subscribers = new HashSet<MappingServiceSubscriberRLOC>();
+                    } else if (subscribers.contains(subscriberRloc)) {
+                        /*
+                         * If there is an entry already for this
+                         * subscriberRloc, remove it, so that it gets the
+                         * new timestamp
+                         */
+                        subscribers.remove(subscriberRloc);
+                    }
+                    if (smr) {
+                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(mapping.getKey().getEID(),
+                                mapping.getKey().getMask());
+                        LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
+                        subscribers.add(subscriberRloc);
+                        dao.put(key, new MappingEntry<HashSet<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                    }
+                }
+            } else {
+                recordBuilder.setAction(Action.NativelyForward);
+                if (shouldAuthenticate() && getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
+                    recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+                } else {
+                    recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+
+                }
+            }
+            builder.getEidToLocatorRecord().add(recordBuilder.build());
+        }
+
+        callback.handleMapReply(builder.build());
+
     }
 
     private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs, List<ItrRloc> itrRlocs) {
