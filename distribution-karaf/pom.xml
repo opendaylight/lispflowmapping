@@ -12,13 +12,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <parent>
     <groupId>org.opendaylight.controller</groupId>
     <artifactId>karaf-parent</artifactId>
-    <version>1.5.0-Lithium</version>
+    <version>1.5.1-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>distribution-karaf</artifactId>
-  <version>1.2.0-Lithium</version>
+  <version>1.2.1-SNAPSHOT</version>
   <name>LISP Flow Mapping Project - Karaf Distribution</name>
 
   <prerequisites>
