@@ -1,0 +1,54 @@
+# General configuration
+#   debug: Debug levels [0..3]
+#   map-request-retries: Additional Map-Requests to send per map cache miss
+debug               = 0
+map-request-retries = 2
+
+# operating mode can be any of:
+# xTR, RTR, MN, MS
+operating-mode = RTR
+
+###############################################
+#
+# RTR config
+#
+rtr-ifaces {
+    rtr-iface {
+        iface    = eth1
+        afi      = 4
+        priority = 1
+        weight   = 100
+    }
+    rtr-iface {
+        iface    = eth1
+        afi      = 6
+        priority = 2
+        weight   = 100
+    }
+}
+
+###############################################
+#
+# xTR & MN config
+#
+
+# RLOC Probing configuration
+#   rloc-probe-interval: interval at which periodic RLOC probes are sent
+#     (seconds). A value of 0 disables RLOC Probing
+#   rloc-probe-retries: RLOC Probe retries before setting the locator with
+#     status down. [0..5]
+#   rloc-probe-retries-interval: interval at which RLOC probes retries are
+#     sent (seconds) [1..#rloc-probe-interval]
+rloc-probing {
+    rloc-probe-interval         = 0
+    rloc-probe-retries          = 2
+    rloc-probe-retries-interval = 5
+}
+
+# Encapsulated Map-Requests are sent to this map-resolver
+# You can define several map-resolvers. Encapsulated Map-Request messages will
+# be sent to only one.
+#   address: IPv4 or IPv6 address of the map resolver
+map-resolver = {
+    192.168.16.11
+}

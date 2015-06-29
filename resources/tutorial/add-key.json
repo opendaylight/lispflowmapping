@@ -1,0 +1,13 @@
+{
+    "input": {
+        "LispAddressContainer": {
+            "Ipv4Address": {
+                "afi": 1,
+                "Ipv4Address": "1.1.1.1"
+            }
+        },
+        "mask-length": 32,
+        "key-type": 1,
+        "authkey": "password"
+   }
+}
