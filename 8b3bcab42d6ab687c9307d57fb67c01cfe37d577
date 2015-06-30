@@ -40,6 +40,24 @@
       "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cfe4700f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-30T15:48:29Z",
+      "side": 1,
+      "message": "Not sure it\u0027s worth the effort. Java8 comes with String.join(), so we\u0027ll soon be able to move to that. If however we start printing stack traces more often, before completely switching to java 8, then I would still be in favor of apache-commons3 since it brings more utility functions and, well, it\u0027s maitained by others :-). But again, this is just me!",
+      "parentUuid": "7a7fa997_fdb6c989",
+      "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
