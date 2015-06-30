@@ -22,6 +22,24 @@
       "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_fdb6c989",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-30T12:07:40Z",
+      "side": 1,
+      "message": "Indeed, I did consider that too, but didn\u0027t want to introduce another dependency for something as simple as that, AFAICT we don\u0027t yet have apache-commons3 as a dep yet. I could however create a function in one of our *Util classes, to get the same effect.",
+      "parentUuid": "7a7fa997_02424010",
+      "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
