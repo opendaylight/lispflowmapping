@@ -58,6 +58,24 @@
       "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_523d678e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-06-30T21:29:07Z",
+      "side": 1,
+      "message": "How about we keep it like this for this particular commit, and we standardize on something when we overhaul all stack trace printing code?",
+      "parentUuid": "7a7fa997_cfe4700f",
+      "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
