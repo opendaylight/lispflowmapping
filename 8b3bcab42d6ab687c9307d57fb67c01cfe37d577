@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_02424010",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-06-30T00:51:09Z",
+      "side": 1,
+      "message": "I don\u0027t have a good alternative to this, but I like the following more because it\u0027s shorter (not a strong opinion). \n\nSystem.out.println(StringUtils.join(e.getStackTrace(), \"\\n\"));",
+      "range": {
+        "startLine": 318,
+        "startChar": 0,
+        "endLine": 320,
+        "endChar": 88
+      },
+      "revId": "8b3bcab42d6ab687c9307d57fb67c01cfe37d577",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
