@@ -48,20 +48,6 @@ map-resolver = {
     192.168.16.11
 }
 
-# Map-Registers are sent to this map-server
-# You can define several map-servers. Map-Register messages will be sent to all
-# of them.
-#   address: IPv4 or IPv6 address of the map-server
-#   key-type: Only 1 supported (HMAC-SHA-1-96)
-#   key: password to authenticate with the map-server
-#   proxy-reply [on/off]: Configure map-server to Map-Reply on behalf of the xTR
-map-server {
-    address     = 192.0.2.1
-    key-type    = 1
-    key         = password
-    proxy-reply = off
-}
-
 # IPv4 / IPv6 EID of the node.
 # Two kind of rlocs can be defined:
 #   -> rloc-address: Specifies directly the rloc of the interface
@@ -81,17 +67,17 @@ map-server {
 #     indicates how to balance unicast traffic between them.
 
 database-mapping {
-    eid-prefix    = 2.2.2.2/32
+    eid-prefix     = 2.2.2.2/32
     rloc-iface {
-        interface = eth1
-        afi       = 4
-        priority  = 1
-        weight    = 1
+        interface  = eth1
+        ip_version = 4
+        priority   = 1
+        weight     = 1
     }
     rloc-iface {
-        interface = eth1
-        afi       = 6
-        priority  = 2
-        weight    = 1
+        interface  = eth1
+        ip_version = 6
+        priority   = 2
+        weight     = 1
     }
 }

@@ -14,16 +14,16 @@ operating-mode = RTR
 #
 rtr-ifaces {
     rtr-iface {
-        iface    = eth1
-        afi      = 4
-        priority = 1
-        weight   = 100
+        iface      = eth1
+        ip_version = 4
+        priority   = 1
+        weight     = 100
     }
     rtr-iface {
-        iface    = eth1
-        afi      = 6
-        priority = 2
-        weight   = 100
+        iface      = eth1
+        ip_version = 6
+        priority   = 2
+        weight     = 100
     }
 }
 
