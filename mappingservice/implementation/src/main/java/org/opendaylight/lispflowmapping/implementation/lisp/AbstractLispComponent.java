@@ -96,47 +96,20 @@ public abstract class AbstractLispComponent {
     }
 
     @SuppressWarnings("unchecked")
-    private HashSet<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength,
-            ILispDAO dao) {
+    protected HashSet<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength) {
         Object subscribers;
-
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
-        subscribers = dao.getSpecific(key, SUBSCRIBERS_SUBKEY);
+        if (prefix.getAddress() instanceof LcafSourceDest) {
+            IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(getSrcForLcafSrcDst(prefix),
+                    getSrcMaskForLcafSrcDst(prefix));
+            ILispDAO srcDstDao = getSrcDstInnerDao(prefix, maskLength);
+            subscribers = srcDstDao.getSpecific(srcKey, SUBSCRIBERS_SUBKEY);
+        } else {
+            IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(prefix, maskLength);
+            subscribers = dao.getSpecific(key, SUBSCRIBERS_SUBKEY);
+        }
 
         if (subscribers != null && subscribers instanceof HashSet<?>) {
             return (HashSet<MappingServiceSubscriberRLOC>) subscribers;
-        }
-        return null;
-    }
-
-    protected HashSet<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength) {
-        // For SrcDst we merge the subscriber set from the parent DAO with the source specific DAO
-        if (prefix.getAddress() instanceof LcafSourceDest) {
-            HashSet<MappingServiceSubscriberRLOC> resultSet = new HashSet<MappingServiceSubscriberRLOC>();
-            boolean haveResult = false;
-
-            LispAddressContainer srcAddr = LispAFIConvertor.toContainer(getSrcForLcafSrcDst(prefix));
-            short srcMask = getSrcMaskForLcafSrcDst(prefix);
-            ILispDAO srcDstDao = getSrcDstInnerDao(prefix, maskLength);
-            HashSet<MappingServiceSubscriberRLOC> srcDstSubscribers = getSubscribers(srcAddr, srcMask, srcDstDao);
-            if (srcDstSubscribers != null) {
-                resultSet.addAll(srcDstSubscribers);
-                haveResult = true;
-            }
-
-            LispAddressContainer dstAddr = LispAFIConvertor.toContainer(getDstForLcafSrcDst(prefix));
-            short dstMask = getDstMaskForLcafSrcDst(prefix);
-            HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(dstAddr, dstMask, dao);
-            if (subscribers != null) {
-                resultSet.addAll(subscribers);
-                haveResult = true;
-            }
-
-            if (haveResult) {
-                return resultSet;
-            }
-        } else {
-            return getSubscribers(prefix, maskLength, dao);
         }
         return null;
     }

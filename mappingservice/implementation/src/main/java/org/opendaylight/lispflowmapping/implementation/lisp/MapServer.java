@@ -115,13 +115,6 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord>());
         LispAddressContainer container = eidRecord.getLispAddressContainer();
         short mask = (short) eidRecord.getMaskLength();
-
-        // For Src/Dst don't use an LCAF EID, just use the destination prefix
-        if (container.getAddress() instanceof LcafSourceDest) {
-            mask = getDstMaskForLcafSrcDst(container);
-            container = LispAFIConvertor.toContainer(getDstForLcafSrcDst(container));
-        }
-
         builder.getEidRecord().add(new EidRecordBuilder().setMask(mask).setLispAddressContainer(container).build());
 
         builder.setItrRloc(new ArrayList<ItrRloc>());
@@ -152,9 +145,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 }
                 boolean mappingChanged = saveRlocs(eidRecord, smr);
                 if (smr && mappingChanged) {
-                    HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(eidRecord.getLispAddressContainer(),
-                            eidRecord.getMaskLength());
-                    handleSmr(eidRecord, subscribers, callback);
+                    sendSmrs(eidRecord, callback);
                 }
             }
             if (!failed) {
@@ -303,6 +294,26 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             for (LocatorRecord record : group.getRecords()) {
                 db.removeSpecific(mapping.getKey(), getAddressKey(record.getLispAddressContainer().getAddress()));
             }
+        }
+    }
+
+    private void sendSmrs(EidToLocatorRecord record, IMapNotifyHandler callback) {
+        LispAddressContainer eid = record.getLispAddressContainer();
+        HashSet<MappingServiceSubscriberRLOC> subscribers;
+
+        subscribers = getSubscribers(eid, record.getMaskLength());
+        handleSmr(record, subscribers, callback);
+
+        // For SrcDst LCAF also send SMRs to Dst prefix
+        if (eid.getAddress() instanceof LcafSourceDest) {
+            LispAddressContainer dstAddr = LispAFIConvertor.toContainer(getDstForLcafSrcDst(eid));
+            short dstMask = getDstMaskForLcafSrcDst(eid);
+            subscribers = getSubscribers(dstAddr, dstMask);
+            EidToLocatorRecord newRecord = new EidToLocatorRecordBuilder().setAction(record.getAction()).
+                    setAuthoritative(record.isAuthoritative()).setLocatorRecord(record.getLocatorRecord()).
+                    setMapVersion(record.getMapVersion()).setRecordTtl(record.getRecordTtl()).
+                    setLispAddressContainer(dstAddr).setMaskLength(dstMask).build();
+            handleSmr(newRecord, subscribers, callback);
         }
     }
 
