@@ -114,7 +114,15 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
 
         builder.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord>());
         LispAddressContainer container = eidRecord.getLispAddressContainer();
-        builder.getEidRecord().add(new EidRecordBuilder().setMask((short) eidRecord.getMaskLength()).setLispAddressContainer(container).build());
+        short mask = (short) eidRecord.getMaskLength();
+
+        // For Src/Dst don't use an LCAF EID, just use the destination prefix
+        if (container.getAddress() instanceof LcafSourceDest) {
+            mask = getDstMaskForLcafSrcDst(container);
+            container = LispAFIConvertor.toContainer(getDstForLcafSrcDst(container));
+        }
+
+        builder.getEidRecord().add(new EidRecordBuilder().setMask(mask).setLispAddressContainer(container).build());
 
         builder.setItrRloc(new ArrayList<ItrRloc>());
         builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(getLocalAddress())).build());
