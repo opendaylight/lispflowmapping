@@ -17,7 +17,6 @@ import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -153,8 +152,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                     .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
                                     .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
-                                    .setLispAddressContainer(container).setName(LispAddressStringifier.getString(container)).build());
-                                                                    // TODO HACK ^^^^^^^^^^^^^
+                                    .setLispAddressContainer(container).setName(record.getName()).build());
                     continue;
                 }
 
@@ -167,7 +165,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                                 new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                         .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
                                         .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
-                                        .setLispAddressContainer(container).build());
+                                        .setLispAddressContainer(container).setName(record.getName()).build());
                         // Make the priority of the added simple locator lower so that ELP is used by default if
                         // the xTR understands ELP.  Exclude 255, since that means don't use for unicast forwarding
                         // XXX Complex cases like several ELPs with different priorities are not handled
@@ -180,7 +178,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                             .setWeight(record.getWeight()).setPriority(priority).setMulticastWeight(record.getMulticastWeight())
                             .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
-                            .setLispAddressContainer(nextHop).build());
+                            .setLispAddressContainer(nextHop).setName(record.getName()).build());
                 }
             }
         } catch (ClassCastException cce) {
