@@ -146,8 +146,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             for (LocatorRecord record : locatorObject.getRecords()) {
                 LispAddressContainer container = record.getLispAddressContainer();
 
-                // For non-ELP RLOCs, or when ELP policy is default, just add the locator and be done
-                if ((!(container.getAddress() instanceof LcafTrafficEngineering)) || elpPolicy.equalsIgnoreCase("default")) {
+                // For non-ELP RLOCs, or when ELP policy is default, or itrRlocs is null, just add the locator and be done
+                if ((!(container.getAddress() instanceof LcafTrafficEngineering)) || elpPolicy.equalsIgnoreCase("default") || itrRlocs == null) {
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                     .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
