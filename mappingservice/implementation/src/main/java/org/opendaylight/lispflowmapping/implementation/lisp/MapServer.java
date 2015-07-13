@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -332,7 +334,9 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 try {
                     callback.handleSMR(mapRequest, rloc.getSrcRloc());
                 } catch (Exception e) {
-                    LOG.error("Errors encountered while handling SMR:" + e.getStackTrace());
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    LOG.error("Errors encountered while handling SMR:" + sw.toString());
                 }
             }
         }
