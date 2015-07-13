@@ -1,0 +1,33 @@
+module lfm-ms-inmemorydb {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao:inmemorydb";
+    prefix "inmemorydb";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
+
+    description
+        "Service definition for Mapping Service DAO.";
+
+    revision "2015-07-13" {
+        description
+            "Initial revision";
+    }
+
+    identity lfm-ms-inmemorydb {
+        base config:module-type;
+        config:provided-service ms-dao:ms-dao;
+        config:java-name-prefix InMemoryDb;
+    }
+
+    augment "/config:modules/config:module/config:configuration" {
+        case lfm-ms-inmemorydb {
+          when "/config:modules/config:module/config:type = 'lfm-ms-inmemorydb'";
+          leaf record-timeout {
+              type uint16;
+              description
+                  "Mapping record timeout";
+          }
+        }
+    }
+}

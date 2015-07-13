@@ -8,9 +8,7 @@
     <version>1.3.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.api</artifactId>
-  <version>1.3.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Mapping Service Public APIs</name>
 
@@ -27,43 +25,13 @@
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.yangmodel</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.opendaylight.yangtools.model</groupId>
+      <artifactId>ietf-inet-types</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.yangtools.model</groupId>
+      <artifactId>ietf-yang-types</artifactId>
+    </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Export-Package>org.opendaylight.lispflowmapping.interfaces.dao,
-              org.opendaylight.lispflowmapping.interfaces.lisp,
-              org.opendaylight.lispflowmapping.type,
-              org.opendaylight.lispflowmapping.type.lisp,
-              org.opendaylight.lispflowmapping.type.lisp.address,
-              org.opendaylight.lispflowmapping.type.sbplugin</Export-Package>
-            <Import-Package>org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispsimpleaddress.primitiveaddress,
-              org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress,
-              org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924,
-              org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924,
-              org.opendaylight.controller.sal.binding.api,
-              org.opendaylight.yangtools.yang.binding,
-              javax.xml.bind,
-              javax.xml.bind.annotation,
-              org.slf4j,
-              org.opendaylight.yangtools.yang.common,
-              com.google.common.collect</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

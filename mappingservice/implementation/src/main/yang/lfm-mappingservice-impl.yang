@@ -7,7 +7,7 @@ module lfm-mappingservice-impl {
   import config { prefix config; revision-date 2013-04-05; }
   import rpc-context { prefix rpcx; revision-date 2013-06-17; }
   import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
-
+  import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
 
   description
       "This module contains the base YANG definitions for
@@ -47,7 +47,6 @@ module lfm-mappingservice-impl {
           }
         }
       }
-
       container broker {
           uses config:service-ref {
               refine type {
@@ -56,7 +55,6 @@ module lfm-mappingservice-impl {
               }
           }
       }
-
       container rpc-registry {
         uses config:service-ref {
           refine type {
@@ -64,6 +62,14 @@ module lfm-mappingservice-impl {
               config:required-identity mdsal:binding-rpc-registry;
           }
         }
+      }
+      container dao {
+          uses config:service-ref {
+              refine type {
+                  mandatory true;
+                  config:required-identity ms-dao:ms-dao;
+              }
+          }
       }
     }
   }

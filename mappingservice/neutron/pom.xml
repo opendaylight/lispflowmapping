@@ -35,6 +35,11 @@
       <groupId>org.opendaylight.yangtools.model</groupId>
       <artifactId>ietf-inet-types</artifactId>
     </dependency>
+    <!-- needed for activator -->
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.dependencymanager</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

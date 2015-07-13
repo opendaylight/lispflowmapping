@@ -118,6 +118,17 @@
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.inmemorydb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.inmemorydb</artifactId>
+      <version>${project.version}</version>
+      <classifier>config</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.netconf</artifactId>
     </dependency>
     <dependency>

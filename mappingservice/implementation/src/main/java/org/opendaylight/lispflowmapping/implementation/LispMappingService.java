@@ -20,7 +20,6 @@ import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.AbstractLispComponent;
@@ -122,7 +121,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         LfmMappingDatabaseRpc mappingDbProviderRpc = new LfmMappingDatabaseRpc(dataBrokerService);
         lfmDbRpc = rpcRegistry.addRpcImplementation(LfmMappingDatabaseService.class, mappingDbProviderRpc);
         dsbe = new DataStoreBackEnd(dataBrokerService);
-        setLispDao(new HashMapDb());
+        restoreDaoFromDatastore();
     }
 
     @Override
@@ -158,10 +157,9 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         mapServer = new MapServer(dao);
     }
 
-    void setLispDao(ILispDAO dao) {
+    public void setLispDao(ILispDAO dao) {
         LOG.trace("LispDAO set in LispMappingService");
         basicInit(dao);
-        restoreDaoFromDatastore();
     }
 
     void unsetLispDao(ILispDAO dao) {

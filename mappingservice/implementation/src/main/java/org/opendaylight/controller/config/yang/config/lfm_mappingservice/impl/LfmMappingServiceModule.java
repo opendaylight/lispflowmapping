@@ -36,6 +36,7 @@ public class LfmMappingServiceModule extends org.opendaylight.controller.config.
         lfmService.setDataBrokerService(getDataBrokerDependency());
         lfmService.setRpcProviderRegistry(getRpcRegistryDependency());
         lfmService.setBindingAwareBroker(getBrokerDependency());
+        lfmService.setLispDao(getDaoDependency());
         lfmService.initialize();
 
         return lfmService;

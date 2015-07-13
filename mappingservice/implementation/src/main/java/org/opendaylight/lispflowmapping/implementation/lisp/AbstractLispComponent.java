@@ -9,10 +9,10 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.HashSet;
 
-import org.opendaylight.lispflowmapping.implementation.dao.HashMapDb;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
+import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;

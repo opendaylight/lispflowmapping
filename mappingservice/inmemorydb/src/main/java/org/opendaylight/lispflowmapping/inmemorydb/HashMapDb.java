@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.dao;
+package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +20,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HashMapDb implements ILispDAO {
+public class HashMapDb implements ILispDAO, AutoCloseable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object, ConcurrentMap<String, Object>>();
@@ -108,6 +108,10 @@ public class HashMapDb implements ILispDAO {
 
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
+    }
+
+    public void close() throws Exception {
+        data.clear();
     }
 
 }
