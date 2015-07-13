@@ -94,6 +94,9 @@ public class LispNotificationHelper {
         if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) {
             tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) address).getIpv4Address().getValue()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+        } else if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address) {
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address) address).getIpv6Address().getValue()));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
         } else if (address instanceof LcafKeyValueAddressAddr) {
             PrimitiveAddress primitiveAddress = ((LcafKeyValueAddressAddr) address).getValue().getPrimitiveAddress();
             if (primitiveAddress instanceof LispDistinguishedNameAddress) {
