@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_01e3fe05",
+        "filename": "artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_415c96ed",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_e172827b",
         "filename": "commons/parent/pom.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "Could it be in alphabetic order like the rest of the lispflowmapping artifacts?",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_a1f1eace",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_e172827b",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_81be2ed3",
+        "filename": "features/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_a16c8a9d",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_c16746b6",
         "filename": "features/src/main/resources/features.xml",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "There are some extra whitespace characters on the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_21b5daed",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_c16746b6",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_41b816e5",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_610672d0",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_612d1246",
         "filename": "mappingservice/implementation/pom.xml",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "Same comment, please insert between .api and .yangmodel, for alphabetical order.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_21acfa9f",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_612d1246",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_c19ae66d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/AbstractLispComponent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Yep, this requires changes. But I\u0027d rather have the logic of how data is stored outside (out of all the classes) the *Abstract*LispComponent :)",
+      "parentUuid": "7a7fa997_81306e9f",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_21271a66",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "Idem.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_61899225",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "yep",
+      "parentUuid": "7a7fa997_21271a66",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_818cee36",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Eclipse is great at everything, but this... Done",
+      "parentUuid": "7a7fa997_412a562d",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_c11506e6",
         "filename": "mappingservice/inmemorydb/pom.xml",
         "patchSetId": 1
@@ -166,6 +328,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "Extra whitespace in the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_21839a05",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_c11506e6",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_4186d614",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "As per my previous comments I think it\u0027s better if we don\u0027t do this.",
+      "parentUuid": "7a7fa997_a11a4a15",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_61d43220",
         "filename": "mappingservice/inmemorydb/pom.xml",
         "patchSetId": 1
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_e17cc222",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_61d43220",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_41e1f6fc",
         "filename": "mappingservice/pom.xml",
         "patchSetId": 1
@@ -217,6 +433,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 1,
       "message": "One row lower :P",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0178de29",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 1,
+      "message": "This is not alphabetical. I think it sets the order in which the modules are built (yangmodel is first) and we need to build the ILispDAO implementations ahead of mappingservice.implementation.",
+      "parentUuid": "7a7fa997_41e1f6fc",
       "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false

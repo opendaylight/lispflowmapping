@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_a1c80a75",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 0,
+      "message": "The groupId is the same as the parent groupId, which is just 5 lines above ... Do we really need to repeat it? This generates a warning in eclipse.",
+      "parentUuid": "7a7fa997_81094edf",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_21107a00",
         "filename": "mappingservice/api/pom.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 0,
       "message": "Same as above.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_c1c3c655",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 0,
+      "message": "The version is the same as the parent\u0027s version just 6 line above. This also generates a warning in Eclipse! Are there any situations when we want the parent and child version different?",
+      "parentUuid": "7a7fa997_21107a00",
       "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_61a2f2af",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 0,
+      "message": "See previous comments",
+      "parentUuid": "7a7fa997_a1032ab7",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_c1fe66ae",
         "filename": "mappingservice/implementation/pom.xml",
         "patchSetId": 1
@@ -81,6 +135,24 @@
       "writtenOn": "2015-07-13T17:36:45Z",
       "side": 0,
       "message": "See above.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_81a5ceb6",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T18:27:24Z",
+      "side": 0,
+      "message": "See previous comments",
+      "parentUuid": "7a7fa997_c1fe66ae",
       "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
