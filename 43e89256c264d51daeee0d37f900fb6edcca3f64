@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_c17c26b8",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-07-13T20:56:43Z",
+      "side": 0,
+      "message": "Yes, they are the bundle\u0027s header, but maven was such taught that some properties are inherited (i.e., they are impicit)  and if need be they can be overriden. And my Eclipse seems to be painfully aware of this :-P\n\nRegarding the possibility to copy \"dependencies\", you can do that from the artifacts/commons. But typically, throughout the bundles, you should only need to copy the groupId and artifactId, just 2 lines .. \n\nInteresting note: after looking at some other projects I noticed that they don\u0027t manage to keep consistent between bundles: sometimes they add the version sometimes they don\u0027t (I suspect they use different versions at times because the code is maintained by multiple parties that push code at different speeds). I found only one repetition of groupId though, but that might be due to my short and biased search.",
+      "parentUuid": "7a7fa997_a1ad6a8a",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_21107a00",
         "filename": "mappingservice/api/pom.xml",
         "patchSetId": 1
