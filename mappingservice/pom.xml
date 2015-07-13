@@ -20,6 +20,7 @@
     <module>api</module>
     <module>config</module>
     <module>clusterdao</module>
+    <module>inmemorydb</module>
     <module>implementation</module>
     <module>southbound</module>
     <module>neutron</module>

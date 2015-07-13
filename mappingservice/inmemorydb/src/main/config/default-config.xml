@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<snapshot>
+    <required-capabilities>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao?module=lfm-ms-dao&amp;revision=2015-07-13</capability>
+    </required-capabilities>
+    <configuration>
+        <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <modules xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
+                <module>
+                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao:inmemorydb">
+                        prefix:lfm-ms-inmemorydb
+                    </type>
+                    <name>lfm-ms-inmemorydb-default</name>
+                    <record-timeout>240</record-timeout>
+                </module>
+            </modules>
+            <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
+              <service>
+                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao">prefix:ms-dao</type>
+                <instance>
+                  <name>lfm-ms-inmemorydb</name>
+                  <provider>/modules/module[type='lfm-ms-inmemorydb'][name='lfm-ms-inmemorydb-default']
+                  </provider>
+                </instance>
+              </service>
+            </services>
+        </data>
+    </configuration>
+</snapshot>

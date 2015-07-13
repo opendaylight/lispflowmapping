@@ -1,0 +1,20 @@
+module lfm-ms-dao {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao";
+    prefix "ms-dao";
+
+    import config { prefix config; revision-date 2013-04-05; }
+
+    description
+        "Service definition for Mapping Service DAO.";
+
+    revision "2015-07-13" {
+        description
+            "Initial revision";
+    }
+
+    identity ms-dao {
+        base "config:service-type";
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO";
+    }
+}
