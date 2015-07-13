@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_a1ad6a8a",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T18:52:16Z",
+      "side": 0,
+      "message": "This group of tags defines this bundle. When I open a pom file, I can see here the full definition of the artifact, and I could copy paste it directly into the \u003cdependency\u003e section of another pom file, in a completely different project. If anything, I\u0027d rather define the \u003cparent\u003e\u0027s \u003cgroupId\u003e as ${project.groupId} if I want to avoid repetitions.\n\nI have to admit that I don\u0027t like Eclipse warnings, but I haven\u0027t seen one for this in my environement.",
+      "parentUuid": "7a7fa997_a1c80a75",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_21107a00",
         "filename": "mappingservice/api/pom.xml",
         "patchSetId": 1
