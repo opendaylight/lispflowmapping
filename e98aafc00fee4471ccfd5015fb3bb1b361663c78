@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_415c96ed",
+        "filename": "artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Could it be in alphabetic order like the rest of the artifacts?",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_e172827b",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Could it be in alphabetic order like the rest of the lispflowmapping artifacts?",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_a16c8a9d",
+        "filename": "features/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Sam alphabetic ordering comment as previous files...",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_c16746b6",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "There are some extra whitespace characters on the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_610672d0",
+        "filename": "features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "There are some extra whitespace characters on the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_612d1246",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Same comment, please insert between .api and .yangmodel, for alphabetical order.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_81306e9f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/AbstractLispComponent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "We should note that we need to change the \u0027new HashMapDb()\u0027 call to a factory method, so that we keep the class abstract and independent of any particular ILispDAO implementation, but I don\u0027t think it\u0027s required for this commit.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_21271a66",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Idem.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_412a562d",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Extra whitespace on the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_c11506e6",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Extra whitespace in the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_a11a4a15",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Please add \u003cprojectId\u003e and \u003cversion\u003e like in the other pom files.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_61d43220",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "Extra whitespace in the empty line.",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_41e1f6fc",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 1,
+      "message": "One row lower :P",
+      "revId": "e98aafc00fee4471ccfd5015fb3bb1b361663c78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

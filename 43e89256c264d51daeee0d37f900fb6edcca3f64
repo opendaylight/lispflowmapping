@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_81094edf",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 0,
+      "message": "Please don\u0027t remove this, I know it\u0027s redundant, but it increases readability. It helped me keep sanity in various cases having it clearly spelled out.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_21107a00",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 0,
+      "message": "Same as above.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_e1f922c9",
+        "filename": "mappingservice/api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 0,
+      "message": "Yey, good riddance! :)",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_a1032ab7",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 0,
+      "message": "Please don\u0027t remove, see API bundle comment.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_c1fe66ae",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-07-13T17:36:45Z",
+      "side": 0,
+      "message": "See above.",
+      "revId": "43e89256c264d51daeee0d37f900fb6edcca3f64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
