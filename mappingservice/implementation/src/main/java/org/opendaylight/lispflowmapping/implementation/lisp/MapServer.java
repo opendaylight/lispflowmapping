@@ -8,8 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -23,6 +21,7 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
@@ -334,9 +333,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 try {
                     callback.handleSMR(mapRequest, rloc.getSrcRloc());
                 } catch (Exception e) {
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw));
-                    LOG.error("Errors encountered while handling SMR:" + sw.toString());
+                    LOG.error("Errors encountered while handling SMR:" + ExceptionUtils.getStackTrace(e));
                 }
             }
         }

@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import java.net.HttpURLConnection;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.net.util.SubnetUtils;
 import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
@@ -80,7 +81,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 					+ subnet.getNetworkUUID());
 		} catch (Exception e) {
 			LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
-					+ subnet.toString() + "Error: "+ e);
+					+ subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
 		}
         LOG.info("Neutron Subnet Created request : Subnet name: "
                 + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
@@ -166,7 +167,7 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 					+ subnet.getNetworkUUID());
 		} catch (Exception e) {
 			LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: "
-					+ subnet.toString());
+					+ subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
 		}
 	}
 

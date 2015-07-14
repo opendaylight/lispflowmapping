@@ -17,6 +17,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
@@ -195,7 +196,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
                 restartXtrThread();
             }
         } catch (SocketException e) {
-            LOG.error("couldn't start socket {}", e.getMessage());
+            LOG.error("couldn't start socket: {}", ExceptionUtils.getStackTrace(e));
         }
     }
 
@@ -207,7 +208,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             xtrThread.start();
             LOG.info("xTR Southbound Plugin is up!");
         } catch (SocketException e) {
-            LOG.warn("failed to start xtr thread: {}", e.getMessage());
+            LOG.warn("failed to start xtr thread: {}", ExceptionUtils.getStackTrace(e));
         }
     }
 

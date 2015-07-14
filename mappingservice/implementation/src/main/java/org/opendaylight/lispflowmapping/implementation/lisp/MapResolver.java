@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
@@ -182,7 +183,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 }
             }
         } catch (ClassCastException cce) {
-            LOG.error("Class Cast Exception while building EidToLocatorRecord: {}", cce);
+            LOG.error("Class Cast Exception while building EidToLocatorRecord: {}", ExceptionUtils.getStackTrace(cce));
         }
     }
 
