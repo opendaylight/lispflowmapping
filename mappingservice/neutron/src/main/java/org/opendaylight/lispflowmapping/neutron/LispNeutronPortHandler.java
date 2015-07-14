@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.neutron.spi.INeutronPortAware;
 import org.opendaylight.neutron.spi.NeutronPort;
@@ -89,7 +90,8 @@ public class LispNeutronPortHandler extends LispNeutronService implements
 
 
         } catch (Exception e) {
-            LOG.warn("Failed to GET mapping for EID {}: , mappingInput: {} , Exception: {}", hostAddress, input, e);
+            LOG.warn("Failed to GET mapping for EID {}: , mappingInput: {} , Exception: {}", hostAddress, input,
+                    ExceptionUtils.getStackTrace(e));
             return;
         }
 

@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafsegmentaddress.AddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcafsegmentaddress.Address;
@@ -49,7 +50,7 @@ public class MaskUtil {
                 return new LcafSegmentAddrBuilder(segAddr).setAddress(normalizedAddr).build();
             }
         } catch (UnknownHostException e) {
-            LOG.trace("Failed to normalize " + address + ": " + e.getMessage());
+            LOG.trace("Failed to normalize " + address + ": " + ExceptionUtils.getStackTrace(e));
             return null;
         }
         return null;
