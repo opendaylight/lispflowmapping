@@ -38,7 +38,6 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecordBuilder;
@@ -104,7 +103,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         return null;
     }
 
-    private static MapRequest buildSMR(EidToLocatorRecord eidRecord) {
+    private static MapRequestBuilder buildSMR(EidToLocatorRecord eidRecord) {
         MapRequestBuilder builder = new MapRequestBuilder();
         builder.setAuthoritative(false);
         builder.setMapDataPresent(false);
@@ -125,9 +124,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
 
-        // XXX For now we set source EID to queried EID...
-        builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(container).build());
-        return builder.build();
+        return builder;
     }
 
     public void handleMapRegister(MapRegister mapRegister, boolean smr, IMapNotifyHandler callback) {
@@ -324,15 +321,16 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         if (subscribers == null) {
             return;
         }
-        MapRequest mapRequest = buildSMR(record);
-        LOG.trace("Built SMR packet: " + mapRequest.toString());
-        for (MappingServiceSubscriberRLOC rloc : subscribers) {
-            if (rloc.timedOut()) {
-                LOG.trace("Lazy removing expired subscriber entry " + rloc.toString());
-                subscribers.remove(rloc);
+        MapRequestBuilder mrb = buildSMR(record);
+        LOG.trace("Built SMR packet: " + mrb.build().toString());
+        for (MappingServiceSubscriberRLOC subscriber : subscribers) {
+            if (subscriber.timedOut()) {
+                LOG.trace("Lazy removing expired subscriber entry " + subscriber.toString());
+                subscribers.remove(subscriber);
             } else {
                 try {
-                    callback.handleSMR(mapRequest, rloc.getSrcRloc());
+                    mrb.setSourceEid(new SourceEidBuilder().setLispAddressContainer(subscriber.getSrcEid()).build());
+                    callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:" + ExceptionUtils.getStackTrace(e));
                 }

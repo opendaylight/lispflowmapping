@@ -65,9 +65,11 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             return;
         }
 
-        LispAFIAddress srcEid = null;
+        LispAddressContainer srcEid = null;
+        LispAFIAddress srcEidAfi = null;
         if (request.getSourceEid() != null) {
-            srcEid = LispAFIConvertor.toAFI(request.getSourceEid().getLispAddressContainer());
+            srcEid = request.getSourceEid().getLispAddressContainer();
+            srcEidAfi = LispAFIConvertor.toAFI(srcEid);
         }
         MapReplyBuilder builder = new MapReplyBuilder();
         builder.setEchoNonceEnabled(false);
@@ -77,7 +79,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         for (EidRecord eid : request.getEidRecord()) {
             EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
-            Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping = DAOMappingUtil.getMapping(srcEid, eid, dao);
+            Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping =
+                    DAOMappingUtil.getMapping(srcEidAfi, eid, dao);
             recordBuilder.setRecordTtl(0);
             recordBuilder.setAction(Action.NoAction);
             recordBuilder.setAuthoritative(false);
@@ -91,7 +94,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                 addLocatorGroups(recordBuilder, locators, itrRlocs);
                 if (itrRlocs != null && itrRlocs.size() > 0) {
                     LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
-                    MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc);
+                    MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc, srcEid);
                     HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
                     if (subscribers == null) {
                         subscribers = new HashSet<MappingServiceSubscriberRLOC>();

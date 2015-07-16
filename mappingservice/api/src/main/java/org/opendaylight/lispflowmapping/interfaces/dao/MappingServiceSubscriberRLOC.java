@@ -16,16 +16,19 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
  */
 public class MappingServiceSubscriberRLOC {
     private LispAddressContainer rloc;
+    private LispAddressContainer eid;
     private Date lastRequestDate;
     private static final long SUBSCRIBER_TIMEOUT = 600000;    /* milliseconds */
 
-    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc) {
-        this(srcRloc, new Date(System.currentTimeMillis()));
+    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc, LispAddressContainer srcEid) {
+        this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
     }
 
-    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc, Date lastRequestDate) {
+    public MappingServiceSubscriberRLOC(LispAddressContainer srcRloc, LispAddressContainer srcEid,
+            Date lastRequestDate) {
         super();
         this.rloc = srcRloc;
+        this.eid = srcEid;
         this.lastRequestDate = lastRequestDate;
     }
 
@@ -35,6 +38,14 @@ public class MappingServiceSubscriberRLOC {
 
     public void setSrcRloc(LispAddressContainer srcRloc) {
         this.rloc = srcRloc;
+    }
+
+    public LispAddressContainer getSrcEid() {
+        return eid;
+    }
+
+    public void setSrcEid(LispAddressContainer srcEid) {
+        this.eid = srcEid;
     }
 
     public Date getLastRequestDate() {
@@ -51,7 +62,11 @@ public class MappingServiceSubscriberRLOC {
 
     @Override
     public int hashCode() {
-        return rloc.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((rloc == null) ? 0 : rloc.hashCode());
+        result = prime * result + ((eid == null) ? 0 : eid.hashCode());
+        return result;
     }
 
     @Override
@@ -70,6 +85,7 @@ public class MappingServiceSubscriberRLOC {
 
     @Override
     public String toString() {
-        return rloc.toString() + ", last request @ " + lastRequestDate.toString();
+        return "_rloc=" + rloc.toString() + ", _eid=" + eid.toString()
+                + ", last request @ " + lastRequestDate.toString();
     }
 }
