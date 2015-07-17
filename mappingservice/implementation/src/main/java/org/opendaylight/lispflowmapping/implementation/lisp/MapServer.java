@@ -30,6 +30,7 @@ import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.implementation.util.MapNotifyBuilderHelper;
+import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -104,7 +105,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         return null;
     }
 
-    private static MapRequestBuilder buildSMR(EidToLocatorRecord eidRecord) {
+    private static MapRequestBuilder buildSMR(LispAddressContainer srcEid) {
         MapRequestBuilder builder = new MapRequestBuilder();
         builder.setAuthoritative(false);
         builder.setMapDataPresent(false);
@@ -114,14 +115,13 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.setSmrInvoked(false);
 
         builder.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord>());
-        LispAddressContainer container = eidRecord.getLispAddressContainer();
-        short mask = (short) eidRecord.getMaskLength();
-        builder.getEidRecord().add(new EidRecordBuilder().setMask(mask).setLispAddressContainer(container).build());
-
-
+        // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request. To
+        // ensure consistent behavior it is set to the value used to originally request a given mapping
+        builder.getEidRecord().add(new EidRecordBuilder()
+                    .setMask((short)MaskUtil.getMaxMask(LispAFIConvertor.toAFI(srcEid)))
+                    .setLispAddressContainer(srcEid).build());
         builder.setItrRloc(new ArrayList<ItrRloc>());
         builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(getLocalAddress())).build());
-
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
 
@@ -322,7 +322,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         if (subscribers == null) {
             return;
         }
-        MapRequestBuilder mrb = buildSMR(record);
+        MapRequestBuilder mrb = buildSMR(subscribers.iterator().next().getSrcEid());
         LOG.trace("Built SMR packet: " + mrb.build().toString());
         for (MappingServiceSubscriberRLOC subscriber : subscribers) {
             if (subscriber.timedOut()) {
@@ -330,7 +330,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 subscribers.remove(subscriber);
             } else {
                 try {
-                    mrb.setSourceEid(new SourceEidBuilder().setLispAddressContainer(subscriber.getSrcEid()).build());
+                    // The Source EID in a SMR is used as EID record in the SMR-invoked Map-Request.
+                    mrb.setSourceEid(new SourceEidBuilder().setLispAddressContainer(record.getLispAddressContainer()).build());
                     callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();

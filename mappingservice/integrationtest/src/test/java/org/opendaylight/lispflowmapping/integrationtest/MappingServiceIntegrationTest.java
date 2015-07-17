@@ -525,8 +525,10 @@ public class MappingServiceIntegrationTest {
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
         MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf);
         assertTrue(smr.isSmr());
-        LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
-        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(smrEid));
+        LispAddressContainer sourceEid = smr.getSourceEid().getLispAddressContainer();
+        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(sourceEid));
+        // LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
+        // assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")).equals(smrEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
