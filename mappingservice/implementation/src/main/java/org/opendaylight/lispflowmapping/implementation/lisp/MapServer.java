@@ -118,6 +118,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         short mask = (short) eidRecord.getMaskLength();
         builder.getEidRecord().add(new EidRecordBuilder().setMask(mask).setLispAddressContainer(container).build());
 
+
         builder.setItrRloc(new ArrayList<ItrRloc>());
         builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(getLocalAddress())).build());
 
@@ -197,9 +198,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             srcDstDao.put(srcKey, entries.toArray(new MappingEntry[entries.size()]));
             if (checkForChanges) {
                 newMapping = DAOMappingUtil.getMappingExact(srcAddr, dstAddr, srcMask, dstMask, dao);
-                if (!newMapping.getValue().equals(oldMapping.getValue())) {
-                    return true;
-                }
+                return (newMapping.getValue() == null) ? oldMapping.getValue() != null :
+                                                        !newMapping.getValue().equals(oldMapping.getValue());
             }
         } else {
             List<MappingServiceRLOCGroup> oldLocators = null, newLocators = null;
@@ -211,9 +211,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             dao.put(key, entries.toArray(new MappingEntry[entries.size()]));
             if (checkForChanges) {
                 newLocators = DAOMappingUtil.getLocatorsByEidToLocatorRecord(eidRecord, dao, shouldIterateMask());
-                if (!newLocators.equals(oldLocators)) {
-                    return true;
-                }
+                return (newLocators == null) ? oldLocators != null : !newLocators.equals(oldLocators);
             }
         }
         return false;
@@ -289,6 +287,9 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     }
 
     private void removeMappingRlocs(Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping, ILispDAO db) {
+        if (mapping == null || mapping.getValue() == null) {
+            return;
+        }
         for (MappingServiceRLOCGroup group : mapping.getValue()) {
             for (LocatorRecord record : group.getRecords()) {
                 db.removeSpecific(mapping.getKey(), getAddressKey(record.getLispAddressContainer().getAddress()));
