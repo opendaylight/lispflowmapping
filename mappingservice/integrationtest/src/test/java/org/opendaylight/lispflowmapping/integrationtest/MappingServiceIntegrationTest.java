@@ -83,8 +83,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.HopsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafSourceDest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.NoBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
@@ -526,7 +528,11 @@ public class MappingServiceIntegrationTest {
         MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf);
         assertTrue(smr.isSmr());
         LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
-        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(smrEid));
+        LispAddressContainer sourceEid = smr.getSourceEid().getLispAddressContainer();
+        LispAddressContainer noAddr = new LispAddressContainerBuilder().setAddress(
+                new NoBuilder().setNoAddress(new NoAddressBuilder().setAfi((short) 0).build()).build()).build();
+        assertTrue(noAddr.equals(smrEid));
+        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(sourceEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
