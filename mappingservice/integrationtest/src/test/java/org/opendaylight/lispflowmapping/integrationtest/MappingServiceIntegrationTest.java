@@ -158,8 +158,8 @@ public class MappingServiceIntegrationTest {
         // LISP(Type = 1 Map-Request
         // Record Count: 1
         // ITR-RLOC count: 0
-        // Source EID AFI: 0
-        // Source EID not present
+        // Source EID AFI: 1
+        // Source EID 1.2.3.4
         // Nonce: 0x3d8d2acd39c8d608
         // ITR-RLOC AFI=1 Address=192.168.136.10
         // Record 1: 153.16.254.1/32
@@ -528,8 +528,10 @@ public class MappingServiceIntegrationTest {
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
         MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf);
         assertTrue(smr.isSmr());
+        LispAddressContainer sourceEid = smr.getSourceEid().getLispAddressContainer();
+        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(sourceEid));
         LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
-        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(smrEid));
+        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")).equals(smrEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
