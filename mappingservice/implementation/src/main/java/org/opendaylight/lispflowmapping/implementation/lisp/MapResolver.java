@@ -151,7 +151,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                     .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
-                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
+                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                                     .setLispAddressContainer(container).setName(record.getName()).build());
                     continue;
                 }
@@ -164,7 +164,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                         recordBuilder.getLocatorRecord().add(
                                 new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                                         .setWeight(record.getWeight()).setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
-                                        .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
+                                        .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                                         .setLispAddressContainer(container).setName(record.getName()).build());
                         // Make the priority of the added simple locator lower so that ELP is used by default if
                         // the xTR understands ELP.  Exclude 255, since that means don't use for unicast forwarding
@@ -177,7 +177,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator()).setRlocProbed(record.isRlocProbed())
                             .setWeight(record.getWeight()).setPriority(priority).setMulticastWeight(record.getMulticastWeight())
-                            .setMulticastPriority(record.getMulticastPriority()).setRouted(true)
+                            .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                             .setLispAddressContainer(nextHop).setName(record.getName()).build());
                 }
             }
