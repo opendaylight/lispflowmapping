@@ -1,0 +1,7 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Florin Coras <fcoras@cisco.com>
+Submitted-by: Lori Jakab <lorand.jakab@gmail.com>
+Submitted-at: Tue, 21 Jul 2015 23:16:07 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/24330
+Project: lispflowmapping
+Branch: refs/heads/stable/lithium
