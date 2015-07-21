@@ -65,9 +65,7 @@ public class DAOMappingUtil {
         if (locators != null) {
             for (Object value : locators.values()) {
                 if (value != null && value instanceof MappingServiceRLOCGroup) {
-                    if (!((MappingServiceRLOCGroup) value).getRecords().isEmpty()) {
-                        result.add((MappingServiceRLOCGroup) value);
-                    }
+                    result.add((MappingServiceRLOCGroup) value);
                 }
             }
         }

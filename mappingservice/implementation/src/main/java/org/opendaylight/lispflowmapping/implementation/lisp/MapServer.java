@@ -171,6 +171,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 }
                 rlocGroups.get(subkey).addRecord(locatorRecord);
             }
+        } else {
+            rlocGroups.put(ADDRESS_SUBKEY, new MappingServiceRLOCGroup(eidRecord.getRecordTtl(), eidRecord.getAction(), eidRecord.isAuthoritative()));
         }
         List<MappingEntry<MappingServiceRLOCGroup>> entries = new ArrayList<>();
         for (String subkey : rlocGroups.keySet()) {
