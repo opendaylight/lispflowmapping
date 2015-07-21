@@ -121,7 +121,7 @@ public class LfmMappingDatabaseProviderRpc implements LfmMappingDatabaseService 
     @Override
     public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
         Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
-        LOG.debug("RPC received to add get following mapping: " + input.toString());
+        LOG.debug("RPC received to get the following mapping: " + input.toString());
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
