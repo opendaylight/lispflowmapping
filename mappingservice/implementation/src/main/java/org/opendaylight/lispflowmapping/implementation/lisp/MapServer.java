@@ -113,12 +113,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         builder.setSmr(true);
         builder.setSmrInvoked(false);
 
-        builder.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord>());
-        // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request. To
-        // ensure consistent behavior it is set to the value used to originally request a given mapping
-        builder.getEidRecord().add(new EidRecordBuilder()
-                    .setMask((short)MaskUtil.getMaxMask(LispAFIConvertor.toAFI(srcEid)))
-                    .setLispAddressContainer(srcEid).build());
+        builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(srcEid).build());
         builder.setItrRloc(new ArrayList<ItrRloc>());
         builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(getLocalAddress())).build());
         builder.setMapReply(null);
@@ -323,7 +318,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
         if (subscribers == null) {
             return;
         }
-        MapRequestBuilder mrb = buildSMR(subscribers.iterator().next().getSrcEid());
+        MapRequestBuilder mrb = buildSMR(record.getLispAddressContainer());
         LOG.trace("Built SMR packet: " + mrb.build().toString());
         for (MappingServiceSubscriberRLOC subscriber : subscribers) {
             if (subscriber.timedOut()) {
@@ -331,8 +326,12 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 subscribers.remove(subscriber);
             } else {
                 try {
-                    // The Source EID in a SMR is used as EID record in the SMR-invoked Map-Request.
-                    mrb.setSourceEid(new SourceEidBuilder().setLispAddressContainer(record.getLispAddressContainer()).build());
+                    // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request. To
+                    // ensure consistent behavior it is set to the value used to originally request a given mapping
+                    mrb.setEidRecord(new ArrayList<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidrecords.EidRecord>());
+                    mrb.getEidRecord().add(new EidRecordBuilder()
+                                .setMask((short)MaskUtil.getMaxMask(LispAFIConvertor.toAFI(subscriber.getSrcEid())))
+                                .setLispAddressContainer(subscriber.getSrcEid()).build());
                     callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:" + ExceptionUtils.getStackTrace(e));

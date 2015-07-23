@@ -415,7 +415,11 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
     }
 
     public void handleSMR(MapRequest smr, LispAddressContainer subscriber) {
-        LOG.debug("Sending SMR to " + subscriber.toString());
+        LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
+                LispAddressStringifier.getString(subscriber),
+                LispAddressStringifier.getString(smr.getSourceEid().getLispAddressContainer()),
+                LispAddressStringifier.getString(smr.getEidRecord().get(0).getLispAddressContainer(),
+                        smr.getEidRecord().get(0).getMask()));
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));
