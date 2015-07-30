@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.1.15-Helium-SR4</version>
+		<version>1.1.16-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.neutron</artifactId>
@@ -84,17 +84,17 @@
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>containermanager</artifactId>
-			<version>0.5.6-Helium-SR4</version>
+			<version>0.5.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>commons.northbound</artifactId>
-			<version>0.4.6-Helium-SR4</version>
+			<version>0.4.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.controller</groupId>
 			<artifactId>networkconfig.neutron</artifactId>
-			<version>0.4.6-Helium-SR4</version>
+			<version>0.4.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opendaylight.lispflowmapping</groupId>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.opendaylight.lispflowmapping</groupId>
 		<artifactId>mappingservice-parent</artifactId>
-		<version>1.1.15-Helium-SR4</version>
+		<version>1.1.16-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mappingservice.clusterdao</artifactId>
