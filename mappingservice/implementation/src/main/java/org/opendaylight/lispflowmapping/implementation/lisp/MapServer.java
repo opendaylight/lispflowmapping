@@ -270,11 +270,10 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
             mapping = DAOMappingUtil.getMappingForEid(LispAFIConvertor.toAFI(address), maskLen, db);
         }
         if (smr) {
-            HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(address, maskLen);
             // mapping is removed before first SMR is sent to avoid inconsistent replies
             removeMappingRlocs(mapping, db);
-            handleSmr(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
-                    setMaskLength((short) maskLen).build(), subscribers, callback);
+            sendSmrs(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
+                    setMaskLength((short) maskLen).build(), callback);
             db.removeSpecific(mapping.getKey(), SUBSCRIBERS_SUBKEY);
         } else {
             removeMappingRlocs(mapping, db);
