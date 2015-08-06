@@ -34,6 +34,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.LcafTrafficEngineering;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.lispaddresscontainer.address.No;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.mapreplymessage.MapReplyBuilder;
@@ -91,7 +92,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             if (locators != null && locators.size() > 0) {
                 List<ItrRloc> itrRlocs = request.getItrRloc();
                 addLocatorGroups(recordBuilder, locators, itrRlocs);
-                if (itrRlocs != null && itrRlocs.size() > 0) {
+                if (!(srcEid.getAddress() instanceof No) && itrRlocs != null && itrRlocs.size() > 0) {
                     LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
                     MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc, srcEid);
                     HashSet<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
