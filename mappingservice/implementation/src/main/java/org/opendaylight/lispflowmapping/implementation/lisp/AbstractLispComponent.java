@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
@@ -96,7 +96,7 @@ public abstract class AbstractLispComponent {
     }
 
     @SuppressWarnings("unchecked")
-    protected HashSet<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength) {
+    protected Set<MappingServiceSubscriberRLOC> getSubscribers(LispAddressContainer prefix, int maskLength) {
         Object subscribers;
         if (prefix.getAddress() instanceof LcafSourceDest) {
             IMappingServiceKey srcKey = MappingServiceKeyUtil.generateMappingServiceKey(getSrcForLcafSrcDst(prefix),
@@ -108,8 +108,8 @@ public abstract class AbstractLispComponent {
             subscribers = dao.getSpecific(key, SUBSCRIBERS_SUBKEY);
         }
 
-        if (subscribers != null && subscribers instanceof HashSet<?>) {
-            return (HashSet<MappingServiceSubscriberRLOC>) subscribers;
+        if (subscribers != null && subscribers instanceof Set<?>) {
+            return (Set<MappingServiceSubscriberRLOC>) subscribers;
         }
         return null;
     }
