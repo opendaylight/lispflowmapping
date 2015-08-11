@@ -94,7 +94,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             if (locators != null && locators.size() > 0) {
                 List<ItrRloc> itrRlocs = request.getItrRloc();
                 addLocatorGroups(recordBuilder, locators, itrRlocs);
-                if (!(srcEid.getAddress() instanceof No) && itrRlocs != null && itrRlocs.size() > 0) {
+                if (srcEid != null && !(srcEid.getAddress() instanceof No) && itrRlocs != null && itrRlocs.size() > 0) {
                     LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
                     MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc, srcEid);
                     Set<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
