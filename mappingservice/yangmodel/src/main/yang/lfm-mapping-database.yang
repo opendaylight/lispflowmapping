@@ -25,6 +25,13 @@ module lfm-mapping-database {
         }
     }
 
+    typedef site-id {
+        description "64 bit site identifier";
+        type binary {
+            length "8";
+        }
+    }
+
     typedef iid-uri {
         description "IID as a string lookup key in a URI";
         type inet:uri;
@@ -74,6 +81,9 @@ module lfm-mapping-database {
             }
             leaf origin {
                 type mapping-origin;
+            }
+            leaf-list site-id {
+                type site-id;
             }
             uses lfm-cp:EidToLocatorRecord;
         }

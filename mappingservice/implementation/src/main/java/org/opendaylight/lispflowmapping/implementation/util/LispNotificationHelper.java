@@ -35,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
@@ -148,6 +149,7 @@ public class LispNotificationHelper {
             mb.setEid(new EidUri(LispAddressStringifier.getURIString(
                     record.getLispAddressContainer(), record.getMaskLength())));
             mb.setOrigin(MappingOrigin.Southbound);
+            mb.setSiteId(getSiteId(mapRegisterNotification.getMapRegister()));
             mb.setRecordTtl(record.getRecordTtl());
             mb.setMaskLength(record.getMaskLength());
             mb.setMapVersion(record.getMapVersion());
@@ -158,5 +160,16 @@ public class LispNotificationHelper {
             mappings.add(mb.build());
         }
         return mappings;
+    }
+
+    public static List<SiteId> getSiteId(MapRegister mapRegister) {
+        if (mapRegister.isXtrSiteIdPresent()) {
+            List<SiteId> siteIds = new ArrayList<SiteId>();
+            SiteId siteId = new SiteId(mapRegister.getSiteId());
+            siteIds.add(siteId);
+            return siteIds;
+        } else {
+            return null;
+        }
     }
 }
