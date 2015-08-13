@@ -111,13 +111,13 @@
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
-      <dependency>
+<!--       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>features-netconf-connector</artifactId>
         <version>${mdsal.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
-      </dependency>
+      </dependency> -->
       <dependency>
         <groupId>org.opendaylight.neutron</groupId>
         <artifactId>features-neutron</artifactId>
@@ -231,11 +231,11 @@
         <artifactId>mappingservice.inmemorydb</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
-      <dependency>
+<!--       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.netconf</artifactId>
         <version>${lispflowmapping.version}</version>
-      </dependency>
+      </dependency> -->
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.neutron</artifactId>
