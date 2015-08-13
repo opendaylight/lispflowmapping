@@ -1,12 +1,4 @@
-/*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/epl-v10.html
- */
-
-package org.opendaylight.lispflowmapping.config.yang.netconf.impl;
+package org.opendaylight.controller.config.yang.config.lfm_netconf.impl;
 
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.netconf.impl.LispDeviceNetconfConnector;
@@ -14,14 +6,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.lispflow
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LfmNetconfConnectorProviderModule extends org.opendaylight.lispflowmapping.config.yang.netconf.impl.AbstractLfmNetconfConnectorProviderModule {
+public class LfmNetconfConnectorProviderModule extends org.opendaylight.controller.config.yang.config.lfm_netconf.impl.AbstractLfmNetconfConnectorProviderModule {
     private static final Logger log = LoggerFactory.getLogger(LfmNetconfConnectorProviderModule.class);
 
     public LfmNetconfConnectorProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public LfmNetconfConnectorProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.lispflowmapping.config.yang.netconf.impl.LfmNetconfConnectorProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public LfmNetconfConnectorProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.controller.config.yang.config.lfm_netconf.impl.LfmNetconfConnectorProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 
@@ -32,7 +24,6 @@ public class LfmNetconfConnectorProviderModule extends org.opendaylight.lispflow
 
     @Override
     public java.lang.AutoCloseable createInstance() {
-
         final LispDeviceNetconfConnector lnconfConnector = LispDeviceNetconfConnector.createLispDeviceNetconfConnector();
 
         final BindingAwareBroker.RpcRegistration<LfmNetconfConnectorService> rpcRegistration = getRpcRegistryDependency()
@@ -53,8 +44,6 @@ public class LfmNetconfConnectorProviderModule extends org.opendaylight.lispflow
         AutoCloseable ret = new AutoCloseableNCC();
         log.info("Lisp netconf connector provider (instance {}) initialized.", ret);
         return ret;
-
     }
-
 
 }

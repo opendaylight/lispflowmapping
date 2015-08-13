@@ -42,11 +42,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.inmemorydb</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
+<!--       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.netconf</artifactId>
         <version>${project.version}</version>
-      </dependency>
+      </dependency> -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.neutron</artifactId>

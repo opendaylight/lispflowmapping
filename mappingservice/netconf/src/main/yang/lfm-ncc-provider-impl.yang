@@ -1,6 +1,6 @@
 module lfm-ncc-provider-impl {
     yang-version 1;
-    namespace "urn:opendaylight:params:xml:ns:yang:lispflowmapping:netconf:impl";
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm-netconf:impl";
     prefix "lfm-ncc-provider-impl";
 
     import config { prefix config; revision-date 2013-04-05; }
