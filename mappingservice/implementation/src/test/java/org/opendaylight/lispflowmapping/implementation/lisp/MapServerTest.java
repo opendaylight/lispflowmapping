@@ -18,13 +18,14 @@ import junitx.framework.ArrayAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.implementation.dao.MappingKeyUtil;
+import org.opendaylight.lispflowmapping.implementation.util.DAOSubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
+import org.opendaylight.lispflowmapping.interfaces.dao.IMappingKey;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
@@ -86,9 +87,9 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
-        assertEquals(1, ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().size());
-        assertEquals(rloc, LispAFIConvertor.toAFI(((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0).getLispAddressContainer()));
+        assertEquals(DAOSubKeys.ADDRESS_SUBKEY.toString(), entries[0].getKey());
+        assertEquals(1, ((RLOCGroup) entries[0].getValue()).getRecords().size());
+        assertEquals(rloc, LispAFIConvertor.toAFI(((RLOCGroup) entries[0].getValue()).getRecords().get(0).getLispAddressContainer()));
     }
 
     @Test
@@ -409,10 +410,10 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc0), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
+        assertEquals(DAOSubKeys.ADDRESS_SUBKEY.toString(), entries[0].getKey());
+        assertEquals(LispAFIConvertor.toContainer(rloc0), ((RLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(1)
+        assertEquals(LispAFIConvertor.toContainer(rloc1), ((RLOCGroup) entries[0].getValue()).getRecords().get(1)
                 .getLispAddressContainer());
 
     }
@@ -444,11 +445,11 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(2, entries.length);
 
-        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
+        assertEquals(DAOSubKeys.ADDRESS_SUBKEY.toString(), entries[0].getKey());
         assertEquals(subkey, entries[1].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc0), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
+        assertEquals(LispAFIConvertor.toContainer(rloc0), ((RLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), ((MappingServiceRLOCGroup) entries[1].getValue()).getRecords().get(0)
+        assertEquals(LispAFIConvertor.toContainer(rloc1), ((RLOCGroup) entries[1].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
 
     }
@@ -462,8 +463,8 @@ public class MapServerTest extends BaseTestCase {
         MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
         assertEquals(1, entries.length);
 
-        assertEquals(AbstractLispComponent.ADDRESS_SUBKEY, entries[0].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
+        assertEquals(DAOSubKeys.ADDRESS_SUBKEY.toString(), entries[0].getKey());
+        assertEquals(LispAFIConvertor.toContainer(rloc), ((RLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
     }
 
@@ -480,7 +481,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(1, entries.length);
 
         assertEquals(String.valueOf(hc), entries[0].getKey());
-        assertEquals(LispAFIConvertor.toContainer(rloc), ((MappingServiceRLOCGroup) entries[0].getValue()).getRecords().get(0)
+        assertEquals(LispAFIConvertor.toContainer(rloc), ((RLOCGroup) entries[0].getValue()).getRecords().get(0)
                 .getLispAddressContainer());
     }
 
@@ -571,16 +572,16 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleAddAuthenticationKey() throws Exception {
         String password = "pass";
-        IMappingServiceKey key = getDefualtKey();
+        IMappingKey key = getDefualtKey();
         oneOf(lispDAO).put(weq(key),
-                weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>(AbstractLispComponent.PASSWORD_SUBKEY, password)).toArray())));
+                weq((MappingEntry<String>[]) (Arrays.asList(new MappingEntry<String>(DAOSubKeys.PASSWORD_SUBKEY.toString(), password)).toArray())));
         testedMapServer.addAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask(), password);
     }
 
     @Test
     public void handleGetAuthenticationKey() throws Exception {
-        IMappingServiceKey key = getDefualtKey();
-        oneOf(lispDAO).getSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
+        IMappingKey key = getDefualtKey();
+        oneOf(lispDAO).getSpecific(weq(key), with(DAOSubKeys.PASSWORD_SUBKEY.toString()));
         ret("password");
         assertEquals("password", testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
     }
@@ -588,18 +589,18 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleGetAuthenticationKeyNoIteration() throws Exception {
         testedMapServer.setShouldIterateMask(false);
-        IMappingServiceKey key = getDefualtKey();
-        IMappingServiceKey passKey = getKey(30);
-        oneOf(lispDAO).getSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
-        allowing(lispDAO).getSpecific(weq(passKey), with(AbstractLispComponent.PASSWORD_SUBKEY));
+        IMappingKey key = getDefualtKey();
+        IMappingKey passKey = getKey(30);
+        oneOf(lispDAO).getSpecific(weq(key), with(DAOSubKeys.PASSWORD_SUBKEY.toString()));
+        allowing(lispDAO).getSpecific(weq(passKey), with(DAOSubKeys.PASSWORD_SUBKEY.toString()));
         ret("password");
         assertEquals(null, testedMapServer.getAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask()));
     }
 
     @Test
     public void handleRemoveAuthenticationKey() throws Exception {
-        IMappingServiceKey key = getDefualtKey();
-        oneOf(lispDAO).removeSpecific(weq(key), with(AbstractLispComponent.PASSWORD_SUBKEY));
+        IMappingKey key = getDefualtKey();
+        oneOf(lispDAO).removeSpecific(weq(key), with(DAOSubKeys.PASSWORD_SUBKEY.toString()));
         testedMapServer.removeAuthenticationKey(LispAFIConvertor.toContainer(eid), key.getMask());
     }
 
@@ -613,7 +614,7 @@ public class MapServerTest extends BaseTestCase {
     }
 
     private void addPutExpectations(LispAFIAddress address, int mask) {
-        oneOf(lispDAO).put(weq(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), mask)),
+        oneOf(lispDAO).put(weq(MappingKeyUtil.generateMappingKey(LispAFIConvertor.toContainer(address), mask)),
                 with(mappingEntriesSaver));
     }
 
@@ -622,29 +623,29 @@ public class MapServerTest extends BaseTestCase {
             String result = null;
             result = null;
             allowing(lispDAO).getSpecific(
-                    with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withoutPassword)), with("password"));
+                    with(MappingKeyUtil.generateMappingKey(LispAFIConvertor.toContainer(address), withoutPassword)), with("password"));
             ret(result);
         }
         if (withPassword > 0) {
             String result = null;
             result = password;
-            allowing(lispDAO).getSpecific(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), withPassword)),
+            allowing(lispDAO).getSpecific(with(MappingKeyUtil.generateMappingKey(LispAFIConvertor.toContainer(address), withPassword)),
                     with("password"));
             ret(result);
         }
         for (int i = mask; i >= 0; i--) {
-            allowing(lispDAO).getSpecific(with(MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(address), i)),
+            allowing(lispDAO).getSpecific(with(MappingKeyUtil.generateMappingKey(LispAFIConvertor.toContainer(address), i)),
                     with("password"));
             ret(null);
         }
     }
 
-    private IMappingServiceKey getDefualtKey() {
+    private IMappingKey getDefualtKey() {
         return getKey(32);
     }
 
-    private IMappingServiceKey getKey(int mask) {
-        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(LispAFIConvertor.toContainer(eid), mask);
+    private IMappingKey getKey(int mask) {
+        IMappingKey key = MappingKeyUtil.generateMappingKey(LispAFIConvertor.toContainer(eid), mask);
         return key;
     }
 

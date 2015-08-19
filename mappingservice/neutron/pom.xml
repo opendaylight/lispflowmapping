@@ -21,10 +21,6 @@
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
-      <artifactId>mappingservice.implementation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.yangmodel</artifactId>
     </dependency>
     <dependency>
