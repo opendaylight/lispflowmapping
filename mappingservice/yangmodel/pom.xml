@@ -16,7 +16,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <relativePath/>
   </parent>
 
-  <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.yangmodel</artifactId>
   <version>1.3.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
@@ -34,6 +33,15 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.opendaylight.yangtools.model</groupId>
       <artifactId>yang-ext</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>common.unittest.tools</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.neutron.spi.INeutronPortAware;
 import org.opendaylight.neutron.spi.NeutronPort;
 import org.opendaylight.neutron.spi.Neutron_IPs;
