@@ -22,17 +22,13 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKey;
 import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceNoMaskKey;
-import org.opendaylight.lispflowmapping.implementation.lisp.AbstractLispComponent;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.implementation.util.LispAddressStringifier;
-import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
+import org.opendaylight.lispflowmapping.implementation.util.DAOSubKeys;
+import org.opendaylight.lispflowmapping.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -42,6 +38,10 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.lispflowmapping.lisp.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.lisp.util.MapServerMapResolverUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapNotify;
@@ -214,7 +214,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
                 if (!lastKey.equals(key)) {
                     sb.append(key + "\t");
                 }
-                if (!(valueKey.equals(AbstractLispComponent.LCAF_SRCDST_SUBKEY))) {
+                if (!(valueKey.equals(DAOSubKeys.LCAF_SRCDST_SUBKEY.toString()))) {
                     sb.append(valueKey + "=" + value + "\t");
                 }
                 lastKey = key;
@@ -228,7 +228,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
                 if (!lastKey.equals(key)) {
                     sb.append("\n" + key + "\t");
                 }
-                if (valueKey.equals(AbstractLispComponent.LCAF_SRCDST_SUBKEY)) {
+                if (valueKey.equals(DAOSubKeys.LCAF_SRCDST_SUBKEY.toString())) {
                     sb.append(valueKey + "= { ");
                     ((ILispDAO)value).getAll(innerVisitor);
                     sb.append("}\t");

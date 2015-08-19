@@ -15,8 +15,8 @@ import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.serializer.MapRegisterSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
 import org.slf4j.Logger;

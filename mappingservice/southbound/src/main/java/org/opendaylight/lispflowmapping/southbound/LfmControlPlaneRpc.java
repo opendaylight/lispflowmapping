@@ -11,10 +11,10 @@ package org.opendaylight.lispflowmapping.southbound;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 
-import org.opendaylight.lispflowmapping.implementation.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapReplySerializer;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.serializer.MapRequestSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapNotifyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.SendMapRegisterInput;
