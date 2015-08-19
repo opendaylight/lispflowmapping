@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.implementation.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.eidtolocatorrecords.EidToLocatorRecord;
