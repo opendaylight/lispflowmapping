@@ -16,6 +16,24 @@
       "revId": "9dd9c0a159425fd5811ec768b1a1f818259eb0b5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_1b05e310",
+        "filename": "mappingservice/yangmodel/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-19T17:58:36Z",
+      "side": 1,
+      "message": "Dependencies. I didn\u0027t want to explicitly import dependencies like lang3, but that is definitely not a blocker. I will revert to binding-parent.",
+      "parentUuid": "3a79b1b5_d840d158",
+      "revId": "9dd9c0a159425fd5811ec768b1a1f818259eb0b5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
