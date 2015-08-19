@@ -13,7 +13,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafApplicationDataAddress;
