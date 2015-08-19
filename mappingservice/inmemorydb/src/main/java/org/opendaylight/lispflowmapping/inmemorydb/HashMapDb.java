@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,15 +80,15 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
-                if (value instanceof MappingServiceRLOCGroup) {
-                    MappingServiceRLOCGroup rloc = (MappingServiceRLOCGroup) value;
+                if (value instanceof RLOCGroup) {
+                    RLOCGroup rloc = (RLOCGroup) value;
                     if (isExpired(rloc)) {
                         removeSpecific(keyId, valueKey);
                     }
                 }
             }
 
-            private boolean isExpired(MappingServiceRLOCGroup rloc) {
+            private boolean isExpired(RLOCGroup rloc) {
                 return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });

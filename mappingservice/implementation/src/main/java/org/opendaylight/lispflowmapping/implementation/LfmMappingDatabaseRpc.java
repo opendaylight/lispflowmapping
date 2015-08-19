@@ -11,8 +11,8 @@ import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.implementation.util.MapServerMapResolverUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MapServerMapResolverUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.AddKeyInput;

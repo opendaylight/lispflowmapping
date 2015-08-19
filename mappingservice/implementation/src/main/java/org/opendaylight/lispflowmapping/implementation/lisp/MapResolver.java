@@ -15,16 +15,14 @@ import java.util.Set;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.dao.MappingServiceKeyUtil;
 import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
-import org.opendaylight.lispflowmapping.implementation.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IMappingServiceKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceRLOCGroup;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingServiceSubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
+import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LcafTrafficEngineeringAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LispAFIAddress;
@@ -82,7 +80,7 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         for (EidRecord eid : request.getEidRecord()) {
             EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
-            Entry<IMappingServiceKey, List<MappingServiceRLOCGroup>> mapping =
+            Entry<IMappingServiceKey, List<RLOCGroup>> mapping =
                     DAOMappingUtil.getMapping(srcEidAfi, eid, dao);
             recordBuilder.setRecordTtl(0);
             recordBuilder.setAction(Action.NoAction);
@@ -91,14 +89,14 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
             recordBuilder.setMaskLength((short) mapping.getKey().getMask());
             recordBuilder.setLispAddressContainer(mapping.getKey().getEID());
             recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-            List<MappingServiceRLOCGroup> locators = mapping.getValue();
+            List<RLOCGroup> locators = mapping.getValue();
             if (locators != null && locators.size() > 0) {
                 List<ItrRloc> itrRlocs = request.getItrRloc();
                 addLocatorGroups(recordBuilder, locators, itrRlocs);
                 if (srcEid != null && !(srcEid.getAddress() instanceof No) && itrRlocs != null && itrRlocs.size() > 0) {
                     LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
-                    MappingServiceSubscriberRLOC subscriberRloc = new MappingServiceSubscriberRLOC(itrRloc, srcEid);
-                    Set<MappingServiceSubscriberRLOC> subscribers = getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask());
+                    SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid);
+                    Set<SubscriberRLOC> subscribers = DAOMappingUtil.getSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask(), dao);
                     if (subscribers == null) {
                         subscribers = Sets.newConcurrentHashSet();
                     } else if (subscribers.contains(subscriberRloc)) {
@@ -110,16 +108,15 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                         subscribers.remove(subscriberRloc);
                     }
                     if (smr) {
-                        IMappingServiceKey key = MappingServiceKeyUtil.generateMappingServiceKey(mapping.getKey().getEID(),
-                                mapping.getKey().getMask());
                         LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
                         subscribers.add(subscriberRloc);
-                        dao.put(key, new MappingEntry<Set<MappingServiceSubscriberRLOC>>(SUBSCRIBERS_SUBKEY, subscribers));
+                        DAOMappingUtil.addSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask(), subscribers, dao);
                     }
                 }
             } else {
                 recordBuilder.setAction(Action.NativelyForward);
-                if (shouldAuthenticate() && getPassword(eid.getLispAddressContainer(), eid.getMask()) != null) {
+                if (shouldAuthenticate() && DAOMappingUtil.getPassword(eid.getLispAddressContainer(), eid.getMask(),
+                        dao, shouldIterateMask()) != null) {
                     recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                 } else {
                     recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
@@ -133,14 +130,14 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
 
     }
 
-    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<MappingServiceRLOCGroup> rlocs, List<ItrRloc> itrRlocs) {
-        for (MappingServiceRLOCGroup rloc : rlocs) {
+    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<RLOCGroup> rlocs, List<ItrRloc> itrRlocs) {
+        for (RLOCGroup rloc : rlocs) {
             addLocators(recordBuilder, rloc, itrRlocs);
             recordBuilder.setRecordTtl(rloc.getTtl());
         }
     }
 
-    private void addLocators(EidToLocatorRecordBuilder recordBuilder, MappingServiceRLOCGroup locatorObject, List<ItrRloc> itrRlocs) {
+    private void addLocators(EidToLocatorRecordBuilder recordBuilder, RLOCGroup locatorObject, List<ItrRloc> itrRlocs) {
         if (locatorObject == null) {
             return;
         }
