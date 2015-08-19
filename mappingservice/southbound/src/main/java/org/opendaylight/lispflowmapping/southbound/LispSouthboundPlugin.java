@@ -23,7 +23,7 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderCo
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.lispflowmapping.implementation.serializer.LispMessage;
+import org.opendaylight.lispflowmapping.serializer.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
