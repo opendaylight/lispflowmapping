@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_01c81421",
+        "filename": "mappingservice/yangmodel/src/main/java/org/opendaylight/lispflowmapping/serializer/EidRecordSerializer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-20T15:03:05Z",
+      "side": 1,
+      "message": "I would use org.opendaylight.lispflowmapping.lisp.serializer for the package name, since this is also lisp protocol specific. Or loose the lisp prefix on the util and type classes. It make things living in the same bundle more consistent IMHO.",
+      "revId": "3e7ab4eeb0f53d5044d40d30c41ddbe934a8c097",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
