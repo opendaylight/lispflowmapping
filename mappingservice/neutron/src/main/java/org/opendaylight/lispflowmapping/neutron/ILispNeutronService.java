@@ -9,12 +9,12 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mapping.database.rev150314.LfmMappingDatabaseService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingserviceService;
 
 public interface ILispNeutronService {
 
 	public IFlowMapping getMappingService();
 
-	public LfmMappingDatabaseService getMappingDbService();
+	public MappingserviceService getMappingDbService();
 
 }

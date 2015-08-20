@@ -64,7 +64,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>mappingservice.yangmodel</artifactId>
+        <artifactId>mappingservice.lisp-proto</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
