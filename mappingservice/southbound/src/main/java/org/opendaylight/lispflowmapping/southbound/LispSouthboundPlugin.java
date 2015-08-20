@@ -28,8 +28,8 @@ import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.LfmControlPlaneService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.transportaddress.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.transportaddress.TransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +50,14 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private volatile String bindingAddress = null;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private BindingAwareBroker.RpcRegistration<LfmControlPlaneService> controlPlaneRpc;
+    private BindingAwareBroker.RpcRegistration<LispProtoService> controlPlaneRpc;
     private DatagramSocket xtrSocket;
 
     public void init() {
         LOG.info("LISP (RFC6830) Mapping Service is up!");
         final LfmControlPlaneRpc lfmCpRpc = new LfmControlPlaneRpc(this);
 
-        controlPlaneRpc = rpcRegistry.addRpcImplementation(LfmControlPlaneService.class, lfmCpRpc);
+        controlPlaneRpc = rpcRegistry.addRpcImplementation(LispProtoService.class, lfmCpRpc);
         broker.registerProvider(this);
 
         synchronized (startLock) {

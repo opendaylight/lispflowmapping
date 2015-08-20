@@ -38,7 +38,7 @@
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.yangmodel/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.shell/${project.version}</bundle>
@@ -53,7 +53,7 @@
         <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.yangmodel/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.inmemorydb/${project.version}</bundle>
         <configfile finalname="${configfile.directory}/lfm-inmemorydb.xml">

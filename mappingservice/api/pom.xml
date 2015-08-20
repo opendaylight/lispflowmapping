@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
-      <artifactId>mappingservice.yangmodel</artifactId>
+      <artifactId>mappingservice.lisp-proto</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.yangtools.model</groupId>

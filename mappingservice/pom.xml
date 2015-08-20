@@ -16,7 +16,7 @@
   <name>Mapping Service Parent POM</name>
 
   <modules>
-    <module>yangmodel</module>
+    <module>lisp-proto</module>
     <module>api</module>
     <module>config</module>
     <module>clusterdao</module>

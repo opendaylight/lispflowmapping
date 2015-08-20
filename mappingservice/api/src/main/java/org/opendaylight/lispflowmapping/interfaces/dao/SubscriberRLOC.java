@@ -9,7 +9,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.control.plane.rev150314.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
 
 /**
  * Request source RLOC in the mapping service with it's properties.
