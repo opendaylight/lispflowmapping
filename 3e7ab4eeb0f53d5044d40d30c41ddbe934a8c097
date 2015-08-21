@@ -16,6 +16,24 @@
       "revId": "3e7ab4eeb0f53d5044d40d30c41ddbe934a8c097",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_41e5aca6",
+        "filename": "mappingservice/yangmodel/src/main/java/org/opendaylight/lispflowmapping/serializer/EidRecordSerializer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-21T02:15:05Z",
+      "side": 1,
+      "message": "Very good point! I\u0027ll change everything to have prefix org.opendaylight.lispflowmapping.lisp.*",
+      "parentUuid": "3a79b1b5_01c81421",
+      "revId": "3e7ab4eeb0f53d5044d40d30c41ddbe934a8c097",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
