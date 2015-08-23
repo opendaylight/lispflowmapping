@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.2.1-Lithium-SR1</version>
+    <version>1.2.2-SNAPSHOT</version>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.neutron</artifactId>
-  <version>1.2.1-Lithium-SR1</version>
+  <version>1.2.2-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Mapping Service Neutron APIs</name>
 

@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>lispflowmapping-all</artifactId>
-    <version>1.2.1-Lithium-SR1</version>
+    <version>1.2.2-SNAPSHOT</version>
   </parent>
   <artifactId>features-lispflowmapping</artifactId>
   <packaging>jar</packaging>
@@ -22,8 +22,8 @@
   <properties>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
     <features.file>features.xml</features.file>
-    <mdsal.version>1.2.1-Lithium-SR1</mdsal.version>
-    <yangtools.version>0.7.1-Lithium-SR1</yangtools.version>
+    <mdsal.version>1.2.2-SNAPSHOT</mdsal.version>
+    <yangtools.version>0.7.2-SNAPSHOT</yangtools.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -137,7 +137,7 @@
     <dependency>
       <groupId>org.opendaylight.odlparent</groupId>
       <artifactId>features-test</artifactId>
-      <version>1.5.1-Lithium-SR1</version>
+      <version>1.5.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
