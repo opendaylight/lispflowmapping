@@ -86,7 +86,7 @@ public class LispNotificationHelper {
             EidToLocatorRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i);
             MappingBuilder mb = new MappingBuilder();
             mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                    record.getLispAddressContainer(), record.getMaskLength())));
+                    record.getLispAddressContainer())));
             mb.setOrigin(MappingOrigin.Southbound);
             mb.setSiteId(getSiteId(mapRegisterNotification.getMapRegister()));
             mb.setRecordTtl(record.getRecordTtl());

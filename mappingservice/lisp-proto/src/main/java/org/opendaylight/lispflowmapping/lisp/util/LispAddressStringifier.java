@@ -66,22 +66,18 @@ public class LispAddressStringifier {
     }
 
     public static String getString(LispAddressContainer container) {
-        return getString(Destination.USER, container);
+        return getAddrString(Destination.USER, container);
     }
 
-    public static String getString(LispAddressContainer container, int mask) {
-        return getString(Destination.USER, container, mask);
+    public static String getURIString(LispAddressContainer container) {
+        return getString(Destination.URI, container);
     }
 
-    public static String getURIString(LispAddressContainer container, int mask) {
-        return getString(Destination.URI, container, mask);
+    public static String getURLString(LispAddressContainer container) {
+        return getString(Destination.URL, container);
     }
 
-    public static String getURLString(LispAddressContainer container, int mask) {
-        return getString(Destination.URL, container, mask);
-    }
-
-    private static String getString(Destination dst, LispAddressContainer container) {
+    private static String getAddrString(Destination dst, LispAddressContainer container) {
         Preconditions.checkNotNull(container, "address should not be null");
         Address addr = container.getAddress();
         String prefix = null;
@@ -135,21 +131,12 @@ public class LispAddressStringifier {
 
     }
 
-    private static String getString(Destination dst, LispAddressContainer container, int mask) {
-        Address addr = container.getAddress();
-
-        if (isMaskable(addr)) {
-            return (getString(dst, container) + getMaskSeparator(dst) + mask);
+    private static String getString(Destination dst, LispAddressContainer container) {
+        if (MaskUtil.isMaskable(container)) {
+            return (getAddrString(dst, container) + getMaskSeparator(dst) + MaskUtil.getMaskForAddress(container));
         } else {
-            return getString(dst, container);
+            return getAddrString(dst, container);
         }
-    }
-
-    private static boolean isMaskable(Address addr) {
-        if (addr instanceof Ipv4 || addr instanceof Ipv6 || addr instanceof LcafSegment) {
-            return true;
-        }
-        return false;
     }
 
     private static String getMaskSeparator(Destination dst) {

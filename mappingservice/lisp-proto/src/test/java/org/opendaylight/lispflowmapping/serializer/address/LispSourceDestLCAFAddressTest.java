@@ -42,8 +42,8 @@ public class LispSourceDestLCAFAddressTest extends BaseTestCase {
         assertEquals((byte) 0x10, srcDestAddress.getSrcMaskLength().byteValue());
         assertEquals((byte) 0x18, srcDestAddress.getDstMaskLength().byteValue());
 
-        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("17.34.51.68"), srcDestAddress.getSrcAddress().getPrimitiveAddress());
-        assertEquals(LispAFIConvertor.asPrimitiveIPAfiAddress("34.51.68.85"), srcDestAddress.getDstAddress().getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.asPrimitiveIPv4AfiPrefix("17.34.51.68", 16), srcDestAddress.getSrcAddress().getPrimitiveAddress());
+        assertEquals(LispAFIConvertor.asPrimitiveIPv4AfiPrefix("34.51.68.85", 24), srcDestAddress.getDstAddress().getPrimitiveAddress());
         assertEquals(LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode(), srcDestAddress.getLcafType().byteValue());
     }
 
@@ -67,14 +67,14 @@ public class LispSourceDestLCAFAddressTest extends BaseTestCase {
     public void deserialize__Ipv6() throws Exception {
         LcafSourceDestAddress srcAddress = (LcafSourceDestAddress) LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
                 "0C 20 00 28 " + //
-                "00 00 CC DD " + // reserved + masks
-                "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD " + // AFI=2,
-                "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD")); // AFI=2,
+                "00 00 78 78 " + // reserved + masks
+                "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC 00 " + // AFI=2,
+                "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC 00")); // AFI=2,
         // IPv6
 
-        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd")), srcAddress
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiPrefix("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd", 0x78)), srcAddress
                 .getSrcAddress().getPrimitiveAddress());
-        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("4433:2211:8877:6655:99aa:bbcc:aabb:ccdd")), srcAddress
+        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiPrefix("4433:2211:8877:6655:99aa:bbcc:aabb:ccdd", 0x78)), srcAddress
                 .getDstAddress().getPrimitiveAddress());
     }
 

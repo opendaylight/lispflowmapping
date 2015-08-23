@@ -10,22 +10,18 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
+import org.opendaylight.lispflowmapping.implementation.mapcache.TopologyMapCache;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.IMappingKey;
-import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafTrafficEngineeringAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecord;
@@ -33,7 +29,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafTrafficEngineering;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.No;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapreplymessage.MapReplyBuilder;
@@ -65,10 +60,8 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         Preconditions.checkNotNull(dao);
 
         LispAddressContainer srcEid = null;
-        LispAFIAddress srcEidAfi = null;
         if (request.getSourceEid() != null) {
             srcEid = request.getSourceEid().getLispAddressContainer();
-            srcEidAfi = LispAFIConvertor.toAFI(srcEid);
         }
         MapReplyBuilder builder = new MapReplyBuilder();
         builder.setEchoNonceEnabled(false);
@@ -76,27 +69,17 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         builder.setSecurityEnabled(false);
         builder.setNonce(request.getNonce());
         builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        for (EidRecord eid : request.getEidRecord()) {
-            EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
-            Entry<IMappingKey, List<RLOCGroup>> mapping =
-                    DAOMappingUtil.getMapping(srcEidAfi, eid, dao);
-            recordBuilder.setRecordTtl(0);
-            recordBuilder.setAction(Action.NoAction);
-            recordBuilder.setAuthoritative(false);
-            recordBuilder.setMapVersion((short) 0);
-            recordBuilder.setMaskLength((short) mapping.getKey().getMask());
-            recordBuilder.setLispAddressContainer(mapping.getKey().getEID());
-            recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-            List<RLOCGroup> locators = mapping.getValue();
-            if (locators != null && locators.size() > 0) {
+        for (EidRecord eidRecord : request.getEidRecord()) {
+            EidToLocatorRecord mapping = TopologyMapCache.getMapping(srcEid, eidRecord.getLispAddressContainer(), dao);
+            EidToLocatorRecordBuilder recordBuilder;
+            if (mapping != null) {
+                recordBuilder = new EidToLocatorRecordBuilder(mapping);
                 List<ItrRloc> itrRlocs = request.getItrRloc();
-                addLocatorGroups(recordBuilder, locators, itrRlocs);
-                if (srcEid != null && !(srcEid.getAddress() instanceof No) && itrRlocs != null
-                        && itrRlocs.size() > 0) {
+                if (itrRlocs != null && itrRlocs.size() != 0) {
+                    updateLocators(recordBuilder, itrRlocs);
                     LispAddressContainer itrRloc = itrRlocs.get(0).getLispAddressContainer();
                     SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid);
-                    Set<SubscriberRLOC> subscribers = DAOMappingUtil.getSubscribers(mapping.getKey().getEID(),
-                            mapping.getKey().getMask(), dao);
+                    Set<SubscriberRLOC> subscribers = TopologyMapCache.getSubscribers(mapping.getLispAddressContainer(), dao);
                     if (subscribers == null) {
                         subscribers = Sets.newConcurrentHashSet();
                     } else if (subscribers.contains(subscriberRloc)) {
@@ -107,13 +90,17 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
                     if (smr) {
                         LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
                         subscribers.add(subscriberRloc);
-                        DAOMappingUtil.addSubscribers(mapping.getKey().getEID(), mapping.getKey().getMask(),
-                                subscribers, dao);
+                        TopologyMapCache.addSubscribers(mapping.getLispAddressContainer(), subscribers, dao);
                     }
                 }
             } else {
+                recordBuilder = new EidToLocatorRecordBuilder();
+                recordBuilder.setAuthoritative(false);
+                recordBuilder.setMapVersion((short) 0);
+                recordBuilder.setMaskLength(eidRecord.getMask());
+                recordBuilder.setLispAddressContainer(eidRecord.getLispAddressContainer());
                 recordBuilder.setAction(Action.NativelyForward);
-                if (shouldAuthenticate() && DAOMappingUtil.getPassword(eid.getLispAddressContainer(), eid.getMask(),
+                if (shouldAuthenticate() && TopologyMapCache.getAuthenticationKey(eidRecord.getLispAddressContainer(),
                         dao, shouldIterateMask()) != null) {
                     recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
                 } else {
@@ -126,24 +113,12 @@ public class MapResolver extends AbstractLispComponent implements IMapResolverAs
         callback.handleMapReply(builder.build());
     }
 
-    private void addLocatorGroups(EidToLocatorRecordBuilder recordBuilder, List<RLOCGroup> rlocs,
-            List<ItrRloc> itrRlocs) {
-        for (RLOCGroup rloc : rlocs) {
-            addLocators(recordBuilder, rloc, itrRlocs);
-            recordBuilder.setRecordTtl(rloc.getTtl());
-        }
-    }
-
-    private void addLocators(EidToLocatorRecordBuilder recordBuilder, RLOCGroup locatorObject,
-            List<ItrRloc> itrRlocs) {
-        Preconditions.checkNotNull(locatorObject);
-
-        recordBuilder.setAction(locatorObject.getAction());
-        recordBuilder.setAuthoritative(locatorObject.isAuthoritative());
-        recordBuilder.setRecordTtl(locatorObject.getTtl());
-
+    // Process locators according to configured policy
+    private void updateLocators(EidToLocatorRecordBuilder recordBuilder, List<ItrRloc> itrRlocs) {
+        List<LocatorRecord> locatorRecords = recordBuilder.getLocatorRecord();
+        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         try {
-            for (LocatorRecord record : locatorObject.getRecords()) {
+            for (LocatorRecord record : locatorRecords) {
                 LispAddressContainer container = record.getLispAddressContainer();
 
                 // For non-ELP RLOCs, or when ELP policy is default, or itrRlocs is null, just add the locator and be

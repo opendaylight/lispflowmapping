@@ -20,19 +20,16 @@ import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.dao.MappingKey;
-import org.opendaylight.lispflowmapping.implementation.dao.MappingNoMaskKey;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
-import org.opendaylight.lispflowmapping.implementation.util.DAOSubKeys;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispTypeConverter;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -64,7 +61,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15082
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
@@ -135,18 +131,6 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
 
-    class LispIpv4AddressInMemoryConverter implements ILispTypeConverter<Ipv4Address, Integer> {
-    }
-
-    class LispIpv6AddressInMemoryConverter implements ILispTypeConverter<Ipv6Address, Integer> {
-    }
-
-    class MappingServiceKeyConvertor implements ILispTypeConverter<MappingKey, Integer> {
-    }
-
-    class MappingServiceNoMaskKeyConvertor implements ILispTypeConverter<MappingNoMaskKey, Integer> {
-    }
-
     public static LispMappingService getLispMappingService() {
         return lfmService;
     }
@@ -192,7 +176,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         }
 
         for (AuthenticationKey authKey : authKeys) {
-            addAuthenticationKey(authKey.getLispAddressContainer(), authKey.getMaskLength(), authKey.getAuthkey());
+            addAuthenticationKey(authKey.getLispAddressContainer(), authKey.getAuthkey());
         }
     }
 
@@ -214,7 +198,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
                 if (!lastKey.equals(key)) {
                     sb.append(key + "\t");
                 }
-                if (!(valueKey.equals(DAOSubKeys.LCAF_SRCDST_SUBKEY.toString()))) {
+                if (!(valueKey.equals(SubKeys.LCAF_SRCDST.toString()))) {
                     sb.append(valueKey + "=" + value + "\t");
                 }
                 lastKey = key;
@@ -228,7 +212,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
                 if (!lastKey.equals(key)) {
                     sb.append("\n" + key + "\t");
                 }
-                if (valueKey.equals(DAOSubKeys.LCAF_SRCDST_SUBKEY.toString())) {
+                if (valueKey.equals(SubKeys.LCAF_SRCDST.toString())) {
                     sb.append(valueKey + "= { ");
                     ((ILispDAO)value).getAll(innerVisitor);
                     sb.append("}\t");
@@ -244,8 +228,8 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
 
     public void addDefaultKeyIPv4() {
         LispAddressContainer address = LispAFIConvertor.toContainer(
-                new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).build());
-        addAuthenticationKey(address, 0, "password");
+                new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).setMask((short)0).build());
+        addAuthenticationKey(address, "password");
     }
 
     public MapReply handleMapRequest(MapRequest request) {
@@ -254,14 +238,12 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
 
     public MapReply handleMapRequest(MapRequest request, boolean smr) {
         LOG.debug("DAO: Retrieving mapping for {}",
-                LispAddressStringifier.getString(request.getEidRecord().get(0).getLispAddressContainer(),
-                request.getEidRecord().get(0).getMask()));
+                LispAddressStringifier.getString(request.getEidRecord().get(0).getLispAddressContainer()));
 
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
         mapResolver.handleMapRequest(request, smr, this);
-        // After this invocation we assume that the thread local is filled with
-        // the reply
+        // After this invocation we assume that the thread local is filled with the reply
         if (tlsMapRequest.get() != null) {
             SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
             new MapRequestBuilder(tlsMapRequest.get().getLeft());
@@ -281,35 +263,33 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
         LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer(),
-                mapRegister.getEidToLocatorRecord().get(0).getMaskLength()));
+                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister, smr, this);
-        // After this invocation we assume that the thread local is filled with
-        // the reply
+        // After this invocation we assume that the thread local is filled with the reply
         return tlsMapNotify.get();
     }
 
-    public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Retrieving authentication key for {}", LispAddressStringifier.getString(address, maskLen));
-        return mapServer.getAuthenticationKey(address, maskLen);
+    public String getAuthenticationKey(LispAddressContainer address) {
+        LOG.debug("DAO: Retrieving authentication key for {}", LispAddressStringifier.getString(address));
+        return mapServer.getAuthenticationKey(address);
     }
 
-    public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Removing authentication key for {}", LispAddressStringifier.getString(address, maskLen));
-        mapServer.removeAuthenticationKey(address, maskLen);
+    public void removeAuthenticationKey(LispAddressContainer address) {
+        LOG.debug("DAO: Removing authentication key for {}", LispAddressStringifier.getString(address));
+        mapServer.removeAuthenticationKey(address);
     }
 
-    public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
+    public void addAuthenticationKey(LispAddressContainer address, String key) {
         LOG.debug("DAO: Adding authentication key '{}' for {}", key,
-                LispAddressStringifier.getString(address, maskLen));
-        mapServer.addAuthenticationKey(address, maskLen, key);
+                LispAddressStringifier.getString(address));
+        mapServer.addAuthenticationKey(address, key);
     }
 
-    public void removeMapping(LispAddressContainer address, int maskLen) {
-        LOG.debug("DAO: Removing mapping for {}", LispAddressStringifier.getString(address, maskLen));
-        mapServer.removeMapping(address, maskLen, smr, this);
+    public void removeMapping(LispAddressContainer address) {
+        LOG.debug("DAO: Removing mapping for {}", LispAddressStringifier.getString(address));
+        mapServer.removeMapping(address, smr, this);
     }
 
     public boolean shouldIterateMask() {
@@ -418,8 +398,7 @@ public class LispMappingService implements IFlowMapping, IFlowMappingShell, Bind
         LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
                 LispAddressStringifier.getString(subscriber),
                 LispAddressStringifier.getString(smr.getSourceEid().getLispAddressContainer()),
-                LispAddressStringifier.getString(smr.getEidRecord().get(0).getLispAddressContainer(),
-                        smr.getEidRecord().get(0).getMask()));
+                LispAddressStringifier.getString(smr.getEidRecord().get(0).getLispAddressContainer()));
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));

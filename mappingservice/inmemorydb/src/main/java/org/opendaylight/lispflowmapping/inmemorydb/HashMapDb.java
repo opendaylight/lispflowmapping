@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.inmemorydb;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,19 +78,20 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         data.clear();
     }
 
+    // TODO: this should be moved outside of DAO implementation
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
-                if (value instanceof RLOCGroup) {
-                    RLOCGroup rloc = (RLOCGroup) value;
-                    if (isExpired(rloc)) {
-                        removeSpecific(keyId, valueKey);
+                if (value != null && valueKey instanceof String && ((String) valueKey).equals(SubKeys.REGDATE)) {
+                    Date date = (Date) value;
+                    if (isExpired(date)) {
+                        removeSpecific(keyId, SubKeys.RECORD);
                     }
                 }
             }
 
-            private boolean isExpired(RLOCGroup rloc) {
-                return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+            private boolean isExpired(Date date) {
+                return System.currentTimeMillis() - date.getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });
     }
@@ -114,4 +116,15 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         data.clear();
     }
 
+    @Override
+    public ILispDAO putNestedTable(Object key, String valueKey) {
+        ILispDAO nestedTable = (ILispDAO) getSpecific(key, valueKey);
+        if (nestedTable != null) {
+            LOG.warn("Trying to add nested table that already exists. Aborting!");
+            return nestedTable;
+        }
+        nestedTable = new HashMapDb();
+        put(key, new MappingEntry<>(valueKey, nestedTable));
+        return nestedTable;
+    }
 }
