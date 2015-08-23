@@ -15,6 +15,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.li
  */
 public interface IMapServerAsync extends IGeneralMapServer {
     public void handleMapRegister(MapRegister request, boolean smr, IMapNotifyHandler callback);
-    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback);
+    public void removeMapping(LispAddressContainer address, boolean smr, IMapNotifyHandler callback);
 
 }

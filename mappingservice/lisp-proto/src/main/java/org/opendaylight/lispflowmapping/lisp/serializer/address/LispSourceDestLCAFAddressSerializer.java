@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import java.nio.ByteBuffer;
 
+import org.opendaylight.lispflowmapping.lisp.serializer.SerializerHelper;
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -53,10 +54,12 @@ public class LispSourceDestLCAFAddressSerializer extends LispLCAFAddressSerializ
     @Override
     protected LcafSourceDestAddress deserializeData(ByteBuffer buffer, byte res2, short length) {
         short res = buffer.getShort();
-        int srcMaskLength = ByteUtil.getUnsignedByte(buffer);
-        int dstMaskLength = ByteUtil.getUnsignedByte(buffer);
+        short srcMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
+        short dstMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
         LispAFIAddress srcAddress = LispAddressSerializer.getInstance().deserialize(buffer);
+        srcAddress = SerializerHelper.fixMask(srcAddress, srcMaskLength);
         LispAFIAddress dstAddress = LispAddressSerializer.getInstance().deserialize(buffer);
+        dstAddress = SerializerHelper.fixMask(dstAddress, dstMaskLength);
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setDstMaskLength((short) dstMaskLength).setSrcMaskLength((short) srcMaskLength);
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress((PrimitiveAddress) LispAFIConvertor.toPrimitive(srcAddress)).build());

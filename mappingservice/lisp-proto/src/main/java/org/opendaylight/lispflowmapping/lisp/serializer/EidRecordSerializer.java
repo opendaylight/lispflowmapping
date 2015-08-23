@@ -16,7 +16,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.Li
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecordBuilder;
 
-
 public class EidRecordSerializer {
 
     private static final EidRecordSerializer INSTANCE = new EidRecordSerializer();
@@ -33,7 +32,8 @@ public class EidRecordSerializer {
         /* byte reserved = */requestBuffer.get();
         short maskLength = (short) (ByteUtil.getUnsignedByte(requestBuffer));
         LispAFIAddress prefix = LispAddressSerializer.getInstance().deserialize(requestBuffer);
-        return new EidRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(prefix))
-                .setMask(maskLength).build();
+        prefix = SerializerHelper.fixMask(prefix, maskLength);
+        return new EidRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(prefix)).setMask(maskLength)
+                .build();
     }
 }

@@ -172,7 +172,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(1, mr.getEidRecord().size());
         EidRecord eid = mr.getEidRecord().get(0);
         assertEquals(0x20, eid.getMask().byteValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")), eid.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.asIPv4Address("1.2.3.4"), eid.getLispAddressContainer());
     }
 
     @Test
@@ -192,9 +192,9 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(1, mr.getEidRecord().size());
         EidRecord eid = mr.getEidRecord().get(0);
         assertEquals(0x20, eid.getMask().byteValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")), eid.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.asIPv4Prefix("1.2.3.4", 0x20), eid.getLispAddressContainer());
         MapReply mapReply = mr.getMapReply();
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("1.2.3.4"))), mapReply.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.asIPv4Address(("1.2.3.4")), mapReply.getLispAddressContainer());
         assertEquals(false, mapReply.isAuthoritative());
         assertEquals(Action.NoAction, mapReply.getAction());
         assertEquals(0, mapReply.getMapVersion().shortValue());
@@ -236,11 +236,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         EidRecord eid = mr.getEidRecord().get(0);
         assertEquals(0x0020, eid.getMask().shortValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")), eid.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.asIPv4Address("1.2.3.4"), eid.getLispAddressContainer());
 
         eid = mr.getEidRecord().get(1);
         assertEquals(0x0080, eid.getMask().shortValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:5")), eid.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:5"), eid.getLispAddressContainer());
     }
 
     @Test
