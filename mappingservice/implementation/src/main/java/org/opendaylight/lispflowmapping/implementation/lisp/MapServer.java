@@ -19,15 +19,16 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.util.DAOMappingUtil;
-import org.opendaylight.lispflowmapping.implementation.util.MaskUtil;
+import org.opendaylight.lispflowmapping.implementation.mapcache.TopologyMapCache;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.lisp.util.LcafSourceDestHelper;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecordBuilder;
@@ -91,61 +92,60 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     public void handleMapRegister(MapRegister mapRegister, boolean smr, IMapNotifyHandler callback) {
         if (dao == null) {
             LOG.warn("handleMapRegister called while dao is uninitialized");
-        } else {
-            boolean failed = false;
-            String password = null;
-            for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecord()) {
-                if (shouldAuthenticate()) {
-                    password = DAOMappingUtil.getPassword(eidRecord.getLispAddressContainer(),
-                            eidRecord.getMaskLength(), dao, shouldIterateMask());
-                    if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                        LOG.warn("Authentication failed");
-                        failed = true;
-                        break;
-                    }
-                }
-                boolean mappingChanged = DAOMappingUtil.saveRlocs(eidRecord, smr, dao, shouldIterateMask(),
-                        shouldOverwrite());
-                if (smr && mappingChanged) {
-                    Set<SubscriberRLOC> subscribers = DAOMappingUtil.getSubscribers(
-                            eidRecord.getLispAddressContainer(), eidRecord.getMaskLength(), dao);
-                    sendSmrs(eidRecord, subscribers, callback);
+            return;
+        }
+        boolean failed = false;
+        String password = null;
+        for (EidToLocatorRecord eidRecord : mapRegister.getEidToLocatorRecord()) {
+            if (shouldAuthenticate()) {
+                password = TopologyMapCache.getAuthenticationKey(eidRecord.getLispAddressContainer(), dao, shouldIterateMask());
+                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
+                    LOG.warn("Authentication failed");
+                    failed = true;
+                    break;
                 }
             }
-            if (!failed) {
-                MapNotifyBuilder builder = new MapNotifyBuilder();
-                if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
-                    LOG.trace("MapRegister wants MapNotify");
-                    MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
-                    if (shouldAuthenticate()) {
-                        builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                                password));
-                    }
-                    callback.handleMapNotify(builder.build());
+            boolean mappingChanged = TopologyMapCache.addMapping(eidRecord, smr, dao, shouldIterateMask(),
+                    shouldOverwrite());
+            if (smr && mappingChanged) {
+                Set<SubscriberRLOC> subscribers = TopologyMapCache.getSubscribers(
+                        eidRecord.getLispAddressContainer(), dao);
+                sendSmrs(eidRecord, subscribers, callback);
+            }
+        }
+        if (!failed) {
+            MapNotifyBuilder builder = new MapNotifyBuilder();
+            if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
+                LOG.trace("MapRegister wants MapNotify");
+                MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
+                if (shouldAuthenticate()) {
+                    builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
+                            password));
                 }
+                callback.handleMapNotify(builder.build());
             }
         }
     }
 
-    public String getAuthenticationKey(LispAddressContainer address, int maskLen) {
-        return DAOMappingUtil.getPassword(address, maskLen, dao, shouldIterateMask());
+    public String getAuthenticationKey(LispAddressContainer address) {
+        return TopologyMapCache.getAuthenticationKey(address, dao, shouldIterateMask());
     }
 
-    public void removeAuthenticationKey(LispAddressContainer address, int maskLen) {
-        DAOMappingUtil.removeAuthenticationKey(address, maskLen, dao);
+    public void removeAuthenticationKey(LispAddressContainer address) {
+        TopologyMapCache.removeAuthenticationKey(address, dao);
     }
 
-    public void removeMapping(LispAddressContainer address, int maskLen, boolean smr, IMapNotifyHandler callback) {
+    public void removeMapping(LispAddressContainer address, boolean smr, IMapNotifyHandler callback) {
         if (smr) {
             // mapping is removed before first SMR is sent to avoid inconsistent replies
-            DAOMappingUtil.removeMapping(address, maskLen, dao, shouldOverwrite());
-            Set<SubscriberRLOC> subscribers = DAOMappingUtil.getSubscribers(address, maskLen, dao);
+            TopologyMapCache.removeMapping(address, dao, shouldOverwrite());
+            Set<SubscriberRLOC> subscribers = TopologyMapCache.getSubscribers(address, dao);
             sendSmrs(new EidToLocatorRecordBuilder().setLispAddressContainer(address).
-                    setMaskLength((short) maskLen).build(), subscribers, callback);
-            DAOMappingUtil.removeSubscribers(address, maskLen, dao, shouldOverwrite());
+                    setMaskLength(MaskUtil.getMaskForAddress(address)).build(), subscribers, callback);
+            TopologyMapCache.removeSubscribers(address, dao, shouldOverwrite());
         } else {
-            DAOMappingUtil.removeMapping(address, maskLen, dao, shouldOverwrite());
-            DAOMappingUtil.removeSubscribers(address, maskLen, dao, shouldOverwrite());
+            TopologyMapCache.removeMapping(address, dao, shouldOverwrite());
+            TopologyMapCache.removeSubscribers(address, dao, shouldOverwrite());
         }
     }
 
@@ -155,9 +155,9 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof LcafSourceDest) {
-            LispAddressContainer dstAddr = LispAFIConvertor.toContainer(DAOMappingUtil.getDstForLcafSrcDst(eid));
-            short dstMask = DAOMappingUtil.getDstMaskForLcafSrcDst(eid);
-            subscribers = DAOMappingUtil.getSubscribers(dstAddr, dstMask, dao);
+            LispAddressContainer dstAddr = LispAFIConvertor.toContainer(LcafSourceDestHelper.getDstAfi(eid));
+            short dstMask = LcafSourceDestHelper.getDstMask(eid);
+            subscribers = TopologyMapCache.getSubscribers(dstAddr, dao);
             EidToLocatorRecord newRecord = new EidToLocatorRecordBuilder().setAction(record.getAction()).
                     setAuthoritative(record.isAuthoritative()).setLocatorRecord(record.getLocatorRecord()).
                     setMapVersion(record.getMapVersion()).setRecordTtl(record.getRecordTtl()).
@@ -191,7 +191,7 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
                 }
             }
         }
-        DAOMappingUtil.addSubscribers(record.getLispAddressContainer(), record.getMaskLength(), subscribers, dao);
+        TopologyMapCache.addSubscribers(record.getLispAddressContainer(), subscribers, dao);
     }
 
     public boolean shouldOverwrite() {
@@ -203,8 +203,8 @@ public class MapServer extends AbstractLispComponent implements IMapServerAsync 
     }
 
     @Override
-    public void addAuthenticationKey(LispAddressContainer address, int maskLen, String key) {
-        DAOMappingUtil.addAuthenticationKey(address, maskLen, key, dao);
+    public void addAuthenticationKey(LispAddressContainer address, String key) {
+        TopologyMapCache.addAuthenticationKey(address, key, dao);
     }
 
 }

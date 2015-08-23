@@ -27,5 +27,5 @@ public interface IFlowMapping extends IMapResolver, IMapServer {
     public MapNotify handleMapRegister(MapRegister mb);
 
     public MapReply handleMapRequest(MapRequest mr);
-    public void removeMapping(LispAddressContainer address, int maskLen);
+    public void removeMapping(LispAddressContainer address);
 }

@@ -36,7 +36,7 @@ public interface IGeneralMapServer {
      * @param maskLen EID mask length
      * @return The correct key.
      */
-    String getAuthenticationKey(LispAddressContainer address, int maskLen);
+    String getAuthenticationKey(LispAddressContainer address);
 
     void setShouldIterateMask(boolean shouldIterateMask);
 
@@ -50,7 +50,7 @@ public interface IGeneralMapServer {
      * @param address EID to remove
      * @param maskLen EID mask length
      */
-    void removeAuthenticationKey(LispAddressContainer address, int maskLen);
+    void removeAuthenticationKey(LispAddressContainer address);
 
     /**
      * This method adds an authentication key to the address.
@@ -59,5 +59,5 @@ public interface IGeneralMapServer {
      * @param maskLen EID mask length
      * @param key Value of the key for the EID
      */
-    void addAuthenticationKey(LispAddressContainer address, int maskLen, String key);
+    void addAuthenticationKey(LispAddressContainer address, String key);
 }

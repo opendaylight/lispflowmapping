@@ -13,21 +13,31 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapServerMapResolverUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetKeyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.GetMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.update.key.input.EidBuilder;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -67,8 +77,11 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        String key = lispMappingService.getAuthenticationKey(input.getLispAddressContainer(),
-                input.getMaskLength());
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new AddKeyInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+
+        String key = lispMappingService.getAuthenticationKey(input.getLispAddressContainer());
 
         if (key != null) {
             String message = "Key already exists! Please use update-key if you want to change it.";
@@ -88,6 +101,10 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
         Preconditions.checkNotNull(input, "add-mapping RPC input must be not null!");
         LOG.trace("RPC received to add the following mapping: " + input.toString());
 
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new AddMappingInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+
         dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
 
         RpcResultBuilder<Void> rpcResultBuilder;
@@ -102,9 +119,13 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
         Preconditions.checkNotNull(input, "get-key RPC input must be not null!");
         LOG.trace("RPC received to get the following key: " + input.toString());
 
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new GetKeyInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
 
-        String key = lispMappingService.getAuthenticationKey(input.getLispAddressContainer(), input.getMaskLength());
+        String key = lispMappingService.getAuthenticationKey(input.getLispAddressContainer());
 
         if (key == null) {
             String message = "Key was not found in the mapping database";
@@ -121,6 +142,10 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
     public Future<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
         Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: " + input.toString());
+
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new GetMappingInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
@@ -145,6 +170,10 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
         Preconditions.checkNotNull(input, "remove-key RPC input must be not null!");
         LOG.trace("RPC received to remove the following key: " + input.toString());
 
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new RemoveKeyInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+
         RpcResultBuilder<Void> rpcResultBuilder;
 
         dsbe.removeAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
@@ -158,6 +187,10 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
     public Future<RpcResult<Void>> removeMapping(RemoveMappingInput input) {
         Preconditions.checkNotNull(input, "remove-mapping RPC input must be not null!");
         LOG.trace("RPC received to remove the following mapping: " + input.toString());
+
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new RemoveMappingInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
@@ -173,10 +206,15 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
         Preconditions.checkNotNull(input, "update-key RPC input must be not null!");
         LOG.trace("RPC received to update the following key: " + input.toString());
 
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new UpdateKeyInputBuilder(input).setEid(
+                new EidBuilder(input.getEid()).setLispAddressContainer(
+                        MaskUtil.setMask(input.getEid().getLispAddressContainer(), input.getEid()
+                                .getMaskLength())).build()).build();
+
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        String key = lispMappingService.getAuthenticationKey(input.getEid().getLispAddressContainer(),
-                input.getEid().getMaskLength());
+        String key = lispMappingService.getAuthenticationKey(input.getEid().getLispAddressContainer());
 
         if (key == null) {
             String message = "Key doesn't exist! Please use add-key if you want to create a new authentication key.";
@@ -195,6 +233,10 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
     public Future<RpcResult<Void>> updateMapping(UpdateMappingInput input) {
         LOG.trace("RPC received to update the following mapping: " + input.toString());
         Preconditions.checkNotNull(input, "update-mapping RPC input must be not null!");
+
+        // XXX: to remove once RPC API has been updated to remove explicit mask
+        input = new UpdateMappingInputBuilder(input).setLispAddressContainer(
+                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 

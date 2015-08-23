@@ -31,7 +31,7 @@ public class RPCInputConvertorUtil {
     public static AuthenticationKey toAuthenticationKey(AddKeyInput input) {
         AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
         akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer(), input.getMaskLength())));
+                input.getLispAddressContainer())));
         akb.setLispAddressContainer(input.getLispAddressContainer());
         akb.setMaskLength(input.getMaskLength());
         akb.setKeyType(input.getKeyType());
@@ -42,7 +42,7 @@ public class RPCInputConvertorUtil {
     public static AuthenticationKey toAuthenticationKey(UpdateKeyInput input) {
         AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
         akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getEid().getLispAddressContainer(), input.getEid().getMaskLength())));
+                input.getEid().getLispAddressContainer())));
         akb.setLispAddressContainer(input.getEid().getLispAddressContainer());
         akb.setMaskLength(input.getEid().getMaskLength());
         akb.setKeyType(input.getKey().getKeyType());
@@ -53,7 +53,7 @@ public class RPCInputConvertorUtil {
     public static AuthenticationKey toAuthenticationKey(RemoveKeyInput input) {
         AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
         akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer(), input.getMaskLength())));
+                input.getLispAddressContainer())));
         akb.setLispAddressContainer(input.getLispAddressContainer());
         akb.setMaskLength(input.getMaskLength());
         return akb.build();
@@ -62,7 +62,7 @@ public class RPCInputConvertorUtil {
     public static Mapping toMapping(AddMappingInput input) {
         MappingBuilder mb = new MappingBuilder();
         mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer(), input.getMaskLength())));
+                input.getLispAddressContainer())));
         mb.setOrigin(MappingOrigin.Northbound);
         mb.setRecordTtl(input.getRecordTtl());
         mb.setMaskLength(input.getMaskLength());
@@ -77,7 +77,7 @@ public class RPCInputConvertorUtil {
     public static Mapping toMapping(UpdateMappingInput input) {
         MappingBuilder mb = new MappingBuilder();
         mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer(), input.getMaskLength())));
+                input.getLispAddressContainer())));
         mb.setOrigin(MappingOrigin.Northbound);
         mb.setRecordTtl(input.getRecordTtl());
         mb.setMaskLength(input.getMaskLength());
@@ -92,7 +92,7 @@ public class RPCInputConvertorUtil {
     public static Mapping toMapping(RemoveMappingInput input) {
         MappingBuilder mb = new MappingBuilder();
         mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer(), input.getMaskLength())));
+                input.getLispAddressContainer())));
         mb.setOrigin(MappingOrigin.Northbound);
         mb.setMaskLength(input.getMaskLength());
         mb.setLispAddressContainer(input.getLispAddressContainer());
