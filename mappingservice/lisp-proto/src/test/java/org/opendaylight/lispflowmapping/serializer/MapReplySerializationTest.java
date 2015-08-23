@@ -81,11 +81,11 @@ public class MapReplySerializationTest extends BaseTestCase {
                 + "03 04 00 06 00 01 0a 0a " //
                 + "0a 0a 04 03 02 01 00 01 " //
                 + "00 02 00 01 00 02 00 03 " //
-                + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 02 01"));
+                + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
         assertEquals(2, mr.getNonce().longValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("1.2.3.4"))), mr.getEidToLocatorRecord().get(0)
+        assertEquals(LispAFIConvertor.asIPv4Address(("1.2.3.4")), mr.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("4.3.2.1"))), mr.getEidToLocatorRecord().get(1)
+        assertEquals(LispAFIConvertor.asIPv4Prefix(("4.3.2.1"), 16), mr.getEidToLocatorRecord().get(1)
                 .getLispAddressContainer());
         assertEquals(false, mr.getEidToLocatorRecord().get(0).isAuthoritative());
         assertEquals(true, mr.getEidToLocatorRecord().get(1).isAuthoritative());
@@ -145,10 +145,10 @@ public class MapReplySerializationTest extends BaseTestCase {
     public void deserialize__MultipleRecordsWithoutRLOCs() throws Exception {
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 "
         //
-                + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 02 01"));
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("1.2.3.4"))), mr.getEidToLocatorRecord().get(0)
+                + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
+        assertEquals(LispAFIConvertor.asIPv4Address(("1.2.3.4")), mr.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("4.3.2.1"))), mr.getEidToLocatorRecord().get(1)
+        assertEquals(LispAFIConvertor.asIPv4Prefix("4.3.2.1", 16), mr.getEidToLocatorRecord().get(1)
                 .getLispAddressContainer());
         assertEquals(false, mr.getEidToLocatorRecord().get(0).isAuthoritative());
         assertEquals(true, mr.getEidToLocatorRecord().get(1).isAuthoritative());

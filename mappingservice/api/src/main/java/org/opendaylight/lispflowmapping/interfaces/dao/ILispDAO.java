@@ -73,4 +73,14 @@ public interface ILispDAO {
      */
     public void removeAll();
 
+    /**
+     * Inserts a new, nested table for given key and subkey. Also acts as factory method.
+     *
+     * @param key
+     *              The key for which a new table is linked in
+     * @param valueKey
+     *              The subkey under which to insert the new table
+     * @return The inserted table
+     */
+    public ILispDAO putNestedTable(Object key, String valueKey);
 }

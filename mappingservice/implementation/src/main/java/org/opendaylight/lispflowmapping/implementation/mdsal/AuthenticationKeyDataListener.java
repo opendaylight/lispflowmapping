@@ -54,8 +54,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                msmr.addAuthenticationKey(authkey.getLispAddressContainer(),
-                        authkey.getMaskLength(), authkey.getAuthkey());
+                msmr.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
             }
         }
 
@@ -69,8 +68,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                msmr.addAuthenticationKey(authkey.getLispAddressContainer(),
-                        authkey.getMaskLength(), authkey.getAuthkey());
+                msmr.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
             }
         }
 
@@ -85,7 +83,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", authkey);
 
-                msmr.removeAuthenticationKey(authkey.getLispAddressContainer(), authkey.getMaskLength());
+                msmr.removeAuthenticationKey(authkey.getLispAddressContainer());
             }
         }
     }

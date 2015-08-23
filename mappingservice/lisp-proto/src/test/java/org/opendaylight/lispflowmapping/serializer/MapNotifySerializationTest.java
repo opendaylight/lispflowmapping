@@ -208,9 +208,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         ));
 
         assertEquals(4, mn.getEidToLocatorRecord().size());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")), mn.getEidToLocatorRecord().get(0)
+        assertEquals(LispAFIConvertor.asIPv4Address("153.16.254.1"), mn.getEidToLocatorRecord().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("151.16.254.1")), mn.getEidToLocatorRecord().get(2)
+        assertEquals(LispAFIConvertor.asIPv4Address("151.16.254.1"), mn.getEidToLocatorRecord().get(2)
                 .getLispAddressContainer());
         assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.11")), mn.getEidToLocatorRecord().get(1)
                 .getLocatorRecord().get(0).getLispAddressContainer());

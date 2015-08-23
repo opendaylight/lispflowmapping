@@ -88,8 +88,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lc
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.HopsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
@@ -353,9 +355,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Test
     public void testOverWriting() throws Exception {
         //testMapRegisterDosntOverwritesOtherSubKeys(); TODO weird failure, needs debug
-        testMapRegisterOverwritesSameSubkey();
-        testMapRegisterOverwritesNoSubkey();
-        testMapRegisterDoesntOverwritesNoSubkey();
+
+        // TODO: remove, we don't support overwrite flag any longer and RLOCs are not saved as independent RLOC groups
+        // testMapRegisterOverwritesSameSubkey();
+        // testMapRegisterOverwritesNoSubkey();
+        // testMapRegisterDoesntOverwritesNoSubkey();
     }
 
     @Test
@@ -404,7 +408,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
         cleanUP();
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
 
         MapReply mapReply = registerAddressAndQuery(eid, 32);
 
@@ -430,7 +434,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequest() throws SocketTimeoutException {
         cleanUP();
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
         mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
@@ -471,7 +475,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterDosntOverwritesOtherSubKeys() throws SocketTimeoutException {
         cleanUP();
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc1 = LispAFIConvertor.asKeyValue("subkey1", LispAFIConvertor.toPrimitive(rloc1Value));
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
@@ -484,7 +488,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterOverwritesSameSubkey() throws SocketTimeoutException {
         cleanUP();
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc1 = LispAFIConvertor.asKeyValue("subkey", LispAFIConvertor.toPrimitive(rloc1Value));
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
@@ -497,7 +501,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void testMapRegisterOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
         lms.setOverwrite(true);
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
@@ -509,11 +513,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void testMapRegisterDoesntOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
         lms.setOverwrite(false);
-        LispAFIAddress eid = LispAFIConvertor.asIPAfiAddress("1.2.3.4");
+        LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
-        assertEquals(2, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+        assertEquals(1, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
         LispAddressContainer rloc1ReturnValueContainer = mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer();
         LispAddressContainer rloc2ReturnValueContainer = mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(1).getLispAddressContainer();
         assertTrue((LispAFIConvertor.toContainer(rloc1Value).equals(rloc1ReturnValueContainer) && LispAFIConvertor.toContainer(rloc2Value).equals(
@@ -572,6 +576,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
+            LOG.warn("Interrupted while sleeping");
         }
 
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
@@ -583,7 +588,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         LispAddressContainer sourceEid = smr.getSourceEid().getLispAddressContainer();
         assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("153.16.254.1")).equals(sourceEid));
         LispAddressContainer smrEid = smr.getEidRecord().get(0).getLispAddressContainer();
-        assertTrue(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4")).equals(smrEid));
+        assertTrue(LispAFIConvertor.asIPv4Address("1.2.3.4").equals(smrEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
@@ -1116,7 +1121,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     // takes an address, packs it in a MapRegister and sends it
-    private void registerAddress(LispAFIAddress eid, int maskLength) throws SocketTimeoutException {
+    private void registerAddress(LispAddressContainer eid, int maskLength) throws SocketTimeoutException {
         MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
         mapRegisterBuilder.setWantMapNotify(true);
         mapRegisterBuilder.setKeyId((short) 0);
@@ -1124,7 +1129,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterBuilder.setNonce((long) 8);
         mapRegisterBuilder.setProxyMapReply(false);
         EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
-        etlrBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
+        etlrBuilder.setLispAddressContainer(eid);
         if (maskLength != -1) {
             etlrBuilder.setMaskLength((short) maskLength);
         } else {
@@ -1152,12 +1157,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(8, mapNotify.getNonce().longValue());
     }
 
-    private MapReply queryForAddress(LispAFIAddress eid, String srcEid) throws SocketTimeoutException {
+    private MapReply queryForAddress(LispAddressContainer eid, String srcEid) throws SocketTimeoutException {
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
         mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
         mapRequestBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(LispAFIConvertor.toContainer(eid)).build());
+                new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(eid).build());
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
         if (srcEid != null) {
             mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(LispAFIConvertor.
@@ -1241,7 +1246,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String ipString = "10.20.30.200";
         String macString = "01:02:03:04:05:06";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString, 32);
         org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAFIConvertor.asPrimitiveMacAfiAddress(macString);
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
@@ -1275,8 +1280,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String ipString1 = "10.10.10.0";
         String ipString2 = "20.20.20.0";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString1);
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend2 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString2);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString1, 24);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend2 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString2, 24);
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
@@ -1285,8 +1290,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(addrToSend1).build());
         builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(addrToSend2).build());
 
-        LcafSourceDestAddr srcDst = builder.build();
-        registerAddress(LispAFIConvertor.asIPAfiAddress(ipString2), 24);
+        LispAddressContainer srcDst = LispAFIConvertor.toContainer(builder.build());
+        registerAddress(LispAFIConvertor.asIPv4Prefix(ipString2, 24), 24);
         registerAddress(srcDst, -1);
 
         // exact match
@@ -1309,7 +1314,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(ipString2, receivedIP2.getIpv4Address().getValue());
 
         // srcEid/dstEid match
-        reply = queryForAddress(LispAFIConvertor.asIPAfiAddress("20.20.20.1"), "10.10.10.1");
+        reply = queryForAddress(LispAFIConvertor.asIPv4Address("20.20.20.1"), "10.10.10.1");
         fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
         assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4);
 
@@ -1317,7 +1322,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(ipString2, ipAddr2.getIpv4Address().getValue());
 
         // dstEid match only
-        reply = queryForAddress(LispAFIConvertor.asIPAfiAddress("20.20.20.1"), "1.2.3.4");
+        reply = queryForAddress(LispAFIConvertor.asIPv4Address("20.20.20.1"), "1.2.3.4");
         fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
         assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4);
 

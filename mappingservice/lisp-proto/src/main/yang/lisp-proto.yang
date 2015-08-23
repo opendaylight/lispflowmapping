@@ -58,6 +58,9 @@ module lisp-proto {
             type inet:ipv4-address;
             reference "https://tools.ietf.org/html/rfc3209#section-4.6.2.1";
         }
+        leaf mask {
+            type uint8;
+        }
     }
 
     grouping LispIpv6Address {
@@ -68,6 +71,9 @@ module lisp-proto {
         }
         leaf Ipv6Address {
             type inet:ipv6-address;
+        }
+        leaf mask {
+            type uint8;
         }
     }
 
