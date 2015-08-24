@@ -83,7 +83,7 @@
 		{
 			"id": "027528fb-3e87-d348-8a23-272a760d525c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -106,7 +106,7 @@
 		{
 			"id": "03a89a0a-ed4d-2f76-e9fd-c5c4d297fd4a",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -129,7 +129,7 @@
 		{
 			"id": "047c0854-8d54-b462-74fd-a4564123bc40",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -152,7 +152,7 @@
 		{
 			"id": "0acae000-42f7-8dc2-07c8-2ef0cd44d821",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -175,7 +175,7 @@
 		{
 			"id": "0babd386-8ac9-d28f-b9a0-bcad9367b42a",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -198,7 +198,7 @@
 		{
 			"id": "0fcb66dc-5ee0-208c-5e42-9550224e3a98",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -221,7 +221,7 @@
 		{
 			"id": "101474de-efd0-0b86-d98e-522f660c37c4",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -244,7 +244,7 @@
 		{
 			"id": "123ac2ca-f3cf-9288-6983-509adb333816",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -267,7 +267,7 @@
 		{
 			"id": "14fc0028-06f6-41bf-7bfc-405e7e806cb5",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -290,7 +290,7 @@
 		{
 			"id": "176e26c1-7360-dde9-2fdb-af27f9ec1b97",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -313,7 +313,7 @@
 		{
 			"id": "19aa8979-2f0d-eb68-a3a1-95f1809253fc",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -336,7 +336,7 @@
 		{
 			"id": "1a0a2f0c-8652-302d-264a-bd0dd41e8ce6",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -359,7 +359,7 @@
 		{
 			"id": "2f39f538-bb0d-310c-8e9e-8962fb58359b",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -382,7 +382,7 @@
 		{
 			"id": "2f60ab4b-2942-f57c-6ea1-d2b7b311d146",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -405,7 +405,7 @@
 		{
 			"id": "2fa332e1-6fc9-0c5d-dcb7-e4086828efec",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -428,7 +428,7 @@
 		{
 			"id": "301163a4-b5b1-9377-191e-27763f9d4e51",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -451,7 +451,7 @@
 		{
 			"id": "332aa91d-a689-3364-9ac9-86813c03c04b",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -474,7 +474,7 @@
 		{
 			"id": "3594b898-f00d-e65e-f26e-7ea4852ad6e3",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -497,7 +497,7 @@
 		{
 			"id": "3d96b180-55f1-0463-0c2f-17673b9c4b78",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -520,7 +520,7 @@
 		{
 			"id": "3dcb3826-9554-318a-2e61-814f36b4dceb",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -543,7 +543,7 @@
 		{
 			"id": "3eea11ed-9325-5cd4-0393-d4b49e53f42e",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -566,7 +566,7 @@
 		{
 			"id": "40cb8152-0f0f-b606-deb8-3523a45088fe",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -589,7 +589,7 @@
 		{
 			"id": "42204829-49cf-64cc-2bf6-436f5fca7759",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -612,7 +612,7 @@
 		{
 			"id": "4246d14c-c8e3-9d1e-ee28-706944a32ef7",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -633,7 +633,7 @@
 		{
 			"id": "444b0b02-59a6-ec5b-89c3-c4d097465a39",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -656,7 +656,7 @@
 		{
 			"id": "46a2e984-8226-9092-2e8a-e3128a893b56",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -679,7 +679,7 @@
 		{
 			"id": "47d8f781-b331-a925-fd32-a604b36080ec",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -700,7 +700,7 @@
 		{
 			"id": "502b71a6-4f62-0760-8117-c3e907a18314",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -723,7 +723,7 @@
 		{
 			"id": "51937e10-a151-997c-07a9-aad87aeb41fa",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -744,7 +744,7 @@
 		{
 			"id": "56938ae7-f113-ee60-ef92-1e5028494db5",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -767,7 +767,7 @@
 		{
 			"id": "5f3161ec-b598-b240-4975-bf50289562a8",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -790,7 +790,7 @@
 		{
 			"id": "632e6a4a-0315-2e44-7a11-2608a905089c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -813,7 +813,7 @@
 		{
 			"id": "64a01be8-895f-087f-865d-2c4cf59f1081",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -836,7 +836,7 @@
 		{
 			"id": "67204f8c-9287-f5e4-2847-fc2854441297",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -859,7 +859,7 @@
 		{
 			"id": "68f0ddb6-2512-16bb-f08d-f0d64221b270",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -880,7 +880,7 @@
 		{
 			"id": "6b2d8b03-aac6-ab52-3837-60c43baf99d1",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -901,7 +901,7 @@
 		{
 			"id": "70b64110-73e2-a902-4abd-f9b5de550b38",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -924,7 +924,7 @@
 		{
 			"id": "79e37882-7564-ea1f-339d-5bdf8205556c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -945,7 +945,7 @@
 		{
 			"id": "7e8fbbcb-560b-2e64-5ea4-8f3bc763e5f1",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -966,7 +966,7 @@
 		{
 			"id": "7f8f23fe-0e3c-8faf-9b1c-758fc81e513b",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -989,7 +989,7 @@
 		{
 			"id": "80af36e1-3e15-7a1f-0466-e96d1c0b4ef2",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1012,7 +1012,7 @@
 		{
 			"id": "8474d55a-6d1c-c4ba-81f0-ab3ff2d1aaea",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1035,7 +1035,7 @@
 		{
 			"id": "85b24eac-fab0-ed44-d02f-8f78aed6cb6c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1056,7 +1056,7 @@
 		{
 			"id": "89420a7b-489d-2458-c1ca-8acb5a8ac97b",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1077,7 +1077,7 @@
 		{
 			"id": "92d71ba6-6dba-0987-2032-841b2e75189e",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1100,7 +1100,7 @@
 		{
 			"id": "9c0594ac-14d4-13ff-574d-9696d0788cfd",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1123,7 +1123,7 @@
 		{
 			"id": "a1adf8b9-a1f8-acfd-af45-5d3dee6ea0ea",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1144,7 +1144,7 @@
 		{
 			"id": "a1d77c69-57a4-a2b2-ac98-e612f73782ed",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1167,7 +1167,7 @@
 		{
 			"id": "a3b76da1-4e38-0a39-1003-b61a5f937543",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1190,7 +1190,7 @@
 		{
 			"id": "aae3ada0-89c3-b38e-20ea-51f26b0ad0d7",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1213,7 +1213,7 @@
 		{
 			"id": "add50eac-85bb-9c63-6954-651ec3def935",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1234,7 +1234,7 @@
 		{
 			"id": "b0447c46-ba92-38ec-30bc-6871d3f6746f",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1257,7 +1257,7 @@
 		{
 			"id": "b635f4f5-7166-e138-3542-2c5285e3a5bb",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1280,7 +1280,7 @@
 		{
 			"id": "b83a0563-9539-b5f9-700b-58ca819f44bf",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1303,7 +1303,7 @@
 		{
 			"id": "b91b03a2-0e89-b5de-dd63-64925fa40c23",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1324,7 +1324,7 @@
 		{
 			"id": "bce9e800-e3f8-0463-3342-13911c68aa12",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1347,7 +1347,7 @@
 		{
 			"id": "c0b3e7b2-6f7f-e250-3d0c-c16b6ec5abdc",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1370,7 +1370,7 @@
 		{
 			"id": "cc62bee8-afea-c711-5fb3-47ae7b188808",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:remove-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:remove-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1393,7 +1393,7 @@
 		{
 			"id": "ce882c5e-fd36-9d68-5859-778cbe763b97",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1414,7 +1414,7 @@
 		{
 			"id": "d48a19c6-718d-5fad-8993-697c6121df33",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1437,7 +1437,7 @@
 		{
 			"id": "d8d8826f-a15a-148e-d568-28575a185169",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:update-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1460,7 +1460,7 @@
 		{
 			"id": "dbf9d7c8-a474-9d35-3804-54f861f9465e",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1483,7 +1483,7 @@
 		{
 			"id": "e27b1f5d-2645-5847-6309-1c27de01b22c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-key",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-key",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1506,7 +1506,7 @@
 		{
 			"id": "e652707b-3637-7494-9e82-c7ee27df52d3",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -1527,7 +1527,7 @@
 		{
 			"id": "f81029ff-09d1-695c-703b-785657d4d633",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1550,7 +1550,7 @@
 		{
 			"id": "fb94962b-8db0-2af0-3a1b-656a9f88d856",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:add-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:add-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
@@ -1573,7 +1573,7 @@
 		{
 			"id": "fcdced1b-892a-ad47-043e-f650b78add0f",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/lfm-mapping-database:get-mapping",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:get-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",

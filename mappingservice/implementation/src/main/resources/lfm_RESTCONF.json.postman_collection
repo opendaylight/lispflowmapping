@@ -32,7 +32,7 @@
 		{
 			"id": "135e122f-af86-1494-7fe2-c4c58dd41f3a",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/mac:00:11:22:33:44:55/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/mac:00:11:22:33:44:55/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "PUT",
@@ -55,7 +55,7 @@
 		{
 			"id": "2c1b7cac-a60a-3698-32fe-6c29bda5b8a7",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/ipv6:2001:db8::1%2f128/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/ipv6:2001:db8::1%2f128/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -76,7 +76,7 @@
 		{
 			"id": "85ba8251-4998-532a-4c4b-611b30974599",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -97,7 +97,7 @@
 		{
 			"id": "8d19a093-57fb-9c07-0d36-9c211fd0b654",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/1/authentication-key/kv:192.0.2.1=>192.0.2.2/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/1/authentication-key/kv:192.0.2.1=>192.0.2.2/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "PUT",
@@ -120,7 +120,7 @@
 		{
 			"id": "9342710c-03ab-7494-909a-5e3e9a6cfc55",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "DELETE",
@@ -142,7 +142,7 @@
 		{
 			"id": "a38cd195-f904-5160-7bc2-4fbfa01e16d4",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/as:AS64500/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/as:AS64500/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -163,7 +163,7 @@
 		{
 			"id": "a3d74340-9293-3faa-ff5f-c655bcc7be12",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/1/authentication-key/srcdst:192.0.2.1%2f32|192.0.2.2%2f32/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/1/authentication-key/srcdst:192.0.2.1%2f32|192.0.2.2%2f32/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -184,7 +184,7 @@
 		{
 			"id": "a3fc8671-d7ab-9276-6e09-e62939e330dc",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -205,7 +205,7 @@
 		{
 			"id": "af40d48c-cc5e-bedd-a92f-c0b433e3928e",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -225,7 +225,7 @@
 		{
 			"id": "be974822-7f0b-ac92-35af-1aac8cadc7ac",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -246,7 +246,7 @@
 		{
 			"id": "d43cc55e-bcc7-bdce-1673-4ba2d1c92f2c",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -266,7 +266,7 @@
 		{
 			"id": "dbcd9153-6022-c297-0154-bfa15d8b6872",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -288,7 +288,7 @@
 		{
 			"id": "e4f03542-2d58-9a77-f59b-1518e3e2bce9",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/dn:stringAsIs/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/dn:stringAsIs/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -309,7 +309,7 @@
 		{
 			"id": "f317f5ca-1bac-2f87-5d9f-c165d127bdf6",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "DELETE",
@@ -329,7 +329,7 @@
 		{
 			"id": "fb4658dc-9ba9-3110-9fb3-9e69f30d292a",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/1/authentication-key/ipv4:192.0.2.0%2f24/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/1/authentication-key/ipv4:192.0.2.0%2f24/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "PUT",
@@ -350,7 +350,7 @@
 		{
 			"id": "fe7ae219-42c0-6cb4-ffb5-7badb8af5738",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/lfm-mapping-database:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/mappingservice:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "DELETE",
