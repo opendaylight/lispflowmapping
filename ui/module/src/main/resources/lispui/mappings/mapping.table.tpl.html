@@ -1,0 +1,52 @@
+<div>
+  <br>
+  <button class="btn btn-info add-row" ng-click="loadTable()">{{ 'REFRESH_TABLE' | translate }}</button>
+</div>
+
+<table class="footable table">
+  <thead>
+  <tr>
+    <th>{{ 'IID' | translate }}</th>
+    <th>{{ 'EID' | translate }}</th>
+      <th>{{ 'LOCATOR' | translate }}</th>
+      <th>{{ 'FLAGS' | translate }}</th>
+      <th>{{ 'TTL' | translate }}</th>
+      <th>{{ 'ACTIONS' | translate }}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-hide="data.length > 0">
+    <td colspan="5" class="centerAlign">{{ 'NO_MAPPINGS' | translate }}</td>
+  </tr>
+    <tr ng-repeat-start="mapping in data" node-table>
+    <td>{{ mapping.iid }}</td>
+    <td>{{ mapping.eid }}</td>
+      <td>{{ mapping.locatorString }}</td>
+      <td>{{ mapping.flags }}</td>
+      <td>{{ mapping.ttl }}</td>
+      <td><i class="icon-eye-open" ng-click="expandSingleRow(mapping, data, 'detailHide')"> {{ 'VIEW' | translate }}</i> |
+        <i class="icon-trash"><a ng-click="expandSingleRow(mapping, data, 'deleteHide')"> {{ 'DELETE' | translate }}</a></i>
+      </td>
+  </tr>
+    <tr ng-hide="mapping.detailHide" node-table>
+      <td colspan="5">
+        <p>{{ mapping.data }}</p>
+      </td>
+    </tr>
+    <tr ng-hide="mapping.deleteHide" ng-repeat-end node-table>
+      <td colspan="6">
+        <!-- <div ng-bind-html-unsafe="key.data"></div> -->
+        <p>{{ 'ASK_DELETE_MAPPING' | translate }}</p>
+        <button class="btn btn-info add-row" ng-click="deleteMapping(mapping.eid)">{{ 'YES' | translate }}</button>
+        <button class="btn btn-info add-row" ng-click="expandSingleRow(mapping, data, 'deleteHide')">{{ 'NO' | translate }}</button>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot class="hide-if-no-paging">
+  <tr>
+    <td colspan="6">
+    <div class="pagination pagination-centered"></div>
+    </td>
+  </tr>
+  </tfoot>
+</table>

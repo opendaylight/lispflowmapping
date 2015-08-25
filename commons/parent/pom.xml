@@ -30,6 +30,8 @@
     <build.suffix>1.0.0</build.suffix>
     <clustering.services.version>0.7.0-SNAPSHOT</clustering.services.version>
     <config.version>0.4.0-SNAPSHOT</config.version>
+    <dlux.loader.version>0.3.0-SNAPSHOT</dlux.loader.version>
+    <dlux.core.version>0.3.0-SNAPSHOT</dlux.core.version>
     <feature.test.version>0.8.0-SNAPSHOT</feature.test.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
     <ietf-inet-types.version>2010.09.24.8-SNAPSHOT</ietf-inet-types.version>
@@ -334,6 +336,11 @@
         <artifactId>mockito-configuration</artifactId>
         <version>${yangtools.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.lispflwomapping</groupId>
+        <artifactId>ui-lispflowmapping</artifactId>
+        <version>${lispflowmapping.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
