@@ -1,0 +1,52 @@
+<div>
+	<br>
+	<button class="btn btn-info add-row" ng-click="loadTable()">{{ 'REFRESH_TABLE' | translate }}</button>
+</div>
+
+<table class="footable table">
+	<thead>
+    <tr>
+      <th>{{ 'IID' | translate }}</th>
+      <th>{{ 'EID' | translate }}</th>
+      <th>{{ 'KEY_TYPE' | translate }}</th>
+      <th>{{ 'AUTH_KEY' | translate }}</th>
+			<th>{{ 'ACTIONS' | translate }}</th>
+    </tr>
+	</thead>
+	<tbody>
+    <tr ng-hide="data.length > 0">
+      <td colspan="5" class="centerAlign">{{ 'NO_KEY' | translate }}</td>
+    </tr>
+	  <tr ng-repeat-start="key in data" node-table>
+      <td>{{ key.iid }}</td>
+      <td>{{ key.eid }}</td>
+      <td>{{ key['key-type'] | number }}</td>
+      <td>{{ key.authkey }}</td>
+			<td><i class="icon-eye-open" ng-click="expandSingleRow(key, data, 'detailHide')"> {{ 'VIEW' | translate }}</i> |
+				<!-- <i class="icon-edit"><a ng-href="#/lispui/keys-edit/{{ key.url }}">{{ 'EDIT' | translate }}</a></i> | -->
+				<i class="icon-trash"><a ng-click="expandSingleRow(key, data, 'deleteHide')"> {{ 'DELETE' | translate }}</a></i>
+			</td>
+    </tr>
+		<tr ng-hide="key.detailHide" node-table>
+			<td colspan="5">
+				<!-- <div ng-bind-html-unsafe="key.data"></div> -->
+				<p>{{ key.data }}</p>
+			</td>
+		</tr>
+		<tr ng-hide="key.deleteHide" ng-repeat-end node-table>
+			<td colspan="5">
+				<!-- <div ng-bind-html-unsafe="key.data"></div> -->
+				<p>{{ 'ASK_DELETE_KEY' | translate }}</p>
+				<button class="btn btn-info add-row" ng-click="deleteKey(key.eid)">{{ 'YES' | translate }}</button>
+				<button class="btn btn-info add-row" ng-click="expandSingleRow(key, data, 'deleteHide')">{{ 'NO' | translate }}</button>
+			</td>
+		</tr>
+	</tbody>
+  <tfoot class="hide-if-no-paging">
+    <tr>
+      <td colspan="5">
+        <div class="pagination pagination-centered"></div>
+      </td>
+    </tr>
+  </tfoot>
+</table>

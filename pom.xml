@@ -24,6 +24,7 @@
     <module>commons/unittest_tools</module>
     <module>artifacts</module>
     <module>mappingservice</module>
+    <module>ui</module>
     <module>features</module>
     <module>distribution-karaf</module>
     <module>mappingservice/integrationtest</module>

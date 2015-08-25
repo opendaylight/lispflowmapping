@@ -1,0 +1,11 @@
+<div class="menu">
+  <ul class="nav nav-pills">
+    <li ng-class="{ active: isState('main.lispui.keys') || isState('main.lispui.keys-create') || isState('main.lispui.keys-get')}"><a href="#/lispui/keys">{{ 'LISP_KEYS' | translate }}</a></li>
+    <li ng-class="{ active: isState('main.lispui.mappings') || isState('main.lispui.mappings-create') || isState('main.lispui.mappings-get')}"><a href="#/lispui/mappings">{{ 'LISP_MAPPINGS' | translate }}</a></li>
+  </ul>
+
+  <!-- For child state use-->
+  <div ui-view="submenu"></div>
+</div>
+
+<div class="main" ui-view="lispui"></div>
