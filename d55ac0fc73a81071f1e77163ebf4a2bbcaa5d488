@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_be684bbb",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove this line. In general, even if the new component was introduced, we keep the same version number across all components, to avoid confusion.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_de6507e2",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please use ${lispflowmapping.version}",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_3e9c3bc0",
+        "filename": "features/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please move up this line so that properties are sorted in alphabetical order.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_9e5f8f0e",
+        "filename": "features/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove this line.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_5ea1f7f6",
+        "filename": "features/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please use ${project.version} here.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_beafebe2",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please rename this artifact to \u0027lispflowmapping-ui-bundle\u0027, and all occurrences in other files.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_1eab7fd9",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove this line",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_be960b93",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please capitalize LISP",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_deac27f0",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Is this plugin absolutely necessary? Can you try if things work without this \u003cplugin\u003e block. In general we don\u0027t want to use \u003cImport-Package\u003e in the project.",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_9eb6af3c",
+        "filename": "ui/module/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please rename to lispflowmapping-ui-module",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_7eb9532d",
+        "filename": "ui/module/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove this line",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_1e829f4f",
+        "filename": "ui/module/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please capitalize LISP",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_3e83db57",
+        "filename": "ui/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please rename to \u0027lispflowmapping-ui\u0027",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_5e881771",
+        "filename": "ui/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove this line",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_fe7c8374",
+        "filename": "ui/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T09:21:47Z",
+      "side": 1,
+      "message": "Please remove \u0027 - All\u0027 and capitalize LISP:\n\n\u0027LISP Flow Mapping UI\u0027",
+      "revId": "d55ac0fc73a81071f1e77163ebf4a2bbcaa5d488",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
