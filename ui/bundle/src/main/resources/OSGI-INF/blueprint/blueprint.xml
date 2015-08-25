@@ -1,0 +1,14 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <reference id="httpService" availability="mandatory" activation="eager" interface="org.osgi.service.http.HttpService"/>
+    <reference id="loader" availability="mandatory" activation="eager" interface="org.opendaylight.dlux.loader.DluxModuleLoader"/>
+
+    <bean id="bundle" init-method="initialize" destroy-method="clean" class="org.opendaylight.dlux.loader.DluxModule">
+        <property name="httpService" ref="httpService"/>
+        <property name="loader" ref="loader"/>
+        <property name="moduleName" value="lispui"/>
+        <property name="url" value="/src/app/lispui"/>
+        <property name="directory" value="/lispui"/>
+        <property name="requireJs" value="app/lispui/lispui.module"/>
+        <property name="angularJs" value="app.lispui"/>
+    </bean>
+</blueprint>

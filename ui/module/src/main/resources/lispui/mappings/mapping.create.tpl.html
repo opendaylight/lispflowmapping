@@ -1,0 +1,13 @@
+<div>
+  <h1>{{ 'LISP_ADD_MAPPING' | translate }}</h1>
+  <a class="btn btn-info add-row" href="#/lispui/mappings">{{ 'BACK' | translate }}</a>
+  <div class="form-inline">
+    <div ng-if="node" ng-include src="'src/app/yangui/views/' + '/' + apiType + node.type + '.tpl.html'"></div>
+  </div>
+  <button ng-hide="node === null || selectedOperation === null" class="btn btn-default btn-slim" style="margin-right: 5px" ng-click="executeOperation(selectedOperation)">{{ 'LISP_ADD_MAPPING' | translate }}</button>
+  <alert ng-show="status.show" type="{{status.type}}" ng-show="status.msg" close="dismissStatus()">
+    <i ng-show="status.isWorking" class="icon-refresh icon-spin"></i>
+    <b> {{ status.msg | translate }}</b>
+    <b> {{ status.rawMsg ? (' - ' + status.rawMsg) : '' }}</b>
+  </alert>
+</div>

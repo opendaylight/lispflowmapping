@@ -28,6 +28,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <properties>
     <commons.opendaylight.version>1.6.0-SNAPSHOT</commons.opendaylight.version>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
+    <dlux.core.version>0.3.0-SNAPSHOT</dlux.core.version>
     <features.file>features.xml</features.file>
     <mdsal.version>1.3.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.6.0-SNAPSHOT</neutron.version>
@@ -79,6 +80,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.yangtools</groupId>
       <artifactId>features-yangtools</artifactId>
       <version>${yangtools.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.dlux</groupId>
+      <artifactId>features-dlux</artifactId>
+      <version>${dlux.core.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>runtime</scope>
@@ -152,6 +161,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lispflowmapping-ui-bundle</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
