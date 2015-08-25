@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_fe5a4382",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "Please move these versions up to be sorted alphabetically.",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_3e619b39",
+        "filename": "commons/parent/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "This is duplicate, please remove.",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_fed1e3cd",
+        "filename": "features/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "please change to ${project.groupId}",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_5e1817d3",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "You can remove this, since \u0027..\u0027 is the default.",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_9e4b0fb0",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "please change to ${project.version}",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_1e129fb1",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "This should be META-INF\\/**",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_be260b15",
+        "filename": "ui/module/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "Please remove this as \u0027..\u0027 is the default",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_9e746ffe",
+        "filename": "ui/module/src/main/resources/lispui/mappings/mapping.table.tpl.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:09:54Z",
+      "side": 1,
+      "message": "Please replace TAB indentation with spaces. This is a general comment BTW, for all source files.",
+      "revId": "2ee677fcff40f3c981fb99e53508004d1669f22c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
