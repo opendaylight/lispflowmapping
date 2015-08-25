@@ -543,6 +543,7 @@
 		{
 			"id": "3eea11ed-9325-5cd4-0393-d4b49e53f42e",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
+<<<<<<< HEAD
 			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/mappingservice:update-mapping",
 			"pathVariables": {},
 			"preRequestScript": "",
