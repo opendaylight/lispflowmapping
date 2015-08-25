@@ -50,6 +50,9 @@
     <xtend.dstdir>src/main/xtend-gen</xtend.dstdir>
     <yang.src.path>src/main/yang</yang.src.path>
     <yangtools.version>0.8.0-SNAPSHOT</yangtools.version>
+    <dlux.loader.version>0.3.0-SNAPSHOT</dlux.loader.version>
+    <dlux.core.version>0.3.0-SNAPSHOT</dlux.core.version>
+    <yangtools.version>0.8.0-SNAPSHOT</yangtools.version>
   </properties>
 
   <dependencyManagement>
@@ -334,6 +337,11 @@
         <artifactId>mockito-configuration</artifactId>
         <version>${yangtools.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.lispflwomapping</groupId>
+        <artifactId>ui-lispflowmapping</artifactId>
+        <version>${lispflowmapping.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
