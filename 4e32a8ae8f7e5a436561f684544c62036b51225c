@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_3e4bdb88",
+        "filename": "ui/bundle/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:45:07Z",
+      "side": 1,
+      "message": "You need to remove relativePath completely. We\u0027re using an empty path only for parents that are not in our own repository.",
+      "revId": "4e32a8ae8f7e5a436561f684544c62036b51225c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_5e501732",
+        "filename": "ui/module/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-25T12:45:07Z",
+      "side": 1,
+      "message": "You need to remove relativePath completely. We\u0027re using an empty path only for parents that are not in our own repository.",
+      "revId": "4e32a8ae8f7e5a436561f684544c62036b51225c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
