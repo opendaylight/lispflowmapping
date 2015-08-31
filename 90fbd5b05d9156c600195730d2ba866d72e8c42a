@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_459278a0",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubKeys.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-31T13:57:56Z",
+      "side": 1,
+      "message": "Indeed. It finally looked like too much work for something very simple.",
+      "parentUuid": "3a79b1b5_e277fa00",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_62e9aa7f",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-08-31T12:12:41Z",
       "side": 1,
       "message": "Why not remove altogether?",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_058c807e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-31T13:57:56Z",
+      "side": 1,
+      "message": "Good catch. I missed them :-)",
+      "parentUuid": "3a79b1b5_62e9aa7f",
       "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_05ba400a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/TopologyMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-31T13:57:56Z",
+      "side": 1,
+      "message": "I\u0027m not sure if I\u0027m interpreting the comment right. I guess you mean that we should consistently SrcDest or SD in method names. If that\u0027s the case, consider it done. Thanks!",
+      "parentUuid": "3a79b1b5_62b76a87",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_027d56b1",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/serializer/address/LispSourceDestLCAFAddressTest.java",
         "patchSetId": 2
@@ -81,6 +135,24 @@
       "writtenOn": "2015-08-31T12:12:41Z",
       "side": 1,
       "message": "Why not put masks in decimal? It\u0027s more readable for the test case. There are many other things here that are not in hex, to ease translation for the packet data.",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_e5e7043f",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/serializer/address/LispSourceDestLCAFAddressTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-08-31T13:57:56Z",
+      "side": 1,
+      "message": "Ah, because they\u0027re the last two hexa values on the line above with the comment \"reserved + masks\". I thought it\u0027s easier to visually match the two. I\u0027ll switch to decimal for consistency.",
+      "parentUuid": "3a79b1b5_027d56b1",
       "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
