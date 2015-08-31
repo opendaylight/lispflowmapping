@@ -99,7 +99,7 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", dataObject);
 
-                msmr.removeMapping(mapping.getLispAddressContainer(), mapping.getMaskLength());
+                msmr.removeMapping(mapping.getLispAddressContainer());
             }
         }
     }

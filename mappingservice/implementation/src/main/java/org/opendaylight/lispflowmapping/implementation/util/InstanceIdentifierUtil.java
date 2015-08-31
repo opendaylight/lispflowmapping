@@ -33,20 +33,20 @@ import com.google.common.base.Preconditions;
  *
  */
 public class InstanceIdentifierUtil {
-    public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(LispAddressContainer eid, int mask) {
+    public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(LispAddressContainer eid) {
         Preconditions.checkNotNull(eid, "Key needs and EID entry!");
 
         InstanceIdKey iidKey = new InstanceIdKey(new IidUri(Long.toString(getLispInstanceId(eid))));
-        AuthenticationKeyKey authKeyKey = new AuthenticationKeyKey(new EidUri(getURIAddressString(eid, mask)));
+        AuthenticationKeyKey authKeyKey = new AuthenticationKeyKey(new EidUri(getURIAddressString(eid)));
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(InstanceId.class, iidKey).child(AuthenticationKey.class, authKeyKey);
     }
 
-    public static InstanceIdentifier<Mapping> createMappingIid(LispAddressContainer eid, int mask, MappingOrigin orig) {
+    public static InstanceIdentifier<Mapping> createMappingIid(LispAddressContainer eid, MappingOrigin orig) {
         Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
 
         InstanceIdKey iidKey = new InstanceIdKey(new IidUri(Long.toString(getLispInstanceId(eid))));
-        MappingKey eidKey = new MappingKey(new EidUri(getURIAddressString(eid, mask)), orig);
+        MappingKey eidKey = new MappingKey(new EidUri(getURIAddressString(eid)), orig);
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(InstanceId.class, iidKey).child(Mapping.class, eidKey);
     }
@@ -59,7 +59,7 @@ public class InstanceIdentifierUtil {
         return 0L;
     }
 
-    private static String getURIAddressString(LispAddressContainer container, int mask) {
-        return LispAddressStringifier.getURIString(container, mask);
+    private static String getURIAddressString(LispAddressContainer container) {
+        return LispAddressStringifier.getURIString(container);
     }
 }

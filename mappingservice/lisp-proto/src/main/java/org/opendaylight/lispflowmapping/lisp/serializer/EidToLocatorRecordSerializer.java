@@ -50,6 +50,7 @@ public class EidToLocatorRecordSerializer {
         builder.setMapVersion(buffer.getShort());
 
         LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
+        afiAddress = SerializerHelper.fixMask(afiAddress, builder.getMaskLength());
         LispAddressContainer container = LispAFIConvertor.toContainer(afiAddress);
         builder.setLispAddressContainer(container);
 

@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.clusterdao;
 
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +24,7 @@ import org.opendaylight.controller.clustering.services.IClusterServices;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.RLOCGroup;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,19 +107,20 @@ public class ClusterDAOService implements ILispDAO {
         }
     }
 
+    // TODO: this should be moved outside of DAO implementation
     public void cleanOld() {
         getAll(new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
-                if (value instanceof RLOCGroup) {
-                    RLOCGroup rloc = (RLOCGroup) value;
-                    if (isExpired(rloc)) {
-                        removeSpecific(keyId, valueKey);
+                if (value != null && valueKey instanceof String && ((String) valueKey).equals(SubKeys.REGDATE)) {
+                    Date date = (Date) value;
+                    if (isExpired(date)) {
+                        removeSpecific(keyId, SubKeys.RECORD);
                     }
                 }
             }
 
-            private boolean isExpired(RLOCGroup rloc) {
-                return System.currentTimeMillis() - rloc.getRegisterdDate().getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+            private boolean isExpired(Date date) {
+                return System.currentTimeMillis() - date.getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });
     }
@@ -163,5 +165,11 @@ public class ClusterDAOService implements ILispDAO {
 
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
+    }
+
+    @Override
+    public ILispDAO putNestedTable(Object key, String valueKey) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
