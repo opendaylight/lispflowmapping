@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_e277fa00",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubKeys.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T12:12:41Z",
+      "side": 1,
+      "message": "I\u0027m happy to see this return to static Strings, wasn\u0027t too sure about the use of Enum in the previous patch.",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_62e9aa7f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T12:12:41Z",
+      "side": 1,
+      "message": "Why not remove altogether?",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_a2efc286",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T12:12:41Z",
+      "side": 1,
+      "message": "No need for .toString() here and below occurrences anymore.",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_62b76a87",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/TopologyMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T12:12:41Z",
+      "side": 1,
+      "message": "For consistency, I would either use getMappingExactSrcDst() above or getOrInstantiateSDInnerDao() here. Same with other SrcDst functions below.",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_027d56b1",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/serializer/address/LispSourceDestLCAFAddressTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T12:12:41Z",
+      "side": 1,
+      "message": "Why not put masks in decimal? It\u0027s more readable for the test case. There are many other things here that are not in hex, to ease translation for the packet data.",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
