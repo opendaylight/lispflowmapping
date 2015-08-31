@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_85b410d2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T16:05:16Z",
+      "side": 1,
+      "message": "This seems to be unaddressed.",
+      "parentUuid": "3a79b1b5_a2efc286",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_62b76a87",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/TopologyMapCache.java",
         "patchSetId": 2
@@ -118,6 +136,24 @@
       "side": 1,
       "message": "I\u0027m not sure if I\u0027m interpreting the comment right. I guess you mean that we should consistently SrcDest or SD in method names. If that\u0027s the case, consider it done. Thanks!",
       "parentUuid": "3a79b1b5_62b76a87",
+      "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_25cbbc54",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/TopologyMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-08-31T16:05:16Z",
+      "side": 1,
+      "message": "Yes, sorry for being clear, I meant usage in the method names.",
+      "parentUuid": "3a79b1b5_05ba400a",
       "revId": "90fbd5b05d9156c600195730d2ba866d72e8c42a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
