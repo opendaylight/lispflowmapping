@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.li
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSegment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSegmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
@@ -57,9 +58,9 @@ public class MaskUtil {
     public static boolean isMaskable(LispAddressContainer address) {
         if (address.getAddress() instanceof Ipv4  || address.getAddress() instanceof Ipv6) {
             return true;
-        } else if (address.getAddress() instanceof LcafSegmentAddress) {
-            return isMaskable(LispAFIConvertor.toAFIfromPrimitive(((LcafSegmentAddress) address).getAddress()
-                    .getPrimitiveAddress()));
+        } else if (address.getAddress() instanceof LcafSegment) {
+            return isMaskable(LispAFIConvertor.toAFIfromPrimitive(((LcafSegment) address.getAddress())
+                    .getLcafSegmentAddr().getAddress().getPrimitiveAddress()));
         } else if (address.getAddress() instanceof LcafSourceDestAddress) {
             LcafSourceDestAddr sd = ((LcafSourceDest) address.getAddress()).getLcafSourceDestAddr();
             return isMaskable(LispAFIConvertor.toAFIfromPrimitive(sd.getSrcAddress().getPrimitiveAddress()))
@@ -121,8 +122,8 @@ public class MaskUtil {
                 return LispAFIConvertor.asIPv6Prefix(normalizeIP(
                         Inet6Address.getByName(((Ipv6) address.getAddress()).getIpv6Address().getIpv6Address().getValue()),
                         mask).getHostAddress(), mask);
-            } else if (address instanceof LcafSegmentAddress) {
-                LcafSegmentAddress segAddr = (LcafSegmentAddress) address;
+            } else if (address.getAddress() instanceof LcafSegment) {
+                LcafSegmentAddress segAddr = ((LcafSegment) address.getAddress()).getLcafSegmentAddr();
                 LispAFIAddress afiAddr = LispAFIConvertor
                         .toAFIfromPrimitive(segAddr.getAddress().getPrimitiveAddress());
                 Address normalizedAddr = new AddressBuilder().setPrimitiveAddress(
@@ -143,8 +144,8 @@ public class MaskUtil {
             return normalize(address, ((Ipv4)address.getAddress()).getIpv4Address().getMask());
         } else if (address.getAddress() instanceof Ipv6) {
             return normalize(address, ((Ipv6)address.getAddress()).getIpv6Address().getMask());
-        } else if (address instanceof LcafSegmentAddress) {
-            LcafSegmentAddress segAddr = (LcafSegmentAddress) address;
+        } else if (address.getAddress() instanceof LcafSegment) {
+            LcafSegmentAddress segAddr = ((LcafSegment) address.getAddress()).getLcafSegmentAddr();
             LispAFIAddress afiAddr = LispAFIConvertor
                     .toAFIfromPrimitive(segAddr.getAddress().getPrimitiveAddress());
             short mask = getMaskForAfiAddress(afiAddr);
@@ -235,9 +236,9 @@ public class MaskUtil {
         } else if (addr.getAddress() instanceof Ipv6) {
             Short res = ((Ipv6)addr.getAddress()).getIpv6Address().getMask();
             return (res != null) ? res.shortValue() : 128;
-        } else if (addr.getAddress() instanceof LcafSegmentAddress) {
-            return getMaskForAfiAddress(LispAFIConvertor.toAFIfromPrimitive(((LcafSegmentAddress) addr.getAddress())
-                    .getAddress().getPrimitiveAddress()));
+        } else if (addr.getAddress() instanceof LcafSegment) {
+            return getMaskForAfiAddress(LispAFIConvertor.toAFIfromPrimitive((((LcafSegment) addr.getAddress())
+                    .getLcafSegmentAddr()).getAddress().getPrimitiveAddress()));
         }
         return 0;
     }
@@ -264,9 +265,9 @@ public class MaskUtil {
                     new Ipv6Builder().setIpv6Address(
                             new Ipv6AddressBuilder(((Ipv6) addr.getAddress()).getIpv6Address()).setMask((short) mask)
                                     .build()).build()).build();
-        } else if (addr.getAddress() instanceof LcafSegmentAddress) {
-            setMask(LispAFIConvertor.toAFIfromPrimitive(((LcafSegmentAddress) addr.getAddress()).getAddress()
-                    .getPrimitiveAddress()), mask);
+        } else if (addr.getAddress() instanceof LcafSegment) {
+            setMask(LispAFIConvertor.toAFIfromPrimitive(((LcafSegment) addr.getAddress()).getLcafSegmentAddr()
+                    .getAddress().getPrimitiveAddress()), mask);
         }
         return addr;
     }
@@ -304,5 +305,32 @@ public class MaskUtil {
                         (LcafSourceDestAddr) setMaskSourceDest(
                                 ((LcafSourceDest) addr.getAddress()).getLcafSourceDestAddr(), srcMask, dstMask))
                         .build()).build();
+    }
+
+    /**
+     * RFC6830 defines masks and EIDs as separate fields of larger, encompassing blocks of LISP messages. However within
+     * LispFlowMapping masks are internal fields of EIDs. The fixMask methods should be used in deserializers and RPC
+     * handlers to ensure that masks for EIDs reflect accordingly the mask field values carried in LISP messages or RPC
+     * input objects respectively.
+     */
+    public static LispAFIAddress fixMask(LispAFIAddress addr, short mask) {
+        if (addr instanceof LispIpv4Address || addr instanceof LispIpv6Address || addr instanceof LcafSegmentAddress) {
+           return MaskUtil.setMask(addr, mask);
+        } else if (addr instanceof LcafSourceDestAddress) {
+           return MaskUtil.setMaskSourceDest(addr, LcafSourceDestHelper.getSrcMask(addr),
+                    LcafSourceDestHelper.getDstMask(addr));
+        }
+        return addr;
+    }
+
+    public static LispAddressContainer fixMask(LispAddressContainer addr, short mask) {
+        if (addr.getAddress() instanceof Ipv4 || addr.getAddress() instanceof Ipv6
+                || addr.getAddress() instanceof LcafSegment) {
+            return MaskUtil.setMask(addr, mask);
+        } else if (addr.getAddress() instanceof LcafSourceDest) {
+            return MaskUtil.setMaskSourceDest(addr, LcafSourceDestHelper.getSrcMask(addr),
+                    LcafSourceDestHelper.getDstMask(addr));
+        }
+        return addr;
     }
 }

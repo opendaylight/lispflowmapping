@@ -79,7 +79,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new AddKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         String key = lispMappingService.getAuthenticationKey(input.getLispAddressContainer());
 
@@ -103,7 +103,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new AddMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
 
@@ -121,7 +121,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new GetKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
 
@@ -145,7 +145,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new GetMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
@@ -172,7 +172,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new RemoveKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
@@ -190,7 +190,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new RemoveMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
@@ -209,7 +209,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new UpdateKeyInputBuilder(input).setEid(
                 new EidBuilder(input.getEid()).setLispAddressContainer(
-                        MaskUtil.setMask(input.getEid().getLispAddressContainer(), input.getEid()
+                        MaskUtil.fixMask(input.getEid().getLispAddressContainer(), input.getEid()
                                 .getMaskLength())).build()).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
@@ -236,7 +236,7 @@ public class LfmMappingDatabaseRpc implements MappingserviceService {
 
         // XXX: to remove once RPC API has been updated to remove explicit mask
         input = new UpdateMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.setMask(input.getLispAddressContainer(), input.getMaskLength())).build();
+                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 

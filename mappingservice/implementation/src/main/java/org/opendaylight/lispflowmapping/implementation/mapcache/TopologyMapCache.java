@@ -158,15 +158,16 @@ public class TopologyMapCache {
         return mapping;
     }
 
-    public static void removeMapping(LispAddressContainer address, ILispDAO dao, boolean oerwrite) {
-        if (address.getAddress() instanceof LcafSourceDest) {
-            ILispDAO db = getSDInnerDao(address, dao);
+    public static void removeMapping(LispAddressContainer eid, ILispDAO dao, boolean oerwrite) {
+        eid = MaskUtil.normalize(eid);
+        if (eid.getAddress() instanceof LcafSourceDest) {
+            ILispDAO db = getSDInnerDao(eid, dao);
             if (db != null) {
-                db.removeSpecific(LcafSourceDestHelper.getSrc(address),
+                db.removeSpecific(LcafSourceDestHelper.getSrc(eid),
                         SubKeys.RECORD);
             }
         } else {
-            dao.removeSpecific(address, SubKeys.RECORD);
+            dao.removeSpecific(eid, SubKeys.RECORD);
         }
     }
 
@@ -215,6 +216,7 @@ public class TopologyMapCache {
     }
 
     public static void removeAuthenticationKey(LispAddressContainer eid, ILispDAO dao) {
+        eid = MaskUtil.normalize(eid);
         if (eid.getAddress() instanceof LcafSourceDest) {
             ILispDAO srcDstDao = getSDInnerDao(eid, dao);
             if (srcDstDao != null) {
@@ -253,14 +255,15 @@ public class TopologyMapCache {
         return null;
     }
 
-    public static void removeSubscribers(LispAddressContainer address, ILispDAO dao, boolean shouldOverwrite) {
-        if (address.getAddress() instanceof LcafSourceDest) {
-            ILispDAO db = getSDInnerDao(address, dao);
+    public static void removeSubscribers(LispAddressContainer eid, ILispDAO dao, boolean shouldOverwrite) {
+        eid = MaskUtil.normalize(eid);
+        if (eid.getAddress() instanceof LcafSourceDest) {
+            ILispDAO db = getSDInnerDao(eid, dao);
             if (db != null) {
-                db.removeSpecific(LcafSourceDestHelper.getSrc(address), SubKeys.SUBSCRIBERS);
+                db.removeSpecific(LcafSourceDestHelper.getSrc(eid), SubKeys.SUBSCRIBERS);
             }
         } else {
-            dao.removeSpecific(address, SubKeys.SUBSCRIBERS);
+            dao.removeSpecific(eid, SubKeys.SUBSCRIBERS);
         }
     }
 

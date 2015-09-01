@@ -14,6 +14,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord.Action;
@@ -50,7 +51,7 @@ public class EidToLocatorRecordSerializer {
         builder.setMapVersion(buffer.getShort());
 
         LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
-        afiAddress = SerializerHelper.fixMask(afiAddress, builder.getMaskLength());
+        afiAddress = MaskUtil.fixMask(afiAddress, builder.getMaskLength());
         LispAddressContainer container = LispAFIConvertor.toContainer(afiAddress);
         builder.setLispAddressContainer(container);
 
