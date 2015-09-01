@@ -253,20 +253,20 @@ public class MaskUtil {
     }
 
     public static LispAddressContainer setMask(LispAddressContainer addr, int mask) {
-        if (addr instanceof LispIpv4Address) {
+        if (addr.getAddress() instanceof Ipv4) {
             return new LispAddressContainerBuilder().setAddress(
                     new Ipv4Builder().setIpv4Address(
-                            new Ipv4AddressBuilder((LispIpv4Address) addr).setMask((short) mask).build()).build())
-                    .build();
+                            new Ipv4AddressBuilder(((Ipv4) addr.getAddress()).getIpv4Address()).setMask((short) mask)
+                                    .build()).build()).build();
 
-        } else if (addr instanceof LispIpv6Address) {
+        } else if (addr.getAddress() instanceof Ipv6) {
             return new LispAddressContainerBuilder().setAddress(
                     new Ipv6Builder().setIpv6Address(
-                            new Ipv6AddressBuilder((LispIpv6Address) addr).setMask((short) mask).build()).build())
-                    .build();
-        } else if (addr instanceof LcafSegmentAddress) {
-            LispAddressContainer newAddr = setMask(LispAFIConvertor.toContainer(LispAFIConvertor.toAFIfromPrimitive(((LcafSegmentAddress) addr).getAddress().getPrimitiveAddress())), mask);
-            return new LispAddressContainerBuilder().setAddress(newAddr.getAddress()).build();
+                            new Ipv6AddressBuilder(((Ipv6) addr.getAddress()).getIpv6Address()).setMask((short) mask)
+                                    .build()).build()).build();
+        } else if (addr.getAddress() instanceof LcafSegmentAddress) {
+            setMask(LispAFIConvertor.toAFIfromPrimitive(((LcafSegmentAddress) addr.getAddress()).getAddress()
+                    .getPrimitiveAddress()), mask);
         }
         return addr;
     }

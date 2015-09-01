@@ -170,12 +170,13 @@ public class TopologyMapCache {
         }
     }
 
-    public static void addAuthenticationKey(LispAddressContainer address, String key, ILispDAO dao) {
-        if (address.getAddress() instanceof LcafSourceDest) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(address, dao);
-            srcDstDao.put(LcafSourceDestHelper.getSrc(address), new MappingEntry<String>(SubKeys.PASSWORD, key));
+    public static void addAuthenticationKey(LispAddressContainer eid, String key, ILispDAO dao) {
+        eid = MaskUtil.normalize(eid);
+        if (eid.getAddress() instanceof LcafSourceDest) {
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
+            srcDstDao.put(LcafSourceDestHelper.getSrc(eid), new MappingEntry<String>(SubKeys.PASSWORD, key));
         } else {
-            dao.put(address, new MappingEntry<String>(SubKeys.PASSWORD, key));
+            dao.put(eid, new MappingEntry<String>(SubKeys.PASSWORD, key));
         }
     }
 
@@ -226,6 +227,7 @@ public class TopologyMapCache {
 
     public static void addSubscribers(LispAddressContainer eid, Set<SubscriberRLOC> subscribers,
             ILispDAO dao) {
+        eid = MaskUtil.normalize(eid);
         if (eid.getAddress() instanceof LcafSourceDest) {
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
             srcDstDao.put(LcafSourceDestHelper.getSrc(eid), new MappingEntry<Set<SubscriberRLOC>>(
