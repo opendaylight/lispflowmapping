@@ -16,14 +16,19 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
-      <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common.unittest.tools</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit-addons</groupId>
+      <artifactId>junit-addons</artifactId>
+    </dependency>
     <!-- needed for osgi console -->
     <dependency>
       <groupId>equinoxSDK381</groupId>

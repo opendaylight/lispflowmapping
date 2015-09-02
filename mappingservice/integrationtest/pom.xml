@@ -36,15 +36,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>features-lispflowmapping</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--
+         Will need to add this back once we create tests over HTTP
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit-dep</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
+    -->
   </dependencies>
 </project>

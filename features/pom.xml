@@ -175,11 +175,5 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit-dep</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>

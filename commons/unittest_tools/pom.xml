@@ -14,16 +14,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>equinoxSDK381</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit-addons</groupId>
-      <artifactId>junit-addons</artifactId>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -31,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
+      <artifactId>jmock</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>

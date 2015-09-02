@@ -20,7 +20,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <artifactId>mappingservice.lisp-proto</artifactId>
   <version>1.3.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
-  <name>Mapping Service LISP protocol</name>
+  <name>Mapping Service LISP Protocol</name>
 
   <dependencies>
     <dependency>
@@ -32,10 +32,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>ietf-yang-types</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.yangtools.model</groupId>
-      <artifactId>yang-ext</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
@@ -43,6 +39,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit-addons</groupId>
+      <artifactId>junit-addons</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
