@@ -35,8 +35,8 @@
         <feature version="${mdsal.version}">odl-mdsal-apidocs</feature>
         <!-- <feature version="${sal.version}">odl-adsal-core</feature> -->
         <!-- <feature version="${clustering.services.version}">odl-adsal-clustering</feature> -->
-        <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <feature version='${yangtools.version}'>odl-mdsal-binding-base</feature>
+        <feature version='${yangtools.version}'>odl-mdsal-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
@@ -51,8 +51,8 @@
 
     <feature name="odl-lispflowmapping-inmemorydb" description="OpenDaylight :: LISP Flow Mapping :: In Memory DB" version='${project.version}'>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <feature version='${yangtools.version}'>odl-mdsal-binding-base</feature>
+        <feature version='${yangtools.version}'>odl-mdsal-models</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${project.version}</bundle>
