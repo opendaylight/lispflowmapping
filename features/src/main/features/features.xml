@@ -12,6 +12,7 @@
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <!-- Needed for odl-mdsal-broker -->
+    <repository>mvn:org.opendaylight.mdsal/features-mdsal-model/${mdsal.model.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
     <!-- Needed for odl-mdsal-apidocs -->
     <repository>mvn:org.opendaylight.netconf/features-restconf/${restconf.version}/xml/features</repository>
@@ -32,8 +33,7 @@
         <feature>odl-base-felix-dm</feature>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
         <feature version="${restconf.version}">odl-mdsal-apidocs</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <feature version='${mdsal.model.version}'>odl-mdsal-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
@@ -47,8 +47,7 @@
 
     <feature name="odl-lispflowmapping-inmemorydb" description="OpenDaylight :: LISP Flow Mapping :: In Memory DB" version='${project.version}'>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
-        <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <feature version='${mdsal.model.version}'>odl-mdsal-models</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.lisp-proto/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${project.version}</bundle>
@@ -74,6 +73,7 @@
 
     <feature name="odl-lispflowmapping-ui" description="OpenDaylight :: LISP Flow Mapping :: User Interface" version='${project.version}'>
         <feature version="${yangtools.version}">odl-yangtools-all</feature>
+        <feature version='${mdsal.model.version}'>odl-mdsal-models</feature>
         <feature version="${dlux.core.version}">odl-dlux-all</feature>
         <bundle>mvn:org.opendaylight.lispflowmapping/lispflowmapping-ui-bundle/${project.version}</bundle>
     </feature>
