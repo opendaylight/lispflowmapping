@@ -32,7 +32,6 @@
     <dlux.loader.version>0.3.0-SNAPSHOT</dlux.loader.version>
     <dlux.core.version>0.3.0-SNAPSHOT</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
-    <ietf-inet-types.version>2010.09.24.8-SNAPSHOT</ietf-inet-types.version>
     <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
     <karaf.empty.version>1.6.0-SNAPSHOT</karaf.empty.version>
     <karaf.resources.version>1.6.0-SNAPSHOT</karaf.resources.version>
@@ -54,6 +53,27 @@
     <dependencies>
       <!-- NOTE: The "Type" jar is considered default. You only need to specify
                  the type when it is something other than jar. -->
+      <dependency>
+       <groupId>org.opendaylight.yangtools</groupId>
+       <artifactId>yangtools-artifacts</artifactId>
+       <version>0.8.0-SNAPSHOT</version>
+       <type>pom</type>
+      <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.mdsal</groupId>
+        <artifactId>mdsal-artifacts</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <type>pom</type>
+       <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.mdsal.model</groupId>
+        <artifactId>mdsal-model-artifacts</artifactId>
+        <version>0.8.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>junit-addons</groupId>
         <artifactId>junit-addons</artifactId>
@@ -209,51 +229,6 @@
         <version>${lispflowmapping.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-binding</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-common</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-data-api</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-data-impl</artifactId>
-        <version>${yangtools.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-data-util</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-model-api</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang-parser-impl</artifactId>
-        <version>${yangtools.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools.model</groupId>
-        <artifactId>ietf-inet-types</artifactId>
-        <version>${ietf-inet-types.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.yangtools.model</groupId>
-        <artifactId>ietf-yang-types</artifactId>
-        <version>${ietf-inet-types.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>common.unittest.tools</artifactId>
         <version>${lispflowmapping.version}</version>
@@ -266,7 +241,7 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.opendaylight.lispflwomapping</groupId>
+        <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>ui-lispflowmapping</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
@@ -486,7 +461,7 @@
           <version>${yangtools.version}</version>
           <dependencies>
             <dependency>
-              <groupId>org.opendaylight.yangtools</groupId>
+              <groupId>org.opendaylight.mdsal</groupId>
               <artifactId>maven-sal-api-gen-plugin</artifactId>
               <version>${yangtools.version}</version>
             </dependency>
