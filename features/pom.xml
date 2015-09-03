@@ -56,12 +56,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
-<!--     <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>features-netconf-connector</artifactId>
-      <classifier>features</classifier>
-      <type>xml</type>
-    </dependency> -->
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>features-mdsal</artifactId>
@@ -138,11 +132,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>config</classifier>
       <type>xml</type>
     </dependency>
-<!--     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.netconf</artifactId>
-      <version>${project.version}</version>
-    </dependency> -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.neutron</artifactId>
