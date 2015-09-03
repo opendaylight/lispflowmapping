@@ -13,7 +13,6 @@
 
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-restconf/${mdsal.version}/xml/features</repository>
-    <!-- <repository>mvn:org.opendaylight.controller/features-adsal/${sal.version}/xml/features</repository> -->
     <!-- TODO features-base should be removed when we get rid of Activators, hopefully soon -->
     <repository>mvn:org.opendaylight.controller/features-base/${commons.opendaylight.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
@@ -33,8 +32,6 @@
         <feature>odl-base-felix-dm</feature>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
         <feature version="${mdsal.version}">odl-mdsal-apidocs</feature>
-        <!-- <feature version="${sal.version}">odl-adsal-core</feature> -->
-        <!-- <feature version="${clustering.services.version}">odl-adsal-clustering</feature> -->
         <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
@@ -43,7 +40,6 @@
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.shell/${project.version}</bundle>
-        <!-- <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.clusterdao/${project.version}</bundle>  -->
         <configfile finalname="${configfile.directory}/lfm-mappingservice.xml">
             mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/${project.version}/xml/config
         </configfile>

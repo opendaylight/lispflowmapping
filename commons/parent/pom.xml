@@ -28,7 +28,6 @@
   <properties>
     <branding.version>1.2.0-SNAPSHOT</branding.version>
     <build.suffix>1.0.0</build.suffix>
-    <clustering.services.version>0.7.0-SNAPSHOT</clustering.services.version>
     <config.version>0.4.0-SNAPSHOT</config.version>
     <dlux.loader.version>0.3.0-SNAPSHOT</dlux.loader.version>
     <dlux.core.version>0.3.0-SNAPSHOT</dlux.core.version>
@@ -211,11 +210,6 @@
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.api</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.clusterdao</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
       <dependency>
