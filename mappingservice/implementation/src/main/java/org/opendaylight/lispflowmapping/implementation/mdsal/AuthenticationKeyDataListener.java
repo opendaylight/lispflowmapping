@@ -12,10 +12,10 @@ import java.util.Set;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingDatabase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.AuthenticationKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.mapping.database.InstanceId;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.InstanceId;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthenticationKeyDataListener extends AbstractDataListener {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
-    private LispMappingService msmr;
+    private IMappingSystem mapSystem;
 
-    public AuthenticationKeyDataListener(DataBroker broker, LispMappingService msmr) {
+    public AuthenticationKeyDataListener(DataBroker broker, IMappingSystem mapSystem) {
         setBroker(broker);
-        setMsmr(msmr);
+        setMappingSystem(mapSystem);
         setPath(InstanceIdentifier.create(MappingDatabase.class).child(InstanceId.class)
                 .child(AuthenticationKey.class));
         LOG.trace("Registering AuthenticationKey listener.");
@@ -54,7 +54,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                msmr.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
             }
         }
 
@@ -68,7 +68,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                msmr.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
             }
         }
 
@@ -83,12 +83,12 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", authkey);
 
-                msmr.removeAuthenticationKey(authkey.getLispAddressContainer());
+                mapSystem.removeAuthenticationKey(authkey.getLispAddressContainer());
             }
         }
     }
 
-    void setMsmr(LispMappingService msmr) {
-        this.msmr = msmr;
+    void setMappingSystem(IMappingSystem msmr) {
+        this.mapSystem = msmr;
     }
 }

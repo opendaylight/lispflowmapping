@@ -15,7 +15,21 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.tr
  * An interface for dealing with a map reply message.
  */
 public interface IMapRequestResultHandler {
-    public void handleMapReply(MapReply mapReply);
+    /**
+     * Handle return map-reply message
+     *
+     * @param mapReply
+     *            The map-reply message
+     */
+    void handleMapReply(MapReply mapReply);
 
-    public void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress);
+    /**
+     * Handle map-request to be forwarded to authoritative ETR
+     *
+     * @param mapRequest
+     *            The map-request message
+     * @param transportAddress
+     *            The address of the ETR
+     */
+    void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress);
 }

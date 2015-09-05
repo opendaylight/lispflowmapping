@@ -10,8 +10,14 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
 
 /**
- * The async map resolver interface for dealing with async map request calls.
+ * Map Resolver interface for dealing with async map request calls.
  */
-public interface IMapResolverAsync extends IGeneralMapResolver {
-    public void handleMapRequest(MapRequest request, boolean smr, IMapRequestResultHandler callback);
+public interface IMapResolverAsync extends IGenericMapResolver {
+    /**
+     * Handle Map-Request
+     *
+     * @param request
+     *            The map-request message
+     */
+    void handleMapRequest(MapRequest request);
 }

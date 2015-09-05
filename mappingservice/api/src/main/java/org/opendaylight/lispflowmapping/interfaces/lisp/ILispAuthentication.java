@@ -5,16 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 
-/**
- * The map server interface for dealing with map registers.
- */
-public interface IMapServer extends IGeneralMapServer {
-    MapNotify handleMapRegister(MapRegister mapRegister, boolean smr);
+public interface ILispAuthentication {
+    public boolean validate(MapRegister mapRegister, String key);
+
+    public byte[] getAuthenticationData(MapNotify mapNotify, String key);
+
+    public int getAuthenticationLength();
+
+    public static final int MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION = 16;
 
 }

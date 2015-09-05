@@ -3,16 +3,14 @@
     <required-capabilities>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao?module=lfm-ms-dao&amp;revision=2015-07-13</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl?module=lfm-mappingservice-impl&amp;revision=2015-05-17</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=mappingservice-impl&amp;revision=2015-09-06</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <modules xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
                 <module>
-                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">
-                        prefix:lfm-mappingservice-impl
-                    </type>
-                    <name>lfm-mappingservice-default</name>
+                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice-impl</type>
+                    <name>mappingservice-default</name>
                     <rpc-registry>
                         <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-rpc-registry</type>
                         <name>binding-rpc-broker</name>
@@ -29,14 +27,38 @@
                       <type xmlns:dao="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao">dao:ms-dao</type>
                       <name>lfm-ms-inmemorydb</name>
                     </dao>
+                    <notification-service>
+                      <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-notification-service</type>
+                      <name>binding-notification-broker</name>
+                    </notification-service>
+                </module>
+                <module>
+                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:lisp-mappingservice-impl</type>
+                    <name>lisp-mappingservice-default</name>
+                    <osgi-broker>
+                      <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-broker-osgi-registry</type>
+                      <name>binding-osgi-broker</name>
+                    </osgi-broker>
+                    <mappingservice>
+                      <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice</type>
+                      <name>mappingservice</name>
+                    </mappingservice>
                 </module>
             </modules>
             <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
               <service>
-                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice:impl">prefix:lfm-mappingservice</type>
+                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice</type>
                 <instance>
-                  <name>lfm-mappingservice</name>
-                  <provider>/modules/module[type='lfm-mappingservice-impl'][name='lfm-mappingservice-default']
+                  <name>mappingservice</name>
+                  <provider>/modules/module[type='mappingservice-impl'][name='mappingservice-default']
+                  </provider>
+                </instance>
+              </service>
+              <service>
+                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:lisp-mappingservice</type>
+                <instance>
+                  <name>lisp-mappingservice</name>
+                  <provider>/modules/module[type='lisp-mappingservice-impl'][name='lisp-mappingservice-default']
                   </provider>
                 </instance>
               </service>

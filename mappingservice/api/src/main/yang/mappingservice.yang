@@ -13,7 +13,7 @@ module mappingservice {
     description
         "An MD-SAL based implementation of a LISP Map-Server database";
 
-    revision "2015-08-20" {
+    revision "2015-09-06" {
         description "Renamed and moved module to mappingservice.api.";
     }
 
@@ -40,6 +40,14 @@ module mappingservice {
     typedef eid-uri {
         description "EID as a string lookup key in a URI";
         type inet:uri;
+    }
+    
+    typedef mapping-change {
+        description "Type of mapping update";
+        type enumeration {
+            enum updated;
+            enum removed;
+        }
     }
 
     identity instance-id-context {
@@ -166,6 +174,15 @@ module mappingservice {
     rpc remove-mapping {
         input {
             uses lisp-prefix;
+        }
+    }
+    
+    notification mapping-changed {
+        container Mapping {
+            uses lisp-proto:EidToLocatorRecord;
+        }
+        leaf change {
+            type mapping-change;
         }
     }
 }

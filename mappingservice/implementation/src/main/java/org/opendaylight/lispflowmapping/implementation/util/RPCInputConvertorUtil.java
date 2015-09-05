@@ -8,18 +8,18 @@
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.AddMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.EidUri;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.RemoveMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.UpdateMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.AuthenticationKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.AuthenticationKeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.Mapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.MappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 
 /**
  * Converts RPC *Input object to other object types

@@ -11,21 +11,34 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
 
 /**
- * A mapping service.
+ * The LISP Mapping Service interface
  */
-public interface IFlowMapping extends IMapResolver, IMapServer {
+public interface IFlowMapping {
+    /**
+     * Handle southbound map-request
+     *
+     * @param mapRegister
+     *            The map-register message
+     * @return a map-notify message, if requested in the map-register or null otherwise
+     */
+    MapNotify handleMapRegister(MapRegister mapRegister);
 
-    public void clean();
+    /**
+     * Handle southbound map-request
+     *
+     * @param mr
+     *            The map-request messages
+     * @return a map-reply messages
+     */
+    MapReply handleMapRequest(MapRequest mr);
 
-    public void setShouldUseSmr(boolean smr);
-
-    public boolean shouldUseSmr();
-
-    public MapNotify handleMapRegister(MapRegister mb);
-
-    public MapReply handleMapRequest(MapRequest mr);
-    public void removeMapping(LispAddressContainer address);
+    /**
+     * Configure LISP mapping service to track and notify of changes mapping requesters
+     *
+     * @param smr
+     *            Configure state of service
+     */
+     void setShouldUseSmr(boolean smr);
 }
