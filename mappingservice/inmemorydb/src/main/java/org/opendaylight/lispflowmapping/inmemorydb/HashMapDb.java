@@ -27,6 +27,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object, ConcurrentMap<String, Object>>();
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int recordTimeOut = 240;
+    private final Object TABLES = (Object) "tables";
 
     @Override
     public void put(Object key, MappingEntry<?>... values) {
@@ -126,5 +127,17 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         nestedTable = new HashMapDb();
         put(key, new MappingEntry<>(valueKey, nestedTable));
         return nestedTable;
+    }
+
+    @Override
+    public ILispDAO putTable(String key) {
+        ILispDAO table = (ILispDAO) getSpecific(TABLES, key);
+        if (table != null) {
+            LOG.warn("Trying to add table that already exists. Aborting!");
+            return table;
+        }
+        table = new HashMapDb();
+        put(TABLES, new MappingEntry<>(key, table));
+        return table;
     }
 }

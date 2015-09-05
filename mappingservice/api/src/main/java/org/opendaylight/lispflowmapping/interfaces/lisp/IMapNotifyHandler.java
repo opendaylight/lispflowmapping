@@ -15,6 +15,22 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.li
  * An interface for dealing with a map notify message.
  */
 public interface IMapNotifyHandler {
-    public void handleMapNotify(MapNotify mapNotify);
-    public void handleSMR(MapRequest mapRequest, LispAddressContainer subscriber);
+    /**
+     * Handle map-notify message
+     *
+     * @param mapNotify
+     *            The map-notify message
+     */
+    void handleMapNotify(MapNotify mapNotify);
+
+    /**
+     * Handle Solicit Map Request message
+     *
+     * @param mapRequest
+     *            the SMR message
+     *
+     * @param subscriber
+     *            The address of the subscriber that should be SMRed
+     */
+    void handleSMR(MapRequest mapRequest, LispAddressContainer subscriber);
 }
