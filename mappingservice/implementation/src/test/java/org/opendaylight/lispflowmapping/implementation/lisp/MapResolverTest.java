@@ -18,6 +18,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.MappingService;
+import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
@@ -40,8 +42,8 @@ public class MapResolverTest extends BaseTestCase {
 
     // private MapResolver testedMapResolver;
     private LispMappingService testedMapResolver;
-
-    private ILispDAO lispDAO;
+    private ILispDAO dao;
+    private MappingService mapService;
     private MapRequestBuilder mapRequest;
     private LispAddressContainer v4Address;
     private LispAddressContainer v6Address;
@@ -52,9 +54,20 @@ public class MapResolverTest extends BaseTestCase {
     @Before
     public void before() throws Exception {
         super.before();
-        lispDAO = context.mock(ILispDAO.class);
+
+        dao = context.mock(ILispDAO.class);
+
+        // map-cache init and table creation
+        allowing(dao).putTable(wany(String.class));will(returnValue(dao));
+
+        MappingSystem mapSystem = new MappingSystem(dao, true, true, true);
+        mapService = new MappingService();
+        mapService.setDaoService(dao);
+        inject(mapService, "mappingSystem", mapSystem);
+
         testedMapResolver = new LispMappingService();
-        testedMapResolver.basicInit(lispDAO);
+        testedMapResolver.setMappingService(mapService);
+        testedMapResolver.basicInit();
 
         mapRequest = new MapRequestBuilder();
         v4Address = LispAFIConvertor.asIPv4Address("1.2.3.4");
@@ -210,9 +223,9 @@ public class MapResolverTest extends BaseTestCase {
     }
 
     private MapReply getNativelyForwardMapReply(MapRequest mr, Map<String, EidToLocatorRecord> result) {
-        allowing(lispDAO).get(wany(LispAddressContainer.class));
+        allowing(dao).get(wany(LispAddressContainer.class));
         ret(result);
-        allowing(lispDAO).getSpecific(wany(LispAddressContainer.class), with(SubKeys.PASSWORD));
+        allowing(dao).getSpecific(wany(LispAddressContainer.class), with(SubKeys.AUTH_KEY));
         ret("pass");
         MapReply mapReply = testedMapResolver.handleMapRequest(mr);
         return mapReply;
@@ -228,7 +241,6 @@ public class MapResolverTest extends BaseTestCase {
 
     @Test
     public void handleMapRequest__VerifyMaskNoMatch() throws Exception {
-
         mapRequest = getDefaultMapRequestBuilder();
         mapRequest.getEidRecord().add(
                 new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(v4Address).build());
@@ -350,9 +362,9 @@ public class MapResolverTest extends BaseTestCase {
             }
         };
 
-        allowing(lispDAO).get(with(daoGetSaverAction));
+        allowing(dao).get(with(daoGetSaverAction));
         will(daoGetSaverAction);
-        allowing(lispDAO).getSpecific(wany(LispAddressContainer.class), with(SubKeys.PASSWORD));
+        allowing(dao).getSpecific(wany(LispAddressContainer.class), with(SubKeys.AUTH_KEY));
 
         return daoResults.get(v4Address);
     }

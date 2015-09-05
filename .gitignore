@@ -9,6 +9,7 @@
 *.ipr
 *.iml
 *.iws
+*maven-metadata-local.xml
 .idea
 .checkstyle
 .DS_Store

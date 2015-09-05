@@ -16,10 +16,11 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
  */
 
 public interface SubKeys {
-    String PASSWORD = "password";
+    String AUTH_KEY = "password";
     String RECORD = "address";
     String SUBSCRIBERS = "subscribers";
     String REGDATE = "date";
     String LCAF_SRCDST = "lcaf_srcdst";
+
     String UNKOWN = "-1";
 }
