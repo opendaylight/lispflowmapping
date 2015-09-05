@@ -10,6 +10,8 @@ package org.opendaylight.lispflowmapping.implementation.authentication;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
+
 public class LispAuthenticationFactory {
 
     private static Map<LispKeyIDEnum, ILispAuthentication> keyIDToAuthenticationMap;

@@ -1,0 +1,111 @@
+module mappingservice-impl {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl";
+    prefix "mappingservice-impl";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import rpc-context { prefix rpcx; revision-date 2013-06-17; }
+    import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+    import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
+
+    description
+        "This module contains the base YANG definitions for
+        mappingservice implementation.";
+
+    revision "2015-09-06" {
+        description
+            "Initial revision.";
+    }
+
+    // This is the definition of lisp-mappingservice interface identity.
+    identity lisp-mappingservice {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping";
+    }
+
+    identity mappingservice {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService";
+    }
+
+    // This is the definition of the mappingservice implementation as a module identity
+    identity mappingservice-impl {
+        base config:module-type;
+        config:java-name-prefix MappingService;
+        config:provided-service mappingservice;
+    }
+
+    identity lisp-mappingservice-impl {
+        base config:module-type;
+        config:java-name-prefix LispMappingService;
+        config:provided-service lisp-mappingservice;
+    }
+
+    // Augments the 'configuration' choice node under modules/module.
+    augment "/config:modules/config:module/config:configuration" {
+        case mappingservice-impl {
+            when "/config:modules/config:module/config:type = 'mappingservice-impl'";
+
+            //wires in the data-broker service
+            container data-broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }
+            container broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-broker-osgi-registry;
+                    }
+                }
+            }
+            container rpc-registry {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-rpc-registry;
+                    }
+                }
+            }
+            container dao {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity ms-dao:ms-dao;
+                    }
+                }
+            }
+            container notification-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-notification-service;
+                    }
+                }
+            }
+        }
+        case lisp-mappingservice-impl {
+            when "/config:modules/config:module/config:type = 'lisp-mappingservice-impl'";
+            container osgi-broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-broker-osgi-registry;
+                    }
+                }
+            }
+            container mappingservice {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mappingservice;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -51,6 +51,7 @@ import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
@@ -147,12 +148,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Override
     public String getModuleName() {
-        return "lfm-mappingservice-impl";
+        return "mappingservice-impl";
     }
 
     @Override
     public String getInstanceName() {
-        return "lfm-mappingservice-default";
+        return "mappingservice-default";
     }
 
     // This is temporary, since the properties in the pom file are not picked up
@@ -307,6 +308,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Inject @Filter(timeout=60000)
     private IFlowMapping lms;
+
+    @Inject @Filter(timeout=60000)
+    private IMappingService mapService;
 
     @Inject @Filter(timeout=10000)
     private IConfigLispSouthboundPlugin configLispPlugin;
@@ -500,7 +504,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
-        lms.setOverwrite(true);
+        mapService.setMappingOverwrite(true);
         LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
@@ -512,7 +516,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterDoesntOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
-        lms.setOverwrite(false);
+        mapService.setMappingOverwrite(false);
         LispAFIAddress eid = LispAFIConvertor.toAFI(LispAFIConvertor.asIPv4Address("1.2.3.4"));
         LispAFIAddress rloc1Value = LispAFIConvertor.asIPAfiAddress("4.3.2.1");
         LispAFIAddress rloc2Value = LispAFIConvertor.asIPAfiAddress("4.3.2.2");
@@ -529,13 +533,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(LispAFIAddress eid, LispAFIAddress rloc1, LispAFIAddress rloc2)
             throws SocketTimeoutException {
         MapRegister mb = createMapRegister(eid, rloc1);
-        MapNotify mapNotify = lms.handleMapRegister(mb, false);
+        MapNotify mapNotify = lms.handleMapRegister(mb);
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
         assertEquals(mb.getEidToLocatorRecord().get(0).getLocatorRecord().get(0).getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0)
                 .getLocatorRecord().get(0).getLispAddressContainer());
         mb = createMapRegister(eid, rloc2);
-        mapNotify = lms.handleMapRegister(mb, false);
+        mapNotify = lms.handleMapRegister(mb);
         assertEquals(8, mapNotify.getNonce().longValue());
         mr = createMapRequest(eid);
         sendMapRequest(mr);
@@ -572,12 +576,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendPacket(mapRegisterPacketWithNotify);
         receiveMapNotify();
 
+        sleepForSeconds(1);
         sendPacket(mapRequestPacket);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            LOG.warn("Interrupted while sleeping");
-        }
+        sleepForSeconds(1);
 
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
         sendPacket(mapRegisterPacketWithoutNotify);
@@ -1219,6 +1220,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegisterBuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
+        // wait for the notifications to propagate
+        sleepForSeconds(1);
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
         mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
@@ -1521,31 +1524,38 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
         mapRequestBuilder.getItrRloc().add(
                 new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(ourAddress))).build());
+
         sendMapRequest(mapRequestBuilder.build());
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
         assertEquals(0, mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().size());
+
         MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
         mapRegisterbuilder.setWantMapNotify(true);
         mapRegisterbuilder.setNonce((long) 8);
+
         EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
         etlrBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(eid));
         etlrBuilder.setMaskLength((short) 32);
         etlrBuilder.setRecordTtl(254);
+
         LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
         recordBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlrBuilder.getLocatorRecord().add(recordBuilder.build());
         mapRegisterbuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         mapRegisterbuilder.getEidToLocatorRecord().add(etlrBuilder.build());
+
         sendMapRegister(mapRegisterbuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
+
         sendMapRequest(mapRequestBuilder.build());
         mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
         assertEquals(recordBuilder.getLispAddressContainer(), mapReply.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
                 .getLispAddressContainer());
+
         causeEntryToBeCleaned();
         sendMapRequest(mapRequestBuilder.build());
         mapReply = receiveMapReply();
@@ -1579,10 +1589,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void causeEntryToBeCleaned() {
-        // TODO for the time being, to keep master and stable/lithium in sync, we need to remove the forceful
+        // TODO XXX for the time being, to keep master and stable/lithium in sync, we need to remove the forceful
         // expiration of DAO entries. Once we're past this, we'll have to expose methods to setTimeUnit(TimeUnit)
         // and cleanOld() (expired) entries in IFlowMapping (and perhaps ILispDAO) and use them here.
-        this.lms.clean();
+        mapService.cleanCachedMappings();
     }
 
     private void testTTLAfterRegister(MapRequest mapRequest) throws SocketTimeoutException {
@@ -1817,6 +1827,16 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
     }
 
+
+    private void sleepForSeconds(int seconds) {
+        try {
+            Thread.sleep(seconds*1000);
+        } catch (InterruptedException e) {
+            LOG.warn("Interrupted while sleeping");
+            e.printStackTrace();
+        }
+    }
+
     private void initPacketAddress(DatagramPacket packet, int port) throws UnknownHostException {
         packet.setAddress(InetAddress.getByName(lispBindAddress));
         packet.setPort(port);
@@ -1927,7 +1947,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void cleanUP() {
         after();
-        lms.clean();
+        mapService.cleanCachedMappings();;
         configLispPlugin.shouldListenOnXtrPort(false);
         socket = initSocket(socket, LispMessage.PORT_NUM);
 

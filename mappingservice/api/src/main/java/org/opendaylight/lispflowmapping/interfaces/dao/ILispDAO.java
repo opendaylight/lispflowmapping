@@ -20,7 +20,7 @@ public interface ILispDAO {
      * @param values
      *            The entry's value.
      */
-    public void put(Object key, MappingEntry<?>... values);
+    void put(Object key, MappingEntry<?>... values);
 
     /**
      * Get a specific value from the DAO.
@@ -31,7 +31,7 @@ public interface ILispDAO {
      *            The value to fetch
      * @return The value from the DAO.
      */
-    public Object getSpecific(Object key, String valueKey);
+    Object getSpecific(Object key, String valueKey);
 
     /**
      * Get the entries from the DAO
@@ -40,7 +40,7 @@ public interface ILispDAO {
      *            The key.
      * @return The value from the DAO.
      */
-    public Map<String, Object> get(Object key);
+    Map<String, Object> get(Object key);
 
     /**
      * Enumerate all the entries from the DAO
@@ -48,7 +48,7 @@ public interface ILispDAO {
      * @param visitor
      *            The visitor object.
      */
-    public void getAll(IRowVisitor visitor);
+    void getAll(IRowVisitor visitor);
 
     /**
      * Remove an entry from the DAO
@@ -56,7 +56,7 @@ public interface ILispDAO {
      * @param key
      *            The key of the entry to delete
      */
-    public void remove(Object key);
+    void remove(Object key);
 
     /**
      * Remove an entry from the DAO
@@ -66,12 +66,21 @@ public interface ILispDAO {
      * @param valueKey
      *            The value to delete
      */
-    public void removeSpecific(Object key, String valueKey);
+    void removeSpecific(Object key, String valueKey);
 
     /**
      * Clear the DAO and remove all of the entries.
      */
-    public void removeAll();
+    void removeAll();
+
+    /**
+     * Insert a new table for given key.
+     *
+     * @param key
+     *            The key for the table
+     * @return The inserted table
+     */
+    ILispDAO putTable(String key);
 
     /**
      * Inserts a new, nested table for given key and subkey. Also acts as factory method.
@@ -82,5 +91,5 @@ public interface ILispDAO {
      *              The subkey under which to insert the new table
      * @return The inserted table
      */
-    public ILispDAO putNestedTable(Object key, String valueKey);
+    ILispDAO putNestedTable(Object key, String valueKey);
 }

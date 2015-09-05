@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
+import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 

@@ -12,14 +12,14 @@ import java.util.Set;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.lisp.util.MapServerMapResolverUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingDatabase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.db.instance.Mapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150820.mapping.database.InstanceId;
+import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
+import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.InstanceId;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -29,21 +29,26 @@ import org.slf4j.LoggerFactory;
  * DataListener for all Mapping modification events.
  *
  * @author Lorand Jakab
+ * @author Florin Coras
  *
  */
 public class MappingDataListener extends AbstractDataListener {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
-    private LispMappingService msmr;
-    private static final ConfigIni configIni = new ConfigIni();
-    private volatile boolean smr = configIni.smrIsSet();
+    private IMappingSystem mapSystem;
+    private NotificationProviderService notificationProvider;
 
-    public MappingDataListener(DataBroker broker, LispMappingService msmr) {
+    public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationProviderService notificationProvider) {
         setBroker(broker);
-        setMsmr(msmr);
+        setMappingSystem(msmr);
+        setNotificationProviderService(notificationProvider);
         setPath(InstanceIdentifier.create(MappingDatabase.class).child(InstanceId.class)
                 .child(Mapping.class));
         LOG.trace("Registering Mapping listener.");
         registerDataChangeListener();
+    }
+
+    public void setNotificationProviderService(NotificationProviderService notificationProvider) {
+        this.notificationProvider = notificationProvider;
     }
 
     @Override
@@ -60,12 +65,8 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", mapping);
 
-                if (mapping.getOrigin() != MappingOrigin.Southbound) {
-                    MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                    msmr.handleMapRegister(register, smr);
-                } else {
-                    LOG.trace("Mapping is coming from the southbound plugin, already handled");
-                }
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
+                        new EidToLocatorRecordBuilder(mapping).build());
             }
         }
 
@@ -79,12 +80,9 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", entry.getValue());
 
-                if (mapping.getOrigin() != MappingOrigin.Southbound) {
-                    MapRegister register = MapServerMapResolverUtil.getMapRegister(mapping);
-                    msmr.handleMapRegister(register, smr);
-                } else {
-                    LOG.trace("Mapping is coming from the southbound plugin, already handled");
-                }
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
+                        new EidToLocatorRecordBuilder(mapping).build());
+                notificationProvider.publish(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
             }
         }
 
@@ -99,12 +97,13 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", dataObject);
 
-                msmr.removeMapping(mapping.getLispAddressContainer());
+                mapSystem.removeMapping(mapping.getOrigin(), mapping.getLispAddressContainer());
+                notificationProvider.publish(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
             }
         }
     }
 
-    void setMsmr(LispMappingService msmr) {
-        this.msmr = msmr;
+    void setMappingSystem(IMappingSystem msmr) {
+        this.mapSystem = msmr;
     }
 }
