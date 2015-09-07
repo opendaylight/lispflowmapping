@@ -14,6 +14,10 @@
   <packaging>bundle</packaging>
   <name>Mapping Service NETCONF Connector</name>
 
+  <properties>
+    <netconf.connector.version>1.3.0-SNAPSHOT</netconf.connector.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
@@ -52,8 +56,9 @@
       <artifactId>sal-common-util</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.controller</groupId>
+      <groupId>org.opendaylight.netconf</groupId>
       <artifactId>sal-netconf-connector</artifactId>
+      <version>${netconf.connector.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>

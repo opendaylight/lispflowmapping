@@ -14,7 +14,7 @@
     <!-- Needed for odl-mdsal-broker -->
     <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
     <!-- Needed for odl-mdsal-apidocs -->
-    <repository>mvn:org.opendaylight.controller/features-restconf/${mdsal.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-restconf/${restconf.version}/xml/features</repository>
     <!-- TODO features-base should be removed when we get rid of Activators, hopefully soon -->
     <repository>mvn:org.opendaylight.controller/features-base/${commons.opendaylight.version}/xml/features</repository>
     <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
@@ -31,7 +31,7 @@
         <!-- TODO felix-dm should be removed when we get rid of Activators, hopefully soon -->
         <feature>odl-base-felix-dm</feature>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
-        <feature version="${mdsal.version}">odl-mdsal-apidocs</feature>
+        <feature version="${restconf.version}">odl-mdsal-apidocs</feature>
         <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
