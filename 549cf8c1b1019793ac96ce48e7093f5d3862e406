@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_225960fe",
+        "filename": "mappingservice/api/src/main/yang/lisp-sb.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-09-07T12:58:45Z",
+      "side": 1,
+      "message": "Do we still need these?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 65
+      },
+      "revId": "549cf8c1b1019793ac96ce48e7093f5d3862e406",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
