@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_5771bcde",
+        "filename": "mappingservice/netconf/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-07T11:18:00Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be restconf.version?",
+      "revId": "f715a98b9bbb4cc087676a063cd96df69ab256b3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
