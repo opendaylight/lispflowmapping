@@ -22,6 +22,24 @@
       "revId": "549cf8c1b1019793ac96ce48e7093f5d3862e406",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_026ea496",
+        "filename": "mappingservice/api/src/main/yang/lisp-sb.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-07T13:02:45Z",
+      "side": 1,
+      "message": "Uhm, sorry forgot to remove :P",
+      "parentUuid": "3a79b1b5_225960fe",
+      "revId": "549cf8c1b1019793ac96ce48e7093f5d3862e406",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
