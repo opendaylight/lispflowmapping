@@ -13,9 +13,8 @@ import java.net.DatagramPacket;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LfmControlPlaneRpc;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundRPC;
 import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
