@@ -15,11 +15,11 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.SendMapNotifyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.SendMapRegisterInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.SendMapReplyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.SendMapRequestInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.LispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInput;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
@@ -35,9 +35,9 @@ import com.google.common.util.concurrent.Futures;
  * @author Lorand Jakab (lojakab@cisco.com)
  */
 
-public class LfmControlPlaneRpc implements LispProtoService {
+public class LispSouthboundRPC implements LispSbService {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(LfmControlPlaneRpc.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);
 
     private final String MAP_NOTIFY = "MapNotify";
     private final String MAP_REPlY = "MapReply";
@@ -45,7 +45,7 @@ public class LfmControlPlaneRpc implements LispProtoService {
     private final String MAP_REGISTER = "MapRegister";
     private final LispSouthboundPlugin lispSbPlugin;
 
-    public LfmControlPlaneRpc(LispSouthboundPlugin lispSbPlugin) {
+    public LispSouthboundRPC(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
     }
 

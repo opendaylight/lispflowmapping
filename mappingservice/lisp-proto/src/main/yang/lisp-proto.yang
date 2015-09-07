@@ -594,30 +594,6 @@ module lisp-proto {
         uses TransportAddress;
     }
 
-    rpc sendMapRegister {
-        input {
-            uses MapRegisterMessage;
-        }
-    }
-
-    rpc sendMapNotify {
-        input {
-            uses MapNotifyMessage;
-        }
-    }
-
-    rpc sendMapRequest {
-        input {
-            uses MapRequestMessage;
-        }
-    }
-
-    rpc sendMapReply {
-        input {
-            uses MapReplyMessage;
-        }
-    }
-
     notification addMapping {
         uses MapRegisterNotification;
     }

@@ -1,0 +1,41 @@
+module lisp-sb {
+
+    yang-version 1;
+    namespace "urn:opendaylight:lfm:lisp-sb";
+    prefix "lisp-sb";
+
+    import lisp-proto { prefix lisp-proto; revision-date 2015-08-20; }
+
+    contact "Lorand Jakab <lojakab@cisco.com";
+
+    description
+        "API for the LISP southbound module";
+
+    revision "2015-09-04" {
+        description "Initial version. Some content originally from lisp-proto.yang";
+    }
+
+    rpc send-map-request {
+        input {
+            uses lisp-proto:MapRequestMessage;
+        }
+    }
+
+    rpc send-map-reply {
+        input {
+            uses lisp-proto:MapReplyMessage;
+        }
+    }
+
+    rpc send-map-register {
+        input {
+            uses lisp-proto:MapRegisterMessage;
+        }
+    }
+
+    rpc send-map-notify {
+        input {
+            uses lisp-proto:MapNotifyMessage;
+        }
+    }
+}
