@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_0e97aa91",
+        "filename": "mappingservice/api/src/main/yang/lisp-sb.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-09T00:53:58Z",
+      "side": 1,
+      "message": "I would simplify this model to the one below, unless you have a specific reason for the extra containers.\n    grouping ctrl-msg-stats {\n        leaf rx-unknown {\n            type int64;\n        }\n        leaf tx-errors {\n            type int64;\n        }\n        list control-message {\n             key   \"msgType\";\n             ordered-by \"user\";\n            leaf msgType {\n                type lisp-proto:lisp-type;\n            }            \n            leaf rx-count {\n                type int64;\n            }\n            leaf tx-count {\n                type int64;\n            }            \n        }\n    }\n    rpc get-stats {\n        output {\n                uses ctrl-msg-stats;\n        }\n    }",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_6ef73ef6",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-09T00:53:58Z",
+      "side": 1,
+      "message": "Can you change the name to message-type? lisp part is obvious and type alone is not descriptive enough. thanks.",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_8e389aa1",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundRPC.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-09T00:53:58Z",
+      "side": 1,
+      "message": "This logic will also be simplified if we change to the simplified yang snippet.",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_8e5f3ae5",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStats.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-09T00:53:58Z",
+      "side": 1,
+      "message": "I noticed you added a method to compute the max type value in the java API. Perhaps you can add a similar method here instead of using the value of the last message which as you note can change in future.",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
