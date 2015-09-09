@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_a92f90f5",
+        "filename": "mappingservice/api/src/main/yang/lisp-sb.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-09T12:19:21Z",
+      "side": 1,
+      "message": "That\u0027s what I started out with, but the reason behind the extra container is easy access to the values I need. When I convert the output to a Python dict, I can access the value I need with something like output[\u0027ctrl-msg-stats\u0027][2][\u0027counters\u0027][\u0027rx-count\u0027] whereas otherwise I would need filtering and going through all list elements to get the counters for the type I need.",
+      "parentUuid": "3a79b1b5_0e97aa91",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_6ef73ef6",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-09-09T00:53:58Z",
       "side": 1,
       "message": "Can you change the name to message-type? lisp part is obvious and type alone is not descriptive enough. thanks.",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_4936fc53",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-09T12:19:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a79b1b5_6ef73ef6",
       "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_698738d8",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundRPC.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-09T12:19:21Z",
+      "side": 1,
+      "message": "I know, I had the simpler version coded first, but as I replied on the YANG file, I think this makes the data more accessible.",
+      "parentUuid": "3a79b1b5_8e389aa1",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_8e5f3ae5",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStats.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-09-09T00:53:58Z",
       "side": 1,
       "message": "I noticed you added a method to compute the max type value in the java API. Perhaps you can add a similar method here instead of using the value of the last message which as you note can change in future.",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_8961743b",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStats.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-09T12:19:21Z",
+      "side": 1,
+      "message": "Actually, I want to deprecate LispMessageEnum in favor of the YANG modeled LispType (MessageType in patch set 2), but thought of using the Enum first. I agree to add a method here, although if we start using the LispType in many places, the Max method should be moved to a helper class.",
+      "parentUuid": "3a79b1b5_8e5f3ae5",
       "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
