@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3a79b1b5_7a684df5",
+        "filename": "mappingservice/api/src/main/yang/lisp-sb.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-11T23:29:13Z",
+      "side": 1,
+      "message": "Actually, it looks like it doesn\u0027t help in the Robot tests, so I will remove the container.",
+      "parentUuid": "3a79b1b5_a92f90f5",
+      "revId": "b9a6e6c81e25da1ef645883909ecf3f35380d8a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a79b1b5_6ef73ef6",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
