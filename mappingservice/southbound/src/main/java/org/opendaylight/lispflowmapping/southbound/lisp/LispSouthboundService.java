@@ -13,9 +13,10 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -27,6 +28,7 @@ import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.AddMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
@@ -41,6 +43,16 @@ public class LispSouthboundService implements ILispSouthboundService {
     private NotificationProviderService notificationProvider;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundService.class);
 
+    private final LispSouthboundPlugin lispSbPlugin;
+    private LispSouthboundStats lispSbStats = null;
+
+    public LispSouthboundService(LispSouthboundPlugin lispSbPlugin) {
+        this.lispSbPlugin = lispSbPlugin;
+        if (lispSbPlugin != null) {
+            this.lispSbStats = lispSbPlugin.getStats();
+        }
+    }
+
     public void setNotificationProvider(NotificationProviderService nps) {
         this.notificationProvider = nps;
     }
@@ -48,21 +60,22 @@ public class LispSouthboundService implements ILispSouthboundService {
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
-        Object lispType = LispMessageEnum.valueOf((byte) (type));
-        if (lispType == LispMessageEnum.EncapsulatedControlMessage) {
-            LOG.trace("Received packet of type EncapsulatedControlMessage");
+        handleStats(type);
+        Object lispType = MessageType.forValue(type);
+        if (lispType == MessageType.EncapsulatedControlMessage) {
+            LOG.trace("Received packet of type Encapsulated Control Message");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
-        } else if (lispType == LispMessageEnum.MapRequest) {
-            LOG.trace("Received packet of type MapRequest");
+        } else if (lispType == MessageType.MapRequest) {
+            LOG.trace("Received packet of type Map-Request");
             handleMapRequest(inBuffer, packet.getPort());
-        } else if (lispType == LispMessageEnum.MapRegister) {
-            LOG.trace("Received packet of type MapRegister");
+        } else if (lispType == MessageType.MapRegister) {
+            LOG.trace("Received packet of type Map-Register");
             handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
-        } else if (lispType == LispMessageEnum.MapNotify) {
-            LOG.trace("Received packet of type MapNotify");
+        } else if (lispType == MessageType.MapNotify) {
+            LOG.trace("Received packet of type Map-Notify");
             handleMapNotify(inBuffer, packet.getAddress(), packet.getPort());
-        } else if (lispType == LispMessageEnum.MapReply) {
-            LOG.trace("Received packet of type MapReply");
+        } else if (lispType == MessageType.MapReply) {
+            LOG.trace("Received packet of type Map-Reply");
             handleMapReply(inBuffer, packet.getAddress(), packet.getPort());
         } else {
             LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
@@ -180,6 +193,16 @@ public class LispSouthboundService implements ILispSouthboundService {
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + inBuffer.capacity() + ")", re);
+        }
+    }
+
+    private void handleStats(int type) {
+        if (lispSbStats != null) {
+            if (type <= LispSouthboundStats.MAX_LISP_TYPES) {
+                lispSbStats.incrementRx(type);
+            } else {
+                lispSbStats.incrementRxUnknown();
+            }
         }
     }
 }

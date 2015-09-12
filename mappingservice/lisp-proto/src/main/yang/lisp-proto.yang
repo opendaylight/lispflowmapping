@@ -538,6 +538,54 @@ module lisp-proto {
         uses EidToLocatorRecords;
     }
 
+    typedef message-type {
+        type enumeration {
+            enum reserved {
+                value 0;
+                description
+                    "Reserved";
+            }
+            enum map-request {
+                value 1;
+                description
+                    "Map-Request control packet";
+            }
+            enum map-reply {
+                value 2;
+                description
+                    "Map-Reply control packet";
+            }
+            enum map-register {
+                value 3;
+                description
+                    "Map-Register control packet";
+            }
+            enum map-notify {
+                value 4;
+                description
+                    "Map-Notify control packet";
+            }
+            enum map-referral {
+                value 6;
+                description
+                    "Map-Referral control packet";
+            }
+            enum info {
+                value 7;
+                description
+                    "Info control packet";
+            }
+            enum encapsulated-control-message {
+                value 8;
+                description
+                    "Encapsulated control packet";
+            }
+        }
+        description
+            "Defines the LISP control message types";
+        reference "https://tools.ietf.org/html/rfc6830#section-6.1.1";
+    }
+
     grouping MapRegisterMessage {
         container MapRegister {
             uses MapRegister;

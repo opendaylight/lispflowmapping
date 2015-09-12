@@ -27,6 +27,16 @@ public enum LispMessageEnum {
         return value;
     }
 
+    public static byte getMaxValue() {
+        byte max = 0;
+        for (LispMessageEnum lme : LispMessageEnum.values()) {
+            if (lme.getValue() > max) {
+                max = lme.getValue();
+            }
+        }
+        return max;
+    }
+
     public static LispMessageEnum valueOf(byte i) {
         for (LispMessageEnum lme : LispMessageEnum.values()) {
             if (lme.getValue() == i) {

@@ -95,7 +95,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         super.before();
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
-        testedLispService = new LispSouthboundService();
+        testedLispService = new LispSouthboundService(null);
         nps = context.mock(NotificationProviderService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
