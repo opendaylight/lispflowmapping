@@ -180,7 +180,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Override
     public String getFeatureName() {
-        return "odl-lispflowmapping-all";
+        return "odl-lispflowmapping-msmr";
     }
 
     @Override
