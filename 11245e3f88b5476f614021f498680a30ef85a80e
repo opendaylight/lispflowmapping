@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_35041c14",
+        "filename": "features/src/main/features/features.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-16T01:44:31Z",
+      "side": 1,
+      "message": "Can you please explain why is this needed now? thanks",
+      "range": {
+        "startLine": 77,
+        "startChar": 68,
+        "endLine": 77,
+        "endChar": 69
+      },
+      "revId": "11245e3f88b5476f614021f498680a30ef85a80e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
