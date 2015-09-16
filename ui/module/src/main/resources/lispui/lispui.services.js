@@ -290,10 +290,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
         });
     });
 
-    lispui.register.factory('LispuiDashboardSvc', ['LispuiNodeFormSvc',
-        'LispuiRestangular', 'LispuiUtils',
-        function(LispuiNodeFormSvc, LispuiRestangular,
-            LispuiUtils) {
+    lispui.register.factory('LispuiDashboardSvc', ['LispuiNodeFormSvc', 'LispuiRestangular', 'LispuiUtils',
+        function(LispuiNodeFormSvc, LispuiRestangular, LispuiUtils) {
             var api = {};
 
             api.getAll = function() {
@@ -368,8 +366,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                     console.info('database:',
                         database);
                     for (key of database) {
-                        key.data = JSON.stringify(
-                            key);
+                        key.data = LispuiUtils.getPrettyString(JSON.stringify(key));
                         key.detailHide = true;
                         key.deleteHide = true;
                         key.url = key.eid.replace(
@@ -386,8 +383,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
                     function(database) {
                         var data = [];
                         for (mapping of database) {
-                            mapping.data = JSON.stringify(
-                                mapping);
+                            mapping.data = LispuiUtils.getPrettyString(JSON.stringify(mapping));
+                            console.log(mapping.data);
                             mapping.detailHide = true;
                             mapping.deleteHide = true;
                             mapping.url = mapping.eid.replace('/', '%2f');
@@ -469,8 +466,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                                 locatorString +=
                                     mapping.action;
                             }
-                            mapping.locatorString =
-                                locatorString;
+                            mapping.locatorString = locatorString;
                             mapping.flags = flags;
 
                             data.push(mapping);
@@ -529,8 +525,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
         }
     ]);
 
-    lispui.register.factory('LispuiUtils', ['$filter',
-        function($filter) {
+    lispui.register.factory('LispuiUtils', ['$sce',
+        function($sce) {
             var api = {};
 
             api.getLocale = function(label) {
@@ -557,37 +553,33 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 output = '<p>';
                 length = input.length;
                 indx = 0;
-                console.info('input:', input);
-                console.info('length:', length);
 
                 for (i = 0; i < length; i++) {
                     if (input[i] == '{' || input[i] == '[') {
-                        output = output.concat(input[i]).concat(
-                            '<br>');
+                        output = output.concat(input[i]).concat('<br>');
                         indx++;
                         for (j = 0; j < indx; j++)
-                            output = output.concat(
-                                '&nbsp;&nbsp;&nbsp;');
-                    } else if (input[i] == '}' || input[i] ==
-                        ']') {
+                            output = output.concat('&nbsp;&nbsp;&nbsp;&nbsp;');
+                    } else if (input[i] == '}' || input[i] == ']') {
                         output = output.concat('<br>');
                         indx--;
                         for (j = 0; j < indx; j++)
-                            output = output.concat(
-                                '&nbsp;&nbsp;&nbsp;');
+                            output = output.concat('&nbsp;&nbsp;&nbsp;&nbsp;');
                         output = output.concat(input[i]);
                     } else if (input[i] == ',') {
                         output = output.concat(',<br>');
                         for (j = 0; j < indx; j++)
-                            output = output.concat(
-                                '&nbsp;&nbsp;&nbsp;');
-                    } else
+                            output = output.concat('&nbsp;&nbsp;&nbsp;&nbsp;');
+                    } else {
                         output = output.concat(input[i]);
+                        if (input[i] == ':')
+                            output = output.concat(' ');
+                    }
 
                 }
                 output = output.concat('</p>');
-                console.info('output:', output);
-                return output;
+                // Return a trusted HTML for ng-bind-html
+                return $sce.trustAsHtml(output);
             }
 
             api.getAddress = function(address) {
@@ -596,7 +588,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                     address = address[Object.keys(address)[0]];
                 }
                 var afi = address.afi;
-                
+
                 console.log(afi);
                 var string = '';
                 if (afi == 1) {

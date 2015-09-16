@@ -22,12 +22,12 @@
             <td>{{ key['key-type'] | number }}</td>
             <td>{{ key.authkey }}</td>
             <td><i class="icon-eye-open" ng-click="expandSingleRow(key, data, 'detailHide')"> {{ 'VIEW' | translate }}</i> |
-                <i class="icon-trash"><a ng-click="expandSingleRow(key, data, 'deleteHide')"> {{ 'DELETE' | translate }}</a></i>
+                <i class="icon-trash" ng-click="expandSingleRow(key, data, 'deleteHide')"> {{ 'DELETE' | translate }}</i>
             </td>
         </tr>
         <tr ng-hide="key.detailHide" node-table>
             <td colspan="5">
-                <p>{{ key.data }}</p>
+                <div ng-bind-html="key.data"></div>
             </td>
         </tr>
         <tr ng-hide="key.deleteHide" ng-repeat-end node-table>
