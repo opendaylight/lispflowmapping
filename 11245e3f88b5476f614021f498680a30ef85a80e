@@ -40,6 +40,24 @@
       "revId": "11245e3f88b5476f614021f498680a30ef85a80e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_0139a2a3",
+        "filename": "features/src/main/features/features.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-16T21:15:00Z",
+      "side": 1,
+      "message": "Ack.  Thanks.",
+      "parentUuid": "3a79b1b5_f8a3fb4c",
+      "revId": "11245e3f88b5476f614021f498680a30ef85a80e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
