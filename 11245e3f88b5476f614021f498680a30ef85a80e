@@ -22,6 +22,24 @@
       "revId": "11245e3f88b5476f614021f498680a30ef85a80e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_f8a3fb4c",
+        "filename": "features/src/main/features/features.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-09-16T14:49:30Z",
+      "side": 1,
+      "message": "Previously this was a transitive dependency, which was brought in (I assume) by odl-mdsal-broker in the other features. Since we broke out the models, we have to list it explicitly, but it is not a new dependency per se. I prefer not to bring odl-mdsal-broker here, since I prefer each feature to be as small is it can be.",
+      "parentUuid": "3a79b1b5_35041c14",
+      "revId": "11245e3f88b5476f614021f498680a30ef85a80e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
