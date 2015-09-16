@@ -27,7 +27,7 @@
         </tr>
         <tr ng-hide="key.detailHide" node-table>
             <td colspan="5">
-                <p>{{ key.data }}</p>
+                <div ng-bind-html="key.data"></div>
             </td>
         </tr>
         <tr ng-hide="key.deleteHide" ng-repeat-end node-table>

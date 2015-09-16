@@ -29,7 +29,7 @@
         </tr>
         <tr ng-hide="mapping.detailHide" node-table>
             <td colspan="6">
-                <p>{{ mapping.data }}</p>
+                <div ng-bind-html="mapping.data"></div>
             </td>
         </tr>
         <tr ng-hide="mapping.deleteHide" ng-repeat-end node-table>
