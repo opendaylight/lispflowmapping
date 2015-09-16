@@ -24,12 +24,12 @@
             <td>{{ mapping.flags }}</td>
             <td>{{ mapping.ttl }}</td>
             <td><i class="icon-eye-open" ng-click="expandSingleRow(mapping, data, 'detailHide')"> {{ 'VIEW' | translate }}</i> |
-                <i class="icon-trash"><a ng-click="expandSingleRow(mapping, data, 'deleteHide')"> {{ 'DELETE' | translate }}</a></i>
+                <i class="icon-trash" ng-click="expandSingleRow(mapping, data, 'deleteHide')"> {{ 'DELETE' | translate }}</i>
             </td>
         </tr>
         <tr ng-hide="mapping.detailHide" node-table>
             <td colspan="6">
-                <p>{{ mapping.data }}</p>
+                <div ng-bind-html="mapping.data"></div>
             </td>
         </tr>
         <tr ng-hide="mapping.deleteHide" ng-repeat-end node-table>
