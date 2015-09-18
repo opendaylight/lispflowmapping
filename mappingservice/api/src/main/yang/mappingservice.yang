@@ -4,6 +4,7 @@ module mappingservice {
     namespace "urn:opendaylight:lfm:mappingservice";
     prefix "mappingservice";
 
+    import config { prefix config; revision-date 2013-04-05; }
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import yang-ext { prefix ext; revision-date "2013-07-09"; }
     import lisp-proto { prefix lisp-proto; revision-date 2015-08-20; }
@@ -15,6 +16,16 @@ module mappingservice {
 
     revision "2015-09-06" {
         description "Renamed and moved module to mappingservice.api.";
+    }
+
+    identity mappingservice {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService";
+    }
+
+    identity lisp-mappingservice {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping";
     }
 
     typedef mapping-origin {

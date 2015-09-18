@@ -7,6 +7,7 @@ module lfm-mappingservice-sb-impl {
   import config { prefix config; revision-date 2013-04-05; }
   import rpc-context { prefix rpcx; revision-date 2013-06-17; }
   import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+  import lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
 
   description
       "This module contains the base YANG definitions for
@@ -17,14 +18,9 @@ module lfm-mappingservice-sb-impl {
           "Initial revision.";
   }
 
-  identity lfm-mappingservice-sb {
-      base "config:service-type";
-      config:java-class "org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin";
-  }
-
   identity lfm-mappingservice-sb-impl {
       base config:module-type;
-      config:provided-service lfm-mappingservice-sb;
+      config:provided-service lisp-sb:lfm-mappingservice-sb;
       config:java-name-prefix LfmMappingServiceSb;
   }
 
