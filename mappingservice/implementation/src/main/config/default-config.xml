@@ -40,14 +40,14 @@
                       <name>binding-osgi-broker</name>
                     </osgi-broker>
                     <mappingservice>
-                      <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice</type>
+                      <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:mappingservice</type>
                       <name>mappingservice</name>
                     </mappingservice>
                 </module>
             </modules>
             <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
               <service>
-                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice</type>
+                <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:mappingservice</type>
                 <instance>
                   <name>mappingservice</name>
                   <provider>/modules/module[type='mappingservice-impl'][name='mappingservice-default']
@@ -55,7 +55,7 @@
                 </instance>
               </service>
               <service>
-                <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:lisp-mappingservice</type>
+                <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:lisp-mappingservice</type>
                 <instance>
                   <name>lisp-mappingservice</name>
                   <provider>/modules/module[type='lisp-mappingservice-impl'][name='lisp-mappingservice-default']

@@ -38,7 +38,7 @@
 
       <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
         <service>
-          <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl">prefix:lfm-mappingservice-sb</type>
+          <type xmlns:prefix="urn:opendaylight:lfm:lisp-sb">prefix:lfm-mappingservice-sb</type>
           <instance>
             <name>lfm-mappingservice-sb</name>
             <provider>/modules/module[type='lfm-mappingservice-sb-impl'][name='lfm-mappingservice-sb-impl-default']</provider>

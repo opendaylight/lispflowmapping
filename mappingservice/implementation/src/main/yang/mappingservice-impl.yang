@@ -1,4 +1,5 @@
 module mappingservice-impl {
+
     yang-version 1;
     namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl";
     prefix "mappingservice-impl";
@@ -6,6 +7,7 @@ module mappingservice-impl {
     import config { prefix config; revision-date 2013-04-05; }
     import rpc-context { prefix rpcx; revision-date 2013-06-17; }
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+    import mappingservice { prefix mappingservice; revision-date 2015-09-06; }
     import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
 
     description
@@ -17,28 +19,17 @@ module mappingservice-impl {
             "Initial revision.";
     }
 
-    // This is the definition of lisp-mappingservice interface identity.
-    identity lisp-mappingservice {
-        base config:service-type;
-        config:java-class "org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping";
-    }
-
-    identity mappingservice {
-        base config:service-type;
-        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService";
-    }
-
     // This is the definition of the mappingservice implementation as a module identity
     identity mappingservice-impl {
         base config:module-type;
         config:java-name-prefix MappingService;
-        config:provided-service mappingservice;
+        config:provided-service mappingservice:mappingservice;
     }
 
     identity lisp-mappingservice-impl {
         base config:module-type;
         config:java-name-prefix LispMappingService;
-        config:provided-service lisp-mappingservice;
+        config:provided-service mappingservice:lisp-mappingservice;
     }
 
     // Augments the 'configuration' choice node under modules/module.
@@ -102,7 +93,7 @@ module mappingservice-impl {
                 uses config:service-ref {
                     refine type {
                         mandatory true;
-                        config:required-identity mappingservice;
+                        config:required-identity mappingservice:mappingservice;
                     }
                 }
             }
