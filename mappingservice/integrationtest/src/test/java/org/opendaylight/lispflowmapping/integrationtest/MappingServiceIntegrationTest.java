@@ -1551,6 +1551,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegisterbuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
+        sleepForSeconds(1);
 
         sendMapRequest(mapRequestBuilder.build());
         mapReply = receiveMapReply();
