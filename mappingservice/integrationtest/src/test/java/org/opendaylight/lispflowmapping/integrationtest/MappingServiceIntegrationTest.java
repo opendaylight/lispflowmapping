@@ -469,6 +469,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegisterbuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
+        sleepForSeconds(1);
         sendMapRequest(mapRequestBuilder.build());
         mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
@@ -992,6 +993,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegister.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
+        sleepForSeconds(1);
         MapRequestBuilder mapRequest = new MapRequestBuilder();
         mapRequest.setNonce((long) 4);
         mapRequest.setSourceEid(new SourceEidBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(ourAddress))).build());
