@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_12dabd78",
+        "filename": "mappingservice/implementation/src/main/config/default-config.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-09-23T06:10:07Z",
+      "side": 1,
+      "message": "Lori, do you know how this prefix was working before?",
+      "range": {
+        "startLine": 50,
+        "startChar": 22,
+        "endLine": 50,
+        "endChar": 27
+      },
+      "revId": "6ebc6154fc271239e302a09d4e828fd500ab0db3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
