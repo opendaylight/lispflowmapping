@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.config.yang;
+package org.opendaylight.yang.gen.v1.lispconfig.rev131107;
 
 import java.io.Closeable;
 import java.io.IOException;

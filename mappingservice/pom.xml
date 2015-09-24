@@ -18,7 +18,6 @@
   <modules>
     <module>lisp-proto</module>
     <module>api</module>
-    <module>config</module>
     <module>inmemorydb</module>
     <module>implementation</module>
     <module>southbound</module>
