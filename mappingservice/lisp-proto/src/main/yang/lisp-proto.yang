@@ -6,6 +6,7 @@ module lisp-proto {
 
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import ietf-yang-types { prefix yang; revision-date 2010-09-24; }
+    import lisp-address-types { prefix address; revision-date 2015-03-09; }
 
     organization "LISP Flow Mapping";
 
