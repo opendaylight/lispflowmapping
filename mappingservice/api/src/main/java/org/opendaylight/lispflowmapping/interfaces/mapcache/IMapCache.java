@@ -121,7 +121,7 @@ public interface IMapCache {
     void removeData(LispAddressContainer key, String subKey);
 
     /**
-     * Print mappings in cache. Should be used for testing and debuggin only.
+     * Print mappings in cache. Used for testing, debugging and the karaf shell
      *
      * @return a String consisting of all the mappings in the cache
      */

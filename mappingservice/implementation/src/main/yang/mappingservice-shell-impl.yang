@@ -1,0 +1,47 @@
+module mappingservice-shell-impl {
+
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl";
+    prefix "mappingservice-shell-impl";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+    import mappingservice { prefix mappingservice; revision-date 2015-09-06; }
+
+    description
+        "This module contains the base YANG definitions for
+        mappingservice shell implementation.";
+
+    revision "2015-09-25" {
+        description
+            "Initial revision.";
+    }
+
+    identity mappingservice-shell-impl {
+        base config:module-type;
+        config:java-name-prefix MappingServiceShell;
+        config:provided-service mappingservice:mappingservice-shell;
+    }
+
+    augment "/config:modules/config:module/config:configuration" {
+        case mappingservice-shell-impl {
+            when "/config:modules/config:module/config:type = 'mappingservice-shell-impl'";
+            container broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-broker-osgi-registry;
+                    }
+                }
+            }
+            container mappingservice {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mappingservice:mappingservice;
+                    }
+                }
+            }
+        }
+    }
+}

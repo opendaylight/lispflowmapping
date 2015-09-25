@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.interfaces.lisp;
+package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
 /**
  * This interface defines the methods that need to be implemented in order to
@@ -14,7 +14,7 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
  * @author Lorand Jakab
  *
  */
-public interface IFlowMappingShell {
+public interface IMappingServiceShell {
     /**
      * Print the full mapping database.
      *

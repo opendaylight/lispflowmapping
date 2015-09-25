@@ -10,7 +10,7 @@ package org.opendaylight.lispflowmapping.shell;
 
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
  * This class implements the "lisp:mappings" Karaf shell command
@@ -18,17 +18,17 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
  * @author Lorand Jakab
  *
  */
-@Command(scope = "lisp", name = "mappings", description="Print LISP mapping database")
+@Command(scope = "mappingservice", name = "mappings", description="Print LISP mapping database")
 public class LispMappings  extends OsgiCommandSupport {
-    private IFlowMappingShell lispShellService;
+    private IMappingServiceShell mappingServiceShell;
 
     @Override
     protected Object doExecute() throws Exception {
-        System.out.print(lispShellService.printMappings());
+        System.out.print(mappingServiceShell.printMappings());
         return null;
     }
 
-    public void setLispShellService(IFlowMappingShell lispShellService) {
-        this.lispShellService = lispShellService;
+    public void setMappingServiceShell(IMappingServiceShell mappingServiceShell) {
+        this.mappingServiceShell = mappingServiceShell;
     }
 }
