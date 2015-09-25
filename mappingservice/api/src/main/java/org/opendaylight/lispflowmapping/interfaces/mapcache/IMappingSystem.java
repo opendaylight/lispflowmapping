@@ -169,7 +169,7 @@ public interface IMappingSystem {
     public void setOverwritePolicy(boolean overwrite);
 
     /**
-     * Print all mappings. Used for testing and debuggin purposes.
+     * Print all mappings. Used for testing, debugging and the karaf shell
      *
      * @return String consisting of all mappings
      */

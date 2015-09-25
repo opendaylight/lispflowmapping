@@ -23,6 +23,11 @@ module mappingservice {
         config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService";
     }
 
+    identity mappingservice-shell {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell";
+    }
+
     identity lisp-mappingservice {
         base config:service-type;
         config:java-class "org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping";

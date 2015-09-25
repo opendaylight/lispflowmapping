@@ -24,14 +24,10 @@ import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
@@ -76,8 +72,7 @@ import com.google.common.util.concurrent.Futures;
  * @author Florin Coras
  *
  */
-public class MappingService implements MappingserviceService, IMappingService, IFlowMappingShell, BindingAwareProvider,
-        AutoCloseable {
+public class MappingService implements MappingserviceService, IMappingService, BindingAwareProvider, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
@@ -379,13 +374,6 @@ public class MappingService implements MappingserviceService, IMappingService, I
     @Override
     public String printMappings() {
         return mappingSystem.printMappings();
-    }
-
-    @Override
-    public void addDefaultKeyIPv4() {
-        LispAddressContainer address = LispAFIConvertor.toContainer(
-                new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).setMask((short)0).build());
-        addAuthenticationKey(address, "password");
     }
 
     @Override

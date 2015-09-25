@@ -1,14 +1,14 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-  <reference id="lispShellServiceRef" interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMappingShell"/>
+  <reference id="mappingServiceShellRef" interface="org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell"/>
   <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
     <command>
       <action class="org.opendaylight.lispflowmapping.shell.LispMappings">
-        <property name="lispShellService" ref="lispShellServiceRef"/>
+        <property name="mappingServiceShell" ref="mappingServiceShellRef"/>
       </action>
     </command>
     <command>
       <action class="org.opendaylight.lispflowmapping.shell.LispAddKey">
-        <property name="lispShellService" ref="lispShellServiceRef"/>
+        <property name="mappingServiceShell" ref="mappingServiceShellRef"/>
       </action>
     </command>
   </command-bundle>

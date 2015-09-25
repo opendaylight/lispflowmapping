@@ -150,9 +150,16 @@ public interface IMappingService {
      * otherwise, mappings are merged
      *
      * @param overwrite
-     *            enables or disables mapping overwite
+     *            enables or disables mapping overwrite
      */
     void setMappingOverwrite(boolean overwrite);
+
+    /**
+     * Print all mappings. Used for testing, debugging and the karaf shell
+     *
+     * @return String consisting of all mappings
+     */
+    String printMappings();
 
     /**
      * Cleans all cached mappings.Used for testing.
