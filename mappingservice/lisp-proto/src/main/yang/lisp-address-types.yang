@@ -41,6 +41,11 @@ module lisp-address-types {
       "Base identity from which identities describing LISP address
        families are derived.";
   }
+  identity no-address {
+      base lisp-address-family;
+      description
+        "IANA Reserved.";
+    }
   identity ipv4 {
     base lisp-address-family;
     description
@@ -60,6 +65,11 @@ module lisp-address-types {
     base lisp-address-family;
     description
       "IANA Distinguished Name address family.";
+  }
+  identity as-number {
+      base lisp-address-family;
+      description
+        "IANA AS Number address family.";
   }
   identity lcaf {
     base lisp-address-family;
@@ -81,7 +91,7 @@ module lisp-address-types {
     description
       "Instance-ID LCAF type.";
   }
-  identity as-number {
+  identity as-number-lcaf {
     base lcaf;
     description
       "AS Number LCAF type.";
@@ -164,6 +174,7 @@ module lisp-address-types {
       type inet:ip-prefix;
       type yang:mac-address;
       type distinguished-name;
+      type inet:as-number;
     }
     description
       "Union of address types that can be part of LCAFs.";
@@ -256,8 +267,8 @@ module lisp-address-types {
             "AFI address.";
         }
       }
-      container as-number {
-        when "../../lcaf-type = as-number" {
+      container as-number-lcaf {
+        when "../../lcaf-type = as-number-lcaf" {
           description
             "When LCAF type is AS-Number.";
         }
@@ -524,6 +535,15 @@ module lisp-address-types {
         "Instance ID of the address.";
     }
     choice address {
+      leaf no-address {
+        when "../../afi = 'laddr:no-addr'" {
+          description
+            "When AFI is 0.";
+        }
+        type empty;
+        description
+          "No address.";
+      }
       leaf ipv4 {
         when "../../afi = 'laddr:ipv4'" {
           description
@@ -560,6 +580,15 @@ module lisp-address-types {
         description
           "Distinguished Name address.";
       }
+      leaf as-number {
+          when "../../afi = 'laddr:as-number'" {
+            description
+              "When AFI is as-number.";
+          }
+          type inet:as-number;
+          description
+            "AS Number.";
+        }
       container lcaf {
         when "../../afi = 'laddr:lcaf'" {
           description
