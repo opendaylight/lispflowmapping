@@ -6,7 +6,8 @@ module mappingservice {
 
     import config { prefix config; revision-date 2013-04-05; }
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
-    import yang-ext { prefix ext; revision-date "2013-07-09"; }
+    import yang-ext { prefix ext; revision-date 2013-07-09; }
+    import lisp-address-types { prefix lisp-address; revision-date 2015-03-09; }
     import lisp-proto { prefix lisp-proto; revision-date 2015-08-20; }
 
     contact "Lorand Jakab <lojakab@cisco.com";
@@ -74,13 +75,6 @@ module mappingservice {
         description "A classifier for endpoint-id elements which allows direct access to a particular element in the data tree.";
     }
 
-    grouping lisp-prefix {
-        uses lisp-proto:LispAddress;
-        leaf mask-length {
-            type uint8;
-        }
-    }
-
     grouping mapping-authkey {
         leaf key-type {
             type uint16;
@@ -120,7 +114,7 @@ module mappingservice {
             leaf eid {
                 type eid-uri;
             }
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
             uses mapping-authkey;
         }
     }
@@ -137,14 +131,14 @@ module mappingservice {
 
     rpc add-key {
         input {
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
             uses mapping-authkey;
         }
     }
 
     rpc get-key {
         input {
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
         }
         output {
             uses mapping-authkey;
@@ -154,7 +148,7 @@ module mappingservice {
     rpc update-key {
         input {
             container eid {
-                uses lisp-prefix;
+                uses lisp-address:lisp-address;
             }
             container key {
                 uses mapping-authkey;
@@ -164,7 +158,7 @@ module mappingservice {
 
     rpc remove-key {
         input {
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
         }
     }
 
@@ -176,7 +170,7 @@ module mappingservice {
 
     rpc get-mapping {
         input {
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
         }
         output {
             uses lisp-proto:EidToLocatorRecords;
@@ -191,7 +185,7 @@ module mappingservice {
 
     rpc remove-mapping {
         input {
-            uses lisp-prefix;
+            uses lisp-address:lisp-address;
         }
     }
 
