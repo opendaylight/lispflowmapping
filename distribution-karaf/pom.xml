@@ -26,7 +26,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   </prerequisites>
 
   <properties>
-    <karaf.localFeature>odl-lispflowmapping-msmr</karaf.localFeature>
+    <!-- <karaf.localFeature>odl-lispflowmapping-msmr</karaf.localFeature> -->
+    <karaf.localFeature>odl-lispflowmapping-models</karaf.localFeature>
   </properties>
 
   <dependencyManagement>

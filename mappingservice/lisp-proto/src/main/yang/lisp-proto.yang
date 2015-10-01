@@ -6,7 +6,7 @@ module lisp-proto {
 
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import ietf-yang-types { prefix yang; revision-date 2010-09-24; }
-    import lisp-address-types { prefix address; revision-date 2015-03-09; }
+    import lisp-address-types { prefix lisp-address; revision-date 2015-03-09; }
 
     organization "LISP Flow Mapping";
 
@@ -362,10 +362,7 @@ module lisp-proto {
 
     grouping EidRecords {
         list EidRecord {
-            uses LispAddress;
-            leaf mask {
-                type uint8;
-            }
+            uses lisp-address:lisp-address;
         }
     }
 
@@ -398,7 +395,7 @@ module lisp-proto {
             }
 
             //locator address
-            uses LispAddress;
+            uses lisp-address:lisp-address;
         }
     }
 
@@ -424,7 +421,7 @@ module lisp-proto {
             type boolean;
         }
         // EID prefix
-        uses LispAddress;
+        uses lisp-address:lisp-address;
 
         // locator record list
         uses LocatorRecords;
@@ -511,10 +508,10 @@ module lisp-proto {
             type int64;
         }
         container SourceEid {
-            uses LispAddress;
+            uses lisp-address:lisp-address;
         }
         list itrRloc {
-            uses LispAddress;
+            uses lisp-address:lisp-address;
         }
         uses EidRecords;
         container MapReply{
