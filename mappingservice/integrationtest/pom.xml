@@ -20,7 +20,7 @@
     <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <!-- Dependency Versions -->
-    <junit.version>4.8.1</junit.version>
+    <junit.version>4.11</junit.version>
     <lispflowmapping.version>1.2.2-SNAPSHOT</lispflowmapping.version>
     <url.version>1.5.0</url.version>
   </properties>
