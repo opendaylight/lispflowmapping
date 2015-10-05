@@ -2,6 +2,7 @@
 <snapshot>
   <required-capabilities>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
+    <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl?module=opendaylight-sal-binding-broker-impl&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl?module=lfm-mappingservice-sb-impl&amp;revision=2015-05-17</capability>
   </required-capabilities>
   <configuration>
@@ -27,12 +28,12 @@
             <name>binding-osgi-broker</name>
           </broker>
 
-          <notification-service>
-            <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">
-              binding:binding-notification-service
+          <notification-publish-service>
+            <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl">
+              binding:binding-new-notification-publish-service
             </type>
-            <name>binding-notification-broker</name>
-          </notification-service>
+            <name>binding-notification-publish-adapter</name>
+          </notification-publish-service>
         </module>
       </modules>
 
