@@ -26,7 +26,7 @@ import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.binding.Notification;
 public class LispSouthboundServiceTest extends BaseTestCase {
 
     private LispSouthboundService testedLispService;
-    private NotificationProviderService nps;
+    private NotificationPublishService nps;
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacket;
     private ValueSaverAction<Notification> lispNotificationSaver;
@@ -96,7 +96,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
         testedLispService = new LispSouthboundService(null);
-        nps = context.mock(NotificationProviderService.class);
+        nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
         // mapRegisterSaver = new ValueSaverAction<MapRegister>();
@@ -227,7 +227,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   ff 00 00 05 00 01 0a 01 00 6e 06 64 ff 00 00 05 " //
                 + "0070   00 01 c0 a8 88 33"));
 
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
 
         handleMapRegisterPacket(mapRegisterPacket);
 
@@ -262,7 +262,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   01 92 00 00 00 00 00 00 00 01 01 64 ff 00 00 05 " //
                 + "0070   00 01 0a 00 3a 9c"));
 
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
 
         handleMapRegisterPacket(mapRegisterPacket);
 
@@ -276,7 +276,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegister__VerifyBasicFields() throws Exception {
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRegisterPacket(mapRegisterPacket);
 
         EidToLocatorRecord eidToLocator = lastMapRegister().getEidToLocatorRecord().get(0);
@@ -289,7 +289,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapRegister__NoResponseFromMapServerShouldReturnNullPacket() throws Exception {
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapNotifyBuilder = null;
 
         assertNull(handleMapRegisterPacket(mapRegisterPacket));
@@ -412,7 +412,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRequest__VerifyBasicFields() throws Exception {
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRequestAsByteArray(mapRequestPacket);
         List<EidRecord> eids = lastMapRequest().getEidRecord();
         assertEquals(1, eids.size());
@@ -452,7 +452,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 " //
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
 
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         // ret(mapReply);
 
         handleMapRequestAsByteArray(mapRequestPacket);
@@ -480,7 +480,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 " //
                 + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 " //
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         // ret(mapReply);
 
         DatagramPacket replyPacket = handleMapRequestPacket(mapRequestPacket);
@@ -502,7 +502,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0070   10 00 00 00 00 01 99 10 fe 01 01 64 ff 00 00 05 " //
                 + "0080   00 01 0a 00 01 26"));
 
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         // ret(mapReply);
 
         handleMapRequestAsByteArray(mapRequestPacket);
@@ -677,13 +677,16 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0080   01 64 ff 00 00 05 00 01 0a 01 00 6f 06 64 ff 00 " //
                 + "0090   00 05 00 01 c0 a8 88 33"));
 
-        oneOf(nps).publish(with(lispNotificationSaver));
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRequestAsByteArray(mapRequestPacket);
 
     }
 
     private void stubMapRegister(final boolean setNotifyFromRegister) {
-        allowing(nps).publish(with(lispNotificationSaver));
+        try {
+            allowing(nps).putNotification(with(lispNotificationSaver));
+        } catch (InterruptedException e) {
+        }
         will(new SimpleAction() {
 
             @Override
@@ -697,7 +700,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private void stubHandleRequest() {
-        allowing(nps).publish(wany(Notification.class));
+        try {
+            allowing(nps).putNotification(wany(Notification.class));
+        } catch (InterruptedException e) {
+        }
     }
 
     private byte[] handleMapRequestAsByteArray(byte[] inPacket) {
@@ -777,7 +783,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     // + "40 05 c0 a8 88 0a 01 02 " // MAC (ITR-RLOC #1 of 2)
     // + "00 01 01 02 03 04 " // IP (ITR-RLOC #2 of 2)
     // + "00 20 00 01 01 02 03 04").array();
-    // oneOf(nps).publish(with(lispNotificationSaver));
+    // oneOf(nps).putNotification(with(lispNotificationSaver));
     // // ret(mapReply);
     // DatagramPacket packet = handleMapRequestPacket(mapRequestPacket);
     // assertEquals(2, lastMapRequest().getItrRlocs().size());
@@ -794,7 +800,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     // + "00 01 01 02 03 04 " // IP (ITR-RLOC #1 of 2)
     // + "00 01 c0 a8 88 0a " // MAC (ITR-RLOC #2 of 2)
     // + "00 20 00 01 01 02 03 04").array();
-    // oneOf(nps).publish(with(lispNotificationSaver));
+    // oneOf(nps).putNotification(with(lispNotificationSaver));
     // // ret(mapReply);
     // DatagramPacket packet = handleMapRequestPacket(mapRequestPacket);
     // assertEquals(2, lastMapRequest().getItrRloc().size());

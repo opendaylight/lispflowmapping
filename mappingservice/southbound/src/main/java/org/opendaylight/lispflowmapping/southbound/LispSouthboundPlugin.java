@@ -18,10 +18,10 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
@@ -44,7 +44,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispIoThread xtrThread;
     private LispSouthboundService lispSouthboundService;
     private LispXtrSouthboundService lispXtrSouthboundService;
-    private NotificationProviderService notificationService;
+    private NotificationPublishService notificationPublishService;
     private RpcProviderRegistry rpcRegistry;
     private BindingAwareBroker broker;
     private volatile DatagramSocket socket = null;
@@ -65,8 +65,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         synchronized (startLock) {
             lispSouthboundService = new LispSouthboundService(this);
             lispXtrSouthboundService = new LispXtrSouthboundService();
-            lispSouthboundService.setNotificationProvider(this.notificationService);
-            lispXtrSouthboundService.setNotificationProvider(this.notificationService);
+            lispSouthboundService.setNotificationProvider(this.notificationPublishService);
+            lispXtrSouthboundService.setNotificationProvider(this.notificationPublishService);
             if (bindingAddress == null) {
                 setLispAddress("0.0.0.0");
             }
@@ -74,8 +74,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
-    public void setNotificationProviderService(NotificationProviderService notificationService) {
-        this.notificationService = notificationService;
+    public void setNotificationPublishService(NotificationPublishService notificationService) {
+        this.notificationPublishService = notificationService;
     }
 
     public void setRpcRegistryDependency(RpcProviderRegistry rpcRegistry) {
