@@ -33,6 +33,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>distribution-karaf</artifactId>
+      <version>${project.version}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>features-lispflowmapping</artifactId>
       <version>${project.version}</version>
     </dependency>
