@@ -157,13 +157,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     // This is temporary, since the properties in the pom file are not picked up
-    // .versionAsInProject() doesn't work here, and this makes version bumping difficult
     @Override
     public String getKarafDistro() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
                 .artifactId("distribution-karaf")
-                .version("1.3.0-SNAPSHOT")
+                .versionAsInProject()
                 .type("zip")
                 .getURL();
     }
