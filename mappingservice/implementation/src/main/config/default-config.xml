@@ -2,6 +2,7 @@
 <snapshot>
     <required-capabilities>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl?module=opendaylight-sal-binding-broker-impl&amp;revision=2013-10-28</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao?module=lfm-ms-dao&amp;revision=2015-07-13</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=mappingservice-impl&amp;revision=2015-09-06</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl?module=mappingservice-shell-impl&amp;revision=2015-09-25</capability>
@@ -28,10 +29,10 @@
                       <type xmlns:dao="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao">dao:ms-dao</type>
                       <name>lfm-ms-inmemorydb</name>
                     </dao>
-                    <notification-service>
-                      <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-notification-service</type>
-                      <name>binding-notification-broker</name>
-                    </notification-service>
+                    <notification-publish-service>
+                      <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl">binding:binding-new-notification-publish-service</type>
+                      <name>binding-notification-publish-adapter</name>
+                    </notification-publish-service>
                 </module>
                 <module>
                     <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl">prefix:mappingservice-shell-impl</type>
@@ -52,6 +53,10 @@
                       <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-broker-osgi-registry</type>
                       <name>binding-osgi-broker</name>
                     </osgi-broker>
+                    <notification-service>
+                      <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl">binding:binding-new-notification-service</type>
+                      <name>binding-notification-adapter</name>
+                    </notification-service>
                     <mappingservice>
                       <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:mappingservice</type>
                       <name>mappingservice</name>

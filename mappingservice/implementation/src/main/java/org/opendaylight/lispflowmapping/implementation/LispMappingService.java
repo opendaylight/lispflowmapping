@@ -10,11 +10,10 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.NotificationListener;
-import org.opendaylight.controller.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -28,11 +27,16 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrReplyMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapreplymessage.MapReplyBuilder;
@@ -44,12 +48,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
-import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements IFlowMapping, BindingAwareProvider, IMapRequestResultHandler,
-        IMapNotifyHandler, AutoCloseable {
+        IMapNotifyHandler, LispProtoListener, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private volatile boolean shouldAuthenticate = true;
@@ -79,6 +82,10 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         this.broker = broker;
     }
 
+    public void setNotificationService(NotificationService ns) {
+        this.notificationService = ns;
+    }
+
     public void setMappingService(IMappingService ms) {
         LOG.trace("MappingService set in LispMappingService");
         this.mapService = ms;
@@ -98,8 +105,13 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         }
     }
 
+    public NotificationService getNotificationService() {
+        return this.notificationService;
+    }
+
     public void initialize() {
         broker.registerProvider(this);
+        notificationService.registerNotificationListener(this);
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, shouldAuthenticate, smr, this, notificationService);
     }
@@ -112,9 +124,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     @Override
     public void onSessionInitiated(ProviderContext session) {
         LOG.info("Lisp Consumer session initialized!");
-        notificationService = session.getSALService(NotificationService.class);
-        registerNotificationListener(AddMapping.class, new MapRegisterNotificationHandler());
-        registerNotificationListener(RequestMapping.class, new MapRequestNotificationHandler());
         this.session = session;
         LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
@@ -169,44 +178,53 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         return shouldAuthenticate;
     }
 
-    public <T extends Notification> void registerNotificationListener(Class<T> notificationType,
-            NotificationListener<T> listener) {
-        notificationService.registerNotificationListener(notificationType, listener);
-    }
-
-    private class MapRegisterNotificationHandler implements NotificationListener<AddMapping> {
-
-        @Override
-        public void onNotification(AddMapping mapRegisterNotification) {
-            MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
-            if (mapNotify != null) {
-                TransportAddressBuilder tab = new TransportAddressBuilder();
-                tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-                SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
-                smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
-                smnib.setTransportAddress(tab.build());
-                getLispSB().sendMapNotify(smnib.build());
-            } else {
-                LOG.warn("got null map notify");
-            }
+    @Override
+    public void onAddMapping(AddMapping mapRegisterNotification) {
+        MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+        if (mapNotify != null) {
+            TransportAddressBuilder tab = new TransportAddressBuilder();
+            tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
+            smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
+            smnib.setTransportAddress(tab.build());
+            getLispSB().sendMapNotify(smnib.build());
+        } else {
+            LOG.warn("got null map notify");
         }
     }
 
-    private class MapRequestNotificationHandler implements NotificationListener<RequestMapping> {
-
-        @Override
-        public void onNotification(RequestMapping mapRequestNotification) {
-            MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
-            if (mapReply != null) {
-                SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
-                smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
-                smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
-                getLispSB().sendMapReply(smrib.build());
-            } else {
-                LOG.warn("got null map reply");
-            }
+    @Override
+    public void onRequestMapping(RequestMapping mapRequestNotification) {
+        MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
+        if (mapReply != null) {
+            SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
+            smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
+            smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
+            getLispSB().sendMapReply(smrib.build());
+        } else {
+            LOG.warn("got null map reply");
         }
+    }
+
+    @Override
+    public void onGotMapReply(GotMapReply notification) {
+        LOG.debug("Received GotMapReply notification, ignoring");
+    }
+
+    @Override
+    public void onGotMapNotify(GotMapNotify notification) {
+        LOG.debug("Received GotMapNotify notification, ignoring");
+    }
+
+    @Override
+    public void onXtrRequestMapping(XtrRequestMapping notification) {
+        LOG.debug("Received XtrRequestMapping notification, ignoring");
+    }
+
+    @Override
+    public void onXtrReplyMapping(XtrReplyMapping notification) {
+        LOG.debug("Received XtrReplyMapping notification, ignoring");
     }
 
     private LispSbService getLispSB() {
