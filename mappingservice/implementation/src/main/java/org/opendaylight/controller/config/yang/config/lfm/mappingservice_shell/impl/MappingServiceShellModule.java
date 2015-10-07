@@ -1,15 +1,15 @@
-package org.opendaylight.controller.config.yang.config.lfm.mappingservice.shell.impl;
+package org.opendaylight.controller.config.yang.config.lfm.mappingservice_shell.impl;
 
 import org.opendaylight.lispflowmapping.implementation.MappingServiceShell;
 
-public class MappingServiceShellModule extends org.opendaylight.controller.config.yang.config.lfm.mappingservice.shell.impl.AbstractMappingServiceShellModule {
+public class MappingServiceShellModule extends org.opendaylight.controller.config.yang.config.lfm.mappingservice_shell.impl.AbstractMappingServiceShellModule {
     private MappingServiceShell mappingServiceShell;
 
     public MappingServiceShellModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public MappingServiceShellModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.controller.config.yang.config.lfm.mappingservice.shell.impl.MappingServiceShellModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public MappingServiceShellModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.controller.config.yang.config.lfm.mappingservice_shell.impl.MappingServiceShellModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 

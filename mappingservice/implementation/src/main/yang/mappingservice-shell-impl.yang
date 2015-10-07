@@ -1,7 +1,7 @@
 module mappingservice-shell-impl {
 
     yang-version 1;
-    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl";
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl";
     prefix "mappingservice-shell-impl";
 
     import config { prefix config; revision-date 2013-04-05; }

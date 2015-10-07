@@ -8,7 +8,7 @@ module mappingservice-impl {
     import rpc-context { prefix rpcx; revision-date 2013-06-17; }
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
     import mappingservice { prefix mappingservice; revision-date 2015-09-06; }
-    import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
+    import mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
 
     description
         "This module contains the base YANG definitions for
@@ -66,7 +66,7 @@ module mappingservice-impl {
                 uses config:service-ref {
                     refine type {
                         mandatory true;
-                        config:required-identity ms-dao:ms-dao;
+                        config:required-identity ms-dao:mappingservice-dao;
                     }
                 }
             }

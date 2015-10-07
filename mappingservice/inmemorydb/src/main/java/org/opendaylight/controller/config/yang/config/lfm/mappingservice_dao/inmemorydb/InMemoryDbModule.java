@@ -1,13 +1,13 @@
-package org.opendaylight.controller.config.yang.config.lfm.ms.dao.inmemorydb;
+package org.opendaylight.controller.config.yang.config.lfm.mappingservice_dao.inmemorydb;
 
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 
-public class InMemoryDbModule extends org.opendaylight.controller.config.yang.config.lfm.ms.dao.inmemorydb.AbstractInMemoryDbModule {
+public class InMemoryDbModule extends org.opendaylight.controller.config.yang.config.lfm.mappingservice_dao.inmemorydb.AbstractInMemoryDbModule {
     public InMemoryDbModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public InMemoryDbModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.controller.config.yang.config.lfm.ms.dao.inmemorydb.InMemoryDbModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public InMemoryDbModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.controller.config.yang.config.lfm.mappingservice_dao.inmemorydb.InMemoryDbModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 
@@ -22,4 +22,5 @@ public class InMemoryDbModule extends org.opendaylight.controller.config.yang.co
         hashMapDb.setRecordTimeOut(getRecordTimeout());
         return hashMapDb;
     }
+
 }
