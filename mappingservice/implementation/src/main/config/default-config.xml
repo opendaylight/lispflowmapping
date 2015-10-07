@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <snapshot>
     <required-capabilities>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao:inmemorydb?module=lfm-ms-inmemorydb&amp;revision=2015-07-13</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=mappingservice-impl&amp;revision=2015-09-06</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl?module=mappingservice-shell-impl&amp;revision=2015-09-25</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl?module=mappingservice-shell-impl&amp;revision=2015-09-25</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <modules xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
                 <module>
-                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:mappingservice-impl</type>
+                    <type xmlns:msi="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">msi:mappingservice-impl</type>
                     <name>mappingservice-default</name>
                     <rpc-registry>
                         <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-rpc-registry</type>
@@ -25,8 +24,8 @@
                       <name>binding-osgi-broker</name>
                     </broker>
                     <dao>
-                      <type xmlns:dao="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:ms:dao">dao:ms-dao</type>
-                      <name>lfm-ms-inmemorydb</name>
+                      <type xmlns:dao="urn:opendaylight:lfm:mappingservice-dao">dao:mappingservice-dao</type>
+                      <name>mappingservice-dao-inmemorydb</name>
                     </dao>
                     <notification-service>
                       <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-notification-service</type>
@@ -34,26 +33,26 @@
                     </notification-service>
                 </module>
                 <module>
-                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl">prefix:mappingservice-shell-impl</type>
+                    <type xmlns:shell="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl">shell:mappingservice-shell-impl</type>
                     <name>mappingservice-shell-default</name>
-                    <broker>
+                    <osgi-broker>
                       <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-broker-osgi-registry</type>
                       <name>binding-osgi-broker</name>
-                    </broker>
+                    </osgi-broker>
                     <mappingservice>
-                      <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:mappingservice</type>
+                      <type xmlns:ms="urn:opendaylight:lfm:mappingservice">ms:mappingservice</type>
                       <name>mappingservice</name>
                     </mappingservice>
                 </module>
                 <module>
-                    <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">prefix:lisp-mappingservice-impl</type>
+                    <type xmlns:ms="urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl">ms:lisp-mappingservice-impl</type>
                     <name>lisp-mappingservice-default</name>
                     <osgi-broker>
                       <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-broker-osgi-registry</type>
                       <name>binding-osgi-broker</name>
                     </osgi-broker>
                     <mappingservice>
-                      <type xmlns:prefix="urn:opendaylight:lfm:mappingservice">prefix:mappingservice</type>
+                      <type xmlns:ms="urn:opendaylight:lfm:mappingservice">ms:mappingservice</type>
                       <name>mappingservice</name>
                     </mappingservice>
                 </module>
