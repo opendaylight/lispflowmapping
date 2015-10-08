@@ -48,7 +48,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
-import org.opendaylight.controller.sal.binding.api.NotificationListener;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -61,7 +60,10 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafListAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafSegmentAddress;
@@ -69,11 +71,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.Lc
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispIpv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispMacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.ReencapHop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecordBuilder;
@@ -1696,6 +1701,34 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     }
 
+    private class XtrRequestMappingListener implements LispProtoListener {
+
+        @Override
+        public void onGotMapReply(GotMapReply notification) {
+        }
+
+        @Override
+        public void onAddMapping(AddMapping notification) {
+        }
+
+        @Override
+        public void onXtrReplyMapping(XtrReplyMapping notification) {
+        }
+
+        @Override
+        public void onRequestMapping(RequestMapping notification) {
+        }
+
+        @Override
+        public void onGotMapNotify(GotMapNotify notification) {
+        }
+
+        @Override
+        public void onXtrRequestMapping(XtrRequestMapping notification) {
+        }
+
+    }
+
     public void testRecievingNonProxyOnXtrPort() throws SocketTimeoutException, SocketException, Throwable {
         cleanUP();
         configLispPlugin.shouldListenOnXtrPort(true);
@@ -1710,10 +1743,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                         new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
                                 LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPortLow(new PortNumber(port)).build();
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
-        ((LispMappingService) lms).registerNotificationListener(XtrRequestMapping.class, new NotificationListener<XtrRequestMapping>() {
+        ((LispMappingService) lms).getNotificationService().registerNotificationListener(new XtrRequestMappingListener() {
 
             @Override
-            public void onNotification(XtrRequestMapping notification) {
+            public void onXtrRequestMapping(XtrRequestMapping notification) {
                 assertEquals(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue(),
                         eid);
                 notificationCalled = true;

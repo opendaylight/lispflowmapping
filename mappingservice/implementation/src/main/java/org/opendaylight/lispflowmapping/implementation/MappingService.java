@@ -11,10 +11,10 @@ import java.util.Arrays;
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
@@ -87,7 +87,7 @@ public class MappingService implements MappingserviceService, IMappingService, B
     private DataBroker dataBroker;
     private RpcProviderRegistry rpcRegistry;
     private BindingAwareBroker bindingAwareBroker;
-    private NotificationProviderService notificationService;
+    private NotificationPublishService notificationPublishService;
 
     private static final ConfigIni configIni = new ConfigIni();
     private boolean overwritePolicy = configIni.mappingOverwriteIsSet();
@@ -110,8 +110,8 @@ public class MappingService implements MappingserviceService, IMappingService, B
         this.bindingAwareBroker = broker;
     }
 
-    public void setNotificationService(NotificationProviderService notification) {
-        this.notificationService = notification;
+    public void setNotificationPublishService(NotificationPublishService nps) {
+        this.notificationPublishService = nps;
     }
 
     public void setDaoService(ILispDAO dao) {
@@ -137,7 +137,7 @@ public class MappingService implements MappingserviceService, IMappingService, B
         mappingSystem.initialize();
 
         keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
-        mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationService);
+        mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
     }
 
     @Override
