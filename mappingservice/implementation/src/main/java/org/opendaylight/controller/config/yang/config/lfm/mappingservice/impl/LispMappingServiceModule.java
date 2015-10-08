@@ -28,6 +28,7 @@ public class LispMappingServiceModule extends org.opendaylight.controller.config
 
         lmsService = new LispMappingService();
         lmsService.setBindingAwareBroker(getOsgiBrokerDependency());
+        lmsService.setNotificationService(getNotificationServiceDependency());
         lmsService.setMappingService(getMappingserviceDependency());
         lmsService.initialize();
 

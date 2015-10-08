@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecordBuilder;
@@ -35,20 +35,20 @@ import org.slf4j.LoggerFactory;
 public class MappingDataListener extends AbstractDataListener {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
-    private NotificationProviderService notificationProvider;
+    private NotificationPublishService notificationPublishService;
 
-    public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationProviderService notificationProvider) {
+    public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationPublishService nps) {
         setBroker(broker);
         setMappingSystem(msmr);
-        setNotificationProviderService(notificationProvider);
+        setNotificationProviderService(nps);
         setPath(InstanceIdentifier.create(MappingDatabase.class).child(InstanceId.class)
                 .child(Mapping.class));
         LOG.trace("Registering Mapping listener.");
         registerDataChangeListener();
     }
 
-    public void setNotificationProviderService(NotificationProviderService notificationProvider) {
-        this.notificationProvider = notificationProvider;
+    public void setNotificationProviderService(NotificationPublishService nps) {
+        this.notificationPublishService = nps;
     }
 
     @Override
@@ -82,7 +82,11 @@ public class MappingDataListener extends AbstractDataListener {
 
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
                         new EidToLocatorRecordBuilder(mapping).build());
-                notificationProvider.publish(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
+                try {
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
+                } catch (InterruptedException e) {
+                    LOG.warn("Notification publication interrupted!");
+                }
             }
         }
 
@@ -98,7 +102,11 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Value: {}", dataObject);
 
                 mapSystem.removeMapping(mapping.getOrigin(), mapping.getLispAddressContainer());
-                notificationProvider.publish(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
+                try {
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
+                } catch (InterruptedException e) {
+                    LOG.warn("Notification publication interrupted!");
+                }
             }
         }
     }
