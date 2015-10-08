@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.2.2-Lithium-SR2</version>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.clusterdao</artifactId>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.2.2-Lithium-SR2</version>
   <packaging>bundle</packaging>
   <name>Mapping Service Cluster DAO</name>
 
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>clustering.services</artifactId>
-      <version>0.6.2-SNAPSHOT</version>
+      <version>0.6.2-Lithium-SR2</version>
     </dependency>
   </dependencies>
 

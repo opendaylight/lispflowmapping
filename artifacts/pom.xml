@@ -11,7 +11,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>lispflowmapping-artifacts</artifactId>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.2.2-Lithium-SR2</version>
   <packaging>pom</packaging>
   <name>LISP Flow Mapping Artifacts</name>
 
