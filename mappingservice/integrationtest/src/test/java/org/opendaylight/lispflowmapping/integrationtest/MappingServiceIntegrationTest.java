@@ -13,32 +13,21 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import org.apache.commons.codec.binary.Base64;
 //import org.codehaus.jettison.json.JSONException;
 //import org.codehaus.jettison.json.JSONObject;
 //import org.codehaus.jettison.json.JSONTokener;
@@ -94,17 +83,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lc
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.Hops;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.HopsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafKeyValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafsegment.LcafSegmentAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcaftrafficengineering.LcafTrafficEngineeringAddrBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
@@ -128,7 +114,6 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -307,7 +292,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Inject
     private BundleContext bc;
-    private HttpURLConnection connection;
+    //private HttpURLConnection connection;
     protected static boolean notificationCalled;
 
     @Inject @Filter(timeout=60000)
@@ -1623,14 +1608,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapReply = receiveMapReply();
         assertCorrectMapReplyTTLAndAction(mapReply, 15, Action.NativelyForward);
     }
-
+/*
     private void testTTLAfterAutherize(MapRequest mapRequest) throws SocketTimeoutException {
         MapReply mapReply;
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertCorrectMapReplyTTLAndAction(mapReply, 1, Action.NativelyForward);
     }
-
+*/
     private void assertCorrectMapReplyTTLAndAction(MapReply mapReply, int expectedTTL, Action expectedAction) {
         assertEquals(expectedTTL, mapReply.getEidToLocatorRecord().get(0).getRecordTtl().intValue());
         assertEquals(expectedAction, mapReply.getEidToLocatorRecord().get(0).getAction());
@@ -1920,7 +1905,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void areWeReady() throws InvalidSyntaxException {
         try {
             Thread.sleep(5000);
@@ -1961,7 +1945,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
         // assertNotNull(broker);
 
-        ServiceReference r = null;
         configLispPlugin.setLispAddress(lispBindAddress);
 
         // Uncomment this code to Know which services were actually loaded to
@@ -1982,7 +1965,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void cleanUP() {
         after();
-        mapService.cleanCachedMappings();;
+        mapService.cleanCachedMappings();
         configLispPlugin.shouldListenOnXtrPort(false);
         socket = initSocket(socket, LispMessage.PORT_NUM);
 
