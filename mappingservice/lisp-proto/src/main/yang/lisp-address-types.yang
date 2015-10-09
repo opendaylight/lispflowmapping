@@ -42,19 +42,29 @@ module lisp-address-types {
        families are derived.";
   }
   identity no-address {
-      base lisp-address-family;
-      description
-        "IANA Reserved.";
+    base lisp-address-family;
+    description
+      "IANA Reserved.";
     }
   identity ipv4 {
     base lisp-address-family;
     description
       "IANA IPv4 address family.";
   }
+  identity ipv4-prefix {
+    base lisp-address-family;
+    description
+      "IANA IPv4 address family prefix.";
+  }
   identity ipv6 {
     base lisp-address-family;
     description
       "IANA IPv6 address family.";
+  }
+  identity ipv6-prefix {
+    base lisp-address-family;
+    description
+      "IANA IPv6 address family prefix.";
   }
   identity mac {
     base lisp-address-family;
@@ -549,12 +559,30 @@ module lisp-address-types {
           description
             "When AFI is IPv4.";
         }
-        type inet:ipv4-prefix;
+        type inet:ipv4-address;
         description
           "IPv4 address.";
       }
+      leaf ipv4-prefix {
+        when "../../afi = 'laddr:ipv4-prefix'" {
+          description
+            "When AFI is IPv4.";
+        }
+        type inet:ipv4-prefix;
+        description
+          "IPv4 prefix.";
+      }
       leaf ipv6 {
         when "../../afi = 'laddr:ipv6'" {
+          description
+            "When AFI is IPv6.";
+        }
+        type inet:ipv6-address;
+        description
+          "IPv6 address.";
+      }
+      leaf ipv6-prefix {
+        when "../../afi = 'laddr:ipv6-prefix'" {
           description
             "When AFI is IPv6.";
         }
