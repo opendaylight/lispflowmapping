@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_41ab4ed6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-09T10:35:23Z",
+      "side": 1,
+      "message": "This is not that pretty. Hopefully we\u0027ll get to move lisp-sb notifications out of lisp-proto.",
+      "range": {
+        "startLine": 55,
+        "startChar": 27,
+        "endLine": 55,
+        "endChar": 44
+      },
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e1905a97",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1730,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-09T10:35:23Z",
+      "side": 1,
+      "message": "Do we really need this? Can\u0027t we use LispMappingService instead? See comment lower also.",
+      "range": {
+        "startLine": 1704,
+        "startChar": 0,
+        "endLine": 1730,
+        "endChar": 5
+      },
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_41926ea0",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1746,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-09T10:35:23Z",
+      "side": 1,
+      "message": "Can\u0027t we just use LispMappingService here instead of the dummy class?",
+      "range": {
+        "startLine": 1746,
+        "startChar": 89,
+        "endLine": 1746,
+        "endChar": 120
+      },
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
