@@ -122,6 +122,24 @@
       "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e11a9a16",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1746,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-09T11:47:57Z",
+      "side": 1,
+      "message": "Well, LispMappingService\u0027s constructor does nothing, on purpose, because the actual initialization is done post configuration. So constructing another LispMappingService should have close to no coast. Having said that, I\u0027m not that strongly against using the dummy class, it\u0027s just that it looks cleaner to my eyes not to duplicate code when possible.",
+      "parentUuid": "1a76adc5_c162feac",
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
