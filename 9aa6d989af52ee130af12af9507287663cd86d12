@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_e155bac6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-09T11:20:47Z",
+      "side": 1,
+      "message": "Yeah, as we discussed previously, they don\u0027t belong there, they\u0027re just a remnant of our former \"one yang file\" approach. I\u0027ll put it on my TODO to move them from lisp-proto to api\u0027s lisp-sb.",
+      "parentUuid": "1a76adc5_41ab4ed6",
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_e1905a97",
         "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 3
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_6159aafd",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1730,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-09T11:20:47Z",
+      "side": 1,
+      "message": "See below.",
+      "parentUuid": "1a76adc5_e1905a97",
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_41926ea0",
         "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 3
@@ -65,6 +101,24 @@
         "endLine": 1746,
         "endChar": 120
       },
+      "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c162feac",
+        "filename": "mappingservice/integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1746,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-09T11:20:47Z",
+      "side": 1,
+      "message": "I\u0027m a bit weary of adding a new instance of LispMappingService. For one, it could add unintended side-effects to an already complex and fragile system that are the integration tests, and we already using another instance. While the code may not be that nice, I think it is a lot more robust this way, one less thing to worry about.",
+      "parentUuid": "1a76adc5_41926ea0",
       "revId": "9aa6d989af52ee130af12af9507287663cd86d12",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
