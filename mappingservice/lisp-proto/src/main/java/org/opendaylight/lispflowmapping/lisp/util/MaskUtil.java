@@ -14,6 +14,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.LispAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lcaf.address.address.instance.id.InstanceId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafSegmentAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafSourceDestAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
@@ -48,6 +51,15 @@ import org.slf4j.LoggerFactory;
 
 public class MaskUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MaskUtil.class);
+    public static boolean isMaskable(LispAddress address) {
+        if (address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4 ||
+            address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6 ||
+            address instanceof InstanceId) {
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isMaskable(LispAFIAddress address) {
         if (address instanceof Ipv4Address || address instanceof Ipv6Address || address instanceof LcafSegmentAddr) {
             return true;
@@ -227,6 +239,28 @@ public class MaskUtil {
         } else {
             return 0;
         }
+    }
+
+    public static short getMaskForAddress(SimpleAddress address) {
+        return 0;
+    }
+
+    public static short getMaskForAddress(LispAddress address) {
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.Address addr = address.getAddress();
+        if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4) {
+            return 32;
+        } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6) {
+            return 128;
+        } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4Prefix) {
+            String[] prefix = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4Prefix)addr).getIpv4Prefix().getValue().split("/");
+            return Short.parseShort(prefix[1]);
+        } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6Prefix) {
+            String[] prefix = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6Prefix)addr).getIpv6Prefix().getValue().split("/");
+            return Short.parseShort(prefix[1]);
+        } else if (addr instanceof InstanceId) {
+            return getMaskForAddress(((InstanceId)addr).getAddress());
+        }
+        return 0;
     }
 
     public static short getMaskForAddress(LispAddressContainer addr) {
