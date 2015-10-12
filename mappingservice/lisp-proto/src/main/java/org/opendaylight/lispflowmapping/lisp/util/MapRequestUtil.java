@@ -13,10 +13,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.SourceEidBuilder;
@@ -29,7 +25,7 @@ public class MapRequestUtil {
         }
         InetAddress selectedItrRloc = null;
         for (ItrRloc itr : request.getItrRloc()) {
-            Address addr = itr.getLispAddressContainer().getAddress();
+            Address addr = itr.getAddress();
             if (addr instanceof Ipv4) {
                 try {
                     selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4Address().getIpv4Address().getValue());
