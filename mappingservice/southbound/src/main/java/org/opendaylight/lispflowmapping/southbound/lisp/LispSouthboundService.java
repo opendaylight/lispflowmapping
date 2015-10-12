@@ -12,7 +12,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispSouthboundService implements ILispSouthboundService {
-    private NotificationProviderService notificationProvider;
+    private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundService.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
@@ -53,8 +53,8 @@ public class LispSouthboundService implements ILispSouthboundService {
         }
     }
 
-    public void setNotificationProvider(NotificationProviderService nps) {
-        this.notificationProvider = nps;
+    public void setNotificationProvider(NotificationPublishService nps) {
+        this.notificationPublishService = nps;
     }
 
     public void handlePacket(DatagramPacket packet) {
@@ -105,14 +105,16 @@ public class LispSouthboundService implements ILispSouthboundService {
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationProvider != null) {
-                notificationProvider.publish(requestMappingBuilder.build());
+            if (notificationPublishService != null) {
+                notificationPublishService.putNotification(requestMappingBuilder.build());
                 LOG.trace("MapRequest was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 
@@ -145,14 +147,16 @@ public class LispSouthboundService implements ILispSouthboundService {
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationProvider != null) {
-                notificationProvider.publish(addMappingBuilder.build());
+            if (notificationPublishService != null) {
+                notificationPublishService.putNotification(addMappingBuilder.build());
                 LOG.trace("MapRegister was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 
@@ -165,14 +169,16 @@ public class LispSouthboundService implements ILispSouthboundService {
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapNotifyBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationProvider != null) {
-                notificationProvider.publish(gotMapNotifyBuilder.build());
+            if (notificationPublishService != null) {
+                notificationPublishService.putNotification(gotMapNotifyBuilder.build());
                 LOG.trace("MapNotify was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Notify (len=" + inBuffer.capacity() + ")", re);
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 
@@ -185,14 +191,16 @@ public class LispSouthboundService implements ILispSouthboundService {
             transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapReplyBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationProvider != null) {
-                notificationProvider.publish(gotMapReplyBuilder.build());
+            if (notificationPublishService != null) {
+                notificationPublishService.putNotification(gotMapReplyBuilder.build());
                 LOG.trace("MapReply was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + inBuffer.capacity() + ")", re);
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 

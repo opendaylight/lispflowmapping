@@ -28,7 +28,7 @@ public class MappingServiceModule extends org.opendaylight.controller.config.yan
         mappingService.setBindingAwareBroker(getBrokerDependency());
         mappingService.setDataBroker(getDataBrokerDependency());
         mappingService.setRpcProviderRegistry(getRpcRegistryDependency());
-        mappingService.setNotificationService(getNotificationServiceDependency());
+        mappingService.setNotificationPublishService(getNotificationPublishServiceDependency());
         mappingService.setDaoService(getDaoDependency());
         mappingService.initialize();
 

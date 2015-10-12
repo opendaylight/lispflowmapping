@@ -1,7 +1,7 @@
 module mappingservice-shell-impl {
 
     yang-version 1;
-    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:shell:impl";
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl";
     prefix "mappingservice-shell-impl";
 
     import config { prefix config; revision-date 2013-04-05; }
@@ -26,7 +26,7 @@ module mappingservice-shell-impl {
     augment "/config:modules/config:module/config:configuration" {
         case mappingservice-shell-impl {
             when "/config:modules/config:module/config:type = 'mappingservice-shell-impl'";
-            container broker {
+            container osgi-broker {
                 uses config:service-ref {
                     refine type {
                         mandatory true;

@@ -17,8 +17,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.controller.sal.binding.api.NotificationListener;
-import org.opendaylight.controller.sal.binding.api.NotificationService;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -42,13 +41,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingserviceListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-public class MapServer implements IMapServerAsync {
+public class MapServer implements IMapServerAsync, MappingserviceListener {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private IMappingService mapService;
@@ -66,7 +66,7 @@ public class MapServer implements IMapServerAsync {
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
         if (notificationService != null) {
-            subscribeToMappingNotifications();
+            notificationService.registerNotificationListener(this);
         }
     }
 
@@ -125,21 +125,15 @@ public class MapServer implements IMapServerAsync {
         return (mapRegister.getSiteId() != null) ? new SiteId(mapRegister.getSiteId()) : null;
     }
 
-    private class MappingChangedNotificationHandler implements NotificationListener<MappingChanged> {
-        @Override
-        public void onNotification(MappingChanged notification) {
-            if (subscriptionService) {
-                sendSmrs(new EidToLocatorRecordBuilder(notification.getMapping()).build(), getSubscribers(notification
-                        .getMapping().getLispAddressContainer()));
-                if (notification.getChange().equals(MappingChange.Removed)) {
-                    removeSubscribers(notification.getMapping().getLispAddressContainer());
-                }
+    @Override
+    public void onMappingChanged(MappingChanged notification) {
+        if (subscriptionService) {
+            sendSmrs(new EidToLocatorRecordBuilder(notification.getMapping()).build(), getSubscribers(notification
+                    .getMapping().getLispAddressContainer()));
+            if (notification.getChange().equals(MappingChange.Removed)) {
+                removeSubscribers(notification.getMapping().getLispAddressContainer());
             }
         }
-    }
-
-    private void subscribeToMappingNotifications() {
-        notificationService.registerNotificationListener(MappingChanged.class, new MappingChangedNotificationHandler());
     }
 
     private void sendSmrs(EidToLocatorRecord record, Set<SubscriberRLOC> subscribers) {

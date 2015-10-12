@@ -7,8 +7,9 @@ module mappingservice-impl {
     import config { prefix config; revision-date 2013-04-05; }
     import rpc-context { prefix rpcx; revision-date 2013-06-17; }
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+    import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
     import mappingservice { prefix mappingservice; revision-date 2015-09-06; }
-    import lfm-ms-dao { prefix ms-dao; revision-date 2015-07-13; }
+    import mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
 
     description
         "This module contains the base YANG definitions for
@@ -66,15 +67,15 @@ module mappingservice-impl {
                 uses config:service-ref {
                     refine type {
                         mandatory true;
-                        config:required-identity ms-dao:ms-dao;
+                        config:required-identity ms-dao:mappingservice-dao;
                     }
                 }
             }
-            container notification-service {
+            container notification-publish-service {
                 uses config:service-ref {
                     refine type {
                         mandatory true;
-                        config:required-identity mdsal:binding-notification-service;
+                        config:required-identity sal-broker:binding-new-notification-publish-service;
                     }
                 }
             }
@@ -86,6 +87,14 @@ module mappingservice-impl {
                     refine type {
                         mandatory true;
                         config:required-identity mdsal:binding-broker-osgi-registry;
+                    }
+                }
+            }
+            container notification-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity sal-broker:binding-new-notification-service;
                     }
                 }
             }

@@ -7,6 +7,7 @@ module lfm-mappingservice-sb-impl {
   import config { prefix config; revision-date 2013-04-05; }
   import rpc-context { prefix rpcx; revision-date 2013-06-17; }
   import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+  import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
   import lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
 
   description
@@ -39,11 +40,11 @@ module lfm-mappingservice-sb-impl {
           }
       }
 
-      container notification-service {
+      container notification-publish-service {
           uses config:service-ref {
               refine type {
                   mandatory true;
-                  config:required-identity mdsal:binding-notification-service;
+                  config:required-identity sal-broker:binding-new-notification-publish-service;
               }
           }
       }

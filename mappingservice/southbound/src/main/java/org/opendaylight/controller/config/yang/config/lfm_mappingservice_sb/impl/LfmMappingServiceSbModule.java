@@ -8,13 +8,7 @@
 
 package org.opendaylight.controller.config.yang.config.lfm_mappingservice_sb.impl;
 
-import java.net.DatagramPacket;
-
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundRPC;
-import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -40,7 +34,7 @@ public class LfmMappingServiceSbModule extends org.opendaylight.controller.confi
         LOG.debug("LfmMappingServiceSb Module up!");
 
         sbPlugin = new LispSouthboundPlugin();
-        sbPlugin.setNotificationProviderService(getNotificationServiceDependency());
+        sbPlugin.setNotificationPublishService(getNotificationPublishServiceDependency());
         sbPlugin.setRpcRegistryDependency(getRpcRegistryDependency());
         sbPlugin.setBindingAwareBroker(getBrokerDependency());
         sbPlugin.init();
