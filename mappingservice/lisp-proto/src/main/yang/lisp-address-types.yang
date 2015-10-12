@@ -41,133 +41,133 @@ module lisp-address-types {
       "Base identity from which identities describing LISP address
        families are derived.";
   }
-  identity no-address {
+  identity no-address-afi {
     base lisp-address-family;
     description
       "IANA Reserved.";
     }
-  identity ipv4 {
+  identity ipv4-afi {
     base lisp-address-family;
     description
       "IANA IPv4 address family.";
   }
-  identity ipv4-prefix {
+  identity ipv4-prefix-afi {
     base lisp-address-family;
     description
       "IANA IPv4 address family prefix.";
   }
-  identity ipv6 {
+  identity ipv6-afi {
     base lisp-address-family;
     description
       "IANA IPv6 address family.";
   }
-  identity ipv6-prefix {
+  identity ipv6-prefix-afi {
     base lisp-address-family;
     description
       "IANA IPv6 address family prefix.";
   }
-  identity mac {
+  identity mac-afi {
     base lisp-address-family;
     description
       "IANA MAC address family.";
   }
-  identity distinguished-name {
+  identity distinguished-name-afi {
     base lisp-address-family;
     description
       "IANA Distinguished Name address family.";
   }
-  identity as-number {
+  identity as-number-afi {
       base lisp-address-family;
       description
         "IANA AS Number address family.";
   }
-  identity lcaf {
+  identity lcaf-afi {
     base lisp-address-family;
     description
       "IANA LISP Canonical Address Format address family.";
   }
   identity null-address {
-    base lcaf;
+    base lcaf-afi;
     description
       "Null body LCAF type.";
   }
   identity afi-list {
-    base lcaf;
+    base lcaf-afi;
     description
       "AFI-List LCAF type.";
   }
   identity instance-id {
-    base lcaf;
+    base lcaf-afi;
     description
       "Instance-ID LCAF type.";
   }
   identity as-number-lcaf {
-    base lcaf;
+    base lcaf-afi;
     description
       "AS Number LCAF type.";
   }
   identity application-data {
-    base lcaf;
+    base lcaf-afi;
     description
       "Application Data LCAF type.";
   }
   identity geo-coordinates {
-    base lcaf;
+    base lcaf-afi;
     description
       "Geo-coordinates LCAF type.";
   }
   identity opaque-key {
-    base lcaf;
+    base lcaf-afi;
     description
       "Opaque Key LCAF type.";
   }
   identity nat-traversal {
-    base lcaf;
+    base lcaf-afi;
     description
       "NAT-Traversal LCAF type.";
   }
   identity nonce-locator {
-    base lcaf;
+    base lcaf-afi;
     description
       "Nonce-Locator LCAF type.";
   }
   identity multicast-info {
-    base lcaf;
+    base lcaf-afi;
     description
       "Multicast Info LCAF type.";
   }
   identity explicit-locator-path {
-    base lcaf;
+    base lcaf-afi;
     description
       "Explicit Locator Path LCAF type.";
   }
   identity security-key {
-    base lcaf;
+    base lcaf-afi;
     description
       "Security Key LCAF type.";
   }
   identity source-dest-key {
-    base lcaf;
+    base lcaf-afi;
     description
       "Source/Dest LCAF type.";
   }
   identity replication-list {
-    base lcaf;
+    base lcaf-afi;
     description
       "Replication-List LCAF type.";
   }
   identity json-data-model {
-    base lcaf;
+    base lcaf-afi;
     description
       "JSON Data Model LCAF type.";
   }
   identity key-value-address {
-    base lcaf;
+    base lcaf-afi;
     description
       "Key-Value LCAF type.";
   }
   identity encapsulation-format {
-    base lcaf;
+    base lcaf-afi;
     description
       "Encapsulation Format LCAF type.";
   }
@@ -204,9 +204,9 @@ module lisp-address-types {
     description
       "LISP address family reference.";
   }
-  typedef lcaf-ref {
+  typedef lcaf-address-family-ref {
     type identityref {
-      base lcaf;
+      base lcaf-afi;
     }
     description
       "LCAF types reference.";
@@ -215,7 +215,7 @@ module lisp-address-types {
     description
       "Group of all the LCAF types.";
     leaf lcaf-type {
-      type lcaf-ref;
+      type lcaf-address-family-ref;
       mandatory true;
       description
         "Enumeration of LCAF types.";
@@ -546,7 +546,7 @@ module lisp-address-types {
     }
     choice address {
       leaf no-address {
-        when "../../afi = 'laddr:no-addr'" {
+        when "../../afi = 'laddr:no-addr-afi'" {
           description
             "When AFI is 0.";
         }
@@ -555,7 +555,7 @@ module lisp-address-types {
           "No address.";
       }
       leaf ipv4 {
-        when "../../afi = 'laddr:ipv4'" {
+        when "../../afi = 'laddr:ipv4-afi'" {
           description
             "When AFI is IPv4.";
         }
@@ -564,7 +564,7 @@ module lisp-address-types {
           "IPv4 address.";
       }
       leaf ipv4-prefix {
-        when "../../afi = 'laddr:ipv4-prefix'" {
+        when "../../afi = 'laddr:ipv4-prefix-afi'" {
           description
             "When AFI is IPv4.";
         }
@@ -573,7 +573,7 @@ module lisp-address-types {
           "IPv4 prefix.";
       }
       leaf ipv6 {
-        when "../../afi = 'laddr:ipv6'" {
+        when "../../afi = 'laddr:ipv6-afi'" {
           description
             "When AFI is IPv6.";
         }
@@ -582,7 +582,7 @@ module lisp-address-types {
           "IPv6 address.";
       }
       leaf ipv6-prefix {
-        when "../../afi = 'laddr:ipv6-prefix'" {
+        when "../../afi = 'laddr:ipv6-prefix-afi'" {
           description
             "When AFI is IPv6.";
         }
@@ -591,7 +591,7 @@ module lisp-address-types {
           "IPv6 address.";
       }
       leaf mac {
-        when "../../afi = 'laddr:mac'" {
+        when "../../afi = 'laddr:mac-afi'" {
           description
             "When AFI is MAC.";
         }
@@ -600,7 +600,7 @@ module lisp-address-types {
           "MAC address.";
       }
       leaf distinguished-name {
-        when "../../afi = 'laddr:distinguished-name'" {
+        when "../../afi = 'laddr:distinguished-name-afi'" {
           description
             "When AFI is distinguished-name.";
         }
@@ -609,7 +609,7 @@ module lisp-address-types {
           "Distinguished Name address.";
       }
       leaf as-number {
-          when "../../afi = 'laddr:as-number'" {
+          when "../../afi = 'laddr:as-number-afi'" {
             description
               "When AFI is as-number.";
           }
@@ -618,7 +618,7 @@ module lisp-address-types {
             "AS Number.";
         }
       container lcaf {
-        when "../../afi = 'laddr:lcaf'" {
+        when "../../afi = 'laddr:lcaf-afi'" {
           description
             "When AFI is LCAF.";
         }
