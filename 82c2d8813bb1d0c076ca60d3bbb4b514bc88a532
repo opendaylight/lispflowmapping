@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e7d70522",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-10-13T01:51:33Z",
+      "side": 1,
+      "message": "typo here: calf",
+      "range": {
+        "startLine": 164,
+        "startChar": 34,
+        "endLine": 164,
+        "endChar": 35
+      },
+      "revId": "82c2d8813bb1d0c076ca60d3bbb4b514bc88a532",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
