@@ -22,6 +22,24 @@
       "revId": "82c2d8813bb1d0c076ca60d3bbb4b514bc88a532",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e764e54a",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-13T08:14:58Z",
+      "side": 1,
+      "message": "Fixed.",
+      "parentUuid": "1a76adc5_e7d70522",
+      "revId": "82c2d8813bb1d0c076ca60d3bbb4b514bc88a532",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
