@@ -395,7 +395,9 @@ module lisp-proto {
             }
 
             //locator address
-            uses lisp-address:lisp-address;
+            container rloc {
+                uses lisp-address:lisp-address;
+            }
         }
     }
 
@@ -421,7 +423,9 @@ module lisp-proto {
             type boolean;
         }
         // EID prefix
-        uses lisp-address:lisp-address;
+        container eid {
+            uses lisp-address:lisp-address;
+        }
 
         // locator record list
         uses LocatorRecords;

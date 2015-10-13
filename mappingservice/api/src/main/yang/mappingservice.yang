@@ -86,15 +86,15 @@ module mappingservice {
 
     grouping db-instance {
         description "Describes the mappings belonging to the same Instance ID";
-        leaf iid {
+        leaf iid-uri {
             description "The 24-bit Instance ID";
             type iid-uri;
         }
         list mapping {
             description "A list of EID-to-RLOC mappings within the same Instance ID";
-            key "eid origin";
+            key "eid-uri origin";
             ext:context-instance "eid-context";
-            leaf eid {
+            leaf eid-uri {
                 type eid-uri;
             }
             leaf origin {
@@ -109,9 +109,9 @@ module mappingservice {
         }
         list authentication-key {
             description "A list of authentication keys for EID prefixes within the same Instance ID";
-            key "eid";
+            key "eid-uri";
             ext:context-instance "eid-context";
-            leaf eid {
+            leaf eid-uri {
                 type eid-uri;
             }
             uses lisp-address:lisp-address;
@@ -123,7 +123,7 @@ module mappingservice {
         description "The LISP EID-to-RLOC mapping database";
         list instance-id {
             description "A list of LISP Instance IDs";
-            key "iid";
+            key "iid-uri";
             ext:context-instance "instance-id-context";
             uses db-instance;
         }
