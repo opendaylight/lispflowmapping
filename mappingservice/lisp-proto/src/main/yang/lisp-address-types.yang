@@ -164,7 +164,7 @@ module lisp-address-types {
   identity key-value-address-lcaf {
     base lcaf;
     description
-      "Key-Value LCAF type.";
+      "Key/Value Address LCAF type.";
   }
   identity encapsulation-format-lcaf {
     base lcaf;
@@ -526,6 +526,27 @@ module lisp-address-types {
           type inet:ip-prefix;
           description
             "Destination prefix.";
+        }
+      }
+      container key-value-address {
+        when "../../lcaf-type = key-value-address-lcaf" {
+          description
+            "When LCAF type type is Key/Value Address.";
+        }
+        description
+          "Key/Value Address LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.11";
+        leaf key {
+          type simple-address;
+          description
+            "Address as Key.";
+        }
+        leaf value {
+          type simple-address;
+          description
+            "Address as Value.";
         }
       }
     }
