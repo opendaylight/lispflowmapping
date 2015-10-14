@@ -178,6 +178,14 @@ module lisp-address-types {
     description
       "Defines the range of values for an Instance ID.";
   }
+  typedef distinguished-name-type {
+    type string;
+    description
+      "Distinguished Name address.";
+    reference
+      "http://www.iana.org/assignments/address-family-numbers/
+       address-family-numbers.xhtml";
+  }
   typedef simple-address {
     type union {
       type inet:ip-address;
@@ -188,14 +196,6 @@ module lisp-address-types {
     }
     description
       "Union of address types that can be part of LCAFs.";
-  }
-  typedef distinguished-name {
-    type string;
-    description
-      "Distinguished Name address.";
-    reference
-      "http://www.iana.org/assignments/address-family-numbers/
-       address-family-numbers.xhtml";
   }
   typedef lisp-address-family-ref {
     type identityref {
@@ -261,7 +261,7 @@ module lisp-address-types {
         reference
           "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
            #section-4.2";
-        leaf instance-id {
+        leaf iid {
           type instance-id-type;
           description
             "Instance ID value.";
@@ -539,7 +539,7 @@ module lisp-address-types {
       description
         "LISP address family AFI.";
     }
-    leaf instance-id {
+    leaf tenant-id {
       type instance-id-type;
       description
         "Instance ID of the address.";
