@@ -105,7 +105,9 @@ module mappingservice {
                 description "Site ID";
                 type site-id;
             }
-            uses lisp-proto:EidToLocatorRecord;
+            container eid {
+                uses lisp-proto:EidToLocatorRecord;
+            }
         }
         list authentication-key {
             description "A list of authentication keys for EID prefixes within the same Instance ID";
@@ -114,8 +116,12 @@ module mappingservice {
             leaf eid-uri {
                 type eid-uri;
             }
-            uses lisp-address:lisp-address;
-            uses mapping-authkey;
+            container eid {
+                uses lisp-address:lisp-address;
+            }
+            container key {
+                uses mapping-authkey;
+            }
         }
     }
 
@@ -131,17 +137,25 @@ module mappingservice {
 
     rpc add-key {
         input {
-            uses lisp-address:lisp-address;
-            uses mapping-authkey;
+            container eid {
+                uses lisp-address:lisp-address;
+            }
+            container key {
+                uses mapping-authkey;
+            }
         }
     }
 
     rpc get-key {
         input {
-            uses lisp-address:lisp-address;
+            container eid {
+                uses lisp-address:lisp-address;
+            }
         }
         output {
-            uses mapping-authkey;
+            container key {
+                uses mapping-authkey;
+            }
         }
     }
 
@@ -158,34 +172,46 @@ module mappingservice {
 
     rpc remove-key {
         input {
-            uses lisp-address:lisp-address;
+            container eid {
+                uses lisp-address:lisp-address;
+            }
         }
     }
 
     rpc add-mapping {
         input {
-            uses lisp-proto:EidToLocatorRecord;
+            container mapping {
+                uses lisp-proto:EidToLocatorRecord;
+            }
         }
     }
 
     rpc get-mapping {
         input {
-            uses lisp-address:lisp-address;
+            container mapping {
+                uses lisp-address:lisp-address;
+            }
         }
         output {
-            uses lisp-proto:EidToLocatorRecords;
+            container mapping {
+                uses lisp-proto:EidToLocatorRecords;
+            }
         }
     }
 
     rpc update-mapping {
         input {
-            uses lisp-proto:EidToLocatorRecord;
+            container mapping {
+                uses lisp-proto:EidToLocatorRecord;
+            }
         }
     }
 
     rpc remove-mapping {
         input {
-            uses lisp-address:lisp-address;
+            container eid {
+                uses lisp-address:lisp-address;
+            }
         }
     }
 
