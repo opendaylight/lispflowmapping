@@ -22,6 +22,24 @@
       "revId": "a9587675d47981eb6aa727f8f79d3cd7b10da117",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_72eead8d",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-19T08:30:18Z",
+      "side": 1,
+      "message": "Sure, I\u0027ll respin the patch with virtual-network-id (we should avoid capital letters in new YANG models).",
+      "parentUuid": "fad0f9df_393b30ed",
+      "revId": "a9587675d47981eb6aa727f8f79d3cd7b10da117",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
