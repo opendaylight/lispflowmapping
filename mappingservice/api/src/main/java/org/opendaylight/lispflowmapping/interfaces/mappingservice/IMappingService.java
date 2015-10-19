@@ -8,7 +8,7 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 
@@ -33,7 +33,7 @@ public interface IMappingService {
      * @param data
      *            Value to be stored
      */
-    void addMapping(MappingOrigin origin, LispAddressContainer key, SiteId siteId, Object data);
+    void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data);
 
     /**
      * Retrieves mapping with given origin for the provided key. The lookup policy for the key is defined in the Mapping
@@ -45,7 +45,7 @@ public interface IMappingService {
      *            Key to be looked up
      * @return Returns the object found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(MappingOrigin origin, LispAddressContainer key);
+    Object getMapping(MappingOrigin origin, Eid key);
 
     /**
      * Retrieves mapping for given key.The lookup policy for the key is defined in the Mapping
@@ -55,7 +55,7 @@ public interface IMappingService {
      *            Key to be looked up
      * @return Returns the object found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(LispAddressContainer key);
+    Object getMapping(Eid key);
 
     /**
      * Retrieves mapping with a Source/Dest policy. This method is meant to avoid the overhead of building
@@ -67,7 +67,7 @@ public interface IMappingService {
      *            Destination key being looked up
      * @return Returns the object found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(LispAddressContainer srcKey, LispAddressContainer dstKey);
+    Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
      * Remove mapping
@@ -77,7 +77,7 @@ public interface IMappingService {
      * @param key
      *            Key to be removed
      */
-    void removeMapping(MappingOrigin origin, LispAddressContainer key);
+    void removeMapping(MappingOrigin origin, Eid key);
 
     /**
      * Add authentication key
@@ -87,7 +87,7 @@ public interface IMappingService {
      * @param authKey
      *            The authentication key
      */
-    void addAuthenticationKey(LispAddressContainer key, String authKey);
+    void addAuthenticationKey(Eid key, String authKey);
 
     /**
      * Retrieve authentication key
@@ -96,7 +96,7 @@ public interface IMappingService {
      *            The key for which the authentication key is being looked up.
      * @return The authentication key.
      */
-    String getAuthenticationKey(LispAddressContainer key);
+    String getAuthenticationKey(Eid key);
 
     /**
      * Remove authentication key
@@ -104,7 +104,7 @@ public interface IMappingService {
      * @param key
      *            Key for which the authentication key should be removed.
      */
-    void removeAuthenticationKey(LispAddressContainer key);
+    void removeAuthenticationKey(Eid key);
 
     /**
      * Generic addition of data. Not stored in MD-SAL datastore!
@@ -118,7 +118,7 @@ public interface IMappingService {
      * @param data
      *            The data to be stored
      */
-    void addData(MappingOrigin origin, LispAddressContainer key, String subKey, Object data);
+    void addData(MappingOrigin origin, Eid key, String subKey, Object data);
 
     /**
      * Generic retrieval of data
@@ -131,7 +131,7 @@ public interface IMappingService {
      *            The subKey where data is stored
      * @return The data
      */
-    Object getData(MappingOrigin origin, LispAddressContainer key, String subKey);
+    Object getData(MappingOrigin origin, Eid key, String subKey);
 
     /**
      * Generic removal of data
@@ -143,7 +143,7 @@ public interface IMappingService {
      * @param subKey
      *            The subKey of the data to be removed
      */
-    void removeData(MappingOrigin origin, LispAddressContainer key, String subKey);
+    void removeData(MappingOrigin origin, Eid key, String subKey);
 
     /**
      * Configures Mapping Service mapping overwrite option. If set to true, mappings with the same key are overwritten,

@@ -14,6 +14,8 @@ import java.net.InetAddress;
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafkeyvalueaddress.KeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafkeyvalueaddress.ValueBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
@@ -28,11 +30,49 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.li
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.MacBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.distinguishedname.DistinguishedNameAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.mac.MacAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4PrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6PrefixBuilder;
 
 public class LispAFIConvertor {
+
+    public static Eid toEid(Eid eid, IpPrefix prefix) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAfi(eid.getAfi());
+        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
+        // XXX Not sure if the below actually works as expected... also, what happens to AFI?
+        builder.setAddress((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.Address)prefix);
+        return builder.build();
+    }
+
+    public static Eid asIpv4Prefix(Eid eid, Inet4Address address, short mask) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAfi(eid.getAfi());
+        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
+        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new Ipv4Prefix(getStringPrefix(address, mask))).build());
+        return builder.build();
+    }
+
+    public static Eid asIpv6Prefix(Eid eid, Inet6Address address, short mask) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAfi(eid.getAfi());
+        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
+        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(new Ipv6Prefix(getStringPrefix(address, mask))).build());
+        return builder.build();
+    }
+
+    private static String getStringPrefix(InetAddress address, short mask) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(address.getHostAddress());
+        sb.append("/");
+        sb.append(mask);
+        return sb.toString();
+    }
 
     public static LispAddressContainer toContainer(LispAFIAddress address) {
         Address addr = null;
@@ -260,34 +300,6 @@ public class LispAFIConvertor {
         return new LispAddressContainerBuilder().setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4Builder()
         .setIpv4Address(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder()
         .setIpv4Address(new Ipv4Address(ip)).setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).setMask((short)32).build()).build()).build();
-    }
-
-    public static LispAFIAddress asIPv4AfiPrefix(String ip, int mask) {
-        return new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder()
-        .setIpv4Address(new Ipv4Address(MaskUtil.normalizeIPString(ip, mask))).setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).setMask((short)mask).build();
-    }
-
-    public static LispAddressContainer asIPv4Prefix(String ip, int mask) {
-        return new LispAddressContainerBuilder().setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4Builder()
-        .setIpv4Address(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder()
-        .setIpv4Address(new Ipv4Address(MaskUtil.normalizeIPString(ip, mask))).setAfi((short) AddressFamilyNumberEnum.IP.getIanaCode()).setMask((short)mask).build()).build()).build();
-    }
-
-    public static LispAddressContainer asIPv6Address(String ip) {
-        return new LispAddressContainerBuilder().setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6Builder()
-        .setIpv6Address(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv6.Ipv6AddressBuilder()
-        .setIpv6Address(new Ipv6Address(ip)).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode()).setMask((short)128).build()).build()).build();
-    }
-
-    public static LispAFIAddress asIPv6AfiPrefix(String ip, int mask) {
-        return new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv6.Ipv6AddressBuilder()
-        .setIpv6Address(new Ipv6Address(MaskUtil.normalizeIPString(ip, mask))).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode()).setMask((short)mask).build();
-    }
-
-    public static LispAddressContainer asIPv6Prefix(String ip, int mask) {
-        return new LispAddressContainerBuilder().setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6Builder()
-        .setIpv6Address(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv6.Ipv6AddressBuilder()
-        .setIpv6Address(new Ipv6Address(MaskUtil.normalizeIPString(ip, mask))).setAfi((short) AddressFamilyNumberEnum.IP6.getIanaCode()).setMask((short)mask).build()).build()).build();
     }
 
     public static LcafKeyValueAddressAddr asKeyValue(String key,
