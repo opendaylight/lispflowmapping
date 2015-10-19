@@ -12,11 +12,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.SourceEidBuilder;
@@ -29,17 +28,17 @@ public class MapRequestUtil {
         }
         InetAddress selectedItrRloc = null;
         for (ItrRloc itr : request.getItrRloc()) {
-            Address addr = itr.getLispAddressContainer().getAddress();
+            Address addr = itr.getAddress();
             if (addr instanceof Ipv4) {
                 try {
-                    selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4Address().getIpv4Address().getValue());
+                    selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4().getValue());
                 } catch (UnknownHostException e) {
                 }
                 break;
             }
             if (addr instanceof Ipv6) {
                 try {
-                    selectedItrRloc = InetAddress.getByName((((Ipv6) addr).getIpv6Address().getIpv6Address().getValue()));
+                    selectedItrRloc = InetAddress.getByName(((Ipv6) addr).getIpv6().getValue());
                 } catch (UnknownHostException e) {
                 }
                 break;
@@ -48,7 +47,7 @@ public class MapRequestUtil {
         return selectedItrRloc;
     }
 
-    public static MapRequestBuilder prepareSMR(LispAddressContainer srcEid, LispAddressContainer itrRloc) {
+    public static MapRequestBuilder prepareSMR(Address srcEid, Address itrRloc) {
         MapRequestBuilder builder = new MapRequestBuilder();
         builder.setAuthoritative(false);
         builder.setMapDataPresent(false);
@@ -57,9 +56,9 @@ public class MapRequestUtil {
         builder.setSmr(true);
         builder.setSmrInvoked(false);
 
-        builder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(srcEid).build());
+        builder.setSourceEid(new SourceEidBuilder().setAddress(srcEid).build());
         builder.setItrRloc(new ArrayList<ItrRloc>());
-        builder.getItrRloc().add(new ItrRlocBuilder().setLispAddressContainer(itrRloc).build());
+        builder.getItrRloc().add(new ItrRlocBuilder().setAddress(itrRloc).build());
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
 
