@@ -12,14 +12,14 @@
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <!-- Needed for odl-mdsal-broker -->
-    <repository>mvn:org.opendaylight.mdsal.model/features-mdsal-model/${mdsal.model.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.controller/features-mdsal/${mdsal.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.mdsal.model/features-mdsal-model/{{VERSION}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-mdsal/{{VERSION}}/xml/features</repository>
     <!-- Needed for odl-restconf -->
-    <repository>mvn:org.opendaylight.netconf/features-restconf/${restconf.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-restconf/{{VERSION}}/xml/features</repository>
     <!-- Needed for odl-config-api -->
-    <repository>mvn:org.opendaylight.controller/features-config/${config.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.neutron/features-neutron/${neutron.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.dlux/features-dlux/${dlux.core.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-config/{{VERSION}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.neutron/features-neutron/{{VERSION}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.dlux/features-dlux/{{VERSION}}/xml/features</repository>
 
     <feature name="odl-lispflowmapping-msmr" description="OpenDaylight :: LISP Flow Mapping :: Map-Server/Map-Resolver" version='${project.version}'>
         <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
