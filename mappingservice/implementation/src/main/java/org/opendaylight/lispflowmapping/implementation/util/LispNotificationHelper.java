@@ -16,7 +16,6 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafApplicationDataAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispDistinguishedNameAddress;
@@ -24,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.li
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedName;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddr;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.transportaddress.TransportAddressBuilder;
@@ -83,19 +83,13 @@ public class LispNotificationHelper {
     public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
         List<Mapping> mappings = new ArrayList<Mapping>();
         for (int i=0; i<mapRegisterNotification.getMapRegister().getEidToLocatorRecord().size(); i++) {
-            EidToLocatorRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i);
+            MappingRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i).getMappingRecord();
             MappingBuilder mb = new MappingBuilder();
-            mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                    record.getLispAddressContainer())));
+            mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(
+                    record.getEid())));
             mb.setOrigin(MappingOrigin.Southbound);
             mb.setSiteId(getSiteId(mapRegisterNotification.getMapRegister()));
-            mb.setRecordTtl(record.getRecordTtl());
-            mb.setMaskLength(record.getMaskLength());
-            mb.setMapVersion(record.getMapVersion());
-            mb.setAction(record.getAction());
-            mb.setAuthoritative(record.isAuthoritative());
-            mb.setLispAddressContainer(record.getLispAddressContainer());
-            mb.setLocatorRecord(record.getLocatorRecord());
+            mb.setMappingRecord(record);
             mappings.add(mb.build());
         }
         return mappings;

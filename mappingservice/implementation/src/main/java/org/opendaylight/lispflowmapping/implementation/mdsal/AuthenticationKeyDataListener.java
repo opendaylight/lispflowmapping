@@ -54,7 +54,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey().getKeyString());
             }
         }
 
@@ -68,7 +68,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey().getKeyString());
             }
         }
 
@@ -83,7 +83,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.removeAuthenticationKey(authkey.getLispAddressContainer());
+                mapSystem.removeAuthenticationKey(authkey.getEid());
             }
         }
     }

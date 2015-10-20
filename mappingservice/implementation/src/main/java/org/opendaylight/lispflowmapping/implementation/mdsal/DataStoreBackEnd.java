@@ -45,41 +45,41 @@ public class DataStoreBackEnd {
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Adding authentication key '{}' for {}", authenticationKey.getAuthkey(),
-                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer()));
+        LOG.debug("MD-SAL: Adding authentication key '{}' for {}", authenticationKey.getMappingAuthkey().getKeyString(),
+                LispAddressStringifier.getString(authenticationKey.getEid()));
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
                 "Adding authentication key to config datastrore failed");
     }
 
     public void addMapping(Mapping mapping) {
         LOG.debug("MD-SAL: Adding mapping for {}",
-                LispAddressStringifier.getString(mapping.getLispAddressContainer()));
+                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
                 "Adding mapping to config datastrore failed");
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
         LOG.debug("MD-SAL: Removing authentication key for {}",
-                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer()));
+                LispAddressStringifier.getString(authenticationKey.getEid()));
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getEid());
         deleteTransaction(path, LogicalDatastoreType.CONFIGURATION,
                 "Deleting authentication key from config datastrore failed");
     }
 
     public void removeMapping(Mapping mapping) {
         LOG.debug("MD-SAL: Removing mapping for {}",
-                LispAddressStringifier.getString(mapping.getLispAddressContainer()));
+                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         deleteTransaction(path, LogicalDatastoreType.CONFIGURATION, "Deleting mapping from config datastrore failed");
     }
 
@@ -92,21 +92,21 @@ public class DataStoreBackEnd {
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
         LOG.debug("MD-SAL: Updating authentication key for {} with '{}'",
-                LispAddressStringifier.getString(authenticationKey.getLispAddressContainer()),
-                authenticationKey.getAuthkey());
+                LispAddressStringifier.getString(authenticationKey.getEid()),
+                authenticationKey.getMappingAuthkey().getKeyString());
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getLispAddressContainer());
+                .createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
                 "Updating authentication key in config datastrore failed");
     }
 
     public void updateMapping(Mapping mapping) {
         LOG.debug("MD-SAL: Updating mapping for {}",
-                LispAddressStringifier.getString(mapping.getLispAddressContainer()));
+                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
-                .createMappingIid(mapping.getLispAddressContainer(), mapping.getOrigin());
+                .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
                 "Updating mapping in config datastrore failed");
     }

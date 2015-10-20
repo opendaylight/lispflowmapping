@@ -8,8 +8,11 @@
 
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lcaf.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafSourceDestAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafsourcedestaddress.DstAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafsourcedestaddress.SrcAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
@@ -18,12 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Florin Coras
+ * @author Lorand Jakab
  *
  */
 
-public class LcafSourceDestHelper {
-    private final static Logger LOG = LoggerFactory.getLogger(LcafSourceDestHelper.class);
+public class SourceDestKeyHelper {
+    private final static Logger LOG = LoggerFactory.getLogger(SourceDestKeyHelper.class);
     public static LispAFIAddress getSrcAfi(LispAddressContainer addr) {
         if (!isSrcDst(addr)) {
             return LispAFIConvertor.toAFI(addr);
@@ -56,12 +59,23 @@ public class LcafSourceDestHelper {
                 .getDstAddress().getPrimitiveAddress());
     }
 
-    public static LispAddressContainer getSrc(LispAddressContainer addr) {
-        if (!isSrcDst(addr)) {
-            return addr;
+    public static Eid getSrc(Eid eid) {
+        Address addr = eid.getAddress();
+        if (addr instanceof SourceDestKey) {
+            return LispAFIConvertor.toEid(eid, ((SourceDestKey)addr).getSourceDestKey().getSource());
+        } else {
+            return eid;
         }
-        return LispAFIConvertor.toContainer(LispAFIConvertor.toAFIfromPrimitive(((LcafSourceDest) addr
-                .getAddress()).getLcafSourceDestAddr().getSrcAddress().getPrimitiveAddress()));    }
+    }
+
+    public static Eid getDst(Eid eid) {
+        Address addr = eid.getAddress();
+        if (addr instanceof SourceDestKey) {
+            return LispAFIConvertor.toEid(eid, ((SourceDestKey)addr).getSourceDestKey().getDest());
+        } else {
+            return eid;
+        }
+    }
 
     public static LispAddressContainer getDst(LispAddressContainer addr) {
         if (!isSrcDst(addr)) {
@@ -127,6 +141,14 @@ public class LcafSourceDestHelper {
         return ((LcafSourceDest)addr.getAddress()).getLcafSourceDestAddr().getSrcAddress();
     }
 
+
+    private static boolean isSrcDst(Address addr) {
+        if (!(addr instanceof SourceDestKey)) {
+            LOG.warn("Address {} is not a valid SourceDest LCAF", addr);
+            return false;
+        }
+        return true;
+    }
 
     private static boolean isSrcDst(LispAFIAddress addr) {
         if (!(addr instanceof LcafSourceDestAddress)) {
