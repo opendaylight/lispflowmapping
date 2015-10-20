@@ -9,22 +9,23 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.rloc.container.Rloc;
 
 /**
  * Request source RLOC in the mapping service with it's properties.
  */
 public class SubscriberRLOC {
-    private LispAddressContainer rloc;
-    private LispAddressContainer eid;
+    private Rloc rloc;
+    private Eid eid;
     private Date lastRequestDate;
     private static final long SUBSCRIBER_TIMEOUT = 600000;    /* milliseconds */
 
-    public SubscriberRLOC(LispAddressContainer srcRloc, LispAddressContainer srcEid) {
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid) {
         this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
     }
 
-    public SubscriberRLOC(LispAddressContainer srcRloc, LispAddressContainer srcEid,
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid,
             Date lastRequestDate) {
         super();
         this.rloc = srcRloc;
@@ -32,19 +33,19 @@ public class SubscriberRLOC {
         this.lastRequestDate = lastRequestDate;
     }
 
-    public LispAddressContainer getSrcRloc() {
+    public Rloc getSrcRloc() {
         return rloc;
     }
 
-    public void setSrcRloc(LispAddressContainer srcRloc) {
+    public void setSrcRloc(Rloc srcRloc) {
         this.rloc = srcRloc;
     }
 
-    public LispAddressContainer getSrcEid() {
+    public Eid getSrcEid() {
         return eid;
     }
 
-    public void setSrcEid(LispAddressContainer srcEid) {
+    public void setSrcEid(Eid srcEid) {
         this.eid = srcEid;
     }
 

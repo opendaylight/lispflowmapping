@@ -37,10 +37,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrRequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequestmessage.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.transportaddress.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.transportaddress.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.LispSbService;
@@ -130,7 +130,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapReply handleMapRequest(MapRequest request) {
         LOG.debug("DAO: Retrieving mapping for {}",
-                LispAddressStringifier.getString(request.getEidRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(request.getEidRecord().get(0).getEid()));
 
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
@@ -150,7 +150,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapNotify handleMapRegister(MapRegister mapRegister) {
         LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0)
+                        .getMappingRecord().getEid()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister);
@@ -160,7 +161,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
         LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0)
+                        .getMappingRecord().getEid()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister);
@@ -245,14 +247,14 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     @Override
-    public void handleSMR(MapRequest smr, LispAddressContainer subscriber) {
+    public void handleSMR(MapRequest smr, Rloc subscriber) {
         LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
                 LispAddressStringifier.getString(subscriber),
-                LispAddressStringifier.getString(smr.getSourceEid().getLispAddressContainer()),
-                LispAddressStringifier.getString(smr.getEidRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(smr.getSourceEid().getEid()),
+                LispAddressStringifier.getString(smr.getEidRecord().get(0).getEid()));
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
-        smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));
+        smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromRloc(subscriber));
         getLispSB().sendMapRequest(smrib.build());
 
     }

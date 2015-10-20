@@ -8,7 +8,8 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
  * Map-cache interface
@@ -28,7 +29,7 @@ public interface IMapCache {
      * @param shouldOverwrite
      *            Select if mappings with the same key are overwritten or merged
      */
-    void addMapping(LispAddressContainer key, Object data, boolean shouldOverwrite);
+    void addMapping(Eid key, Object data, boolean shouldOverwrite);
 
     /**
      * Retrieves mapping for the provided srcKey and dstKey.
@@ -39,7 +40,7 @@ public interface IMapCache {
      *            Destination Key to be looked up
      * @return Returns the object found in the cache or null if nothing is found.
      */
-    Object getMapping(LispAddressContainer srcKey, LispAddressContainer dstKey);
+    Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
      * Remove mapping
@@ -50,7 +51,7 @@ public interface IMapCache {
      *            Select if mappings with the same key are overwritten or merged
      *
      */
-    void removeMapping(LispAddressContainer key, boolean overwrite);
+    void removeMapping(Eid key, boolean overwrite);
 
     /**
      * Add authentication key
@@ -60,7 +61,7 @@ public interface IMapCache {
      * @param authKey
      *            The authentication key
      */
-    void addAuthenticationKey(LispAddressContainer key, String authKey);
+    void addAuthenticationKey(Eid key, MappingAuthkey authKey);
 
     /**
      * Retrieve authentication key
@@ -69,7 +70,7 @@ public interface IMapCache {
      *            The key for which the authentication key is being looked up.
      * @return The authentication key.
      */
-    String getAuthenticationKey(LispAddressContainer key);
+    MappingAuthkey getAuthenticationKey(Eid key);
 
     /**
      * Remove authentication key
@@ -77,7 +78,7 @@ public interface IMapCache {
      * @param key
      *            Key for which the authentication key should be removed.
      */
-    void removeAuthenticationKey(LispAddressContainer key);
+    void removeAuthenticationKey(Eid key);
 
     /**
      * Update key registration
@@ -85,7 +86,7 @@ public interface IMapCache {
      * @param key
      *            The key whose registration must be updated
      */
-    void updateMappingRegistration(LispAddressContainer key);
+    void updateMappingRegistration(Eid key);
 
     /**
      * Add data for key
@@ -97,7 +98,7 @@ public interface IMapCache {
      * @param data
      *            The data to be stored
      */
-    void addData(LispAddressContainer key, String subKey, Object data);
+    void addData(Eid key, String subKey, Object data);
 
     /**
      * Generic retrieval of data
@@ -108,7 +109,7 @@ public interface IMapCache {
      *            The subKey where data is stored
      * @return The data
      */
-    Object getData(LispAddressContainer key, String subKey);
+    Object getData(Eid key, String subKey);
 
     /**
      * Generic removal of data
@@ -118,7 +119,7 @@ public interface IMapCache {
      * @param subKey
      *            The subKey of the data to be removed
      */
-    void removeData(LispAddressContainer key, String subKey);
+    void removeData(Eid key, String subKey);
 
     /**
      * Print mappings in cache. Used for testing, debugging and the karaf shell

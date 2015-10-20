@@ -20,11 +20,11 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,16 +92,16 @@ public class MappingSystem implements IMappingSystem {
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
-    public void addMapping(MappingOrigin origin, LispAddressContainer key, Object value) {
+    public void addMapping(MappingOrigin origin, Eid key, Object value) {
         tableMap.get(origin).addMapping(key, value, overwrite);
     }
 
-    public void updateMappingRegistration(MappingOrigin origin, LispAddressContainer key) {
+    public void updateMappingRegistration(MappingOrigin origin, Eid key) {
         tableMap.get(origin).updateMappingRegistration(key);
     }
 
     @Override
-    public Object getMapping(LispAddressContainer src, LispAddressContainer dst) {
+    public Object getMapping(Eid src, Eid dst) {
         // NOTE: what follows is just a simple implementation of a lookup logic, it SHOULD be subject to future
         // improvements
 
@@ -117,17 +117,17 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public Object getMapping(LispAddressContainer dst) {
-        return getMapping((LispAddressContainer)null, dst);
+    public Object getMapping(Eid dst) {
+        return getMapping((Eid)null, dst);
     }
 
     @Override
-    public Object getMapping(MappingOrigin origin, LispAddressContainer key) {
+    public Object getMapping(MappingOrigin origin, Eid key) {
         return tableMap.get(origin).getMapping(null, key);
     }
 
     @Override
-    public void removeMapping(MappingOrigin origin, LispAddressContainer key) {
+    public void removeMapping(MappingOrigin origin, Eid key) {
         tableMap.get(origin).removeMapping(key, overwrite);
         if (notificationService) {
             // TODO
@@ -135,39 +135,39 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public void addAuthenticationKey(LispAddressContainer key, String authKey) {
+    public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
         LOG.debug("Adding authentication key '{}' for {}", key,
                 LispAddressStringifier.getString(key));
         smc.addAuthenticationKey(key, authKey);
     }
 
     @Override
-    public String getAuthenticationKey(LispAddressContainer key) {
+    public MappingAuthkey getAuthenticationKey(Eid key) {
         LOG.debug("Retrieving authentication key for {}", LispAddressStringifier.getString(key));
         return smc.getAuthenticationKey(key);
     }
 
     @Override
-    public void removeAuthenticationKey(LispAddressContainer key) {
+    public void removeAuthenticationKey(Eid key) {
         LOG.debug("Removing authentication key for {}", LispAddressStringifier.getString(key));
         smc.removeAuthenticationKey(key);
     }
 
     @Override
-    public void addData(MappingOrigin origin, LispAddressContainer key, String subKey, Object data) {
+    public void addData(MappingOrigin origin, Eid key, String subKey, Object data) {
         LOG.debug("Add data of class {} for key {} and subkey {}", data.getClass(),
                 LispAddressStringifier.getString(key), subKey);
         tableMap.get(origin).addData(key, subKey, data);
     }
 
     @Override
-    public Object getData(MappingOrigin origin, LispAddressContainer key, String subKey) {
+    public Object getData(MappingOrigin origin, Eid key, String subKey) {
         LOG.debug("Retrieving data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
         return tableMap.get(origin).getData(key, subKey);
     }
 
     @Override
-    public void removeData(MappingOrigin origin, LispAddressContainer key, String subKey) {
+    public void removeData(MappingOrigin origin, Eid key, String subKey) {
         LOG.debug("Removing data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
         tableMap.get(origin).removeData(key, subKey);
     }
@@ -183,12 +183,11 @@ public class MappingSystem implements IMappingSystem {
         LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
 
         for (Mapping mapping : mappings) {
-            addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
-                    new EidToLocatorRecordBuilder(mapping).build());
+            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
         }
 
         for (AuthenticationKey authKey : authKeys) {
-            addAuthenticationKey(authKey.getLispAddressContainer(), authKey.getAuthkey());
+            addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
         }
     }
 
