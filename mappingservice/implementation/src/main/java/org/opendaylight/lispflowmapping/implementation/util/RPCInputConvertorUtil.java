@@ -8,6 +8,9 @@
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
@@ -20,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
  * Converts RPC *Input object to other object types
@@ -29,73 +33,52 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  */
 public class RPCInputConvertorUtil {
     public static AuthenticationKey toAuthenticationKey(AddKeyInput input) {
-        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
-        akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer())));
-        akb.setLispAddressContainer(input.getLispAddressContainer());
-        akb.setMaskLength(input.getMaskLength());
-        akb.setKeyType(input.getKeyType());
-        akb.setAuthkey(input.getAuthkey());
-        return akb.build();
+        return toAuthenticationKey(input.getEid(), input.getMappingAuthkey());
     }
 
     public static AuthenticationKey toAuthenticationKey(UpdateKeyInput input) {
-        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
-        akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getEid().getLispAddressContainer())));
-        akb.setLispAddressContainer(input.getEid().getLispAddressContainer());
-        akb.setMaskLength(input.getEid().getMaskLength());
-        akb.setKeyType(input.getKey().getKeyType());
-        akb.setAuthkey(input.getKey().getAuthkey());
-        return akb.build();
+        return toAuthenticationKey(input.getEid(), input.getMappingAuthkey());
     }
 
     public static AuthenticationKey toAuthenticationKey(RemoveKeyInput input) {
-        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
-        akb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer())));
-        akb.setLispAddressContainer(input.getLispAddressContainer());
-        akb.setMaskLength(input.getMaskLength());
-        return akb.build();
+        return toAuthenticationKey(input.getEid(), null);
     }
 
     public static Mapping toMapping(AddMappingInput input) {
-        MappingBuilder mb = new MappingBuilder();
-        mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer())));
-        mb.setOrigin(MappingOrigin.Northbound);
-        mb.setRecordTtl(input.getRecordTtl());
-        mb.setMaskLength(input.getMaskLength());
-        mb.setMapVersion(input.getMapVersion());
-        mb.setAction(input.getAction());
-        mb.setAuthoritative(input.isAuthoritative());
-        mb.setLispAddressContainer(input.getLispAddressContainer());
-        mb.setLocatorRecord(input.getLocatorRecord());
-        return mb.build();
+        return toMapping(input.getMappingRecord());
     }
 
     public static Mapping toMapping(UpdateMappingInput input) {
-        MappingBuilder mb = new MappingBuilder();
-        mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer())));
-        mb.setOrigin(MappingOrigin.Northbound);
-        mb.setRecordTtl(input.getRecordTtl());
-        mb.setMaskLength(input.getMaskLength());
-        mb.setMapVersion(input.getMapVersion());
-        mb.setAction(input.getAction());
-        mb.setAuthoritative(input.isAuthoritative());
-        mb.setLispAddressContainer(input.getLispAddressContainer());
-        mb.setLocatorRecord(input.getLocatorRecord());
-        return mb.build();
+        return toMapping(input.getMappingRecord());
     }
 
     public static Mapping toMapping(RemoveMappingInput input) {
+        return toMapping(input.getEid());
+    }
+
+    private static AuthenticationKey toAuthenticationKey(Eid address, MappingAuthkey key) {
+        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
+        akb.setEidUri(new EidUri(LispAddressStringifier.getURIString(address)));
+        akb.setEid(address);
+        if (key != null) {
+            akb.setMappingAuthkey(key);
+        }
+        return akb.build();
+    }
+
+    private static Mapping toMapping(MappingRecord mapping) {
         MappingBuilder mb = new MappingBuilder();
-        mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                input.getLispAddressContainer())));
+        mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(mapping.getEid())));
         mb.setOrigin(MappingOrigin.Northbound);
-        mb.setMaskLength(input.getMaskLength());
-        mb.setLispAddressContainer(input.getLispAddressContainer());
+        mb.setMappingRecord(mapping);
+        return mb.build();
+    }
+
+    private static Mapping toMapping(Eid eid) {
+        MappingBuilder mb = new MappingBuilder();
+        mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(eid)));
+        mb.setOrigin(MappingOrigin.Northbound);
+        mb.setMappingRecord(new MappingRecordBuilder().setEid(eid).build());
         return mb.build();
     }
 }

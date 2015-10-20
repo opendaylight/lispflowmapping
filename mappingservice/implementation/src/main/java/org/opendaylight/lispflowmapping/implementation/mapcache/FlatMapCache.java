@@ -15,7 +15,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
  * Flat key implementation of a map-cache. As the name suggests, no longest prefix matching is done for IP addresses
@@ -33,60 +34,60 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(LispAddressContainer key, Object data, boolean shouldOverwrite) {
+    public void addMapping(Eid key, Object data, boolean shouldOverwrite) {
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));
     }
 
     @Override
-    public Object getMapping(LispAddressContainer srcKey, LispAddressContainer dstKey) {
+    public Object getMapping(Eid srcKey, Eid dstKey) {
         return dao.getSpecific(dstKey, SubKeys.RECORD);
     }
 
     @Override
-    public void removeMapping(LispAddressContainer key, boolean overwrite) {
+    public void removeMapping(Eid key, boolean overwrite) {
         dao.removeSpecific(key, SubKeys.RECORD);
     }
 
     @Override
-    public void addAuthenticationKey(LispAddressContainer key, String authKey) {
+    public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
         dao.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
     }
 
     @Override
-    public String getAuthenticationKey(LispAddressContainer key) {
+    public MappingAuthkey getAuthenticationKey(Eid key) {
         Object data = dao.getSpecific(key, SubKeys.AUTH_KEY);
-        if (data instanceof String) {
-            return (String) data;
+        if (data instanceof MappingAuthkey) {
+            return (MappingAuthkey) data;
         } else {
             return null;
         }
     }
 
     @Override
-    public void removeAuthenticationKey(LispAddressContainer key) {
+    public void removeAuthenticationKey(Eid key) {
         dao.removeSpecific(key, SubKeys.AUTH_KEY);
     }
 
     @Override
-    public void updateMappingRegistration(LispAddressContainer key) {
+    public void updateMappingRegistration(Eid key) {
         if (dao.get(key) != null) {
             dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         }
     }
 
     @Override
-    public void addData(LispAddressContainer key, String subKey, Object data) {
+    public void addData(Eid key, String subKey, Object data) {
         dao.put(key, new MappingEntry<>(subKey, data));
     }
 
     @Override
-    public Object getData(LispAddressContainer key, String subKey) {
+    public Object getData(Eid key, String subKey) {
         return dao.getSpecific(key, subKey);
     }
 
     @Override
-    public void removeData(LispAddressContainer key, String subKey) {
+    public void removeData(Eid key, String subKey) {
         dao.removeSpecific(key, subKey);
     }
 
