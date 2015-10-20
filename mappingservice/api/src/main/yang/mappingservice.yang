@@ -48,8 +48,8 @@ module mappingservice {
         }
     }
 
-    typedef iid-uri {
-        description "IID as a string lookup key in a URI";
+    typedef vni-uri {
+        description "VNI as a string lookup key in a URI";
         type inet:uri;
     }
 
@@ -66,8 +66,8 @@ module mappingservice {
         }
     }
 
-    identity instance-id-context {
-        description "A classifier for instance-id elements which allows direct access to a particular element in the data tree.";
+    identity vni-context {
+        description "A classifier for virtual-network-identifier elements which allows direct access to a particular element in the data tree.";
     }
 
     identity eid-context {
@@ -86,10 +86,10 @@ module mappingservice {
     }
 
     grouping db-instance {
-        description "Describes the mappings belonging to the same Instance ID";
-        leaf iid-uri {
-            description "The 24-bit Instance ID";
-            type iid-uri;
+        description "Describes the mappings belonging to the same Virtual Network Identifier";
+        leaf vni {
+            description "The 24-bit Virtual Network Identifier";
+            type vni-uri;
         }
         list mapping {
             description "A list of EID-to-RLOC mappings within the same Instance ID";
@@ -109,7 +109,7 @@ module mappingservice {
             uses lisp-proto:mapping-record-container;
         }
         list authentication-key {
-            description "A list of authentication keys for EID prefixes within the same Instance ID";
+            description "A list of authentication keys for EID prefixes within the same Virtual Network Identifier";
             key "eid-uri";
             ext:context-instance "eid-context";
             leaf eid-uri {
@@ -122,10 +122,10 @@ module mappingservice {
 
     container mapping-database {
         description "The LISP EID-to-RLOC mapping database";
-        list instance-id {
-            description "A list of LISP Instance IDs";
-            key "iid-uri";
-            ext:context-instance "instance-id-context";
+        list virtual-network-identifier {
+            description "A list of Virtual Network Identifiers";
+            key "vni";
+            ext:context-instance "vni-context";
             uses db-instance;
         }
     }
