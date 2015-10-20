@@ -360,9 +360,21 @@ module lisp-proto {
         }
     }
 
+    grouping eid-container {
+        container eid {
+            uses lisp-address:lisp-address;
+        }
+    }
+
+    grouping rloc-container {
+        container rloc {
+            uses lisp-address:lisp-address;
+        }
+    }
+
     grouping EidRecords {
         list EidRecord {
-            uses lisp-address:lisp-address;
+            uses eid-container;
         }
     }
 
@@ -395,9 +407,7 @@ module lisp-proto {
             }
 
             //locator address
-            container rloc {
-                uses lisp-address:lisp-address;
-            }
+            uses rloc-container;
         }
     }
 
@@ -423,17 +433,21 @@ module lisp-proto {
             type boolean;
         }
         // EID prefix
-        container eid {
-            uses lisp-address:lisp-address;
-        }
+        uses eid-container;
 
         // locator record list
         uses LocatorRecords;
     }
 
+    grouping mapping-record-container {
+        container mapping-record {
+            uses EidToLocatorRecord;
+        }
+    }
+
     grouping EidToLocatorRecords {
         list eidToLocatorRecord {
-            uses EidToLocatorRecord;
+            uses mapping-record-container;
         }
     }
 
@@ -512,10 +526,10 @@ module lisp-proto {
             type int64;
         }
         container SourceEid {
-            uses lisp-address:lisp-address;
+            uses eid-container;
         }
         list itrRloc {
-            uses lisp-address:lisp-address;
+            uses rloc-container;
         }
         uses EidRecords;
         container MapReply{

@@ -7,7 +7,6 @@ module mappingservice {
     import config { prefix config; revision-date 2013-04-05; }
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import yang-ext { prefix ext; revision-date 2013-07-09; }
-    import lisp-address-types { prefix lisp-address; revision-date 2015-03-09; }
     import lisp-proto { prefix lisp-proto; revision-date 2015-08-20; }
 
     contact "Lorand Jakab <lojakab@cisco.com";
@@ -75,12 +74,14 @@ module mappingservice {
         description "A classifier for endpoint-id elements which allows direct access to a particular element in the data tree.";
     }
 
-    grouping mapping-authkey {
-        leaf key-type {
-            type uint16;
-        }
-        leaf authkey {
-            type string;
+    grouping mapping-authkey-container {
+        container mapping-authkey {
+            leaf key-string {
+                type string;
+            }
+            leaf key-type {
+                type uint16;
+            }
         }
     }
 
@@ -105,7 +106,7 @@ module mappingservice {
                 description "Site ID";
                 type site-id;
             }
-            uses lisp-proto:EidToLocatorRecord;
+            uses lisp-proto:mapping-record-container;
         }
         list authentication-key {
             description "A list of authentication keys for EID prefixes within the same Instance ID";
@@ -114,8 +115,8 @@ module mappingservice {
             leaf eid-uri {
                 type eid-uri;
             }
-            uses lisp-address:lisp-address;
-            uses mapping-authkey;
+            uses lisp-proto:eid-container;
+            uses mapping-authkey-container;
         }
     }
 
@@ -131,73 +132,66 @@ module mappingservice {
 
     rpc add-key {
         input {
-            uses lisp-address:lisp-address;
-            uses mapping-authkey;
+            uses lisp-proto:eid-container;
+            uses mapping-authkey-container;
         }
     }
 
     rpc get-key {
         input {
-            uses lisp-address:lisp-address;
+            uses lisp-proto:eid-container;
         }
         output {
-            uses mapping-authkey;
+            uses mapping-authkey-container;
         }
     }
 
     rpc update-key {
         input {
-            container eid {
-                uses lisp-address:lisp-address;
-            }
-            container key {
-                uses mapping-authkey;
-            }
+            uses lisp-proto:eid-container;
+            uses mapping-authkey-container;
         }
     }
 
     rpc remove-key {
         input {
-            uses lisp-address:lisp-address;
+            uses lisp-proto:eid-container;
         }
     }
 
     rpc add-mapping {
         input {
-            uses lisp-proto:EidToLocatorRecord;
+            uses lisp-proto:mapping-record-container;
         }
     }
 
     rpc get-mapping {
         input {
-            uses lisp-address:lisp-address;
+            uses lisp-proto:eid-container;
         }
         output {
-            uses lisp-proto:EidToLocatorRecords;
+            uses lisp-proto:mapping-record-container;
         }
     }
 
     rpc update-mapping {
         input {
-            uses lisp-proto:EidToLocatorRecord;
+            uses lisp-proto:mapping-record-container;
         }
     }
 
     rpc remove-mapping {
         input {
-            uses lisp-address:lisp-address;
+            uses lisp-proto:eid-container;
         }
     }
 
     notification mapping-changed {
         description "Notification sent when a mapping is changed";
-        container mapping {
-            description "Mapping that has been changed";
-            uses lisp-proto:EidToLocatorRecord;
-        }
-        leaf change {
+        leaf change-type {
             description "The type of change";
             type mapping-change;
         }
+        uses lisp-proto:mapping-record-container;
     }
 }
