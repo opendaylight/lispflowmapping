@@ -164,7 +164,7 @@ module lisp-address-types {
   identity key-value-address-lcaf {
     base lcaf;
     description
-      "Key/Value Address LCAF type.";
+      "Key-Value LCAF type.";
   }
   identity encapsulation-format-lcaf {
     base lcaf;
@@ -178,24 +178,24 @@ module lisp-address-types {
     description
       "Defines the range of values for an Instance ID.";
   }
-  typedef distinguished-name-type {
+  typedef simple-address {
+    type union {
+      type inet:ip-address;
+      type inet:ip-prefix;
+      type yang:mac-address;
+      type distinguished-name;
+      type inet:as-number;
+    }
+    description
+      "Union of address types that can be part of LCAFs.";
+  }
+  typedef distinguished-name {
     type string;
     description
       "Distinguished Name address.";
     reference
       "http://www.iana.org/assignments/address-family-numbers/
        address-family-numbers.xhtml";
-  }
-  typedef simple-address {
-    type union {
-      type inet:ip-address;
-      type inet:ip-prefix;
-      type yang:mac-address;
-      type distinguished-name-type;
-      type inet:as-number;
-    }
-    description
-      "Union of address types that can be part of LCAFs.";
   }
   typedef lisp-address-family-ref {
     type identityref {
@@ -211,19 +211,99 @@ module lisp-address-types {
     description
       "LCAF types reference.";
   }
-  grouping lcaf-address {
+
+  grouping lisp-address {
     description
-      "Group of all the LCAF types.";
-    leaf lcaf-type {
-      type lcaf-ref;
+      "Generic LISP address.";
+    leaf afi {
+      type lisp-address-family-ref;
       mandatory true;
       description
-        "Enumeration of LCAF types.";
+        "LISP address family AFI.";
+    }
+    leaf instance-id {
+      type instance-id-type;
+      description
+        "Instance ID of the address.";
     }
     choice address {
-      description "The LCAF addresses.";
+      description
+        "Various LISP address types, including IP, MAC, and LCAF.";
+  
+      leaf no-address {
+        when "../../afi = 'laddr:no-addr-afi'" {
+          description
+            "When AFI is 0.";
+        }
+        type empty;
+        description
+          "No address.";
+      }
+      leaf ipv4 {
+        when "../../afi = 'laddr:ipv4-afi'" {
+          description
+            "When AFI is IPv4.";
+        }
+        type inet:ipv4-address;
+        description
+          "IPv4 address.";
+      }
+      leaf ipv4-prefix {
+        when "../../afi = 'laddr:ipv4-prefix-afi'" {
+          description
+            "When AFI is IPv4.";
+        }
+        type inet:ipv4-prefix;
+        description
+          "IPv4 prefix.";
+      }
+      leaf ipv6 {
+        when "../../afi = 'laddr:ipv6-afi'" {
+          description
+            "When AFI is IPv6.";
+        }
+        type inet:ipv6-address;
+        description
+          "IPv6 address.";
+      }
+      leaf ipv6-prefix {
+        when "../../afi = 'laddr:ipv6-prefix-afi'" {
+          description
+            "When AFI is IPv6.";
+        }
+        type inet:ipv6-prefix;
+        description
+          "IPv6 address.";
+      }
+      leaf mac {
+        when "../../afi = 'laddr:mac-afi'" {
+          description
+            "When AFI is MAC.";
+        }
+        type yang:mac-address;
+        description
+          "MAC address.";
+      }
+      leaf distinguished-name {
+        when "../../afi = 'laddr:distinguished-name-afi'" {
+          description
+            "When AFI is distinguished-name.";
+        }
+        type distinguished-name;
+        description
+          "Distinguished Name address.";
+      }
+      leaf as-number {
+        when "../../afi = 'laddr:as-number-afi'" {
+          description
+            "When AFI is as-number.";
+        }
+        type inet:as-number;
+        description
+          "AS Number.";
+      }
       container null-address {
-        when "../../lcaf-type = null-address-lcaf" {
+        when "../../afi = 'null-address-lcaf'" {
           description
             "When LCAF type is null.";
         }
@@ -236,7 +316,7 @@ module lisp-address-types {
         }
       }
       container afi-list {
-        when "../../lcaf-type = afi-list-lcaf" {
+        when "../../afi = 'afi-list-lcaf'" {
           description
             "When LCAF type is AFI-List.";
         }
@@ -251,8 +331,8 @@ module lisp-address-types {
             "List of AFI addresses.";
         }
       }
-      container instance-id {
-        when "../../lcaf-type = instance-id-lcaf" {
+      container instance-id-lcaf {
+        when "../../afi = 'instance-id-lcaf'" {
           description
             "When LCAF type is Instance-ID";
         }
@@ -278,7 +358,7 @@ module lisp-address-types {
         }
       }
       container as-number-lcaf {
-        when "../../lcaf-type = as-number-lcaf-lcaf" {
+        when "../../afi = as-number-lcaf" {
           description
             "When LCAF type is AS-Number.";
         }
@@ -299,7 +379,7 @@ module lisp-address-types {
         }
       }
       container application-data {
-        when "../../lcaf-type = application-data-lcaf" {
+        when "../../afi = application-data-lcaf" {
           description
             "When LCAF type is Application Data.";
         }
@@ -345,7 +425,7 @@ module lisp-address-types {
         }
       }
       container geo-coordinates {
-        when "../../lcaf-type = geo-coordinates-lcaf" {
+        when "../../afi = geo-coordinates-lcaf" {
           description
             "When LCAF type is Geo-coordinates.";
         }
@@ -428,7 +508,7 @@ module lisp-address-types {
         }
       }
       container nat-traversal {
-        when "../../lcaf-type = nat-traversal-lcaf" {
+        when "../../afi = nat-traversal-lcaf" {
           description
             "When LCAF type is NAT-Traversal.";
         }
@@ -469,7 +549,7 @@ module lisp-address-types {
         }
       }
       container explicit-locator-path {
-        when "../../lcaf-type = explicit-locator-path-lcaf" {
+        when "../../afi = 'explicit-locator-path-lcaf'" {
           description
             "When LCAF type type is Explicit Locator Path.";
         }
@@ -508,15 +588,15 @@ module lisp-address-types {
         }
       }
       container source-dest-key {
-        when "../../lcaf-type = source-dest-key-lcaf" {
+        when "../../afi = source-dest-key-lcaf" {
           description
             "When LCAF type type is Source/Dest.";
         }
         description
           "Source/Dest LCAF type.";
         reference
-          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-           #section-4.11";
+            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+            #section-4.11";
         leaf source {
           type inet:ip-prefix;
           description
@@ -528,127 +608,6 @@ module lisp-address-types {
             "Destination prefix.";
         }
       }
-      container key-value-address {
-        when "../../lcaf-type = key-value-address-lcaf" {
-          description
-            "When LCAF type type is Key/Value Address.";
-        }
-        description
-          "Key/Value Address LCAF type.";
-        reference
-          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-           #section-4.11";
-        leaf key {
-          type simple-address;
-          description
-            "Address as Key.";
-        }
-        leaf value {
-          type simple-address;
-          description
-            "Address as Value.";
-        }
-      }
-    }
-  }
-  grouping lisp-address {
-    description
-      "Generic LISP address.";
-    leaf afi {
-      type lisp-address-family-ref;
-      mandatory true;
-      description
-        "LISP address family AFI.";
-    }
-    leaf virtual-network-id {
-      type instance-id-type;
-      description
-        "Instance ID of the address.";
-    }
-    choice address {
-      leaf no-address {
-        when "../../afi = 'laddr:no-addr-afi'" {
-          description
-            "When AFI is 0.";
-        }
-        type empty;
-        description
-          "No address.";
-      }
-      leaf ipv4 {
-        when "../../afi = 'laddr:ipv4-afi'" {
-          description
-            "When AFI is IPv4.";
-        }
-        type inet:ipv4-address;
-        description
-          "IPv4 address.";
-      }
-      leaf ipv4-prefix {
-        when "../../afi = 'laddr:ipv4-prefix-afi'" {
-          description
-            "When AFI is IPv4.";
-        }
-        type inet:ipv4-prefix;
-        description
-          "IPv4 prefix.";
-      }
-      leaf ipv6 {
-        when "../../afi = 'laddr:ipv6-afi'" {
-          description
-            "When AFI is IPv6.";
-        }
-        type inet:ipv6-address;
-        description
-          "IPv6 address.";
-      }
-      leaf ipv6-prefix {
-        when "../../afi = 'laddr:ipv6-prefix-afi'" {
-          description
-            "When AFI is IPv6.";
-        }
-        type inet:ipv6-prefix;
-        description
-          "IPv6 address.";
-      }
-      leaf mac {
-        when "../../afi = 'laddr:mac-afi'" {
-          description
-            "When AFI is MAC.";
-        }
-        type yang:mac-address;
-        description
-          "MAC address.";
-      }
-      leaf distinguished-name {
-        when "../../afi = 'laddr:distinguished-name-afi'" {
-          description
-            "When AFI is distinguished-name.";
-        }
-        type distinguished-name-type;
-        description
-          "Distinguished Name address.";
-      }
-      leaf as-number {
-          when "../../afi = 'laddr:as-number-afi'" {
-            description
-              "When AFI is as-number.";
-          }
-          type inet:as-number;
-          description
-            "AS Number.";
-        }
-      container lcaf {
-        when "../../afi = 'laddr:lcaf'" {
-          description
-            "When AFI is LCAF.";
-        }
-        uses lcaf-address;
-        description
-          "LCAF address.";
-      }
-      description
-        "Selection of address type.";
     }
   }
 }
