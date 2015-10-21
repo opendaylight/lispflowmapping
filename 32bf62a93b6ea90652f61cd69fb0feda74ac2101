@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "fad0f9df_66fee86d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-21T10:58:38Z",
+      "side": 1,
+      "message": "s/lcal address/lcaf-address/",
+      "revId": "32bf62a93b6ea90652f61cd69fb0feda74ac2101",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_c6e234d5",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
         "patchSetId": 1
