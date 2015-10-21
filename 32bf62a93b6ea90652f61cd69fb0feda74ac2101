@@ -36,6 +36,40 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_061d9cbd",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-21T11:31:27Z",
+      "side": 1,
+      "message": "This was reverted from virtual-network-id? Was that intentional?",
+      "revId": "32bf62a93b6ea90652f61cd69fb0feda74ac2101",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_a67930fe",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-21T11:31:27Z",
+      "side": 1,
+      "message": "This should stay instance-id.",
+      "revId": "32bf62a93b6ea90652f61cd69fb0feda74ac2101",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_26d1c0fb",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
         "patchSetId": 1
