@@ -171,6 +171,12 @@ module lisp-address-types {
     description
       "Encapsulation Format LCAF type.";
   }
+  identity service-path-lcaf {
+    base lcaf;
+    description
+      "Service Path Identifier LCAF type.";
+  }
+  
   typedef instance-id-type {
     type uint32 {
       range "0..16777214";
@@ -630,6 +636,28 @@ module lisp-address-types {
             "Address as Value.";
         }
       }
+      container service-path {
+        when "../../lcaf-type = 'service-path-lcaf'" {
+          description
+            "When LCAF type service path identifier.";
+        }
+        description
+          "Service Path LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ermagan-lisp-nsh-00";
+        leaf service-path-id {
+          type uint32 {
+            range "0..16777215";
+          }
+          description
+            "Service path identifier for the path for NSH header";
+        }
+        leaf service-index {
+          type uint8;
+          description
+            "Service path index for NSH header";
+        }
+      }      
     }
   }
 }
