@@ -173,10 +173,17 @@ module lisp-address-types {
   }
   typedef instance-id-type {
     type uint32 {
-      range "0..16777214";
+      range "0..16777215";
     }
     description
       "Defines the range of values for an Instance ID.";
+  }
+  typedef service-path-id-type {
+    type uint32 {
+      range "0..16777215";
+    }
+    description
+      "Defines the range of values for a Service Path ID.";
   }
    typedef distinguished-name-type {
     type string;
@@ -665,6 +672,28 @@ module lisp-address-types {
               "Address as Value.";
           }
         }
+      }
+      case service-path {
+      	container service-path {
+          when "../../address-type = 'service-path-lcaf'" {
+          description
+            "When LCAF type service path identifier.";
+       	  }
+          description
+          	"Service Path LCAF type.";
+          reference
+          	"http://tools.ietf.org/html/draft-ermagan-lisp-nsh-00";
+          leaf service-path-id {
+          	type service-path-id-type;
+          	description
+            	"Service path identifier for the path for NSH header";
+          }
+	      leaf service-index {
+	        type uint8;
+	        description
+	          "Service path index for NSH header";
+	      }
+	    }
       }
     }
   }
