@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_aa5d6eeb",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-23T15:37:24Z",
+      "side": 1,
+      "message": "Needs to be address-type.",
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_6a6f8693",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-10-23T15:37:24Z",
+      "side": 1,
+      "message": "Would be better to either reuse the instance-id-type, or create a new typedef, if they\u0027re not really the same thing. We can even rename the instance-id-type to be vni-type, or similar.",
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
