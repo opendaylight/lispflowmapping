@@ -33,6 +33,70 @@
       "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_a046ed21",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-24T11:34:26Z",
+      "side": 1,
+      "message": "I would avoid unifying iid and spi. Although they have the same length, they serve different purposes and both may be subject to future, independent changes. Creating a new typedef might be good though, since it helps clarify the code. That is, variables passed around won\u0027t be \"int\" but \"ServicePathId(entifier)\".",
+      "parentUuid": "fad0f9df_6a6f8693",
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_6048052e",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-24T11:34:26Z",
+      "side": 1,
+      "message": "If we use a typedef for service-path-id, I guess we should use one for service-index as well.",
+      "range": {
+        "startLine": 656,
+        "startChar": 10,
+        "endLine": 656,
+        "endChar": 21
+      },
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_404b812b",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 660,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-10-24T11:34:26Z",
+      "side": 1,
+      "message": "Would be good to remove the spaces. Unfortunately eclipse\u0027s yang extension doesn\u0027t take care of this. Sigh.. :(",
+      "range": {
+        "startLine": 660,
+        "startChar": 7,
+        "endLine": 660,
+        "endChar": 13
+      },
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
