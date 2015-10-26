@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_2e1aeb17",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-10-26T23:47:44Z",
+      "side": 1,
+      "message": "Agree with separate typedefs. will do.",
+      "parentUuid": "fad0f9df_a046ed21",
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_6048052e",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
         "patchSetId": 1
@@ -65,6 +83,30 @@
       "writtenOn": "2015-10-24T11:34:26Z",
       "side": 1,
       "message": "If we use a typedef for service-path-id, I guess we should use one for service-index as well.",
+      "range": {
+        "startLine": 656,
+        "startChar": 10,
+        "endLine": 656,
+        "endChar": 21
+      },
+      "revId": "2374e929431a61acba1d3e0e1cf14fc3829cdfe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_8ecbd771",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-10-26T23:47:44Z",
+      "side": 1,
+      "message": "Not so sure about this, we should follow a rule here, otherwise everything becomes a typedef. We have many uint8 type variables in this class. memory-wise for sure not using type def is best.",
+      "parentUuid": "fad0f9df_6048052e",
       "range": {
         "startLine": 656,
         "startChar": 10,
