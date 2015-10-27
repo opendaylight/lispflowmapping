@@ -201,10 +201,10 @@ module lisp-proto {
             }
         }
         list Hops {
-            key "name";
+            key "hop-id";
             ordered-by user;
-            leaf name {
-                type string;
+            leaf hop-id {
+                type lisp-address:list-item-id;
             }
             uses ReencapHop;
         }
@@ -218,9 +218,9 @@ module lisp-proto {
             }
         }
         list Addresses {
-            key "name";
-            leaf name {
-                type string;
+            key "address-id";
+            leaf address-id {
+                type lisp-address:list-item-id;
             }
             uses LispSimpleAddress;
         }
@@ -374,15 +374,19 @@ module lisp-proto {
 
     grouping EidRecords {
         list EidRecord {
+            key "mapping-id";
+            leaf mapping-id {
+                type lisp-address:list-item-id;
+            }
             uses eid-container;
         }
     }
 
     grouping LocatorRecords {
         list LocatorRecord {
-            key "name";
-            leaf name {
-                type string;
+            key "locator-id";
+            leaf locator-id {
+                type lisp-address:list-item-id;
             }
             leaf priority {
                 type uint8;
@@ -447,6 +451,10 @@ module lisp-proto {
 
     grouping EidToLocatorRecords {
         list eidToLocatorRecord {
+            key "mapping-record-id";
+            leaf mapping-record-id {
+                type lisp-address:list-item-id;
+            }
             uses mapping-record-container;
         }
     }
@@ -529,6 +537,10 @@ module lisp-proto {
             uses eid-container;
         }
         list itrRloc {
+            key "itr-rloc-id";
+            leaf itr-rloc-id {
+                type lisp-address:list-item-id;
+            }
             uses rloc-container;
         }
         uses EidRecords;
