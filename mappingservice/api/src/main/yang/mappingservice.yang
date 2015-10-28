@@ -7,6 +7,7 @@ module mappingservice {
     import config { prefix config; revision-date 2013-04-05; }
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import yang-ext { prefix ext; revision-date 2013-07-09; }
+    import lisp-address-types { prefix lisp-address; revision-date 2015-03-09; }
     import lisp-proto { prefix lisp-proto; revision-date 2015-08-20; }
 
     contact "Lorand Jakab <lojakab@cisco.com";
@@ -82,6 +83,27 @@ module mappingservice {
             leaf key-type {
                 type uint16;
             }
+        }
+    }
+
+    grouping mapping-authkey-list {
+        list mapping-authkey-item {
+            key "mapping-authkey-item-id";
+            leaf mapping-authkey-item-id {
+                type lisp-address:list-item-id;
+            }
+            uses mapping-authkey-container;
+        }
+    }
+
+    grouping eid-authkey-list {
+        list eid-authkey-item {
+            key "eid-authkey-item-id";
+            leaf eid-authkey-item-id {
+                type lisp-address:list-item-id;
+            }
+            uses lisp-proto:eid-container;
+            uses mapping-authkey-container;
         }
     }
 
@@ -184,6 +206,78 @@ module mappingservice {
         input {
             uses lisp-proto:eid-container;
         }
+    }
+
+    rpc add-keys {
+        input {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc get-keys {
+        input {
+            uses lisp-proto:eid-list;
+        }
+        output {
+            uses mapping-authkey-list;
+        }
+    }
+
+    rpc update-keys {
+        input {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc remove-keys {
+        input {
+            uses lisp-proto:eid-list;
+        }
+    }
+
+    rpc add-mappings {
+        input {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc get-mappings {
+        input {
+            uses lisp-proto:eid-list;
+        }
+        output {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc update-mappings {
+        input {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc remove-mappings {
+        input {
+            uses lisp-proto:eid-list;
+        }
+    }
+
+    rpc get-all-keys {
+        output {
+            uses mapping-authkey-list;
+        }
+    }
+
+    rpc get-all-mappings {
+        output {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc remove-all-keys {
+    }
+
+    rpc remove-all-mappings {
     }
 
     notification mapping-changed {
