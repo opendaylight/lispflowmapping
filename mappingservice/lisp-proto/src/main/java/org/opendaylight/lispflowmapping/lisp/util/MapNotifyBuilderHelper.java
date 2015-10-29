@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.list.MappingRecordItem;
 
 public class MapNotifyBuilderHelper {
 
     public static void setFromMapRegister(MapNotifyBuilder builder, MapRegister mapRegister) {
-        if (builder.getEidToLocatorRecord() == null) {
-            builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        if (builder.getMappingRecordItem() == null) {
+            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         }
         builder.setNonce(mapRegister.getNonce());
         builder.setKeyId(mapRegister.getKeyId());
@@ -29,8 +29,8 @@ public class MapNotifyBuilderHelper {
         }
         builder.setAuthenticationData(authenticationData);
 
-        for (EidToLocatorRecord eidToLocator : mapRegister.getEidToLocatorRecord()) {
-            builder.getEidToLocatorRecord().add(eidToLocator);
+        for (MappingRecordItem eidToLocator : mapRegister.getMappingRecordItem()) {
+            builder.getMappingRecordItem().add(eidToLocator);
         }
     }
 }

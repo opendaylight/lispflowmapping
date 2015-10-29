@@ -26,6 +26,7 @@
         <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
         <feature version="${project.version}">odl-lispflowmapping-southbound</feature>
     </feature>
+    -->
 
     <feature name="odl-lispflowmapping-mappingservice" description="OpenDaylight :: LISP Flow Mapping :: Mapping Service" version='${project.version}'>
         <feature version="${restconf.version}">odl-restconf</feature>
@@ -48,6 +49,7 @@
         </configfile>
     </feature>
 
+    <!--
     <feature name="odl-lispflowmapping-southbound" description="OpenDaylight :: LISP Flow Mapping :: Southbound Plugin" version='${project.version}'>
         <feature version="${restconf.version}">odl-restconf</feature>
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>

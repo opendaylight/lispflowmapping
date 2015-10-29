@@ -24,25 +24,26 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.util.LcafSourceDestHelper;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
-import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.lisp.address.types.rev150309.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.list.EidItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingserviceListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,24 +88,24 @@ public class MapServer implements IMapServerAsync, MappingserviceListener {
 
     public void handleMapRegister(MapRegister mapRegister) {
         boolean failed = false;
-        String password = null;
-        for (EidToLocatorRecord record : mapRegister.getEidToLocatorRecord()) {
+        MappingAuthkey password = null;
+        for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
+            MappingRecord mapping = record.getMappingRecord();
             if (authenticate) {
-                password = mapService.getAuthenticationKey(record.getLispAddressContainer());
-                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
+                password = mapService.getAuthenticationKey(mapping.getEid());
+                if (!LispAuthenticationUtil.validate(mapRegister, password.getKeyString())) {
                     LOG.warn("Authentication failed");
                     failed = true;
                     break;
                 }
             }
-            EidToLocatorRecord oldMapping = (EidToLocatorRecord) mapService.getMapping(MappingOrigin.Southbound,
-                    record.getLispAddressContainer());
-            mapService.addMapping(MappingOrigin.Southbound, record.getLispAddressContainer(), getSiteId(mapRegister),
-                    record);
-            if (subscriptionService && !record.equals(oldMapping)) {
-                LOG.debug("Sending SMRs for subscribers of {}", record.getLispAddressContainer());
-                Set<SubscriberRLOC> subscribers = getSubscribers(record.getLispAddressContainer());
-                sendSmrs(record, subscribers);
+            MappingRecord oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
+                    mapping.getEid());
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), record);
+            if (subscriptionService && !mapping.equals(oldMapping)) {
+                LOG.debug("Sending SMRs for subscribers of {}", mapping.getEid());
+                Set<SubscriberRLOC> subscribers = getSubscribers(mapping.getEid());
+                sendSmrs(mapping, subscribers);
             }
         }
         if (!failed) {
@@ -114,7 +115,7 @@ public class MapServer implements IMapServerAsync, MappingserviceListener {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
                 if (authenticate) {
                     builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                            password));
+                            password.getKeyString()));
                 }
                 notifyHandler.handleMapNotify(builder.build());
             }
@@ -128,37 +129,34 @@ public class MapServer implements IMapServerAsync, MappingserviceListener {
     @Override
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
-            sendSmrs(new EidToLocatorRecordBuilder(notification.getMapping()).build(), getSubscribers(notification
-                    .getMapping().getLispAddressContainer()));
-            if (notification.getChange().equals(MappingChange.Removed)) {
-                removeSubscribers(notification.getMapping().getLispAddressContainer());
+            sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
+            if (notification.getChangeType().equals(MappingChange.Removed)) {
+                removeSubscribers(notification.getMappingRecord().getEid());
             }
         }
     }
 
-    private void sendSmrs(EidToLocatorRecord record, Set<SubscriberRLOC> subscribers) {
-        LispAddressContainer eid = record.getLispAddressContainer();
+    private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
+        Eid eid = record.getEid();
         handleSmr(record, subscribers, notifyHandler);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            LispAddressContainer dstAddr = LispAFIConvertor.toContainer(LcafSourceDestHelper.getDstAfi(eid));
-            short dstMask = LcafSourceDestHelper.getDstMask(eid);
+        if (eid.getAddress() instanceof SourceDestKey) {
+            Eid dstAddr = SourceDestKeyHelper.getDst(eid);
             subscribers = getSubscribers(dstAddr);
-            EidToLocatorRecord newRecord = new EidToLocatorRecordBuilder().setAction(record.getAction())
+            MappingRecord newRecord = new MappingRecordBuilder().setAction(record.getAction())
                     .setAuthoritative(record.isAuthoritative()).setLocatorRecord(record.getLocatorRecord())
                     .setMapVersion(record.getMapVersion()).setRecordTtl(record.getRecordTtl())
-                    .setLispAddressContainer(dstAddr).setMaskLength(dstMask).build();
+                    .setEid(dstAddr).build();
             handleSmr(newRecord, subscribers, notifyHandler);
         }
     }
 
-    private void handleSmr(EidToLocatorRecord record, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
+    private void handleSmr(MappingRecord record, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
         if (subscribers == null) {
             return;
         }
-        MapRequestBuilder mrb = MapRequestUtil.prepareSMR(record.getLispAddressContainer(),
-                LispAFIConvertor.toContainer(getLocalAddress()));
+        MapRequestBuilder mrb = MapRequestUtil.prepareSMR(record.getEid(), LispAFIConvertor.toRloc(getLocalAddress()));
         LOG.trace("Built SMR packet: " + mrb.build().toString());
         for (SubscriberRLOC subscriber : subscribers) {
             if (subscriber.timedOut()) {
@@ -168,31 +166,27 @@ public class MapServer implements IMapServerAsync, MappingserviceListener {
                 try {
                     // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request.
                     // To ensure consistent behavior it is set to the value used to originally request a given mapping
-                    mrb.setEidRecord(new ArrayList<EidRecord>());
-                    mrb.getEidRecord()
-                            .add(new EidRecordBuilder()
-                                    .setMask(
-                                            (short) MaskUtil.getMaxMask(LispAFIConvertor.toAFI(subscriber.getSrcEid())))
-                                    .setLispAddressContainer(subscriber.getSrcEid()).build());
+                    mrb.setEidItem(new ArrayList<EidItem>());
+                    mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                     callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:" + ExceptionUtils.getStackTrace(e));
                 }
             }
         }
-        addSubscribers(record.getLispAddressContainer(), subscribers);
+        addSubscribers(record.getEid(), subscribers);
     }
 
     @SuppressWarnings("unchecked")
-    private Set<SubscriberRLOC> getSubscribers(LispAddressContainer address) {
+    private Set<SubscriberRLOC> getSubscribers(Eid address) {
         return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
-    private void removeSubscribers(LispAddressContainer address) {
+    private void removeSubscribers(Eid address) {
         mapService.removeData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
-    private void addSubscribers(LispAddressContainer address, Set<SubscriberRLOC> subscribers) {
+    private void addSubscribers(Eid address, Set<SubscriberRLOC> subscribers) {
         mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
