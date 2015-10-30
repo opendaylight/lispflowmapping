@@ -32,7 +32,6 @@
         <feature version='${project.version}'>odl-lispflowmapping-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.shell/{{VERSION}}</bundle>
         <configfile finalname="${configfile.directory}/lfm-mappingservice.xml">
             mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/{{VERSION}}/xml/config
         </configfile>
@@ -77,4 +76,8 @@
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.api/{{VERSION}}</bundle>
     </feature>
 
+    <feature name="odl-lispflowmapping-karaf-shell" description="OpenDaylight :: LISP Flow Mapping :: Karaf Shell" version='${project.version}'>
+        <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.shell/{{VERSION}}</bundle>
+    </feature>
 </features>
