@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_26f54783",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-05T13:20:51Z",
+      "side": 1,
+      "message": "In general, \"grouping \" is useful if it is used in multiple places. If it is only used in one place, then it doesnt have to be a grouping, and can be defined in place. eid-list is only used here, so maybe you can define the list here inside the input and avoid defining the eid-list grouping. Unless it is serving a specific purpose in the code, I think we should aim for simplicity of the model.",
+      "range": {
+        "startLine": 219,
+        "startChar": 36,
+        "endLine": 219,
+        "endChar": 37
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_26a0e78f",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-05T13:20:51Z",
+      "side": 1,
+      "message": "Is the list of keys without associated EIDs useful in any way? I think this should be eid-authkey-list.",
+      "range": {
+        "startLine": 222,
+        "startChar": 37,
+        "endLine": 222,
+        "endChar": 38
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_c6c31b37",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-05T13:20:51Z",
+      "side": 1,
+      "message": "Again, I dont think list of keys without eid association is useful. In general use of RESTCONF for adding/updating data is strictly preferable, because RPC hides the tree hierarchy,preventing tail-f to do transactions /reverts. So now that our model is more stable, moving forward we should only use RESTCONF for adding/updating data. RPC is requried only for gettng, because of longest prefix match.  and not to complicate the models too much, I think we dont need to add too many RPCs in an exahustive way. After API freeze we can still add RPCs if we want I think if needed, we just cant change the existing published API.",
+      "range": {
+        "startLine": 267,
+        "startChar": 37,
+        "endLine": 267,
+        "endChar": 38
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_663a6f38",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-05T13:20:51Z",
+      "side": 1,
+      "message": "These two groupings seem repetitive. Can you please explain why you need to add the eid-item-list and how is it different from just using EidRecords? is it a matter of naming? This seems a bit confusing to me.",
+      "range": {
+        "startLine": 387,
+        "startChar": 4,
+        "endLine": 387,
+        "endChar": 5
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_a6305757",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-05T13:20:51Z",
+      "side": 1,
+      "message": "These two groupings seem repetitive. Can you please explain why you need to add the mapping-record-list and how is it different from just using EidToLocatorRecords? is it a matter of naming? This seems a bit confusing to me.",
+      "range": {
+        "startLine": 468,
+        "startChar": 4,
+        "endLine": 468,
+        "endChar": 5
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
