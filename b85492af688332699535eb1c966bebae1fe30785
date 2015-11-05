@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_46b64b8c",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T14:52:33Z",
+      "side": 1,
+      "message": "The main reason I defined eid-list is because it is used in lisp-proto as well, in the EidRecord (not EidToLocatorRecord) field, so they can just be passed around.  Also, it is used in several other RPCs below. This means simple code, less builders, potentially better performance, bucase I don\u0027t need to convert what\u0027s in GetKeysInput to something else.",
+      "parentUuid": "bada0100_26f54783",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_26a0e78f",
         "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
         "patchSetId": 1
@@ -42,6 +60,24 @@
         "endLine": 222,
         "endChar": 38
       },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_66bb4f73",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T14:52:33Z",
+      "side": 1,
+      "message": "You\u0027re right. I\u0027ll change this.",
+      "parentUuid": "bada0100_26a0e78f",
       "revId": "b85492af688332699535eb1c966bebae1fe30785",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_c6a9db25",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T14:52:33Z",
+      "side": 1,
+      "message": "Yeap, I\u0027ll change this.\n\nRegarding RESTCONF for add/update, unless we need stricter validation and/or potential manipulation of input that\u0027s impossible with RESTCONF, I agree, but I seem to remember we needed some extra operations on add too.  Either way, we can figure that out later.  Do you have any candidate RPCs you\u0027d like us to remove?",
+      "parentUuid": "bada0100_c6c31b37",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_663a6f38",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -94,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_466deb03",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T14:52:33Z",
+      "side": 1,
+      "message": "Just for passing the same object around, whatever I put into an RPC input/output field is the same I have stored.",
+      "parentUuid": "bada0100_663a6f38",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_a6305757",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -111,6 +183,24 @@
         "endLine": 468,
         "endChar": 5
       },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0677e3d5",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T14:52:33Z",
+      "side": 1,
+      "message": "See above. I can\u0027t just cast EidToLocatorRecord to MappingRecord (what I store to the datastore, since I have to copy fields. This makes is easier.",
+      "parentUuid": "bada0100_a6305757",
       "revId": "b85492af688332699535eb1c966bebae1fe30785",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
