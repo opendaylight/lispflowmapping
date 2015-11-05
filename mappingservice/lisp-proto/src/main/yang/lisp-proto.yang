@@ -5,7 +5,6 @@ module lisp-proto {
     prefix "lisp-proto";
 
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
-    import ietf-yang-types { prefix yang; revision-date 2010-09-24; }
     import lisp-address-types { prefix lisp-address; revision-date 2015-03-09; }
 
     organization "LISP Flow Mapping";
@@ -17,345 +16,19 @@ module lisp-proto {
     description
         "YANG representation of LISP (RFC6830) protocol.";
 
-    revision "2015-08-20" {
+    revision "2015-11-05" {
         description "Renamed the module to lisp-proto.";
         reference "https://tools.ietf.org/html/rfc6830";
     }
 
-    grouping TransportAddress {
-        container TransportAddress {
+    grouping transport-address {
+        container transport-address {
             leaf ipAddress {
                 type inet:ip-address;
                 reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
             }
             leaf port {
                 type inet:port-number;
-            }
-        }
-    }
-
-    grouping LispAFIAddress {
-        leaf afi {
-            type int16;
-            reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
-        }
-    }
-
-    grouping LispNoAddress {
-        uses LispAFIAddress {
-            refine afi {
-                default 0;
-            }
-        }
-    }
-
-    grouping LispIpv4Address {
-        uses LispAFIAddress {
-            refine afi {
-                default 1;
-            }
-        }
-        leaf Ipv4Address {
-            type inet:ipv4-address;
-            reference "https://tools.ietf.org/html/rfc3209#section-4.6.2.1";
-        }
-        leaf mask {
-            type uint8;
-        }
-    }
-
-    grouping LispIpv6Address {
-        uses LispAFIAddress {
-            refine afi {
-                default 2;
-            }
-        }
-        leaf Ipv6Address {
-            type inet:ipv6-address;
-        }
-        leaf mask {
-            type uint8;
-        }
-    }
-
-    grouping LispMacAddress {
-        uses LispAFIAddress {
-            refine afi {
-                default 16389;
-            }
-        }
-        leaf MacAddress {
-            type yang:mac-address;
-        }
-    }
-
-    grouping LispDistinguishedNameAddress {
-        uses LispAFIAddress {
-            refine afi {
-                default 17;
-            }
-        }
-        leaf distinguishedName {
-            type string;
-        }
-    }
-
-    grouping LispASAddress {
-        uses LispAFIAddress {
-            refine afi {
-                default 18;
-            }
-        }
-        leaf AS {
-            type int32;
-        }
-    }
-
-    grouping LispSimpleAddress {
-        choice primitiveAddress {
-            case No {
-                container NoAddress {
-                    uses LispNoAddress;
-                }
-            }
-            case Ipv4 {
-                container Ipv4Address {
-                    uses LispIpv4Address;
-                }
-            }
-            case Ipv6 {
-                container Ipv6Address {
-                    uses LispIpv6Address;
-                }
-            }
-            case Mac {
-                container MacAddress {
-                    uses LispMacAddress;
-                }
-            }
-            case DistinguishedName {
-                container DistinguishedNameAddress {
-                    uses LispDistinguishedNameAddress;
-                }
-            }
-            case AS {
-                container ASAddress {
-                    uses LispASAddress;
-                }
-            }
-        }
-    }
-
-    grouping ReencapHop {
-        container hop {
-            uses LispSimpleAddress;
-        }
-        leaf lookup {
-            type boolean;
-        }
-        leaf RLOCProbe {
-            type boolean;
-        }
-        leaf strict {
-            type boolean;
-        }
-    }
-
-    grouping LispLcafAddress {
-        uses LispAFIAddress {
-            refine afi {
-                    default 16387;
-            }
-        }
-        leaf lcafType {
-            type uint8;
-            reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03";
-        }
-    }
-
-    grouping LcafSegmentAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.1";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 2;
-            }
-        }
-        leaf instanceId {
-            type uint32 {
-                range "0 .. 16777215";
-            }
-        }
-        leaf iidMaskLength {
-            type uint8;
-        }
-        container Address {
-            uses LispSimpleAddress;
-        }
-    }
-
-    grouping LcafTrafficEngineeringAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-09#section-4.9";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 10;
-            }
-        }
-        list Hops {
-            key "hop-id";
-            ordered-by user;
-            leaf hop-id {
-                type string;
-            }
-            uses ReencapHop;
-        }
-    }
-
-    grouping LcafListAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.15.1";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 1;
-            }
-        }
-        list Addresses {
-            key "address-id";
-            leaf address-id {
-                type string;
-            }
-            uses LispSimpleAddress;
-        }
-    }
-
-    grouping LcafSourceDestAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.11";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 12;
-            }
-        }
-        container srcAddress {
-            uses LispSimpleAddress;
-        }
-        container dstAddress {
-            uses LispSimpleAddress;
-        }
-        leaf srcMaskLength {
-            type uint8;
-        }
-        leaf dstMaskLength {
-            type uint8;
-        }
-    }
-
-    grouping LcafKeyValueAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.14";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 15;
-            }
-        }
-        container key {
-            uses LispSimpleAddress;
-        }
-        container value {
-            uses LispSimpleAddress;
-        }
-    }
-
-    grouping LcafApplicationDataAddress {
-        reference "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-08#section-4.3";
-        uses LispLcafAddress {
-            refine lcafType {
-                default 4;
-            }
-        }
-        container Address {
-            uses LispSimpleAddress;
-        }
-        leaf protocol {
-            type uint8;
-        }
-        leaf ipTos {
-            type int32;
-        }
-        leaf localPortLow {
-            type inet:port-number;
-        }
-        leaf localPortHigh {
-            type inet:port-number;
-        }
-        leaf remotePortLow {
-            type inet:port-number;
-        }
-        leaf remotePortHigh {
-            type inet:port-number;
-        }
-    }
-
-
-    grouping LispAddress {
-        container LispAddressContainer {
-            choice Address {
-                case No {
-                    container NoAddress {
-                        uses LispNoAddress;
-                    }
-                }
-                case Ipv4 {
-                    container Ipv4Address {
-                        uses LispIpv4Address;
-                    }
-                }
-                case Ipv6 {
-                    container Ipv6Address {
-                        uses LispIpv6Address;
-                    }
-                }
-                case Mac {
-                    container MacAddress {
-                        uses LispMacAddress;
-                    }
-                }
-                case DistinguishedName {
-                    container distinguishedName {
-                        uses LispDistinguishedNameAddress;
-                    }
-                }
-                case AS {
-                    container AS {
-                        uses LispASAddress;
-                    }
-                }
-                case LcafSegment {
-                    container LcafSegmentAddr {
-                        uses LcafSegmentAddress;
-                    }
-                }
-                case LcafSourceDest {
-                    container LcafSourceDestAddr {
-                        uses LcafSourceDestAddress;
-                    }
-                }
-                case LcafKeyValue {
-                    container LcafKeyValueAddressAddr {
-                        uses LcafKeyValueAddress;
-                    }
-                }
-                case LcafList {
-                    container LcafListAddr {
-                        uses LcafListAddress;
-                    }
-                }
-                case LcafApplicationData {
-                    container LcafApplicationDataAddr {
-                        uses LcafApplicationDataAddress;
-                    }
-                }
-                case LcafTrafficEngineering {
-                    container LcafTrafficEngineeringAddr {
-                        uses LcafTrafficEngineeringAddress;
-                    }
-                }
             }
         }
     }
@@ -618,56 +291,56 @@ module lisp-proto {
         container MapRegister {
             uses MapRegister;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapRegisterNotification {
         container MapRegister {
             uses MapRegister;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapNotifyMessage {
         container MapNotify {
             uses MapNotify;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapNotifyNotification {
         container MapNotify {
             uses MapNotify;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapRequestMessage {
         container MapRequest {
             uses MapRequest;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapRequestNotification {
         container MapRequest {
             uses MapRequest;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapReplyMessage {
         container MapReply {
             uses MapReply;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     grouping MapReplyNotification {
         container MapReply {
             uses MapReply;
         }
-        uses TransportAddress;
+        uses transport-address;
     }
 
     notification addMapping {
