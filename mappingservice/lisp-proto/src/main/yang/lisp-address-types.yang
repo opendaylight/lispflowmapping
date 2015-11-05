@@ -240,465 +240,429 @@ module lisp-address-types {
       description
         "Various LISP address types, including IP, MAC, and LCAF.";
   
-      case no-address {
-        leaf no-address {
-          when "../../address-type = 'laddr:no-addr-afi'" {
-            description
-              "When AFI is 0.";
-          }
+      leaf no-address {
+        when "../../address-type = 'laddr:no-addr-afi'" {
+          description
+            "When AFI is 0.";
+        }
+        type empty;
+        description
+          "No address.";
+      }
+      leaf ipv4 {
+        when "../../address-type = 'laddr:ipv4-afi'" {
+          description
+            "When AFI is IPv4.";
+        }
+        type inet:ipv4-address;
+        description
+          "IPv4 address.";
+      }
+      leaf ipv4-prefix {
+        when "../../address-type = 'laddr:ipv4-prefix-afi'" {
+          description
+            "When AFI is IPv4.";
+        }
+        type inet:ipv4-prefix;
+        description
+          "IPv4 prefix.";
+      }
+      leaf ipv6 {
+        when "../../address-type = 'laddr:ipv6-afi'" {
+          description
+            "When AFI is IPv6.";
+        }
+        type inet:ipv6-address;
+        description
+          "IPv6 address.";
+      }
+      leaf ipv6-prefix {
+        when "../../address-type = 'laddr:ipv6-prefix-afi'" {
+          description
+            "When AFI is IPv6.";
+        }
+        type inet:ipv6-prefix;
+        description
+          "IPv6 address.";
+      }
+      leaf mac {
+        when "../../address-type = 'laddr:mac-afi'" {
+          description
+            "When AFI is MAC.";
+        }
+        type yang:mac-address;
+        description
+          "MAC address.";
+      }
+      leaf distinguished-name {
+        when "../../address-type = 'laddr:distinguished-name-afi'" {
+          description
+            "When AFI is distinguished-name.";
+        }
+        type distinguished-name-type;
+        description
+          "Distinguished Name address.";
+      }
+      leaf as-number {
+        when "../../address-type = 'laddr:as-number-afi'" {
+          description
+            "When AFI is as-number.";
+        }
+        type inet:as-number;
+        description
+          "AS Number.";
+      }
+      container null-address {
+        when "../../address-type = 'null-address-lcaf'" {
+          description
+            "When LCAF type is null.";
+        }
+        description
+          "Null body LCAF type";
+        leaf address {
           type empty;
           description
-            "No address.";
+            "AFI address.";
         }
       }
-      case ipv4 {
-        leaf ipv4 {
-          when "../../address-type = 'laddr:ipv4-afi'" {
-            description
-              "When AFI is IPv4.";
-          }
-          type inet:ipv4-address;
+      container afi-list {
+        when "../../address-type = 'afi-list-lcaf'" {
           description
-            "IPv4 address.";
+            "When LCAF type is AFI-List.";
+        }
+        description
+          "AFI-List LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.16.1";
+        leaf-list address-list {
+          type simple-address;
+          description
+            "List of AFI addresses.";
         }
       }
-      case ipv4-prefix {
-        leaf ipv4-prefix {
-          when "../../address-type = 'laddr:ipv4-prefix-afi'" {
-            description
-              "When AFI is IPv4.";
-          }
-          type inet:ipv4-prefix;
+      container instance-id {
+        when "../../address-type = 'instance-id-lcaf'" {
           description
-            "IPv4 prefix.";
+            "When LCAF type is Instance-ID";
         }
-      }
-      case ipv6 {
-        leaf ipv6 {
-          when "../../address-type = 'laddr:ipv6-afi'" {
-            description
-              "When AFI is IPv6.";
-          }
-          type inet:ipv6-address;
+        description
+          "Instance ID LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.2";
+        leaf iid {
+          type instance-id-type;
           description
-            "IPv6 address.";
+            "Instance ID value.";
         }
-      }
-      case ipv6-prefix {
-        leaf ipv6-prefix {
-          when "../../address-type = 'laddr:ipv6-prefix-afi'" {
-            description
-              "When AFI is IPv6.";
-          }
-          type inet:ipv6-prefix;
-          description
-            "IPv6 address.";
-        }
-      }
-      case mac {
-        leaf mac {
-          when "../../address-type = 'laddr:mac-afi'" {
-            description
-              "When AFI is MAC.";
-          }
-          type yang:mac-address;
-          description
-            "MAC address.";
-        }
-      }
-      case distinguished-name {
-        leaf distinguished-name {
-          when "../../address-type = 'laddr:distinguished-name-afi'" {
-            description
-              "When AFI is distinguished-name.";
-          }
-          type distinguished-name-type;
-          description
-            "Distinguished Name address.";
-        }
-      }
-      case as-number {
-        leaf as-number {
-          when "../../address-type = 'laddr:as-number-afi'" {
-            description
-              "When AFI is as-number.";
-          }
-          type inet:as-number;
-          description
-            "AS Number.";
-        }
-      }
-      case null-address {
-        container null-address {
-          when "../../address-type = 'null-address-lcaf'" {
-            description
-              "When LCAF type is null.";
-          }
-          description
-            "Null body LCAF type";
-          leaf address {
-            type empty;
-            description
-              "AFI address.";
-          }
-        }
-      }
-      case afi-list {
-        container afi-list {
-          when "../../address-type = 'afi-list-lcaf'" {
-            description
-              "When LCAF type is AFI-List.";
-          }
-          description
-            "AFI-List LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.16.1";
-          leaf-list address-list {
-            type simple-address;
-            description
-              "List of AFI addresses.";
-          }
-        }
-      }
-      case instance-id {
-        container instance-id {
-          when "../../address-type = 'instance-id-lcaf'" {
-            description
-              "When LCAF type is Instance-ID";
-          }
-          description
-            "Instance ID LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.2";
-          leaf iid {
-            type instance-id-type;
-            description
-              "Instance ID value.";
-          }
-          leaf mask-length {
-              type uint8;
-              description
-                "Mask length.";
-          }
-          leaf address {
-            type simple-address;
-            description
-              "AFI address.";
-          }
-        }
-      }
-      case as-number-lcaf {
-        container as-number-lcaf {
-          when "../../address-type = 'as-number-lcaf'" {
-            description
-              "When LCAF type is AS-Number.";
-          }
-          description
-            "AS Number LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.3";
-          leaf as {
-            type inet:as-number;
-            description
-              "AS number.";
-          }
-          leaf address {
-            type simple-address;
-            description
-              "AFI address.";
-          }
-        }
-      }
-      case application-data {
-        container application-data {
-          when "../../address-type = 'application-data-lcaf'" {
-            description
-              "When LCAF type is Application Data.";
-          }
-          description
-            "Application Data LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.4";
-          leaf address {
-              type simple-address;
-              description
-                "AFI address.";
-          }
-          leaf protocol {
-              type uint8;
-              description
-                "Protocol number.";
-          }
-          leaf ip-tos {
-              type int32;
-              description
-                "Type of service field.";
-          }
-          leaf local-port-low {
-              type inet:port-number;
-              description
-                "Low end of local port range.";
-          }
-          leaf local-port-high {
-              type inet:port-number;
-              description
-                "High end of local port range.";
-          }
-          leaf remote-port-low {
-              type inet:port-number;
-              description
-                "Low end of remote port range.";
-          }
-          leaf remote-port-high {
-              type inet:port-number;
-              description
-                "High end of remote port range.";
-          }
-        }
-      }
-      case geo-coordinates {
-        container geo-coordinates {
-          when "../../address-type = 'geo-coordinates-lcaf'" {
-            description
-              "When LCAF type is Geo-coordinates.";
-          }
-          description
-            "Geo-coordinates LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.5";
-          leaf latitude {
-            type bits {
-              bit N {
-                description
-                  "Latitude bit.";
-              }
-            }
-            description
-              "Bit that selects between North and South latitude.";
-          }
-          leaf latitude-degrees {
-            type uint8 {
-              range "0 .. 90";
-            }
-            description
-              "Degrees of latitude.";
-          }
-          leaf latitude-minutes {
-            type uint8 {
-              range "0..59";
-            }
-            description
-              "Minutes of latitude.";
-          }
-          leaf latitude-seconds {
-            type uint8 {
-              range "0..59";
-            }
-            description
-              "Seconds of latitude.";
-          }
-          leaf longitude {
-            type bits {
-              bit E {
-                description
-                  "Longitude bit.";
-              }
-            }
-            description
-              "Bit that selects between East and West longitude.";
-          }
-          leaf longitude-degrees {
-            type uint16 {
-              range "0 .. 180";
-            }
-            description
-              "Degrees of longitude.";
-          }
-          leaf longitude-minutes {
-            type uint8 {
-              range "0..59";
-            }
-            description
-              "Minutes of longitude.";
-          }
-          leaf longitude-seconds {
-            type uint8 {
-              range "0..59";
-            }
-            description
-              "Seconds of longitude.";
-          }
-          leaf altitude {
-            type int32;
-            description
-              "Height relative to sea level in meters.";
-          }
-          leaf address {
-            type simple-address;
-            description
-              "AFI address.";
-          }
-        }
-      }
-      case nat-traversal {
-        container nat-traversal {
-          when "../../address-type = 'nat-traversal-lcaf'" {
-            description
-              "When LCAF type is NAT-Traversal.";
-          }
-          description
-            "NAT-Traversal LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.6";
-          leaf ms-udp-port {
-            type uint16;
-            description
-              "Map-Server UDP port (set to 4342).";
-          }
-          leaf etr-udp-port {
-            type uint16;
-            description
-              "ETR UDP port.";
-          }
-          leaf global-etr-rloc {
-            type simple-address;
-            description
-              "Global ETR RLOC address.";
-          }
-          leaf ms-rloc {
-            type simple-address;
-            description
-              "Map-Server RLOC address.";
-          }
-          leaf private-etr-rloc {
-            type simple-address;
-            description
-              "Private ETR RLOC address.";
-          }
-          leaf-list rtr-rlocs {
-            type simple-address;
-            description
-              "List of RTR RLOC addresses.";
-          }
-        }
-      }
-      case explicit-locator-path {
-        container explicit-locator-path {
-          when "../../address-type = 'explicit-locator-path-lcaf'" {
-            description
-              "When LCAF type type is Explicit Locator Path.";
-          }
-          description
-            "Explicit Locator Path LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.9";
-          list hop {
-            key "hop-id";
-            ordered-by user;
-            description
-              "List of locator hops forming the explicit path.";
-            leaf hop-id {
-              type string;
-            }
-            leaf address {
-              type simple-address;
-              description
-                "AFI address.";
-            }
-            leaf lrs-bits {
-              type bits{
-                bit lookup {
-                  description
-                    "Lookup bit.";
-                }
-                bit rloc-probe {
-                  description
-                    "RLOC-probe bit.";
-                }
-                bit strict {
-                  description
-                    "Strict bit.";
-                }
-              }
-              description
-                "Flag bits per hop.";
-            }
-          }
-        }
-      }
-      case source-dest-key {
-        container source-dest-key {
-          when "../../address-type = 'source-dest-key-lcaf'" {
-            description
-              "When LCAF type type is Source/Dest.";
-          }
-          description
-            "Source/Dest LCAF type.";
-          reference
-              "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-              #section-4.11";
-          leaf source {
-            type inet:ip-prefix;
-            description
-              "Source prefix.";
-          }
-          leaf dest {
-            type inet:ip-prefix;
-            description
-              "Destination prefix.";
-          }
-        }
-      }
-      case key-value-address {
-        container key-value-address {
-          when "../../address-type = 'key-value-address-lcaf'" {
-            description
-              "When LCAF type type is Key/Value Address.";
-          }
-          description
-            "Key/Value Address LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
-             #section-4.11";
-          leaf key {
-            type simple-address;
-            description
-              "Address as Key.";
-          }
-          leaf value {
-            type simple-address;
-            description
-              "Address as Value.";
-          }
-        }
-      }
-      case service-path {
-        container service-path {
-          when "../../address-type = 'service-path-lcaf'" {
-          description
-            "When LCAF type service path identifier.";
-   	      }
-          description
-            "Service Path LCAF type.";
-          reference
-            "http://tools.ietf.org/html/draft-ermagan-lisp-nsh-00";
-          leaf service-path-id {
-            type service-path-id-type;
-            description
-              "Service path identifier for the path for NSH header";
-          }
-          leaf service-index {
+        leaf mask-length {
             type uint8;
             description
-              "Service path index for NSH header";
+              "Mask length.";
+        }
+        leaf address {
+          type simple-address;
+          description
+            "AFI address.";
+        }
+      }
+      container as-number-lcaf {
+        when "../../address-type = 'as-number-lcaf'" {
+          description
+            "When LCAF type is AS-Number.";
+        }
+        description
+          "AS Number LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.3";
+        leaf as {
+          type inet:as-number;
+          description
+            "AS number.";
+        }
+        leaf address {
+          type simple-address;
+          description
+            "AFI address.";
+        }
+      }
+      container application-data {
+        when "../../address-type = 'application-data-lcaf'" {
+          description
+            "When LCAF type is Application Data.";
+        }
+        description
+          "Application Data LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.4";
+        leaf address {
+            type simple-address;
+            description
+              "AFI address.";
+        }
+        leaf protocol {
+            type uint8;
+            description
+              "Protocol number.";
+        }
+        leaf ip-tos {
+            type int32;
+            description
+              "Type of service field.";
+        }
+        leaf local-port-low {
+            type inet:port-number;
+            description
+              "Low end of local port range.";
+        }
+        leaf local-port-high {
+            type inet:port-number;
+            description
+              "High end of local port range.";
+        }
+        leaf remote-port-low {
+            type inet:port-number;
+            description
+              "Low end of remote port range.";
+        }
+        leaf remote-port-high {
+            type inet:port-number;
+            description
+              "High end of remote port range.";
+        }
+      }
+      container geo-coordinates {
+        when "../../address-type = 'geo-coordinates-lcaf'" {
+          description
+            "When LCAF type is Geo-coordinates.";
+        }
+        description
+          "Geo-coordinates LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.5";
+        leaf latitude {
+          type bits {
+            bit N {
+              description
+                "Latitude bit.";
+            }
           }
+          description
+            "Bit that selects between North and South latitude.";
+        }
+        leaf latitude-degrees {
+          type uint8 {
+            range "0 .. 90";
+          }
+          description
+            "Degrees of latitude.";
+        }
+        leaf latitude-minutes {
+          type uint8 {
+            range "0..59";
+          }
+          description
+            "Minutes of latitude.";
+        }
+        leaf latitude-seconds {
+          type uint8 {
+            range "0..59";
+          }
+          description
+            "Seconds of latitude.";
+        }
+        leaf longitude {
+          type bits {
+            bit E {
+              description
+                "Longitude bit.";
+            }
+          }
+          description
+            "Bit that selects between East and West longitude.";
+        }
+        leaf longitude-degrees {
+          type uint16 {
+            range "0 .. 180";
+          }
+          description
+            "Degrees of longitude.";
+        }
+        leaf longitude-minutes {
+          type uint8 {
+            range "0..59";
+          }
+          description
+            "Minutes of longitude.";
+        }
+        leaf longitude-seconds {
+          type uint8 {
+            range "0..59";
+          }
+          description
+            "Seconds of longitude.";
+        }
+        leaf altitude {
+          type int32;
+          description
+            "Height relative to sea level in meters.";
+        }
+        leaf address {
+          type simple-address;
+          description
+            "AFI address.";
+        }
+      }
+      container nat-traversal {
+        when "../../address-type = 'nat-traversal-lcaf'" {
+          description
+            "When LCAF type is NAT-Traversal.";
+        }
+        description
+          "NAT-Traversal LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.6";
+        leaf ms-udp-port {
+          type uint16;
+          description
+            "Map-Server UDP port (set to 4342).";
+        }
+        leaf etr-udp-port {
+          type uint16;
+          description
+            "ETR UDP port.";
+        }
+        leaf global-etr-rloc {
+          type simple-address;
+          description
+            "Global ETR RLOC address.";
+        }
+        leaf ms-rloc {
+          type simple-address;
+          description
+            "Map-Server RLOC address.";
+        }
+        leaf private-etr-rloc {
+          type simple-address;
+          description
+            "Private ETR RLOC address.";
+        }
+        leaf-list rtr-rlocs {
+          type simple-address;
+          description
+            "List of RTR RLOC addresses.";
+        }
+      }
+      container explicit-locator-path {
+        when "../../address-type = 'explicit-locator-path-lcaf'" {
+          description
+            "When LCAF type type is Explicit Locator Path.";
+        }
+        description
+          "Explicit Locator Path LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.9";
+        list hop {
+          key "hop-id";
+          ordered-by user;
+          description
+            "List of locator hops forming the explicit path.";
+          leaf hop-id {
+            type string;
+            description
+              "Unique identifier for the hop.";
+          }
+          leaf address {
+            type simple-address;
+            description
+              "AFI address.";
+          }
+          leaf lrs-bits {
+            type bits{
+              bit lookup {
+                description
+                  "Lookup bit.";
+              }
+              bit rloc-probe {
+                description
+                  "RLOC-probe bit.";
+              }
+              bit strict {
+                description
+                  "Strict bit.";
+              }
+            }
+            description
+              "Flag bits per hop.";
+          }
+        }
+      }
+      container source-dest-key {
+        when "../../address-type = 'source-dest-key-lcaf'" {
+          description
+            "When LCAF type type is Source/Dest.";
+        }
+        description
+          "Source/Dest LCAF type.";
+        reference
+            "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+            #section-4.11";
+        leaf source {
+          type inet:ip-prefix;
+          description
+            "Source prefix.";
+        }
+        leaf dest {
+          type inet:ip-prefix;
+          description
+            "Destination prefix.";
+        }
+      }
+      container key-value-address {
+        when "../../address-type = 'key-value-address-lcaf'" {
+          description
+            "When LCAF type type is Key/Value Address.";
+        }
+        description
+          "Key/Value Address LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
+           #section-4.11";
+        leaf key {
+          type simple-address;
+          description
+            "Address as Key.";
+        }
+        leaf value {
+          type simple-address;
+          description
+            "Address as Value.";
+        }
+      }
+      container service-path {
+        when "../../address-type = 'service-path-lcaf'" {
+        description
+          "When LCAF type service path identifier.";
+            }
+        description
+          "Service Path LCAF type.";
+        reference
+          "http://tools.ietf.org/html/draft-ermagan-lisp-nsh-00";
+        leaf service-path-id {
+          type service-path-id-type;
+          description
+            "Service path identifier for the path for NSH header";
+        }
+        leaf service-index {
+          type uint8;
+          description
+            "Service path index for NSH header";
         }
       }
     }
