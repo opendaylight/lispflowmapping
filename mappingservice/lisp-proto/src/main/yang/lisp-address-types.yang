@@ -222,12 +222,6 @@ module lisp-address-types {
       "LCAF types reference.";
   }
 
-  typedef list-item-id {
-    type string;
-    description
-      "Unique ID used to discriminate list elements.";
-  }
-
   grouping lisp-address {
     description
       "Generic LISP address.";
@@ -611,7 +605,7 @@ module lisp-address-types {
             description
               "List of locator hops forming the explicit path.";
             leaf hop-id {
-              type list-item-id;
+              type string;
             }
             leaf address {
               type simple-address;

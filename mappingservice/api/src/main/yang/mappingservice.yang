@@ -85,6 +85,27 @@ module mappingservice {
         }
     }
 
+    grouping mapping-authkey-list {
+        list mapping-authkey-item {
+            key "mapping-authkey-item-id";
+            leaf mapping-authkey-item-id {
+                type string;
+            }
+            uses mapping-authkey-container;
+        }
+    }
+
+    grouping eid-authkey-list {
+        list eid-authkey-item {
+            key "eid-authkey-item-id";
+            leaf eid-authkey-item-id {
+                type string;
+            }
+            uses lisp-proto:eid-container;
+            uses mapping-authkey-container;
+        }
+    }
+
     grouping db-instance {
         description "Describes the mappings belonging to the same Virtual Network Identifier";
         leaf vni {
@@ -184,6 +205,78 @@ module mappingservice {
         input {
             uses lisp-proto:eid-container;
         }
+    }
+
+    rpc add-keys {
+        input {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc get-keys {
+        input {
+            uses lisp-proto:eid-list;
+        }
+        output {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc update-keys {
+        input {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc remove-keys {
+        input {
+            uses lisp-proto:eid-list;
+        }
+    }
+
+    rpc add-mappings {
+        input {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc get-mappings {
+        input {
+            uses lisp-proto:eid-list;
+        }
+        output {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc update-mappings {
+        input {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc remove-mappings {
+        input {
+            uses lisp-proto:eid-list;
+        }
+    }
+
+    rpc get-all-keys {
+        output {
+            uses eid-authkey-list;
+        }
+    }
+
+    rpc get-all-mappings {
+        output {
+            uses lisp-proto:mapping-record-list;
+        }
+    }
+
+    rpc remove-all-keys {
+    }
+
+    rpc remove-all-mappings {
     }
 
     notification mapping-changed {

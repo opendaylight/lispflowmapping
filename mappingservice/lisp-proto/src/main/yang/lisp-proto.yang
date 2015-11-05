@@ -204,7 +204,7 @@ module lisp-proto {
             key "hop-id";
             ordered-by user;
             leaf hop-id {
-                type lisp-address:list-item-id;
+                type string;
             }
             uses ReencapHop;
         }
@@ -220,7 +220,7 @@ module lisp-proto {
         list Addresses {
             key "address-id";
             leaf address-id {
-                type lisp-address:list-item-id;
+                type string;
             }
             uses LispSimpleAddress;
         }
@@ -372,11 +372,11 @@ module lisp-proto {
         }
     }
 
-    grouping EidRecords {
-        list EidRecord {
-            key "mapping-id";
-            leaf mapping-id {
-                type lisp-address:list-item-id;
+    grouping eid-list {
+        list eid-item {
+            key "eid-item-id";
+            leaf eid-item-id {
+                type string;
             }
             uses eid-container;
         }
@@ -386,7 +386,7 @@ module lisp-proto {
         list LocatorRecord {
             key "locator-id";
             leaf locator-id {
-                type lisp-address:list-item-id;
+                type string;
             }
             leaf priority {
                 type uint8;
@@ -449,11 +449,11 @@ module lisp-proto {
         }
     }
 
-    grouping EidToLocatorRecords {
-        list eidToLocatorRecord {
-            key "mapping-record-id";
-            leaf mapping-record-id {
-                type lisp-address:list-item-id;
+    grouping mapping-record-list {
+        list mapping-record-item {
+            key "mapping-record-item-id";
+            leaf mapping-record-item-id {
+                type string;
             }
             uses mapping-record-container;
         }
@@ -488,7 +488,7 @@ module lisp-proto {
         leaf authenticationData {
             type binary;
         }
-        uses EidToLocatorRecords;
+        uses mapping-record-list;
         uses xtrSiteId;
     }
 
@@ -506,7 +506,7 @@ module lisp-proto {
         leaf authenticationData {
             type binary;
         }
-        uses EidToLocatorRecords;
+        uses mapping-record-list;
         uses xtrSiteId;
     }
 
@@ -539,11 +539,11 @@ module lisp-proto {
         list itrRloc {
             key "itr-rloc-id";
             leaf itr-rloc-id {
-                type lisp-address:list-item-id;
+                type string;
             }
             uses rloc-container;
         }
-        uses EidRecords;
+        uses eid-list;
         container MapReply {
             uses mapping-record-container;
         }
@@ -563,7 +563,7 @@ module lisp-proto {
         leaf securityEnabled {
             type boolean;
         }
-        uses EidToLocatorRecords;
+        uses mapping-record-list;
     }
 
     typedef message-type {
