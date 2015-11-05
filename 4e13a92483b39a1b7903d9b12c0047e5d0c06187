@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_01958d3f",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T16:44:28Z",
+      "side": 1,
+      "message": "While we\u0027re at it, can we rename this to transport-address?",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 29
+      },
+      "revId": "4e13a92483b39a1b7903d9b12c0047e5d0c06187",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
