@@ -22,6 +22,24 @@
       "revId": "e1e8988d9dad3204e6110a9075e90a1cb1f69adf",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6111f9ab",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-address-types.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T17:11:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_21f53183",
+      "revId": "e1e8988d9dad3204e6110a9075e90a1cb1f69adf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
