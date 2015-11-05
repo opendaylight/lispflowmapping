@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bada0100_c6579b25",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T15:08:06Z",
+      "side": 1,
+      "message": "Is there any value in using this instead of string?",
+      "range": {
+        "startLine": 93,
+        "startChar": 16,
+        "endLine": 93,
+        "endChar": 46
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_26f54783",
         "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
         "patchSetId": 1
@@ -125,6 +148,29 @@
     },
     {
       "key": {
+        "uuid": "bada0100_66726fe7",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T15:08:06Z",
+      "side": 1,
+      "message": "My memory doesn\u0027t serve me well today. Did we decide to use \"-item\" suffix for lists? The issue with this naming convention is that yangtools will convert the whole list to an EidItem object that gives the wrong impression (at least to me) that the list is an item. Comment holds for elements in mappingservice.yang as well.",
+      "range": {
+        "startLine": 376,
+        "startChar": 13,
+        "endLine": 376,
+        "endChar": 21
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_663a6f38",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -166,6 +212,47 @@
     },
     {
       "key": {
+        "uuid": "bada0100_2609c731",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T15:08:06Z",
+      "side": 1,
+      "message": "Can\u0027t we just use everywhere eid-list, or you didn\u0027t want to change eid-records because it maps to the LISP defined concept? I guess I\u0027d call eid-records the container that includes the eid-list.",
+      "parentUuid": "bada0100_466deb03",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_01134d5d",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T15:08:06Z",
+      "side": 1,
+      "message": "Again the -item issue.",
+      "range": {
+        "startLine": 457,
+        "startChar": 12,
+        "endLine": 457,
+        "endChar": 32
+      },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_a6305757",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -201,6 +288,24 @@
       "side": 1,
       "message": "See above. I can\u0027t just cast EidToLocatorRecord to MappingRecord (what I store to the datastore, since I have to copy fields. This makes is easier.",
       "parentUuid": "bada0100_a6305757",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_c11c656d",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-11-05T15:08:06Z",
+      "side": 1,
+      "message": "Same comment as above",
+      "parentUuid": "bada0100_0677e3d5",
       "revId": "b85492af688332699535eb1c966bebae1fe30785",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
