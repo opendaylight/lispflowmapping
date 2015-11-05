@@ -1,5 +1,5 @@
-module lisp-address-types {
-  namespace "urn:ietf:params:xml:ns:yang:lisp-address-types";
+module ietf-lisp-address-types {
+  namespace "urn:ietf:params:xml:ns:yang:ietf-lisp-address-types";
   prefix laddr;
   import ietf-inet-types {
     prefix inet;
@@ -32,7 +32,7 @@ module lisp-address-types {
      the RFC itself for full legal notices.
 
     ";
-  revision 2015-03-09 {
+  revision 2015-11-05 {
     description
       "Initial revision.";
     reference
