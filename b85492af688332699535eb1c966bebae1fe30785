@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_216531e1",
+        "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T15:30:50Z",
+      "side": 1,
+      "message": "I guess I started liking this form of \"type safety\" and consistence.  But in this case, you\u0027re right, it doesn\u0027t add too much value, so I don\u0027t mind changing to string, it will also simplify code.",
+      "parentUuid": "bada0100_c6579b25",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_26f54783",
         "filename": "mappingservice/api/src/main/yang/mappingservice.yang",
         "patchSetId": 1
@@ -171,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_e15e4912",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T15:30:50Z",
+      "side": 1,
+      "message": "no, it will be a List\u003cEIdItem\u003e, what will be confusing is object.getEidItem() which will actually return a list, not an item, but there is already a bug reported for that, so that it would be made plural.",
+      "parentUuid": "bada0100_66726fe7",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_663a6f38",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -230,6 +266,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_e1b5e931",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T15:30:50Z",
+      "side": 1,
+      "message": "This is a good idea, I\u0027ll remove \"grouping EidRecords\" and just use \"grouping eid-list\" instead, thanks!",
+      "parentUuid": "bada0100_2609c731",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_01134d5d",
         "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
         "patchSetId": 1
@@ -247,6 +301,24 @@
         "endLine": 457,
         "endChar": 32
       },
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8182dd50",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T15:30:50Z",
+      "side": 1,
+      "message": "Yeah, same as above.",
+      "parentUuid": "bada0100_01134d5d",
       "revId": "b85492af688332699535eb1c966bebae1fe30785",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -306,6 +378,24 @@
       "side": 1,
       "message": "Same comment as above",
       "parentUuid": "bada0100_0677e3d5",
+      "revId": "b85492af688332699535eb1c966bebae1fe30785",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_417cf572",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-11-05T15:30:50Z",
+      "side": 1,
+      "message": "Yeah, I will change, I like it better the way you propose it.",
+      "parentUuid": "bada0100_c11c656d",
       "revId": "b85492af688332699535eb1c966bebae1fe30785",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
