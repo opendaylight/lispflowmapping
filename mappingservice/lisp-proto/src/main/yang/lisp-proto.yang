@@ -372,14 +372,18 @@ module lisp-proto {
         }
     }
 
-    grouping EidRecords {
-        list EidRecord {
-            key "mapping-id";
-            leaf mapping-id {
+    grouping eid-list {
+        list eid-item {
+            key "eid-item-id";
+            leaf eid-item-id {
                 type lisp-address:list-item-id;
             }
             uses eid-container;
         }
+    }
+
+    grouping EidRecords {
+        uses eid-list;
     }
 
     grouping LocatorRecords {
@@ -449,14 +453,18 @@ module lisp-proto {
         }
     }
 
-    grouping EidToLocatorRecords {
-        list eidToLocatorRecord {
-            key "mapping-record-id";
-            leaf mapping-record-id {
+    grouping mapping-record-list {
+        list mapping-record-item {
+            key "mapping-record-item-id";
+            leaf mapping-record-item-id {
                 type lisp-address:list-item-id;
             }
             uses mapping-record-container;
         }
+    }
+
+    grouping EidToLocatorRecords {
+        uses mapping-record-list;
     }
 
     grouping xtrSiteId {
