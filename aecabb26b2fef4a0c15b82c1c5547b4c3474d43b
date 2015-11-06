@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_6f049115",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-06T09:01:25Z",
+      "side": 1,
+      "message": "This seems to have the same problem as eid-list and eidRecord, meaning too many groupings for the same data. I think we can combine mapping-record-container and EidToLocatorRecord. As is, the EidToLocatorRecord is a grouping that is only used inside mapping-record-container so we can define it inline here. Basically, any grouping that is used only once, should probably be defined inline so we get rid of one extra layer of grouping.",
+      "range": {
+        "startLine": 449,
+        "startChar": 2,
+        "endLine": 450,
+        "endChar": 2
+      },
+      "revId": "aecabb26b2fef4a0c15b82c1c5547b4c3474d43b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
