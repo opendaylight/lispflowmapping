@@ -22,6 +22,30 @@
       "revId": "aecabb26b2fef4a0c15b82c1c5547b4c3474d43b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ace114c_cc0b4f2a",
+        "filename": "mappingservice/lisp-proto/src/main/yang/lisp-proto.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-11-08T02:38:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_6f049115",
+      "range": {
+        "startLine": 449,
+        "startChar": 2,
+        "endLine": 450,
+        "endChar": 2
+      },
+      "revId": "aecabb26b2fef4a0c15b82c1c5547b4c3474d43b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
