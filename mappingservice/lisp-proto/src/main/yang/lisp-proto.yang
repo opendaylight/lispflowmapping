@@ -88,38 +88,34 @@ module lisp-proto {
         }
     }
 
-    grouping EidToLocatorRecord {
-        leaf recordTtl {
-            type int32;
-        }
-        leaf maskLength {
-            type uint8;
-        }
-        leaf mapVersion {
-            type int16;
-        }
-        leaf action {
-            type enumeration {
-                enum NoAction;
-                enum NativelyForward;
-                enum SendMapRequest;
-                enum Drop;
-            }
-        }
-        leaf authoritative {
-            type boolean;
-        }
-        // EID prefix
-        uses eid-container;
-
-        // locator record list
-        uses LocatorRecords;
-    }
-
     grouping mapping-record-container {
         container mapping-record {
-            uses EidToLocatorRecord;
-        }
+	        leaf recordTtl {
+	            type int32;
+	        }
+	        leaf maskLength {
+	            type uint8;
+	        }
+	        leaf mapVersion {
+	            type int16;
+	        }
+	        leaf action {
+	            type enumeration {
+	                enum NoAction;
+	                enum NativelyForward;
+	                enum SendMapRequest;
+	                enum Drop;
+	            }
+	        }
+	        leaf authoritative {
+	            type boolean;
+	        }
+	        // EID prefix
+	        uses eid-container;
+	
+	        // locator record list
+	        uses LocatorRecords;
+	    }
     }
 
     grouping mapping-record-list {
