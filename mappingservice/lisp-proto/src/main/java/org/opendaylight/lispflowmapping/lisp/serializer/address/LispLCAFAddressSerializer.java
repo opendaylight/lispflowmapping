@@ -13,8 +13,8 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.factory.LispLCAF
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispLcafAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispLcafAddress;
 
 public class LispLCAFAddressSerializer extends LispAddressSerializer {
 

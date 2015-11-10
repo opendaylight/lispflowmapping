@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
 /**
  * An interface for dealing with a map notify message.
@@ -32,5 +32,5 @@ public interface IMapNotifyHandler {
      * @param subscriber
      *            The address of the subscriber that should be SMRed
      */
-    void handleSMR(MapRequest mapRequest, LispAddressContainer subscriber);
+    void handleSMR(MapRequest mapRequest, Rloc subscriber);
 }

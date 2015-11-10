@@ -10,9 +10,9 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispDistinguishedNameAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedNameBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispDistinguishedNameAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedNameBuilder;
 
 public class LispDistinguishedNameAddressSerializer extends LispAddressSerializer {
 

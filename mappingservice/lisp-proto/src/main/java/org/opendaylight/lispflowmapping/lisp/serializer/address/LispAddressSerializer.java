@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.factory.LispAFIAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
 
 public class LispAddressSerializer {
 

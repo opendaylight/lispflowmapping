@@ -10,21 +10,21 @@ package org.opendaylight.lispflowmapping.southbound.util;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifynotification.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapnotifynotification.MapNotifyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapregisternotification.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapregisternotification.MapRegisterBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapreplynotification.MapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapreplynotification.MapReplyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequestnotification.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifynotification.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifynotification.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplynotification.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplynotification.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 
 public class LispNotificationHelper {
     public static MapRegister convertMapRegister(
-            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister mapRegister) {
+            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister mapRegister) {
         return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
                 .setEidToLocatorRecord(mapRegister.getEidToLocatorRecord()).setKeyId(mapRegister.getKeyId())
                 .setNonce(mapRegister.getNonce()).setProxyMapReply(mapRegister.isProxyMapReply())
@@ -33,7 +33,7 @@ public class LispNotificationHelper {
     }
 
     public static MapNotify convertMapNotify(
-            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify mapNotify) {
+            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify mapNotify) {
         return new MapNotifyBuilder().setAuthenticationData(mapNotify.getAuthenticationData())
                 .setEidToLocatorRecord(mapNotify.getEidToLocatorRecord()).setKeyId(mapNotify.getKeyId())
                 .setNonce(mapNotify.getNonce()).setXtrSiteIdPresent(mapNotify.isXtrSiteIdPresent())
@@ -41,7 +41,7 @@ public class LispNotificationHelper {
     }
 
     public static MapRequest convertMapRequest(
-            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest mapRequest) {
+            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest mapRequest) {
         return new MapRequestBuilder().setAuthoritative(mapRequest.isAuthoritative())
                 .setEidRecord(mapRequest.getEidRecord()).setItrRloc(mapRequest.getItrRloc())
                 .setMapDataPresent(mapRequest.isMapDataPresent()).setMapReply(mapRequest.getMapReply())
@@ -51,7 +51,7 @@ public class LispNotificationHelper {
     }
 
     public static MapReply convertMapReply(
-            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply mapReply) {
+            org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply mapReply) {
         return new MapReplyBuilder().setEchoNonceEnabled(mapReply.isEchoNonceEnabled())
                 .setEidToLocatorRecord(mapReply.getEidToLocatorRecord()).setNonce(mapReply.getNonce())
                 .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();

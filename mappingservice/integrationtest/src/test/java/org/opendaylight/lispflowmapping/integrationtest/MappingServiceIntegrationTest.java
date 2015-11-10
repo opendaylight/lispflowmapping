@@ -49,60 +49,60 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.EidToLocatorRecord.Action;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.GotMapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafApplicationDataAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafListAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafSegmentAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LcafTrafficEngineeringAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispIpv4Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispMacAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.LispProtoListener;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.ReencapHop;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.RequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrReplyMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.XtrRequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidrecords.EidRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafkeyvalueaddress.KeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafkeyvalueaddress.ValueBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaflistaddress.Addresses;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaflistaddress.AddressesBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafsegmentaddress.AddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafsourcedestaddress.DstAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafsourcedestaddress.SrcAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.Hops;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcaftrafficengineeringaddress.HopsBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafKeyValue;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.LcafSourceDest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafsegment.LcafSegmentAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.lcaftrafficengineering.LcafTrafficEngineeringAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.locatorrecords.LocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.locatorrecords.LocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.mapregisternotification.MapRegisterBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRloc;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.ItrRlocBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequest.SourceEidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.maprequestnotification.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.reencaphop.Hop;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.reencaphop.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafApplicationDataAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafListAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafSegmentAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafTrafficEngineeringAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispIpv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispMacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispProtoListener;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ReencapHop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafkeyvalueaddress.KeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafkeyvalueaddress.ValueBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaflistaddress.Addresses;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaflistaddress.AddressesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafsegmentaddress.AddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafsourcedestaddress.DstAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafsourcedestaddress.SrcAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaftrafficengineeringaddress.Hops;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaftrafficengineeringaddress.HopsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafKeyValue;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafSourceDest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafsegment.LcafSegmentAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcaftrafficengineering.LcafTrafficEngineeringAddrBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.reencaphop.Hop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.reencaphop.HopBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -420,7 +420,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertTrue(true);
         LispAFIAddress addressFromNetwork = LispAFIConvertor.toAFI(reply.getEidToLocatorRecord().get(0).getLispAddressContainer());
         assertTrue(addressFromNetwork instanceof LispMacAddress);
-        String macAddressFromReply = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.mac.MacAddress) addressFromNetwork).getMacAddress().getValue();
+        String macAddressFromReply = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.mac.MacAddress) addressFromNetwork).getMacAddress().getValue();
 
         assertEquals(macAddress, macAddressFromReply);
     }
@@ -603,9 +603,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void northboundRetrieveSourceDestKey() throws Exception {
         cleanUP();
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
                 .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.1"));
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
                 .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.2"));
         int mask1 = 32;
         int mask2 = 32;
@@ -780,9 +780,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void northboundRetrieveSourceDestMapping() throws Exception {
         cleanUP();
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
                 .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.1"));
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAFIConvertor
                 .toPrimitive(LispAFIConvertor.asIPAfiAddress("10.0.0.2"));
         int mask1 = 32;
         int mask2 = 32;
@@ -1240,8 +1240,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String ipString = "10.20.30.200";
         String macString = "01:02:03:04:05:06";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString, 32);
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAFIConvertor.asPrimitiveMacAfiAddress(macString);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString, 32);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAFIConvertor.asPrimitiveMacAfiAddress(macString);
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
@@ -1274,8 +1274,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String ipString1 = "10.10.10.0";
         String ipString2 = "20.20.20.0";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString1, 24);
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend2 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString2, 24);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString1, 24);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend2 = LispAFIConvertor.asPrimitiveIPv4AfiPrefix(ipString2, 24);
         LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
@@ -1310,17 +1310,17 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // srcEid/dstEid match
         reply = queryForAddress(LispAFIConvertor.asIPv4Address("20.20.20.1"), "10.10.10.1");
         fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
-        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4);
+        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4);
 
-        Ipv4Address ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
+        Ipv4Address ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
         assertEquals(ipString2, ipAddr2.getIpv4Address().getValue());
 
         // dstEid match only
         reply = queryForAddress(LispAFIConvertor.asIPv4Address("20.20.20.1"), "1.2.3.4");
         fromNetwork = reply.getEidToLocatorRecord().get(0).getLispAddressContainer();
-        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4);
+        assertTrue(fromNetwork.getAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4);
 
-        ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
+        ipAddr2 = ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4) fromNetwork.getAddress()).getIpv4Address();
         assertEquals(ipString2, ipAddr2.getIpv4Address().getValue());
     }
 
@@ -1329,8 +1329,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String ipString = "10.20.30.200";
         String macString = "01:02:03:04:05:06";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString);
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAFIConvertor.asPrimitiveMacAfiAddress(macString);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAFIConvertor.asPrimitiveIPAfiAddress(ipString);
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAFIConvertor.asPrimitiveMacAfiAddress(macString);
         LcafKeyValueAddressAddrBuilder builder = new LcafKeyValueAddressAddrBuilder();
         builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
         builder.setLcafType((short) LispCanonicalAddressFormatEnum.KEY_VALUE.getLispCode());
@@ -1452,11 +1452,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(true, hops2.isRLOCProbe());
         assertEquals(false, hops2.isStrict());
 
-        assertTrue(receivedHop1.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4);
-        assertTrue(receivedHop2.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Mac);
+        assertTrue(receivedHop1.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4);
+        assertTrue(receivedHop2.getHop().getPrimitiveAddress() instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Mac);
 
-        assertEquals(ipString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) receivedHop1.getHop().getPrimitiveAddress()).getIpv4Address().getIpv4Address().getValue());
-        assertEquals(macString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Mac) receivedHop2.getHop().getPrimitiveAddress()).getMacAddress().getMacAddress().getValue());
+        assertEquals(ipString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4) receivedHop1.getHop().getPrimitiveAddress()).getIpv4Address().getIpv4Address().getValue());
+        assertEquals(macString, ((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Mac) receivedHop2.getHop().getPrimitiveAddress()).getMacAddress().getMacAddress().getValue());
     }
 
     public void registerAndQuery__ApplicationData() throws SocketTimeoutException {
@@ -1477,7 +1477,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         builder.setLocalPortHigh(new PortNumber(localPortHigh));
         builder.setRemotePortLow(new PortNumber(remotePortLow));
         builder.setRemotePortHigh(new PortNumber(remotePortHigh));
-        builder.setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafapplicationdataaddress.AddressBuilder()
+        builder.setAddress(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafapplicationdataaddress.AddressBuilder()
                 .setPrimitiveAddress(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress(ipString))).build());
 
         LcafApplicationDataAddress addressToSend = builder.build();
@@ -1679,7 +1679,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(
-                        new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
+                        new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
                                 LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPortLow(new PortNumber(port)).build();
         LOG.info("testNonProxyOtherPort:" + adLcaf.toString());
         sendProxyMapRequest(rloc, port, adLcaf);
@@ -1725,14 +1725,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode())
                 .setAddress(
-                        new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
+                        new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcafapplicationdataaddress.AddressBuilder().setPrimitiveAddress(
                                 LispAFIConvertor.asPrimitiveIPAfiAddress(rloc)).build()).setLocalPortLow(new PortNumber(port)).build();
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         ((LispMappingService) lms).getNotificationService().registerNotificationListener(new XtrRequestMappingListener() {
 
             @Override
             public void onXtrRequestMapping(XtrRequestMapping notification) {
-                assertEquals(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispaddress.lispaddresscontainer.address.Ipv4) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue(),
+                assertEquals(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4) mapRequest.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue(),
                         eid);
                 notificationCalled = true;
                 LOG.warn("notification arrived");

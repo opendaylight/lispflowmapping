@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.southbound;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 
 /**
  * Object to hold statistics about LISP southbound events
