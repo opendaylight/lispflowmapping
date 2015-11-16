@@ -33,6 +33,12 @@ module lisp-proto {
         }
     }
 
+    grouping lisp-addr-container {
+        container lisp-addr {
+            uses lisp-address:lisp-address;
+        }
+    }
+
     grouping eid-container {
         container eid {
             uses lisp-address:lisp-address;
