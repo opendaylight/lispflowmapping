@@ -1,4 +1,4 @@
-module lisp-proto {
+module odl-lisp-proto {
 
     yang-version 1;
     namespace "urn:opendaylight:lfm:lisp-proto";

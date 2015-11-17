@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <snapshot>
     <required-capabilities>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=mappingservice-impl&amp;revision=2015-09-06</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl?module=mappingservice-shell-impl&amp;revision=2015-09-25</capability>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=odl-mappingservice-impl&amp;revision=2015-09-06</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl?module=odl-mappingservice-shell-impl&amp;revision=2015-09-25</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=odl-mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">

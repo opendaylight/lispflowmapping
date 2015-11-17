@@ -1,10 +1,10 @@
-module mappingservice-dao-inmemorydb {
+module odl-mappingservice-dao-inmemorydb {
     yang-version 1;
     namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb";
     prefix "inmemorydb";
 
     import config { prefix config; revision-date 2013-04-05; }
-    import mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
+    import odl-mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
 
     description
         "InMemoryDb Mapping Service DAO implementation.";

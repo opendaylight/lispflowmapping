@@ -3,16 +3,16 @@
   <required-capabilities>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl?module=opendaylight-sal-binding-broker-impl&amp;revision=2013-10-28</capability>
-    <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl?module=lfm-mappingservice-sb-impl&amp;revision=2015-05-17</capability>
+    <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:impl?module=odl-lisp-sb-impl&amp;revision=2015-05-17</capability>
   </required-capabilities>
   <configuration>
     <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
       <modules xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
         <module>
-          <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl">
-            prefix:lfm-mappingservice-sb-impl
+          <type xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:impl">
+            prefix:lisp-sb-impl
           </type>
-          <name>lfm-mappingservice-sb-impl-default</name>
+          <name>lisp-sb-impl-default</name>
 
           <rpc-registry>
             <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">
@@ -39,10 +39,10 @@
 
       <services xmlns="urn:opendaylight:params:xml:ns:yang:controller:config">
         <service>
-          <type xmlns:prefix="urn:opendaylight:lfm:lisp-sb">prefix:lfm-mappingservice-sb</type>
+          <type xmlns:prefix="urn:opendaylight:lfm:lisp-sb">prefix:lisp-sb</type>
           <instance>
-            <name>lfm-mappingservice-sb</name>
-            <provider>/modules/module[type='lfm-mappingservice-sb-impl'][name='lfm-mappingservice-sb-impl-default']</provider>
+            <name>lisp-sb</name>
+            <provider>/modules/module[type='lisp-sb-impl'][name='lisp-sb-impl-default']</provider>
           </instance>
         </service>
       </services>

@@ -1,4 +1,4 @@
-module mappingservice-impl {
+module odl-mappingservice-impl {
 
     yang-version 1;
     namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl";
@@ -8,8 +8,8 @@ module mappingservice-impl {
     import rpc-context { prefix rpcx; revision-date 2013-06-17; }
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
     import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
-    import mappingservice { prefix mappingservice; revision-date 2015-09-06; }
-    import mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
+    import odl-mappingservice { prefix mappingservice; revision-date 2015-09-06; }
+    import odl-mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
 
     description
         "This module contains the base YANG definitions for

@@ -1,14 +1,14 @@
-module lfm-mappingservice-sb-impl {
+module odl-lisp-sb-impl {
 
   yang-version 1;
-  namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lfm-mappingservice-sb:impl";
-  prefix "lfm-mappingservice-sb-impl";
+  namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:impl";
+  prefix "lisp-sb-impl";
 
   import config { prefix config; revision-date 2013-04-05; }
   import rpc-context { prefix rpcx; revision-date 2013-06-17; }
   import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
   import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
-  import lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
+  import odl-lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
 
   description
       "This module contains the base YANG definitions for
@@ -19,17 +19,17 @@ module lfm-mappingservice-sb-impl {
           "Initial revision.";
   }
 
-  identity lfm-mappingservice-sb-impl {
+  identity lisp-sb-impl {
       base config:module-type;
-      config:provided-service lisp-sb:lfm-mappingservice-sb;
+      config:provided-service lisp-sb:lisp-sb;
       config:java-name-prefix LfmMappingServiceSb;
   }
 
 
   // Augments the 'configuration' choice node under modules/module.
   augment "/config:modules/config:module/config:configuration" {
-    case lfm-mappingservice-sb-impl {
-      when "/config:modules/config:module/config:type = 'lfm-mappingservice-sb-impl'";
+    case lisp-sb-impl {
+      when "/config:modules/config:module/config:type = 'lisp-sb-impl'";
 
       container broker {
           uses config:service-ref {

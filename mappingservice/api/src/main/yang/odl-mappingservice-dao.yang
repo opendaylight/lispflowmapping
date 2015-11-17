@@ -1,4 +1,4 @@
-module mappingservice-dao {
+module odl-mappingservice-dao {
     yang-version 1;
     namespace "urn:opendaylight:lfm:mappingservice-dao";
     prefix "ms-dao";

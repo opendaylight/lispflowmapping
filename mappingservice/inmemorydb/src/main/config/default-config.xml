@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <snapshot>
     <required-capabilities>
-        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
+        <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=odl-mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
