@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
-import java.util.Arrays;
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -25,33 +24,36 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllMappingsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeysInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeysOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInputBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.update.key.input.EidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -147,11 +149,7 @@ public class MappingService implements MappingserviceService, IMappingService, B
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new AddKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
-        String key = mappingSystem.getAuthenticationKey(input.getLispAddressContainer());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
 
         if (key != null) {
             String message = "Key already exists! Please use update-key if you want to change it.";
@@ -171,10 +169,6 @@ public class MappingService implements MappingserviceService, IMappingService, B
         Preconditions.checkNotNull(input, "add-mapping RPC input must be not null!");
         LOG.trace("RPC received to add the following mapping: " + input.toString());
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new AddMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
         dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
 
         RpcResultBuilder<Void> rpcResultBuilder;
@@ -189,20 +183,16 @@ public class MappingService implements MappingserviceService, IMappingService, B
         Preconditions.checkNotNull(input, "get-key RPC input must be not null!");
         LOG.trace("RPC received to get the following key: " + input.toString());
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new GetKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
 
-        String key = mappingSystem.getAuthenticationKey(input.getLispAddressContainer());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
 
         if (key == null) {
             String message = "Key was not found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetKeyOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
         } else {
-            rpcResultBuilder = RpcResultBuilder.success(new GetKeyOutputBuilder().setAuthkey(key));
+            rpcResultBuilder = RpcResultBuilder.success(new GetKeyOutputBuilder().setMappingAuthkey(key));
         }
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -213,21 +203,16 @@ public class MappingService implements MappingserviceService, IMappingService, B
         Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: " + input.toString());
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new GetMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
-        EidToLocatorRecord reply = (EidToLocatorRecord) mappingSystem.getMapping(input.getLispAddressContainer());
+        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(input.getEid());
 
         if (reply == null) {
             String message = "No mapping was found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetMappingOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
         } else {
-            rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setEidToLocatorRecord(Arrays
-                    .asList(reply)));
+            rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setMappingRecord(reply));
         }
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -237,10 +222,6 @@ public class MappingService implements MappingserviceService, IMappingService, B
     public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
         Preconditions.checkNotNull(input, "remove-key RPC input must be not null!");
         LOG.trace("RPC received to remove the following key: " + input.toString());
-
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new RemoveKeyInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
@@ -256,10 +237,6 @@ public class MappingService implements MappingserviceService, IMappingService, B
         Preconditions.checkNotNull(input, "remove-mapping RPC input must be not null!");
         LOG.trace("RPC received to remove the following mapping: " + input.toString());
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new RemoveMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
         RpcResultBuilder<Void> rpcResultBuilder;
 
         dsbe.removeMapping(RPCInputConvertorUtil.toMapping(input));
@@ -274,15 +251,9 @@ public class MappingService implements MappingserviceService, IMappingService, B
         Preconditions.checkNotNull(input, "update-key RPC input must be not null!");
         LOG.trace("RPC received to update the following key: " + input.toString());
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new UpdateKeyInputBuilder(input).setEid(
-                new EidBuilder(input.getEid()).setLispAddressContainer(
-                        MaskUtil.fixMask(input.getEid().getLispAddressContainer(), input.getEid()
-                                .getMaskLength())).build()).build();
-
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        String key = mappingSystem.getAuthenticationKey(input.getEid().getLispAddressContainer());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
 
         if (key == null) {
             String message = "Key doesn't exist! Please use add-key if you want to create a new authentication key.";
@@ -302,10 +273,6 @@ public class MappingService implements MappingserviceService, IMappingService, B
         LOG.trace("RPC received to update the following mapping: " + input.toString());
         Preconditions.checkNotNull(input, "update-mapping RPC input must be not null!");
 
-        // XXX: to remove once RPC API has been updated to remove explicit mask
-        input = new UpdateMappingInputBuilder(input).setLispAddressContainer(
-                MaskUtil.fixMask(input.getLispAddressContainer(), input.getMaskLength())).build();
-
         RpcResultBuilder<Void> rpcResultBuilder;
 
         dsbe.updateMapping(RPCInputConvertorUtil.toMapping(input));
@@ -316,58 +283,131 @@ public class MappingService implements MappingserviceService, IMappingService, B
     }
 
     @Override
-    public void addMapping(MappingOrigin origin, LispAddressContainer key, SiteId siteId, Object data) {
-        dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (EidToLocatorRecord) data));
+    public Future<RpcResult<Void>> removeKeys(RemoveKeysInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeMappings(RemoveMappingsInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetKeysOutput>> getKeys(GetKeysInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> addMappings(AddMappingsInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateKeys(UpdateKeysInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeAllMappings() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> removeAllKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetAllKeysOutput>> getAllKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> updateMappings(UpdateMappingsInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<Void>> addKeys(AddKeysInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetAllMappingsOutput>> getAllMappings() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<RpcResult<GetMappingsOutput>> getMappings(
+            GetMappingsInput input) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data) {
+        dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
         mappingSystem.updateMappingRegistration(origin, key);
     }
 
     @Override
-    public Object getMapping(MappingOrigin origin, LispAddressContainer key) {
+    public Object getMapping(MappingOrigin origin, Eid key) {
         return mappingSystem.getMapping(origin, key);
     }
 
     @Override
-    public Object getMapping(LispAddressContainer key) {
+    public Object getMapping(Eid key) {
         return mappingSystem.getMapping(key);
     }
 
     @Override
-    public Object getMapping(LispAddressContainer srcKey, LispAddressContainer dstKey) {
+    public Object getMapping(Eid srcKey, Eid dstKey) {
         return mappingSystem.getMapping(srcKey, dstKey);
     }
 
     @Override
-    public void removeMapping(MappingOrigin origin, LispAddressContainer key) {
+    public void removeMapping(MappingOrigin origin, Eid key) {
         dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }
 
     @Override
-    public void addAuthenticationKey(LispAddressContainer key, String authKey) {
+    public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
         dsbe.addAuthenticationKey(DSBEInputUtil.toAuthenticationKey(key, authKey));
     }
 
     @Override
-    public String getAuthenticationKey(LispAddressContainer key) {
+    public MappingAuthkey getAuthenticationKey(Eid key) {
         return mappingSystem.getAuthenticationKey(key);
     }
 
     @Override
-    public void removeAuthenticationKey(LispAddressContainer key) {
+    public void removeAuthenticationKey(Eid key) {
         dsbe.removeAuthenticationKey(DSBEInputUtil.toAuthenticationKey(key, null));
     }
 
     @Override
-    public void addData(MappingOrigin origin, LispAddressContainer key, String subKey, Object data) {
+    public void addData(MappingOrigin origin, Eid key, String subKey, Object data) {
         mappingSystem.addData(origin, key, subKey, data);
     }
 
     @Override
-    public Object getData(MappingOrigin origin, LispAddressContainer key, String subKey) {
+    public Object getData(MappingOrigin origin, Eid key, String subKey) {
         return mappingSystem.getData(origin, key, subKey);
     }
 
     @Override
-    public void removeData(MappingOrigin origin, LispAddressContainer key, String subKey) {
+    public void removeData(MappingOrigin origin, Eid key, String subKey) {
         mappingSystem.removeData(origin, key, subKey);
     }
 

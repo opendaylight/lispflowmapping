@@ -10,12 +10,11 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
-import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 public class EidRecordSerializer {
 
@@ -29,12 +28,12 @@ public class EidRecordSerializer {
         return INSTANCE;
     }
 
-    public EidRecord deserialize(ByteBuffer requestBuffer) {
+    public Eid deserialize(ByteBuffer requestBuffer) {
         /* byte reserved = */requestBuffer.get();
         short maskLength = (short) (ByteUtil.getUnsignedByte(requestBuffer));
-        LispAFIAddress prefix = LispAddressSerializer.getInstance().deserialize(requestBuffer);
-        prefix = MaskUtil.fixMask(prefix, maskLength);
-        return new EidRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(prefix)).setMask(maskLength)
-                .build();
+        LispAddressSerializerContext ctx = new LispAddressSerializerContext(new InstanceIdType(0L),
+                LispAddressSerializerContext.AddressContext.EID, maskLength);
+        LispAddress prefix = LispAddressSerializer.getInstance().deserialize(requestBuffer, ctx);
+        return (Eid) prefix;
     }
 }

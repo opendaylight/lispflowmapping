@@ -15,9 +15,9 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 
 /**
  * This class deals with serializing map notify from the java object to udp.
@@ -43,15 +43,15 @@ public class MapNotifySerializer {
             size += org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE +
                     org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
         }
-        for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecord()) {
-            size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
+        for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem()) {
+            size += MappingRecordSerializer.getInstance().getSerializationSize(mappingRecord.getMappingRecord());
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
         replyBuffer.put((byte) (LispMessageEnum.MapNotify.getValue() << 4));
         replyBuffer.position(replyBuffer.position() + Length.RES);
-        if (mapNotify.getEidToLocatorRecord() != null) {
-            replyBuffer.put((byte) mapNotify.getEidToLocatorRecord().size());
+        if (mapNotify.getMappingRecordItem() != null) {
+            replyBuffer.put((byte) mapNotify.getMappingRecordItem().size());
         } else {
             replyBuffer.put((byte) 0);
         }
@@ -64,9 +64,9 @@ public class MapNotifySerializer {
             replyBuffer.putShort((short) 0);
         }
 
-        if (mapNotify.getEidToLocatorRecord() != null) {
-            for (EidToLocatorRecord eidToLocatorRecord : mapNotify.getEidToLocatorRecord()) {
-                EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
+        if (mapNotify.getMappingRecordItem() != null) {
+            for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem()) {
+                MappingRecordSerializer.getInstance().serialize(replyBuffer, mappingRecord.getMappingRecord());
             }
         }
 
@@ -96,16 +96,16 @@ public class MapNotifySerializer {
             notifyBuffer.get(authenticationData);
             builder.setAuthenticationData(authenticationData);
 
-            builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
             for (int i = 0; i < recordCount; i++) {
-                builder.getEidToLocatorRecord().add(
-                        new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
+                builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                        (MappingRecordSerializer.getInstance().deserialize(notifyBuffer))).build());
             }
 
             if (xtrSiteIdPresent) {
-                byte[] xtrId  = new byte[org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE];
+                byte[] xtrId  = new byte[MapRegisterSerializer.Length.XTRID_SIZE];
                 notifyBuffer.get(xtrId);
-                byte[] siteId = new byte[org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE];
+                byte[] siteId = new byte[MapRegisterSerializer.Length.SITEID_SIZE];
                 notifyBuffer.get(siteId);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);

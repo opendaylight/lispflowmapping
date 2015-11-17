@@ -25,8 +25,6 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -36,12 +34,14 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void serialize__Fields() throws Exception {
         MapNotifyBuilder mnBuilder = new MapNotifyBuilder();
-        mnBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.1")))
+        mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(
+                        new MappingRecordBuilder().setEid(LispAFIConvertor.asIpv4Prefix("0.0.0.1/32")).build())
                         .build());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.73")))
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(
+                        new MappingRecordBuilder().setEid(LispAFIConvertor.asIpv4Prefix("0.0.0.73/32")).build())
                         .build());
 
         mnBuilder.setNonce(6161616161L);
@@ -75,12 +75,14 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void serialize__deserizlise() throws Exception {
         MapNotifyBuilder mnBuilder = new MapNotifyBuilder();
-        mnBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.1")))
+        mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(
+                        new MappingRecordBuilder().setEid(LispAFIConvertor.asIpv4Prefix("0.0.0.1/32")).build())
                         .build());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.73")))
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(
+                        new MappingRecordBuilder().setEid(LispAFIConvertor.asIpv4Prefix("0.0.0.73/32")).build())
                         .build());
 
         mnBuilder.setNonce(6161616161L);
@@ -123,7 +125,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         assertTrue(mn.isXtrSiteIdPresent());
 
-        assertEquals(1, mn.getEidToLocatorRecord().size());
+        assertEquals(1, mn.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0000, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = {};
@@ -133,10 +135,11 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void serialize__NoAuthenticationData() throws Exception {
         MapNotifyBuilder mnBuilder = new MapNotifyBuilder();
-        mnBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setRecordTtl(55)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.1"))).build());
+        mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(
+                        new MappingRecordBuilder().setEid(LispAFIConvertor.asIpv4Prefix("0.0.0.1/32"))
+                        .setRecordTtl(55).build()).build());
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
         bb.position(bb.position() + 14); // jump to AuthenticationDataLength
@@ -161,11 +164,13 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void serialize__NoPrefixInEidToLocator() throws Exception {
         MapNotifyBuilder mnBuilder = new MapNotifyBuilder();
-        mnBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        mnBuilder.getEidToLocatorRecord().add(new EidToLocatorRecordBuilder().build());
-        mnBuilder.getEidToLocatorRecord().add(new EidToLocatorRecordBuilder().setLispAddressContainer(null).build());
-        mnBuilder.getEidToLocatorRecord().add(
-                new EidToLocatorRecordBuilder().setLispAddressContainer(
+        mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().build());
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(new MappingRecordBuilder().setEid(null).build())
+                        .build());
+        mnBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setLispAddressContainer(
                         LispAFIConvertor.toContainer(new NoAddressBuilder().setAfi(AddressFamilyNumberEnum.NO_ADDRESS.getIanaCode()).build())).build());
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
@@ -207,15 +212,15 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
         ));
 
-        assertEquals(4, mn.getEidToLocatorRecord().size());
-        assertEquals(LispAFIConvertor.asIPv4Address("153.16.254.1"), mn.getEidToLocatorRecord().get(0)
-                .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.asIPv4Address("151.16.254.1"), mn.getEidToLocatorRecord().get(2)
-                .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.11")), mn.getEidToLocatorRecord().get(1)
-                .getLocatorRecord().get(0).getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.13")), mn.getEidToLocatorRecord().get(3)
-                .getLocatorRecord().get(0).getLispAddressContainer());
+        assertEquals(4, mn.getMappingRecordItem().size());
+        assertEquals(LispAFIConvertor.asIPv4Address("153.16.254.1"), mn.getMappingRecordItem().get(0)
+                .getMappingRecord().getEid().getAddress());
+        assertEquals(LispAFIConvertor.asIPv4Address("151.16.254.1"), mn.getMappingRecordItem().get(2)
+                .getMappingRecord().getEid().getAddress());
+        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.11")), mn.getMappingRecordItem().get(1)
+                .getMappingRecord().getLocatorRecord().get(0).getRloc());
+        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.13")), mn.getMappingRecordItem().get(3)
+                .getMappingRecord().getLocatorRecord().get(0).getRloc());
     }
 
     @Test
@@ -241,12 +246,12 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "00 01 c0 a8 88 0a " // Locator
         ));
 
-        assertEquals(1, mn.getEidToLocatorRecord().size());
-        EidToLocatorRecord eidToLocator = mn.getEidToLocatorRecord().get(0);
-        assertEquals(3, eidToLocator.getLocatorRecord().size());
-        LocatorRecord loc0 = eidToLocator.getLocatorRecord().get(0);
-        LocatorRecord loc1 = eidToLocator.getLocatorRecord().get(1);
-        LocatorRecord loc2 = eidToLocator.getLocatorRecord().get(2);
+        assertEquals(1, mn.getMappingRecordItem().size());
+        MappingRecordItem eidToLocator = mn.getMappingRecordItem().get(0);
+        assertEquals(3, eidToLocator.getMappingRecord().getLocatorRecord().size());
+        LocatorRecord loc0 = eidToLocator.getMappingRecord().getLocatorRecord().get(0);
+        LocatorRecord loc1 = eidToLocator.getMappingRecord().getLocatorRecord().get(1);
+        LocatorRecord loc2 = eidToLocator.getMappingRecord().getLocatorRecord().get(2);
         assertEquals((byte) 0x01, loc0.getPriority().byteValue());
         assertEquals((byte) 0x67, loc1.getPriority().byteValue());
         assertEquals((byte) 0x60, loc2.getPriority().byteValue());
@@ -275,8 +280,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertFalse(loc1.isRouted());
         assertTrue(loc2.isRouted());
 
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.10")), loc0.getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("204.170.170.17")), loc1.getLispAddressContainer());
+        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.10")), loc0.getRloc());
+        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("204.170.170.17")), loc1.getRloc());
     }
 
     @Test
@@ -307,12 +312,12 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
         ));
 
-        assertEquals(4, mn.getEidToLocatorRecord().size());
+        assertEquals(4, mn.getMappingRecordItem().size());
 
-        EidToLocatorRecord record0 = mn.getEidToLocatorRecord().get(0);
-        EidToLocatorRecord record1 = mn.getEidToLocatorRecord().get(1);
-        EidToLocatorRecord record2 = mn.getEidToLocatorRecord().get(2);
-        EidToLocatorRecord record3 = mn.getEidToLocatorRecord().get(3);
+        MappingRecord record0 = mn.getMappingRecordItem().get(0).getMappingRecord();
+        MappingRecord record1 = mn.getMappingRecordItem().get(1).getMappingRecord();
+        MappingRecord record2 = mn.getMappingRecordItem().get(2).getMappingRecord();
+        MappingRecord record3 = mn.getMappingRecordItem().get(3).getMappingRecord();
 
         assertEquals(10, record0.getRecordTtl().intValue());
         assertEquals(13, record3.getRecordTtl().intValue());
@@ -345,8 +350,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "00 0a 01 20 F0 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
-        assertEquals(1, mn.getEidToLocatorRecord().size());
-        assertEquals(Action.NoAction, mn.getEidToLocatorRecord().get(0).getAction());
+        assertEquals(1, mn.getMappingRecordItem().size());
+        assertEquals(Action.NoAction, mn.getMappingRecordItem().get(0).getMappingRecord().getAction());
     }
 
     @Test(expected = LispSerializationException.class)
@@ -392,7 +397,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         assertFalse(mn.isXtrSiteIdPresent());
 
-        assertEquals(1, mn.getEidToLocatorRecord().size());
+        assertEquals(1, mn.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0001, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a, (byte) 0x20, (byte) 0xba, (byte) 0xd8, //
@@ -425,7 +430,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         assertFalse(mn.isXtrSiteIdPresent());
 
-        assertEquals(1, mn.getEidToLocatorRecord().size());
+        assertEquals(1, mn.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0002, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x70, (byte) 0x30, (byte) 0xd4, (byte) 0xc6, (byte) 0x10, (byte) 0x44, (byte) 0x0d, (byte) 0x83,
