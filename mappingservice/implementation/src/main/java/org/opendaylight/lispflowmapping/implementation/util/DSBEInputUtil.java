@@ -12,9 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
@@ -22,34 +21,31 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
  * @author Florin Coras
  *
  */
 public class DSBEInputUtil {
-    public static Mapping toMapping(MappingOrigin origin, LispAddressContainer key, SiteId siteId,
-            EidToLocatorRecord record) {
+    public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingRecord record) {
         List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
-        return new MappingBuilder(record).setEid(new EidUri(LispAddressStringifier.getURIString(key)))
-                .setOrigin(origin).setSiteId(siteIds).build();
+        return new MappingBuilder().setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
+                .setOrigin(origin).setSiteId(siteIds).setMappingRecord(record).build();
     }
 
-    public static Mapping toMapping(MappingOrigin origin, LispAddressContainer key) {
+    public static Mapping toMapping(MappingOrigin origin, Eid key) {
         MappingBuilder mb = new MappingBuilder();
-        mb.setEid(new EidUri(LispAddressStringifier.getURIString(key)));
+        mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(key)));
         mb.setOrigin(origin);
-        mb.setMaskLength(MaskUtil.getMaskForAddress(key));
-        mb.setLispAddressContainer(key);
         return mb.build();
     }
 
-    public static AuthenticationKey toAuthenticationKey(LispAddressContainer key, String authKey) {
+    public static AuthenticationKey toAuthenticationKey(Eid key, MappingAuthkey authKey) {
         AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
-        akb.setEid(new EidUri(LispAddressStringifier.getURIString(key)));
-        akb.setLispAddressContainer(key);
-        akb.setMaskLength(MaskUtil.getMaskForAddress(key));
-        akb.setAuthkey(authKey);
+        akb.setEidUri(new EidUri(LispAddressStringifier.getURIString(key)));
+        akb.setEid(key);
+        akb.setMappingAuthkey(authKey);
         return akb.build();
     }
 }
