@@ -40,6 +40,9 @@ public class FlatMapCache implements IMapCache {
 
     @Override
     public Object getMapping(LispAddressContainer srcKey, LispAddressContainer dstKey) {
+        if (dstKey == null) {
+            return null;
+        }
         return dao.getSpecific(dstKey, SubKeys.RECORD);
     }
 

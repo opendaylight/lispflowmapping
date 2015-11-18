@@ -113,6 +113,9 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public Object getMapping(LispAddressContainer srcEid, LispAddressContainer dstEid) {
+        if (dstEid == null) {
+            return null;
+        }
         return getMappingLpmEid(dstEid, dao);
     }
 

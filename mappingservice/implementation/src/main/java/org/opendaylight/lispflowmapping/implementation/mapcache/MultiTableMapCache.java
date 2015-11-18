@@ -95,6 +95,9 @@ public class MultiTableMapCache implements IMapCache {
 
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not) address
     private Object getMappingLpmEid(LispAddressContainer eid, ILispDAO dao) {
+        if (eid == null) {
+            return null;
+        }
         Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
         if (daoEntry != null) {
             return daoEntry.get(SubKeys.RECORD);
@@ -124,6 +127,10 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     public Object getMapping(LispAddressContainer srcEid, LispAddressContainer dstEid) {
+        if (dstEid == null) {
+            return null;
+        }
+
         // a map-request for an actual SrcDst LCAF, ignore src eid
         if (dstEid.getAddress() instanceof LcafSourceDest) {
             LispAddressContainer srcAddr = LcafSourceDestHelper.getSrc(dstEid);
