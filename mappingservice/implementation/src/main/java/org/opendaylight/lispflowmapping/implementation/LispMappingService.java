@@ -29,21 +29,21 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestmessage.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transportaddress.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.LispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements IFlowMapping, BindingAwareProvider, IMapRequestResultHandler,
-        IMapNotifyHandler, LispProtoListener, AutoCloseable {
+        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private volatile boolean shouldAuthenticate = true;
@@ -65,7 +65,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
-    private LispSbService lispSB = null;
+    private OdlLispSbService lispSB = null;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
 
@@ -130,7 +130,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapReply handleMapRequest(MapRequest request) {
         LOG.debug("DAO: Retrieving mapping for {}",
-                LispAddressStringifier.getString(request.getEidRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
 
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
@@ -150,7 +150,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapNotify handleMapRegister(MapRegister mapRegister) {
         LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
+                        .getMappingRecord().getEid()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister);
@@ -160,7 +161,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
         LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getEidToLocatorRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
+                        .getMappingRecord().getEid()));
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister);
@@ -227,9 +229,9 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         LOG.debug("Received XtrReplyMapping notification, ignoring");
     }
 
-    private LispSbService getLispSB() {
+    private OdlLispSbService getLispSB() {
         if (lispSB == null) {
-            lispSB = session.getRpcService(LispSbService.class);
+            lispSB = session.getRpcService(OdlLispSbService.class);
         }
         return lispSB;
     }
@@ -245,14 +247,14 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     @Override
-    public void handleSMR(MapRequest smr, LispAddressContainer subscriber) {
+    public void handleSMR(MapRequest smr, Rloc subscriber) {
         LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
                 LispAddressStringifier.getString(subscriber),
-                LispAddressStringifier.getString(smr.getSourceEid().getLispAddressContainer()),
-                LispAddressStringifier.getString(smr.getEidRecord().get(0).getLispAddressContainer()));
+                LispAddressStringifier.getString(smr.getSourceEid().getEid()),
+                LispAddressStringifier.getString(smr.getEidItem().get(0).getEid()));
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
-        smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromContainer(subscriber));
+        smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromRloc(subscriber));
         getLispSB().sendMapRequest(smrib.build());
 
     }

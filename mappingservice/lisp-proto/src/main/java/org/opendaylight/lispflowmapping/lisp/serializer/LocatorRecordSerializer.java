@@ -12,13 +12,11 @@ import java.nio.ByteBuffer;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
 public class LocatorRecordSerializer {
 
@@ -42,10 +40,9 @@ public class LocatorRecordSerializer {
         builder.setLocalLocator(ByteUtil.extractBit(flags, Flags.LOCAL_LOCATOR));
         builder.setRlocProbed(ByteUtil.extractBit(flags, Flags.RLOC_PROBED));
         builder.setRouted(ByteUtil.extractBit(flags, Flags.ROUTED));
-        LispAFIAddress afiAddress = LispAddressSerializer.getInstance().deserialize(buffer);
-        LispAddressContainer locator = LispAFIConvertor.toContainer(afiAddress);
-        builder.setLispAddressContainer(locator);
-        builder.setName(LispAddressStringifier.getString(locator));
+        Rloc rloc = LispAddressSerializer.getInstance().deserializeRloc(buffer);
+        builder.setRloc(rloc);
+        builder.setLocatorId(LispAddressStringifier.getString(rloc));
         return builder.build();
     }
 
@@ -58,12 +55,12 @@ public class LocatorRecordSerializer {
         replyBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(record.isLocalLocator()), Flags.LOCAL_LOCATOR) | //
                 ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRlocProbed()), Flags.RLOC_PROBED) | //
                 ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRouted()), Flags.ROUTED)));
-        LispAddressSerializer.getInstance().serialize(replyBuffer, LispAFIConvertor.toAFI(record.getLispAddressContainer()));
+        LispAddressSerializer.getInstance().serialize(replyBuffer, record.getRloc());
     }
 
     public int getSerializationSize(LocatorRecord record) {
         return Length.HEADER_SIZE
-                + LispAddressSerializer.getInstance().getAddressSize(LispAFIConvertor.toAFI(record.getLispAddressContainer()));
+                + LispAddressSerializer.getInstance().getAddressSize(record.getRloc());
     }
 
     private interface Flags {
