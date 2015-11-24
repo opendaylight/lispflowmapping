@@ -32,6 +32,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>ietf-yang-types</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>iana-afn-safi</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
@@ -48,7 +52,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     </dependency>
   </dependencies>
 
-  <!-- Temporarily disable compiling non-generated code, like serializers, which won't build for now -->
   <build>
     <pluginManagement>
       <plugins>
@@ -82,22 +85,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       </plugins>
     </pluginManagement>
 
+    <!-- Temporarily disable compiling (and running) unit tests -->
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>org/opendaylight/lispflowmapping/**</exclude>
-              </excludes>
-            </configuration>
-          </execution>
           <execution>
             <id>default-testCompile</id>
             <phase>test-compile</phase>
@@ -105,7 +97,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
               <goal>testCompile</goal>
             </goals>
             <configuration>
-              <skip>true</skip>
+              <testExcludes>
+                <exclude>org/opendaylight/lispflowmapping/serializer/*.java</exclude>
+              </testExcludes>
             </configuration>
           </execution>
         </executions>
