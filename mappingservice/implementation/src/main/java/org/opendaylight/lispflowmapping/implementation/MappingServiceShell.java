@@ -13,9 +13,10 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv4.Ipv4AddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +49,9 @@ public class MappingServiceShell implements IMappingServiceShell, BindingAwarePr
 
     @Override
     public void addDefaultKeyIPv4() {
-        LispAddressContainer address = LispAFIConvertor.toContainer(
-                new Ipv4AddressBuilder().setIpv4Address(new Ipv4Address("0.0.0.0")).setMask((short)0).build());
-        mappingService.addAuthenticationKey(address, "password");
+        Eid eid = LispAFIConvertor.toEid(new Ipv4Prefix("0.0.0.0/0"), null);
+        MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build();
+        mappingService.addAuthenticationKey(eid, key);
     }
 
     @Override
