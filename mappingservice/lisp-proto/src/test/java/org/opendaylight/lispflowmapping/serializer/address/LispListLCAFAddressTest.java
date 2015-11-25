@@ -19,57 +19,50 @@ import junitx.framework.Assert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
-import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafListAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaflistaddress.Addresses;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaflistaddress.AddressesBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcaflist.LcafListAddrBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiListBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
                 "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44")); // IPv6
 
-        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
-        LcafListAddress lcafList = (LcafListAddress) address;
+        assertEquals(AfiListLcaf.class, address.getAddressType());
+        AfiList afiList = (AfiList) address.getAddress();
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lcafList.getLcafType().byteValue());
-
-        List<Addresses> addressList = lcafList.getAddresses();
+        List<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
         assertEquals(2, addressList.size());
 
-        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress("170.187.204.221")), addressList.get(0).getPrimitiveAddress());
-        assertEquals(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:1122:3344:1122:3344:1122:3344")), addressList.get(1)
-                .getPrimitiveAddress());
+        assertEquals("170.187.204.221", String.valueOf(addressList.get(0).getValue()));
+        assertEquals("1122:3344:1122:3344:1122:3344:1122:3344", String.valueOf(addressList.get(1).getValue()));
     }
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        LispAFIAddress address = LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00 "));
 
-        assertEquals(AddressFamilyNumberEnum.LCAF.getIanaCode(), address.getAfi().shortValue());
-        LcafListAddress lcafList = (LcafListAddress) address;
+        assertEquals(AfiListLcaf.class, address.getAddressType());
+        AfiList afiList = (AfiList) address.getAddress();
 
-        assertEquals(LispCanonicalAddressFormatEnum.LIST.getLispCode(), lcafList.getLcafType().byteValue());
-
-        List<Addresses> addressList = lcafList.getAddresses();
+        List<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
         assertEquals(0, addressList.size());
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
                 "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
@@ -77,23 +70,27 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer2() throws Exception {
-        LispAddressSerializer.getInstance().deserialize(hexToByteBuffer("40 03 00 00 " + //
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 "));
     }
 
     @Test
     public void serialize__Simple() throws Exception {
-        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder();
-        listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
-        listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
-        List<Addresses> addressList = new ArrayList<Addresses>();
-        addressList.add(new AddressesBuilder().setPrimitiveAddress(LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPAfiAddress("170.187.204.221")))
-                .build());
-        addressList.add(new AddressesBuilder().setPrimitiveAddress(
-                LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("1122:3344:1122:3344:1122:3344:1122:3344"))).build());
-        listBuilder.setAddresses(addressList);
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(listBuilder.build()));
-        LispAddressSerializer.getInstance().serialize(buf, listBuilder.build());
+        AfiListBuilder listBuilder = new AfiListBuilder();
+        List<SimpleAddress> addressList = new ArrayList<SimpleAddress>();
+        addressList.add(SimpleAddressBuilder.getDefaultInstance("170.187.204.221"));
+        addressList.add(SimpleAddressBuilder.getDefaultInstance("1122:3344:1122:3344:1122:3344:1122:3344"));
+        listBuilder.setAddressList(addressList);
+
+        RlocBuilder rb = new RlocBuilder();
+        rb.setAddressType(AfiListLcaf.class);
+        rb.setVirtualNetworkId(null);
+        rb.setAddress((Address)
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
+                .setAfiList(listBuilder.build()).build());
+
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
+        LispAddressSerializer.getInstance().serialize(buf, rb.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 18 " + //
                 "00 01 AA BB CC DD " + // IPv4
@@ -103,13 +100,19 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void serialize__NoAddresses() throws Exception {
-        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder();
-        listBuilder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
-        listBuilder.setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode());
-        List<Addresses> addressList = new ArrayList<Addresses>();
-        listBuilder.setAddresses(addressList);
-        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(listBuilder.build()));
-        LispAddressSerializer.getInstance().serialize(buf, listBuilder.build());
+        AfiListBuilder listBuilder = new AfiListBuilder();
+        List<SimpleAddress> addressList = new ArrayList<SimpleAddress>();
+        listBuilder.setAddressList(addressList);
+
+        RlocBuilder rb = new RlocBuilder();
+        rb.setAddressType(AfiListLcaf.class);
+        rb.setVirtualNetworkId(null);
+        rb.setAddress((Address)
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
+                .setAfiList(listBuilder.build()).build());
+
+        ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
+        LispAddressSerializer.getInstance().serialize(buf, rb.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
                 "01 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
@@ -117,18 +120,19 @@ public class LispListLCAFAddressTest extends BaseTestCase {
 
     @Test
     public void equals__Simple() throws Exception {
-        Ipv6 ip1 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"));
-        Ipv6 ip2 = (Ipv6) LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:2"));
-        LcafListAddrBuilder listBuilder = new LcafListAddrBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
-                .setLcafType((short) LispCanonicalAddressFormatEnum.LIST.getLispCode()).setAddresses(new ArrayList<Addresses>());
-        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
-        LcafListAddr address1 = listBuilder.build();
-        listBuilder.setAddresses(new ArrayList<Addresses>());
-        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip1).build());
-        LcafListAddr address2 = listBuilder.build();
-        listBuilder.setAddresses(new ArrayList<Addresses>());
-        listBuilder.getAddresses().add(new AddressesBuilder().setPrimitiveAddress(ip2).build());
-        LcafListAddr address3 = listBuilder.build();
+        SimpleAddress ip1 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:1");
+        SimpleAddress ip2 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:2");
+
+        AfiListBuilder listBuilder = new AfiListBuilder().setAddressList(new ArrayList<SimpleAddress>());
+
+        listBuilder.getAddressList().add(ip1);
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address1 = listBuilder.build();
+        listBuilder.setAddressList(new ArrayList<SimpleAddress>());
+        listBuilder.getAddressList().add(ip1);
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address2 = listBuilder.build();
+        listBuilder.setAddressList(new ArrayList<SimpleAddress>());
+        listBuilder.getAddressList().add(ip2);
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
 
         assertEquals(address1, address2);
         Assert.assertNotEquals(address2, address3);
