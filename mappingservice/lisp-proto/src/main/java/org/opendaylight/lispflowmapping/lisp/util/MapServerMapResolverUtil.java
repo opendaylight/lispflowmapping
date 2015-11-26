@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.lispflowmapping.lisp.util;
-
+/*
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
-
+*/
 /**
  * Utilities to prepare MapRegister and MapRequest object for interaction with
  * the IFlowMapping API.
@@ -28,17 +28,17 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
  *
  */
 public class MapServerMapResolverUtil {
-
+/*
     public static MapRegister getMapRegister(EidToLocatorRecord mapping) {
         MapRegisterBuilder mrb = new MapRegisterBuilder();
         mrb.setEidToLocatorRecord(getEidToLocatorRecord(mapping));
         return mrb.build();
     }
 
-    public static MapRequest getMapRequest(LispAddressContainer address, short mask) {
+    public static MapRequest getMapRequest(LispAddress address) {
         MapRequestBuilder mrb = new MapRequestBuilder();
         mrb.setPitr(false);
-        mrb.setEidRecord(getEidRecord(address, mask));
+        mrb.setEidRecord(getEidRecord(address));
         return mrb.build();
     }
 
@@ -49,7 +49,7 @@ public class MapServerMapResolverUtil {
         etlrb.setMapVersion(mapping.getMapVersion());
         etlrb.setAction(mapping.getAction());
         etlrb.setAuthoritative(mapping.isAuthoritative());
-        etlrb.setLispAddressContainer(mapping.getLispAddressContainer());
+        etlrb.setEid(mapping.getEid());
         etlrb.setLocatorRecord(mapping.getLocatorRecord());
 
         List<org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord> mappings =
@@ -58,13 +58,16 @@ public class MapServerMapResolverUtil {
         return mappings;
     }
 
-    public static List<EidRecord> getEidRecord(LispAddressContainer address, short mask) {
+    public static List<EidRecord> getEidRecord(LispAddress address) {
         EidRecordBuilder erb = new EidRecordBuilder();
-        erb.setLispAddressContainer(address);
-        erb.setMask(mask);
+        erb.setEid(address);
+        erb.setAddress(address.getAddress());
+        erb.setAfi(address.getAfi());
+        erb.setVirtualNetworkId(address.getVirtualNetworkId());
 
         List<EidRecord> records = new ArrayList<EidRecord>();
         records.add(erb.build());
         return records;
     }
+    */
 }

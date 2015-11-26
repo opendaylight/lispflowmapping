@@ -22,7 +22,7 @@ import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
@@ -70,8 +70,8 @@ public class MapResolverTest extends BaseTestCase {
         testedMapResolver.basicInit();
 
         mapRequest = new MapRequestBuilder();
-        v4Address = LispAFIConvertor.asIPv4Address("1.2.3.4");
-        v6Address = LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:1");
+        v4Address = LispAddressUtil.asIPv4Address("1.2.3.4");
+        v6Address = LispAddressUtil.asIPv6Address("0:0:0:0:0:0:0:1");
         daoResults = new HashMap<LispAddressContainer, Map<String, EidToLocatorRecord>>();
     }
 
@@ -80,14 +80,14 @@ public class MapResolverTest extends BaseTestCase {
         mapRequest = getDefaultMapRequestBuilder();
         mapRequest.getEidRecord().add(
                 new EidRecordBuilder().setMask((short) 32)
-                        .setLispAddressContainer(LispAFIConvertor.asIPv4Address("1.2.3.4")).build());
+                        .setLispAddressContainer(LispAddressUtil.asIPv4Address("1.2.3.4")).build());
 
         EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
         record.setLispAddressContainer(v4Address);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setLocalLocator(false);
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("4.3.2.1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("4.3.2.1"));
         locator.setRouted(true);
         locator.setMulticastPriority((short) 5);
         locator.setWeight((short) 17);
@@ -107,7 +107,7 @@ public class MapResolverTest extends BaseTestCase {
         assertEquals(locator.getPriority(), resultLocator.getPriority());
         assertEquals(locator.getWeight(), resultLocator.getWeight());
 
-        assertLocator(LispAFIConvertor.asIPv4Address("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
+        assertLocator(LispAddressUtil.asIPv4Address("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class MapResolverTest extends BaseTestCase {
 
         record.setAuthoritative(true);
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("4.3.2.1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("4.3.2.1"));
         record.getLocatorRecord().add(locator.build());
         prepareMapping(record.build());
 
@@ -144,11 +144,11 @@ public class MapResolverTest extends BaseTestCase {
                 new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(v4Address).build());
 
         EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
-        record.setLispAddressContainer(LispAFIConvertor.asIPv4Prefix("1.2.3.0", 24));
+        record.setLispAddressContainer(LispAddressUtil.asIPv4Prefix("1.2.3.0", 24));
         record.setMaskLength((short) 24);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        locator.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("4.3.2.1")));
         record.getLocatorRecord().add(locator.build());
         prepareMapping(record.build());
 
@@ -158,7 +158,7 @@ public class MapResolverTest extends BaseTestCase {
         assertEquals(mr.getNonce(), mapReply.getNonce());
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
         assertEquals((byte) 24, eidToLocators.getMaskLength().byteValue());
-        assertEquals(LispAFIConvertor.asIPv4Prefix("1.2.3.0", 24), eidToLocators.getLispAddressContainer());
+        assertEquals(LispAddressUtil.asIPv4Prefix("1.2.3.0", 24), eidToLocators.getLispAddressContainer());
     }
 
     @Test
@@ -168,11 +168,11 @@ public class MapResolverTest extends BaseTestCase {
                 new EidRecordBuilder().setMask((short) 128).setLispAddressContainer(v6Address).build());
 
         EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
-        record.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:0")));
+        record.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:0")));
         record.setMaskLength((short) 128);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        locator.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("4.3.2.1")));
         record.getLocatorRecord().add(locator.build());
         prepareMapping(record.build());
 
@@ -193,11 +193,11 @@ public class MapResolverTest extends BaseTestCase {
                 new EidRecordBuilder().setMask((short) 128).setLispAddressContainer(v6Address).build());
 
         EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
-        record.setLispAddressContainer(LispAFIConvertor.asIPv6Prefix("0:1:0:0:0:0:0:1", 112));
+        record.setLispAddressContainer(LispAddressUtil.asIPv6Prefix("0:1:0:0:0:0:0:1", 112));
         record.setMaskLength((short) 112);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("4.3.2.1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("4.3.2.1"));
         record.getLocatorRecord().add(locator.build());
         prepareMapping(record.build());
 
@@ -246,11 +246,11 @@ public class MapResolverTest extends BaseTestCase {
                 new EidRecordBuilder().setMask((short) 32).setLispAddressContainer(v4Address).build());
 
         EidToLocatorRecordBuilder record = getDefaultEidToLocatorBuilder();
-        record.setLispAddressContainer(LispAFIConvertor.asIPv4Prefix("1.2.4.0", 24));
+        record.setLispAddressContainer(LispAddressUtil.asIPv4Prefix("1.2.4.0", 24));
         record.setMaskLength((short) 24);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("4.3.2.1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("4.3.2.1"));
         record.getLocatorRecord().add(locator.build());
         prepareMapping(record.build());
 
@@ -273,13 +273,13 @@ public class MapResolverTest extends BaseTestCase {
         record.setLispAddressContainer(v4Address);
 
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("4.3.2.1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("4.3.2.1"));
         record.getLocatorRecord().add(locator.build());
         locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:1"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv6Address("0:0:0:0:0:0:0:1"));
         record.getLocatorRecord().add(locator.build());
         locator = getDefaultLocatorBuilder();
-        locator.setLispAddressContainer(LispAFIConvertor.asIPv4Address("1.8.2.7"));
+        locator.setLispAddressContainer(LispAddressUtil.asIPv4Address("1.8.2.7"));
         record.getLocatorRecord().add(locator.build());
 
         prepareMapping(record.build());
@@ -289,9 +289,9 @@ public class MapResolverTest extends BaseTestCase {
         EidToLocatorRecord eidToLocators = mapReply.getEidToLocatorRecord().get(0);
         assertEquals(3, eidToLocators.getLocatorRecord().size());
 
-        assertLocator(LispAFIConvertor.asIPv4Address("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
-        assertLocator(LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:1"), eidToLocators.getLocatorRecord().get(1));
-        assertLocator(LispAFIConvertor.asIPv4Address("1.8.2.7"), eidToLocators.getLocatorRecord().get(2));
+        assertLocator(LispAddressUtil.asIPv4Address("4.3.2.1"), eidToLocators.getLocatorRecord().get(0));
+        assertLocator(LispAddressUtil.asIPv6Address("0:0:0:0:0:0:0:1"), eidToLocators.getLocatorRecord().get(1));
+        assertLocator(LispAddressUtil.asIPv4Address("1.8.2.7"), eidToLocators.getLocatorRecord().get(2));
     }
 
     @Test
@@ -308,7 +308,7 @@ public class MapResolverTest extends BaseTestCase {
         record1.setRecordTtl(100);
 
         LocatorRecordBuilder locator1 = getDefaultLocatorBuilder();
-        locator1.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")));
+        locator1.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("4.3.2.1")));
         record1.getLocatorRecord().add(locator1.build());
 
         EidToLocatorRecordBuilder record2 = getDefaultEidToLocatorBuilder();
@@ -317,7 +317,7 @@ public class MapResolverTest extends BaseTestCase {
         record2.setRecordTtl(100);
 
         LocatorRecordBuilder locator2 = getDefaultLocatorBuilder();
-        locator2.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
+        locator2.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
         record2.getLocatorRecord().add(locator2.build());
 
         prepareMapping(record1.build(), record2.build());
@@ -326,12 +326,12 @@ public class MapResolverTest extends BaseTestCase {
 
         EidToLocatorRecord eidToLocators1 = mapReply.getEidToLocatorRecord().get(0);
         assertEquals(1, eidToLocators1.getLocatorRecord().size());
-        assertLocator(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1")), eidToLocators1
+        assertLocator(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("4.3.2.1")), eidToLocators1
                 .getLocatorRecord().get(0));
 
         EidToLocatorRecord eidToLocators2 = mapReply.getEidToLocatorRecord().get(1);
         assertEquals(1, eidToLocators2.getLocatorRecord().size());
-        assertLocator(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")), eidToLocators2
+        assertLocator(LispAddressUtil.toContainer(LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:1")), eidToLocators2
                 .getLocatorRecord().get(0));
     }
 
@@ -381,7 +381,7 @@ public class MapResolverTest extends BaseTestCase {
         mrBuilder.setSmr(false);
         mrBuilder.setSmrInvoked(true);
         mrBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
-                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("127.0.0.1"))).build());
+                LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("127.0.0.1"))).build());
         return mrBuilder;
     }
 
