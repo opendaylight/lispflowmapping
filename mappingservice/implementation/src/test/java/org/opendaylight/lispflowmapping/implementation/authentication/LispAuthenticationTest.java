@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
@@ -167,7 +167,7 @@ public class LispAuthenticationTest extends BaseTestCase {
         mapNotifyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
         EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.setLispAddressContainer(LispAFIConvertor.getIPContainer("1.1.1.1"));
+        etlrBuilder.setLispAddressContainer(LispAddressUtil.getIPContainer("1.1.1.1"));
         etlrBuilder.setRecordTtl(55);
         mapNotifyBuilder.getEidToLocatorRecord().add(etlrBuilder.build());
         ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(mapNotifyBuilder.build(), "password"));

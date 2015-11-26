@@ -35,4 +35,37 @@
       <artifactId>org.eclipse.osgi</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <!-- Temporarily disable compiling non-generated code, like serializers, which won't build for now -->
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <!-- <exclude>org/opendaylight/controller/**</exclude> -->
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

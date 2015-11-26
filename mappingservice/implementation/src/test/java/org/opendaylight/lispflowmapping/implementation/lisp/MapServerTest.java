@@ -24,7 +24,7 @@ import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
@@ -84,8 +84,8 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder = new MapRegisterBuilder();
         mapRegisterBuilder.setKeyId((short) 0);
         mapRegisterBuilder.setAuthenticationData(new byte[0]);
-        eid = LispAFIConvertor.asIPv4Address(eidIpv4String);
-        rloc = LispAFIConvertor.asIPv4Address("192.168.136.10");
+        eid = LispAddressUtil.asIPv4Address(eidIpv4String);
+        rloc = LispAddressUtil.asIPv4Address("192.168.136.10");
         EidToLocatorRecordBuilder recordBuilder = new EidToLocatorRecordBuilder();
         recordBuilder.setLispAddressContainer(eid).setMaskLength((short) 32);
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
@@ -120,11 +120,11 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ValidNotifyEchoesRegister() throws Exception {
         mapRegisterBuilder.getEidToLocatorRecord().add(
-                getDefaultEidToLocatorBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(new NoAddressBuilder().build())).build());
+                getDefaultEidToLocatorBuilder().setLispAddressContainer(LispAddressUtil.toContainer(new NoAddressBuilder().build())).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(eid);
-        addDefaultPutAndGetExpectations(LispAFIConvertor.toContainer(new NoAddressBuilder().build()));
+        addDefaultPutAndGetExpectations(LispAddressUtil.toContainer(new NoAddressBuilder().build()));
         MapRegister mr = mapRegisterBuilder.build();
         MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
         assertEquals(mr.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
@@ -139,11 +139,11 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder.setWantMapNotify(true);
         EidToLocatorRecordBuilder eidToLocatorBuilder = getDefaultEidToLocatorBuilder();
         eidToLocatorBuilder.setMaskLength((short) 32);
-        eid = LispAFIConvertor.asIPv4Address("0.0.0.1");
+        eid = LispAddressUtil.asIPv4Address("0.0.0.1");
         eidToLocatorBuilder.setLispAddressContainer(eid);
 
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.2")));
+        locatorBuilder.setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("0.0.0.2")));
         locatorBuilder.setPriority((short) 55);
         eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder.build());
 
@@ -162,7 +162,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__ValidMask() throws Exception {
         int mask = 16;
-        LispAddressContainer newEid = LispAFIConvertor.asIPv4Prefix(eidIpv4String, mask);
+        LispAddressContainer newEid = LispAddressUtil.asIPv4Prefix(eidIpv4String, mask);
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         recordBuilder.setLispAddressContainer(newEid).setMaskLength((short) mask);
@@ -187,7 +187,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegister__NonMaskable() throws Exception {
         int mask = 16;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.toContainer(LispAFIConvertor.asMacAfiAddress("01:01:01:01:01:01"));
+        LispAddressContainer addr = LispAddressUtil.toContainer(LispAddressUtil.asMacAfiAddress("01:01:01:01:01:01"));
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -212,7 +212,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegister__ZeroMask() throws Exception {
         int mask = 0;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.toContainer(LispAFIConvertor.asMacAfiAddress("01:01:01:01:01:01"));
+        LispAddressContainer addr = LispAddressUtil.toContainer(LispAddressUtil.asMacAfiAddress("01:01:01:01:01:01"));
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -236,7 +236,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIPv4__ZeroMask() throws Exception {
         int mask = 0;
-        LispAddressContainer newEid = LispAFIConvertor.asIPv4Prefix(eidIpv4String, mask);
+        LispAddressContainer newEid = LispAddressUtil.asIPv4Prefix(eidIpv4String, mask);
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         recordBuilder.setLispAddressContainer(newEid).setMaskLength((short) mask);
@@ -284,7 +284,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv6__ValidMask96() throws Exception {
         int mask = 96;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.asIPv6Prefix(eidIpv6String, mask);
+        LispAddressContainer addr = LispAddressUtil.asIPv6Prefix(eidIpv6String, mask);
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -309,7 +309,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv6__ZeroMask() throws Exception {
         int mask = 0;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.asIPv6Prefix(eidIpv6String, mask);
+        LispAddressContainer addr = LispAddressUtil.asIPv6Prefix(eidIpv6String, mask);
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -334,7 +334,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv6__ValidMask48() throws Exception {
         int mask = 48;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.asIPv6Prefix(eidIpv6String, mask);
+        LispAddressContainer addr = LispAddressUtil.asIPv6Prefix(eidIpv6String, mask);
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -359,7 +359,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv6__ValidMask128() throws Exception {
         int mask = 128;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        LispAddressContainer addr = LispAFIConvertor.asIPv6Address(eidIpv6String);
+        LispAddressContainer addr = LispAddressUtil.asIPv6Address(eidIpv6String);
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -386,7 +386,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         EidToLocatorRecordBuilder recordBuilder0 = getDefaultEidToLocatorBuilder();
         recordBuilder0.setLispAddressContainer(eid).setMaskLength((short) 32);
-        LispAddressContainer addr = LispAFIConvertor.asIPv6Prefix(eidIpv6String, mask);
+        LispAddressContainer addr = LispAddressUtil.asIPv6Prefix(eidIpv6String, mask);
         EidToLocatorRecordBuilder recordBuilder1 = getDefaultEidToLocatorBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setLispAddressContainer(rloc);
@@ -417,7 +417,7 @@ public class MapServerTest extends BaseTestCase {
 
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         LispAddressContainer rloc0 = rloc;
-        LispAddressContainer rloc1 = LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:7");
+        LispAddressContainer rloc1 = LispAddressUtil.asIPv6Address("0:0:0:0:0:0:0:7");
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         recordBuilder.setLispAddressContainer(eid);
         LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
@@ -449,16 +449,16 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         LispAddressContainer rloc0 = rloc;
         // LispAFIAddress rloc1 =
-        // LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:7");
+        // LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:7");
         String subkey = "bla";
-        LispAFIAddress rloc1 = LispAFIConvertor
-                .asKeyValue(subkey, LispAFIConvertor.toPrimitive(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:7")));
+        LispAFIAddress rloc1 = LispAddressUtil
+                .asKeyValue(subkey, LispAddressUtil.toPrimitive(LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:7")));
         EidToLocatorRecordBuilder recordBuilder = getDefaultEidToLocatorBuilder();
         recordBuilder.setLispAddressContainer(eid);
         LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
         locatorBuilder1.setLispAddressContainer(rloc0);
         LocatorRecordBuilder locatorBuilder2 = getDefaultLocatorBuilder();
-        locatorBuilder2.setLispAddressContainer(LispAFIConvertor.toContainer(rloc1));
+        locatorBuilder2.setLispAddressContainer(LispAddressUtil.toContainer(rloc1));
         recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
         recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
 
@@ -472,7 +472,7 @@ public class MapServerTest extends BaseTestCase {
         assertEquals(2, storedMapping.getLocatorRecord().size());
         assertEquals(SubKeys.RECORD, entries[0].getKey());
         assertEquals(rloc0, storedMapping.getLocatorRecord().get(0).getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(rloc1), storedMapping.getLocatorRecord().get(1)
+        assertEquals(LispAddressUtil.toContainer(rloc1), storedMapping.getLocatorRecord().get(1)
                 .getLispAddressContainer());
 
     }
@@ -525,7 +525,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegister__MultipleEIDs() throws Exception {
         addDefaultPutAndGetExpectations(eid);
 
-        LispAddressContainer rloc1 = LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:7");
+        LispAddressContainer rloc1 = LispAddressUtil.asIPv6Address("0:0:0:0:0:0:0:7");
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         EidToLocatorRecordBuilder etlrBuilder = getDefaultEidToLocatorBuilder();
         etlrBuilder.getLocatorRecord().add(getDefaultLocatorBuilder().setLispAddressContainer(rloc1).build());
@@ -533,14 +533,14 @@ public class MapServerTest extends BaseTestCase {
         etlrBuilder.setLispAddressContainer(eid);
 
         EidToLocatorRecordBuilder etlr2Builder = getDefaultEidToLocatorBuilder();
-        LispAddressContainer address = LispAFIConvertor.asIPv4Address("1.1.1.1");
+        LispAddressContainer address = LispAddressUtil.asIPv4Address("1.1.1.1");
         etlr2Builder.setLispAddressContainer(address);
         etlr2Builder.setMaskLength((short) 32);
         int recordTtl = 5;
         etlr2Builder.setRecordTtl(recordTtl);
         etlr2Builder.getLocatorRecord().add(
                 getDefaultLocatorBuilder().setPriority((short) 10)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("2.2.2.2"))).build());
+                        .setLispAddressContainer(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("2.2.2.2"))).build());
         mapRegisterBuilder.getEidToLocatorRecord().add(etlrBuilder.build());
         mapRegisterBuilder.getEidToLocatorRecord().add(etlr2Builder.build());
         addDefaultPutAndGetExpectations(address);
@@ -548,7 +548,7 @@ public class MapServerTest extends BaseTestCase {
 
         assertEquals(rloc1, mapNotify.getEidToLocatorRecord().get(0).getLocatorRecord().get(0)
                 .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("2.2.2.2")), mapNotify.getEidToLocatorRecord().get(1)
+        assertEquals(LispAddressUtil.toContainer(LispAddressUtil.asIPAfiAddress("2.2.2.2")), mapNotify.getEidToLocatorRecord().get(1)
                 .getLocatorRecord().get(0).getLispAddressContainer());
         assertEquals(address, mapNotify.getEidToLocatorRecord().get(1).getLispAddressContainer());
         assertEquals(recordTtl, mapNotify.getEidToLocatorRecord().get(1).getRecordTtl().intValue());
@@ -558,7 +558,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__CheckWrongPassword() throws Exception {
 
-        addGetExpectations(LispAFIConvertor.asIPv4Address("153.16.254.1"), 0, 31, "bla");
+        addGetExpectations(LispAddressUtil.asIPv4Address("153.16.254.1"), 0, 31, "bla");
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(null, mapNotify);
     }
@@ -566,8 +566,8 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__CheckNoPasswordAndThenPassword() throws Exception {
 
-        addGetExpectations(LispAFIConvertor.asIPv4Address("153.16.254.1"), 0, 25, "password");
-        addPutExpectations(LispAFIConvertor.asIPv4Address("153.16.254.1"));
+        addGetExpectations(LispAddressUtil.asIPv4Address("153.16.254.1"), 0, 25, "password");
+        addPutExpectations(LispAddressUtil.asIPv4Address("153.16.254.1"));
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(mapRegisterWithAuthentication.getEidToLocatorRecord(), mapNotify.getEidToLocatorRecord());
         assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
@@ -577,7 +577,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__CheckNoPassword() throws Exception {
 
-        addGetExpectations(LispAFIConvertor.asIPv4Address("153.16.254.1"), 30, 0, "password");
+        addGetExpectations(LispAddressUtil.asIPv4Address("153.16.254.1"), 30, 0, "password");
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(null, mapNotify);
     }
@@ -585,7 +585,7 @@ public class MapServerTest extends BaseTestCase {
     @Test
     public void handleMapRegisterIpv4__CheckNoreturn() throws Exception {
 
-        addGetExpectations(LispAFIConvertor.asIPv4Address("153.16.254.1"));
+        addGetExpectations(LispAddressUtil.asIPv4Address("153.16.254.1"));
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
         assertEquals(mapNotify, null);
     }
