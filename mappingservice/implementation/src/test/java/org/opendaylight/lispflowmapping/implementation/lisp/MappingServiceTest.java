@@ -24,9 +24,10 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 
 /**
  *
@@ -40,7 +41,7 @@ public class MappingServiceTest extends BaseTestCase {
     private DataStoreBackEnd dsbe;
     private MappingSystem mapSystem;
 
-    private LispAddressContainer eid;
+    private Eid eid;
     private String eidIpv4String = "10.31.0.5";
 
     @Override
@@ -61,17 +62,17 @@ public class MappingServiceTest extends BaseTestCase {
         inject(mapService, "dsbe", dsbe);
         inject(mapService, "mappingSystem", mapSystem);
 
-        eid = LispAFIConvertor.asIPv4Address(eidIpv4String);
+        eid = LispAFIConvertor.asIpv4Prefix(eidIpv4String + "/32");
 
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void handleAddAuthenticationKey() throws Exception {
-        String authKey = "pass";
-        MappingEntry<String> keyMappingEntry = new MappingEntry<String>(SubKeys.AUTH_KEY, authKey);
-        LispAddressContainer key = getDefaultKey();
-        MappingEntry<String>[] authKeys =(MappingEntry<String>[]) (Arrays.asList(keyMappingEntry).toArray());
+        MappingAuthkey authKey = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("pass").build();
+        MappingEntry<MappingAuthkey> keyMappingEntry = new MappingEntry<>(SubKeys.AUTH_KEY, authKey);
+        Eid key = getDefaultKey();
+        MappingEntry<MappingAuthkey>[] authKeys =(MappingEntry<MappingAuthkey>[]) (Arrays.asList(keyMappingEntry).toArray());
         addDsbeAddKeyExpectation();
         oneOf(dao).put(weq(key), weq(authKeys));
         mapService.addAuthenticationKey(eid, authKey);
@@ -79,7 +80,7 @@ public class MappingServiceTest extends BaseTestCase {
 
     @Test
     public void handleGetAuthenticationKey() throws Exception {
-        LispAddressContainer key = getDefaultKey();
+        Eid key = getDefaultKey();
         oneOf(dao).getSpecific(weq(key), with(SubKeys.AUTH_KEY));
         ret("password");
         assertEquals("password", mapService.getAuthenticationKey(eid));
@@ -88,8 +89,8 @@ public class MappingServiceTest extends BaseTestCase {
     @Test
     public void handleGetAuthenticationKeyNoIteration() throws Exception {
         mapSystem.setIterateMask(false);
-        LispAddressContainer key = getDefaultKey();
-        LispAddressContainer passKey = getKey(30);
+        Eid key = getDefaultKey();
+        Eid passKey = getKey(30);
         oneOf(dao).getSpecific(weq(key), with(SubKeys.AUTH_KEY));
         allowing(dao).getSpecific(weq(passKey), with(SubKeys.AUTH_KEY));
         ret("password");
@@ -98,25 +99,26 @@ public class MappingServiceTest extends BaseTestCase {
 
     @Test
     public void handleRemoveAuthenticationKey() throws Exception {
-        LispAddressContainer key = getDefaultKey();
+        Eid key = getDefaultKey();
         addDsbeRemoveKeyExpectation();
         oneOf(dao).removeSpecific(weq(key), with(SubKeys.AUTH_KEY));
         mapService.removeAuthenticationKey(eid);
     }
 
-    private LispAddressContainer getDefaultKey() {
+    private Eid getDefaultKey() {
         return getKey(32);
     }
 
-    private LispAddressContainer getKey(int mask) {
-        return MaskUtil.normalize(eid, (short)mask);
+    private Eid getKey(int mask) {
+        Eid key = LispAFIConvertor.asIpv4Prefix(eidIpv4String + Integer.toString(mask));
+        return MaskUtil.normalize(key);
     }
 
     private void addDsbeAddKeyExpectation() {
         ValueSaverAction<AuthenticationKey> dsbeAddKeySaverAction = new ValueSaverAction<AuthenticationKey>() {
             @Override
             public Object invoke(Invocation invocation) throws Throwable {
-                mapSystem.addAuthenticationKey(lastValue.getLispAddressContainer(), lastValue.getAuthkey());
+                mapSystem.addAuthenticationKey(lastValue.getEid(), lastValue.getMappingAuthkey());
                 return null;
             }
         };
@@ -127,7 +129,7 @@ public class MappingServiceTest extends BaseTestCase {
         ValueSaverAction<AuthenticationKey> dsbeRemoveKeySaverAction = new ValueSaverAction<AuthenticationKey>() {
             @Override
             public Object invoke(Invocation invocation) throws Throwable {
-                mapSystem.removeAuthenticationKey(lastValue.getLispAddressContainer());
+                mapSystem.removeAuthenticationKey(lastValue.getEid());
                 return null;
             }
         };
