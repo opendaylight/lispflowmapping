@@ -89,7 +89,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
-    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.implementation</artifactId>
@@ -102,6 +101,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>config</classifier>
       <type>xml</type>
     </dependency>
+    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.southbound</artifactId>
@@ -120,7 +120,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>mappingservice.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.inmemorydb</artifactId>
@@ -143,13 +142,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>mappingservice.shell</artifactId>
       <version>${project.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lispflowmapping-ui-bundle</artifactId>
@@ -162,6 +159,5 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
-    -->
   </dependencies>
 </project>
