@@ -9,26 +9,25 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import java.util.List;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaflistaddress.Addresses;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lcaftrafficengineeringaddress.Hops;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.Address;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.AS;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.DistinguishedName;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv6;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafApplicationData;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafKeyValue;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafList;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafSegment;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafSourceDest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafTrafficEngineering;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Mac;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.No;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafapplicationdata.LcafApplicationDataAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafsourcedest.LcafSourceDestAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AsNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedName;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.InstanceId;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 
 import com.google.common.base.Preconditions;
 
@@ -65,62 +64,68 @@ public class LispAddressStringifier {
         URL;
     }
 
-    public static String getString(LispAddressContainer container) {
-        return getAddrString(Destination.USER, container);
+    public static String getString(LispAddress lispAddress) {
+        return getAddrString(Destination.USER, lispAddress);
     }
 
-    public static String getURIString(LispAddressContainer container) {
-        return getString(Destination.URI, container);
+    public static String getURIString(LispAddress lispAddress) {
+        return getAddrString(Destination.URI, lispAddress);
     }
 
-    public static String getURLString(LispAddressContainer container) {
-        return getString(Destination.URL, container);
+    public static String getURLString(LispAddress lispAddress) {
+        return getAddrString(Destination.URL, lispAddress);
     }
 
-    private static String getAddrString(Destination dst, LispAddressContainer container) {
-        Preconditions.checkNotNull(container, "address should not be null");
-        Address addr = container.getAddress();
+    private static String getAddrString(Destination dst, LispAddress lispAddress) {
+        Preconditions.checkNotNull(lispAddress, "lispAddress should not be null");
+        Address addr = lispAddress.getAddress();
         String prefix = null;
         String address = null;
 
         if (addr instanceof Ipv4) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
             address = getStringFromIpv4(dst, (Ipv4) addr);
+        } else if (addr instanceof Ipv4Prefix) {
+            prefix = "ipv4" + PREFIX_SEPARATOR;
+            address = getStringFromIpv4Prefix(dst, (Ipv4Prefix) addr);
         } else if (addr instanceof Ipv6) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
             address = getStringFromIpv6(dst, (Ipv6) addr);
+        } else if (addr instanceof Ipv6Prefix) {
+            prefix = "ipv6" + PREFIX_SEPARATOR;
+            address = getStringFromIpv6Prefix(dst, (Ipv6Prefix) addr);
         } else if (addr instanceof Mac) {
             prefix = "mac" + PREFIX_SEPARATOR;
             address = getStringFromMac(dst, (Mac) addr);
-        } else if (addr instanceof LcafSegment) {
-            PrimitiveAddress pa = ((LcafSegment) addr).getLcafSegmentAddr().getAddress().getPrimitiveAddress();
+        } else if (addr instanceof InstanceId) {
+            SimpleAddress pa = ((InstanceId)addr).getInstanceId().getAddress();
             // Instance ID is a separate parent hierarchy, so we use the simple address prefix
-            prefix = LispPrimitiveAddressStringifier.getURLPrefix(pa) + PREFIX_SEPARATOR;
-            address = getStringFromLcafSegment(dst, (LcafSegment) addr);
-        } else if (addr instanceof No) {
+            prefix = LispSimpleAddressStringifier.getURLPrefix(pa) + PREFIX_SEPARATOR;
+            address = getStringFromInstanceId(dst, (InstanceId) addr);
+        } else if (addr instanceof NoAddress) {
             prefix = "no" + PREFIX_SEPARATOR;
-            address = getStringFromNo(dst, (No) addr);
+            address = getStringFromNoAddress(dst, (NoAddress) addr);
         } else if (addr instanceof DistinguishedName) {
             prefix = "dn" + PREFIX_SEPARATOR;
             address = getStringFromDistinguishedName(dst, (DistinguishedName) addr);
-        } else if (addr instanceof AS) {
+        } else if (addr instanceof AsNumber) {
             prefix = "as" + PREFIX_SEPARATOR;
-            address = getStringFromAS(dst, (AS) addr);
-        } else if (addr instanceof LcafList) {
+            address = getStringFromAsNumber(dst, (AsNumber) addr);
+        } else if (addr instanceof AfiList) {
             prefix = "list" + PREFIX_SEPARATOR;
-            address = getStringFromLcafList(dst, (LcafList) addr);
-        } else if (addr instanceof LcafApplicationData) {
+            address = getStringFromAfiList(dst, (AfiList) addr);
+        } else if (addr instanceof ApplicationData) {
             prefix = "appdata" + PREFIX_SEPARATOR;
-            address = getStringFromLcafApplicationData(dst, (LcafApplicationData) addr);
-        } else if (addr instanceof LcafTrafficEngineering) {
+            address = getStringFromApplicationData(dst, (ApplicationData) addr);
+        } else if (addr instanceof ExplicitLocatorPath) {
             prefix = "elp" + PREFIX_SEPARATOR;
-            address = getStringFromLcafTrafficEngineering(dst, (LcafTrafficEngineering) addr);
-        } else if (addr instanceof LcafSourceDest) {
+            address = getStringFromExplicitLocatorPath(dst, (ExplicitLocatorPath) addr);
+        } else if (addr instanceof SourceDestKey) {
             prefix = "srcdst" + PREFIX_SEPARATOR;
-            address = getStringFromLcafSourceDest(dst, (LcafSourceDest) addr);
-        } else if (addr instanceof LcafKeyValue) {
+            address = getStringFromSourceDestKey(dst, (SourceDestKey) addr);
+        } else if (addr instanceof KeyValueAddress) {
             prefix = "kv" + PREFIX_SEPARATOR;
-            address = getStringFromLcafKeyValue(dst, (LcafKeyValue) addr);
+            address = getStringFromKeyValueAddress(dst, (KeyValueAddress) addr);
         }
 
         if (dst == Destination.USER) {
@@ -131,23 +136,15 @@ public class LispAddressStringifier {
 
     }
 
-    private static String getString(Destination dst, LispAddressContainer container) {
-        if (MaskUtil.isMaskable(container)) {
-            return (getAddrString(dst, container) + getMaskSeparator(dst) + MaskUtil.getMaskForAddress(container));
-        } else {
-            return getAddrString(dst, container);
-        }
-    }
-
-    private static String getMaskSeparator(Destination dst) {
+    private static String getPrefixString(Destination dst, String prefix) {
         if (dst == Destination.URL) {
-            return "%2f";
+            return prefix.replace("/", "%2f");
         } else {
-            return "/";
+            return prefix;
         }
     }
 
-    protected static String getStringFromNo(Destination dst, No addr) {
+    protected static String getStringFromNoAddress(Destination dst, NoAddress addr) {
         // AFI = 0
         if (dst == Destination.USER) {
             return "No Address Present";
@@ -158,88 +155,102 @@ public class LispAddressStringifier {
 
     protected static String getStringFromIpv4(Destination dst, Ipv4 addr) {
         // AFI = 1; IPv4
-        return addr.getIpv4Address().getIpv4Address().getValue();
+        return addr.getIpv4().getValue();
+    }
+
+    protected static String getStringFromIpv4Prefix(Destination dst, Ipv4Prefix addr) {
+        // AFI = 1; IPv4
+        String prefix = addr.getIpv4Prefix().getValue();
+        return getPrefixString(dst, prefix);
     }
 
     protected static String getStringFromIpv6(Destination dst, Ipv6 addr) {
         // AFI = 2; IPv6
-        return addr.getIpv6Address().getIpv6Address().getValue();
+        return addr.getIpv6().getValue();
+    }
+
+    protected static String getStringFromIpv6Prefix(Destination dst, Ipv6Prefix addr) {
+        // AFI = 2; IPv6
+        return addr.getIpv6Prefix().getValue();
     }
 
     protected static String getStringFromDistinguishedName(Destination dst, DistinguishedName addr) {
         // AFI = 17; Distinguished Name
-        return addr.getDistinguishedName().getDistinguishedName();
+        return addr.getDistinguishedName().getValue();
     }
 
-    protected static String getStringFromAS(Destination dst, AS addr) {
+    protected static String getStringFromAsNumber(Destination dst, AsNumber addr) {
         // AFI = 18; Autonomous System Number
-        return "AS" + addr.getAS().getAS();
+        return "AS" + addr.getAsNumber().getValue();
     }
-    protected static String getStringFromLcafList(Destination dst, LcafList addr) {
+    protected static String getStringFromAfiList(Destination dst, AfiList addr) {
         // AFI 16387, LCAF Type 1; Address List
         // Example rendering:
         //    {192.0.2.1,192.0.2.2,2001:db8::1}
-        List<Addresses> addresses = addr.getLcafListAddr().getAddresses();
+        List<SimpleAddress> addresses = addr.getAfiList().getAddressList();
         StringBuilder sb = new StringBuilder("{");
         boolean needComma = false;
-        for (Addresses a : addresses) {
+        for (SimpleAddress a : addresses) {
             if (needComma) {
                 sb.append(",");
             }
-            sb.append(LispPrimitiveAddressStringifier.getString(dst, a.getPrimitiveAddress()));
+            sb.append(a.getValue());
             needComma = true;
         }
         sb.append("}");
         return sb.toString();
     }
 
-    protected static String getStringFromLcafSegment(Destination dst, LcafSegment addr) {
+    protected static String getStringFromInstanceId(Destination dst, InstanceId addr) {
         // AFI = 16387, LCAF Type 2; Instance ID
         // Example rendering:
         //    [223] 192.0.2.0/24
-        PrimitiveAddress pa = addr.getLcafSegmentAddr().getAddress().getPrimitiveAddress();
+        SimpleAddress pa = addr.getInstanceId().getAddress();
         if (dst == Destination.USER) {
-            return "[" + addr.getLcafSegmentAddr().getInstanceId() + "] "
-                    + LispPrimitiveAddressStringifier.getString(dst, pa);
+            return "[" + addr.getInstanceId().getIid().getValue() + "] "
+                    + LispSimpleAddressStringifier.getString(dst, pa);
         } else {
-            return LispPrimitiveAddressStringifier.getString(dst, pa);
+            return LispSimpleAddressStringifier.getString(dst, pa);
         }
     }
 
-    protected static String getStringFromLcafApplicationData(Destination dst, LcafApplicationData addr) {
+    protected static String getStringFromApplicationData(Destination dst, ApplicationData addr) {
         // AFI = 16387, LCAF Type 4; Application Data
         // Example rendering:
         //    192.0.2.1!128!17!80-81!6667-7000
-        LcafApplicationDataAddr a = addr.getLcafApplicationDataAddr();
-        return LispPrimitiveAddressStringifier.getString(dst, a.getAddress().getPrimitiveAddress())
-                + "!" + a.getIpTos() + "!" + a.getProtocol()
-                + "!" + a.getLocalPortLow() + "-" + a.getLocalPortHigh()
-                + "!" + a.getRemotePortLow() + "-" + a.getRemotePortHigh();
-
+        return LispSimpleAddressStringifier.getString(dst, addr.getApplicationData().getAddress())
+                + "!" + addr.getApplicationData().getIpTos()
+                + "!" + addr.getApplicationData().getProtocol()
+                + "!" + addr.getApplicationData().getLocalPortLow()
+                + "-" + addr.getApplicationData().getLocalPortHigh()
+                + "!" + addr.getApplicationData().getRemotePortLow()
+                + "-" + addr.getApplicationData().getRemotePortHigh();
     }
-    protected static String getStringFromLcafTrafficEngineering(Destination dst, LcafTrafficEngineering addr) {
+
+    protected static String getStringFromExplicitLocatorPath(Destination dst, ExplicitLocatorPath addr) {
         // AFI = 16387, LCAF Type 10, Explicit Locator Path
         // Example rendering:
         //    {192.0.2.1->192.0.2.2|lps->192.0.2.3}
-        List<Hops> hops = addr.getLcafTrafficEngineeringAddr().getHops();
+        List<Hop> hops = addr.getExplicitLocatorPath().getHop();
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         boolean needArrow = false;
-        for (Hops hop : hops) {
+        for (Hop hop : hops) {
             if (needArrow) {
                 sb.append("->");
             }
-            sb.append(LispPrimitiveAddressStringifier.getString(dst, hop.getHop().getPrimitiveAddress()));
-            if (hop.isLookup() || hop.isRLOCProbe() || hop.isStrict()) {
+            sb.append(LispSimpleAddressStringifier.getString(dst, hop.getAddress()));
+            LrsBits lrs = hop.getLrsBits();
+            if (lrs.isLookup() || lrs.isRlocProbe() || lrs.isStrict()) {
                 sb.append("|");
             }
-            if (hop.isLookup()) {
+            if (lrs.isLookup()) {
                 sb.append("l");
             }
-            if (hop.isRLOCProbe()) {
+            if (lrs.isRlocProbe()) {
                 sb.append("p");
             }
-            if (hop.isStrict()) {
+            if (lrs.isStrict()) {
                 sb.append("s");
             }
             needArrow = true;
@@ -248,29 +259,25 @@ public class LispAddressStringifier {
         return sb.toString();
     }
 
-    protected static String getStringFromLcafSourceDest(Destination dst, LcafSourceDest addr) {
+    protected static String getStringFromSourceDestKey(Destination dst, SourceDestKey addr) {
         // AFI = 16387, LCAF Type 12, Source/Destination Key
         // Example rendering:
         //    192.0.2.1/32|192.0.2.2/32
-        LcafSourceDestAddr a = ((LcafSourceDest) addr).getLcafSourceDestAddr();
-        return LispPrimitiveAddressStringifier.getString(dst, a.getSrcAddress().getPrimitiveAddress())
-                + getMaskSeparator(dst) + a.getSrcMaskLength() + "|"
-                + LispPrimitiveAddressStringifier.getString(dst, a.getDstAddress().getPrimitiveAddress())
-                + getMaskSeparator(dst) + a.getDstMaskLength();
+        return getPrefixString(dst, (new String(addr.getSourceDestKey().getSource().getValue()))
+                + "|" + getPrefixString(dst, new String(addr.getSourceDestKey().getDest().getValue())));
     }
 
-    protected static String getStringFromLcafKeyValue(Destination dst, LcafKeyValue addr) {
+    protected static String getStringFromKeyValueAddress(Destination dst, KeyValueAddress addr) {
         // AFI = 16387, LCAF Type 15, Key/Value Address Pair
         // Example rendering:
         //    192.0.2.1=>192.0.2.2
-        LcafKeyValueAddressAddr a = addr.getLcafKeyValueAddressAddr();
-        return LispPrimitiveAddressStringifier.getString(dst, a.getKey().getPrimitiveAddress()) + "=>"
-                + LispPrimitiveAddressStringifier.getString(dst, a.getValue().getPrimitiveAddress());
+        return getPrefixString(dst, new String(addr.getKeyValueAddress().getKey().getValue())
+                + "=>" + getPrefixString(dst, new String(addr.getKeyValueAddress().getValue().getValue())));
     }
 
     protected static String getStringFromMac(Destination dst, Mac addr) {
         // AFI = 16389; MAC
-        return addr.getMacAddress().getMacAddress().getValue();
+        return addr.getMac().getValue();
     }
 
 }
