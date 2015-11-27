@@ -29,8 +29,8 @@ import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.LispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private volatile String bindingAddress = null;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private BindingAwareBroker.RpcRegistration<LispSbService> sbRpcRegistration;
+    private BindingAwareBroker.RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private DatagramSocket xtrSocket;
     private LispSouthboundStats statistics = new LispSouthboundStats();
 
@@ -59,7 +59,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         LOG.info("LISP (RFC6830) southbound plugin is initializing...");
         final LispSouthboundRPC sbRpcHandler = new LispSouthboundRPC(this);
 
-        sbRpcRegistration = rpcRegistry.addRpcImplementation(LispSbService.class, sbRpcHandler);
+        sbRpcRegistration = rpcRegistry.addRpcImplementation(OdlLispSbService.class, sbRpcHandler);
         broker.registerProvider(this);
 
         synchronized (startLock) {

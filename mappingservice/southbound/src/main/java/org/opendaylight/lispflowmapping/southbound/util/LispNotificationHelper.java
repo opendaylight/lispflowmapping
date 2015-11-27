@@ -26,7 +26,7 @@ public class LispNotificationHelper {
     public static MapRegister convertMapRegister(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister mapRegister) {
         return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
-                .setEidToLocatorRecord(mapRegister.getEidToLocatorRecord()).setKeyId(mapRegister.getKeyId())
+                .setMappingRecordItem(mapRegister.getMappingRecordItem()).setKeyId(mapRegister.getKeyId())
                 .setNonce(mapRegister.getNonce()).setProxyMapReply(mapRegister.isProxyMapReply())
                 .setWantMapNotify(mapRegister.isWantMapNotify()).setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent())
                 .setXtrId(mapRegister.getXtrId()).setSiteId(mapRegister.getSiteId()).build();
@@ -35,7 +35,7 @@ public class LispNotificationHelper {
     public static MapNotify convertMapNotify(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify mapNotify) {
         return new MapNotifyBuilder().setAuthenticationData(mapNotify.getAuthenticationData())
-                .setEidToLocatorRecord(mapNotify.getEidToLocatorRecord()).setKeyId(mapNotify.getKeyId())
+                .setMappingRecordItem(mapNotify.getMappingRecordItem()).setKeyId(mapNotify.getKeyId())
                 .setNonce(mapNotify.getNonce()).setXtrSiteIdPresent(mapNotify.isXtrSiteIdPresent())
                 .setXtrId(mapNotify.getXtrId()).setSiteId(mapNotify.getSiteId()).build();
     }
@@ -43,7 +43,7 @@ public class LispNotificationHelper {
     public static MapRequest convertMapRequest(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest mapRequest) {
         return new MapRequestBuilder().setAuthoritative(mapRequest.isAuthoritative())
-                .setEidRecord(mapRequest.getEidRecord()).setItrRloc(mapRequest.getItrRloc())
+                .setEidItem(mapRequest.getEidItem()).setItrRloc(mapRequest.getItrRloc())
                 .setMapDataPresent(mapRequest.isMapDataPresent()).setMapReply(mapRequest.getMapReply())
                 .setNonce(mapRequest.getNonce()).setPitr(mapRequest.isPitr()).setProbe(mapRequest.isProbe())
                 .setSmr(mapRequest.isSmr()).setSmrInvoked(mapRequest.isSmrInvoked())
@@ -53,7 +53,7 @@ public class LispNotificationHelper {
     public static MapReply convertMapReply(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply mapReply) {
         return new MapReplyBuilder().setEchoNonceEnabled(mapReply.isEchoNonceEnabled())
-                .setEidToLocatorRecord(mapReply.getEidToLocatorRecord()).setNonce(mapReply.getNonce())
+                .setMappingRecordItem(mapReply.getMappingRecordItem()).setNonce(mapReply.getNonce())
                 .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
 

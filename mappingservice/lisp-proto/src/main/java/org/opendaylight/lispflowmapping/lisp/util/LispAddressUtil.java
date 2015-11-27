@@ -33,6 +33,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedNameBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder;
@@ -314,6 +315,22 @@ public class LispAddressUtil {
 
     public static Eid asMacEid(String address) {
         return toEid(new MacAddress(address), null);
+    }
+
+    public static Eid toEid(DistinguishedNameType dn, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(DistinguishedNameAfi.class);
+        builder.setVirtualNetworkId(vni);
+        builder.setAddress((Address) new DistinguishedNameBuilder().setDistinguishedName(dn).build());
+        return builder.build();
+    }
+
+    public static Eid asDistinguishedNameEid(String address, long vni) {
+        return toEid(new MacAddress(address), new InstanceIdType(vni));
+    }
+
+    public static Eid asDistinguishedNameEid(String address) {
+        return toEid(new DistinguishedNameType(address), null);
     }
 
     public static Rloc asKeyValueAddress(String key, SimpleAddress value) {
