@@ -22,7 +22,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.api</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!--
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.implementation</artifactId>
@@ -33,11 +32,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.inmemorydb</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!--
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.neutron</artifactId>
         <version>${project.version}</version>
       </dependency>
+      -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.shell</artifactId>
@@ -48,19 +49,16 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.southbound</artifactId>
         <version>${project.version}</version>
       </dependency>
-      -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.lisp-proto</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!--
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>lispflowmapping-ui-bundle</artifactId>
         <version>${project.version}</version>
       </dependency>
-      -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>features-lispflowmapping</artifactId>

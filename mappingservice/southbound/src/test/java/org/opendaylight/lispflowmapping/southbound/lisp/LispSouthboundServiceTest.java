@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import junitx.framework.ArrayAssert;
-import junitx.framework.Assert;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
@@ -27,28 +26,35 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
@@ -63,7 +69,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     // private ValueSaverAction<MapRequest> mapRequestSaver;
     private MapNotifyBuilder mapNotifyBuilder;
     private MapReplyBuilder mapReplyBuilder;
-    private EidToLocatorRecordBuilder eidToLocatorBuilder;
+    private MappingRecordBuilder mappingRecordBuilder;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -116,20 +122,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 c0 a8 88 0a 00 20 " //
                 + "0060   00 01 01 02 03 04"));
         mapReplyBuilder = new MapReplyBuilder();
-        mapReplyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        mapReplyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapReplyBuilder.setNonce((long) 0);
         mapReplyBuilder.setEchoNonceEnabled(false);
         mapReplyBuilder.setProbe(true);
         mapReplyBuilder.setSecurityEnabled(true);
-        eidToLocatorBuilder = new EidToLocatorRecordBuilder();
+        mappingRecordBuilder = new MappingRecordBuilder();
         String ip = "0.0.0.0";
-        eidToLocatorBuilder.setLispAddressContainer(LispAFIConvertor.asIPv4Prefix(ip, 0));
-        eidToLocatorBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        eidToLocatorBuilder.setRecordTtl(10);
-        eidToLocatorBuilder.setMapVersion((short) 0);
-        eidToLocatorBuilder.setMaskLength((short) 0);
-        eidToLocatorBuilder.setAction(Action.NativelyForward);
-        eidToLocatorBuilder.setAuthoritative(false);
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid(ip + "/0"));
+        mappingRecordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        mappingRecordBuilder.setRecordTtl(10);
+        mappingRecordBuilder.setMapVersion((short) 0);
+        mappingRecordBuilder.setMaskLength((short) 0);
+        mappingRecordBuilder.setAction(Action.NativelyForward);
+        mappingRecordBuilder.setAuthoritative(false);
         // eidToLocatorBuilder.setPrefix(new LispIpv4Address(0));
         // mapReply.addEidToLocator(eidToLocatorBuilder);
 
@@ -226,12 +232,12 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRegisterPacket(mapRegisterPacket);
 
-        List<EidToLocatorRecord> eidRecords = lastMapRegister().getEidToLocatorRecord();
+        List<MappingRecordItem> eidRecords = lastMapRegister().getMappingRecordItem();
         assertEquals(1, eidRecords.size());
-        EidToLocatorRecord eidRecord = eidRecords.get(0);
+        MappingRecord eidRecord = eidRecords.get(0).getMappingRecord();
         assertEquals(2, eidRecord.getLocatorRecord().size());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.1.0.110")), eidRecord.getLocatorRecord().get(0).getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.51")), eidRecord.getLocatorRecord().get(1).getLispAddressContainer());
+        assertEquals(LispAddressUtil.asIpv4Rloc("10.1.0.110"), eidRecord.getLocatorRecord().get(0).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.51"), eidRecord.getLocatorRecord().get(1).getRloc());
     }
 
     @Test
@@ -261,12 +267,12 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRegisterPacket(mapRegisterPacket);
 
-        EidToLocatorRecord eidToLocatorRecord = lastMapRegister().getEidToLocatorRecord().get(0);
-        assertEquals(LispAFIConvertor.asIPv6Address("2610:d0:ffff:192:0:0:0:1"), eidToLocatorRecord.getLispAddressContainer());
-        assertEquals(AddressFamilyNumberEnum.IP6,
-                AddressFamilyNumberEnum.valueOf(LispAFIConvertor.toAFI(eidToLocatorRecord.getLispAddressContainer()).getAfi()));
+        MappingRecord eidToLocatorRecord = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals("2610:d0:ffff:192:0:0:0:1/128",
+                ((Ipv6Prefix) eidToLocatorRecord.getEid().getAddress()).getIpv6Prefix().getValue());
+        assertEquals(Ipv6PrefixAfi.class, eidToLocatorRecord.getEid().getAddressType());
 
-        assertEquals(LispAFIConvertor.asIPAfiAddress("10.0.58.156"), LispAFIConvertor.toAFI(eidToLocatorRecord.getLocatorRecord().get(0).getLispAddressContainer()));
+        assertEquals(LispAddressUtil.asIpv4Rloc("10.0.58.156"), eidToLocatorRecord.getLocatorRecord().get(0).getRloc());
     }
 
     @Test
@@ -274,11 +280,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRegisterPacket(mapRegisterPacket);
 
-        EidToLocatorRecord eidToLocator = lastMapRegister().getEidToLocatorRecord().get(0);
-        assertEquals(LispAFIConvertor.asIPv4Address("153.16.254.1"), eidToLocator.getLispAddressContainer());
+        MappingRecord eidToLocator = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), eidToLocator.getEid());
 
         assertEquals(1, eidToLocator.getLocatorRecord().size());
-        assertEquals(LispAFIConvertor.asIPAfiAddress("192.168.136.10"), LispAFIConvertor.toAFI(eidToLocator.getLocatorRecord().get(0).getLispAddressContainer()));
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), eidToLocator.getLocatorRecord().get(0).getRloc());
     }
 
     @Test
@@ -361,10 +367,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private DatagramPacket lastMapNotifyPacket() {
-        if (mapNotifyBuilder.getEidToLocatorRecord() == null) {
-            mapNotifyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        if (mapNotifyBuilder.getMappingRecordItem() == null) {
+            mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         }
-        mapNotifyBuilder.getEidToLocatorRecord().add(eidToLocatorBuilder.build());
+        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                mappingRecordBuilder.build()).build());
         mapNotifyBuilder.setNonce((long) 0);
         mapNotifyBuilder.setKeyId((short) 0);
         mapNotifyBuilder.setAuthenticationData(new byte[0]);
@@ -409,16 +416,12 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     public void mapRequest__VerifyBasicFields() throws Exception {
         oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRequestAsByteArray(mapRequestPacket);
-        List<EidRecord> eids = lastMapRequest().getEidRecord();
+        List<EidItem> eids = lastMapRequest().getEidItem();
         assertEquals(1, eids.size());
-        LispAddressContainer lispAddress = eids.get(0).getLispAddressContainer();
-        assertTrue(LispAFIConvertor.toAFI(lispAddress) instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address);
-        assertEquals(LispAFIConvertor.asIPv4Address("1.2.3.4"), lispAddress);
-        assertEquals((byte) 0x20, eids.get(0).getMask().byteValue());
+        Eid lispAddress = eids.get(0).getEid();
+        assertEquals(Ipv4PrefixAfi.class, lispAddress.getAddressType());
+        assertEquals(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"), lispAddress);
         assertEquals(0x3d8d2acd39c8d608L, lastMapRequest().getNonce().longValue());
-        // assertEquals(AddressFamilyNumberEnum.RESERVED,
-        // AddressFamilyNumberEnum.valueOf(LispAFIToContainerConvertorFactory.toAFI(
-        // lastMapRequest().getSourceEid().getLispAddressContainer()).getAfi()));
     }
 
     @Test
@@ -451,8 +454,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // ret(mapReply);
 
         handleMapRequestAsByteArray(mapRequestPacket);
-        assertEquals(LispAFIConvertor.asIPv6AfiAddress("2610:d0:ffff:192:0:0:0:1"), LispAFIConvertor.toAFI(lastMapRequest().getSourceEid().getLispAddressContainer()));
-        assertEquals(LispAFIConvertor.asIPv6Address("2610:d0:ffff:192:0:0:0:2"), lastMapRequest().getEidRecord().get(0).getLispAddressContainer());
+        assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"), lastMapRequest().getSourceEid().getEid());
+        assertEquals(LispAddressUtil.asIpv6PrefixEid("2610:d0:ffff:192:0:0:0:2/128"), lastMapRequest().getEidItem().get(0).getEid());
     }
 
     @Ignore
@@ -501,14 +504,14 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // ret(mapReply);
 
         handleMapRequestAsByteArray(mapRequestPacket);
-        Assert.assertNotEquals(AddressFamilyNumberEnum.IP, LispAFIConvertor.toAFI(lastMapRequest().getSourceEid().getLispAddressContainer()));
+        assertEquals(Ipv4Afi.class, lastMapRequest().getSourceEid().getEid().getAddressType());
 
     }
 
     @Test
     @Ignore
     public void mapReply__VerifyBasicIPv4Fields() throws Exception {
-        eidToLocatorBuilder.setMaskLength((short) 0x20).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.0.20.200")));
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
         mapReplyBuilder.setNonce(0x3d8d2acd39c8d608L);
 
         stubHandleRequest();
@@ -524,15 +527,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte expectedRecordCount = (byte) 1;
         assertEquals(expectedRecordCount, result[MapReplyIpv4SingleLocatorPos.RECORD_COUNT]);
 
-        assertEquals(eidToLocatorBuilder.getMaskLength().byteValue(), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
-        assertEquals(AddressFamilyNumberEnum.IP.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
+        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
+        assertEquals(AddressFamily.IpV4.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
         assertEquals(0x0a0014c8, ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.EID_PREFIX));
     }
 
     @Test
     @Ignore
     public void mapReply__VerifyBasicIPv6() throws Exception {
-        eidToLocatorBuilder.setMaskLength((short) 0x80).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:1/128"));
 
         stubHandleRequest();
 
@@ -543,8 +546,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte expectedRecordCount = (byte) 1;
         assertEquals(expectedRecordCount, result[MapReplyIpv4SingleLocatorPos.RECORD_COUNT]);
 
-        assertEquals(eidToLocatorBuilder.getMaskLength().byteValue(), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
-        assertEquals(AddressFamilyNumberEnum.IP6.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
+        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
+        assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
         byte[] expectedIpv6 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
         ArrayAssert.assertEquals(expectedIpv6, Arrays.copyOfRange(result, 24, 40));
@@ -553,9 +556,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapReply__VerifyIPv6EidAndLocator() throws Exception {
-        eidToLocatorBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")));
-        eidToLocatorBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:2"))).build());
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:1/128"));
+        mappingRecordBuilder.getLocatorRecord().add(
+                new LocatorRecordBuilder().setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:2")).build());
 
         stubHandleRequest();
 
@@ -581,9 +584,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapReply__WithNonRoutableSingleLocator() throws Exception {
-        eidToLocatorBuilder.setMaskLength((short) 0x20).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.0.20.200")));
-        eidToLocatorBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setRouted(false).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1"))).build());
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
+        mappingRecordBuilder.getLocatorRecord().add(
+                new LocatorRecordBuilder().setRouted(false).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
@@ -593,10 +596,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapReply__WithSingleLocator() throws Exception {
-        eidToLocatorBuilder.setMaskLength((short) 0x20)//
-                .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.0.20.200")));
-        eidToLocatorBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setRouted(true).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1"))).build());
+        mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
+        mappingRecordBuilder.getLocatorRecord().add(
+                new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
@@ -605,7 +607,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte expectedLocCount = 1;
         assertEquals(expectedLocCount, result[MapReplyIpv4SingleLocatorPos.LOCATOR_COUNT]);
 
-        assertEquals(AddressFamilyNumberEnum.IP.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SingleLocatorPos.LOC_AFI));
+        assertEquals(AddressFamily.IpV4.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.LOC_AFI));
 
         assertEquals(0x04030201, ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.LOCATOR));
         assertEquals(0x01, result[MapReplyIpv4SingleLocatorPos.LOCATOR_RBIT] & 0x01);
@@ -614,10 +616,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapReply__WithMultipleLocator() throws Exception {
-        eidToLocatorBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setRouted(true).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1"))).build());
-        eidToLocatorBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setRouted(true).setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1"))).build());
+        mappingRecordBuilder.getLocatorRecord().add(
+                new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
+        mappingRecordBuilder.getLocatorRecord().add(
+                new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1")).build());
         stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
@@ -625,11 +627,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         assertEquals(2, result[MapReplyIpv4SingleLocatorPos.LOCATOR_COUNT]);
 
-        assertEquals(AddressFamilyNumberEnum.IP.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SingleLocatorPos.LOC_AFI));
+        assertEquals(AddressFamily.IpV4.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.LOC_AFI));
         assertEquals(0x04030201, ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.LOCATOR));
         assertEquals(0x01, result[MapReplyIpv4SingleLocatorPos.LOCATOR_RBIT] & 0x01);
 
-        assertEquals(AddressFamilyNumberEnum.IP6.getIanaCode(), ByteUtil.getShort(result, MapReplyIpv4SecondLocatorPos.LOC_AFI));
+        assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SecondLocatorPos.LOC_AFI));
 
         byte[] expectedIpv6Rloc = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
         ArrayAssert.assertEquals(expectedIpv6Rloc,
