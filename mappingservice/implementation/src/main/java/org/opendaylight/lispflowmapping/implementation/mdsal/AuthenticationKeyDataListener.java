@@ -15,7 +15,7 @@ import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.InstanceId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
     public AuthenticationKeyDataListener(DataBroker broker, IMappingSystem mapSystem) {
         setBroker(broker);
         setMappingSystem(mapSystem);
-        setPath(InstanceIdentifier.create(MappingDatabase.class).child(InstanceId.class)
+        setPath(InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
                 .child(AuthenticationKey.class));
         LOG.trace("Registering AuthenticationKey listener.");
         registerDataChangeListener();
@@ -54,7 +54,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey());
             }
         }
 
@@ -68,7 +68,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.addAuthenticationKey(authkey.getLispAddressContainer(), authkey.getAuthkey());
+                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey());
             }
         }
 
@@ -83,7 +83,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", authkey);
 
-                mapSystem.removeAuthenticationKey(authkey.getLispAddressContainer());
+                mapSystem.removeAuthenticationKey(authkey.getEid());
             }
         }
     }
