@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 
 public class LispAuthenticationTest extends BaseTestCase {
 
@@ -164,12 +165,13 @@ public class LispAuthenticationTest extends BaseTestCase {
     public void authenticate__MapNotifyNoAuthenticationData() throws Exception {
         MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder();
         mapNotifyBuilder.setKeyId((short) 0x0000);
-        mapNotifyBuilder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
-        EidToLocatorRecordBuilder etlrBuilder = new EidToLocatorRecordBuilder();
+        mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.setLispAddressContainer(LispAFIConvertor.getIPContainer("1.1.1.1"));
+        etlrBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("1.1.1.1/32"));
         etlrBuilder.setRecordTtl(55);
-        mapNotifyBuilder.getEidToLocatorRecord().add(etlrBuilder.build());
+        mapNotifyBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
         ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(mapNotifyBuilder.build(), "password"));
 
     }
