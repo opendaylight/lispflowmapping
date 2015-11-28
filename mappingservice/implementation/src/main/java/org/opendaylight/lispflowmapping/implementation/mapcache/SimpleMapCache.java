@@ -17,9 +17,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,18 +38,18 @@ public class SimpleMapCache implements IMapCache {
         this.dao = dao;
     }
 
-    public void addMapping(LispAddressContainer key, Object value, boolean shouldOverwrite) {
-        LispAddressContainer eid = MaskUtil.normalize(key);
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+        Eid eid = MaskUtil.normalize(key);
         dao.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
     }
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private  Map<String, ?> getDaoEntryBest(LispAddressContainer key, ILispDAO dao) {
-        if (MaskUtil.isMaskable(key)) {
-            LispAddressContainer lookupKey;
-            short mask = MaskUtil.getMaskForAddress(key);
+    private  Map<String, ?> getDaoEntryBest(Eid key, ILispDAO dao) {
+        if (MaskUtil.isMaskable(key.getAddress())) {
+            Eid lookupKey;
+            short mask = MaskUtil.getMaskForAddress(key.getAddress());
             while (mask > 0) {
                 lookupKey = MaskUtil.normalize(key, mask);
                 mask--;
@@ -66,23 +66,23 @@ public class SimpleMapCache implements IMapCache {
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private SimpleImmutableEntry<LispAddressContainer, Map<String, ?>> getDaoPairEntryBest(LispAddressContainer key, ILispDAO dao) {
-        if (MaskUtil.isMaskable(key)) {
-            LispAddressContainer lookupKey;
-            short mask = MaskUtil.getMaskForAddress(key);
+    private SimpleImmutableEntry<Eid, Map<String, ?>> getDaoPairEntryBest(Eid key, ILispDAO dao) {
+        if (MaskUtil.isMaskable(key.getAddress())) {
+            Eid lookupKey;
+            short mask = MaskUtil.getMaskForAddress(key.getAddress());
             while (mask > 0) {
                 lookupKey = MaskUtil.normalize(key, mask);
                 mask--;
                 Map<String, ?> entry = dao.get(lookupKey);
                 if (entry != null) {
-                    return new SimpleImmutableEntry<LispAddressContainer, Map<String, ?>>(lookupKey, entry);
+                    return new SimpleImmutableEntry<Eid, Map<String, ?>>(lookupKey, entry);
                 }
             }
             return null;
         } else {
             Map<String, ?> entry = dao.get(key);
             if (entry != null) {
-                return new SimpleImmutableEntry<LispAddressContainer, Map<String, ?>>(key, entry);
+                return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
             } else {
                 return null;
             }
@@ -91,7 +91,7 @@ public class SimpleMapCache implements IMapCache {
 
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
-    private Object getMappingLpmEid(LispAddressContainer eid, ILispDAO dao) {
+    private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
         Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
         if (daoEntry != null) {
             return daoEntry.get(SubKeys.RECORD);
@@ -102,53 +102,53 @@ public class SimpleMapCache implements IMapCache {
 
     // Returns the matched key and mapping corresponding to the longest prefix match for eid. eid must be a simple
     // (maskable or not) address
-    private SimpleImmutableEntry<LispAddressContainer, Object> getMappingPairLpmEid(LispAddressContainer eid, ILispDAO dao) {
-        SimpleImmutableEntry<LispAddressContainer, Map<String, ?>> daoEntry = getDaoPairEntryBest(eid, dao);
+    private SimpleImmutableEntry<Eid, Object> getMappingPairLpmEid(Eid eid, ILispDAO dao) {
+        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = getDaoPairEntryBest(eid, dao);
         if (daoEntry != null) {
-            return new SimpleImmutableEntry<LispAddressContainer, Object>(daoEntry.getKey(), daoEntry.getValue().get(
+            return new SimpleImmutableEntry<Eid, Object>(daoEntry.getKey(), daoEntry.getValue().get(
                     SubKeys.RECORD));
         } else {
             return null;
         }
     }
 
-    public Object getMapping(LispAddressContainer srcEid, LispAddressContainer dstEid) {
+    public Object getMapping(Eid srcEid, Eid dstEid) {
         if (dstEid == null) {
             return null;
         }
         return getMappingLpmEid(dstEid, dao);
     }
 
-    public void removeMapping(LispAddressContainer eid, boolean overwrite) {
+    public void removeMapping(Eid eid, boolean overwrite) {
         eid = MaskUtil.normalize(eid);
         dao.removeSpecific(eid, SubKeys.RECORD);
     }
 
-    public void addAuthenticationKey(LispAddressContainer eid, String key) {
+    public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
         eid = MaskUtil.normalize(eid);
-        dao.put(eid, new MappingEntry<String>(SubKeys.AUTH_KEY, key));
+        dao.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
     }
 
-    private String getAuthKeyLpm(LispAddressContainer prefix, ILispDAO db) {
-        short maskLength = MaskUtil.getMaskForAddress(prefix);
+    private MappingAuthkey getAuthKeyLpm(Eid prefix, ILispDAO db) {
+        short maskLength = MaskUtil.getMaskForAddress(prefix.getAddress());
         while (maskLength >= 0) {
-            LispAddressContainer key = MaskUtil.normalize(prefix, maskLength);
+            Eid key = MaskUtil.normalize(prefix, maskLength);
             Object password = db.getSpecific(key, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof String) {
-                return (String) password;
+            if (password != null && password instanceof MappingAuthkey) {
+                return (MappingAuthkey) password;
             }
             maskLength -= 1;
         }
         return null;
     }
 
-    public String getAuthenticationKey(LispAddressContainer eid) {
-        if (MaskUtil.isMaskable(LispAFIConvertor.toAFI(eid))) {
+    public MappingAuthkey getAuthenticationKey(Eid eid) {
+        if (MaskUtil.isMaskable(eid.getAddress())) {
             return getAuthKeyLpm(eid, dao);
         } else {
             Object password = dao.getSpecific(eid, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof String) {
-                return (String) password;
+            if (password != null && password instanceof MappingAuthkey) {
+                return (MappingAuthkey) password;
             } else {
                 LOG.warn("Failed to find password!");
                 return null;
@@ -156,7 +156,7 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public void removeAuthenticationKey(LispAddressContainer eid) {
+    public void removeAuthenticationKey(Eid eid) {
         eid = MaskUtil.normalize(eid);
         dao.removeSpecific(eid, SubKeys.AUTH_KEY);
     }
@@ -181,7 +181,7 @@ public class SimpleMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(LispAddressContainer key) {
+    public void updateMappingRegistration(Eid key) {
         Map<String, ?> daoEntry = getDaoEntryBest(key, dao);
         if (daoEntry != null) {
             dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
@@ -189,18 +189,18 @@ public class SimpleMapCache implements IMapCache {
     }
 
     @Override
-    public void addData(LispAddressContainer key, String subKey, Object data) {
-        LispAddressContainer normKey = MaskUtil.normalize(key);
+    public void addData(Eid key, String subKey, Object data) {
+        Eid normKey = MaskUtil.normalize(key);
         dao.put(normKey, new MappingEntry<>(subKey, data));
     }
 
     @Override
-    public Object getData(LispAddressContainer key, String subKey) {
+    public Object getData(Eid key, String subKey) {
         return dao.getSpecific(key, subKey);
     }
 
     @Override
-    public void removeData(LispAddressContainer key, String subKey) {
+    public void removeData(Eid key, String subKey) {
         dao.removeSpecific(key, subKey);
     }
 }
