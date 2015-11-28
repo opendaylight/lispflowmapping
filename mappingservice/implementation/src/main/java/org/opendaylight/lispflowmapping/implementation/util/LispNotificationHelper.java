@@ -13,20 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LcafApplicationDataAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispDistinguishedNameAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.distinguishedname.DistinguishedName;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.lcafkeyvalue.LcafKeyValueAddressAddr;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.PrimitiveAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transportaddress.TransportAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transportaddress.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
@@ -34,21 +27,28 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedName;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
 
 public class LispNotificationHelper {
-    public static TransportAddress getTransportAddressFromContainer(LispAddressContainer container) {
+    public static TransportAddress getTransportAddressFromRloc(Rloc rloc) {
         TransportAddressBuilder tab = new TransportAddressBuilder();
-        LispAFIAddress address = LispAFIConvertor.toAFI(container);
-        if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) {
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv4.Ipv4Address) address).getIpv4Address().getValue()));
+        Address address = rloc.getAddress();
+        if (address instanceof Ipv4) {
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) address).getIpv4().getValue()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-        } else if (address instanceof org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address) {
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.ipv6.Ipv6Address) address).getIpv6Address().getValue()));
+        } else if (address instanceof Ipv6) {
+            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv6) address).getIpv6().getValue()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-        } else if (address instanceof LcafKeyValueAddressAddr) {
-            PrimitiveAddress primitiveAddress = ((LcafKeyValueAddressAddr) address).getValue().getPrimitiveAddress();
-            if (primitiveAddress instanceof LispDistinguishedNameAddress) {
-                String value = ((LispDistinguishedNameAddress) primitiveAddress).getDistinguishedName();
+        } else if (address instanceof KeyValueAddress) {
+            SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();
+            if (sa.getDistinguishedNameType() != null) {
+                String value = sa.getDistinguishedNameType().getValue();
                 String ip = value.split(":")[0];
                 int port = Integer.valueOf(value.split(":")[1]);
                 tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
@@ -56,17 +56,16 @@ public class LispNotificationHelper {
             }
         } else if (address instanceof DistinguishedName) {
             DistinguishedName dname = (DistinguishedName) address;
-            String value = dname.getDistinguishedName();
+            String value = dname.getDistinguishedName().getValue();
             String ip = value.split(":")[0];
             int port = Integer.valueOf(value.split(":")[1]);
 
             tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
             tab.setPort(new PortNumber(port));
-        } else if (address instanceof LcafApplicationDataAddress) {
-            LcafApplicationDataAddress appData = (LcafApplicationDataAddress) address;
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4) appData.getAddress().getPrimitiveAddress()).getIpv4Address()
-                    .getIpv4Address().getValue()));
-            tab.setPort(new PortNumber(appData.getLocalPortLow()));
+        } else if (address instanceof ApplicationData) {
+            ApplicationData appData = (ApplicationData) address;
+            tab.setIpAddress(appData.getApplicationData().getAddress().getIpAddress());
+            tab.setPort(new PortNumber(appData.getApplicationData().getLocalPortLow()));
         }
         return tab.build();
     }
@@ -82,20 +81,14 @@ public class LispNotificationHelper {
 
     public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
         List<Mapping> mappings = new ArrayList<Mapping>();
-        for (int i=0; i<mapRegisterNotification.getMapRegister().getEidToLocatorRecord().size(); i++) {
-            EidToLocatorRecord record = mapRegisterNotification.getMapRegister().getEidToLocatorRecord().get(i);
+        for (int i=0; i<mapRegisterNotification.getMapRegister().getMappingRecordItem().size(); i++) {
+            MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem().get(i).getMappingRecord();
             MappingBuilder mb = new MappingBuilder();
-            mb.setEid(new EidUri(LispAddressStringifier.getURIString(
-                    record.getLispAddressContainer())));
+            mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(
+                    record.getEid())));
             mb.setOrigin(MappingOrigin.Southbound);
             mb.setSiteId(getSiteId(mapRegisterNotification.getMapRegister()));
-            mb.setRecordTtl(record.getRecordTtl());
-            mb.setMaskLength(record.getMaskLength());
-            mb.setMapVersion(record.getMapVersion());
-            mb.setAction(record.getAction());
-            mb.setAuthoritative(record.isAuthoritative());
-            mb.setLispAddressContainer(record.getLispAddressContainer());
-            mb.setLocatorRecord(record.getLocatorRecord());
+            mb.setMappingRecord(record);
             mappings.add(mb.build());
         }
         return mappings;

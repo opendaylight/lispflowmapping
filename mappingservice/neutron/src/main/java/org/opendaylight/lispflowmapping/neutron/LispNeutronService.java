@@ -16,14 +16,14 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingserviceService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 
 
 public class LispNeutronService implements ILispNeutronService, BindingAwareProvider  {
 
 	protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
     private IFlowMapping mappingService;
-    private MappingserviceService lfmDbService;
+    private OdlMappingserviceService lfmDbService;
     private static ILispNeutronService neutronService;
 
 
@@ -46,7 +46,7 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
         return this.mappingService;
     }
 
-    public MappingserviceService getMappingDbService() {
+    public OdlMappingserviceService getMappingDbService() {
         return this.lfmDbService;
     }
 
@@ -64,7 +64,7 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
     public void onSessionInitiated(ProviderContext session) {
         LOG.debug("LFMDBSERVICE IS BEING FILLED! SESSION INITIATED");
         RpcProviderRegistry rpcRegistry = session.getSALService(RpcProviderRegistry.class);
-        lfmDbService = rpcRegistry.getRpcService(MappingserviceService.class);
+        lfmDbService = rpcRegistry.getRpcService(OdlMappingserviceService.class);
         LOG.debug("LFMDBSERVICE was FILLED! SESSION INITIATED");
 
     }
