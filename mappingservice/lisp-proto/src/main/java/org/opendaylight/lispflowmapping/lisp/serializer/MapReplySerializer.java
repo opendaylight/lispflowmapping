@@ -15,8 +15,8 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 
 /**
@@ -36,8 +36,8 @@ public class MapReplySerializer {
 
     public ByteBuffer serialize(MapReply mapReply) {
         int size = Length.HEADER_SIZE;
-        for (EidToLocatorRecord eidToLocatorRecord : mapReply.getEidToLocatorRecord()) {
-            size += EidToLocatorRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord);
+        for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+            size += MappingRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord.getMappingRecord());
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
@@ -47,16 +47,16 @@ public class MapReplySerializer {
                 (BooleanUtils.isTrue(mapReply.isEchoNonceEnabled()) ? Flags.ECHO_NONCE_ENABLED : 0x00)));
 
         replyBuffer.position(replyBuffer.position() + Length.RES);
-        if (mapReply.getEidToLocatorRecord() != null) {
-            replyBuffer.put((byte) mapReply.getEidToLocatorRecord().size());
+        if (mapReply.getMappingRecordItem() != null) {
+            replyBuffer.put((byte) mapReply.getMappingRecordItem().size());
         } else {
             replyBuffer.put((byte) 0);
 
         }
         replyBuffer.putLong(NumberUtil.asLong(mapReply.getNonce()));
-        if (mapReply.getEidToLocatorRecord() != null) {
-            for (EidToLocatorRecord eidToLocatorRecord : mapReply.getEidToLocatorRecord()) {
-                EidToLocatorRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord);
+        if (mapReply.getMappingRecordItem() != null) {
+            for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+                MappingRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord.getMappingRecord());
             }
         }
         return replyBuffer;
@@ -71,10 +71,10 @@ public class MapReplySerializer {
         replyBuffer.getShort();
         int recordCount = ByteUtil.getUnsignedByte(replyBuffer);
         builder.setNonce(replyBuffer.getLong());
-        builder.setEidToLocatorRecord(new ArrayList<EidToLocatorRecord>());
+        builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         for (int i = 0; i < recordCount; i++) {
-            builder.getEidToLocatorRecord().add(
-                    new EidToLocatorRecordBuilder(EidToLocatorRecordSerializer.getInstance().deserialize(replyBuffer)).build());
+            builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                    MappingRecordSerializer.getInstance().deserialize(replyBuffer)).build());
         }
 
         return builder.build();
