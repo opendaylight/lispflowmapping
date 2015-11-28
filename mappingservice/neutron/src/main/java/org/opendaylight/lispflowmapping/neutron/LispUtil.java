@@ -10,9 +10,10 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import java.util.List;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
@@ -23,6 +24,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 
 /**
  * LispUtil class has util functions for building inputs for LISP service RPCs.
@@ -36,35 +38,39 @@ public class LispUtil {
 
   //  private static final Logger LOG = LoggerFactory.getLogger(LispUtil.class);
 
-    public static AddMappingInput buildAddMappingInput(LispAddressContainer eid, List<LocatorRecord> locators, int mask) {
-        AddMappingInputBuilder mib = new AddMappingInputBuilder();
+    public static AddMappingInput buildAddMappingInput(Eid eid, List<LocatorRecord> locators) {
+        MappingRecordBuilder mrb = new MappingRecordBuilder();
 
-        mib.setAction(Action.NoAction).setAuthoritative(true).setLispAddressContainer(eid)
-                .setLocatorRecord(locators).setMapVersion((short) 0).setMaskLength((short) mask)
+        mrb.setAction(Action.NoAction).setAuthoritative(true).setEid(eid)
+                .setLocatorRecord(locators).setMapVersion((short) 0)
                 .setRecordTtl(1440);
+
+        AddMappingInputBuilder mib = new AddMappingInputBuilder();
+        mib.setMappingRecord(mrb.build());
+
         return mib.build();
     }
 
-    public static AddKeyInput buildAddKeyInput(LispAddressContainer eid, String net, int mask) {
+    public static AddKeyInput buildAddKeyInput(Eid eid, String net) {
         AddKeyInputBuilder kib = new AddKeyInputBuilder();
 
-        kib.setLispAddressContainer(eid).setAuthkey(net).setMaskLength((short)mask).setKeyType(1);
+        kib.setEid(eid).setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString(net).setKeyType(1).build());
         return kib.build();
     }
 
-    public static GetMappingInput buildGetMappingInput(LispAddressContainer eid, short mask) {
-        return new GetMappingInputBuilder().setLispAddressContainer(eid).setMaskLength(mask).build();
+    public static GetMappingInput buildGetMappingInput(Eid eid) {
+        return new GetMappingInputBuilder().setEid(eid).build();
     }
 
-    public static RemoveMappingInput buildRemoveMappingInput(LispAddressContainer eid, int mask) {
+    public static RemoveMappingInput buildRemoveMappingInput(Eid eid) {
         RemoveMappingInputBuilder rmib = new RemoveMappingInputBuilder();
-        rmib.setLispAddressContainer(eid).setMaskLength((short)mask);
+        rmib.setEid(eid);
         return rmib.build();
     }
-    public static RemoveKeyInput buildRemoveKeyInput(LispAddressContainer eid, int mask) {
+    public static RemoveKeyInput buildRemoveKeyInput(Eid eid) {
         RemoveKeyInputBuilder kib = new RemoveKeyInputBuilder();
 
-        kib.setLispAddressContainer(eid).setMaskLength((short)mask);
+        kib.setEid(eid);
         return kib.build();
     }
 }

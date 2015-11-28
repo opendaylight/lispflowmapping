@@ -18,13 +18,11 @@
   <modules>
     <module>lisp-proto</module>
     <module>api</module>
-    <!--
     <module>inmemorydb</module>
     <module>implementation</module>
     <module>southbound</module>
     <module>neutron</module>
     <module>shell</module>
-    -->
   </modules>
 
   <dependencyManagement>
