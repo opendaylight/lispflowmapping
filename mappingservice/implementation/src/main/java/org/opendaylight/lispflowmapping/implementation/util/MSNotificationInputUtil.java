@@ -8,12 +8,10 @@
 
 package org.opendaylight.lispflowmapping.implementation.util;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChangedBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.MappingBuilder;
 
 /**
  * @author Florin Coras
@@ -22,7 +20,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 public class MSNotificationInputUtil {
 
     public static MappingChanged toMappingChanged(Mapping input, MappingChange change) {
-        return new MappingChangedBuilder().setMapping(new MappingBuilder((EidToLocatorRecord) input).build())
-                .setChange(change).build();
+        return new MappingChangedBuilder().setMappingRecord(input.getMappingRecord())
+                .setChangeType(change).build();
     }
 }
