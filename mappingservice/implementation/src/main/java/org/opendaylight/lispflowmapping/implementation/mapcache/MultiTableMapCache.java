@@ -16,11 +16,11 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.LcafSourceDest;
-import org.opendaylight.lispflowmapping.lisp.util.LcafSourceDestHelper;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,25 +40,51 @@ public class MultiTableMapCache implements IMapCache {
         this.dao = dao;
     }
 
-    public void addMapping(LispAddressContainer key, Object value, boolean shouldOverwrite) {
-        LispAddressContainer eid = MaskUtil.normalize(key);
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            LispAddressContainer srcKey = LcafSourceDestHelper.getSrc(eid);
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
+    private ILispDAO getVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getOrInstantiateVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+        if (table == null) {
+            table = dao.putNestedTable(vni, SubKeys.VNI);
+        }
+        return table;
+    }
+
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+        Eid eid = MaskUtil.normalize(key);
+        ILispDAO table = getOrInstantiateVniTable(key);
+
+        if (eid.getAddress() instanceof SourceDestKey) {
+            Eid srcKey = SourceDestKeyHelper.getSrc(eid);
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, value));
         } else {
-            dao.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-            dao.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private Map<String, ?> getDaoEntryBest(LispAddressContainer eid, ILispDAO dao) {
-        if (MaskUtil.isMaskable(eid)) {
-            LispAddressContainer key;
-            short mask = MaskUtil.getMaskForAddress(eid);
+    private Map<String, ?> getDaoEntryBest(Eid eid, ILispDAO dao) {
+        if (MaskUtil.isMaskable(eid.getAddress())) {
+            Eid key;
+            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
             while (mask > 0) {
                 key = MaskUtil.normalize(eid, mask);
                 mask--;
@@ -78,8 +104,7 @@ public class MultiTableMapCache implements IMapCache {
         }
     }
 
-    private Object getMappingExactSD(LispAddressContainer srcEid, LispAddressContainer dstEid,
-            ILispDAO dao) {
+    private Object getMappingExactSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
         Map<String, ?> daoEntry = dao.get(dstEid);
         if (daoEntry != null) {
             // try SrcDst eid lookup
@@ -94,7 +119,7 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not) address
-    private Object getMappingLpmEid(LispAddressContainer eid, ILispDAO dao) {
+    private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
         if (eid == null) {
             return null;
         }
@@ -108,7 +133,7 @@ public class MultiTableMapCache implements IMapCache {
 
     // Returns a mapping corresponding to either the longest prefix match for both dstEid and srcEid,
     // if a SourceDest mapping exists, or to dstEid
-    private Object getMappingLpmSD(LispAddressContainer srcEid, LispAddressContainer dstEid, ILispDAO dao) {
+    private Object getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
         Map<String, ?> daoEntry = getDaoEntryBest(dstEid, dao);
         if (daoEntry != null) {
             // try SrcDst eid lookup
@@ -126,72 +151,89 @@ public class MultiTableMapCache implements IMapCache {
         return null;
     }
 
-    public Object getMapping(LispAddressContainer srcEid, LispAddressContainer dstEid) {
+    public Object getMapping(Eid srcEid, Eid dstEid) {
         if (dstEid == null) {
             return null;
         }
 
+        ILispDAO table = getVniTable(dstEid);
+        if (table == null) {
+            return null;
+        }
+
         // a map-request for an actual SrcDst LCAF, ignore src eid
-        if (dstEid.getAddress() instanceof LcafSourceDest) {
-            LispAddressContainer srcAddr = LcafSourceDestHelper.getSrc(dstEid);
-            LispAddressContainer dstAddr = LcafSourceDestHelper.getDst(dstEid);
-            return getMappingLpmSD(srcAddr, dstAddr, dao);
+        if (dstEid.getAddress() instanceof SourceDestKey) {
+            Eid srcAddr = SourceDestKeyHelper.getSrc(dstEid);
+            Eid dstAddr = SourceDestKeyHelper.getDst(dstEid);
+            return getMappingLpmSD(srcAddr, dstAddr, table);
         }
 
         // potential map-request for SrcDst LCAF from non SrcDst capable devices
-        return getMappingLpmSD(srcEid, dstEid, dao);
+        return getMappingLpmSD(srcEid, dstEid, table);
     }
 
-    public void removeMapping(LispAddressContainer eid, boolean overwrite) {
+    public void removeMapping(Eid eid, boolean overwrite) {
         eid = MaskUtil.normalize(eid);
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            ILispDAO db = getSDInnerDao(eid, dao);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+
+        if (eid.getAddress() instanceof SourceDestKey) {
+            ILispDAO db = getSDInnerDao(eid, table);
             if (db != null) {
-                db.removeSpecific(LcafSourceDestHelper.getSrc(eid),
+                db.removeSpecific(SourceDestKeyHelper.getSrc(eid),
                         SubKeys.RECORD);
             }
         } else {
-            dao.removeSpecific(eid, SubKeys.RECORD);
+            table.removeSpecific(eid, SubKeys.RECORD);
         }
     }
 
-    public void addAuthenticationKey(LispAddressContainer eid, String key) {
+    public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
         eid = MaskUtil.normalize(eid);
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
-            srcDstDao.put(LcafSourceDestHelper.getSrc(eid), new MappingEntry<String>(SubKeys.AUTH_KEY, key));
+        ILispDAO table = getOrInstantiateVniTable(eid);
+
+        if (eid.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
+            srcDstDao.put(SourceDestKeyHelper.getSrc(eid), new MappingEntry<>(SubKeys.AUTH_KEY, key));
         } else {
-            dao.put(eid, new MappingEntry<String>(SubKeys.AUTH_KEY, key));
+            table.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
         }
     }
 
-    private String getAuthKeyLpm(LispAddressContainer prefix, ILispDAO db) {
-        short maskLength = MaskUtil.getMaskForAddress(prefix);
+    private MappingAuthkey getAuthKeyLpm(Eid prefix, ILispDAO db) {
+        short maskLength = MaskUtil.getMaskForAddress(prefix.getAddress());
         while (maskLength >= 0) {
-            LispAddressContainer key = MaskUtil.normalize(prefix, maskLength);
+            Eid key = MaskUtil.normalize(prefix, maskLength);
             Object password = db.getSpecific(key, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof String) {
-                return (String) password;
+            if (password != null && password instanceof MappingAuthkey) {
+                return (MappingAuthkey) password;
             }
             maskLength -= 1;
         }
         return null;
     }
 
-    public String getAuthenticationKey(LispAddressContainer eid) {
-        if (MaskUtil.isMaskable(LispAFIConvertor.toAFI(eid))) {
-            return getAuthKeyLpm(eid, dao);
-        } else if (eid.getAddress() instanceof LcafSourceDest) {
+    public MappingAuthkey getAuthenticationKey(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+
+        if (MaskUtil.isMaskable(eid.getAddress())) {
+            return getAuthKeyLpm(eid, table);
+        } else if (eid.getAddress() instanceof SourceDestKey) {
             // NOTE: this is an exact match, not a longest prefix match
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
+            ILispDAO srcDstDao = getSDInnerDao(eid, table);
             if (srcDstDao != null) {
-                return getAuthKeyLpm(LcafSourceDestHelper.getSrc(eid), srcDstDao);
+                return getAuthKeyLpm(SourceDestKeyHelper.getSrc(eid), srcDstDao);
             }
             return null;
         } else {
-            Object password = dao.getSpecific(eid, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof String) {
-                return (String) password;
+            Object password = table.getSpecific(eid, SubKeys.AUTH_KEY);
+            if (password != null && password instanceof MappingAuthkey) {
+                return (MappingAuthkey) password;
             } else {
                 LOG.warn("Failed to find password!");
                 return null;
@@ -199,22 +241,27 @@ public class MultiTableMapCache implements IMapCache {
         }
     }
 
-    public void removeAuthenticationKey(LispAddressContainer eid) {
+    public void removeAuthenticationKey(Eid eid) {
         eid = MaskUtil.normalize(eid);
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+
+        if (eid.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getSDInnerDao(eid, table);
             if (srcDstDao != null) {
                 srcDstDao.removeSpecific(eid, SubKeys.AUTH_KEY);
             }
         } else {
-            dao.removeSpecific(eid, SubKeys.AUTH_KEY);
+            table.removeSpecific(eid, SubKeys.AUTH_KEY);
         }
     }
 
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to a dst or creates it if it doesn't exist.
-    private ILispDAO getOrInstantiateSDInnerDao(LispAddressContainer address, ILispDAO dao) {
-        LispAddressContainer dstKey = LcafSourceDestHelper.getDst(address);
+    private ILispDAO getOrInstantiateSDInnerDao(Eid address, ILispDAO dao) {
+        Eid dstKey = SourceDestKeyHelper.getDst(address);
         ILispDAO srcDstDao = (ILispDAO) dao.getSpecific(dstKey, SubKeys.LCAF_SRCDST);
         if (srcDstDao == null) {
             // inserts nested table for source
@@ -225,8 +272,8 @@ public class MultiTableMapCache implements IMapCache {
 
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to dst or null if it doesn't exist.
-    private ILispDAO getSDInnerDao(LispAddressContainer address, ILispDAO dao) {
-        return (ILispDAO) dao.getSpecific(LcafSourceDestHelper.getDst(address), SubKeys.LCAF_SRCDST);
+    private ILispDAO getSDInnerDao(Eid address, ILispDAO dao) {
+        return (ILispDAO) dao.getSpecific(SourceDestKeyHelper.getDst(address), SubKeys.LCAF_SRCDST);
     }
 
     public String printMappings() {
@@ -238,10 +285,24 @@ public class MultiTableMapCache implements IMapCache {
             public void visitRow(Object keyId, String valueKey, Object value) {
                 String key = keyId.getClass().getSimpleName() + "#" + keyId;
                 if (!lastKey.equals(key)) {
+                    sb.append("\n" + key + "\t");
+                }
+                sb.append(valueKey + "=" + value + "\t");
+                lastKey = key;
+            }
+        });
+        final IRowVisitor vniVisitor = (new IRowVisitor() {
+            String lastKey = "";
+
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
                     sb.append(key + "\t");
                 }
                 if (!(valueKey.equals(SubKeys.LCAF_SRCDST))) {
-                    sb.append(valueKey + "=" + value + "\t");
+                    sb.append(valueKey + "= { ");
+                    ((ILispDAO)value).getAll(innerVisitor);
+                    sb.append("}\t");
                 }
                 lastKey = key;
             }
@@ -254,9 +315,9 @@ public class MultiTableMapCache implements IMapCache {
                 if (!lastKey.equals(key)) {
                     sb.append("\n" + key + "\t");
                 }
-                if (valueKey.equals(SubKeys.LCAF_SRCDST)) {
+                if (valueKey.equals(SubKeys.VNI)) {
                     sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(innerVisitor);
+                    ((ILispDAO)value).getAll(vniVisitor);
                     sb.append("}\t");
                 } else {
                     sb.append(valueKey + "=" + value + "\t");
@@ -269,41 +330,53 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(LispAddressContainer key) {
+    public void updateMappingRegistration(Eid key) {
 
     }
 
     @Override
-    public void addData(LispAddressContainer key, String subKey, Object data) {
+    public void addData(Eid key, String subKey, Object data) {
         key = MaskUtil.normalize(key);
-        if (key.getAddress() instanceof LcafSourceDest) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, dao);
-            srcDstDao.put(LcafSourceDestHelper.getSrc(key), new MappingEntry<Object>(subKey, data));
+        ILispDAO table = getOrInstantiateVniTable(key);
+
+
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
+            srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<Object>(subKey, data));
         } else {
-            dao.put(key, new MappingEntry<Object>(subKey, data));
+            table.put(key, new MappingEntry<Object>(subKey, data));
         }
     }
 
     @Override
-    public Object getData(LispAddressContainer eid, String subKey) {
-        if (eid.getAddress() instanceof LcafSourceDest) {
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
-            return srcDstDao.getSpecific(LcafSourceDestHelper.getSrc(eid), subKey);
+    public Object getData(Eid key, String subKey) {
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getSDInnerDao(key, table);
+            return srcDstDao.getSpecific(SourceDestKeyHelper.getSrc(key), subKey);
         } else {
-            return dao.getSpecific(eid, subKey);
+            return table.getSpecific(key, subKey);
         }
     }
 
     @Override
-    public void removeData(LispAddressContainer key, String subKey) {
+    public void removeData(Eid key, String subKey) {
         key = MaskUtil.normalize(key);
-        if (key.getAddress() instanceof LcafSourceDest) {
-            ILispDAO db = getSDInnerDao(key, dao);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return;
+        }
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
-                db.removeSpecific(LcafSourceDestHelper.getSrc(key), subKey);
+                db.removeSpecific(SourceDestKeyHelper.getSrc(key), subKey);
             }
         } else {
-            dao.removeSpecific(key, subKey);
+            table.removeSpecific(key, subKey);
         }
     }
 }

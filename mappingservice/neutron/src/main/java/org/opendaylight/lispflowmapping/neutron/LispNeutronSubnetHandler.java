@@ -11,13 +11,10 @@ package org.opendaylight.lispflowmapping.neutron;
 import java.net.HttpURLConnection;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.commons.net.util.SubnetUtils;
-import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.neutron.spi.INeutronSubnetAware;
 import org.opendaylight.neutron.spi.NeutronSubnet;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
  * Lisp Service implementation of NeutronSubnetAware API Creation of a new
@@ -61,23 +58,18 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 				+ subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
 		LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
-		int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
-		SubnetUtils util = new SubnetUtils(subnet.getCidr());
-		SubnetInfo info = util.getInfo();
-
 		// Determine the IANA code for the subnet IP version
 		// Default is set to IPv4 for neutron subnets
 
-		LispAFIAddress lispAddress = LispAFIConvertor.asIPAfiAddress(info.getNetworkAddress());
-		LispAddressContainer addressContainer = LispAFIConvertor.toContainer(lispAddress);
+		Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr());
 
 		try {
 
-            lispNeutronService.getMappingDbService().addKey((LispUtil.buildAddKeyInput(addressContainer,subnet.getNetworkUUID(), masklen)));
+		    lispNeutronService.getMappingDbService().addKey(LispUtil.buildAddKeyInput(eid, subnet.getNetworkUUID()));
 
 			LOG.debug("Neutron Subnet Added to MapServer : Subnet name: "
 					+ subnet.getName() + " EID Prefix: "
-					+ addressContainer.toString() + " Key: "
+					+ subnet.getCidr() + " Key: "
 					+ subnet.getNetworkUUID());
 		} catch (Exception e) {
 			LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
@@ -147,23 +139,18 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
 				+ "Key: " + subnet.getNetworkUUID());
 		LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
-		int masklen = Integer.parseInt(subnet.getCidr().split("/")[1]);
-		SubnetUtils util = new SubnetUtils(subnet.getCidr());
-		SubnetInfo info = util.getInfo();
-
 		// Determine the IANA code for the subnet IP version
 		// Default is set to IPv4 for neutron subnets
 
-        LispAFIAddress lispAddress = LispAFIConvertor.asIPAfiAddress(info.getNetworkAddress());
-        LispAddressContainer addressContainer = LispAFIConvertor.toContainer(lispAddress);
+		Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr());
 
         try {
 
-            lispNeutronService.getMappingDbService().removeKey(LispUtil.buildRemoveKeyInput(addressContainer, masklen));
+            lispNeutronService.getMappingDbService().removeKey(LispUtil.buildRemoveKeyInput(eid));
 
 			LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: "
 					+ subnet.getName() + " Eid Prefix: "
-					+ addressContainer.toString() + " Key: "
+					+ subnet.getCidr() + " Key: "
 					+ subnet.getNetworkUUID());
 		} catch (Exception e) {
 			LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: "
