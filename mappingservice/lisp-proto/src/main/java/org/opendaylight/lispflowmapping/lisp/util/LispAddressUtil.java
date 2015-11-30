@@ -10,6 +10,8 @@ package org.opendaylight.lispflowmapping.lisp.util;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -22,6 +24,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AsNumberAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameType;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
@@ -33,6 +36,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedNameBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder;
@@ -41,12 +45,18 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.key.value.address.KeyValueAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
 
 public class LispAddressUtil {
     private static Pattern IP4_PATTERN = null;
@@ -219,8 +229,15 @@ public class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddress(addressFromIpPrefix(prefix));
         builder.setAddressType(addressTypeFromIpPrefix(prefix));
-        builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
+        // XXX getMapping rcp fails if set to 0
+        //builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
         return builder.build();
+    }
+
+    public static Eid toIpPrefixEid(IpAddress addr, int vni) {
+        int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
+        IpPrefix prefix = asIpPrefix(addr.getValue().toString(), mask);
+        return toEid(prefix, vni);
     }
 
     public static Eid asIpv4PrefixEid(String prefix) {
@@ -316,6 +333,22 @@ public class LispAddressUtil {
         return toEid(new MacAddress(address), null);
     }
 
+    public static Eid toEid(DistinguishedNameType dn, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(DistinguishedNameAfi.class);
+        builder.setVirtualNetworkId(vni);
+        builder.setAddress((Address) new DistinguishedNameBuilder().setDistinguishedName(dn).build());
+        return builder.build();
+    }
+
+    public static Eid asDistinguishedNameEid(String address, long vni) {
+        return toEid(new MacAddress(address), new InstanceIdType(vni));
+    }
+
+    public static Eid asDistinguishedNameEid(String address) {
+        return toEid(new DistinguishedNameType(address), null);
+    }
+
     public static Rloc asKeyValueAddress(String key, SimpleAddress value) {
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();
         kvab.setKey(new SimpleAddress(new DistinguishedNameType(key)));
@@ -363,5 +396,37 @@ public class LispAddressUtil {
                 new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
                         .setSourceDestKey(sd).build());
         return builder.build();
+    }
+
+    public static Rloc asTeLcafRloc(List<IpAddress> hopList) {
+        RlocBuilder teBuilder = new RlocBuilder();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder elpBuilder =
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder();
+        ExplicitLocatorPathBuilder teAddrBuilder = new ExplicitLocatorPathBuilder();
+        teAddrBuilder.setHop(new ArrayList<Hop>());
+        for (IpAddress hop : hopList) {
+            HopBuilder hopBuilder = new HopBuilder();
+            hopBuilder.setAddress(new SimpleAddress(hop));
+            hopBuilder.setHopId("Hop " + teAddrBuilder.getHop().size());
+            hopBuilder.setLrsBits(new LrsBits(false, false, false));
+            teAddrBuilder.getHop().add(hopBuilder.build());
+        }
+
+        elpBuilder.setExplicitLocatorPath(teAddrBuilder.build());
+        teBuilder.setAddress(elpBuilder.build());
+        teBuilder.setAddressType(ExplicitLocatorPathLcaf.class);
+        return teBuilder.build();
+    }
+
+    public static List<LocatorRecord> asLocatorRecords(List<Rloc> locators) {
+        List<LocatorRecord> locatorRecords = new ArrayList<LocatorRecord>();
+        for (Rloc locator : locators) {
+            LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
+            locatorBuilder.setLocalLocator(false).setRlocProbed(false).setWeight((short) 1).setPriority((short) 1)
+                    .setMulticastWeight((short) 1).setMulticastPriority((short) 1).setRouted(true)
+                    .setRloc(locator).setLocatorId("SFC_LISP").build();
+            locatorRecords.add(locatorBuilder.build());
+        }
+        return locatorRecords;
     }
 }

@@ -13,17 +13,16 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.neutron.spi.INeutronPortAware;
 import org.opendaylight.neutron.spi.NeutronPort;
 import org.opendaylight.neutron.spi.Neutron_IPs;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.LispAFIAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingserviceService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
@@ -67,13 +66,13 @@ public class LispNeutronPortHandler extends LispNeutronService implements
                     + port.toString());
             return;
         }
-        LispAFIAddress hostAddress = LispAFIConvertor.asDistinguishedNameAddress(port.getBindinghostID());
+        Eid hostAddress = LispAddressUtil.asDistinguishedNameEid(port.getBindinghostID());
 
-        EidToLocatorRecord eidRecord;
+        MappingRecord eidRecord;
         List<LocatorRecord> hostLocRecords;
-        GetMappingInput input = LispUtil.buildGetMappingInput(LispAFIConvertor.toContainer(hostAddress), (short) 0);
+        GetMappingInput input = LispUtil.buildGetMappingInput(hostAddress);
         try {
-            MappingserviceService lfmdb = lispNeutronService.getMappingDbService();
+            OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
             if (lfmdb == null) {
                 LOG.debug("lfmdb is null!!!");
                 return;
@@ -84,7 +83,7 @@ public class LispNeutronPortHandler extends LispNeutronService implements
             // TODO for now only selecting the first EidToLocatorRecord from the
             // Host_ID mapping
 
-            eidRecord = output.getEidToLocatorRecord().get(0);
+            eidRecord = output.getMappingRecord();
             hostLocRecords = eidRecord.getLocatorRecord();
             LOG.debug("hostLocRecords is : {}",hostLocRecords);
 
@@ -97,15 +96,15 @@ public class LispNeutronPortHandler extends LispNeutronService implements
 
         List<Neutron_IPs> fixedIPs = port.getFixedIPs();
         if (fixedIPs != null && fixedIPs.size() > 0) {
-          LispAddressContainer eidAddress;
+          Eid eidAddress;
             for (Neutron_IPs ip : fixedIPs) {
 
                 // TODO Add check/support for IPv6.
                 // Get subnet for this port, based on v4 or v6 decide address
                 // iana code.
 
-                eidAddress = LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(ip.getIpAddress()));
-                lispNeutronService.getMappingDbService().addMapping(LispUtil.buildAddMappingInput(eidAddress, hostLocRecords, 32));
+                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress() + "/32");
+                lispNeutronService.getMappingDbService().addMapping(LispUtil.buildAddMappingInput(eidAddress, hostLocRecords));
             }
         }
 
@@ -181,7 +180,7 @@ public class LispNeutronPortHandler extends LispNeutronService implements
 
         List<Neutron_IPs> fixedIPs = port.getFixedIPs();
         if (fixedIPs != null && fixedIPs.size() > 0) {
-            LispAddressContainer eidAddress;
+            Eid eidAddress;
 
             for (Neutron_IPs ip : fixedIPs) {
 
@@ -189,8 +188,8 @@ public class LispNeutronPortHandler extends LispNeutronService implements
                 // Get subnet for this port, based on v4 or v6 decide address
                 // iana code.
 
-                eidAddress = LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(ip.getIpAddress()));
-                lispNeutronService.getMappingDbService().removeMapping(LispUtil.buildRemoveMappingInput(eidAddress,32));
+                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress() + "/32");
+                lispNeutronService.getMappingDbService().removeMapping(LispUtil.buildRemoveMappingInput(eidAddress));
 
                 LOG.info("Neutron Port mapping deleted from lisp: "
                         + " Port Fixed IP: " + ip + "Port host IP: ");
