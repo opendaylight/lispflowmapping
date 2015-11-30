@@ -15,11 +15,10 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService
 import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidtolocatorrecords.EidToLocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.InstanceId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -41,7 +40,7 @@ public class MappingDataListener extends AbstractDataListener {
         setBroker(broker);
         setMappingSystem(msmr);
         setNotificationProviderService(nps);
-        setPath(InstanceIdentifier.create(MappingDatabase.class).child(InstanceId.class)
+        setPath(InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
                 .child(Mapping.class));
         LOG.trace("Registering Mapping listener.");
         registerDataChangeListener();
@@ -65,8 +64,8 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", mapping);
 
-                mapSystem.addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
-                        new EidToLocatorRecordBuilder(mapping).build());
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
+                        mapping.getMappingRecord());
             }
         }
 
@@ -80,8 +79,8 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", entry.getValue());
 
-                mapSystem.addMapping(mapping.getOrigin(), mapping.getLispAddressContainer(),
-                        new EidToLocatorRecordBuilder(mapping).build());
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
+                        mapping.getMappingRecord());
                 try {
                     notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
                 } catch (InterruptedException e) {
@@ -101,7 +100,7 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", dataObject);
 
-                mapSystem.removeMapping(mapping.getOrigin(), mapping.getLispAddressContainer());
+                mapSystem.removeMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid());
                 try {
                     notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
                 } catch (InterruptedException e) {
