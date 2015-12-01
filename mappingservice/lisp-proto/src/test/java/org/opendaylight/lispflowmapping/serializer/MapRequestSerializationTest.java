@@ -18,22 +18,27 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
-import org.opendaylight.lispflowmapping.lisp.type.AddressFamilyNumberEnum;
-import org.opendaylight.lispflowmapping.lisp.util.LispAFIConvertor;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.EidToLocatorRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eidrecords.EidRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.LispAddressContainerBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.NoBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispaddress.lispaddresscontainer.address.no.NoAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
@@ -43,17 +48,13 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void prefix__NoPrefix() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidRecord(new ArrayList<EidRecord>());
-        mrBuilder.getEidRecord().add(
-                new EidRecordBuilder().setLispAddressContainer(
-                        new LispAddressContainerBuilder().setAddress(
-                                new NoBuilder().setNoAddress(
-                                        new NoAddressBuilder().setAfi((short) 0)
-                                        .build()).build()).build()).build());
+        mrBuilder.setEidItem(new ArrayList<EidItem>());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(
+                        new EidBuilder().setAddressType(NoAddressAfi.class).setAddress(
+                                (Address) new NoAddressBuilder().setNoAddress(true).build()).build()).build());
 
 
-        assertEquals(AddressFamilyNumberEnum.NO_ADDRESS.getIanaCode(),
-                LispAFIConvertor.toAFI(mrBuilder.getEidRecord().get(0).getLispAddressContainer()).getAfi().shortValue());
+        assertEquals(NoAddressAfi.class, mrBuilder.getEidItem().get(0).getEid().getAddressType());
     }
 
     @Test
@@ -93,8 +94,9 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 " //
                 + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 " //
                 + "00 01 c0 a8 38 66"));
-        assertEquals("1.1.1.1", ((Ipv4) mr.getSourceEid().getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue());
-        assertEquals("1.2.3.4", ((Ipv4) mr.getEidRecord().get(0).getLispAddressContainer().getAddress()).getIpv4Address().getIpv4Address().getValue());
+        assertEquals("1.1.1.1", ((Ipv4) mr.getSourceEid().getEid().getAddress()).getIpv4().getValue());
+        assertEquals("1.2.3.4/32",
+                ((Ipv4Prefix) mr.getEidItem().get(0).getEid().getAddress()).getIpv4Prefix().getValue());
 
     }
 
@@ -162,17 +164,16 @@ public class MapRequestSerializationTest extends BaseTestCase {
     }
 
     @Test
-    public void deserialize__SingleEidRecord() throws Exception {
+    public void deserialize__SingleEidItem() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 "
         //
                 + "01 " // single record
                 + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
                 + "00 20 00 01 01 02 03 04"));
 
-        assertEquals(1, mr.getEidRecord().size());
-        EidRecord eid = mr.getEidRecord().get(0);
-        assertEquals(0x20, eid.getMask().byteValue());
-        assertEquals(LispAFIConvertor.asIPv4Address("1.2.3.4"), eid.getLispAddressContainer());
+        assertEquals(1, mr.getEidItem().size());
+        Eid eid = mr.getEidItem().get(0).getEid();
+        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
     }
 
     @Test
@@ -189,42 +190,39 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         ));
 
-        assertEquals(1, mr.getEidRecord().size());
-        EidRecord eid = mr.getEidRecord().get(0);
-        assertEquals(0x20, eid.getMask().byteValue());
-        assertEquals(LispAFIConvertor.asIPv4Prefix("1.2.3.4", 0x20), eid.getLispAddressContainer());
-        MapReply mapReply = mr.getMapReply();
-        assertEquals(LispAFIConvertor.asIPv4Address(("1.2.3.4")), mapReply.getLispAddressContainer());
-        assertEquals(false, mapReply.isAuthoritative());
-        assertEquals(Action.NoAction, mapReply.getAction());
-        assertEquals(0, mapReply.getMapVersion().shortValue());
-        assertEquals(32, mapReply.getMaskLength().shortValue());
-        assertEquals(2, mapReply.getRecordTtl().byteValue());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress(("10.10.10.10"))), mapReply.getLocatorRecord().get(0)
-                .getLispAddressContainer());
-        assertEquals(1, mapReply.getLocatorRecord().get(0).getPriority().byteValue());
-        assertEquals(2, mapReply.getLocatorRecord().get(0).getWeight().byteValue());
-        assertEquals(3, mapReply.getLocatorRecord().get(0).getMulticastPriority().byteValue());
-        assertEquals(4, mapReply.getLocatorRecord().get(0).getMulticastWeight().byteValue());
-        assertEquals(true, mapReply.getLocatorRecord().get(0).isLocalLocator());
-        assertEquals(true, mapReply.getLocatorRecord().get(0).isRlocProbed());
-        assertEquals(false, mapReply.getLocatorRecord().get(0).isRouted());
+        assertEquals(1, mr.getEidItem().size());
+        Eid eid = mr.getEidItem().get(0).getEid();
+        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
+        MappingRecord record = mr.getMapReply().getMappingRecord();
+        assertEquals("1.2.3.4/32", ((Ipv4Prefix) record.getEid().getAddress()).getIpv4Prefix().getValue());
+        assertEquals(false, record.isAuthoritative());
+        assertEquals(Action.NoAction, record.getAction());
+        assertEquals(0, record.getMapVersion().shortValue());
+        assertEquals(32, record.getMaskLength().shortValue());
+        assertEquals(2, record.getRecordTtl().byteValue());
+        assertEquals("10.10.10.10",
+                ((Ipv4) record.getLocatorRecord().get(0).getRloc().getAddress()).getIpv4().getValue());
+        assertEquals(1, record.getLocatorRecord().get(0).getPriority().byteValue());
+        assertEquals(2, record.getLocatorRecord().get(0).getWeight().byteValue());
+        assertEquals(3, record.getLocatorRecord().get(0).getMulticastPriority().byteValue());
+        assertEquals(4, record.getLocatorRecord().get(0).getMulticastWeight().byteValue());
+        assertEquals(true, record.getLocatorRecord().get(0).isLocalLocator());
+        assertEquals(true, record.getLocatorRecord().get(0).isRlocProbed());
+        assertEquals(false, record.getLocatorRecord().get(0).isRouted());
     }
 
     @Test
-    public void serialize__SingleEidRecord() throws Exception {
+    public void serialize__SingleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidRecord(new ArrayList<EidRecord>());
-        mrBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 32)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
+        mrBuilder.setEidItem(new ArrayList<EidItem>());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 01 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
     }
 
     @Test
-    public void deserialize__MultipleEidRecord() throws Exception {
+    public void deserialize__MultipleEidItem() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 "
         //
                 + "02 " // 2 records
@@ -232,27 +230,21 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04 " //
                 + "00 80 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05"));
 
-        assertEquals(2, mr.getEidRecord().size());
+        assertEquals(2, mr.getEidItem().size());
 
-        EidRecord eid = mr.getEidRecord().get(0);
-        assertEquals(0x0020, eid.getMask().shortValue());
-        assertEquals(LispAFIConvertor.asIPv4Address("1.2.3.4"), eid.getLispAddressContainer());
+        Eid eid = mr.getEidItem().get(0).getEid();
+        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
 
-        eid = mr.getEidRecord().get(1);
-        assertEquals(0x0080, eid.getMask().shortValue());
-        assertEquals(LispAFIConvertor.asIPv6Address("0:0:0:0:0:0:0:5"), eid.getLispAddressContainer());
+        eid = mr.getEidItem().get(1).getEid();
+        assertEquals("0:0:0:0:0:0:0:5/128", ((Ipv6Prefix) eid.getAddress()).getIpv6Prefix().getValue());
     }
 
     @Test
-    public void serialize__MultipleEidRecord() throws Exception {
+    public void serialize__MultipleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidRecord(new ArrayList<EidRecord>());
-        mrBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 32)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
-        mrBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 0)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1"))).build());
+        mrBuilder.setEidItem(new ArrayList<EidItem>());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("4.3.2.1/0")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 02 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04 00 00 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -268,16 +260,14 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(1, mr.getItrRloc().size());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.10")), mr.getItrRloc().get(0)
-                .getLispAddressContainer());
+        assertEquals("192.168.136.10", ((Ipv4) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4().getValue());
     }
 
     @Test
     public void serialize__SingleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -287,10 +277,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__MultipleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
-        mrBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("4.3.2.1"))).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 01 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -309,11 +297,9 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(3, mr.getItrRloc().size());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("192.168.136.10")), mr.getItrRloc().get(0)
-                .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("0:0:0:0:0:0:0:1")), mr.getItrRloc().get(1)
-                .getLispAddressContainer());
-        assertEquals(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("17.34.52.86")), mr.getItrRloc().get(2).getLispAddressContainer());
+        assertEquals("192.168.136.10", ((Ipv4) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4().getValue());
+        assertEquals("0:0:0:0:0:0:0:1", ((Ipv6) mr.getItrRloc().get(1).getRloc().getAddress()).getIpv6().getValue());
+        assertEquals("17.34.52.86", ((Ipv4) mr.getItrRloc().get(2).getRloc().getAddress()).getIpv4().getValue());
     }
 
     @Test
@@ -322,18 +308,12 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.setProbe(true);
         mrBuilder.setPitr(true);
         mrBuilder.setNonce((long) 13);
-        mrBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
-                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.0.0.1"))).build());
+        mrBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1"))).build());
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
-        mrBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("1:2:3:4:5:6:7:8")))
-                        .build());
-        mrBuilder.setEidRecord(new ArrayList<EidRecord>());
-        mrBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 32)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mrBuilder.setEidItem(new ArrayList<EidItem>());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         ByteBuffer expected = hexToByteBuffer("12 80 01 01 00 00 " //
                 + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 20 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -346,26 +326,22 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapRequestBuilder.setMapDataPresent(true);
         mapRequestBuilder.setPitr(true);
         mapRequestBuilder.setNonce((long) 13);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setLispAddressContainer(
-                LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("10.0.0.1"))).build());
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1"))).build());
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPv6AfiAddress("1:2:3:4:5:6:7:8")))
-                        .build());
-        mapRequestBuilder.setEidRecord(new ArrayList<EidRecord>());
-        mapRequestBuilder.getEidRecord().add(
-                new EidRecordBuilder().setMask((short) 32)
-                        .setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("1.2.3.4"))).build());
+        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
+        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         MapReplyBuilder mapreplyBuilder = new MapReplyBuilder();
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
 
-        mapreplyBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.1")));
-        mapreplyBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/0"));
+        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
 
         LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
-        locatorBuilder.setLispAddressContainer(LispAFIConvertor.toContainer(LispAFIConvertor.asIPAfiAddress("0.0.0.2")));
-        mapreplyBuilder.getLocatorRecord().add(locatorBuilder.build());
+        locatorBuilder.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
+        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
+        mapreplyBuilder.setMappingRecord(recordBuilder.build());
         mapRequestBuilder.setMapReply(mapreplyBuilder.build());
 
         ByteBuffer expected = hexToByteBuffer("16 80 01 01 00 00 " //
@@ -374,5 +350,4 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 00 00 00 01 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 01 00 00 00 02");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mapRequestBuilder.build()).array());
     }
-
 }
