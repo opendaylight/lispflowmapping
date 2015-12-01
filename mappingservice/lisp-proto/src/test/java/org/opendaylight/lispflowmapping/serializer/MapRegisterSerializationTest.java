@@ -23,11 +23,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Le
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -170,8 +166,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setEid(null).build()).build());
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().setEid(new EidBuilder().setAddressType(NoAddressAfi.class).setAddress(
-                        (Address) new NoAddressBuilder().setNoAddress(true).build()).build()).build()).build());
+                new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build()).build());
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
         bb.position(bb.position() + 16); // jump to first record prefix AFI
