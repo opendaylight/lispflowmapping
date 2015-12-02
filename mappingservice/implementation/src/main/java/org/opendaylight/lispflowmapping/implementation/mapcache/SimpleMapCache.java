@@ -38,10 +38,36 @@ public class SimpleMapCache implements IMapCache {
         this.dao = dao;
     }
 
+    private ILispDAO getVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getOrInstantiateVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+        if (table == null) {
+            table = dao.putNestedTable(vni, SubKeys.VNI);
+        }
+        return table;
+    }
+
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
         Eid eid = MaskUtil.normalize(key);
-        dao.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-        dao.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+        ILispDAO table = getOrInstantiateVniTable(key);
+
+        table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+        table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
     }
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
@@ -116,17 +142,25 @@ public class SimpleMapCache implements IMapCache {
         if (dstEid == null) {
             return null;
         }
-        return getMappingLpmEid(dstEid, dao);
+
+        ILispDAO table = getVniTable(dstEid);
+        return getMappingLpmEid(dstEid, table);
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
         eid = MaskUtil.normalize(eid);
-        dao.removeSpecific(eid, SubKeys.RECORD);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+
+        table.removeSpecific(eid, SubKeys.RECORD);
     }
 
     public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
         eid = MaskUtil.normalize(eid);
-        dao.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
+        ILispDAO table = getOrInstantiateVniTable(eid);
+        table.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
     }
 
     private MappingAuthkey getAuthKeyLpm(Eid prefix, ILispDAO db) {
@@ -143,10 +177,14 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public MappingAuthkey getAuthenticationKey(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
         if (MaskUtil.isMaskable(eid.getAddress())) {
-            return getAuthKeyLpm(eid, dao);
+            return getAuthKeyLpm(eid, table);
         } else {
-            Object password = dao.getSpecific(eid, SubKeys.AUTH_KEY);
+            Object password = table.getSpecific(eid, SubKeys.AUTH_KEY);
             if (password != null && password instanceof MappingAuthkey) {
                 return (MappingAuthkey) password;
             } else {
@@ -158,13 +196,18 @@ public class SimpleMapCache implements IMapCache {
 
     public void removeAuthenticationKey(Eid eid) {
         eid = MaskUtil.normalize(eid);
-        dao.removeSpecific(eid, SubKeys.AUTH_KEY);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+        table.removeSpecific(eid, SubKeys.AUTH_KEY);
     }
 
     public String printMappings() {
         final StringBuffer sb = new StringBuffer();
         sb.append("Keys\tValues\n");
-        dao.getAll(new IRowVisitor() {
+
+        final IRowVisitor innerVisitor = (new IRowVisitor() {
             String lastKey = "";
 
             public void visitRow(Object keyId, String valueKey, Object value) {
@@ -176,31 +219,63 @@ public class SimpleMapCache implements IMapCache {
                 lastKey = key;
             }
         });
+
+        dao.getAll(new IRowVisitor() {
+            String lastKey = "";
+
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
+                    sb.append("\n" + key + "\t");
+                }
+                if (valueKey.equals(SubKeys.VNI)) {
+                    sb.append(valueKey + "= { ");
+                    ((ILispDAO)value).getAll(innerVisitor);
+                    sb.append("}\t");
+                } else {
+                    sb.append(valueKey + "=" + value + "\t");
+                }
+                lastKey = key;
+            }
+        });
         sb.append("\n");
         return sb.toString();
     }
 
     @Override
     public void updateMappingRegistration(Eid key) {
-        Map<String, ?> daoEntry = getDaoEntryBest(key, dao);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return;
+        }
+        Map<String, ?> daoEntry = getDaoEntryBest(key, table);
         if (daoEntry != null) {
-            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+            table.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         }
     }
 
     @Override
     public void addData(Eid key, String subKey, Object data) {
         Eid normKey = MaskUtil.normalize(key);
-        dao.put(normKey, new MappingEntry<>(subKey, data));
+        ILispDAO table = getOrInstantiateVniTable(normKey);
+        table.put(normKey, new MappingEntry<>(subKey, data));
     }
 
     @Override
     public Object getData(Eid key, String subKey) {
-        return dao.getSpecific(key, subKey);
+        ILispDAO table = getOrInstantiateVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        return table.getSpecific(key, subKey);
     }
 
     @Override
     public void removeData(Eid key, String subKey) {
-        dao.removeSpecific(key, subKey);
+        ILispDAO table = getOrInstantiateVniTable(key);
+        if (table == null) {
+            return;
+        }
+        table.removeSpecific(key, subKey);
     }
 }
