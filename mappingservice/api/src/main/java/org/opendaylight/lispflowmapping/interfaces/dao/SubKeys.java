@@ -20,6 +20,7 @@ public interface SubKeys {
     String RECORD = "address";
     String SUBSCRIBERS = "subscribers";
     String REGDATE = "date";
+    String VNI = "vni";
     String LCAF_SRCDST = "lcaf_srcdst";
 
     String UNKOWN = "-1";

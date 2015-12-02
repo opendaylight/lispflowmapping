@@ -40,16 +40,42 @@ public class MultiTableMapCache implements IMapCache {
         this.dao = dao;
     }
 
+    private ILispDAO getVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getOrInstantiateVniTable(Eid eid) {
+        long vni = 0;
+        if (eid.getVirtualNetworkId() == null) {
+            vni = 0;
+        } else {
+            vni = eid.getVirtualNetworkId().getValue();
+        }
+        ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+        if (table == null) {
+            table = dao.putNestedTable(vni, SubKeys.VNI);
+        }
+        return table;
+    }
+
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
         Eid eid = MaskUtil.normalize(key);
+        ILispDAO table = getOrInstantiateVniTable(key);
+
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid srcKey = SourceDestKeyHelper.getSrc(eid);
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, value));
         } else {
-            dao.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-            dao.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
 
@@ -130,37 +156,49 @@ public class MultiTableMapCache implements IMapCache {
             return null;
         }
 
+        ILispDAO table = getVniTable(dstEid);
+        if (table == null) {
+            return null;
+        }
+
         // a map-request for an actual SrcDst LCAF, ignore src eid
         if (dstEid.getAddress() instanceof SourceDestKey) {
             Eid srcAddr = SourceDestKeyHelper.getSrc(dstEid);
             Eid dstAddr = SourceDestKeyHelper.getDst(dstEid);
-            return getMappingLpmSD(srcAddr, dstAddr, dao);
+            return getMappingLpmSD(srcAddr, dstAddr, table);
         }
 
         // potential map-request for SrcDst LCAF from non SrcDst capable devices
-        return getMappingLpmSD(srcEid, dstEid, dao);
+        return getMappingLpmSD(srcEid, dstEid, table);
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
         eid = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+
         if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO db = getSDInnerDao(eid, dao);
+            ILispDAO db = getSDInnerDao(eid, table);
             if (db != null) {
                 db.removeSpecific(SourceDestKeyHelper.getSrc(eid),
                         SubKeys.RECORD);
             }
         } else {
-            dao.removeSpecific(eid, SubKeys.RECORD);
+            table.removeSpecific(eid, SubKeys.RECORD);
         }
     }
 
     public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
         eid = MaskUtil.normalize(eid);
+        ILispDAO table = getOrInstantiateVniTable(eid);
+
         if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, dao);
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
             srcDstDao.put(SourceDestKeyHelper.getSrc(eid), new MappingEntry<>(SubKeys.AUTH_KEY, key));
         } else {
-            dao.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
+            table.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
         }
     }
 
@@ -178,17 +216,22 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     public MappingAuthkey getAuthenticationKey(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+
         if (MaskUtil.isMaskable(eid.getAddress())) {
-            return getAuthKeyLpm(eid, dao);
+            return getAuthKeyLpm(eid, table);
         } else if (eid.getAddress() instanceof SourceDestKey) {
             // NOTE: this is an exact match, not a longest prefix match
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
+            ILispDAO srcDstDao = getSDInnerDao(eid, table);
             if (srcDstDao != null) {
                 return getAuthKeyLpm(SourceDestKeyHelper.getSrc(eid), srcDstDao);
             }
             return null;
         } else {
-            Object password = dao.getSpecific(eid, SubKeys.AUTH_KEY);
+            Object password = table.getSpecific(eid, SubKeys.AUTH_KEY);
             if (password != null && password instanceof MappingAuthkey) {
                 return (MappingAuthkey) password;
             } else {
@@ -200,13 +243,18 @@ public class MultiTableMapCache implements IMapCache {
 
     public void removeAuthenticationKey(Eid eid) {
         eid = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+
         if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
+            ILispDAO srcDstDao = getSDInnerDao(eid, table);
             if (srcDstDao != null) {
                 srcDstDao.removeSpecific(eid, SubKeys.AUTH_KEY);
             }
         } else {
-            dao.removeSpecific(eid, SubKeys.AUTH_KEY);
+            table.removeSpecific(eid, SubKeys.AUTH_KEY);
         }
     }
 
@@ -237,10 +285,24 @@ public class MultiTableMapCache implements IMapCache {
             public void visitRow(Object keyId, String valueKey, Object value) {
                 String key = keyId.getClass().getSimpleName() + "#" + keyId;
                 if (!lastKey.equals(key)) {
+                    sb.append("\n" + key + "\t");
+                }
+                sb.append(valueKey + "=" + value + "\t");
+                lastKey = key;
+            }
+        });
+        final IRowVisitor vniVisitor = (new IRowVisitor() {
+            String lastKey = "";
+
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
                     sb.append(key + "\t");
                 }
                 if (!(valueKey.equals(SubKeys.LCAF_SRCDST))) {
-                    sb.append(valueKey + "=" + value + "\t");
+                    sb.append(valueKey + "= { ");
+                    ((ILispDAO)value).getAll(innerVisitor);
+                    sb.append("}\t");
                 }
                 lastKey = key;
             }
@@ -253,9 +315,9 @@ public class MultiTableMapCache implements IMapCache {
                 if (!lastKey.equals(key)) {
                     sb.append("\n" + key + "\t");
                 }
-                if (valueKey.equals(SubKeys.LCAF_SRCDST)) {
+                if (valueKey.equals(SubKeys.VNI)) {
                     sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(innerVisitor);
+                    ((ILispDAO)value).getAll(vniVisitor);
                     sb.append("}\t");
                 } else {
                     sb.append(valueKey + "=" + value + "\t");
@@ -275,34 +337,46 @@ public class MultiTableMapCache implements IMapCache {
     @Override
     public void addData(Eid key, String subKey, Object data) {
         key = MaskUtil.normalize(key);
+        ILispDAO table = getOrInstantiateVniTable(key);
+
+
         if (key.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, dao);
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
             srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<Object>(subKey, data));
         } else {
-            dao.put(key, new MappingEntry<Object>(subKey, data));
+            table.put(key, new MappingEntry<Object>(subKey, data));
         }
     }
 
     @Override
-    public Object getData(Eid eid, String subKey) {
-        if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getSDInnerDao(eid, dao);
-            return srcDstDao.getSpecific(SourceDestKeyHelper.getSrc(eid), subKey);
+    public Object getData(Eid key, String subKey) {
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getSDInnerDao(key, table);
+            return srcDstDao.getSpecific(SourceDestKeyHelper.getSrc(key), subKey);
         } else {
-            return dao.getSpecific(eid, subKey);
+            return table.getSpecific(key, subKey);
         }
     }
 
     @Override
     public void removeData(Eid key, String subKey) {
         key = MaskUtil.normalize(key);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return;
+        }
         if (key.getAddress() instanceof SourceDestKey) {
-            ILispDAO db = getSDInnerDao(key, dao);
+            ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
                 db.removeSpecific(SourceDestKeyHelper.getSrc(key), subKey);
             }
         } else {
-            dao.removeSpecific(key, subKey);
+            table.removeSpecific(key, subKey);
         }
     }
 }
