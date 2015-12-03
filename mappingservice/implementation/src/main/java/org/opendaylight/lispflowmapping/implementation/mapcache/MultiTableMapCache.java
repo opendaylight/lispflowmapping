@@ -299,10 +299,12 @@ public class MultiTableMapCache implements IMapCache {
                 if (!lastKey.equals(key)) {
                     sb.append(key + "\t");
                 }
-                if (!(valueKey.equals(SubKeys.LCAF_SRCDST))) {
+                if ((valueKey.equals(SubKeys.LCAF_SRCDST))) {
                     sb.append(valueKey + "= { ");
                     ((ILispDAO)value).getAll(innerVisitor);
                     sb.append("}\t");
+                } else {
+                    sb.append(valueKey + "=" + value + "\t");
                 }
                 lastKey = key;
             }
