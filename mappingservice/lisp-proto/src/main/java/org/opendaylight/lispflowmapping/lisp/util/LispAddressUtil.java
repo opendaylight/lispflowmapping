@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -37,6 +38,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AsNumberBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedNameBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
@@ -93,8 +95,13 @@ public class LispAddressUtil {
             return addressFromIpAddress(address.getIpAddress());
         } else if (address.getIpPrefix() != null) {
             return addressFromIpPrefix(address.getIpPrefix());
+        } else if (address.getMacAddress() != null) {
+            return addressFromMacAddress(address.getMacAddress());
+        } else if (address.getDistinguishedNameType() != null) {
+            return addressFromDistinguishedName(address.getDistinguishedNameType());
+        } else if (address.getAsNumber() != null) {
+            return addressFromAsNumber(address.getAsNumber());
         }
-        // TODO the rest of the types
         return null;
     }
 
@@ -162,6 +169,29 @@ public class LispAddressUtil {
         return null;
     }
 
+    public static Address addressFromMacAddress(MacAddress address) {
+        if (address == null) {
+            return null;
+        } else {
+            return (Address) new MacBuilder().setMac(address).build();
+        }
+    }
+
+    public static Address addressFromDistinguishedName(DistinguishedNameType address) {
+        if (address == null) {
+            return null;
+        } else {
+            return (Address) new DistinguishedNameBuilder().setDistinguishedName(address).build();
+        }
+    }
+
+    public static Address addressFromAsNumber(AsNumber address) {
+        if (address == null) {
+            return null;
+        } else {
+            return (Address) new AsNumberBuilder().setAsNumber(address).build();
+        }
+    }
     public static Rloc toRloc(SimpleAddress address) {
         RlocBuilder builder = new RlocBuilder();
         builder.setAddressType(addressTypeFromSimpleAddress(address));
@@ -218,12 +248,12 @@ public class LispAddressUtil {
         return builder.build();
     }
 
-    public static Eid toEid(Eid eid, IpPrefix prefix) {
+    public static Eid toEid(Eid eid, SimpleAddress address) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(eid.getAddressType());
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         // XXX Not sure if the below actually works as expected... also, what happens to AFI?
-        builder.setAddress(addressFromIpPrefix(prefix));
+        builder.setAddress(addressFromSimpleAddress(address));
         return builder.build();
     }
 
@@ -391,8 +421,8 @@ public class LispAddressUtil {
 
     public static SourceDestKey asSrcDst(String src, String dst, int smask, int dmask) {
         SourceDestKeyBuilder builder = new SourceDestKeyBuilder();
-        builder.setSource(asIpPrefix(src, smask));
-        builder.setDest(asIpPrefix(dst, dmask));
+        builder.setSource(new SimpleAddress(asIpPrefix(src, smask)));
+        builder.setDest(new SimpleAddress(asIpPrefix(dst, dmask)));
         return builder.build();
     }
 

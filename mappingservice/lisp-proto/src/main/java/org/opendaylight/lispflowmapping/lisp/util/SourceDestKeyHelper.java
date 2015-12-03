@@ -44,7 +44,7 @@ public class SourceDestKeyHelper {
         if (!isSrcDst(addr)) {
             return 0;
         }
-        return MaskUtil.getMaskForIpPrefix(((SourceDestKey)addr).getSourceDestKey().getSource());
+        return MaskUtil.getMaskForAddress(((SourceDestKey)addr).getSourceDestKey().getSource());
     }
 
     public static short getDstMask(Eid eid) {
@@ -52,7 +52,7 @@ public class SourceDestKeyHelper {
         if (!isSrcDst(addr)) {
             return 0;
         }
-        return MaskUtil.getMaskForIpPrefix(((SourceDestKey)addr).getSourceDestKey().getDest());
+        return MaskUtil.getMaskForAddress(((SourceDestKey)addr).getSourceDestKey().getDest());
     }
 
     private static boolean isSrcDst(Address addr) {

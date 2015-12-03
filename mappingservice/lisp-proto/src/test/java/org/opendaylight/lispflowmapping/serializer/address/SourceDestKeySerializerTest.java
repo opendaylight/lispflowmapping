@@ -21,6 +21,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -42,8 +43,8 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
         assertEquals(SourceDestKeyLcaf.class, address.getAddressType());
         SourceDestKey srcDestAddress = (SourceDestKey) address.getAddress();
 
-        assertEquals((byte) 0x10, MaskUtil.getMaskForIpPrefix(srcDestAddress.getSourceDestKey().getSource()));
-        assertEquals((byte) 0x18, MaskUtil.getMaskForIpPrefix(srcDestAddress.getSourceDestKey().getDest()));
+        assertEquals((byte) 0x10, MaskUtil.getMaskForAddress(srcDestAddress.getSourceDestKey().getSource()));
+        assertEquals((byte) 0x18, MaskUtil.getMaskForAddress(srcDestAddress.getSourceDestKey().getDest()));
 
         assertEquals("17.34.51.68/16", String.valueOf(srcDestAddress.getSourceDestKey().getSource().getValue()));
         assertEquals("34.51.68.85/24", String.valueOf(srcDestAddress.getSourceDestKey().getDest().getValue()));
@@ -85,8 +86,8 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         SourceDestKeyBuilder addressBuilder = new SourceDestKeyBuilder();
-        addressBuilder.setSource(new IpPrefix(new Ipv4Prefix("17.34.51.68/8")));
-        addressBuilder.setDest(new IpPrefix(new Ipv4Prefix("34.51.68.85/16")));
+        addressBuilder.setSource(new SimpleAddress(new IpPrefix(new Ipv4Prefix("17.34.51.68/8"))));
+        addressBuilder.setDest(new SimpleAddress(new IpPrefix(new Ipv4Prefix("34.51.68.85/16"))));
 
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(SourceDestKeyLcaf.class);

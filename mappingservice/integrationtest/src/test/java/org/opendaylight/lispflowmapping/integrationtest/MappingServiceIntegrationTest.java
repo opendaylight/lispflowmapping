@@ -29,11 +29,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
-
-
-
-
 //import org.codehaus.jettison.json.JSONException;
 //import org.codehaus.jettison.json.JSONObject;
 //import org.codehaus.jettison.json.JSONTokener;
@@ -109,6 +104,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -1217,41 +1213,42 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     // ------------------------------- LCAF Tests ---------------------------
-/*
+
     @Test
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         cleanUP();
-        String ipString = "10.20.30.200";
+        String ipPrefix = "10.20.30.200/32";
         String macString = "01:02:03:04:05:06";
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 addrToSend1 = LispAddressUtil.asPrimitiveIPv4AfiPrefix(ipString, 32);
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Mac addrToSend2 = LispAddressUtil.asPrimitiveMacAfiAddress(macString);
-        LcafSourceDestAddrBuilder builder = new LcafSourceDestAddrBuilder();
-        builder.setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode());
-        builder.setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode());
-        builder.setSrcMaskLength((short) 32);
-        builder.setDstMaskLength((short) 0);
-        builder.setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(addrToSend1).build());
-        builder.setDstAddress(new DstAddressBuilder().setPrimitiveAddress(addrToSend2).build());
 
-        MapReply reply = registerAddressAndQuery(builder.build());
+        SourceDestKeyBuilder builder = new SourceDestKeyBuilder();
+        builder.setSource(new SimpleAddress(new IpPrefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix(ipPrefix))));
+        builder.setDest(new SimpleAddress(new MacAddress(macString)));
+
+        EidBuilder eb = new EidBuilder();
+        eb.setAddressType(SourceDestKeyLcaf.class);
+        eb.setVirtualNetworkId(null);
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
+                .setSourceDestKey(builder.build()).build());
+
+        MapReply reply = registerAddressAndQuery(eb.build());
 
         Eid fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertTrue(fromNetwork.getAddress() instanceof LcafSourceDest);
-        LcafSourceDest sourceDestFromNetwork = (LcafSourceDest) fromNetwork.getAddress();
+        assertEquals(SourceDestKeyLcaf.class, fromNetwork.getAddressType());
+        SourceDestKey sourceDestFromNetwork = (SourceDestKey) fromNetwork.getAddress();
 
-        LispAFIAddress receivedAddr1 = LispAddressUtil.toAFIfromPrimitive(sourceDestFromNetwork.getLcafSourceDestAddr().getSrcAddress().getPrimitiveAddress());
-        LispAFIAddress receivedAddr2 = LispAddressUtil.toAFIfromPrimitive(sourceDestFromNetwork.getLcafSourceDestAddr().getDstAddress().getPrimitiveAddress());
+        SimpleAddress receivedAddr1 = sourceDestFromNetwork.getSourceDestKey().getSource();
+        SimpleAddress receivedAddr2 = sourceDestFromNetwork.getSourceDestKey().getDest();
 
-        assertTrue(receivedAddr1 instanceof LispIpv4Address);
-        assertTrue(receivedAddr2 instanceof LispMacAddress);
+        assertNotNull(receivedAddr1.getIpPrefix().getIpv4Prefix());
+        assertNotNull(receivedAddr2.getMacAddress());
 
-        LispIpv4Address receivedIP = (LispIpv4Address) receivedAddr1;
-        LispMacAddress receivedMAC = (LispMacAddress) receivedAddr2;
+        IpPrefix receivedIP = receivedAddr1.getIpPrefix();
+        MacAddress receivedMAC = receivedAddr2.getMacAddress();
 
-        assertEquals(ipString, receivedIP.getIpv4Address().getValue());
-        assertEquals(macString, receivedMAC.getMacAddress().getValue());
+        assertEquals(ipPrefix, receivedIP.getIpv4Prefix().getValue());
+        assertEquals(macString, receivedMAC.getValue());
     }
-*/
+
     @Test
     public void registerAndQuery__SrcDestLCAFOverlap() throws SocketTimeoutException {
         cleanUP();
@@ -1271,8 +1268,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(SourceDestKeyLcaf.class, fromNetwork.getAddressType());
         SourceDestKey sourceDestFromNetwork = (SourceDestKey) fromNetwork.getAddress();
 
-        IpPrefix receivedAddr1 = sourceDestFromNetwork.getSourceDestKey().getSource();
-        IpPrefix receivedAddr2 = sourceDestFromNetwork.getSourceDestKey().getDest();
+        IpPrefix receivedAddr1 = sourceDestFromNetwork.getSourceDestKey().getSource().getIpPrefix();
+        IpPrefix receivedAddr2 = sourceDestFromNetwork.getSourceDestKey().getDest().getIpPrefix();
 
         assertNotNull(receivedAddr1.getIpv4Prefix());
         assertNotNull(receivedAddr2.getIpv4Prefix());

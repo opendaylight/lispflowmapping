@@ -58,8 +58,19 @@ public class SourceDestKeySerializer extends LcafSerializer {
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         SourceDestKey sdk = (SourceDestKey) lispAddress.getAddress();
         buffer.putShort((short) 0);
-        buffer.put((byte) MaskUtil.getMaskForIpPrefix(sdk.getSourceDestKey().getSource()));
-        buffer.put((byte) MaskUtil.getMaskForIpPrefix(sdk.getSourceDestKey().getDest()));
+        short srcMaskLength = MaskUtil.getMaskForAddress(sdk.getSourceDestKey().getSource());
+        short dstMaskLength = MaskUtil.getMaskForAddress(sdk.getSourceDestKey().getDest());
+        // TODO need to use LispAddressSerializerContext.MASK_LEN_MISSING everywhere instead of -1 but move that from
+        // LispAddressSerializerContext to some more generic place, maybe
+        // org.opendaylight.lispflowmammping.type.Constants
+        if (srcMaskLength == -1) {
+            srcMaskLength = 0;
+        }
+        if (dstMaskLength == -1) {
+            dstMaskLength = 0;
+        }
+        buffer.put((byte) srcMaskLength);
+        buffer.put((byte) dstMaskLength);
         SimpleAddressSerializer.getInstance().serialize(buffer, new SimpleAddress(sdk.getSourceDestKey().getSource()));
         SimpleAddressSerializer.getInstance().serialize(buffer, new SimpleAddress(sdk.getSourceDestKey().getDest()));
     }
@@ -91,8 +102,8 @@ public class SourceDestKeySerializer extends LcafSerializer {
         ctx.setMaskLen(dstMaskLength);
         SimpleAddress dstAddress = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         SourceDestKeyBuilder sdb = new SourceDestKeyBuilder();
-        sdb.setSource(srcAddress.getIpPrefix());
-        sdb.setDest(dstAddress.getIpPrefix());
+        sdb.setSource(srcAddress);
+        sdb.setDest(dstAddress);
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
                 .setSourceDestKey(sdb.build()).build();
     }

@@ -614,14 +614,14 @@ module ietf-lisp-address-types {
             "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
             #section-4.11";
         leaf source {
-          type inet:ip-prefix;
+          type simple-address;
           description
-            "Source prefix.";
+            "Source address.";
         }
         leaf dest {
-          type inet:ip-prefix;
+          type simple-address;
           description
-            "Destination prefix.";
+            "Destination address.";
         }
       }
       container key-value-address {
