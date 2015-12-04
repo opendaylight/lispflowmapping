@@ -24,7 +24,7 @@ public class SourceDestKeyHelper {
     public static Eid getSrc(Eid eid) {
         Address addr = eid.getAddress();
         if (addr instanceof SourceDestKey) {
-            return LispAddressUtil.toEid(eid, ((SourceDestKey)addr).getSourceDestKey().getSource());
+            return LispAddressUtil.asEid(((SourceDestKey)addr).getSourceDestKey().getSource(), null);
         } else {
             return eid;
         }
@@ -33,7 +33,7 @@ public class SourceDestKeyHelper {
     public static Eid getDst(Eid eid) {
         Address addr = eid.getAddress();
         if (addr instanceof SourceDestKey) {
-            return LispAddressUtil.toEid(eid, ((SourceDestKey)addr).getSourceDestKey().getDest());
+            return LispAddressUtil.asEid(((SourceDestKey)addr).getSourceDestKey().getDest(), null);
         } else {
             return eid;
         }
