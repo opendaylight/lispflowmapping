@@ -248,15 +248,6 @@ public class LispAddressUtil {
         return builder.build();
     }
 
-    public static Eid toEid(Eid eid, SimpleAddress address) {
-        EidBuilder builder = new EidBuilder();
-        builder.setAddressType(eid.getAddressType());
-        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
-        // XXX Not sure if the below actually works as expected... also, what happens to AFI?
-        builder.setAddress(addressFromSimpleAddress(address));
-        return builder.build();
-    }
-
     public static Eid toEid(IpPrefix prefix, int vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddress(addressFromIpPrefix(prefix));
@@ -270,6 +261,15 @@ public class LispAddressUtil {
         int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
         IpPrefix prefix = asIpPrefix(addr.getValue().toString(), mask);
         return toEid(prefix, vni);
+    }
+
+    public static Eid asEid(SimpleAddress address, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(addressTypeFromSimpleAddress(address));
+        builder.setVirtualNetworkId(vni);
+        // XXX Not sure if the below actually works as expected... also, what happens to AFI?
+        builder.setAddress(addressFromSimpleAddress(address));
+        return builder.build();
     }
 
     public static Eid asIpv4PrefixEid(String prefix) {
