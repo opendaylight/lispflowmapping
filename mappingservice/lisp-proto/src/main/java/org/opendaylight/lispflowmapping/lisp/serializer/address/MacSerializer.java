@@ -93,8 +93,9 @@ public class MacSerializer extends LispAddressSerializer {
         buffer.get(macBuffer);
         StringBuilder sb = new StringBuilder(17);
         for (byte b : macBuffer) {
-            if (sb.length() > 0)
+            if (sb.length() > 0) {
                 sb.append(':');
+            }
             sb.append(String.format("%02x", b));
         }
         return new MacAddress(sb.toString());

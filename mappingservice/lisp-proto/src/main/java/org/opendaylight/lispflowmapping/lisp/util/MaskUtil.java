@@ -96,10 +96,9 @@ public class MaskUtil {
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
         byte b = (byte) 0xff;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
-            if (mask >= 8)
+            if (mask >= 8) {
                 byteRepresentation.put(i, (byte) (b & byteRepresentation.get(i)));
-
-            else if (mask > 0) {
+            } else if (mask > 0) {
                 byteRepresentation.put(i, (byte) ((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
             } else {
                 byteRepresentation.put(i, (byte) (0 & byteRepresentation.get(i)));

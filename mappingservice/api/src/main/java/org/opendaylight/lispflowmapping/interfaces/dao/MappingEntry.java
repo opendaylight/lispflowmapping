@@ -41,23 +41,30 @@ public class MappingEntry<V> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         MappingEntry other = (MappingEntry) obj;
         if (mappingValueKey == null) {
-            if (other.mappingValueKey != null)
+            if (other.mappingValueKey != null) {
                 return false;
-        } else if (!mappingValueKey.equals(other.mappingValueKey))
+            }
+        } else if (!mappingValueKey.equals(other.mappingValueKey)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
 
