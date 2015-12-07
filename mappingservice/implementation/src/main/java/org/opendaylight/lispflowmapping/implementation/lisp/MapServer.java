@@ -199,14 +199,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             while (interfaces.hasMoreElements()) {
                 NetworkInterface current = interfaces.nextElement();
                 LOG.debug("Interface " + current.toString());
-                if (!current.isUp() || current.isLoopback() || current.isVirtual())
+                if (!current.isUp() || current.isLoopback() || current.isVirtual()) {
                     continue;
+		}
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress current_addr = addresses.nextElement();
                     // Skip loopback and link local addresses
-                    if (current_addr.isLoopbackAddress() || current_addr.isLinkLocalAddress())
+                    if (current_addr.isLoopbackAddress() || current_addr.isLinkLocalAddress()) {
                         continue;
+		    }
                     LOG.debug(current_addr.getHostAddress());
                     return current_addr;
                 }

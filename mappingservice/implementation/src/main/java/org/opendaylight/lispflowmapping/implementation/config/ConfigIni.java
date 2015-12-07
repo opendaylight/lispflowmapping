@@ -41,8 +41,9 @@ public class ConfigIni {
 
         String str = null;
 
-        if (context != null)
+        if (context != null) {
             str = context.getProperty(LISP_MAPPING_OVERWRITE);
+	}
 
         if (str == null) {
             str = System.getProperty(LISP_MAPPING_OVERWRITE);
@@ -66,8 +67,9 @@ public class ConfigIni {
 
         String str = null;
 
-        if (context != null)
+        if (context != null) {
             str = context.getProperty(LISP_SMR);
+	}
 
         if (str == null) {
             str = System.getProperty(LISP_SMR);
@@ -91,8 +93,9 @@ public class ConfigIni {
 
         String str = null;
 
-        if (context != null)
+        if (context != null) {
             str = context.getProperty(LISP_ELP_POLICY);
+	}
 
         if (str == null) {
             str = System.getProperty(LISP_ELP_POLICY);
