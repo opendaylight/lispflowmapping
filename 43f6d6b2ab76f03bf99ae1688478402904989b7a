@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_a3ba9a08",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/MappingEntry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-07T18:56:08Z",
+      "side": 1,
+      "message": "Yes :(  I made the changes quickly with Vim, and this is the result.  I need to edit my .vimrc",
+      "parentUuid": "1aa4ed85_23cf8ab2",
+      "revId": "43f6d6b2ab76f03bf99ae1688478402904989b7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_c3c31689",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 1
