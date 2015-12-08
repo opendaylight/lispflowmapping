@@ -35,7 +35,11 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
 
-public class LispNotificationHelper {
+public final class LispNotificationHelper {
+    // Utility class, should not be instantiated
+    private LispNotificationHelper() {
+    }
+
     public static TransportAddress getTransportAddressFromRloc(Rloc rloc) {
         TransportAddressBuilder tab = new TransportAddressBuilder();
         Address address = rloc.getAddress();

@@ -11,7 +11,10 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 
-public class LispAuthenticationUtil {
+public final class LispAuthenticationUtil {
+    // Utility class, should not be instantiated
+    private LispAuthenticationUtil() {
+    }
 
     public static boolean validate(MapRegister mapRegister, String key) {
         short keyId = 0;

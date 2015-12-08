@@ -17,7 +17,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  * @author Florin Coras
  *
  */
-public class MSNotificationInputUtil {
+public final class MSNotificationInputUtil {
+    // Utility class, should not be instantiated
+    private MSNotificationInputUtil() {
+    }
 
     public static MappingChanged toMappingChanged(Mapping input, MappingChange change) {
         return new MappingChangedBuilder().setMappingRecord(input.getMappingRecord())

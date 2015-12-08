@@ -31,7 +31,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  * @author Lorand Jakab
  *
  */
-public class RPCInputConvertorUtil {
+public final class RPCInputConvertorUtil {
+    // Utility class, should not be instantiated
+    private RPCInputConvertorUtil() {
+    }
+
     public static AuthenticationKey toAuthenticationKey(AddKeyInput input) {
         return toAuthenticationKey(input.getEid(), input.getMappingAuthkey());
     }

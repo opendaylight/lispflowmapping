@@ -14,7 +14,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 
-public class MapNotifyBuilderHelper {
+public final class MapNotifyBuilderHelper {
+    // Utility class, should not be instantiated
+    private MapNotifyBuilderHelper() {
+    }
 
     public static void setFromMapRegister(MapNotifyBuilder builder, MapRegister mapRegister) {
         if (builder.getMappingRecordItem() == null) {

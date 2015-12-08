@@ -34,7 +34,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  */
 
 
-public class LispUtil {
+public final class LispUtil {
+    // Utility class, should not be instantiated
+    private LispUtil() {
+    }
 
   //  private static final Logger LOG = LoggerFactory.getLogger(LispUtil.class);
 

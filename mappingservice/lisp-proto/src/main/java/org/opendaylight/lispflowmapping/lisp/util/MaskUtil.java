@@ -27,10 +27,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MaskUtil {
+public final class MaskUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MaskUtil.class);
     private static final short IPV4_MAX_MASK = 32;
     private static final short IPV6_MAX_MASK = 128;
+
+    // Utility class, should not be instantiated
+    private MaskUtil() {
+    }
 
     public static boolean isMaskable(Address address) {
         if (address instanceof Ipv4Prefix || address instanceof Ipv6Prefix || address instanceof SourceDestKey) {

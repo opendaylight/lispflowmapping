@@ -25,7 +25,10 @@ import com.google.common.base.Preconditions;
  * @author Lorand Jakab
  *
  */
-public class LispSimpleAddressStringifier {
+public final class LispSimpleAddressStringifier {
+    // Utility class, should not be instantiated
+    private LispSimpleAddressStringifier() {
+    }
 
     public static String getString(SimpleAddress addr) {
         return getString(Destination.USER, addr);

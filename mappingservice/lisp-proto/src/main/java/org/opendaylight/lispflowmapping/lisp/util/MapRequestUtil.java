@@ -23,7 +23,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
-public class MapRequestUtil {
+public final class MapRequestUtil {
+    // Utility class, should not be instantiated
+    private MapRequestUtil() {
+    }
+
     public static InetAddress selectItrRloc(MapRequest request) {
         if (request.getItrRloc() == null) {
             return null;

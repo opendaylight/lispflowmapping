@@ -12,9 +12,13 @@ import java.util.Map;
 
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 
-public class LispAuthenticationFactory {
+public final class LispAuthenticationFactory {
 
     private static Map<LispKeyIDEnum, ILispAuthentication> keyIDToAuthenticationMap;
+
+    // Class should not be instantiated
+    private LispAuthenticationFactory() {
+    }
 
     private static void initializeMap() {
         keyIDToAuthenticationMap = new HashMap<LispKeyIDEnum, ILispAuthentication>();
