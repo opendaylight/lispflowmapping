@@ -23,7 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 /**
  * This class deals with deserializing map register from udp to the java object.
  */
-public class MapRegisterSerializer {
+public final class MapRegisterSerializer {
 
     private static final MapRegisterSerializer INSTANCE = new MapRegisterSerializer();
 

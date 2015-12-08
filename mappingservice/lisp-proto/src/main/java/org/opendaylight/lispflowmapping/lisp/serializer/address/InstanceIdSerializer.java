@@ -18,7 +18,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.InstanceId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
-public class InstanceIdSerializer extends LcafSerializer {
+public final class InstanceIdSerializer extends LcafSerializer {
 
     private static final int MAX_INSTANCE_ID = 16777216;
     private static final InstanceIdSerializer INSTANCE = new InstanceIdSerializer();

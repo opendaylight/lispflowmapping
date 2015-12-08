@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
-public class DistinguishedNameSerializer extends LispAddressSerializer {
+public final class DistinguishedNameSerializer extends LispAddressSerializer {
 
     private static final DistinguishedNameSerializer INSTANCE = new DistinguishedNameSerializer();
 
