@@ -30,7 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
  * @author Lorand Jakab
  *
  */
-public class Ipv4PrefixSerializer extends LispAddressSerializer {
+public final class Ipv4PrefixSerializer extends LispAddressSerializer {
 
     private static final Ipv4PrefixSerializer INSTANCE = new Ipv4PrefixSerializer();
 

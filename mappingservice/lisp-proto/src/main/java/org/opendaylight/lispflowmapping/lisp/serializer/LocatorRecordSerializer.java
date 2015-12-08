@@ -18,7 +18,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
-public class LocatorRecordSerializer {
+public final class LocatorRecordSerializer {
 
     private static final LocatorRecordSerializer INSTANCE = new LocatorRecordSerializer();
 

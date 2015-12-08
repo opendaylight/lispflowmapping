@@ -23,7 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
-public class MacSerializer extends LispAddressSerializer {
+public final class MacSerializer extends LispAddressSerializer {
 
     private static final MacSerializer INSTANCE = new MacSerializer();
 
