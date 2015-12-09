@@ -22,6 +22,24 @@
       "revId": "ba1fcd80de12f44808aee6a0368842f3415a1637",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_2f444473",
+        "filename": "integrationtest/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-09T14:16:37Z",
+      "side": 1,
+      "message": "Absolutely, unfortunately I missed that when moving the folder, but I should send a separate patch for that, since this is a special merge commit.",
+      "parentUuid": "1aa4ed85_2f6d2405",
+      "revId": "ba1fcd80de12f44808aee6a0368842f3415a1637",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
