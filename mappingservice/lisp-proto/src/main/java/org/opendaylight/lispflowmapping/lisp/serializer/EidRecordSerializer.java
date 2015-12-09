@@ -14,7 +14,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
-public class EidRecordSerializer {
+public final class EidRecordSerializer {
 
     private static final EidRecordSerializer INSTANCE = new EidRecordSerializer();
 

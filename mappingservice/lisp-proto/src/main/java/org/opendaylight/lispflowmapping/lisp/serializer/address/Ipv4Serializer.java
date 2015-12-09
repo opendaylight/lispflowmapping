@@ -29,7 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
  * @author Lorand Jakab
  *
  */
-public class Ipv4Serializer extends LispAddressSerializer {
+public final class Ipv4Serializer extends LispAddressSerializer {
 
     private static final Ipv4Serializer INSTANCE = new Ipv4Serializer();
 

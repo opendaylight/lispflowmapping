@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 /**
  * This class deals with serializing map notify from the java object to udp.
  */
-public class MapNotifySerializer {
+public final class MapNotifySerializer {
 
     private static final MapNotifySerializer INSTANCE = new MapNotifySerializer();
 

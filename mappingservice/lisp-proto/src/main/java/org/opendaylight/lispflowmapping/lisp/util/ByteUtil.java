@@ -10,9 +10,13 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import java.nio.ByteBuffer;
 
-public class ByteUtil {
+public final class ByteUtil {
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    // Utility class, should not be instantiated
+    private ByteUtil() {
+    }
 
     public static int getUnsignedByte(byte[] inBuffer, int pos) {
         return inBuffer[pos] & 0xFF;

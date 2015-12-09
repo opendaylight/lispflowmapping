@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 /**
  * This class deals with serializing map reply from the java object to udp.
  */
-public class MapReplySerializer {
+public final class MapReplySerializer {
 
     private static final MapReplySerializer INSTANCE = new MapReplySerializer();
 

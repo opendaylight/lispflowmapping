@@ -27,7 +27,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  * @author Florin Coras
  *
  */
-public class DSBEInputUtil {
+public final class DSBEInputUtil {
+    // Utility class, should not be instantiated
+    private DSBEInputUtil() {
+    }
+
     public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingRecord record) {
         List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
         return new MappingBuilder().setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))

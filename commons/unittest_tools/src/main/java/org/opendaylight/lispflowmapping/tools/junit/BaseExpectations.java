@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BaseExpectations extends Expectations {
+public abstract class BaseExpectations extends Expectations {
     protected Mockery context;
     protected boolean showAllExpectations;
     private final Synchroniser synchroniser = new Synchroniser();

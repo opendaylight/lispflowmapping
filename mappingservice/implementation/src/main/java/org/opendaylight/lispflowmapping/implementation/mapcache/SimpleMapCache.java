@@ -151,19 +151,19 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(eid);
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
         if (table == null) {
             return;
         }
 
-        table.removeSpecific(eid, SubKeys.RECORD);
+        table.removeSpecific(key, SubKeys.RECORD);
     }
 
-    public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getOrInstantiateVniTable(eid);
-        table.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
+    public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getOrInstantiateVniTable(key);
+        table.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
     }
 
     private MappingAuthkey getAuthKeyLpm(Eid prefix, ILispDAO db) {
@@ -198,12 +198,12 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public void removeAuthenticationKey(Eid eid) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(eid);
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
         if (table == null) {
             return;
         }
-        table.removeSpecific(eid, SubKeys.AUTH_KEY);
+        table.removeSpecific(key, SubKeys.AUTH_KEY);
     }
 
     public String printMappings() {

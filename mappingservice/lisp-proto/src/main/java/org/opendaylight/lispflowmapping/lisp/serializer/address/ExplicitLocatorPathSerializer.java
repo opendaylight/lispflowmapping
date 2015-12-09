@@ -29,7 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
-public class ExplicitLocatorPathSerializer extends LcafSerializer {
+public final class ExplicitLocatorPathSerializer extends LcafSerializer {
 
     private static final ExplicitLocatorPathSerializer INSTANCE = new ExplicitLocatorPathSerializer();
 
@@ -99,8 +99,9 @@ public class ExplicitLocatorPathSerializer extends LcafSerializer {
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, short length, LispAddressSerializerContext ctx) {
+    private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
         List<Hop> hops = new ArrayList<Hop>();
+        short length = lcafLength;
         while (length > 0) {
             byte flags = (byte) buffer.getShort();
             boolean lookup = ByteUtil.extractBit(flags, Flags.LOOKUP);

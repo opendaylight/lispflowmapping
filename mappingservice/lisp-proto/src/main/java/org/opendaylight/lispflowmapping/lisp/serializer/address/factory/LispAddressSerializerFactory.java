@@ -47,8 +47,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
  * @author Lorand Jakab
  *
  */
-public class LispAddressSerializerFactory {
+public final class LispAddressSerializerFactory {
     private static Map<Class<? extends LispAddressFamily>, LispAddressSerializer> addressTypeToSerializerMap;
+
+    // Class should not be instantiated
+    private LispAddressSerializerFactory() {
+    }
 
     private static void initializeMap() {
         addressTypeToSerializerMap = new HashMap<Class<? extends LispAddressFamily>, LispAddressSerializer>();

@@ -7,7 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
-public class NumberUtil {
+public final class NumberUtil {
+    // Utility class, should not be instantiated
+    private NumberUtil() {
+    }
 
     public static int asInt(Integer number) {
         if (number != null) {

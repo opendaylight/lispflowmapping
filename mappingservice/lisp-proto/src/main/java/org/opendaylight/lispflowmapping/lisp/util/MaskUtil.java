@@ -27,10 +27,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MaskUtil {
+public final class MaskUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MaskUtil.class);
     private static final short IPV4_MAX_MASK = 32;
     private static final short IPV6_MAX_MASK = 128;
+
+    // Utility class, should not be instantiated
+    private MaskUtil() {
+    }
 
     public static boolean isMaskable(Address address) {
         if (address instanceof Ipv4Prefix || address instanceof Ipv6Prefix || address instanceof SourceDestKey) {
@@ -92,14 +96,14 @@ public class MaskUtil {
         return eid;
     }
 
-    private static InetAddress normalizeIP(InetAddress address, int mask) throws UnknownHostException {
+    private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
         byte b = (byte) 0xff;
+        int mask = maskLength;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
-            if (mask >= 8)
+            if (mask >= 8) {
                 byteRepresentation.put(i, (byte) (b & byteRepresentation.get(i)));
-
-            else if (mask > 0) {
+            } else if (mask > 0) {
                 byteRepresentation.put(i, (byte) ((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
             } else {
                 byteRepresentation.put(i, (byte) (0 & byteRepresentation.get(i)));

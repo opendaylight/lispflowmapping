@@ -32,7 +32,11 @@ import com.google.common.base.Preconditions;
  * @author Lorand Jakab
  *
  */
-public class InstanceIdentifierUtil {
+public final class InstanceIdentifierUtil {
+    // Utility class, should not be instantiated
+    private InstanceIdentifierUtil() {
+    }
+
     public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(Eid eid) {
         Preconditions.checkNotNull(eid, "Key needs and EID entry!");
 

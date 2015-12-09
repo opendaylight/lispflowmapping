@@ -40,6 +40,10 @@ public final class AddressTypeMap {
     private static Map<Short, Class<? extends LispAddressFamily>> afiToAddressTypeMap;
     private static Map<Short, Class<? extends LispAddressFamily>> lcafToAddressTypeMap;
 
+    // Utility class, should not be instantiated
+    private AddressTypeMap() {
+    }
+
     private static void initializeAfiMap() {
         afiToAddressTypeMap = new HashMap<Short, Class<? extends LispAddressFamily>>();
         afiToAddressTypeMap.put((short) 0, NoAddressAfi.class);

@@ -19,7 +19,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 
-public class SourceDestKeyHelper {
+public final class SourceDestKeyHelper {
+    // Utility class, should not be instantiated
+    private SourceDestKeyHelper() {
+    }
+
     private final static Logger LOG = LoggerFactory.getLogger(SourceDestKeyHelper.class);
     public static Eid getSrc(Eid eid) {
         Address addr = eid.getAddress();

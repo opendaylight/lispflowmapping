@@ -173,32 +173,32 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(eid);
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
         if (table == null) {
             return;
         }
 
-        if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO db = getSDInnerDao(eid, table);
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
-                db.removeSpecific(SourceDestKeyHelper.getSrc(eid),
+                db.removeSpecific(SourceDestKeyHelper.getSrc(key),
                         SubKeys.RECORD);
             }
         } else {
-            table.removeSpecific(eid, SubKeys.RECORD);
+            table.removeSpecific(key, SubKeys.RECORD);
         }
     }
 
-    public void addAuthenticationKey(Eid eid, MappingAuthkey key) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getOrInstantiateVniTable(eid);
+    public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getOrInstantiateVniTable(key);
 
-        if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
-            srcDstDao.put(SourceDestKeyHelper.getSrc(eid), new MappingEntry<>(SubKeys.AUTH_KEY, key));
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
+            srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
         } else {
-            table.put(eid, new MappingEntry<>(SubKeys.AUTH_KEY, key));
+            table.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
         }
     }
 
@@ -242,19 +242,19 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     public void removeAuthenticationKey(Eid eid) {
-        eid = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(eid);
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
         if (table == null) {
             return;
         }
 
-        if (eid.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getSDInnerDao(eid, table);
+        if (key.getAddress() instanceof SourceDestKey) {
+            ILispDAO srcDstDao = getSDInnerDao(key, table);
             if (srcDstDao != null) {
-                srcDstDao.removeSpecific(eid, SubKeys.AUTH_KEY);
+                srcDstDao.removeSpecific(key, SubKeys.AUTH_KEY);
             }
         } else {
-            table.removeSpecific(eid, SubKeys.AUTH_KEY);
+            table.removeSpecific(key, SubKeys.AUTH_KEY);
         }
     }
 
@@ -337,8 +337,8 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public void addData(Eid key, String subKey, Object data) {
-        key = MaskUtil.normalize(key);
+    public void addData(Eid eid, String subKey, Object data) {
+        Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getOrInstantiateVniTable(key);
 
 
@@ -366,8 +366,8 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public void removeData(Eid key, String subKey) {
-        key = MaskUtil.normalize(key);
+    public void removeData(Eid eid, String subKey) {
+        Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
             return;

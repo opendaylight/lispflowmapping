@@ -22,7 +22,11 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 
-public class LispNotificationHelper {
+public final class LispNotificationHelper {
+    // Utility class, should not be instantiated
+    private LispNotificationHelper() {
+    }
+
     public static MapRegister convertMapRegister(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister mapRegister) {
         return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
@@ -57,7 +61,8 @@ public class LispNotificationHelper {
                 .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
 
-    public static IpAddress getIpAddressFromInetAddress(InetAddress inetAddress) {
+    public static IpAddress getIpAddressFromInetAddress(InetAddress address) {
+        InetAddress inetAddress = address;
         if (inetAddress == null) {
             inetAddress = InetAddress.getLoopbackAddress();
         }

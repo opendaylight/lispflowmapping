@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class deals with deserializing map request from udp to the java object.
  */
-public class MapRequestSerializer {
+public final class MapRequestSerializer {
 
     private static final MapRequestSerializer INSTANCE = new MapRequestSerializer();
     protected static final Logger LOG = LoggerFactory.getLogger(MapRequestSerializer.class);

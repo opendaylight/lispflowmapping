@@ -62,7 +62,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
 
-public class LispAddressUtil {
+public final class LispAddressUtil {
     private static Pattern IP4_PATTERN = null;
     private static Pattern IP6_PATTERN = null;
     private static final String ip4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
@@ -74,6 +74,10 @@ public class LispAddressUtil {
         } catch (PatternSyntaxException e) {
         }
       }
+
+    // Utility class, should not be instantiated
+    private LispAddressUtil() {
+    }
 
     public static Class<? extends LispAddressFamily> addressTypeFromSimpleAddress(SimpleAddress address) {
         if (address.getIpAddress() != null) {

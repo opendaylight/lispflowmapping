@@ -72,15 +72,19 @@ public class SubscriberRLOC {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SubscriberRLOC other = (SubscriberRLOC) obj;
-        if (!rloc.equals(other.rloc))
+        if (!rloc.equals(other.rloc)) {
             return false;
+        }
         return true;
     }
 

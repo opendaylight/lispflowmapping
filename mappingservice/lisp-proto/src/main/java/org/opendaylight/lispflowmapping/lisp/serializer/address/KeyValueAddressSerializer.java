@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
-public class KeyValueAddressSerializer extends LcafSerializer {
+public final class KeyValueAddressSerializer extends LcafSerializer {
 
     private static final KeyValueAddressSerializer INSTANCE = new KeyValueAddressSerializer();
 

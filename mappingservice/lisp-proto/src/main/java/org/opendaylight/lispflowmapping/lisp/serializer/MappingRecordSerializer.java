@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 
-public class MappingRecordSerializer {
+public final class MappingRecordSerializer {
 
     private static final MappingRecordSerializer INSTANCE = new MappingRecordSerializer();
 
