@@ -146,12 +146,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDst(eid);
-            subscribers = getSubscribers(dstAddr);
+            Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
             MappingRecord newRecord = new MappingRecordBuilder().setAction(record.getAction())
                     .setAuthoritative(record.isAuthoritative()).setLocatorRecord(record.getLocatorRecord())
                     .setMapVersion(record.getMapVersion()).setRecordTtl(record.getRecordTtl())
                     .setEid(dstAddr).build();
-            handleSmr(newRecord, subscribers, notifyHandler);
+            handleSmr(newRecord, dstSubs, notifyHandler);
         }
     }
 

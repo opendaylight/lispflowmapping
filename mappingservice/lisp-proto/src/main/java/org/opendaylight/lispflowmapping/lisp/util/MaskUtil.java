@@ -96,9 +96,10 @@ public final class MaskUtil {
         return eid;
     }
 
-    private static InetAddress normalizeIP(InetAddress address, int mask) throws UnknownHostException {
+    private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
         byte b = (byte) 0xff;
+        int mask = maskLength;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
             if (mask >= 8) {
                 byteRepresentation.put(i, (byte) (b & byteRepresentation.get(i)));

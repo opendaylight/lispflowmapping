@@ -84,8 +84,9 @@ public final class AfiListSerializer extends LcafSerializer {
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, short length, LispAddressSerializerContext ctx) {
+    private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
         List<SimpleAddress> addresses = new ArrayList<SimpleAddress>();
+        short length = lcafLength;
         while (length > 0) {
             SimpleAddress address = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
             length -= SimpleAddressSerializer.getInstance().getAddressSize(address);

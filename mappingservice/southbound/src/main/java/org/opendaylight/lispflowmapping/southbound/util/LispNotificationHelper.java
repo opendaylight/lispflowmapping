@@ -61,7 +61,8 @@ public final class LispNotificationHelper {
                 .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
 
-    public static IpAddress getIpAddressFromInetAddress(InetAddress inetAddress) {
+    public static IpAddress getIpAddressFromInetAddress(InetAddress address) {
+        InetAddress inetAddress = address;
         if (inetAddress == null) {
             inetAddress = InetAddress.getLoopbackAddress();
         }

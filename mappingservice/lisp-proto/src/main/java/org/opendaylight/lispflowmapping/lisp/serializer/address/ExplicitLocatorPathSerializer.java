@@ -99,8 +99,9 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, short length, LispAddressSerializerContext ctx) {
+    private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
         List<Hop> hops = new ArrayList<Hop>();
+        short length = lcafLength;
         while (length > 0) {
             byte flags = (byte) buffer.getShort();
             boolean lookup = ByteUtil.extractBit(flags, Flags.LOOKUP);

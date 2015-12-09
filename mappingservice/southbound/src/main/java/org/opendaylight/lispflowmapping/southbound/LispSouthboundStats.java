@@ -70,7 +70,7 @@ public class LispSouthboundStats {
         if (value == Long.MAX_VALUE) {
             return 0;
         } else {
-            return ++value;
+            return value + 1;
         }
     }
 
