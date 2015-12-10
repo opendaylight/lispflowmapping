@@ -214,6 +214,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             }
         } catch (SocketException se) {
+            LOG.debug("Caught socket exceptio", se);
         }
         return null;
     }

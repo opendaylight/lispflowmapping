@@ -37,7 +37,7 @@ public class LispMACAuthentication implements ILispAuthentication {
             authenticationLength = Mac.getInstance(algorithm).getMacLength();
             tempAuthenticationData = new byte[authenticationLength];
         } catch (NoSuchAlgorithmException e) {
-            LOG.warn("No such MAC algorithm" + algorithm);
+            LOG.warn("No such MAC algorithm {}", algorithm, e);
         }
     }
 
@@ -66,9 +66,9 @@ public class LispMACAuthentication implements ILispAuthentication {
 
             return mac.doFinal(data);
         } catch (InvalidKeyException e) {
-            LOG.warn("Invalid password" + key);
+            LOG.warn("Invalid password {}", key, e);
         } catch (NoSuchAlgorithmException e) {
-            LOG.warn("No such MAC algorithm" + algorithm);
+            LOG.warn("No such MAC algorithm {}", algorithm, e);
         }
         return null;
     }

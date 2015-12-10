@@ -157,7 +157,7 @@ public final class MapRequestSerializer {
                     builder.setMapReply(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.MapReplyBuilder().setMappingRecord(
                             MappingRecordSerializer.getInstance().deserialize(requestBuffer)).build()).build();
                 } catch (RuntimeException re) {
-                    LOG.warn("couldn't deserialize map reply encapsulated in map request. {}", re.getMessage());
+                    LOG.warn("Couldn't deserialize Map-Reply encapsulated in Map-Request", re);
                 }
             }
             return builder.build();

@@ -138,6 +138,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
                     threadSocket.receive(packet);
                     LOG.trace("Received a packet!");
                 } catch (SocketTimeoutException ste) {
+                    LOG.trace("Timed out waiting on socket", ste);
                     continue;
                 } catch (IOException e) {
                     LOG.warn("IO Exception while trying to recieve packet", e);

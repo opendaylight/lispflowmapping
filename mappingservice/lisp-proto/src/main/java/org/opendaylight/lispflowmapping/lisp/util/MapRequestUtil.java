@@ -22,8 +22,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MapRequestUtil {
+    protected static final Logger LOG = LoggerFactory.getLogger(MapRequestUtil.class);
+
     // Utility class, should not be instantiated
     private MapRequestUtil() {
     }
@@ -39,6 +43,7 @@ public final class MapRequestUtil {
                 try {
                     selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4().getValue());
                 } catch (UnknownHostException e) {
+                    LOG.debug("Unknown host {}", ((Ipv4) addr).getIpv4().getValue(), e);
                 }
                 break;
             }
@@ -46,6 +51,7 @@ public final class MapRequestUtil {
                 try {
                     selectedItrRloc = InetAddress.getByName(((Ipv6) addr).getIpv6().getValue());
                 } catch (UnknownHostException e) {
+                    LOG.debug("Unknown host {}", ((Ipv6) addr).getIpv6().getValue(), e);
                 }
                 break;
             }

@@ -157,7 +157,7 @@ public class DataStoreBackEnd {
             submitFuture.checkedGet();
             ret = true;
         } catch (TransactionCommitFailedException e) {
-            LOG.error("{} : {}", errMsg, e.getMessage());
+            LOG.error(errMsg, e);
             ret = false;
         }
         return ret;
@@ -193,7 +193,7 @@ public class DataStoreBackEnd {
             submitFuture.checkedGet();
             ret = true;
         } catch (TransactionCommitFailedException e) {
-            LOG.error("{} : {}", errMsg, e.getMessage());
+            LOG.error(errMsg, e);
             ret = false;
         }
         return ret;

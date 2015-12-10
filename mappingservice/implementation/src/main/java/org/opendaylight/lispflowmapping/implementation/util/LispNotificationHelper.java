@@ -34,8 +34,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LispNotificationHelper {
+    protected static final Logger LOG = LoggerFactory.getLogger(LispNotificationHelper.class);
+
     // Utility class, should not be instantiated
     private LispNotificationHelper() {
     }
@@ -79,6 +83,7 @@ public final class LispNotificationHelper {
             InetAddress address = InetAddress.getByName(IPAddress);
             return address;
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", IPAddress, e);
             return null;
         }
     }

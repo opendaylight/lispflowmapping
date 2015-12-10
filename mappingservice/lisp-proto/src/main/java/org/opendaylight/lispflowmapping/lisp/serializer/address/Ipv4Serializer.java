@@ -24,12 +24,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Lorand Jakab
  *
  */
 public final class Ipv4Serializer extends LispAddressSerializer {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(Ipv4Serializer.class);
 
     private static final Ipv4Serializer INSTANCE = new Ipv4Serializer();
 
@@ -62,6 +66,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
         try {
             buffer.put(Inet4Address.getByName(address.getIpv4().getValue()).getAddress());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", address.getIpv4().getValue(), e);
         }
     }
 
@@ -70,6 +75,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
         try {
             buffer.put(Inet4Address.getByName(address.getIpAddress().getIpv4Address().getValue()).getAddress());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", address.getIpAddress().getIpv4Address().getValue(), e);
         }
     }
 
@@ -103,6 +109,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
         try {
             address = InetAddress.getByAddress(ipBuffer);
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", ipBuffer, e);
         }
         return new Ipv4Address(address.getHostAddress());
     }

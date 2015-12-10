@@ -25,12 +25,16 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Lorand Jakab
  *
  */
 public final class Ipv4PrefixSerializer extends LispAddressSerializer {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(Ipv4PrefixSerializer.class);
 
     private static final Ipv4PrefixSerializer INSTANCE = new Ipv4PrefixSerializer();
 
@@ -59,10 +63,12 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        Ipv4Prefix address = (Ipv4Prefix) lispAddress.getAddress();
+        Ipv4Prefix prefix = (Ipv4Prefix) lispAddress.getAddress();
+        String address = MaskUtil.getAddressStringForIpv4Prefix(prefix);
         try {
-            buffer.put(Inet4Address.getByName(MaskUtil.getAddressStringForIpv4Prefix(address)).getAddress());
+            buffer.put(Inet4Address.getByName(address).getAddress());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", address, e);
         }
     }
 
@@ -101,6 +107,7 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
         try {
             address = InetAddress.getByAddress(ipBuffer);
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", ipBuffer, e);
         }
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix(
                 address.getHostAddress() + "/" + ctx.getMaskLen());
