@@ -11,10 +11,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
@@ -42,7 +42,7 @@ public final class MapReplySerializer {
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
 
-        replyBuffer.put((byte) ((LispMessageEnum.MapReply.getValue() << 4) | //
+        replyBuffer.put((byte) ((MessageType.MapReply.getIntValue() << 4) | //
                 (BooleanUtils.isTrue(mapReply.isProbe()) ? Flags.PROBE : 0x00) | //
                 (BooleanUtils.isTrue(mapReply.isEchoNonceEnabled()) ? Flags.ECHO_NONCE_ENABLED : 0x00)));
 
