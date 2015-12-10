@@ -27,7 +27,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
@@ -44,6 +43,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -383,7 +383,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Ignore
     public void mapNotify__VerifyBasicFields() throws Exception {
         byte registerType = mapRegisterPacket[0];
-        assertEquals(LispMessageEnum.MapRegister.getValue(), registerType >> 4);
+        assertEquals(MessageType.MapRegister.getIntValue(), registerType >> 4);
 
         stubMapRegister(true);
 
@@ -391,7 +391,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         assertEquals(mapRegisterPacket.length, result.length);
 
-        byte expectedType = (byte) (LispMessageEnum.MapNotify.getValue() << 4);
+        byte expectedType = (byte) (MessageType.MapNotify.getIntValue() << 4);
         assertHexEquals(expectedType, result[0]);
         assertHexEquals((byte) 0x00, result[1]);
         assertHexEquals((byte) 0x00, result[2]);

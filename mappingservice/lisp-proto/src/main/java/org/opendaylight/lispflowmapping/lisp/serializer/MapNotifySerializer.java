@@ -11,10 +11,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessageEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
@@ -48,7 +48,7 @@ public final class MapNotifySerializer {
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-        replyBuffer.put((byte) (LispMessageEnum.MapNotify.getValue() << 4));
+        replyBuffer.put((byte) (MessageType.MapNotify.getIntValue() << 4));
         replyBuffer.position(replyBuffer.position() + Length.RES);
         if (mapNotify.getMappingRecordItem() != null) {
             replyBuffer.put((byte) mapNotify.getMappingRecordItem().size());
