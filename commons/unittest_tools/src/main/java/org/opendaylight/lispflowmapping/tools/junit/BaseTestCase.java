@@ -20,12 +20,17 @@ import org.hamcrest.Description;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseTestCase extends BaseExpectations {
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseTestCase.class);
+
     protected InetAddress asInet(int intValue) {
         try {
             return InetAddress.getByAddress(ByteBuffer.allocate(4).putInt(intValue).array());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", ByteBuffer.allocate(4).putInt(intValue).array(), e);
             fail("");
         }
         return null;
@@ -109,6 +114,7 @@ public abstract class BaseTestCase extends BaseExpectations {
                 field.set(testedObject, fieldData.value);
                 return fieldData.value;
             } catch (Exception e) {
+                LOG.debug("Caught generic exception", e);
                 fail(e.getMessage());
             }
         }

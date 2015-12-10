@@ -144,7 +144,9 @@ public abstract class BaseExpectations extends Expectations {
             try {
                 return clazz.getMethod(methodName, Invocation.class);
             } catch (SecurityException e) {
+                LOG.debug("Catched SecurityException", e);
             } catch (NoSuchMethodException e) {
+                LOG.debug("Catched NoSuchMethodException", e);
             }
 
             return findMethod(clazz.getSuperclass());
@@ -387,6 +389,7 @@ public abstract class BaseExpectations extends Expectations {
         try {
             return currentBuilder();
         } catch (IllegalStateException e) {
+            LOG.debug("Catched IllegalStateException", e);
             return null;
         }
     }

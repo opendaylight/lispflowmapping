@@ -25,12 +25,16 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Lorand Jakab
  *
  */
 public final class Ipv6PrefixSerializer extends LispAddressSerializer {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(Ipv6PrefixSerializer.class);
 
     private static final Ipv6PrefixSerializer INSTANCE = new Ipv6PrefixSerializer();
 
@@ -59,10 +63,12 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        Ipv6Prefix address = (Ipv6Prefix) lispAddress.getAddress();
+        Ipv6Prefix prefix = (Ipv6Prefix) lispAddress.getAddress();
+        String address = MaskUtil.getAddressStringForIpv6Prefix(prefix);
         try {
-            buffer.put(Inet6Address.getByName(MaskUtil.getAddressStringForIpv6Prefix(address)).getAddress());
+            buffer.put(Inet6Address.getByName(address).getAddress());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", address, e);
         }
     }
 
@@ -71,6 +77,7 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
         try {
             buffer.put(Inet6Address.getByName(prefix.getIpv6Prefix().getValue()).getAddress());
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", prefix.getIpv6Prefix().getValue(), e);
         }
     }
 
@@ -101,6 +108,7 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
         try {
             address = InetAddress.getByAddress(ipBuffer);
         } catch (UnknownHostException e) {
+            LOG.debug("Unknown host {}", ipBuffer, e);
         }
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Prefix(
                 address.getHostAddress() + "/" + ctx.getMaskLen());

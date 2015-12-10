@@ -61,8 +61,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LispAddressUtil {
+    protected static final Logger LOG = LoggerFactory.getLogger(LispAddressUtil.class);
+
     private static Pattern IP4_PATTERN = null;
     private static Pattern IP6_PATTERN = null;
     private static final String ip4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
@@ -72,6 +76,7 @@ public final class LispAddressUtil {
           IP4_PATTERN = Pattern.compile(ip4Pattern, Pattern.CASE_INSENSITIVE);
           IP6_PATTERN = Pattern.compile(ip6Pattern, Pattern.CASE_INSENSITIVE);
         } catch (PatternSyntaxException e) {
+            LOG.debug("Caught pattern syntax exception", e);
         }
       }
 
