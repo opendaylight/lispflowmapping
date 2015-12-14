@@ -36,53 +36,53 @@ public class LispAddressSerializer {
     }
 
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected void serializeData(ByteBuffer buffer, SimpleAddress lispAddress) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected void serializeData(ByteBuffer buffer, IpPrefix lispAddress) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected SimpleAddress deserializeSimpleAddressData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected short getAfi() {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected byte getLcafType() {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected short getLcafLength(LispAddress lispAddress) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected int getAddressSize(SimpleAddress address) {
-        throw new RuntimeException("Unimplemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     protected InstanceIdType getVni(LispAddressSerializerContext ctx) {
