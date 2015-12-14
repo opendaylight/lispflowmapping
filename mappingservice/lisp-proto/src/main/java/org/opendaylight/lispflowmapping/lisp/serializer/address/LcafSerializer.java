@@ -43,7 +43,7 @@ public class LcafSerializer extends LispAddressSerializer {
     }
 
     protected short getLcafLength(LispAddress lispAddress) {
-        throw new RuntimeException("Not implemented");
+        throw new LispSerializationException("Unimplemented method");
     }
 
     @Override
