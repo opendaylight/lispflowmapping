@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_83aadfd2",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-15T15:01:33Z",
+      "side": 1,
+      "message": "Because these objects are immutable this means that periodic map-registers will result in not only registration subkey updates but in whole mapping updates in the map-cache, even when the mapping record did not change. We deem this acceptable?",
+      "range": {
+        "startLine": 133,
+        "startChar": 12,
+        "endLine": 133,
+        "endChar": 28
+      },
+      "revId": "1328ed200a9e1d347b12ec542b71fee0e2f0271c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
