@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -16,6 +17,7 @@ import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 
@@ -81,6 +83,7 @@ public final class MapNotifySerializer {
     public MapNotify deserialize(ByteBuffer notifyBuffer) {
         try {
             MapNotifyBuilder builder = new MapNotifyBuilder();
+            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
 
             byte typeAndFlags = notifyBuffer.get();
             boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
@@ -96,20 +99,30 @@ public final class MapNotifySerializer {
             notifyBuffer.get(authenticationData);
             builder.setAuthenticationData(authenticationData);
 
-            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-            for (int i = 0; i < recordCount; i++) {
-                builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                        (MappingRecordSerializer.getInstance().deserialize(notifyBuffer))).build());
-            }
-
             if (xtrSiteIdPresent) {
+                List<MappingRecordBuilder> mrbs = new ArrayList<MappingRecordBuilder>();
+                for (int i = 0; i < recordCount; i++) {
+                    mrbs.add(MappingRecordSerializer.getInstance().deserializeToBuilder(notifyBuffer));
+                }
                 byte[] xtrId  = new byte[MapRegisterSerializer.Length.XTRID_SIZE];
                 notifyBuffer.get(xtrId);
                 byte[] siteId = new byte[MapRegisterSerializer.Length.SITEID_SIZE];
                 notifyBuffer.get(siteId);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);
+                for (MappingRecordBuilder mrb : mrbs) {
+                    mrb.setXtrId(xtrId);
+                    mrb.setSiteId(siteId);
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                            mrb.build()).build());
+                }
+            } else {
+                for (int i = 0; i < recordCount; i++) {
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                            MappingRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
+                }
             }
+
             notifyBuffer.limit(notifyBuffer.position());
             return builder.build();
         } catch (RuntimeException re) {
