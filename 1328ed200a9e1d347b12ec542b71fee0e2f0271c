@@ -22,6 +22,24 @@
       "revId": "1328ed200a9e1d347b12ec542b71fee0e2f0271c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_e7babee0",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-15T18:03:05Z",
+      "side": 1,
+      "message": "My thinking is that when merging is disabled and we overwrite, we use the existing Subkey.REGDATE as the canonical information source for registration updates and ignore this field. When merging is in use, we just overwrite on mapping updates. I agree the trade-off is debatable, so we can discuss this further in a meeting.",
+      "parentUuid": "1aa4ed85_83aadfd2",
+      "revId": "1328ed200a9e1d347b12ec542b71fee0e2f0271c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
