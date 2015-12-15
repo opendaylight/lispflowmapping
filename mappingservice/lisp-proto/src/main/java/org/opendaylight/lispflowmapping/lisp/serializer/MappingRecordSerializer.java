@@ -34,6 +34,10 @@ public final class MappingRecordSerializer {
     }
 
     public MappingRecord deserialize(ByteBuffer buffer) {
+        return deserializeToBuilder(buffer).build();
+    }
+
+        public MappingRecordBuilder deserializeToBuilder(ByteBuffer buffer) {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
         byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
@@ -56,7 +60,9 @@ public final class MappingRecordSerializer {
             builder.getLocatorRecord().add(LocatorRecordSerializer.getInstance().deserialize(buffer));
         }
 
-        return builder.build();
+        builder.setTimestamp(System.currentTimeMillis());
+
+        return builder;
     }
 
     public void serialize(ByteBuffer replyBuffer, MappingRecord record) {

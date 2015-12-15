@@ -90,32 +90,51 @@ module odl-lisp-proto {
 
     grouping mapping-record-container {
         container mapping-record {
-	        leaf recordTtl {
-	            type int32;
-	        }
-	        leaf maskLength {
-	            type uint8;
-	        }
-	        leaf mapVersion {
-	            type int16;
-	        }
-	        leaf action {
-	            type enumeration {
-	                enum NoAction;
-	                enum NativelyForward;
-	                enum SendMapRequest;
-	                enum Drop;
-	            }
-	        }
-	        leaf authoritative {
-	            type boolean;
-	        }
-	        // EID prefix
-	        uses eid-container;
-	
-	        // locator record list
-	        uses LocatorRecords;
-	    }
+            leaf recordTtl {
+                type int32;
+            }
+            leaf maskLength {
+                type uint8;
+            }
+            leaf mapVersion {
+                type int16;
+            }
+            leaf action {
+                type enumeration {
+                    enum NoAction;
+                    enum NativelyForward;
+                    enum SendMapRequest;
+                    enum Drop;
+                }
+            }
+            leaf authoritative {
+                type boolean;
+            }
+            // EID prefix
+            uses eid-container;
+
+            // locator record list
+            uses LocatorRecords;
+
+            leaf xtr-id {
+                description "128 bit xTR identifier";
+                type binary {
+                    length "16";
+                }
+            }
+
+            leaf site-id {
+                description "64 bit site identifier";
+                type binary {
+                    length "8";
+                }
+            }
+
+            leaf timestamp {
+                description "Milliseconds since January 1, 1970, 00:00:00 GMT";
+                type int64;
+            }
+        }
     }
 
     grouping mapping-record-list {
@@ -130,10 +149,14 @@ module odl-lisp-proto {
 
     grouping xtrSiteId {
         leaf xtrId {
-            type binary;
+            type binary {
+                length "16";
+            }
         }
         leaf siteId {
-            type binary;
+            type binary {
+                length "8";
+            }
         }
     }
 
