@@ -173,6 +173,11 @@ module ietf-lisp-address-types {
     description
       "Encapsulation Format LCAF type.";
   }
+  identity service-path-lcaf {
+    base lcaf;
+    description
+      "Service Path LCAF type.";
+  }
   typedef instance-id-type {
     type uint32 {
       range "0..16777215";
