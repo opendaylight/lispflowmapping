@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 
 import com.google.common.base.Preconditions;
 
@@ -126,6 +127,9 @@ public class LispAddressStringifier {
         } else if (addr instanceof KeyValueAddress) {
             prefix = "kv" + PREFIX_SEPARATOR;
             address = getStringFromKeyValueAddress(dst, (KeyValueAddress) addr);
+        } else if (addr instanceof ServicePath) {
+            prefix = "sp" + PREFIX_SEPARATOR;
+            address = getStringFromServicePath(dst, (ServicePath) addr);
         }
 
         if (dst == Destination.USER) {
@@ -278,6 +282,14 @@ public class LispAddressStringifier {
     protected static String getStringFromMac(Destination dst, Mac addr) {
         // AFI = 16389; MAC
         return addr.getMac().getValue();
+    }
+
+    protected static String getStringFromServicePath(Destination dst, ServicePath addr) {
+        // AFI = 16387; LCAF http://tools.ietf.org/html/draft-ermagan-lisp-nsh-00
+        // Example rendering:
+        //     42(3)
+        return getPrefixString(dst, new String(addr.getServicePath().getServicePathId().getValue() + "("
+                + addr.getServicePath().getServiceIndex() + ")"));
     }
 
 }
