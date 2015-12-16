@@ -80,11 +80,6 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-core</artifactId>
-        <version>${hamcrest.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.jmock</groupId>
         <artifactId>jmock</artifactId>
         <version>2.6.0</version>
