@@ -19,6 +19,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,12 +63,32 @@ public class SimpleMapCache implements IMapCache {
         return table;
     }
 
+    private ILispDAO getXtrIdTable(Eid eid, ILispDAO dao) {
+        return (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+    }
+
+    private ILispDAO getOrInstantiateXtrIdTable(Eid eid, ILispDAO dao) {
+        ILispDAO table = (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+        if (table == null) {
+            table = dao.putNestedTable(eid, SubKeys.XTRID_RECORDS);
+        }
+        return table;
+    }
+
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
         table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+
+        if (!shouldOverwrite && value instanceof MappingRecord) {
+            MappingRecord record = (MappingRecord) value;
+            if (record.getXtrId() != null) {
+                ILispDAO xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
+                xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
+            }
+        }
     }
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
@@ -158,6 +179,13 @@ public class SimpleMapCache implements IMapCache {
         }
 
         table.removeSpecific(key, SubKeys.RECORD);
+
+        if (!overwrite) {
+            ILispDAO xtrIdTable = getXtrIdTable(key, table);
+            if (xtrIdTable != null) {
+                xtrIdTable.removeSpecific(key, SubKeys.RECORD);
+            }
+        }
     }
 
     public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
