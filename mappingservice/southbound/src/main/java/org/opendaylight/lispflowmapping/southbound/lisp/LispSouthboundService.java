@@ -62,19 +62,19 @@ public class LispSouthboundService implements ILispSouthboundService {
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
         handleStats(type);
         Object lispType = MessageType.forValue(type);
-        if (lispType == MessageType.EncapsulatedControlMessage) {
+        if (lispType.equals(MessageType.EncapsulatedControlMessage)) {
             LOG.trace("Received packet of type Encapsulated Control Message");
             handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
-        } else if (lispType == MessageType.MapRequest) {
+        } else if (lispType.equals(MessageType.MapRequest)) {
             LOG.trace("Received packet of type Map-Request");
             handleMapRequest(inBuffer, packet.getPort());
-        } else if (lispType == MessageType.MapRegister) {
+        } else if (lispType.equals(MessageType.MapRegister)) {
             LOG.trace("Received packet of type Map-Register");
             handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
-        } else if (lispType == MessageType.MapNotify) {
+        } else if (lispType.equals(MessageType.MapNotify)) {
             LOG.trace("Received packet of type Map-Notify");
             handleMapNotify(inBuffer, packet.getAddress(), packet.getPort());
-        } else if (lispType == MessageType.MapReply) {
+        } else if (lispType.equals(MessageType.MapReply)) {
             LOG.trace("Received packet of type Map-Reply");
             handleMapReply(inBuffer, packet.getAddress(), packet.getPort());
         } else {

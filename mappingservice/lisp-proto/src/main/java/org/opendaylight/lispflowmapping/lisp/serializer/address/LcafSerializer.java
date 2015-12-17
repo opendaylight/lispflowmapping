@@ -88,7 +88,7 @@ public class LcafSerializer extends LispAddressSerializer {
         }
         // Reset the mask context here, since the general mask length field in mapping records doesn't apply to LCAF
         // address types; except for Instance ID, since we don't store it as an LCAF
-        if (ctx != null && addressType != InstanceIdLcaf.class) {
+        if (ctx != null && !addressType.equals(InstanceIdLcaf.class)) {
             ctx.setMaskLen(LispAddressSerializerContext.MASK_LEN_MISSING);
         }
         return serializer.deserializeLcafEidData(buffer, res2, length, ctx);

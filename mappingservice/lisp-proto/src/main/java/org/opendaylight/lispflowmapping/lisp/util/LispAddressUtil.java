@@ -267,7 +267,7 @@ public final class LispAddressUtil {
     }
 
     public static Eid toIpPrefixEid(IpAddress addr, int vni) {
-        int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
+        int mask = addressTypeFromIpAddress(addr).equals(Ipv4Afi.class) ? 32 : 128;
         IpPrefix prefix = asIpPrefix(addr.getValue().toString(), mask);
         return toEid(prefix, vni);
     }

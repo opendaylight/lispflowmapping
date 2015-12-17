@@ -41,10 +41,10 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
         Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
-        if (lispType == MessageType.MapRequest) {
+        if (lispType.equals(MessageType.MapRequest)) {
             LOG.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer);
-        } else if (lispType ==  MessageType.MapReply){
+        } else if (lispType.equals(MessageType.MapReply)) {
             LOG.trace("Received packet of type MapReply for xTR");
             handleMapReply(inBuffer);
         } else {
