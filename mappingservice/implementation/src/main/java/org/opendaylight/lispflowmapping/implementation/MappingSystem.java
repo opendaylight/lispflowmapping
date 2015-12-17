@@ -93,7 +93,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     public void addMapping(MappingOrigin origin, Eid key, Object value) {
-        tableMap.get(origin).addMapping(key, value, overwrite);
+        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true);
     }
 
     public void updateMappingRegistration(MappingOrigin origin, Eid key) {
@@ -128,7 +128,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).removeMapping(key, overwrite);
+        tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
         if (notificationService) {
             // TODO
         }
