@@ -15,6 +15,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
@@ -34,7 +35,8 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(Eid key, Object data, boolean shouldOverwrite) {
+    public void addMapping(Eid eid, Object data, boolean shouldOverwrite) {
+        Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));
     }
@@ -44,21 +46,25 @@ public class FlatMapCache implements IMapCache {
         if (dstKey == null) {
             return null;
         }
-        return dao.getSpecific(dstKey, SubKeys.RECORD);
+        Eid key = MaskUtil.normalize(dstKey);
+        return dao.getSpecific(key, SubKeys.RECORD);
     }
 
     @Override
-    public void removeMapping(Eid key, boolean overwrite) {
+    public void removeMapping(Eid eid, boolean overwrite) {
+        Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
     }
 
     @Override
-    public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
+    public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
+        Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
     }
 
     @Override
-    public MappingAuthkey getAuthenticationKey(Eid key) {
+    public MappingAuthkey getAuthenticationKey(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
         Object data = dao.getSpecific(key, SubKeys.AUTH_KEY);
         if (data instanceof MappingAuthkey) {
             return (MappingAuthkey) data;
@@ -68,29 +74,34 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void removeAuthenticationKey(Eid key) {
+    public void removeAuthenticationKey(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.AUTH_KEY);
     }
 
     @Override
-    public void updateMappingRegistration(Eid key) {
+    public void updateMappingRegistration(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
         if (dao.get(key) != null) {
             dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         }
     }
 
     @Override
-    public void addData(Eid key, String subKey, Object data) {
+    public void addData(Eid eid, String subKey, Object data) {
+        Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(subKey, data));
     }
 
     @Override
-    public Object getData(Eid key, String subKey) {
+    public Object getData(Eid eid, String subKey) {
+        Eid key = MaskUtil.normalize(eid);
         return dao.getSpecific(key, subKey);
     }
 
     @Override
-    public void removeData(Eid key, String subKey) {
+    public void removeData(Eid eid, String subKey) {
+        Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, subKey);
     }
 

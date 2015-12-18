@@ -93,20 +93,21 @@ public class SimpleMapCache implements IMapCache {
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private  Map<String, ?> getDaoEntryBest(Eid key, ILispDAO dao) {
-        if (MaskUtil.isMaskable(key.getAddress())) {
-            Eid lookupKey;
-            short mask = MaskUtil.getMaskForAddress(key.getAddress());
+    private  Map<String, Object> getDaoEntryBest(Eid eid, ILispDAO dao) {
+        Eid key;
+        if (MaskUtil.isMaskable(eid.getAddress())) {
+            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
             while (mask > 0) {
-                lookupKey = MaskUtil.normalize(key, mask);
+                key = MaskUtil.normalize(eid, mask);
                 mask--;
-                Map<String, ?> entry = dao.get(lookupKey);
+                Map<String, Object> entry = dao.get(key);
                 if (entry != null) {
                     return entry;
                 }
             }
             return null;
         } else {
+            key = MaskUtil.normalize(eid);
             return dao.get(key);
         }
     }
@@ -215,7 +216,8 @@ public class SimpleMapCache implements IMapCache {
         if (MaskUtil.isMaskable(eid.getAddress())) {
             return getAuthKeyLpm(eid, table);
         } else {
-            Object password = table.getSpecific(eid, SubKeys.AUTH_KEY);
+            Eid key = MaskUtil.normalize(eid);
+            Object password = table.getSpecific(key, SubKeys.AUTH_KEY);
             if (password != null && password instanceof MappingAuthkey) {
                 return (MappingAuthkey) password;
             } else {
@@ -274,39 +276,41 @@ public class SimpleMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid key) {
-        ILispDAO table = getVniTable(key);
+    public void updateMappingRegistration(Eid eid) {
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
-        Map<String, ?> daoEntry = getDaoEntryBest(key, table);
+        Map<String, Object> daoEntry = getDaoEntryBest(eid, table);
         if (daoEntry != null) {
-            table.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+            daoEntry.put(SubKeys.REGDATE, new Date(System.currentTimeMillis()));
         }
     }
 
     @Override
-    public void addData(Eid key, String subKey, Object data) {
-        Eid normKey = MaskUtil.normalize(key);
-        ILispDAO table = getOrInstantiateVniTable(normKey);
-        table.put(normKey, new MappingEntry<>(subKey, data));
+    public void addData(Eid eid, String subKey, Object data) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getOrInstantiateVniTable(key);
+        table.put(key, new MappingEntry<>(subKey, data));
     }
 
     @Override
-    public Object getData(Eid key, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(key);
+    public Object getData(Eid eid, String subKey) {
+        ILispDAO table = getOrInstantiateVniTable(eid);
         if (table == null) {
             return null;
         }
+        Eid key = MaskUtil.normalize(eid);
         return table.getSpecific(key, subKey);
     }
 
     @Override
-    public void removeData(Eid key, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(key);
+    public void removeData(Eid eid, String subKey) {
+        ILispDAO table = getOrInstantiateVniTable(eid);
         if (table == null) {
             return;
         }
+        Eid key = MaskUtil.normalize(eid);
         table.removeSpecific(key, subKey);
     }
 }

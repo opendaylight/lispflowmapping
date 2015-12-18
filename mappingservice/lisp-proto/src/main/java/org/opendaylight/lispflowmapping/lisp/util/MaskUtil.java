@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
@@ -89,6 +90,10 @@ public final class MaskUtil {
             } else if (address instanceof InstanceId) {
                 // TODO - not absolutely necessary, but should be implemented
                 return eid;
+            } else if (address instanceof ServicePath) {
+                // Build new Service Path eid with service index set to 0
+                long spi = ((ServicePath) address).getServicePath().getServicePathId().getValue();
+                return LispAddressUtil.asServicePathEid(0, spi, (short)0);
             }
         } catch (UnknownHostException e) {
             LOG.trace("Failed to normalize eid {}: {}", eid, ExceptionUtils.getStackTrace(e));

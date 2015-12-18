@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -20,7 +21,19 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
@@ -100,6 +113,46 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).updateMappingRegistration(key);
     }
 
+    private MappingRecord updateServicePathMappingRecord(MappingRecord mapping, Eid eid) {
+        // keep properties of original record
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mapping);
+        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+
+        // there should only be one locator record
+        if (mapping.getLocatorRecord().size() != 1) {
+            LOG.warn("MappingRecord associated to ServicePath EID has more than one locator!");
+            return mapping;
+        }
+
+        LocatorRecord locatorRecord = mapping.getLocatorRecord().get(0);
+        long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex();
+        int index = 255 - (int) serviceIndex;
+        Rloc rloc = locatorRecord.getRloc();
+        if (rloc.getAddress() instanceof Ipv4 || rloc.getAddress() instanceof Ipv6) {
+            if (index != 0) {
+                LOG.warn("Service Index should be 255 for simple IP RLOCs!");
+            }
+            return mapping;
+        } else if (rloc.getAddress() instanceof ExplicitLocatorPath) {
+            ExplicitLocatorPath elp = (ExplicitLocatorPath) rloc.getAddress();
+            List<Hop> hops = elp.getExplicitLocatorPath().getHop();
+
+            if (index < 0 || index > hops.size())  {
+                LOG.warn("Service Index out of bounds!");
+                return mapping;
+            }
+
+            SimpleAddress nextHop = hops.get(index).getAddress();
+            LocatorRecordBuilder lrb = new LocatorRecordBuilder(locatorRecord);
+            lrb.setRloc(LispAddressUtil.toRloc(nextHop));
+            recordBuilder.getLocatorRecord().add(lrb.build());
+            return recordBuilder.build();
+        } else {
+            LOG.warn("Nothing to do with ServicePath mapping record");
+            return mapping;
+        }
+    }
+
     @Override
     public Object getMapping(Eid src, Eid dst) {
         // NOTE: what follows is just a simple implementation of a lookup logic, it SHOULD be subject to future
@@ -113,6 +166,9 @@ public class MappingSystem implements IMappingSystem {
             return smc.getMapping(src, dst);
         }
 
+        if (dst.getAddress() instanceof ServicePath) {
+            return updateServicePathMappingRecord((MappingRecord)mapping, dst);
+        }
         return mapping;
     }
 

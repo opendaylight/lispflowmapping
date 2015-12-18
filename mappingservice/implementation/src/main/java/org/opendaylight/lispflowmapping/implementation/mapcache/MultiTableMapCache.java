@@ -82,8 +82,8 @@ public class MultiTableMapCache implements IMapCache {
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
     private Map<String, ?> getDaoEntryBest(Eid eid, ILispDAO dao) {
+        Eid key;
         if (MaskUtil.isMaskable(eid.getAddress())) {
-            Eid key;
             short mask = MaskUtil.getMaskForAddress(eid.getAddress());
             while (mask > 0) {
                 key = MaskUtil.normalize(eid, mask);
@@ -95,9 +95,10 @@ public class MultiTableMapCache implements IMapCache {
             }
             return null;
         } else {
-            Map<String, ?> entry = dao.get(eid);
+            key = MaskUtil.normalize(eid);
+            Map<String, ?> entry = dao.get(key);
             if (entry != null) {
-                return dao.get(eid);
+                return dao.get(key);
             } else {
                 return null;
             }
@@ -231,7 +232,8 @@ public class MultiTableMapCache implements IMapCache {
             }
             return null;
         } else {
-            Object password = table.getSpecific(eid, SubKeys.AUTH_KEY);
+            Eid key = MaskUtil.normalize(eid);
+            Object password = table.getSpecific(key, SubKeys.AUTH_KEY);
             if (password != null && password instanceof MappingAuthkey) {
                 return (MappingAuthkey) password;
             } else {
@@ -341,7 +343,6 @@ public class MultiTableMapCache implements IMapCache {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getOrInstantiateVniTable(key);
 
-
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
             srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<Object>(subKey, data));
@@ -351,7 +352,8 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public Object getData(Eid key, String subKey) {
+    public Object getData(Eid eid, String subKey) {
+        Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
             return null;
