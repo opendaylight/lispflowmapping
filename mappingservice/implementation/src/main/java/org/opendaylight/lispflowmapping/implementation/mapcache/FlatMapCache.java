@@ -42,7 +42,7 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcKey, Eid dstKey) {
+    public Object getMapping(Eid srcKey, Eid dstKey, boolean merge) {
         if (dstKey == null) {
             return null;
         }

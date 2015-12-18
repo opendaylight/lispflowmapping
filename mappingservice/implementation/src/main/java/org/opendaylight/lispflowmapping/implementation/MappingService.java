@@ -92,6 +92,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private NotificationPublishService notificationPublishService;
 
     private static final ConfigIni configIni = new ConfigIni();
+    private boolean mergePolicy = configIni.mappingMergeIsSet();
     private boolean overwritePolicy = configIni.mappingOverwriteIsSet();
     private boolean notificationPolicy = configIni.smrIsSet();
     private boolean iterateMask = true;
@@ -121,6 +122,14 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public void setMappingMerge(boolean merge) {
+        this.mergePolicy = merge;
+        if (mappingSystem != null) {
+            mappingSystem.setMergePolicy(merge);
+        }
+    }
+
+    @Override
     public void setMappingOverwrite(boolean overwrite) {
         this.overwritePolicy = overwrite;
         if (mappingSystem != null) {
@@ -134,7 +143,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         mappingServiceRpc = rpcRegistry.addRpcImplementation(OdlMappingserviceService.class, this);
         dsbe = new DataStoreBackEnd(dataBroker);
 
-        mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, overwritePolicy);
+        mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, overwritePolicy, mergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
         mappingSystem.initialize();
 

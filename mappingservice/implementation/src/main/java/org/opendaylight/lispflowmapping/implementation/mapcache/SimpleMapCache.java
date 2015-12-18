@@ -9,7 +9,9 @@
 package org.opendaylight.lispflowmapping.implementation.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -137,11 +139,35 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
+    // Returns the list of mapping records stored in an xTR-ID DAO
+    private Object getXtrIdMappingList(ILispDAO dao) {
+        if (dao != null) {
+            final List<MappingRecord> records = new ArrayList<MappingRecord>();
+            dao.getAll(new IRowVisitor() {
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    if (valueKey.equals(SubKeys.RECORD)) {
+                        records.add((MappingRecord) value);
+                    }
+                }
+            });
+            return (Object) records;
+        }
+        return null;
+    }
+
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
-    private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
+    private Object getMappingLpmEid(Eid eid, ILispDAO dao, boolean merge) {
         Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
         if (daoEntry != null) {
+            // When merge is turned on, we read the xTR-ID list
+            // If there's nothing there, we don't return null, we still try to get the RECORD
+            if (merge) {
+                Object records = getXtrIdMappingList((ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS));
+                if (records != null) {
+                    return records;
+                }
+            }
             return daoEntry.get(SubKeys.RECORD);
         } else {
             return null;
@@ -160,7 +186,7 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid) {
+    public Object getMapping(Eid srcEid, Eid dstEid, boolean merge) {
         if (dstEid == null) {
             return null;
         }
@@ -169,7 +195,7 @@ public class SimpleMapCache implements IMapCache {
         if (table == null) {
             return null;
         }
-        return getMappingLpmEid(dstEid, table);
+        return getMappingLpmEid(dstEid, table, merge);
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {

@@ -27,7 +27,7 @@ public interface IMapCache {
      * @param data
      *            Value to be stored
      * @param shouldOverwrite
-     *            Select if mappings with the same key are overwritten or merged
+     *            Select if mappings with the same key are overwritten
      */
     void addMapping(Eid key, Object data, boolean shouldOverwrite);
 
@@ -38,9 +38,11 @@ public interface IMapCache {
      *            Source Key to be looked up
      * @param dstKey
      *            Destination Key to be looked up
+     * @param merge
+     *            Select if multiple mappings stored under the same key are merged
      * @return Returns the object found in the cache or null if nothing is found.
      */
-    Object getMapping(Eid srcKey, Eid dstKey);
+    Object getMapping(Eid srcKey, Eid dstKey, boolean merge);
 
     /**
      * Remove mapping
@@ -48,7 +50,7 @@ public interface IMapCache {
      * @param key
      *            Key to be removed
      * @param overwrite
-     *            Select if mappings with the same key are overwritten or merged
+     *            Select if mappings with the same key were overwritten on store
      *
      */
     void removeMapping(Eid key, boolean overwrite);

@@ -15,10 +15,12 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigIni {
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
+    private boolean mappingMerge;
     private boolean mappingOverwrite;
     private boolean smr;
     private String elpPolicy;
 
+    private static final String LISP_MAPPING_MERGE = "lisp.mappingMerge";
     private static final String LISP_MAPPING_OVERWRITE = "lisp.mappingOverwrite";
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
@@ -30,9 +32,37 @@ public class ConfigIni {
             context = b.getBundleContext();
         }
 
+        // Initialize mappingMerge first, since mappingOverwrite depends on it
+        initMappingMerge(context);
         initMappingOverwrite(context);
         initSmr(context);
         initElpPolicy(context);
+    }
+
+    private void initMappingMerge(BundleContext context) {
+        // set the default value first
+        this.mappingMerge = false;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_MAPPING_MERGE);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_MAPPING_MERGE);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'false'", LISP_MAPPING_MERGE);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("true")) {
+            this.mappingMerge = true;
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_MERGE);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_MERGE);
+        }
     }
 
     private void initMappingOverwrite(BundleContext context) {
@@ -48,7 +78,15 @@ public class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_MAPPING_OVERWRITE);
             if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_MAPPING_OVERWRITE);
+                if (this.mappingMerge) {
+                    // If merge is enabled and overwriting configuration is not set, disable it
+                    LOG.debug("Configuration variable '{}' is unset. Since '{}'=true setting to 'false'",
+                            LISP_MAPPING_OVERWRITE, LISP_MAPPING_MERGE);
+                    this.mappingOverwrite = false;
+                } else {
+                    LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'",
+                            LISP_MAPPING_OVERWRITE);
+                }
                 return;
             }
         }
@@ -57,7 +95,14 @@ public class ConfigIni {
             this.mappingOverwrite = false;
             LOG.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_OVERWRITE);
         } else {
-            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_OVERWRITE);
+            if (this.mappingMerge) {
+                LOG.warn("Can't set configuration variable '{}' to 'true' since '{}' is enabled",
+                        LISP_MAPPING_OVERWRITE, LISP_MAPPING_MERGE);
+                LOG.warn("If you really need to enable overwriting, please disable merging.");
+                LOG.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_OVERWRITE);
+            } else {
+                LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_OVERWRITE);
+            }
         }
     }
 
@@ -115,6 +160,10 @@ public class ConfigIni {
         } else {
             LOG.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
         }
+    }
+
+    public boolean mappingMergeIsSet() {
+        return mappingMerge;
     }
 
     public boolean mappingOverwriteIsSet() {

@@ -152,7 +152,7 @@ public class MultiTableMapCache implements IMapCache {
         return null;
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid) {
+    public Object getMapping(Eid srcEid, Eid dstEid, boolean merge) {
         if (dstEid == null) {
             return null;
         }

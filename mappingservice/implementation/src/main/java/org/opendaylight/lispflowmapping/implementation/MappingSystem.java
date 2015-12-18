@@ -10,7 +10,9 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.implementation.mapcache.FlatMapCache;
@@ -52,6 +54,7 @@ public class MappingSystem implements IMappingSystem {
     private final static Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private boolean iterateMask;
     private boolean notificationService;
+    private boolean merge;
     private boolean overwrite;
     private ILispDAO dao;
     private IMapCache smc;
@@ -60,16 +63,22 @@ public class MappingSystem implements IMappingSystem {
     private DataStoreBackEnd dsbe;
     private BindingAwareBroker bindingAwareBroker;
 
-    public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
+    public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite, boolean merge) {
         this.dao = dao;
         this.iterateMask = iterateMask;
         this.notificationService = notifications;
+        this.merge = merge;
         this.overwrite = overwrite;
         buildMapCaches();
     }
 
     public void setDataStoreBackEnd(DataStoreBackEnd dsbe) {
         this.dsbe = dsbe;
+    }
+
+    @Override
+    public void setMergePolicy(boolean merge) {
+        this.merge = merge;
     }
 
     @Override
@@ -153,17 +162,60 @@ public class MappingSystem implements IMappingSystem {
         }
     }
 
+    private static void mergeCommonMappingRecordFields(MappingRecordBuilder mrb, MappingRecord record) {
+        // For the TTL value we take the minimum of all records
+        mrb.setRecordTtl(Math.min(mrb.getRecordTtl(), record.getRecordTtl()));
+        if  (!mrb.getAction().equals(record.getAction())) {
+            LOG.warn("Mapping merge operation: actions are different, which one is used is undefined");
+        }
+        if  (mrb.isAuthoritative() != record.isAuthoritative()) {
+            LOG.warn("Mapping merge operation: authoritative status is different, which one is used is undefined");
+        }
+        if  (!mrb.getEid().equals(record.getEid())) {
+            LOG.warn("Mapping merge operation: EID records are different, which one is used is undefined");
+        }
+    }
+
+    private static void mergeLocatorRecord(MappingRecordBuilder mrb, MappingRecord record) {
+        List<LocatorRecord> records = mrb.getLocatorRecord();
+        records.addAll(record.getLocatorRecord());
+        Set<LocatorRecord> uniqueRecordsSet = new HashSet<LocatorRecord>(records);
+        List<LocatorRecord> uniqueRecords = new ArrayList<LocatorRecord>(uniqueRecordsSet);
+        mrb.setLocatorRecord(uniqueRecords);
+    }
+
+    private MappingRecord mergeXtrIdMappings(Object mapping) {
+        // First we handle the case that no xTR-ID subkey was found but there was still a record stored
+        if (mapping instanceof MappingRecord) {
+            return (MappingRecord) mapping;
+        } else if (mapping instanceof ArrayList<?>) {
+            ArrayList<?> records = (ArrayList<?>) mapping;
+            MappingRecordBuilder mrb = new MappingRecordBuilder((MappingRecord) records.get(0));
+            for (int i = 1; i < records.size(); i++) {
+                MappingRecord record = (MappingRecord) records.get(i);
+                mergeCommonMappingRecordFields(mrb, record);
+                mergeLocatorRecord(mrb, record);
+            }
+            return mrb.build();
+        }
+        return null;
+    }
+
     @Override
     public Object getMapping(Eid src, Eid dst) {
         // NOTE: what follows is just a simple implementation of a lookup logic, it SHOULD be subject to future
         // improvements
 
         // first lookup src/dst in policy table
-        Object mapping = pmc.getMapping(src, dst);
+        Object mapping = pmc.getMapping(src, dst, merge);
 
         // if nothing is found, lookup src/dst in sb table
         if (mapping == null) {
-            return smc.getMapping(src, dst);
+            Object sbMapping = smc.getMapping(src, dst, merge);
+            if (merge) {
+                return mergeXtrIdMappings(sbMapping);
+            }
+            return sbMapping;
         }
 
         if (dst.getAddress() instanceof ServicePath) {
@@ -179,7 +231,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public Object getMapping(MappingOrigin origin, Eid key) {
-        return tableMap.get(origin).getMapping(null, key);
+        return tableMap.get(origin).getMapping(null, key, merge);
     }
 
     @Override

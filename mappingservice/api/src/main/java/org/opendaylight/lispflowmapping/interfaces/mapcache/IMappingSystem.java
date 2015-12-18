@@ -162,6 +162,14 @@ public interface IMappingSystem {
     void setIterateMask(boolean iterate);
 
     /**
+     * Configure merge policy. If set to true, mappings are merged on read.
+     *
+     * @param merge
+     *            Value to configure
+     */
+    public void setMergePolicy(boolean merge);
+
+    /**
      * Configure overwrite policy. If set to true, mappings are overwritten.
      *
      * @param overwrite
