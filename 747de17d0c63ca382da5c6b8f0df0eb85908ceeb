@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_7f6c019d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-19T15:19:50Z",
+      "side": 1,
+      "message": "I just realized that both this patch and the overwrite one require that the caches be aware of the type of data (value) that\u0027s stored in them. Could we avoid that and have all the logic needing this information outside, in the MappingSystem? As an advantage we should be able to use overwrite and merge with other caches, if need be. Of course, this can be done only if certain type of functions, like one that retrieves all records under xtr-id, are  part of the IMapCache interface.",
+      "range": {
+        "startLine": 145,
+        "startChar": 23,
+        "endLine": 145,
+        "endChar": 36
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
