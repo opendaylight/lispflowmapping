@@ -27,10 +27,12 @@ public interface IMappingSystem {
      *            Table where mapping should be added
      * @param key
      *            Key of the mapping
+     * @param subkey
+     *            Subkey of the mapping
      * @param data
      *            Value to be stored
      */
-    void addMapping(MappingOrigin origin, Eid key, Object data);
+    void addMapping(MappingOrigin origin, Eid key, Object subkey, Object data);
 
     /**
      * Retrieves mapping for the provided src and dst key.
@@ -80,9 +82,11 @@ public interface IMappingSystem {
      *            Table for mapping that should be removed
      * @param key
      *            Key to be removed
+     * @param subkey
+     *            Subkey to be removed
      *
      */
-    void removeMapping(MappingOrigin origin, Eid key);
+    void removeMapping(MappingOrigin origin, Eid key, Object subkey);
 
     /**
      * Add authentication key

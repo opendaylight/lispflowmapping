@@ -65,7 +65,7 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Value: {}", mapping);
 
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
-                        mapping.getMappingRecord());
+                        mapping.getMappingRecord().getXtrId(), mapping.getMappingRecord());
             }
         }
 
@@ -79,7 +79,7 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", entry.getValue());
 
-                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), null,
                         mapping.getMappingRecord());
                 try {
                     notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
@@ -100,7 +100,7 @@ public class MappingDataListener extends AbstractDataListener {
                 LOG.trace("Key: {}", entry);
                 LOG.trace("Value: {}", dataObject);
 
-                mapSystem.removeMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid());
+                mapSystem.removeMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), null);
                 try {
                     notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
                 } catch (InterruptedException e) {
