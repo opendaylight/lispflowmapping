@@ -40,6 +40,24 @@
       "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_33d4821f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-21T17:56:20Z",
+      "side": 1,
+      "message": "Hm, actually I was thinking about something less generic, very xtr-id specific and my complaint stemmed from the name of the parameter. I was thinking subkey in the sense we use within the map-cache implementations, but after your comment I understood this is the xtr-id value that is being looked up. So, we\u0027re doing a \u0027path lookup\u0027, where the path has 2 elements, the eid value and the xtr-id value. \nIf we stick to paths this short, I\u0027m fine with it (although the name is a bit confusing to me).  But if we plan to extend this to even more layers, we need to come up with something more scalable.",
+      "parentUuid": "1aa4ed85_335fa2e7",
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
