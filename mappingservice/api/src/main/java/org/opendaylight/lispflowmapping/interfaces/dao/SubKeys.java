@@ -18,7 +18,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 public interface SubKeys {
     String AUTH_KEY = "password";
     String RECORD = "address";
-    String XTRID_RECORDS = "xtrid";
+    String SUB_RECORDS = "address_list";
     String SUBSCRIBERS = "subscribers";
     String REGDATE = "date";
     String VNI = "vni";

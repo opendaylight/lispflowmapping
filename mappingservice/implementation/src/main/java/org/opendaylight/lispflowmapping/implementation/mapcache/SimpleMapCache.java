@@ -19,7 +19,6 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,31 +62,30 @@ public class SimpleMapCache implements IMapCache {
         return table;
     }
 
-    private ILispDAO getXtrIdTable(Eid eid, ILispDAO dao) {
-        return (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+    private ILispDAO getGenericSubTable(Eid eid, ILispDAO dao) {
+        return (ILispDAO) dao.getSpecific(eid, SubKeys.SUB_RECORDS);
     }
 
-    private ILispDAO getOrInstantiateXtrIdTable(Eid eid, ILispDAO dao) {
-        ILispDAO table = (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+    private ILispDAO getOrInstantiateGenericSubTable(Eid eid, ILispDAO dao) {
+        ILispDAO table = (ILispDAO) dao.getSpecific(eid, SubKeys.SUB_RECORDS);
         if (table == null) {
-            table = dao.putNestedTable(eid, SubKeys.XTRID_RECORDS);
+            table = dao.putNestedTable(eid, SubKeys.SUB_RECORDS);
         }
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+    public void addMapping(Eid key, Object subkey, Object value, boolean shouldOverwrite) {
+        Date timestamp = new Date(System.currentTimeMillis());
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
-        table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+        table.put(eid, new MappingEntry<>(SubKeys.REGDATE, timestamp));
         table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
 
-        if (!shouldOverwrite && value instanceof MappingRecord) {
-            MappingRecord record = (MappingRecord) value;
-            if (record.getXtrId() != null) {
-                ILispDAO xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
-                xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
-            }
+        if (!shouldOverwrite && subkey !=null) {
+            ILispDAO subDao = getOrInstantiateGenericSubTable(eid, table);
+            subDao.put(subkey, new MappingEntry<>(SubKeys.REGDATE, timestamp));
+            subDao.put(subkey, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
 
@@ -172,7 +170,7 @@ public class SimpleMapCache implements IMapCache {
         return getMappingLpmEid(dstEid, table);
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid, Object subkey, boolean overwrite) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -181,10 +179,10 @@ public class SimpleMapCache implements IMapCache {
 
         table.removeSpecific(key, SubKeys.RECORD);
 
-        if (!overwrite) {
-            ILispDAO xtrIdTable = getXtrIdTable(key, table);
-            if (xtrIdTable != null) {
-                xtrIdTable.removeSpecific(key, SubKeys.RECORD);
+        if (!overwrite && subkey != null) {
+            ILispDAO subTable = getGenericSubTable(key, table);
+            if (subTable != null) {
+                subTable.removeSpecific(subkey, SubKeys.RECORD);
             }
         }
     }

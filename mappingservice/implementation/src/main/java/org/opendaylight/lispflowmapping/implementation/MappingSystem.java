@@ -105,8 +105,8 @@ public class MappingSystem implements IMappingSystem {
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
-    public void addMapping(MappingOrigin origin, Eid key, Object value) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true);
+    public void addMapping(MappingOrigin origin, Eid key, Object subkey, Object value) {
+        tableMap.get(origin).addMapping(key, subkey, value, origin == MappingOrigin.Southbound ? overwrite : true);
     }
 
     public void updateMappingRegistration(MappingOrigin origin, Eid key) {
@@ -183,8 +183,8 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public void removeMapping(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
+    public void removeMapping(MappingOrigin origin, Eid key, Object subkey) {
+        tableMap.get(origin).removeMapping(key, subkey, origin == MappingOrigin.Southbound ? overwrite : true);
         if (notificationService) {
             // TODO
         }
@@ -239,7 +239,7 @@ public class MappingSystem implements IMappingSystem {
         LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
 
         for (Mapping mapping : mappings) {
-            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
+            addMapping(mapping.getOrigin(), null, mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
         }
 
         for (AuthenticationKey authKey : authKeys) {

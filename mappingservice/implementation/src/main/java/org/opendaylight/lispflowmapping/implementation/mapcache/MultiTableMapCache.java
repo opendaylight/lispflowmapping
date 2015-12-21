@@ -64,7 +64,7 @@ public class MultiTableMapCache implements IMapCache {
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+    public void addMapping(Eid key, Object subkey, Object value, boolean shouldOverwrite) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
@@ -173,7 +173,7 @@ public class MultiTableMapCache implements IMapCache {
         return getMappingLpmSD(srcEid, dstEid, table);
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid, Object subkey, boolean overwrite) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {

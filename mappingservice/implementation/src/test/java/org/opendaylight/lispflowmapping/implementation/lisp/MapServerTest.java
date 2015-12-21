@@ -607,7 +607,7 @@ public class MapServerTest extends BaseTestCase {
         ValueSaverAction<Mapping> dsbeAddMappingSaverAction = new ValueSaverAction<Mapping>() {
             @Override
             public Object invoke(Invocation invocation) throws Throwable {
-                mapSystem.addMapping(lastValue.getOrigin(), lastValue.getMappingRecord().getEid(),
+                mapSystem.addMapping(lastValue.getOrigin(), null, lastValue.getMappingRecord().getEid(),
                         (Object) lastValue.getMappingRecord());
                 return null;
             }
