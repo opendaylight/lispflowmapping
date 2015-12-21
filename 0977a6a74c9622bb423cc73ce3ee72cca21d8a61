@@ -58,6 +58,24 @@
       "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_53c01e50",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T18:05:04Z",
+      "side": 1,
+      "message": "In this case subkey is any kind of discriminator between multiple mappings, since the code creates a DAO subkey called address_list, in addition to address, where we store mappings. Right now we use xTR-IDs as keys in the address_list, be we can use something else for other use cases. I can rename subkey -\u003e secodaryKey if that\u0027s more intuitive, or just use xtrId if we want to nail it down. I\u0027m open to other suggestions too, since I\u0027m terrible with naming.",
+      "parentUuid": "1aa4ed85_33d4821f",
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
