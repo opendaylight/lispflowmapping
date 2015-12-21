@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_8e5f4d0e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "We cant just update the timestamp, because I think the \"merged-locators\" has to be marked with the minimum of the timestamps. So if the new Map-Register is from the same xTR-ID, we need to find the new minimum timestamp, and the associated xTR-ID to update the \"merged-locators\" or subkey RECORD. This is iff we do it the way I mentioned above, which is always keeping a merged-locators mapping record under RECORD subkey.",
+      "parentUuid": "1aa4ed85_2d13c3b9",
+      "range": {
+        "startLine": 181,
+        "startChar": 46,
+        "endLine": 181,
+        "endChar": 50
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_824e46c0",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -108,6 +132,24 @@
       "side": 1,
       "message": "Absolutely. As I said in my last email, this is by far not finished, and I didn\u0027t yet full thought merging through. All valid points.",
       "parentUuid": "1aa4ed85_824e46c0",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_2e9c19c0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "Ack. My point was, that we should get the SET of locators, not the SET of  MappingRecord.",
+      "parentUuid": "1aa4ed85_2dbd0369",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -215,6 +257,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_eea5a104",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "So iff we consider storing a ready to go merged record under subkey RECORD,  we would need 3 options: return a specific xTR-ID, return all xTR-IDs, return just the subkey RECORD.",
+      "parentUuid": "1aa4ed85_c8f53d84",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_42612e38",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -250,6 +310,24 @@
       "side": 1,
       "message": "As I said above, this may have some performance impact on merge, but right now it\u0027s just speculation how much. In addition, it will not be difficult to change back to the original merge-on-retrieve design, if we think that\u0027s better, so we can go with this approach.",
       "parentUuid": "1aa4ed85_42612e38",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_aeafa9e2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "I just think it is a bit cleaner, since we can always have a merged-locators ready under RECORD subkey. Then the getMapping can always return only the SUBKEY RECORD when merge\u003d1 and all the records under xTR-RECORD when merge\u003d0.  I dont think we need two merge methods as Florin is pointing I think.",
+      "parentUuid": "1aa4ed85_ed6dab05",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -398,6 +476,48 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_4ed63551",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "Agree with this, if we dont keep a merged-locators record under RECORD subkey. If xTR-ID is not set, and we do keep a merged-locators record under RECORD subkey, then we need another discriminator to return all xTR-ID records, or just the subkey RECORD. Right?",
+      "parentUuid": "1aa4ed85_8dee77eb",
+      "range": {
+        "startLine": 146,
+        "startChar": 41,
+        "endLine": 146,
+        "endChar": 42
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_aec48992",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "Right. Since then though, I noticed that IOS MS actually does keep a list of merged-locators. besides considering that it will reduce the amount of processing needed in general to build the merge result if we incrementally keep a merged-locators list, I am thinking it may be a good idea to start this way. As you said this is changeable in future. But now my vote is to go with incrementally building the merged-locators at store time, and keep it under subkey RECORD. This way, for a Map-Reply, whatever is in subkey RECORD is always the answer. on Map-Register, depending on (merge/overwrite/etc) we have to do different things.",
+      "parentUuid": "1aa4ed85_ad89f3cb",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_a24b42af",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -433,6 +553,24 @@
       "side": 1,
       "message": "We don\u0027t. Lazy entry expiry wasn\u0027t implemented yet. I like to keeps commits atomic, so that was planned as separate commit.",
       "parentUuid": "1aa4ed85_a24b42af",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_2eead90f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T22:21:14Z",
+      "side": 1,
+      "message": "Ack. But we should keep it in mind and carry associated time-stamps with the records if we decide to keep a merged-locators record.",
+      "parentUuid": "1aa4ed85_ad02533c",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
