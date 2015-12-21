@@ -24,12 +24,14 @@ public interface IMapCache {
      *
      * @param key
      *            Key of the mapping
+     * @param subkey
+     *            Subkey of the mapping (ignored when shouldOverwrite if true)
      * @param data
      *            Value to be stored
      * @param shouldOverwrite
      *            Select if mappings with the same key are overwritten or merged
      */
-    void addMapping(Eid key, Object data, boolean shouldOverwrite);
+    void addMapping(Eid key, Object subkey, Object data, boolean shouldOverwrite);
 
     /**
      * Retrieves mapping for the provided srcKey and dstKey.
@@ -47,11 +49,13 @@ public interface IMapCache {
      *
      * @param key
      *            Key to be removed
+     * @param subkey
+     *            Subkey to be removed
      * @param overwrite
      *            Select if mappings with the same key are overwritten or merged
      *
      */
-    void removeMapping(Eid key, boolean overwrite);
+    void removeMapping(Eid key, Object subkey, boolean overwrite);
 
     /**
      * Add authentication key
