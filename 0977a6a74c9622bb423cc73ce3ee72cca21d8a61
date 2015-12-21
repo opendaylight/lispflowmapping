@@ -22,6 +22,24 @@
       "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_335fa2e7",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T17:31:01Z",
+      "side": 1,
+      "message": "I thought I make it generic, so that we can potentially reuse this for subkeys keys that are not xTR-ID. This is better than addMapping(Eid key, byte[] xtrId, Object data, boolean shouldOverwrite) IMO, but I can do that too. If that\u0027s not what you meant, I don\u0027t know how to make this more self-contained, but MappingRecord and/or xTR-ID agnostic.",
+      "parentUuid": "1aa4ed85_48f4ed5a",
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
