@@ -197,6 +197,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_c8f53d84",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-21T14:58:34Z",
+      "side": 1,
+      "message": "Just to be clear, you plan on having 2 methods, one that returns an ArrayList and another that returns just one Object, right?",
+      "parentUuid": "1aa4ed85_cdad4f33",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_42612e38",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -279,6 +297,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_282c1102",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-21T14:58:34Z",
+      "side": 1,
+      "message": "Yeah, I missed it last time :-(",
+      "parentUuid": "1aa4ed85_6dfc5b3f",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_42c84e22",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -338,6 +374,24 @@
       "side": 1,
       "message": "Right, since overwrite is user tunable, it makes sense to return everything when merge\u003d0, overwrite\u003d0.\n\nAs for the merge-on-store, we discussed this at length, and the consensus was not to do it. Either way, changing when the merge is done is relatively simple, so I don\u0027t mind going for this, and if profiling and real-world requirements (e.g., optimize for map-register, or any other functional need) makes us change this, we can.",
       "parentUuid": "1aa4ed85_8dee77eb",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_884665be",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-21T14:58:34Z",
+      "side": 1,
+      "message": "Fine by me!",
+      "parentUuid": "1aa4ed85_ad89f3cb",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
