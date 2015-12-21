@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_48f4ed5a",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-21T15:21:28Z",
+      "side": 1,
+      "message": "Do we really need to expose map-cache internals in the API? I guess that If we switch to a different implementation where we don\u0027t use subkeys, this won\u0027t be useful.",
+      "range": {
+        "startLine": 34,
+        "startChar": 29,
+        "endLine": 34,
+        "endChar": 42
+      },
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
