@@ -2,6 +2,98 @@
   "comments": [
     {
       "key": {
+        "uuid": "1aa4ed85_2260b231",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "If we keep a merged-locators entry in the \"address\" subkey (which would require to also include the timestamp and xTR-ID  info of the xTR-ID with minimum of timestamps) then every time a new Map-Register comes in it only has to be compared to the \"address\" subkey entry to create the new \"address\" merged locators. This is unless the Map-REgister is from same xTR-ID stored at \"address\" merged locators for the minimum timestamp. In that case, we have to walk through all and find the minimum timestamp among all xTR-IDs again. \n\nThis does look a bit more complicated, but reduces processing significantly. thoughts?",
+      "range": {
+        "startLine": 181,
+        "startChar": 46,
+        "endLine": 181,
+        "endChar": 50
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_824e46c0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "So aside from locator ordering, there is another issue: I think it is possible that two xTRs registering the same set of locators have different priority for them, for instance one can mark a locator with p\u003d255, while the other has reachability and marks it p\u003d1. In general, I dont know how MS should deal with differing priorities, but I think here the HashSet should be on the LispAddress inside the locator records.  And I think if a locator is ever marked with 255 it has to remain 255 in the resulting merged locators. The rest of values for p has less importance, but still not sure how they are merged , maybe algorithm can be keep largest value of priority for a locator?",
+      "range": {
+        "startLine": 184,
+        "startChar": 42,
+        "endLine": 184,
+        "endChar": 44
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_6266aa53",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "Would it be better to have get mapping (all) always return a list and base this decision on the size? also probably need to check for null MappingRecord.",
+      "range": {
+        "startLine": 189,
+        "startChar": 46,
+        "endLine": 189,
+        "endChar": 47
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_42612e38",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "What if we do the merge on store/write, and store the merged mapping in the subkey address? This way, we always have a ready to go mapping for SB, and a detailed, per xTR mappings list for future merge processings when merge is on and for monitoring and stats when merge is off. Thougts?",
+      "range": {
+        "startLine": 214,
+        "startChar": 61,
+        "endLine": 214,
+        "endChar": 63
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_7f6c019d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -18,6 +110,52 @@
         "startChar": 23,
         "endLine": 145,
         "endChar": 36
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_42c84e22",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "I am not religous about keeping MapCaches value agnostic, but it is a good rule for keeping house clean if it doesnt add too much overhead. \nIn general, I think if getMapping(merge\u003d0) we should return all mapping records under the xTR-ID_RECORD subkey.\nWhen getMapping(merge\u003d1)  we return re pre-computed merged-locators record under RECORD subkey. \nAt addMapping if merge\u003dtrue we merge with record under subkey RECORD and store both the entry and update RECORD subkey if needed, and if merge\u003dfalse, we still store the record, and also update the subkey RECORD. Thoughts?",
+      "range": {
+        "startLine": 146,
+        "startChar": 41,
+        "endLine": 146,
+        "endChar": 42
+      },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_a24b42af",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2015-12-21T06:21:32Z",
+      "side": 1,
+      "message": "now I cant remember, where do we check the timestamps? you probably should add only valid ones, and ignore stale mappings.",
+      "range": {
+        "startLine": 151,
+        "startChar": 16,
+        "endLine": 151,
+        "endChar": 17
       },
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
