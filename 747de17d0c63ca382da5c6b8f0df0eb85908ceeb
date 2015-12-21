@@ -96,6 +96,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_2dbd0369",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "Absolutely. As I said in my last email, this is by far not finished, and I didn\u0027t yet full thought merging through. All valid points.",
+      "parentUuid": "1aa4ed85_824e46c0",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_6266aa53",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -143,6 +161,42 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_cdad4f33",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "It was my initial choice, but then I was thrown off by the need of extra new ArrayList\u003c\u003e every time we return a single mapping. But I guess if merge\u003d1 this is ok, so I will update the patch (I agree this is more elegant).",
+      "parentUuid": "1aa4ed85_6266aa53",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_6daa1b1b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "Since you insist, I\u0027ll add that possibility too ;)",
+      "parentUuid": "1aa4ed85_2d2c2302",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_42612e38",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -166,6 +220,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_ed6dab05",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "As I said above, this may have some performance impact on merge, but right now it\u0027s just speculation how much. In addition, it will not be difficult to change back to the original merge-on-retrieve design, if we think that\u0027s better, so we can go with this approach.",
+      "parentUuid": "1aa4ed85_42612e38",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_7f6c019d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -183,6 +255,24 @@
         "endLine": 145,
         "endChar": 36
       },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_6dfc5b3f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "I was expecting this comment to hit in the previous commit :)  Since I was on the fence on that. Since you didn\u0027t object, I continued with keeping the API stable (since we need an API change for this).\n\nHowever, I do agree keeping the caches agnostic is better, so if there\u0027s no objections to the API changes, I\u0027ll send out a small patch first for the overwrite feature, and then update this patch too.",
+      "parentUuid": "1aa4ed85_7f6c019d",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -236,6 +326,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_ad89f3cb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "Right, since overwrite is user tunable, it makes sense to return everything when merge\u003d0, overwrite\u003d0.\n\nAs for the merge-on-store, we discussed this at length, and the consensus was not to do it. Either way, changing when the merge is done is relatively simple, so I don\u0027t mind going for this, and if profiling and real-world requirements (e.g., optimize for map-register, or any other functional need) makes us change this, we can.",
+      "parentUuid": "1aa4ed85_8dee77eb",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_a24b42af",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -253,6 +361,24 @@
         "endLine": 151,
         "endChar": 17
       },
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_ad02533c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-21T11:13:38Z",
+      "side": 1,
+      "message": "We don\u0027t. Lazy entry expiry wasn\u0027t implemented yet. I like to keeps commits atomic, so that was planned as separate commit.",
+      "parentUuid": "1aa4ed85_a24b42af",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
