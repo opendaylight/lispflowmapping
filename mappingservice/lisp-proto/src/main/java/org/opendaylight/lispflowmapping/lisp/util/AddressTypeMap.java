@@ -27,6 +27,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ServicePathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 
@@ -69,6 +70,8 @@ public final class AddressTypeMap {
                 SourceDestKeyLcaf.class);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.KEY_VALUE.getLispCode(),
                 KeyValueAddressLcaf.class);
+        lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.SERVICE_PATH.getLispCode(),
+                ServicePathLcaf.class);
         // TODO
     }
 
