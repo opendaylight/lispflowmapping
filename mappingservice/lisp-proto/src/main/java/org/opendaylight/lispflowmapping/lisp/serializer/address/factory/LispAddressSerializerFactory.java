@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4Serializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.MacSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.NoAddressSerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.address.ServicePathSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.SourceDestKeySerializer;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ApplicationDataLcaf;
@@ -39,6 +40,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ServicePathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 
 /**
@@ -70,6 +72,7 @@ public final class LispAddressSerializerFactory {
         addressTypeToSerializerMap.put(ExplicitLocatorPathLcaf.class, ExplicitLocatorPathSerializer.getInstance());
         addressTypeToSerializerMap.put(SourceDestKeyLcaf.class, SourceDestKeySerializer.getInstance());
         addressTypeToSerializerMap.put(KeyValueAddressLcaf.class, KeyValueAddressSerializer.getInstance());
+        addressTypeToSerializerMap.put(ServicePathLcaf.class, ServicePathSerializer.getInstance());
     }
 
     public static LispAddressSerializer getSerializer(Class<? extends LispAddressFamily> clazz) {

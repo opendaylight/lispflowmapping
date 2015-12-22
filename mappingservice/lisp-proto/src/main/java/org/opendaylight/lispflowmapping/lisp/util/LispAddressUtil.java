@@ -373,7 +373,9 @@ public final class LispAddressUtil {
     public static Eid asServicePathEid(long vni, long servicePathId, short serviceIndex) {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(ServicePathLcaf.class);
-        eb.setVirtualNetworkId(new InstanceIdType(vni));
+        if (vni >= 0) {
+            eb.setVirtualNetworkId(new InstanceIdType(vni));
+        }
         org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder spb = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();
         spb.setServicePathId(new ServicePathIdType(servicePathId));
         spb.setServiceIndex(serviceIndex);
