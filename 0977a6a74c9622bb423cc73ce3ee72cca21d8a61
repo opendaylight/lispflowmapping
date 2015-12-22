@@ -76,6 +76,47 @@
       "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_4505b30f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-22T11:15:48Z",
+      "side": 1,
+      "message": "Yes, I finally understood its meaning. But some comments to your comment :)\n1. \"address_list\" is a deceiving subkey string name from my perspective. We\u0027re not storing a list of mappings but a hash table keyed by some object (in our favorite example case, an xtr-id). \n2. I\u0027m not sure what I prefer, subkey or secondaryKey. The latter is often used with databases, but I think it\u0027s semantic is more specific. To me it was confusing because I thought it was the string representation of a subkey we use within the caches. Just leave it as is, I guess. \n3. As mentioned in a different comment, are we sure we will never have more than 1 branch under the eid? If we\u0027re not sure, then we should name the sub-tables instead of using the generic \"address_list\".",
+      "parentUuid": "1aa4ed85_53c01e50",
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_e2b6158a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2015-12-22T11:15:48Z",
+      "side": 1,
+      "message": "Are we sure we\u0027ll never branch out 2 ways? I\u0027m getting a bit lost with all the changes we\u0027re pushing in now so I can\u0027t tell if that\u0027s the case. It might very well be that we\u0027ll never do that. But if we do, we need to \u0027name\u0027 the sub-table.",
+      "range": {
+        "startLine": 86,
+        "startChar": 12,
+        "endLine": 86,
+        "endChar": 74
+      },
+      "revId": "0977a6a74c9622bb423cc73ce3ee72cca21d8a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
