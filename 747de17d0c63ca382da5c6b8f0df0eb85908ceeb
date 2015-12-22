@@ -73,6 +73,42 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_22642d21",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "If we do merge on store, from my perspective, the minimum of timestamps is always the current registration. Is there a reason we should look for the previous minimum value?",
+      "parentUuid": "1aa4ed85_8e5f4d0e",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_c2ad1933",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "To your second question, when we do overwrite (regardless of merge), we always do a put for the registering xTR-ID with the whole mapping record, which contains the timestamp, and additionally we update .REGDATE too, for convenience. So yes.",
+      "parentUuid": "1aa4ed85_2d13c3b9",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_824e46c0",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -150,6 +186,24 @@
       "side": 1,
       "message": "Ack. My point was, that we should get the SET of locators, not the SET of  MappingRecord.",
       "parentUuid": "1aa4ed85_2dbd0369",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_027331ea",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "If you mean the perspective of creating a HashSet to find unique locators, ack, that is my intention. This set of LocatorRecords in the current patch is just to fulfill stupid my need of submitting code that looks like it\u0027s finished :P",
+      "parentUuid": "1aa4ed85_2e9c19c0",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -275,6 +329,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_42504932",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "Yes, we need to support all these 3 operations.",
+      "parentUuid": "1aa4ed85_eea5a104",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_42612e38",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -328,6 +400,24 @@
       "side": 1,
       "message": "I just think it is a bit cleaner, since we can always have a merged-locators ready under RECORD subkey. Then the getMapping can always return only the SUBKEY RECORD when merge\u003d1 and all the records under xTR-RECORD when merge\u003d0.  I dont think we need two merge methods as Florin is pointing I think.",
       "parentUuid": "1aa4ed85_ed6dab05",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_8255e11e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "Actually, we return all records under XTRID_RECORDS only when (merge \u003d 0 \u0026\u0026 overwrite \u003d 0). Current default is overwrite \u003d 1. So when overwrite \u003d 1, (and merge has to be disabled), we return RECORD, and when merge \u003d 1, we return RECORD. Florin\u0027s comment on the two methods I think referred to the mergeXtrIdMappings() method, which should have two prototypes, one for returning just one MappingRecord and one for returning a List\u003cMappingRecord\u003e. I think the result of the merge should be a single MappingRecord always, since we combine locator records.",
+      "parentUuid": "1aa4ed85_aeafa9e2",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -518,6 +608,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_c222f9b8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "When merge \u003d 0 then we don\u0027t keep merged-locators under RECORD. The discriminator in this case is the overwrite variable. If overwrite \u003d 1 (current default) we don\u0027t even store xTR-ID subkeys. If overwrite \u003d 0, we store xTR-ID subkeys, and return all.",
+      "parentUuid": "1aa4ed85_4ed63551",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_a24b42af",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 1
@@ -571,6 +679,24 @@
       "side": 1,
       "message": "Ack. But we should keep it in mind and carry associated time-stamps with the records if we decide to keep a merged-locators record.",
       "parentUuid": "1aa4ed85_ad02533c",
+      "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_622f85a2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-22T11:12:27Z",
+      "side": 1,
+      "message": "Ack.",
+      "parentUuid": "1aa4ed85_2eead90f",
       "revId": "747de17d0c63ca382da5c6b8f0df0eb85908ceeb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
