@@ -21,6 +21,35 @@ module odl-lisp-proto {
         reference "https://tools.ietf.org/html/rfc6830";
     }
 
+    typedef ipv4-address-binary {
+        type binary {
+            length "4";
+        }
+        description
+            "The ipv4-address-binary type represents an IPv4 address in binary
+             in network byte order.";
+    }
+
+    typedef ipv6-address-binary {
+        type binary {
+            length "16";
+        }
+        description
+            "The ipv6-address-binary type represents an IPv6 address in binary
+             in network byte order.";
+    }
+
+    typedef ip-address-binary {
+        type union {
+            type ipv4-address-binary;
+            type ipv6-address-binary;
+        }
+        description
+            "The ip-address-binary type represents an IP address in binary
+             in network byte order, and is IP version neutral.  The length of
+             the byte array implies the IP version.";
+    }
+
     grouping transport-address {
         container transport-address {
             leaf ipAddress {
@@ -88,6 +117,48 @@ module odl-lisp-proto {
         }
     }
 
+    grouping mapping-record-metadata {
+        leaf xtr-id {
+            type binary {
+                length "16";
+            }
+            description
+                "128 bit xTR identifier.";
+        }
+        leaf site-id {
+            type binary {
+                length "8";
+            }
+            description
+                "64 bit site identifier.";
+        }
+        leaf timestamp {
+            type int64;
+            description
+                "Milliseconds since January 1, 1970, 00:00:00 GMT";
+        }
+        list source-rloc-item {
+            key "xtr-id-key";
+            leaf xtr-id-key {
+                type binary {
+                    length "16";
+                }
+                description
+                    "128 bit xTR identifier.";
+            }
+            leaf source-rloc {
+                type ip-address-binary;
+                description
+                    "The Source IP address used for sending the enclosing control
+                     packet in RLOC space.";
+            }
+        }
+        description
+            "This is a collection of fields which are not present in the actual
+            mapping record defined in RFC 6830, but are used internally in
+            OpenDaylight";
+    }
+
     grouping mapping-record-container {
         container mapping-record {
             leaf recordTtl {
@@ -115,25 +186,9 @@ module odl-lisp-proto {
 
             // locator record list
             uses LocatorRecords;
-
-            leaf xtr-id {
-                description "128 bit xTR identifier";
-                type binary {
-                    length "16";
-                }
-            }
-
-            leaf site-id {
-                description "64 bit site identifier";
-                type binary {
-                    length "8";
-                }
-            }
-
-            leaf timestamp {
-                description "Milliseconds since January 1, 1970, 00:00:00 GMT";
-                type int64;
-            }
+            
+            // metadata
+            uses mapping-record-metadata;
         }
     }
 

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +16,15 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.IpAddressBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.metadata.SourceRlocItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.metadata.SourceRlocItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.metadata.SourceRlocItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 
 /**
@@ -77,7 +82,7 @@ public final class MapRegisterSerializer {
         return registerBuffer;
     }
 
-    public MapRegister deserialize(ByteBuffer registerBuffer) {
+    public MapRegister deserialize(ByteBuffer registerBuffer, InetAddress sourceRloc) {
         try {
             MapRegisterBuilder builder = new MapRegisterBuilder();
             builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
@@ -111,6 +116,7 @@ public final class MapRegisterSerializer {
                 for (MappingRecordBuilder mrb : mrbs) {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
+                    mrb.setSourceRlocItem(getSourceRlocItems(xtrId, sourceRloc));
                     builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                             mrb.build()).build());
                 }
@@ -130,6 +136,23 @@ public final class MapRegisterSerializer {
             throw new LispSerializationException("Couldn't deserialize Map-Register (len=" + registerBuffer.capacity() + ")", re);
         }
 
+    }
+
+    private static List<SourceRlocItem> getSourceRlocItems(byte[] xtrId, InetAddress sourceRloc) {
+        byte[] srcRloc;
+        if (sourceRloc == null) {
+            srcRloc = InetAddress.getLoopbackAddress().getAddress();
+        } else {
+            srcRloc = sourceRloc.getAddress();
+        }
+
+        SourceRlocItemBuilder srib = new SourceRlocItemBuilder();
+        srib.setXtrIdKey(xtrId);
+        srib.setSourceRloc(IpAddressBinaryBuilder.getDefaultInstance(srcRloc));
+        srib.setKey(new SourceRlocItemKey(xtrId));
+        List<SourceRlocItem> sourceRlocs = new ArrayList<SourceRlocItem>();
+        sourceRlocs.add(srib.build());
+        return sourceRlocs;
     }
 
     private interface Flags {
