@@ -22,6 +22,24 @@
       "revId": "9af13d2e7e343a1dac6e4c7f9380ec2bcc7bd627",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_36322ba8",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2015-12-23T01:16:24Z",
+      "side": 1,
+      "message": "Right, but in this case it wasn\u0027t really so much a check as it was a feature. I can\u0027t pass \u0027null\u0027 for a parameter of type \u0027long\u0027, but if I pass 0, the serializer will add an IID LCAF, which is not what we want for the Test in this patch.\n\nBut on a general note, agree, we should handle invalid cases, and potentially LOG them.",
+      "parentUuid": "1aa4ed85_560327b8",
+      "revId": "9af13d2e7e343a1dac6e4c7f9380ec2bcc7bd627",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
