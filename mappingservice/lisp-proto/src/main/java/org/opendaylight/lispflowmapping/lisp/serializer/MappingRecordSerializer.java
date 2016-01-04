@@ -37,7 +37,7 @@ public final class MappingRecordSerializer {
         return deserializeToBuilder(buffer).build();
     }
 
-        public MappingRecordBuilder deserializeToBuilder(ByteBuffer buffer) {
+    public MappingRecordBuilder deserializeToBuilder(ByteBuffer buffer) {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
         byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);

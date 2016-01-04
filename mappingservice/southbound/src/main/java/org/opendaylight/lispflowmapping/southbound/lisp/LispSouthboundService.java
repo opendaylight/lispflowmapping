@@ -140,7 +140,7 @@ public class LispSouthboundService implements ILispSouthboundService {
 
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
-            MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer);
+            MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
             AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
