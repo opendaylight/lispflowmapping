@@ -44,7 +44,7 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 " //
                 + "b0 21 27 a8 21 41 04 f3 46 5a 5a 5b 5c 5d 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertFalse(LispAuthenticationUtil.validate(mapRegister, "password"));
     }
@@ -65,7 +65,7 @@ public class LispAuthenticationTest extends BaseTestCase {
         MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(hexToByteBuffer("38 00 01 01 FF BB " //
                 + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
         assertFalse(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
@@ -91,7 +91,7 @@ public class LispAuthenticationTest extends BaseTestCase {
                         hexToByteBuffer("38 00 01 01 FF BB " //
                                 + "00 00 00 00 00 00 00 02 00 20 70 30 d4 c6 10 44 0d 83 be 4d bf fd a9 8c 57 6d 68 a5 bf 32 11 c9 7b 58 c4 b9 9f 06 11 23 b9 38 00 00 " //
                                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
         assertFalse(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
@@ -113,7 +113,7 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 00 00 00 " //
                 + "00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
         assertTrue(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
