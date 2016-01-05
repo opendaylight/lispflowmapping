@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_60ea0611",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-05T02:48:44Z",
+      "side": 1,
+      "message": "Is there a benefit in translating this back and forth from InetAddress? It is ok to add the binary representation definitions, but for the source-rloc, I dont see why we would want to use the binary.",
+      "range": {
+        "startLine": 140,
+        "startChar": 8,
+        "endLine": 140,
+        "endChar": 9
+      },
+      "revId": "b8fe4ff0b789481185c34594b4e6415d86cb231f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
