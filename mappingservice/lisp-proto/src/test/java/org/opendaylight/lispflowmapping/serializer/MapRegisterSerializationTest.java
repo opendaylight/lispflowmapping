@@ -123,7 +123,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         ArrayAssert.assertEquals(
                 MapRegisterSerializer.getInstance().serialize(mapRegister).array(),
                 MapRegisterSerializer.getInstance()
-                        .serialize(MapRegisterSerializer.getInstance().deserialize(MapRegisterSerializer.getInstance().serialize(mapRegister)))
+                        .serialize(MapRegisterSerializer.getInstance().deserialize(MapRegisterSerializer.getInstance().serialize(mapRegister), null))
                         .array());
     }
 
@@ -195,7 +195,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         //
                 + "00 00 00 00 00 00 00 00 00 00 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(mr.isProxyMapReply());
         assertTrue(mr.isWantMapNotify());
@@ -216,7 +216,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 01 00 01 c3 a8 c8 01 0a 32 ff 00 00 04 "
                 + "00 01 ac 10 01 02 15 1a 39 80 e3 35 e6 c4 49 a6 "
                 + "90 87 20 65 9a b7 00 00 00 00 00 00 00 00 ");
-        MapRegister mr = MapRegisterSerializer.getInstance().deserialize(bb);
+        MapRegister mr = MapRegisterSerializer.getInstance().deserialize(bb, null);
 
         assertTrue(mr.isXtrSiteIdPresent());
 
@@ -249,7 +249,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 96 10 fe 01 01 64 " // Record
                 // 4
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
-        ));
+        ), null);
 
         assertEquals(4, mr.getMappingRecordItem().size());
         assertEquals(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), mr.getMappingRecordItem().get(0)
@@ -283,7 +283,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "60 11 34 A4 " // priorities + weights
                 + "00 03 " // Flags
                 + "00 01 c0 a8 88 0a " // Locator
-        ));
+        ), null);
 
         assertEquals(1, mr.getMappingRecordItem().size());
         MappingRecordItem eidToLocator = mr.getMappingRecordItem().get(0);
@@ -349,7 +349,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 0d 01 20 20 00 03 33 00 01 96 10 fe 01 01 64 " // Record
                 // 3
                 + "ff 00 00 05 00 01 c0 a8 88 0d " // contd
-        ));
+        ), null);
 
         assertEquals(4, mr.getMappingRecordItem().size());
 
@@ -387,7 +387,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 01 00 14 ec 47 1e 53 25 91 " //
                 + "2f 68 10 75 13 dd 2c e8 6e 3c ac 94 ed e4 00 00 " //
                 + "00 0a 01 20 F0 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertEquals(1, mr.getMappingRecordItem().size());
         assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
@@ -411,7 +411,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 00 00 14 e8 f5 0b c5 c5 f2 " //
                 + "b0 21 27 a8 21 a5 68 89 ec 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
     }
 
     @Test
@@ -432,7 +432,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 " //
                 + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(mr.isProxyMapReply());
         assertTrue(mr.isWantMapNotify());
@@ -466,7 +466,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 //
                 + "11 c9 7b 58 c4 b9 9f 06 11 23 b9 38 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertTrue(mr.isProxyMapReply());
         assertTrue(mr.isWantMapNotify());

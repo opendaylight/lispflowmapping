@@ -104,7 +104,7 @@ public class MapServerTest extends BaseTestCase {
                 + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 " //
                 + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         mappingEntriesSaver = new ValueSaverAction<MappingEntry<?>[]>();
     }
