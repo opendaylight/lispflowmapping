@@ -22,6 +22,24 @@
       "revId": "b8fe4ff0b789481185c34594b4e6415d86cb231f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_c0bf3aa9",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-05T06:50:14Z",
+      "side": 1,
+      "message": "If we use ip-address, YANG tools represents the data as string, so there is a conversion from byte[] (which is what\u0027s used by InetAddress internally) to String, including a regular expression check, which takes lots of cycles. If we use ip-address binary, there is no conversion, we just store and restore the byte[] from/to InetAddress.",
+      "parentUuid": "1aa4ed85_60ea0611",
+      "revId": "b8fe4ff0b789481185c34594b4e6415d86cb231f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
