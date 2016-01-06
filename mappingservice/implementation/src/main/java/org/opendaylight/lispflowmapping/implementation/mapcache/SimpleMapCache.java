@@ -9,9 +9,13 @@
 package org.opendaylight.lispflowmapping.implementation.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -76,18 +80,36 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+        MappingRecord record = null;
+        if (value instanceof MappingRecord) {
+            record = (MappingRecord) value;
+        }
+
+        // For consistency, get record timestamp from mapping, if available
+        Date regdate = null;
+        if (record != null) {
+            regdate = new Date(record.getTimestamp());
+        } else {
+            regdate = new Date(System.currentTimeMillis());
+        }
+
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
-        table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-        table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
-
-        if (!shouldOverwrite && value instanceof MappingRecord) {
-            MappingRecord record = (MappingRecord) value;
+        if (!shouldOverwrite && record != null) {
             if (record.getXtrId() != null) {
                 ILispDAO xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
                 xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
             }
+        }
+
+        if (ConfigIni.getInstance().mappingMergeIsSet() && record != null) {
+            MappingRecord currentRecord = (MappingRecord) table.getSpecific(eid, SubKeys.RECORD);
+            MappingRecord mergedRecord = MappingMergeUtil.mergeMappings(currentRecord, record);
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, (Object) mergedRecord));
+        } else {
+            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
 
@@ -137,11 +159,35 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
+    // Returns the list of mappings stored in an xTR-ID DAO
+    private List<Object> getXtrIdMappingList(ILispDAO dao) {
+        if (dao != null) {
+            final List<Object> records = new ArrayList<Object>();
+            dao.getAll(new IRowVisitor() {
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    if (valueKey.equals(SubKeys.RECORD)) {
+                        records.add(value);
+                    }
+                }
+            });
+            return records;
+        }
+        return null;
+    }
+
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
     private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
         Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
         if (daoEntry != null) {
+            // When merge is turned on, we read the xTR-ID list
+            // If there's nothing there, we don't return null, we still try to get the RECORD
+            if (ConfigIni.getInstance().mappingMergeIsSet()) {
+                List<Object> records = getXtrIdMappingList((ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS));
+                if (records != null) {
+                    return MappingMergeUtil.mergeXtrIdMappings(records);
+                }
+            }
             return daoEntry.get(SubKeys.RECORD);
         } else {
             return null;
