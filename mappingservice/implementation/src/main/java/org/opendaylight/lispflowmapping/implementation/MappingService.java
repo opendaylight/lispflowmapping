@@ -91,9 +91,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private BindingAwareBroker bindingAwareBroker;
     private NotificationPublishService notificationPublishService;
 
-    private static final ConfigIni configIni = new ConfigIni();
-    private boolean overwritePolicy = configIni.mappingOverwriteIsSet();
-    private boolean notificationPolicy = configIni.smrIsSet();
+    private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
+    private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private boolean iterateMask = true;
 
     public MappingService() {
