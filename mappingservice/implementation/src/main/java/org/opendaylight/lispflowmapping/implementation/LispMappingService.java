@@ -57,9 +57,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     private volatile boolean shouldAuthenticate = true;
 
-    private static final ConfigIni configIni = new ConfigIni();
-    private volatile boolean smr = configIni.smrIsSet();
-    private volatile String elpPolicy = configIni.getElpPolicy();
+    private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
+    private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();

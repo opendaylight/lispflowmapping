@@ -13,7 +13,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigIni {
+public final class ConfigIni {
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingOverwrite;
     private boolean smr;
@@ -23,7 +23,9 @@ public class ConfigIni {
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
 
-    public ConfigIni() {
+    private static final ConfigIni INSTANCE = new ConfigIni();
+
+    private ConfigIni() {
         Bundle b = FrameworkUtil.getBundle(this.getClass());
         BundleContext context = null;
         if (b != null) {
@@ -127,5 +129,9 @@ public class ConfigIni {
 
     public String getElpPolicy() {
         return elpPolicy;
+    }
+
+    public static ConfigIni getInstance() {
+        return INSTANCE;
     }
 }
