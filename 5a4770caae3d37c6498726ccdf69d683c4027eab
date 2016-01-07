@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_e6b92916",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "I still need to write the code for timestamp merging in mergeMappings(). After that, we can read the timestamp from mergedRecord and store it under REGDATE.",
+      "parentUuid": "1aa4ed85_1284c0d2",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_d26dc833",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 185,
         "endChar": 16
       },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_46427d11",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "Right, this is a leftover from patch set 1.\n\nI still have something unclear for getMapping() though. We agreed on supporting 3 different operations: get whatever is under RECORD (when overwrite\u003d1 \u0026\u0026 merge\u003d0; and overwrite\u003d0 \u0026\u0026 merge\u003d1), get a specific xTR-ID, and get all xTR-ID records (when overwrite\u003d0, merge\u003d0). Note that overwrite\u003d1 and merge\u003d0 is not legal and ConfigIni checks for it.\n\nI\u0027m wondering what\u0027s the utility of returning all xTR-ID records when merge is disabled. The caller gets a List\u003cMappingRecord\u003e and we can send a Map-Reply with multiple record, but they all will have the same EID, and I don\u0027t know how an xTR should handle that. Additionally, there is no xTR-ID information in the Map-Reply.",
+      "parentUuid": "1aa4ed85_d26dc833",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -94,6 +130,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_a6d49147",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1aa4ed85_12a04042",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_32a3fc50",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
@@ -111,6 +165,24 @@
         "endLine": 74,
         "endChar": 34
       },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_46cb5da5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1aa4ed85_32a3fc50",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -140,6 +212,24 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_66ce99b6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1aa4ed85_d28948cb",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_92aaf017",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
@@ -157,6 +247,24 @@
         "endLine": 100,
         "endChar": 43
       },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_06c5658d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-07T10:57:58Z",
+      "side": 1,
+      "message": "I think you\u0027re right, but I\u0027m not sure if we have an .add() at line 89 and the List is modified, that gets reflected.",
+      "parentUuid": "1aa4ed85_92aaf017",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
