@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "fa2e39b8_22946e36",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T19:38:46Z",
+      "side": 1,
+      "message": "Actually I think we agreed on supporting only two cases:\n1) overwrite \u003d 1, merge \u003d 0 : We overwrite subkey.RECORD with new record, and we also store new record under xTR-ID for stats/debuging\n2) overwrite \u003d 0, merge \u003d 1 : We store the merged set under subkey.RECORD, and also store the new record under xTR-ID\noverwrite \u003d 1, merge \u003d 1 : invalid as you said\noverwrite \u003d 0, merge \u003d 0 : results in undefined behavior for a Map-Reply, and shouldnt be used in Map-Reply. \nHowever, NB may want to see such a list. It cant see it with direct RESTCONF because we dont yet have xTR-ID as part of the datastore key/path. So I think we decided to implement an RPC to get that. Right?\nSo in hindsight, we may need only one flag, because merge is defining the behavior when overwrite is 0...",
+      "parentUuid": "1aa4ed85_46427d11",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_d27708d3",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
@@ -265,6 +283,24 @@
       "side": 1,
       "message": "I think you\u0027re right, but I\u0027m not sure if we have an .add() at line 89 and the List is modified, that gets reflected.",
       "parentUuid": "1aa4ed85_92aaf017",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa2e39b8_8299fa70",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T19:38:46Z",
+      "side": 1,
+      "message": "ok :) so we can leave it there for now. But can you make a comment to revisit later ? thanks.",
+      "parentUuid": "1aa4ed85_06c5658d",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
