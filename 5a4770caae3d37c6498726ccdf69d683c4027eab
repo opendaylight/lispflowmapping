@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_1284c0d2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "what would be the REGDATE be in this case?",
+      "range": {
+        "startLine": 109,
+        "startChar": 83,
+        "endLine": 109,
+        "endChar": 86
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d26dc833",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "I think we agreed that getMapping always returns the subkey.RECORD (merged locators), so we dont need to do any processing on get, unless of course timestamp is expired.",
+      "range": {
+        "startLine": 185,
+        "startChar": 15,
+        "endLine": 185,
+        "endChar": 16
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d27708d3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "I\u0027ll send an email to lispers to check this.",
+      "range": {
+        "startLine": 57,
+        "startChar": 30,
+        "endLine": 57,
+        "endChar": 31
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_12a04042",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "I would change the input var name for MappingRecord to newRecord to make the code more readable inside the method.",
+      "range": {
+        "startLine": 60,
+        "startChar": 91,
+        "endLine": 60,
+        "endChar": 92
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_32a3fc50",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "Again here I suggest calling this LocatorRecord newlocator, so it is more readable.",
+      "range": {
+        "startLine": 74,
+        "startChar": 27,
+        "endLine": 74,
+        "endChar": 34
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d28948cb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "newRloc here too.",
+      "range": {
+        "startLine": 75,
+        "startChar": 17,
+        "endLine": 75,
+        "endChar": 21
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_92aaf017",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-07T03:52:22Z",
+      "side": 1,
+      "message": "this is probably not needed right? if merge didnt happen, mrb already has the locators set, so we wont need this else.",
+      "range": {
+        "startLine": 100,
+        "startChar": 41,
+        "endLine": 100,
+        "endChar": 43
+      },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
