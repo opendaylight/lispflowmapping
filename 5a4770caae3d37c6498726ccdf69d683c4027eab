@@ -138,6 +138,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_b51c3815",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-08T17:56:05Z",
+      "side": 1,
+      "message": "Right now the code doesn\u0027t store xTR-IDs when overwrite \u003d 1. The main reason to have this behavior is for avoiding the extra sub-DAO instance and potential performance impact. In the end what you propose makes more sense, and is less confusing to the user (and the code maintainer too!). So I would leave as-asi for now, with some comments, and remove one flag after a performance evaluation showing that impact is minimal.",
+      "parentUuid": "da33351e_f5688089",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_d27708d3",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
