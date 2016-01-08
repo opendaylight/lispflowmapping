@@ -120,6 +120,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_f5688089",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-08T17:28:07Z",
+      "side": 1,
+      "message": "I was thinking that option 1) above still stores per XTR-ID info as I detailed, right? so overwrite \u003d 1, merge \u003d0 will overwrite the RECORD, but still does store per xTR-ID info for monitoring/stats. So we always store per XTR-ID info. Do you see a reason why we wouldnt want to store per-xTR-ID info for monitoring/stats even when overwrite \u003d 1?\nI was thinking overwrite/merge determines what is returned in the Map-Reply on SB, but we always store per xTR-ID as well. \nRegarding removing one of the flags, we dont have to do it now, we just have to agree on what to do in each case. I was thinking we only have two cases as listed above.",
+      "parentUuid": "da33351e_e74576b4",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_d27708d3",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
