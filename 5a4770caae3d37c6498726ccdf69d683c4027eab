@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_e74576b4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-08T12:01:03Z",
+      "side": 1,
+      "message": "About needing one flag. I think the reason to have two was to avoid the complexity of merging (for performance reasons) while still making available the list of xTR-IDs, which would be overwrite \u003d 0, merge \u003d 0. I don\u0027t mind going back to one flag, but I wouldn\u0027t want to impose the performance penalty of merging if someone just want statistics/info of all registrations.",
+      "parentUuid": "fa2e39b8_22946e36",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_d27708d3",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 2
@@ -119,6 +137,24 @@
         "endLine": 57,
         "endChar": 31
       },
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_673a0638",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-08T12:01:03Z",
+      "side": 1,
+      "message": "Patch set three will have the algorithm detailed by Johnson.",
+      "parentUuid": "1aa4ed85_d27708d3",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -301,6 +337,24 @@
       "side": 1,
       "message": "ok :) so we can leave it there for now. But can you make a comment to revisit later ? thanks.",
       "parentUuid": "1aa4ed85_06c5658d",
+      "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_87358a48",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-08T12:01:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa2e39b8_8299fa70",
       "revId": "5a4770caae3d37c6498726ccdf69d683c4027eab",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
