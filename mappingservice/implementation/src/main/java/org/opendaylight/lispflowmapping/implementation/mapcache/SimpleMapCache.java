@@ -9,9 +9,13 @@
 package org.opendaylight.lispflowmapping.implementation.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -76,18 +80,43 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+        ILispDAO xtrIdDao = null;
+        MappingRecord record = null;
+        if (value instanceof MappingRecord) {
+            record = (MappingRecord) value;
+        }
+
+        // For consistency, get record timestamp from mapping, if available
+        Date regdate = null;
+        if (record != null) {
+            regdate = new Date(record.getTimestamp());
+        } else {
+            regdate = new Date(System.currentTimeMillis());
+        }
+
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
-        table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-        table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
-
-        if (!shouldOverwrite && value instanceof MappingRecord) {
-            MappingRecord record = (MappingRecord) value;
+        if (!shouldOverwrite && record != null) {
             if (record.getXtrId() != null) {
-                ILispDAO xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
+                xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
                 xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
             }
+        }
+
+        if (ConfigIni.getInstance().mappingMergeIsSet() && record != null) {
+            // Get the oldest (minimum value) timestamp from all xTR-ID mappings
+            SimpleImmutableEntry<byte[], Long> entry = getXtrIdMinTimeStamp(xtrIdDao);
+            byte[] xtrId = entry.getKey();
+            regdate = new Date(entry.getValue());
+
+            MappingRecord currentRecord = (MappingRecord) table.getSpecific(eid, SubKeys.RECORD);
+            MappingRecord mergedRecord = MappingMergeUtil.mergeMappings(currentRecord, record, xtrId, regdate);
+            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, mergedRecord));
+        } else {
+            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
 
@@ -137,12 +166,60 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
+    // Returns the list of mappings stored in an xTR-ID DAO
+    private List<Object> getXtrIdMappingList(ILispDAO dao) {
+        if (dao != null) {
+            final List<Object> records = new ArrayList<Object>();
+            dao.getAll(new IRowVisitor() {
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    if (valueKey.equals(SubKeys.RECORD)) {
+                        records.add(value);
+                    }
+                }
+            });
+            return records;
+        }
+        return null;
+    }
+
+    private SimpleImmutableEntry<byte[], Long> getXtrIdMinTimeStamp(ILispDAO dao) {
+        if (dao != null) {
+            final List<SimpleImmutableEntry<byte[], Long>> entries =
+                    new ArrayList<SimpleImmutableEntry<byte[], Long>>();
+
+            dao.getAll(new IRowVisitor() {
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    if (valueKey.equals(SubKeys.RECORD)) {
+                        byte[] currentXtrId = ((MappingRecord) value).getXtrId();
+                        long currentTimestamp = ((MappingRecord) value).getTimestamp();
+                        if (entries.get(0).getValue() > currentTimestamp) {
+                            SimpleImmutableEntry<byte[], Long> entry =
+                                    new SimpleImmutableEntry<byte[], Long>(currentXtrId, currentTimestamp);
+                            entries.set(0, entry);
+                        }
+                    }
+                }
+            });
+            return entries.get(0);
+        }
+        return null;
+    }
+
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
-    private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
+    private Object getMappingLpmEid(Eid eid, byte[] xtrId, ILispDAO dao) {
         Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
         if (daoEntry != null) {
-            return daoEntry.get(SubKeys.RECORD);
+            if (xtrId != null) {
+                ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS));
+                if (xtrIdTable != null) {
+                    return xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
+                } else {
+                    return null;
+                }
+            } else {
+                return daoEntry.get(SubKeys.RECORD);
+            }
         } else {
             return null;
         }
@@ -160,7 +237,7 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid) {
+    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
         if (dstEid == null) {
             return null;
         }
@@ -169,7 +246,11 @@ public class SimpleMapCache implements IMapCache {
         if (table == null) {
             return null;
         }
-        return getMappingLpmEid(dstEid, table);
+        return getMappingLpmEid(dstEid, xtrId, table);
+    }
+
+    public Object getMapping(Eid srcEid, Eid dstEid) {
+        return getMapping(srcEid, dstEid, null);
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
