@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_30ccb635",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-09T08:17:34Z",
+      "side": 1,
+      "message": "why making a list? dont you need just one entry?",
+      "range": {
+        "startLine": 188,
+        "startChar": 0,
+        "endLine": 188,
+        "endChar": 20
+      },
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_90d142d0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-09T08:17:34Z",
+      "side": 1,
+      "message": "NPE here.",
+      "range": {
+        "startLine": 195,
+        "startChar": 41,
+        "endLine": 195,
+        "endChar": 43
+      },
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_d0daaae8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-09T08:17:34Z",
+      "side": 1,
+      "message": "did we decide to add xTR-ID here? or just read entire list of the xTR-ID entries?\nFor the RPC, I think we dont need per xTR-ID, but just one RPC for getting all the mappings under certain EID : merged, and per xTR-ID. or maybe only all per xTR-IDs if that is easier. Point is, the RPC is not getting xTR-ID as input.",
+      "range": {
+        "startLine": 210,
+        "startChar": 73,
+        "endLine": 210,
+        "endChar": 74
+      },
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
