@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_1b9f1361",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-09T19:21:26Z",
+      "side": 1,
+      "message": "Thats ok, lets just document it in the code. Thanks.",
+      "parentUuid": "da33351e_d0010a3b",
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_90d142d0",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 4
@@ -119,6 +137,24 @@
       "side": 1,
       "message": "Well, Florin mentioned that we might want to make it possible to retrieve a specific xTR-ID mapping, now that we store all of them. Current RPCs don\u0027t have that in the input field, be we can certainly add it. If you don\u0027t think it\u0027s useful, I can revert.\n\nWhat do you mean by \"per xTR-ID(s)\"?",
       "parentUuid": "da33351e_d0daaae8",
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_db948b46",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-09T19:21:26Z",
+      "side": 1,
+      "message": "I dont have anything agains having an RPC with xTR-ID as input, but since xTR-ID comes from SB, User may not be aware of it. So I think we definitely need an RPC that returns a list of all the xTR-IDs (with or without their mappings).",
+      "parentUuid": "da33351e_70ed9e8b",
       "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
