@@ -104,6 +104,47 @@
       "revId": "6218055447918c66e088d7ee532bf33949443d63",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_9012e260",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-01-09T11:29:19Z",
+      "side": 1,
+      "message": "Then use getDaoPairEntryBest() instead of getDaoEntryBest() above.",
+      "parentUuid": "da33351e_b08566af",
+      "revId": "6218055447918c66e088d7ee532bf33949443d63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_70175e52",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-01-09T11:29:19Z",
+      "side": 1,
+      "message": "As far as I can tell, this should serve the same purpose like the one above (getMappingLpmEid) but instead it returns the {Eid, Object} pair. The only place it is used (in the patch), you just do res.getValue(). So is it worth the extra effort to build the SimpleImmutableEntry?",
+      "range": {
+        "startLine": 273,
+        "startChar": 4,
+        "endLine": 273,
+        "endChar": 103
+      },
+      "revId": "6218055447918c66e088d7ee532bf33949443d63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
