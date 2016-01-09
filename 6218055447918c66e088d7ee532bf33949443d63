@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_f08feeca",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-09T09:30:32Z",
+      "side": 1,
+      "message": "Yes, but in practice, with xTRs registering periodically in order, we will always have case 1)\n\nxtr1 567 - 567-xtr1\nxtr2 569 - 567-xtr1\nxtr3 572 - 567-xtr1\n\nxtr1 627 - 569-xtr2\nxtr2 629 - 572-xtr3\nxtr3 632 - 627-xtr1\n\nI initially had the check, but removed it to decrease the amount of \"if\"s we have (which is a lot for merging).",
+      "parentUuid": "da33351e_f0e1ae9b",
+      "revId": "6218055447918c66e088d7ee532bf33949443d63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_50ee9a8c",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 2
@@ -65,6 +83,24 @@
         "endLine": 261,
         "endChar": 48
       },
+      "revId": "6218055447918c66e088d7ee532bf33949443d63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_b08566af",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-09T09:30:32Z",
+      "side": 1,
+      "message": "The original EID is not the key, since we might have iterated the mask: original EID for lookup was 1.1.1.1/32, but the one we found in DAO was 1.1.1.0/24. So we need the second one to directly remove the entry with dao.removeSpecific().",
+      "parentUuid": "da33351e_30f31675",
       "revId": "6218055447918c66e088d7ee532bf33949443d63",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
