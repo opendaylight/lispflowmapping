@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_d0010a3b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-09T09:22:14Z",
+      "side": 1,
+      "message": "Yes. But the beaty (NOT!) of the IRowVisitor() interface is that I need an external variable I can modify to store something. However, that variable has to be \u0027final\u0027. If it\u0027s final, I can\u0027t modify it, I can only call methods on it. So this is the workaround I found :(\n\nShould I document this in the code? Or do you have a more elegant solution?",
+      "parentUuid": "da33351e_30ccb635",
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_90d142d0",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 4
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_b0fe0637",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-09T09:22:14Z",
+      "side": 1,
+      "message": "Indeed. Will fix.",
+      "parentUuid": "da33351e_90d142d0",
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_d0daaae8",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 4
@@ -65,6 +101,24 @@
         "endLine": 210,
         "endChar": 74
       },
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_70ed9e8b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-09T09:22:14Z",
+      "side": 1,
+      "message": "Well, Florin mentioned that we might want to make it possible to retrieve a specific xTR-ID mapping, now that we store all of them. Current RPCs don\u0027t have that in the input field, be we can certainly add it. If you don\u0027t think it\u0027s useful, I can revert.\n\nWhat do you mean by \"per xTR-ID(s)\"?",
+      "parentUuid": "da33351e_d0daaae8",
       "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
