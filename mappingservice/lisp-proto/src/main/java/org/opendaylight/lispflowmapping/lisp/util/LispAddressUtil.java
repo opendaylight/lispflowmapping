@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 public final class LispAddressUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAddressUtil.class);
 
+    public static final short STARTING_SERVICE_INDEX = 255;
     private static Pattern IP4_PATTERN = null;
     private static Pattern IP6_PATTERN = null;
     private static final String ip4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
