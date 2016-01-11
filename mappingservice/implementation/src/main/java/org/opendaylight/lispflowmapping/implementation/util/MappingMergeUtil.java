@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class MappingMergeUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingMergeUtil.class);
+    // A mapping registration is valid for this many milliseconds
+    private static final long REGISTRATION_VALIDITY = 200000L;
 
     // Utility class, should not be instantiated
     private MappingMergeUtil() {
@@ -122,13 +125,45 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
-    public static MappingRecord mergeXtrIdMappings(List<Object> records) {
+    public static SimpleImmutableEntry<MappingRecord, List<byte[]>> mergeXtrIdMappings(List<Object> records) {
+        List<byte[]> expiredMappings = new ArrayList<byte[]>();
         MappingRecordBuilder mrb = new MappingRecordBuilder((MappingRecord) records.get(0));
+        byte[] xtrId = mrb.getXtrId();
+        Long timestamp = mrb.getTimestamp();
+
         for (int i = 1; i < records.size(); i++) {
             MappingRecord record = (MappingRecord) records.get(i);
+
+            // Skip expired mappings and add them to a list to be returned to the caller
+            if (timestampIsExpired(record.getTimestamp())) {
+                expiredMappings.add(record.getXtrId());
+                continue;
+            }
+
+            // Save the oldest valid timestamp
+            if (record.getTimestamp() < timestamp) {
+                timestamp = record.getTimestamp();
+                xtrId = record.getXtrId();
+            }
+
+            // Merge record fields and locators
             mergeCommonMappingRecordFields(mrb, record);
             mergeLocatorRecords(mrb, record);
         }
-        return mrb.build();
+        mrb.setXtrId(xtrId);
+        mrb.setTimestamp(timestamp);
+
+        return new SimpleImmutableEntry<MappingRecord, List<byte[]>>(mrb.build(), expiredMappings);
+    }
+
+    public static boolean timestampIsExpired(Date timestamp) {
+        return timestampIsExpired(timestamp.getTime());
+    }
+
+    public static boolean timestampIsExpired(long timestamp) {
+        if ((System.currentTimeMillis() - timestamp) > REGISTRATION_VALIDITY) {
+            return true;
+        }
+        return false;
     }
 }
