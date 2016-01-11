@@ -158,6 +158,24 @@
       "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_aab68e88",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-11T11:59:18Z",
+      "side": 1,
+      "message": "I added a separate public method called getAllXtrIdMappings() in the next patch set that can be called by the RPC.\n\nHowever, I did not add the prototype to the IMapCache interface yet. We should discuss how we want to expose the functionality.",
+      "parentUuid": "da33351e_db948b46",
+      "revId": "d2735f09cfa37d442b8ea752579a80c505267f8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
