@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_20dbbf1c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-11T19:18:01Z",
+      "side": 1,
+      "message": "If record is null we should just log and return here, no? right now we are checking many times for record !\u003d null. I think we dont want a null value to overwrite the xTR-ID entry that was there before.",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 0
+      },
+      "revId": "c47907448035adf80e5638d1692a76b33c0af68e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_00ef9bb1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-11T19:18:01Z",
+      "side": 1,
+      "message": "may be null if record.xtrId is null. in That case looks like returned entry will also be null. then we will have NPE below. I think if merge is set, but xTR-ID is null in the record, we can again, log error and return, because merging will be undefined when xTR-ID is missing. Maybe we can also check for this early in the method, so from then on  we can assume record and its xTR-ID are non-null.",
+      "range": {
+        "startLine": 109,
+        "startChar": 76,
+        "endLine": 109,
+        "endChar": 84
+      },
+      "revId": "c47907448035adf80e5638d1692a76b33c0af68e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_20f29f9a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-11T19:18:01Z",
+      "side": 1,
+      "message": "this should never happen, right?",
+      "range": {
+        "startLine": 111,
+        "startChar": 31,
+        "endLine": 111,
+        "endChar": 32
+      },
+      "revId": "c47907448035adf80e5638d1692a76b33c0af68e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
