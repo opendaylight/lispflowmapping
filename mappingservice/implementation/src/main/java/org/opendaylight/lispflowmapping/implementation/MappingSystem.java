@@ -126,7 +126,7 @@ public class MappingSystem implements IMappingSystem {
 
         LocatorRecord locatorRecord = mapping.getLocatorRecord().get(0);
         long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex();
-        int index = 255 - (int) serviceIndex;
+        int index = LispAddressUtil.STARTING_SERVICE_INDEX - (int) serviceIndex;
         Rloc rloc = locatorRecord.getRloc();
         if (rloc.getAddress() instanceof Ipv4 || rloc.getAddress() instanceof Ipv6) {
             if (index != 0) {
