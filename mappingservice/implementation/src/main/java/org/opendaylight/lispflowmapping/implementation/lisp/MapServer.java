@@ -106,8 +106,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
             if (subscriptionService && !mapping.equals(oldMapping)) {
-                LOG.debug("Sending SMRs for subscribers of {}", mapping.getEid());
-                Set<SubscriberRLOC> subscribers = getSubscribers(mapping.getEid());
+                LOG.debug("Sending SMRs for subscribers of {}", oldMapping.getEid());
+                Set<SubscriberRLOC> subscribers = getSubscribers(oldMapping.getEid());
                 sendSmrs(mapping, subscribers);
             }
         }
