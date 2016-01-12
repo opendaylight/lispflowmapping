@@ -148,7 +148,7 @@ public interface IMappingService {
 
     /**
      * Configures Mapping Service mapping overwrite option. If set to true, mappings with the same key are overwritten,
-     * otherwise, mappings are merged
+     * otherwise, mappings with the same key but from different xTR-IDs are all stored
      *
      * @param overwrite
      *            enables or disables mapping overwrite
