@@ -104,12 +104,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             }
             MappingRecord oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                     mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+
             if (subscriptionService && !mapping.equals(oldMapping)) {
                 LOG.debug("Sending SMRs for subscribers of {}", mapping.getEid());
                 Set<SubscriberRLOC> subscribers = getSubscribers(mapping.getEid());
                 sendSmrs(mapping, subscribers);
             }
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
         }
         if (!failed) {
             MapNotifyBuilder builder = new MapNotifyBuilder();
