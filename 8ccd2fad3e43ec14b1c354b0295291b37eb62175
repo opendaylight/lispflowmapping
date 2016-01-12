@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_7e18c884",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-01-12T09:03:25Z",
+      "side": 1,
+      "message": "This may work, but I think in some scenarios, we may get an SMR-invoked map-request before inserting the mapping in the map-cache.",
+      "range": {
+        "startLine": 113,
+        "startChar": 12,
+        "endLine": 113,
+        "endChar": 111
+      },
+      "revId": "8ccd2fad3e43ec14b1c354b0295291b37eb62175",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
