@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * addresses.
  *
  * @author Florin Coras
+ * @author Lorand Jakab
  *
  */
 public class SimpleMapCache implements IMapCache {
@@ -79,6 +80,12 @@ public class SimpleMapCache implements IMapCache {
         return table;
     }
 
+    private void removeExpiredXtrIdTableEntries(ILispDAO xtrIdDao, List<byte[]> expiredMappings) {
+        for (byte[] xtrId : expiredMappings) {
+            xtrIdDao.removeSpecific(xtrId, SubKeys.RECORD);
+        }
+    }
+
     public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
         if (value == null) {
             LOG.warn("addMapping() called with null 'value', ignoring");
@@ -107,6 +114,9 @@ public class SimpleMapCache implements IMapCache {
         }
 
         if (ConfigIni.getInstance().mappingMergeIsSet()) {
+            MappingRecord currentRecord = (MappingRecord) table.getSpecific(eid, SubKeys.RECORD);
+            MappingRecord mergedRecord = null;
+
             // Get the oldest (minimum value) timestamp from all xTR-ID mappings
             SimpleImmutableEntry<byte[], Long> entry = getXtrIdMinTimeStamp(xtrIdDao);
             byte[] xtrId = entry.getKey();
@@ -115,8 +125,19 @@ public class SimpleMapCache implements IMapCache {
             }
             regdate = new Date(entry.getValue());
 
-            MappingRecord currentRecord = (MappingRecord) table.getSpecific(eid, SubKeys.RECORD);
-            MappingRecord mergedRecord = MappingMergeUtil.mergeMappings(currentRecord, record, xtrId, regdate);
+            // If the returned timestamp is null, the xTR-ID registration expired, so we merge everything from scratch
+            if (entry.getValue() == null) {
+                xtrIdDao.removeSpecific(xtrId, SubKeys.RECORD);
+                SimpleImmutableEntry<MappingRecord, List<byte[]>> mergeEntry =
+                        MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao));
+                removeExpiredXtrIdTableEntries(xtrIdDao, mergeEntry.getValue());
+                mergedRecord = mergeEntry.getKey();
+                regdate = new Date(mergedRecord.getTimestamp());
+            } else {
+                mergedRecord = MappingMergeUtil.mergeMappings(currentRecord, record, xtrId, regdate);
+                regdate = new Date(entry.getValue());
+            }
+
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
             table.put(eid, new MappingEntry<>(SubKeys.RECORD, mergedRecord));
         } else {
@@ -148,20 +169,21 @@ public class SimpleMapCache implements IMapCache {
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private SimpleImmutableEntry<Eid, Map<String, ?>> getDaoPairEntryBest(Eid key, ILispDAO dao) {
-        if (MaskUtil.isMaskable(key.getAddress())) {
-            Eid lookupKey;
-            short mask = MaskUtil.getMaskForAddress(key.getAddress());
+    private SimpleImmutableEntry<Eid, Map<String, ?>> getDaoPairEntryBest(Eid eid, ILispDAO dao) {
+        Eid key;
+        if (MaskUtil.isMaskable(eid.getAddress())) {
+            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
             while (mask > 0) {
-                lookupKey = MaskUtil.normalize(key, mask);
+                key = MaskUtil.normalize(eid, mask);
                 mask--;
-                Map<String, ?> entry = dao.get(lookupKey);
+                Map<String, ?> entry = dao.get(key);
                 if (entry != null) {
-                    return new SimpleImmutableEntry<Eid, Map<String, ?>>(lookupKey, entry);
+                    return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
                 }
             }
             return null;
         } else {
+            key = MaskUtil.normalize(eid);
             Map<String, ?> entry = dao.get(key);
             if (entry != null) {
                 return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
@@ -200,6 +222,15 @@ public class SimpleMapCache implements IMapCache {
                     if (valueKey.equals(SubKeys.RECORD)) {
                         byte[] currentXtrId = ((MappingRecord) value).getXtrId();
                         long currentTimestamp = ((MappingRecord) value).getTimestamp();
+                        // If one of the timestamps is expired, we signal it to the caller by setting the returned
+                        // timestamp to null. The caller will then have to remove that xTR-ID, and do a full merge
+                        // (or decrement)
+                        if (MappingMergeUtil.timestampIsExpired(currentTimestamp)) {
+                            SimpleImmutableEntry<byte[], Long> entry =
+                                    new SimpleImmutableEntry<byte[], Long>(currentXtrId, null);
+                            entries.set(0, entry);
+                            return;
+                        }
                         if (entries.get(0).getValue() > currentTimestamp) {
                             SimpleImmutableEntry<byte[], Long> entry =
                                     new SimpleImmutableEntry<byte[], Long>(currentXtrId, currentTimestamp);
@@ -216,17 +247,29 @@ public class SimpleMapCache implements IMapCache {
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
     private Object getMappingLpmEid(Eid eid, byte[] xtrId, ILispDAO dao) {
-        Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
+        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = getDaoPairEntryBest(eid, dao);
         if (daoEntry != null) {
             if (xtrId != null) {
-                ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS));
+                ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS));
                 if (xtrIdTable != null) {
-                    return xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
+                    MappingRecord xtrIdRecord = (MappingRecord) xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
+                    if (MappingMergeUtil.timestampIsExpired(xtrIdRecord.getTimestamp())) {
+                        xtrIdTable.removeSpecific(xtrId, SubKeys.RECORD);
+                        return null;
+                    } else {
+                        return xtrIdRecord;
+                    }
                 } else {
                     return null;
                 }
             } else {
-                return daoEntry.get(SubKeys.RECORD);
+                Date timestamp = (Date) daoEntry.getValue().get(SubKeys.REGDATE);
+                if (MappingMergeUtil.timestampIsExpired(timestamp)) {
+                    dao.removeSpecific(daoEntry.getKey(), SubKeys.REGDATE);
+                    dao.removeSpecific(daoEntry.getKey(), SubKeys.RECORD);
+                    return null;
+                }
+                return daoEntry.getValue().get(SubKeys.RECORD);
             }
         } else {
             return null;
@@ -235,11 +278,32 @@ public class SimpleMapCache implements IMapCache {
 
     // Returns the matched key and mapping corresponding to the longest prefix match for eid. eid must be a simple
     // (maskable or not) address
-    private SimpleImmutableEntry<Eid, Object> getMappingPairLpmEid(Eid eid, ILispDAO dao) {
+    private SimpleImmutableEntry<Eid, Object> getMappingPairLpmEid(Eid eid, byte[] xtrId, ILispDAO dao) {
         SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = getDaoPairEntryBest(eid, dao);
         if (daoEntry != null) {
-            return new SimpleImmutableEntry<Eid, Object>(daoEntry.getKey(), daoEntry.getValue().get(
-                    SubKeys.RECORD));
+            if (xtrId != null) {
+                ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS));
+                if (xtrIdTable != null) {
+                    MappingRecord xtrIdRecord = (MappingRecord) xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
+                    if (MappingMergeUtil.timestampIsExpired(xtrIdRecord.getTimestamp())) {
+                        xtrIdTable.removeSpecific(xtrId, SubKeys.RECORD);
+                        return null;
+                    } else {
+                        return new SimpleImmutableEntry<Eid, Object>(daoEntry.getKey(), xtrIdRecord);
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                Date timestamp = (Date) daoEntry.getValue().get(SubKeys.REGDATE);
+                if (MappingMergeUtil.timestampIsExpired(timestamp)) {
+                    dao.removeSpecific(daoEntry.getKey(), SubKeys.REGDATE);
+                    dao.removeSpecific(daoEntry.getKey(), SubKeys.RECORD);
+                    return null;
+                }
+                return new SimpleImmutableEntry<Eid, Object>(daoEntry.getKey(), daoEntry.getValue().get(
+                        SubKeys.RECORD));
+            }
         } else {
             return null;
         }
