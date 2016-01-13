@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_3ec4773f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-13T16:48:23Z",
+      "side": 1,
+      "message": "well, with the optimization, we divide the number of times we do full merging by the number of xTRs. And then the merging operation also gets more costly as the number of xTRs grow. Which means that in the general case where there are many xTRs it may be worth it. \nBut for now, I agree that simplifying the code to remove corner cases is a good idea. We can optimize later if needed. Still I think we should keep merge on store. Just always merge fully.",
+      "parentUuid": "da33351e_c3a5b405",
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_9263fc19",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 4
@@ -78,6 +96,24 @@
       "side": 1,
       "message": "Actually, I think I\u0027ll just remove it, Sonar doesn\u0027t like commented out code, it\u0027s easy to rebuild if we really need it, but we might not maitain it properly if we don\u0027t, and extra code without unit testing just lowers our coverage %.",
       "parentUuid": "da33351e_9263fc19",
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_1ec1b32e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-13T16:48:23Z",
+      "side": 1,
+      "message": "yeap! agree completely. Just didnt want to say it, since seemed like you preferred to keep it :)",
+      "parentUuid": "da33351e_38c5af5b",
       "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
