@@ -88,7 +88,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     public void handleMapRegister(MapRegister mapRegister) {
         boolean failed = false;
+        boolean updated = false;
         String password = null;
+        Set<SubscriberRLOC> subscribers = null;
+        MappingRecord oldMapping;
+
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
             if (authenticate) {
@@ -102,15 +106,20 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     break;
                 }
             }
-            MappingRecord oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
+            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                     mapping.getEid());
 
             if (subscriptionService && !mapping.equals(oldMapping)) {
-                LOG.debug("Sending SMRs for subscribers of {}", mapping.getEid());
-                Set<SubscriberRLOC> subscribers = getSubscribers(mapping.getEid());
+                LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.", mapping.getEid());
+                subscribers = getSubscribers(mapping.getEid());
+                updated = true;
+            }
+            // Must update the record before sending SMRs
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+            if (updated) {
+                updated = false;
                 sendSmrs(mapping, subscribers);
             }
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
         }
         if (!failed) {
             MapNotifyBuilder builder = new MapNotifyBuilder();
