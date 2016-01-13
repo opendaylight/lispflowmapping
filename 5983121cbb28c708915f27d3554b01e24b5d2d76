@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da33351e_c3a5b405",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-13T12:46:43Z",
+      "side": 1,
+      "message": "True. While I was trying to fix this, I realized we might have jumped the gun with too much early optimization in this case, by doing incremental merge. In practice, the most usual scenario would be to have two xTRs per site or EID for redundancy, so we would merge always merge two records, incremental or not. Since dropping incremental would simplify code a lot and cause less potential corner cases, I would go for that option now, and optimize later if it\u0027s really necessary. What do you think? As an added bonus, this way we can easily switch from merging on store to merging an read, if that\u0027s more appropriate.",
+      "parentUuid": "da33351e_12024c3e",
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da33351e_9263fc19",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
         "patchSetId": 4
@@ -42,6 +60,24 @@
         "endLine": 281,
         "endChar": 105
       },
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_38c5af5b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-13T12:46:43Z",
+      "side": 1,
+      "message": "Actually, I think I\u0027ll just remove it, Sonar doesn\u0027t like commented out code, it\u0027s easy to rebuild if we really need it, but we might not maitain it properly if we don\u0027t, and extra code without unit testing just lowers our coverage %.",
+      "parentUuid": "da33351e_9263fc19",
       "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
