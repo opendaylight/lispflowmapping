@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_12024c3e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-13T03:53:52Z",
+      "side": 1,
+      "message": "looking up the min timestamps is done after updating the xtrId record. This means that, if the old xtrId mapping was expired we have to merge from scratch (if mapping is actually different from the old one) but we are missing it here.",
+      "range": {
+        "startLine": 121,
+        "startChar": 84,
+        "endLine": 121,
+        "endChar": 86
+      },
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_9263fc19",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-13T03:53:52Z",
+      "side": 1,
+      "message": "If this is not used in the code lets document it as not used, or better yet, maybe comment it out?",
+      "range": {
+        "startLine": 281,
+        "startChar": 4,
+        "endLine": 281,
+        "endChar": 105
+      },
+      "revId": "5983121cbb28c708915f27d3554b01e24b5d2d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
