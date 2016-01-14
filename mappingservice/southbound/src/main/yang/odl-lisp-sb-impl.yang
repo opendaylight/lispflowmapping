@@ -9,6 +9,7 @@ module odl-lisp-sb-impl {
   import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
   import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
   import odl-lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
+  import odl-mappingservice { prefix mappingservice; revision-date 2015-09-06; }
 
   description
       "This module contains the base YANG definitions for
@@ -45,6 +46,15 @@ module odl-lisp-sb-impl {
               refine type {
                   mandatory true;
                   config:required-identity sal-broker:binding-new-notification-publish-service;
+              }
+          }
+      }
+
+      container lisp-mappingservice {
+          uses config:service-ref {
+              refine type {
+                  mandatory true;
+                  config:required-identity mappingservice:lisp-mappingservice;
               }
           }
       }

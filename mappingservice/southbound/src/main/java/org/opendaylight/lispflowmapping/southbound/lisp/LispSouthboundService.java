@@ -8,8 +8,18 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import java.net.DatagramPacket;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
+
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
@@ -33,13 +43,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundService implements ILispSouthboundService {
+@ChannelHandler.Sharable
+public class LispSouthboundService extends SimpleChannelInboundHandler<DatagramPacket> {
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundService.class);
 
@@ -57,64 +67,71 @@ public class LispSouthboundService implements ILispSouthboundService {
         this.notificationPublishService = nps;
     }
 
-    public void handlePacket(DatagramPacket packet) {
-        ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+    public void handlePacket(ChannelHandlerContext ctx, DatagramPacket msg) {
+        ByteBuffer inBuffer = msg.content().nioBuffer();
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
         handleStats(type);
         Object lispType = MessageType.forValue(type);
         if (lispType == MessageType.EncapsulatedControlMessage) {
             LOG.trace("Received packet of type Encapsulated Control Message");
-            handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
+            handleEncapsulatedControlMessage(ctx, inBuffer, msg.sender().getAddress());
         } else if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type Map-Request");
-            handleMapRequest(inBuffer, packet.getPort());
+            handleMapRequest(ctx, inBuffer, msg.sender().getPort());
         } else if (lispType == MessageType.MapRegister) {
             LOG.trace("Received packet of type Map-Register");
-            handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapRegister(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else if (lispType == MessageType.MapNotify) {
             LOG.trace("Received packet of type Map-Notify");
-            handleMapNotify(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapNotify(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else if (lispType == MessageType.MapReply) {
             LOG.trace("Received packet of type Map-Reply");
-            handleMapReply(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapReply(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else {
             LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
-            LOG.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
         }
     }
 
-    private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
+    private void handleEncapsulatedControlMessage(ChannelHandlerContext ctx, ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
-            handleMapRequest(inBuffer, extractEncapsulatedSourcePort(inBuffer));
+            handleMapRequest(ctx, inBuffer, extractEncapsulatedSourcePort(inBuffer));
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         }
     }
 
-    private void handleMapRequest(ByteBuffer inBuffer, int port) {
+    private void handleMapRequest(ChannelHandlerContext ctx, ByteBuffer inBuffer, int port) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
+            // TODO We should optimize the below somehow so that we get finalSourceAddress directly from inBuffer
             InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
             }
 
-            RequestMappingBuilder requestMappingBuilder = new RequestMappingBuilder();
-            requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
-            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
-            requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(requestMappingBuilder.build());
-                LOG.trace("MapRequest was published!");
-            } else {
-                LOG.warn("Notification Provider is null!");
-            }
+            MapReply reply = lispSbPlugin.getLispMappingService().handleMapRequest(request);
+            ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(reply);
+
+            InetSocketAddress recipient = new InetSocketAddress(finalSourceAddress, port);
+            // the wrappedBuffer() method doesn't copy data, so this conversion shouldn't hurt performance
+            ByteBuf data = wrappedBuffer(outBuffer.array());
+            DatagramPacket packet = new DatagramPacket(data, recipient);
+            LOG.trace("Sending Map-Reply on port {} to address: {}", port, finalSourceAddress);
+            ctx.writeAndFlush(packet).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) {
+                    if (future.isSuccess()) {
+                        LOG.trace("Success");
+                        lispSbStats.incrementTx(MessageType.EncapsulatedControlMessage.getIntValue());
+                    } else {
+                        LOG.warn("Failed to send packet");
+                        lispSbStats.incrementTxErrors();
+                    }
+                }
+            });
+
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
-        } catch (InterruptedException e) {
-            LOG.warn("Notification publication interrupted!");
         }
     }
 
@@ -212,5 +229,23 @@ public class LispSouthboundService implements ILispSouthboundService {
                 lispSbStats.incrementRxUnknown();
             }
         }
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received packet with payload:\n{}", ByteBufUtil.prettyHexDump(msg.content()));
+        }
+        handlePacket(ctx, msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOG.error("Error on channel: " + cause, cause);
     }
 }

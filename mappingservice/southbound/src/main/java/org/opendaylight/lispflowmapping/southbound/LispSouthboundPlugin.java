@@ -8,26 +8,39 @@
 
 package org.opendaylight.lispflowmapping.southbound;
 
+import static io.netty.buffer.Unpooled.wrappedBuffer;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.EventLoop;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
+//import java.net.InetSocketAddress;
+//import java.net.SocketException;
+//import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import java.util.concurrent.ThreadFactory;
+//import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
+//import org.opendaylight.lispflowmapping.southbound.lisp.ILispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundService;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundService;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+//import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
@@ -40,20 +53,22 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
-    private LispIoThread lispThread;
-    private LispIoThread xtrThread;
+//    private LispIoThread lispThread;
+//    private LispIoThread xtrThread;
     private LispSouthboundService lispSouthboundService;
     private LispXtrSouthboundService lispXtrSouthboundService;
     private NotificationPublishService notificationPublishService;
     private RpcProviderRegistry rpcRegistry;
     private BindingAwareBroker broker;
-    private volatile DatagramSocket socket = null;
+//    private volatile DatagramSocket socket = null;
+    private NioDatagramChannel channel;
     private volatile String bindingAddress = null;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
     private BindingAwareBroker.RpcRegistration<OdlLispSbService> sbRpcRegistration;
-    private DatagramSocket xtrSocket;
+//    private DatagramSocket xtrSocket;
     private LispSouthboundStats statistics = new LispSouthboundStats();
+    private IFlowMapping lispMappingService;
 
     public void init() {
         LOG.info("LISP (RFC6830) southbound plugin is initializing...");
@@ -67,11 +82,33 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispXtrSouthboundService = new LispXtrSouthboundService();
             lispSouthboundService.setNotificationProvider(this.notificationPublishService);
             lispXtrSouthboundService.setNotificationProvider(this.notificationPublishService);
-            if (bindingAddress == null) {
-                setLispAddress("0.0.0.0");
+            try {
+                start();
+            } catch (IOException e) {
+            } catch (InterruptedException e) {
             }
             LOG.info("LISP (RFC6830) southbound plugin is up!");
         }
+    }
+
+    private void start() throws IOException, InterruptedException {
+        ThreadFactory factory = new DefaultThreadFactory("lisp-sb");
+        NioEventLoopGroup group = new NioEventLoopGroup(0, factory);
+
+        Bootstrap b = new Bootstrap();
+        b.group(group);
+        b.channel(NioDatagramChannel.class);
+        b.handler(lispSouthboundService);
+        channel = (NioDatagramChannel) b.bind(LispMessage.PORT_NUM).sync().channel();
+        LOG.info("Listening on port {} using a Netty channel created with {} executors", LispMessage.PORT_NUM,
+                group.executorCount());
+    }
+
+    private void stop() throws IOException, InterruptedException {
+        EventLoop loop = channel.eventLoop();
+        channel.close().sync();
+        channel = null;
+        loop.shutdownGracefully();
     }
 
     public void setNotificationPublishService(NotificationPublishService notificationService) {
@@ -86,22 +123,37 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.broker = broker;
     }
 
+    public void setLispMappingService(IFlowMapping lispMappingService) {
+        this.lispMappingService = lispMappingService;
+    }
+
+    public IFlowMapping getLispMappingService() {
+        return this.lispMappingService;
+    }
+
     private void unloadActions() {
-        if (lispThread != null) {
-            lispThread.stopRunning();
-        }
+//        if (lispThread != null) {
+//            lispThread.stopRunning();
+//        }
         lispSouthboundService = null;
         lispXtrSouthboundService = null;
-        lispThread = null;
-        xtrThread = null;
+//        lispThread = null;
+//        xtrThread = null;
         bindingAddress = null;
+
+        try {
+            stop();
+        } catch (IOException e) {
+        } catch (InterruptedException e) {
+        }
+
         LOG.info("LISP (RFC6830) southbound plugin is down!");
         try {
             Thread.sleep(1100);
         } catch (InterruptedException e) {
         }
     }
-
+/*
     private class LispIoThread extends Thread {
         private volatile boolean shouldRun;
         private volatile DatagramSocket threadSocket = null;
@@ -207,22 +259,34 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             LOG.warn("failed to start xtr thread: {}", ExceptionUtils.getStackTrace(e));
         }
     }
+*/
 
-    public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer, MessageType packetType) {
-        DatagramPacket packet = new DatagramPacket(outBuffer.array(), outBuffer.limit());
-        packet.setPort(address.getPort().getValue());
+    public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer, final MessageType packetType) {
         InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
-        packet.setAddress(ip);
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.trace("Sending " + packetType + " on port " + address.getPort().getValue() + " to address: " + ip);
+        int port = address.getPort().getValue();
+        handleSerializedLispBuffer(ip, port, outBuffer, packetType);
+    }
+
+    public void handleSerializedLispBuffer(InetAddress ip, int port, ByteBuffer outBuffer, final MessageType packetType) {
+        InetSocketAddress recipient = new InetSocketAddress(ip, port);
+        // the wrappedBuffer() method doesn't copy data, so this conversion shouldn't hurt performance
+        ByteBuf data = wrappedBuffer(outBuffer.array());
+        DatagramPacket packet = new DatagramPacket(data, recipient);
+        LOG.trace("Sending {} on port {} to address: {}", packetType, port, ip);
+        LOG.trace("Buffer:\n{}", ByteBufUtil.prettyHexDump(data));
+        channel.write(packet).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) {
+                if (future.isSuccess()) {
+                    LOG.trace("Success");
+                    statistics.incrementTx(packetType.getIntValue());
+                } else {
+                    LOG.warn("Failed to send packet");
+                    statistics.incrementTxErrors();
+                }
             }
-            socket.send(packet);
-            this.statistics.incrementTx(packetType.getIntValue());
-        } catch (IOException e) {
-            LOG.warn("Failed to send " + packetType, e);
-            this.statistics.incrementTxErrors();
-        }
+        });
+        channel.flush();
     }
 
     public LispSouthboundStats getStats() {
@@ -237,21 +301,21 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
                 String action = (bindingAddress == null ? "Setting" : "Resetting");
                 LOG.trace(action + " lisp binding address to: " + address);
                 bindingAddress = address;
-                if (lispThread != null) {
-                    lispThread.stopRunning();
-                    while (lispThread.isRunning()) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                stopXtrThread();
-                startIOThread();
+//                if (lispThread != null) {
+//                    lispThread.stopRunning();
+//                    while (lispThread.isRunning()) {
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                        }
+//                    }
+//                }
+//                stopXtrThread();
+//                startIOThread();
             }
         }
     }
-
+/*
     private void stopXtrThread() {
         if (xtrThread != null) {
             xtrThread.stopRunning();
@@ -263,16 +327,16 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             }
         }
     }
-
+*/
     @Override
     public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort) {
         listenOnXtrPort = shouldListenOnXtrPort;
         if (listenOnXtrPort) {
             LOG.debug("restarting xtr thread");
-            restartXtrThread();
+            //restartXtrThread();
         } else {
             LOG.debug("terminating thread");
-            stopXtrThread();
+            //stopXtrThread();
         }
     }
 
@@ -280,9 +344,10 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public void setXtrPort(int port) {
         this.xtrPort = port;
         if (listenOnXtrPort) {
-            restartXtrThread();
+            //restartXtrThread();
         }
     }
+
 
     @Override
     public void close() throws Exception {

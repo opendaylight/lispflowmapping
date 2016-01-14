@@ -4,6 +4,7 @@
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl?module=opendaylight-sal-binding-broker-impl&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:impl?module=odl-lisp-sb-impl&amp;revision=2015-05-17</capability>
+    <capability>urn:opendaylight:lfm:mappingservice?module=odl-mappingservice&amp;revision=2015-09-06</capability>
   </required-capabilities>
   <configuration>
     <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -27,6 +28,13 @@
             </type>
             <name>binding-osgi-broker</name>
           </broker>
+
+          <lisp-mappingservice>
+            <type xmlns:mappingservice="urn:opendaylight:lfm:mappingservice">
+              mappingservice:lisp-mappingservice
+            </type>
+            <name>lisp-mappingservice</name>
+          </lisp-mappingservice>
 
           <notification-publish-service>
             <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl">
