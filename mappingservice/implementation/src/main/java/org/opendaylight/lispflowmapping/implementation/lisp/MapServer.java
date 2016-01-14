@@ -109,7 +109,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             }
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                     mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+
             if (subscriptionService && !mapping.equals(oldMapping)) {
                 if (LOG.isDebugEnabled()){
                     LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",  LispAddressStringifier.getString(mapping.getEid()));
@@ -123,6 +123,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 updated = false;
                 sendSmrs(mapping, subscribers);
             }
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
         }
         if (!failed) {
             MapNotifyBuilder builder = new MapNotifyBuilder();
