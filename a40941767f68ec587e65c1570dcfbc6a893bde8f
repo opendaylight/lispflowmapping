@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_f191a653",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-15T21:40:24Z",
+      "side": 1,
+      "message": "Why not handle null REGDATE inside the timestampIsExpired method? It is being used a few lines above here, and we should check for null up there too.",
+      "range": {
+        "startLine": 247,
+        "startChar": 86,
+        "endLine": 247,
+        "endChar": 88
+      },
+      "revId": "a40941767f68ec587e65c1570dcfbc6a893bde8f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
