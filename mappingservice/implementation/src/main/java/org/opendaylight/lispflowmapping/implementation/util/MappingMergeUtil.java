@@ -21,6 +21,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Utility class to implement merging of locator sets
  *
@@ -157,10 +159,12 @@ public final class MappingMergeUtil {
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
+        Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
         return timestampIsExpired(timestamp.getTime());
     }
 
-    public static boolean timestampIsExpired(long timestamp) {
+    public static boolean timestampIsExpired(Long timestamp) {
+        Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
         if ((System.currentTimeMillis() - timestamp) > REGISTRATION_VALIDITY) {
             return true;
         }
