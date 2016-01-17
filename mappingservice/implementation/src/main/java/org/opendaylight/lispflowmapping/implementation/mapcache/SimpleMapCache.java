@@ -233,7 +233,8 @@ public class SimpleMapCache implements IMapCache {
                 ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS));
                 if (xtrIdTable != null) {
                     MappingRecord xtrIdRecord = (MappingRecord) xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
-                    if (MappingMergeUtil.timestampIsExpired(xtrIdRecord.getTimestamp())) {
+                    if (xtrIdRecord.getTimestamp() != null &&
+                            MappingMergeUtil.timestampIsExpired(xtrIdRecord.getTimestamp())) {
                         xtrIdTable.removeSpecific(xtrId, SubKeys.RECORD);
                         return null;
                     } else {
@@ -244,7 +245,7 @@ public class SimpleMapCache implements IMapCache {
                 }
             } else {
                 Date timestamp = (Date) daoEntry.getValue().get(SubKeys.REGDATE);
-                if (MappingMergeUtil.timestampIsExpired(timestamp)) {
+                if (timestamp != null && MappingMergeUtil.timestampIsExpired(timestamp)) {
                     dao.removeSpecific(daoEntry.getKey(), SubKeys.REGDATE);
                     dao.removeSpecific(daoEntry.getKey(), SubKeys.RECORD);
                     return null;
