@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -20,9 +21,24 @@ public final class MapNotifyBuilderHelper {
     }
 
     public static void setFromMapRegister(MapNotifyBuilder builder, MapRegister mapRegister) {
+        setNonRecordFields(builder, mapRegister);
+
         if (builder.getMappingRecordItem() == null) {
             builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         }
+
+        for (MappingRecordItem eidToLocator : mapRegister.getMappingRecordItem()) {
+            builder.getMappingRecordItem().add(eidToLocator);
+        }
+    }
+
+    public static void setFromMapRegisterAndMappingRecordItems(MapNotifyBuilder builder, MapRegister mapRegister,
+            List<MappingRecordItem> mappings) {
+        setNonRecordFields(builder, mapRegister);
+        builder.setMappingRecordItem(mappings);
+    }
+
+    private static void setNonRecordFields(MapNotifyBuilder builder, MapRegister mapRegister) {
         builder.setNonce(mapRegister.getNonce());
         builder.setKeyId(mapRegister.getKeyId());
         byte[] authenticationData = mapRegister.getAuthenticationData();
@@ -31,9 +47,5 @@ public final class MapNotifyBuilderHelper {
             Arrays.fill(authenticationData, (byte) 0);
         }
         builder.setAuthenticationData(authenticationData);
-
-        for (MappingRecordItem eidToLocator : mapRegister.getMappingRecordItem()) {
-            builder.getMappingRecordItem().add(eidToLocator);
-        }
     }
 }

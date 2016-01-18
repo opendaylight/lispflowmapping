@@ -13,12 +13,14 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -38,6 +40,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
@@ -124,17 +127,26 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 sendSmrs(mapping, subscribers);
             }
         }
-        if (!failed) {
+        if (!failed && BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
+            LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
-            if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
-                LOG.trace("MapRegister wants MapNotify");
-                MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
-                if (authenticate) {
-                    builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                            password));
+            if (ConfigIni.getInstance().mappingMergeIsSet()) {
+                List<MappingRecordItem> mappings = new ArrayList<MappingRecordItem>();
+                for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
+                    MappingRecord mapping = record.getMappingRecord();
+                    MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
+                            mapping.getEid());
+                    mappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                 }
-                notifyHandler.handleMapNotify(builder.build());
+                MapNotifyBuilderHelper.setFromMapRegisterAndMappingRecordItems(builder, mapRegister, mappings);
+            } else {
+                MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
+            if (authenticate) {
+                builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
+                        password));
+            }
+            notifyHandler.handleMapNotify(builder.build());
         }
     }
 
