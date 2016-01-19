@@ -7,9 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
+import java.util.List;
+
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 
 /**
  * An interface for dealing with a map notify message.
@@ -20,8 +23,11 @@ public interface IMapNotifyHandler {
      *
      * @param mapNotify
      *            The map-notify message
+     *
+     * @param rlocs
+     *            A list of RLOCs which need to be notified
      */
-    void handleMapNotify(MapNotify mapNotify);
+    void handleMapNotify(MapNotify mapNotify, List<TransportAddress> rlocs);
 
     /**
      * Handle Solicit Map Request message

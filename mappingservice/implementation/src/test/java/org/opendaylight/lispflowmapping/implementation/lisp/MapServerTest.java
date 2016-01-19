@@ -133,7 +133,7 @@ public class MapServerTest extends BaseTestCase {
         addDefaultPutAndGetExpectations(new EidBuilder().setAddressType(NoAddressAfi.class).setAddress(
                 (Address) new NoAddressBuilder().setNoAddress(true).build()).build());
         MapRegister mr = mapRegisterBuilder.build();
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
         assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mr.getKeyId(), mapNotify.getKeyId());
@@ -158,7 +158,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build()).getLeft();
 
         MappingRecord actualEidToLocator = mapNotify.getMappingRecordItem().get(0).getMappingRecord();
         assertEquals(eid, actualEidToLocator.getEid());
@@ -182,7 +182,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(newEid);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
         assertEquals(newEid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -207,7 +207,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -232,7 +232,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -256,7 +256,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(newEid);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
         assertEquals(newEid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -279,7 +279,7 @@ public class MapServerTest extends BaseTestCase {
 
         addDefaultPutAndGetExpectations(eid);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
         assertEquals(eid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -304,7 +304,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -329,7 +329,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -354,7 +354,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -379,7 +379,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
         assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
@@ -409,7 +409,7 @@ public class MapServerTest extends BaseTestCase {
 
         MapRegister mapRegister = mapRegisterBuilder.build();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
         assertEquals(eid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
         assertEquals(addr, mapNotify.getMappingRecordItem().get(1).getMappingRecord().getEid());
         ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
@@ -548,7 +548,7 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr2Builder.build()).build());
         addDefaultPutAndGetExpectations(address);
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build());
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build()).getLeft();
 
         assertEquals(rloc1, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
                 .getRloc());
@@ -563,7 +563,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__CheckWrongPassword() throws Exception {
 
         addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"), 0, 31, "bla");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
         assertEquals(null, mapNotify);
     }
 
@@ -572,7 +572,7 @@ public class MapServerTest extends BaseTestCase {
 
         addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"), 0, 25, "password");
         addPutExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"));
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
         assertEquals(mapRegisterWithAuthentication.getMappingRecordItem(), mapNotify.getMappingRecordItem());
         assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
         assertEquals(mapRegisterWithAuthentication.getNonce(), mapNotify.getNonce());
@@ -582,7 +582,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__CheckNoPassword() throws Exception {
 
         addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), 30, 0, "password");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
         assertEquals(null, mapNotify);
     }
 
@@ -590,7 +590,7 @@ public class MapServerTest extends BaseTestCase {
     public void handleMapRegisterIpv4__CheckNoreturn() throws Exception {
 
         addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"));
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication);
+        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
         assertEquals(mapNotify, null);
     }
 
