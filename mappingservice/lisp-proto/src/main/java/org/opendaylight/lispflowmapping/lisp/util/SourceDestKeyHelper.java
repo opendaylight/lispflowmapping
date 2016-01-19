@@ -28,7 +28,8 @@ public final class SourceDestKeyHelper {
     public static Eid getSrc(Eid eid) {
         Address addr = eid.getAddress();
         if (addr instanceof SourceDestKey) {
-            return LispAddressUtil.asEid(((SourceDestKey)addr).getSourceDestKey().getSource(), null);
+            return LispAddressUtil.asEid(((SourceDestKey) addr).getSourceDestKey().getSource(),
+                    eid.getVirtualNetworkId());
         } else {
             return eid;
         }
@@ -37,7 +38,8 @@ public final class SourceDestKeyHelper {
     public static Eid getDst(Eid eid) {
         Address addr = eid.getAddress();
         if (addr instanceof SourceDestKey) {
-            return LispAddressUtil.asEid(((SourceDestKey)addr).getSourceDestKey().getDest(), null);
+            return LispAddressUtil.asEid(((SourceDestKey) addr).getSourceDestKey().getDest(),
+                    eid.getVirtualNetworkId());
         } else {
             return eid;
         }
