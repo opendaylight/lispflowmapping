@@ -97,11 +97,7 @@ public class MultiTableMapCache implements IMapCache {
         } else {
             key = MaskUtil.normalize(eid);
             Map<String, ?> entry = dao.get(key);
-            if (entry != null) {
-                return dao.get(key);
-            } else {
-                return null;
-            }
+            return entry;
         }
     }
 
@@ -119,7 +115,8 @@ public class MultiTableMapCache implements IMapCache {
         return null;
     }
 
-    // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not) address
+    // Returns the mapping corresponding to the longest prefix match for eid.
+    // eid must be a simple (maskable or not) address
     private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
         if (eid == null) {
             return null;
