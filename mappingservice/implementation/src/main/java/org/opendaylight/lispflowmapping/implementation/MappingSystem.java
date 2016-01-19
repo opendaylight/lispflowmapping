@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.implementation.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
+import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
@@ -155,21 +157,50 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public Object getMapping(Eid src, Eid dst) {
-        // NOTE: what follows is just a simple implementation of a lookup logic, it SHOULD be subject to future
-        // improvements
+        // NOTE: Currently we have two lookup algorithms implemented, which are configurable
+        // using lookupPolicy in ConfigIni.java
 
-        // first lookup src/dst in policy table
-        Object mapping = pmc.getMapping(src, dst);
+        if (ConfigIni.getInstance().getLookupPolicy() == ConfigIni.NB_AND_SB) {
+            return getMappingNbSbIntersection(src, dst);
+        } else {
+            return getMappingNbFirst(src, dst);
+        }
+    }
 
-        // if nothing is found, lookup src/dst in sb table
-        if (mapping == null) {
+    private Object getMappingNbFirst(Eid src, Eid dst) {
+
+        // Default lookup policy is northboundFirst
+        //lookupPolicy == NB_FIRST
+
+        Object nbMapping = pmc.getMapping(src, dst);
+
+        if (nbMapping == null) {
             return smc.getMapping(src, dst);
         }
-
         if (dst.getAddress() instanceof ServicePath) {
-            return updateServicePathMappingRecord((MappingRecord)mapping, dst);
+            return updateServicePathMappingRecord((MappingRecord)nbMapping, dst);
         }
-        return mapping;
+        return nbMapping;
+    }
+
+    private Object getMappingNbSbIntersection(Eid src, Eid dst) {
+        //lookupPolicy == NB_AND_SB, we return intersection
+        //of NB and SB mappings, or NB mapping if intersection is empty.
+
+        Object nbMapping = pmc.getMapping(src, dst);
+        if (nbMapping == null) {
+            return nbMapping;
+        }
+        // no intersection for Service Path mappings
+        if (dst.getAddress() instanceof ServicePath) {
+            return updateServicePathMappingRecord((MappingRecord)nbMapping, dst);
+        }
+        Object sbMapping = smc.getMapping(src, dst);
+        if (sbMapping == null) {
+            return nbMapping;
+        }
+        // both NB and SB mappings exist. Compute intersection of the mappings
+        return MappingMergeUtil.computeNbSbIntersection((MappingRecord)nbMapping, (MappingRecord)sbMapping);
     }
 
     @Override

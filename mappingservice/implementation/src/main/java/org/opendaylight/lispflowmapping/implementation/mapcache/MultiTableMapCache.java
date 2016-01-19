@@ -98,7 +98,7 @@ public class MultiTableMapCache implements IMapCache {
             key = MaskUtil.normalize(eid);
             Map<String, ?> entry = dao.get(key);
             if (entry != null) {
-                return dao.get(key);
+                return entry;
             } else {
                 return null;
             }
