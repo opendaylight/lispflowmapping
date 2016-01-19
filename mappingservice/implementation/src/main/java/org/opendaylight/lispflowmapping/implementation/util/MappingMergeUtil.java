@@ -13,8 +13,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -170,4 +171,69 @@ public final class MappingMergeUtil {
         }
         return false;
     }
+
+
+    public static Object computeNbSbIntersection(MappingRecord nbMapping, MappingRecord sbMapping) {
+        // returns a MappingRecord which has intersection EID and intersection locator records.
+        // The intersection is only computed for mappings with maskable EIDs.
+        // TODO handle Src-Dst LCAF
+
+        MappingRecordBuilder mrb = new MappingRecordBuilder(nbMapping);
+
+        if ( MaskUtil.isMaskable(nbMapping.getEid().getAddress()) &&
+             MaskUtil.isMaskable(sbMapping.getEid().getAddress()) ) {
+
+            // first check if SB mapping is a subprefix we have to update EID intersection
+            if (nbMapping.getMaskLength() < sbMapping.getMaskLength()) {
+                mrb.setEid(sbMapping.getEid());
+                mrb.setMaskLength(sbMapping.getMaskLength());
+            }
+
+            List<LocatorRecord> commonLocators = getCommonLocatorRecords(nbMapping, sbMapping);
+            if (!commonLocators.isEmpty()) {
+                mrb.setLocatorRecord(commonLocators);
+            }
+        }
+        return mrb.build();
+    }
+
+    private static List<LocatorRecord> getCommonLocatorRecords(MappingRecord nbMapping,
+            MappingRecord sbMapping) {
+        // This method updates the MappingRecord builder with the intersection of
+        // the locator records from the two mappings. NB mapping records fields have
+        // precedence, only Priority is updated from SB mapping if p = 255.
+
+        List<LocatorRecord> sbLocators = sbMapping.getLocatorRecord();
+
+        // We assume locators are unique and don't show up several times (with different or identical p/w/mp/mw),
+        // so we create a LinkedHashMap (which preserves order) of the locators from the existing merged record,
+        // keyed by the Rloc
+        Map<Rloc, LocatorRecord> locatorMap = new LinkedHashMap<Rloc, LocatorRecord>();
+        for (LocatorRecord locator : sbLocators) {
+            locatorMap.put(locator.getRloc(), locator);
+        }
+
+        // Gradually building final list of common locators, in order that they appear in NB Mapping
+        List<LocatorRecord> commonLocators = new ArrayList<LocatorRecord>();
+
+        for (LocatorRecord nbLocator : nbMapping.getLocatorRecord()) {
+            Rloc nbRloc = nbLocator.getRloc();
+            if (locatorMap.containsKey(nbRloc)) {
+                // common locator found. use the NB record as the common locator.
+
+                if (locatorMap.get(nbRloc).getPriority() == (short)255) {
+                    // if SB locator has p == 255 then common locator takes all NB fields
+                    // except for p which must be set to 255
+                    LocatorRecordBuilder lrb = new LocatorRecordBuilder(nbLocator);
+                    lrb.setPriority((short)255);
+                    commonLocators.add(lrb.build());
+                }
+                else {
+                    commonLocators.add(nbLocator);
+                }
+            }
+        }
+        return commonLocators;
+    }
+
 }
