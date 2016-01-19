@@ -11,8 +11,10 @@ package org.opendaylight.lispflowmapping.implementation.mapcache;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
@@ -22,6 +24,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
@@ -114,12 +117,15 @@ public class SimpleMapCache implements IMapCache {
         }
 
         if (ConfigIni.getInstance().mappingMergeIsSet()) {
-            SimpleImmutableEntry<MappingRecord, List<byte[]>> mergedEntry =
-                    MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao));
-            removeExpiredXtrIdTableEntries(xtrIdDao, mergedEntry.getValue());
-            regdate = new Date(mergedEntry.getKey().getTimestamp());
+            List<byte[]> expiredMappings = new ArrayList<byte[]>();
+            Set<IpAddress> sourceRlocs = new HashSet<IpAddress>();
+            MappingRecord mergedEntry = MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao),
+                    expiredMappings, sourceRlocs);
+            removeExpiredXtrIdTableEntries(xtrIdDao, expiredMappings);
+            regdate = new Date(mergedEntry.getTimestamp());
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
-            table.put(eid, new MappingEntry<>(SubKeys.RECORD, mergedEntry.getKey()));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, mergedEntry));
+            table.put(eid, new MappingEntry<>(SubKeys.SRC_RLOCS, sourceRlocs));
         } else {
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
             table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));

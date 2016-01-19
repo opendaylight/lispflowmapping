@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -16,8 +17,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.IpAddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.IpAddressBinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -136,15 +138,16 @@ public final class MapRegisterSerializer {
 
     }
 
-    private static IpAddressBinary getSourceRloc(InetAddress sourceRloc) {
-        byte[] srcRloc;
+    private static IpAddress getSourceRloc(InetAddress sourceRloc) {
         if (sourceRloc == null) {
-            srcRloc = InetAddress.getLoopbackAddress().getAddress();
-        } else {
-            srcRloc = sourceRloc.getAddress();
+            sourceRloc = InetAddress.getLoopbackAddress();
         }
 
-        return IpAddressBinaryBuilder.getDefaultInstance(srcRloc);
+        if (sourceRloc instanceof Inet4Address) {
+            return new IpAddress(new Ipv4Address(sourceRloc.getHostAddress()));
+        } else {
+            return new IpAddress(new Ipv6Address(sourceRloc.getHostAddress()));
+        }
     }
 
     private interface Flags {

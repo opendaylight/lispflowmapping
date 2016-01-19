@@ -13,6 +13,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,11 +27,14 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -42,6 +46,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -90,6 +96,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         authenticate = shouldAuthenticate;
     }
 
+    @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean failed = false;
         boolean updated = false;
@@ -130,15 +137,21 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         if (!failed && BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
             LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
+            List<TransportAddress> rlocs = null;
             if (ConfigIni.getInstance().mappingMergeIsSet()) {
-                List<MappingRecordItem> mappings = new ArrayList<MappingRecordItem>();
+                Set<IpAddress> notifyRlocs = new HashSet<IpAddress>();
+                List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                             mapping.getEid());
-                    mappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
+                    mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
+                    Set<IpAddress> sourceRlocs = (Set<IpAddress>) mapService.getData(MappingOrigin.Southbound,
+                            mapping.getEid(), SubKeys.SRC_RLOCS);
+                    notifyRlocs.addAll(sourceRlocs);
                 }
-                MapNotifyBuilderHelper.setFromMapRegisterAndMappingRecordItems(builder, mapRegister, mappings);
+                MapNotifyBuilderHelper.setFromMapRegisterAndMappingRecordItems(builder, mapRegister, mergedMappings);
+                rlocs = getTransportAddresses(notifyRlocs);
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
@@ -146,8 +159,19 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
                         password));
             }
-            notifyHandler.handleMapNotify(builder.build());
+            notifyHandler.handleMapNotify(builder.build(), rlocs);
         }
+    }
+
+    private static List<TransportAddress> getTransportAddresses(Set<IpAddress> addresses) {
+        List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
+        for (IpAddress address : addresses) {
+            TransportAddressBuilder tab = new TransportAddressBuilder();
+            tab.setIpAddress(address);
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            rlocs.add(tab.build());
+        }
+        return rlocs;
     }
 
     private SiteId getSiteId(MapRegister mapRegister) {

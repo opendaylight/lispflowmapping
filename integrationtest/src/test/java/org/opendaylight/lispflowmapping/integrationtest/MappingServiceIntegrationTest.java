@@ -524,13 +524,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(Eid eid, Rloc rloc1, Rloc rloc2)
             throws SocketTimeoutException {
         MapRegister mb = createMapRegister(eid, rloc1);
-        MapNotify mapNotify = lms.handleMapRegister(mb);
+        MapNotify mapNotify = lms.handleMapRegister(mb).getLeft();
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
         assertEquals(mb.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord()
                 .getLocatorRecord().get(0).getRloc());
         mb = createMapRegister(eid, rloc2);
-        mapNotify = lms.handleMapRegister(mb);
+        mapNotify = lms.handleMapRegister(mb).getLeft();
         assertEquals(8, mapNotify.getNonce().longValue());
         mr = createMapRequest(eid);
         sendMapRequest(mr);

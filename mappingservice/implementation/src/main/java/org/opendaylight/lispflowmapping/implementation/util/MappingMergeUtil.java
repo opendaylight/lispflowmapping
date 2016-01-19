@@ -7,13 +7,14 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -127,8 +128,8 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
-    public static SimpleImmutableEntry<MappingRecord, List<byte[]>> mergeXtrIdMappings(List<Object> records) {
-        List<byte[]> expiredMappings = new ArrayList<byte[]>();
+    public static MappingRecord mergeXtrIdMappings(List<Object> records, List<byte[]> expiredMappings,
+            Set<IpAddress> sourceRlocs) {
         MappingRecordBuilder mrb = new MappingRecordBuilder((MappingRecord) records.get(0));
         byte[] xtrId = mrb.getXtrId();
         Long timestamp = mrb.getTimestamp();
@@ -151,11 +152,14 @@ public final class MappingMergeUtil {
             // Merge record fields and locators
             mergeCommonMappingRecordFields(mrb, record);
             mergeLocatorRecords(mrb, record);
+
+            // Save source locator for use in Map-Notify
+            sourceRlocs.add(record.getSourceRloc());
         }
         mrb.setXtrId(xtrId);
         mrb.setTimestamp(timestamp);
 
-        return new SimpleImmutableEntry<MappingRecord, List<byte[]>>(mrb.build(), expiredMappings);
+        return mrb.build();
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
