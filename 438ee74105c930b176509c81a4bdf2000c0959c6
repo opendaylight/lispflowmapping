@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_f03b57e9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-19T17:52:50Z",
+      "side": 1,
+      "message": "I guess we can. I followed the ELP policy flag, but since we check this much more often, I agree the impact is more. will do.",
+      "parentUuid": "9a3d3df0_fda5f004",
+      "range": {
+        "startLine": 163,
+        "startChar": 54,
+        "endLine": 163,
+        "endChar": 97
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_fd7cd074",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-01-19T13:08:58Z",
       "side": 1,
       "message": "I would add: \"or null if NB is null\"",
+      "range": {
+        "startLine": 189,
+        "startChar": 70,
+        "endLine": 189,
+        "endChar": 72
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d040d358",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-19T17:52:50Z",
+      "side": 1,
+      "message": ":)",
+      "parentUuid": "9a3d3df0_fd7cd074",
       "range": {
         "startLine": 189,
         "startChar": 70,
@@ -163,6 +211,54 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_1074fbcd",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-19T17:52:50Z",
+      "side": 1,
+      "message": "good point. will do.",
+      "parentUuid": "9a3d3df0_3a0c7e42",
+      "range": {
+        "startLine": 211,
+        "startChar": 50,
+        "endLine": 211,
+        "endChar": 63
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_507e83af",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-19T17:52:50Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "9a3d3df0_ba188e85",
+      "range": {
+        "startLine": 211,
+        "startChar": 33,
+        "endLine": 211,
+        "endChar": 43
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_1a225ab9",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -174,6 +270,30 @@
       "writtenOn": "2016-01-19T13:08:58Z",
       "side": 1,
       "message": "Just as a note, since I don\u0027t have much against it: generally our code uses eclipse\u0027s default java formatting which keeps the \"else\" on the same line with the \"if\"\u0027s closing bracket.",
+      "range": {
+        "startLine": 230,
+        "startChar": 0,
+        "endLine": 231,
+        "endChar": 22
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_7058e756",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-19T17:52:50Z",
+      "side": 1,
+      "message": "Done. thnx",
+      "parentUuid": "9a3d3df0_1a225ab9",
       "range": {
         "startLine": 230,
         "startChar": 0,
