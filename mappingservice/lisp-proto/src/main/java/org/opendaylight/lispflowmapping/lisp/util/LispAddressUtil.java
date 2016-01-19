@@ -471,13 +471,12 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
-    public static Eid asSrcDstEid(SourceDestKey sd, int vni) {
+    public static Eid asSrcDstEid(SourceDestKey sd, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(SourceDestKeyLcaf.class);
-        builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
-        builder.setAddress(
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
-                        .setSourceDestKey(sd).build());
+        builder.setVirtualNetworkId(vni);
+        builder.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                .rev151105.lisp.address.address.SourceDestKeyBuilder().setSourceDestKey(sd).build());
         return builder.build();
     }
 
