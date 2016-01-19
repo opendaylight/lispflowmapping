@@ -19,9 +19,14 @@ public final class ConfigIni {
     private boolean mappingOverwrite;
     private boolean smr;
     private String elpPolicy;
+    private String lookupPolicy;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
+    // 'lisp.mappingOverWrite' defines the database behavior while 'lisp.mappingMerge' affects the result
+    // returned in Map-Replies
+
+    private static final String LISP_LOOKUP_POLICY = "lisp.lookupPolicy";
     private static final String LISP_MAPPING_MERGE = "lisp.mappingMerge";
     private static final String LISP_MAPPING_OVERWRITE = "lisp.mappingOverwrite";
     private static final String LISP_SMR = "lisp.smr";
@@ -41,6 +46,34 @@ public final class ConfigIni {
         initMappingOverwrite(context);
         initSmr(context);
         initElpPolicy(context);
+        initLookupPolicy(context);
+    }
+
+    private void initLookupPolicy(BundleContext context) {
+        // set the default value first
+        this.lookupPolicy = "northboundFirst";
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_LOOKUP_POLICY);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_LOOKUP_POLICY);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'northboundFirst' (Southbound is only looked up if Northbound is empty) ",
+                        LISP_LOOKUP_POLICY);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("northboundAndSouthbound")) {
+            this.lookupPolicy = "northboundAndSouthbound";
+            LOG.debug("Setting configuration variable '{}' to 'northboundAndSouthbound' (Southbound is always looked up and can filter Northbound if intersection is not empty)", LISP_LOOKUP_POLICY);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'northboundFirst' (Southbound is only looked up if Northbound is empty)", LISP_LOOKUP_POLICY);
+        }
     }
 
     private void initMappingMerge(BundleContext context) {
@@ -181,6 +214,10 @@ public final class ConfigIni {
 
     public String getElpPolicy() {
         return elpPolicy;
+    }
+
+    public String getLookupPolicy() {
+        return lookupPolicy;
     }
 
     public static ConfigIni getInstance() {
