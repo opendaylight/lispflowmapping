@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
@@ -61,7 +63,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
-    private ThreadLocal<MapNotify> tlsMapNotify = new ThreadLocal<MapNotify>();
+    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<Pair<MapNotify, List<TransportAddress>>>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
     private OdlLispSbService lispSB = null;
@@ -147,7 +149,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         }
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister) {
+    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
         LOG.debug("DAO: Adding mapping for {}",
                 LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
                         .getMappingRecord().getEid()));
@@ -158,7 +160,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         return tlsMapNotify.get();
     }
 
-    public MapNotify handleMapRegister(MapRegister mapRegister, boolean smr) {
+    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister, boolean smr) {
         LOG.debug("DAO: Adding mapping for {}",
                 LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
                         .getMappingRecord().getEid()));
@@ -179,17 +181,29 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         return shouldAuthenticate;
     }
 
+    private void sendMapNotify(MapNotify mapNotify, TransportAddress address) {
+        SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
+        smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
+        smnib.setTransportAddress(address);
+        getLispSB().sendMapNotify(smnib.build());
+    }
+
     @Override
     public void onAddMapping(AddMapping mapRegisterNotification) {
-        MapNotify mapNotify = handleMapRegister(mapRegisterNotification.getMapRegister());
+        Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
+        MapNotify mapNotify = result.getLeft();
+        List<TransportAddress> rlocs = result.getRight();
         if (mapNotify != null) {
-            TransportAddressBuilder tab = new TransportAddressBuilder();
-            tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-            SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
-            smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
-            smnib.setTransportAddress(tab.build());
-            getLispSB().sendMapNotify(smnib.build());
+            if (rlocs == null) {
+                TransportAddressBuilder tab = new TransportAddressBuilder();
+                tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                sendMapNotify(mapNotify, tab.build());
+            } else {
+                for (TransportAddress ta : rlocs) {
+                    sendMapNotify(mapNotify, ta);
+                }
+            }
         } else {
             LOG.warn("got null map notify");
         }
@@ -241,8 +255,8 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     @Override
-    public void handleMapNotify(MapNotify notify) {
-        tlsMapNotify.set(notify);
+    public void handleMapNotify(MapNotify notify, List<TransportAddress> rlocs) {
+        tlsMapNotify.set(new MutablePair<MapNotify, List<TransportAddress>>(notify, rlocs));
     }
 
     @Override

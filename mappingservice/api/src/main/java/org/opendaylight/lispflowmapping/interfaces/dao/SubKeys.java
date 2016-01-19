@@ -20,6 +20,7 @@ public interface SubKeys {
     String RECORD = "address";
     String XTRID_RECORDS = "xtrid";
     String SUBSCRIBERS = "subscribers";
+    String SRC_RLOC = "src_rloc";
     String REGDATE = "date";
     String VNI = "vni";
     String LCAF_SRCDST = "lcaf_srcdst";

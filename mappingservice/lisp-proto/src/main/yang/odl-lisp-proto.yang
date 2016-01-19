@@ -133,7 +133,7 @@ module odl-lisp-proto {
                 "64 bit site identifier.";
         }
         leaf source-rloc {
-            type ip-address-binary;
+            type inet:ip-address;
             description
                 "The Source IP address used for sending the enclosing control
                  packet in RLOC space.";
