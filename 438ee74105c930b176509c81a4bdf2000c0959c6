@@ -85,6 +85,41 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_eee7f8e2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-20T00:21:54Z",
+      "side": 1,
+      "message": "Ah, ok, in that case, no objection.",
+      "parentUuid": "9a3d3df0_f320819d",
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ceecb4ca",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-20T00:21:54Z",
+      "side": 1,
+      "message": "Most of the code uses \u0027} else {\u0027 on the same line.",
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_fd7cd074",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -149,6 +184,23 @@
         "endLine": 26,
         "endChar": 29
       },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_2ed1e0fb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-20T00:21:54Z",
+      "side": 1,
+      "message": "I think \u0027intersection EID\u0027 is confusing, I would use \u0027a MappingRecord which has the more specific EID and ...\u0027",
       "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
