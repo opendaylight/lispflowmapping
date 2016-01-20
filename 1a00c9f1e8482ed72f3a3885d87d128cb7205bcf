@@ -40,6 +40,29 @@
       "revId": "1a00c9f1e8482ed72f3a3885d87d128cb7205bcf",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_495ffe0e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T03:34:05Z",
+      "side": 1,
+      "message": "General comment here: since we deal with record and mappings a lot in the code, it always improves readability if you can prepend these variable names with some discriminator when you have multiple of them in the same code section. i.e: here you can say notifyMappings, or better yet, mergedMappings instead of mappings.",
+      "range": {
+        "startLine": 134,
+        "startChar": 40,
+        "endLine": 134,
+        "endChar": 48
+      },
+      "revId": "1a00c9f1e8482ed72f3a3885d87d128cb7205bcf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
