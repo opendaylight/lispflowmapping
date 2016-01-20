@@ -93,7 +93,8 @@ public final class MaskUtil {
             } else if (address instanceof ServicePath) {
                 // Build new Service Path eid with service index set to 0
                 long spi = ((ServicePath) address).getServicePath().getServicePathId().getValue();
-                return LispAddressUtil.asServicePathEid(eid.getVirtualNetworkId().getValue(), spi, (short)0);
+                long vni = eid.getVirtualNetworkId() != null ? eid.getVirtualNetworkId().getValue() : -1;
+                return LispAddressUtil.asServicePathEid(vni, spi, (short)0);
             }
         } catch (UnknownHostException e) {
             LOG.trace("Failed to normalize eid {}: {}", eid, ExceptionUtils.getStackTrace(e));
