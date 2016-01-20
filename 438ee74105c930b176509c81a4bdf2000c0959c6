@@ -103,6 +103,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_7e90b1ec",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_f320819d",
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_ceecb4ca",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 1
@@ -167,6 +185,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_debc5d6f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "if NB is null, intersection is empty, and we return NB.",
+      "parentUuid": "9a3d3df0_d040d358",
+      "range": {
+        "startLine": 189,
+        "startChar": 70,
+        "endLine": 189,
+        "endChar": 72
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_9da024f6",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
         "patchSetId": 1
@@ -178,6 +220,30 @@
       "writtenOn": "2016-01-19T13:08:58Z",
       "side": 1,
       "message": "mappingOverwrite",
+      "range": {
+        "startLine": 26,
+        "startChar": 13,
+        "endLine": 26,
+        "endChar": 29
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_1eb7e587",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_9da024f6",
       "range": {
         "startLine": 26,
         "startChar": 13,
@@ -207,6 +273,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_9eaad517",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_2ed1e0fb",
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_9d878461",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -230,6 +314,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_7ea71150",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_9d878461",
+      "range": {
+        "startLine": 178,
+        "startChar": 75,
+        "endLine": 178,
+        "endChar": 77
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_5a7ea2af",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -241,6 +349,30 @@
       "writtenOn": "2016-01-19T13:08:58Z",
       "side": 1,
       "message": "A nit: could you reformat some of the comment lines since they\u0027re longer than the 120 character limit.",
+      "range": {
+        "startLine": 208,
+        "startChar": 11,
+        "endLine": 208,
+        "endChar": 40
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_de63bd18",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "I checked, they are not longer than 120.",
+      "parentUuid": "9a3d3df0_5a7ea2af",
       "range": {
         "startLine": 208,
         "startChar": 11,
@@ -334,6 +466,54 @@
       "writtenOn": "2016-01-19T17:52:50Z",
       "side": 1,
       "message": "Done.",
+      "parentUuid": "9a3d3df0_ba188e85",
+      "range": {
+        "startLine": 211,
+        "startChar": 33,
+        "endLine": 211,
+        "endChar": 43
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_be6879f6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_3a0c7e42",
+      "range": {
+        "startLine": 211,
+        "startChar": 50,
+        "endLine": 211,
+        "endChar": 63
+      },
+      "revId": "438ee74105c930b176509c81a4bdf2000c0959c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_1e6ec501",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-20T23:35:19Z",
+      "side": 1,
+      "message": "Done",
       "parentUuid": "9a3d3df0_ba188e85",
       "range": {
         "startLine": 211,
