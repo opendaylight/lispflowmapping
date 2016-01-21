@@ -388,6 +388,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_503e76b9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-01-21T21:04:30Z",
+      "side": 1,
+      "message": "Check the code style/formatter in eclipse. Probably your maximum line width for comments is 80.",
+      "parentUuid": "9a3d3df0_d568b8f7",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_44e4000d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 3
