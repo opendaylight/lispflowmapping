@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_d531d8a3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-21T20:53:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_4f48992d",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_246f3cc7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 3
@@ -113,6 +131,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_757c4c21",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-21T20:53:17Z",
+      "side": 1,
+      "message": "Right, I think Lori was fine with doing it this way, but I agree that if we were to have more options, then enum would be better. For only two, I  dont think it makes much difference. We should probably change elpPolicy to follow the same approach, and there we have 3 options. So maybe I\u0027ll send a separate patch later to use enum instead for both of these.",
+      "parentUuid": "9a3d3df0_e4b6f4db",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_646824bb",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
         "patchSetId": 3
@@ -193,6 +229,30 @@
       "writtenOn": "2016-01-21T10:58:08Z",
       "side": 1,
       "message": "I guess this whole thing could be replaced by: return dao.get(key).",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 13
+      },
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_5579482e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-21T20:53:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_c4793095",
       "range": {
         "startLine": 100,
         "startChar": 0,
@@ -304,6 +364,24 @@
       "side": 1,
       "message": "I added this comment originally, Vina just broke it into shorter lines, although it wasn\u0027t necessary, they were already less than 120 :)\n\nI left that comment there so that when I have a test setup, I would explicitly test this, just to make sure everything\u0027s as expected.",
       "parentUuid": "9a3d3df0_644b042c",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d568b8f7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-21T20:53:17Z",
+      "side": 1,
+      "message": "Sorry Lori. I used the Eclipse cmd+shift+F to format the file, and although I have the editor set to 120 columns, it still breaks these lines! not sure why. will try to restore them to the way they were, I agree it is annoying this way. I didnt notice the change before submitting.",
+      "parentUuid": "9a3d3df0_2f10b500",
       "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -518,6 +596,30 @@
       "writtenOn": "2016-01-21T10:58:08Z",
       "side": 1,
       "message": "I guess this can be removed.",
+      "range": {
+        "startLine": 478,
+        "startChar": 16,
+        "endLine": 478,
+        "endChar": 57
+      },
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_159fc053",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-01-21T20:53:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_a44b4c58",
       "range": {
         "startLine": 478,
         "startChar": 16,
