@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a3d3df0_4f48992d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "While there is no style check for this, I personally used the convention of leaving a space after a cast: (MappingRecord) nbMapping",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_246f3cc7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 3
@@ -19,6 +36,24 @@
         "endLine": 203,
         "endChar": 108
       },
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_6f4bdd2b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "What do you use to check for line length? I just downloaded this patch into Eclipse, where I have a marker set up in my Editor at 120 characters. No line in this file passed the 120 limit. This particular line is 109.",
+      "parentUuid": "9a3d3df0_246f3cc7",
       "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -157,6 +192,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_6f72bd7d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "I see no line longer than 120 characters in this file in Eclipse.",
+      "parentUuid": "9a3d3df0_04ab18d9",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_845288db",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 3
@@ -197,6 +250,24 @@
         "endLine": 97,
         "endChar": 27
       },
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_2f10b500",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "I added this comment originally, Vina just broke it into shorter lines, although it wasn\u0027t necessary, they were already less than 120 :)\n\nI left that comment there so that when I have a test setup, I would explicitly test this, just to make sure everything\u0027s as expected.",
+      "parentUuid": "9a3d3df0_644b042c",
       "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -249,6 +320,41 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_0f15f1f0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "Nope :P\n\nOTOH, you shouldn\u0027t use .getMaskLength() anymore, since it\u0027s not guaranteed it is set (or set correctly) since we switched to the IETF YANG model. Now the IpPrefix object is the canonical source of information for masks, and the maskLenght field will be removed in Boron to avoid confusion. I guess we should have removed it already, since I may be cause for bugs.\n\nYou should use lisp-proto.MaskUtil.getMaskForIpPrefix() and getMaskForAddress()",
+      "parentUuid": "9a3d3df0_449360a3",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_4f1d390f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "Most of the code uses space after cast.",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_a4906c96",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 3
@@ -272,6 +378,58 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_6ff91dc8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "Nope :P",
+      "parentUuid": "9a3d3df0_a4906c96",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_4fe4190d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "Same comment about .getMaskLength()",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_efba4de0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "You can set maskLength here if you want, but the IpPrefix object in the EID has to contain the correct mask (which it does, since you\u0027ve taken it from SB EID).",
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_848d687e",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 3
@@ -289,6 +447,24 @@
         "endLine": 238,
         "endChar": 102
       },
+      "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_4ff6d9d8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-01-21T14:34:02Z",
+      "side": 1,
+      "message": "Nope :P",
+      "parentUuid": "9a3d3df0_848d687e",
       "revId": "d3ae9b30920cf19b0b0e41bfc9c512795e494fb8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
