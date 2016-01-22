@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_98c82076",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2016-01-22T10:12:03Z",
+      "side": 1,
+      "message": "controller provides a config subsystem wrapper for netty event loop groups. SO you can get one injected and configured externally without having to deal with its creation and closing here.",
+      "range": {
+        "startLine": 96,
+        "startChar": 34,
+        "endLine": 96,
+        "endChar": 68
+      },
+      "revId": "ead215fe19b4b37d1f10c7c462eb829d80819cb9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_38cbd473",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2016-01-22T10:12:03Z",
+      "side": 1,
+      "message": "SO here, Id start with this:\n\n            ExecutionHandler executionHandler \u003d new ExecutionHandler(\n                    new OrderedMemoryAwareThreadPoolExecutor(4, 0, 10000));\n            b.childHandler(new ChannelInitializer\u003cChannel\u003e() {\n\n                @Override\n                protected void initChannel(final Channel ch) throws Exception {\n                    ch.pipeline().addLast(executionHandler);\n                    ch.pipeline().addLast(listService);\n                }\n            });\n\nTo add execution handler into pipeline and see what happens.",
+      "range": {
+        "startLine": 101,
+        "startChar": 7,
+        "endLine": 101,
+        "endChar": 41
+      },
+      "revId": "ead215fe19b4b37d1f10c7c462eb829d80819cb9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
