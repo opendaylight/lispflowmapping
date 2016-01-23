@@ -5,7 +5,7 @@
 <table class="footable table">
     <thead>
         <tr>
-            <th>{{ 'IID' | translate }}</th>
+            <th>{{ 'VNI' | translate }}</th>
             <th>{{ 'EID' | translate }}</th>
             <th>{{ 'KEY_TYPE' | translate }}</th>
             <th>{{ 'AUTH_KEY' | translate }}</th>
@@ -17,10 +17,10 @@
             <td colspan="5" class="centerAlign">{{ 'NO_KEY' | translate }}</td>
         </tr>
         <tr ng-repeat-start="key in data" node-table>
-            <td>{{ key.iid }}</td>
-            <td>{{ key.eid }}</td>
-            <td>{{ key['key-type'] | number }}</td>
-            <td>{{ key.authkey }}</td>
+            <td>{{ key.vni }}</td>
+            <td>{{ key['eid-uri'] }}</td>
+            <td>{{ key['mapping-authkey']['key-type'] | number }}</td>
+            <td>{{ key['mapping-authkey']['key-string'] }}</td>
             <td><i class="icon-eye-open" ng-click="expandSingleRow(key, data, 'detailHide')"> {{ 'VIEW' | translate }}</i> |
                 <i class="icon-trash" ng-click="expandSingleRow(key, data, 'deleteHide')"> {{ 'DELETE' | translate }}</i>
             </td>
