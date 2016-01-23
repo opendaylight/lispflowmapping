@@ -70,6 +70,7 @@
     <feature name="odl-lispflowmapping-ui" description="OpenDaylight :: LISP Flow Mapping :: User Interface" version='${project.version}'>
         <feature version="${dlux.core.version}">odl-dlux-core</feature>
         <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
+        <bundle>mvn:org.opendaylight.dlux/dlux.common.yangutils/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/lispflowmapping-ui-bundle/{{VERSION}}</bundle>
     </feature>
 

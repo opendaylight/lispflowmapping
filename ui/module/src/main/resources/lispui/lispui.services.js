@@ -37,11 +37,11 @@ define(['app/lispui/lispui.module'], function(lispui) {
                         apis);
                     console.info('tree api', scope.treeApis);
 
-                    // Select the api 'mappingservice'
+                    // Select the api 'odl-mappingservice'
                     var numApis = scope.apis.length;
                     for (i = 0; i < numApis; i++)
                         if (scope.apis[i].module ==
-                            "mappingservice")
+                            "odl-mappingservice")
                             scope.selApi = scope.apis[
                                 i];
                     console.info('selApi:', scope.selApi);
@@ -297,19 +297,19 @@ define(['app/lispui/lispui.module'], function(lispui) {
             api.getAll = function() {
                 return LispuiRestangular.one('restconf').one(
                     'config').one(
-                    'mappingservice:mapping-database');
+                    'odl-mappingservice:mapping-database');
             };
 
             api.postDeleteKey = function() {
                 return LispuiRestangular.one('restconf').one(
                     'operations').one(
-                    'mappingservice:remove-key');
+                    'odl-mappingservice:remove-key');
             }
 
             api.postDeleteMapping = function() {
                 return LispuiRestangular.one('restconf').one(
                     'operations').one(
-                    'mappingservice:remove-mapping');
+                    'odl-mappingservice:remove-mapping');
             }
 
             api.expandSingleRow = function(element, data, op) {
@@ -325,11 +325,11 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 return api.getAll().get().then(function(
                     data) {
                     var database = [];
-                    for (iid of data['mapping-database']['instance-id']) {
-                        if (iid['authentication-key'] != null) {
-                            for (key of iid['authentication-key']) {
-                                console.log('iid', iid.iid)
-                                key.iid = iid.iid;
+                    for (vni of data['mapping-database']['virtual-network-identifier']) {
+                        if (vni['authentication-key'] != null) {
+                            for (key of vni['authentication-key']) {
+                                console.log('vni', vni.vni)
+                                key.vni = vni.vni;
                                 database.push(key);
                             }
                         }
@@ -344,17 +344,18 @@ define(['app/lispui/lispui.module'], function(lispui) {
                     data) {
                     var database = [];
                     console.info('data:', data);
-                    for (iid of data[
+                    for (vni of data[
                             'mapping-database'][
-                            'instance-id'
+                            'virtual-network-identifier'
                         ]) {
-                        if (iid.mapping != null) {
-                            for (mapping of iid.mapping) {
-                                mapping.iid = iid.iid;
+                        if (vni.mapping != null) {
+                            for (mapping of vni.mapping) {
+                                mapping.vni = vni.vni;
                                 database.push(mapping);
                             }
                         }
                     }
+                    console.info('database:', database);
                     return database;
                 });
             };
@@ -369,11 +370,11 @@ define(['app/lispui/lispui.module'], function(lispui) {
                         key.data = LispuiUtils.getPrettyString(JSON.stringify(key));
                         key.detailHide = true;
                         key.deleteHide = true;
-                        key.url = key.eid.replace(
+                        key.url = key['eid-uri'].replace(
                             '/', '%2f');
                         data.push(key);
                     }
-                    console.info('keys:', data)
+                    console.info('keys:', data);
                     return data;
                 });
             };
@@ -387,40 +388,41 @@ define(['app/lispui/lispui.module'], function(lispui) {
                             console.log(mapping.data);
                             mapping.detailHide = true;
                             mapping.deleteHide = true;
-                            mapping.url = mapping.eid.replace('/', '%2f');
+                            mapping.url = mapping['eid-uri'].replace('/', '%2f');
                             var numLocators = 0;
                             var locatorString = '';
-                            var mainLocatorRecord =
-                                null;
-                            if (mapping.LocatorRecord) {
-                                numLocators = mapping.LocatorRecord
+                            var mainLocatorRecord = null;
+                            var mappingRecord = mapping['mapping-record'];
+                            console.info(mappingRecord);
+                            if (mappingRecord.LocatorRecord) {
+                                numLocators = mappingRecord.LocatorRecord
                                     .length;
                                 // Take the most important Locator
                                 mainLocatorRecord =
-                                    mapping.LocatorRecord[
+                                    mappingRecord.LocatorRecord[
                                         0];
                                 for (i = 1; i <
                                     numLocators; i++) {
-                                    if (mapping.LocatorRecord[
+                                    if (mappingRecord.LocatorRecord[
                                             i].priority <
                                         mainLocatorRecord
                                         .priority ||
-                                        (mapping.LocatorRecord[
+                                        (mappingRecord.LocatorRecord[
                                                 i].priority ==
                                             mainLocatorRecord
                                             .priority &&
-                                            mapping.LocatorRecord[
+                                            mappingRecord.LocatorRecord[
                                                 i].weight >
                                             mainLocatorRecord
                                             .weight))
                                         mainLocatorRecord =
-                                        mapping.LocatorRecord[
+                                        mappingRecord.LocatorRecord[
                                             i];
                                 }
                                 locatorString +=
                                     LispuiUtils.renderLispAddress(
                                         mainLocatorRecord
-                                        .LispAddressContainer
+                                        .rloc
                                     );
                                 if (numLocators > 1) {
                                     numLocators--;
@@ -471,6 +473,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
 
                             data.push(mapping);
                         }
+                        console.info('mappings:', data);
                         return data;
                     });
             }
@@ -479,7 +482,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 var postKey = {
                     "input": {}
                 };
-                if (key.iid == '0' || Object.keys(key.LispAddressContainer)[0] == 'LcafSegmentAddr') {
+                /*
+                if (key.vni == '0' || Object.keys(key.LispAddressContainer)[0] == 'LcafSegmentAddr') {
                     postKey.input.LispAddressContainer = key.LispAddressContainer;
                 } else {
                     // In case the IID is not 0 and the LispAddressContainer is not coded as LCAF, code it as LcafSegmentAddr
@@ -487,7 +491,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                         "LcafSegmentAddr": {
                             "afi": 16387,
                             "lcafType": 2,
-                            "instanceId": parseInt(key.iid),
+                            "instanceId": parseInt(key.vni),
                             "iidMaskLength": 32,
                             "Address": key.LispAddressContainer
                         }
@@ -495,6 +499,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 }
                 postKey.input['mask-length'] = key['mask-length'];
                 console.log('postKey', postKey);
+                */
+                postKey.input.eid = key.eid;
                 return postKey;
             }
 
@@ -502,7 +508,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 var postMapping = {
                     "input": {}
                 };
-                if (mapping.iid == '0' || Object.keys(mapping.LispAddressContainer)[0] == 'LcafSegmentAddr') {
+                /*
+                if (mapping.vni == '0' || Object.keys(mapping.LispAddressContainer)[0] == 'LcafSegmentAddr') {
                     postMapping.input.LispAddressContainer = mapping.LispAddressContainer;
                 } else {
                     // In case the IID is not 0 and the LispAddressContainer is not coded as LCAF, code it as LcafSegmentAddr
@@ -510,7 +517,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                         "LcafSegmentAddr": {
                             "afi": 16387,
                             "lcafType": 2,
-                            "instanceId": parseInt(mapping.iid),
+                            "instanceId": parseInt(mapping.vni),
                             "iidMaskLength": 32,
                             "Address": mapping.LispAddressContainer
                         }
@@ -518,6 +525,8 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 }
                 postMapping.input['mask-length'] = mapping['maskLength'];
                 console.log('postMapping', postMapping);
+                */
+                postMapping.input.eid = mapping['mapping-record'].eid;
                 return postMapping;
             }
 
@@ -582,115 +591,81 @@ define(['app/lispui/lispui.module'], function(lispui) {
                 return $sce.trustAsHtml(output);
             }
 
-            api.getAddress = function(address) {
-                console.log(address);
-                if (address.afi == null) {
-                    address = address[Object.keys(address)[0]];
-                }
-                var afi = address.afi;
-
-                console.log(afi);
-                var string = '';
-                if (afi == 1) {
-                    string = address.Ipv4Address;
-                } else if (afi == 2) {
-                    string = address.Ipv6Address;
-                } else if (afi == 16389) {
-                    string = address.MacAddress;
-                } else if (afi == 17) {
-                    string = address.distinguishedName;
-                } else if (afi == 18) {
-                    string = address.AS;
-                }
-                return string;
-            }
-
             api.renderLispAddress = function(lispAddress) {
                 var string = '';
 
                 if (!lispAddress)
                     return string;
 
-                var addressType = Object.keys(lispAddress)[0];
-                var afi = lispAddress[addressType].afi;
+                var addressType = lispAddress['address-type'];
+                addressType = addressType.replace(/.*\:/, "");
+                addressType = addressType.replace(/-afi$/, "");
+                addressType = addressType.replace(/-lcaf$/, "");
 
-                if (afi == 0) {
+                console.info(lispAddress);
+                console.info(addressType);
+
+                if (addressType == "no-address") {
                     string += 'no:No Address Present';
-                } else if (afi == 1) {
+                } else if (addressType == "ipv4" || addressType == "ipv4-prefix") {
                     string += 'ipv4:';
-                    string += api.getAddress(lispAddress[addressType]);
-                } else if (afi == 2) {
+                    string += lispAddress[addressType];
+                } else if (addressType == "ipv6" || addressType == "ipv6-prefix") {
                     string += 'ipv6:';
-                    string += api.getAddress(lispAddress[addressType]);
-                } else if (afi == 16389) {
+                    string += lispAddress[addressType];
+                } else if (addressType == "mac") {
                     string += 'mac:';
-                    string += api.getAddress(lispAddress[addressType]);
-                } else if (afi == 17) {
+                    string += lispAddress[addressType];
+                } else if (addressType == "distinguished-name") {
                     string += 'dn:';
-                    string += api.getAddress(lispAddress[addressType]);
-                } else if (afi == 18) {
+                    string += lispAddress[addressType];
+                } else if (addressType == "as-number") {
                     string += 'as:AS';
-                    string += api.getAddress(lispAddress[addressType]);
-                } else if (afi == 16387) {
-                    var lcaf = lispAddress[addressType].lcafType;
-                    if (lcaf == 1) {
-                        string += 'list:{';
-                        var addresses = lispAddress[addressType].Addresses;
-                        var first = true;
-                        for (add of addresses) {
-                            string += (first) ? '' : ',';
-                            first = false;
-                            delete add.name;
-                            string += api.getAddress(add);
-                        }
-                        string += '}';
-                    } else if (lcaf == 2) {
-                        string += '[' + lispAddress[addressType].instanceId + '] ';
-                        string += api.getAddress(lispAddress[addressType].Address);
-                        string += '/' + lispAddress[addressType].iidMaskLength;
-                    } else if (lcaf == 4) {
-                        string += 'appdata:'
-                        console.log(lispAddress[addressType].Address);
-                        string += api.getAddress(lispAddress[addressType].Address);
-                        string += '!' + lispAddress[addressType].ipTos;
-                        string += '!' + lispAddress[addressType].protocol;
-                        string += '!' + lispAddress[addressType].localPortLow;
-                        string += '-' + lispAddress[addressType].localPortHigh;
-                        string += '!' + lispAddress[addressType].remotePortLow;
-                        string += '-' + lispAddress[addressType].remotePortHigh;
-                    } else if (lcaf == 10) {
-                        string += 'elp:';
-                        string += '{';
-                        var hops = lispAddress[addressType].Hops;
-                        first = true;
-                        for (hop of hops) {
-                            string += (first) ? '' : '→';
-                            first = false;
-                            string += api.getAddress(hop.hop);
-                        }
-                        string += '}';
-                    } else if (lcaf == 12) {
-                        string += 'srcdst:';
-                        string += api.getAddress(
-                            lispAddress[addressType].srcAddress
-                        );
-                        string += '/' + lispAddress[
-                                addressType].srcMaskLength +
-                            '|';
-                        string += api.getAddress(
-                            lispAddress[addressType].dstAddress
-                        );
-                        string += '/' + lispAddress[
-                            addressType].dstMaskLength;
-                    } else if (lcaf == 15) {
-                        string += api.getAddress(
-                            lispAddress[addressType].key
-                        );
-                        string += '=>';
-                        string += api.getAddress(
-                            lispAddress[addressType].value
-                        );
+                    string += lispAddress[addressType];
+                } else if (addressType == "afi-list") {
+                    string += 'list:{';
+                    var addresses = lispAddress[addressType].address;
+                    var first = true;
+                    for (add of addresses) {
+                        string += (first) ? '' : ',';
+                        first = false;
+                        delete add.name;
+                        string += add;
                     }
+                    string += '}';
+                } else if (addressType == "instance-id") {
+                    string += '[' + lispAddress[addressType].iid + '] ';
+                    string += lispAddress[addressType].address;
+                } else if (addressType == "application-data") {
+                    string += 'appdata:'
+                    console.log(lispAddress[addressType].address);
+                    string += lispAddress[addressType].address;
+                    string += '!' + lispAddress[addressType].ipTos;
+                    string += '!' + lispAddress[addressType].protocol;
+                    string += '!' + lispAddress[addressType].localPortLow;
+                    string += '-' + lispAddress[addressType].localPortHigh;
+                    string += '!' + lispAddress[addressType].remotePortLow;
+                    string += '-' + lispAddress[addressType].remotePortHigh;
+                } else if (addressType == "explicit-locator-path") {
+                    string += 'elp:';
+                    string += '{';
+                    var hops = lispAddress[addressType].hop;
+                    first = true;
+                    for (hop of hops) {
+                        string += (first) ? '' : '→';
+                        first = false;
+                        string += hop.hop.address;
+                    }
+                    string += '}';
+                } else if (addressType == "source-dest-key") {
+                    string += 'srcdst:';
+                    string += lispAddress[addressType].source;
+                    string += '|';
+                    string += lispAddress[addressType].dest;
+                } else if (addressType == "key-value-address") {
+                    string += lispAddress[addressType].key;
+                    string += '=>';
+                    string += lispAddress[addressType].value;
                 }
 
                 return string;
