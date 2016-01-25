@@ -8,11 +8,13 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
+import static io.netty.buffer.Unpooled.wrappedBuffer;
+import io.netty.channel.socket.DatagramPacket;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.net.DatagramPacket;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +62,7 @@ import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
 
-    private LispSouthboundService testedLispService;
+    private LispSouthboundHandler testedLispService;
     private NotificationPublishService nps;
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacket;
@@ -96,7 +98,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         super.before();
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
-        testedLispService = new LispSouthboundService(null);
+        testedLispService = new LispSouthboundHandler(null);
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
@@ -350,20 +352,19 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         System.arraycopy(mapRegisterPacket, 0, extraDataPacket, 0, mapRegisterPacket.length);
         stubMapRegister(true);
 
-        DatagramPacket dp = new DatagramPacket(extraDataPacket, extraDataPacket.length);
-        dp.setLength(mapRegisterPacket.length);
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(extraDataPacket), new InetSocketAddress(0), new InetSocketAddress(0));
         testedLispService.handlePacket(dp);
         // Check map register fields.
         // XXX: test
         // byte[] notifyResult = testedLispService.handlePacket(dp).getData();
-        byte[] notifyResult = lastMapNotifyPacket().getData();
+        byte[] notifyResult = lastMapNotifyPacket().content().array();
         assertEquals(mapRegisterPacket.length, notifyResult.length);
 
     }
 
     private DatagramPacket lastMapReplyPacket() {
         ByteBuffer serialize = MapReplySerializer.getInstance().serialize(mapReplyBuilder.build());
-        return new DatagramPacket(serialize.array(), serialize.array().length);
+        return new DatagramPacket(wrappedBuffer(serialize), new InetSocketAddress(0), new InetSocketAddress(0));
     }
 
     private DatagramPacket lastMapNotifyPacket() {
@@ -376,7 +377,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapNotifyBuilder.setKeyId((short) 0);
         mapNotifyBuilder.setAuthenticationData(new byte[0]);
         ByteBuffer serialize = MapNotifySerializer.getInstance().serialize(mapNotifyBuilder.build());
-        return new DatagramPacket(serialize.array(), serialize.array().length);
+        return new DatagramPacket(wrappedBuffer(serialize), new InetSocketAddress(0), new InetSocketAddress(0));
     }
 
     @Test
@@ -409,7 +410,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         stubMapRegister(true);
 
         DatagramPacket notifyPacket = handleMapRegisterPacket(mapRegisterPacket);
-        assertEquals(LispMessage.PORT_NUM, notifyPacket.getPort());
+        assertEquals(LispMessage.PORT_NUM, notifyPacket.recipient().getPort());
     }
 
     @Test
@@ -482,7 +483,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // ret(mapReply);
 
         DatagramPacket replyPacket = handleMapRequestPacket(mapRequestPacket);
-        assertEquals(4342, replyPacket.getPort());
+        assertEquals(4342, replyPacket.recipient().getPort());
     }
 
     @Test
@@ -578,7 +579,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     public void mapReply__UseEncapsulatedUdpPort() throws Exception {
         stubHandleRequest();
 
-        assertEquals(LispMessage.PORT_NUM, handleMapRequestPacket(mapRequestPacket).getPort());
+        assertEquals(LispMessage.PORT_NUM, handleMapRequestPacket(mapRequestPacket).recipient().getPort());
     }
 
     @Test
@@ -705,28 +706,28 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private byte[] handleMapRequestAsByteArray(byte[] inPacket) {
         handleMapRequestPacket(inPacket);
-        return lastMapReplyPacket().getData();
+        return lastMapReplyPacket().content().array();
     }
 
     private byte[] handleMapRegisterAsByteArray(byte[] inPacket) {
         handleMapRegisterPacket(inPacket);
-        return lastMapNotifyPacket().getData();
+        return lastMapNotifyPacket().content().array();
     }
 
     private DatagramPacket handleMapRequestPacket(byte[] inPacket) {
-        DatagramPacket dp = new DatagramPacket(inPacket, inPacket.length);
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0));
         // Unless we explicitly set the source port, it will be -1, which breaks some tests
         // This is till not the real port number, but it's better
-        dp.setPort(LispMessage.PORT_NUM);
+        //dp.setPort(LispMessage.PORT_NUM);
         testedLispService.handlePacket(dp);
         return lastMapReplyPacket();
     }
 
     private DatagramPacket handleMapRegisterPacket(byte[] inPacket) {
-        DatagramPacket dp = new DatagramPacket(inPacket, inPacket.length);
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0));
         // Unless we explicitly set the source port, it will be -1, which breaks some tests
         // This is till not the real port number, but it's better
-        dp.setPort(LispMessage.PORT_NUM);
+        //dp.setPort(LispMessage.PORT_NUM);
         testedLispService.handlePacket(dp);
         if (mapNotifyBuilder == null) {
             return null;
@@ -737,7 +738,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private DatagramPacket handlePacket(byte[] inPacket) {
         // TODO get from mock
-        testedLispService.handlePacket(new DatagramPacket(inPacket, inPacket.length));
+        testedLispService.handlePacket(new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0)));
         return null;
     }
 
