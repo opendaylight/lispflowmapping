@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import java.net.DatagramPacket;
+import io.netty.channel.socket.DatagramPacket;
 
 public interface ILispSouthboundService {
 

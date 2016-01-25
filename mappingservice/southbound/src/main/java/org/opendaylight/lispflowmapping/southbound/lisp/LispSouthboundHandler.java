@@ -8,7 +8,12 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import java.net.DatagramPacket;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
+
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
@@ -39,14 +44,15 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundService implements ILispSouthboundService {
+@ChannelHandler.Sharable
+public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket> implements ILispSouthboundService {
     private NotificationPublishService notificationPublishService;
-    protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
     private LispSouthboundStats lispSbStats = null;
 
-    public LispSouthboundService(LispSouthboundPlugin lispSbPlugin) {
+    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
         if (lispSbPlugin != null) {
             this.lispSbStats = lispSbPlugin.getStats();
@@ -57,29 +63,28 @@ public class LispSouthboundService implements ILispSouthboundService {
         this.notificationPublishService = nps;
     }
 
-    public void handlePacket(DatagramPacket packet) {
-        ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+    public void handlePacket(DatagramPacket msg) {
+        ByteBuffer inBuffer = msg.content().nioBuffer();
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
         handleStats(type);
         Object lispType = MessageType.forValue(type);
         if (lispType == MessageType.EncapsulatedControlMessage) {
             LOG.trace("Received packet of type Encapsulated Control Message");
-            handleEncapsulatedControlMessage(inBuffer, packet.getAddress());
+            handleEncapsulatedControlMessage(inBuffer, msg.sender().getAddress());
         } else if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type Map-Request");
-            handleMapRequest(inBuffer, packet.getPort());
+            handleMapRequest(inBuffer, msg.sender().getPort());
         } else if (lispType == MessageType.MapRegister) {
             LOG.trace("Received packet of type Map-Register");
-            handleMapRegister(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapRegister(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else if (lispType == MessageType.MapNotify) {
             LOG.trace("Received packet of type Map-Notify");
-            handleMapNotify(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapNotify(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else if (lispType == MessageType.MapReply) {
             LOG.trace("Received packet of type Map-Reply");
-            handleMapReply(inBuffer, packet.getAddress(), packet.getPort());
+            handleMapReply(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else {
             LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
-            LOG.trace("Buffer: " + ByteUtil.bytesToHex(packet.getData(), packet.getLength()));
         }
     }
 
@@ -212,5 +217,24 @@ public class LispSouthboundService implements ILispSouthboundService {
                 lispSbStats.incrementRxUnknown();
             }
         }
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
+                    msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+        }
+        handlePacket(msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOG.error("Error on channel: " + cause, cause);
     }
 }

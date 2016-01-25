@@ -8,7 +8,11 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import java.net.DatagramPacket;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
+
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
@@ -30,16 +34,16 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispXtrSouthboundService implements ILispSouthboundService {
+public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket> implements ILispSouthboundService {
     private NotificationPublishService notificationPublishService;
-    protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundHandler.class);
 
     public void setNotificationProvider(NotificationPublishService nps) {
         this.notificationPublishService = nps;
     }
 
     public void handlePacket(DatagramPacket packet) {
-        ByteBuffer inBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+        ByteBuffer inBuffer = packet.content().nioBuffer();
         Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
@@ -97,5 +101,24 @@ public class LispXtrSouthboundService implements ILispSouthboundService {
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
+                    msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+        }
+        handlePacket(msg);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOG.error("Error on channel: " + cause, cause);
     }
 }
