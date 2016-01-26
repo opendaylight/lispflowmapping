@@ -10,12 +10,15 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
+import org.opendaylight.controller.md.sal.common.api.data.AsyncTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
 import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
@@ -28,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Stores data coming from the mapping database RPCs into the config datastore.
@@ -35,13 +40,15 @@ import com.google.common.util.concurrent.CheckedFuture;
  * @author Lorand Jakab
  *
  */
-public class DataStoreBackEnd {
+public class DataStoreBackEnd implements TransactionChainListener {
     protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
 
     private DataBroker broker;
+    private BindingTransactionChain txChain;
 
     public DataStoreBackEnd(DataBroker broker) {
         this.broker = broker;
+        this.txChain = broker.createTransactionChain(this);
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -147,26 +154,25 @@ public class DataStoreBackEnd {
         return authKeys;
     }
 
-    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> boolean writePutTransaction(
+    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
             InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
-        boolean ret;
-        WriteTransaction writeTx = broker.newWriteOnlyTransaction();
+        WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.put(logicalDatastoreType, addIID, data, true);
-        CheckedFuture<Void, TransactionCommitFailedException> submitFuture = writeTx.submit();
-        try {
-            submitFuture.checkedGet();
-            ret = true;
-        } catch (TransactionCommitFailedException e) {
-            LOG.error(errMsg, e);
-            ret = false;
-        }
-        return ret;
+        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Transaction failed:", t);
+            }
+        });
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
             InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
         U ret = null;
-        ReadOnlyTransaction readTx = broker.newReadOnlyTransaction();
+        ReadOnlyTransaction readTx = txChain.newReadOnlyTransaction();
         Optional<U> optionalDataObject;
         CheckedFuture<Optional<U>, ReadFailedException> submitFuture = readTx.read(logicalDatastoreType, readIID);
         try {
@@ -182,20 +188,31 @@ public class DataStoreBackEnd {
         return ret;
     }
 
-    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> boolean deleteTransaction(
+    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void deleteTransaction(
             InstanceIdentifier<U> deleteIID, LogicalDatastoreType logicalDatastoreType, String errMsg) {
-        boolean ret = false;
 
-        WriteTransaction writeTx = broker.newWriteOnlyTransaction();
+        WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
-        CheckedFuture<Void, TransactionCommitFailedException> submitFuture = writeTx.submit();
-        try {
-            submitFuture.checkedGet();
-            ret = true;
-        } catch (TransactionCommitFailedException e) {
-            LOG.error(errMsg, e);
-            ret = false;
-        }
-        return ret;
+        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Transaction failed:", t);
+            }
+        });
+    }
+
+    @Override
+    public void onTransactionChainFailed(TransactionChain<?, ?> chain, AsyncTransaction<?, ?> transaction,
+            Throwable cause) {
+        LOG.error("Broken chain {} in DataStoreBackEnd, transaction {}, cause {}", chain, transaction.getIdentifier(),
+                cause);
+    }
+
+    @Override
+    public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
+        LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
     }
 }
