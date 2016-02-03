@@ -191,9 +191,9 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     @Override
     public void onAddMapping(AddMapping mapRegisterNotification) {
         Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
-        MapNotify mapNotify = result.getLeft();
-        List<TransportAddress> rlocs = result.getRight();
-        if (mapNotify != null) {
+        if (result != null && result.getLeft() != null) {
+            MapNotify mapNotify = result.getLeft();
+            List <TransportAddress> rlocs = result.getRight();
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
@@ -205,7 +205,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
                 }
             }
         } else {
-            LOG.warn("got null map notify");
+            LOG.debug("Not sending Map-Notify");
         }
     }
 
