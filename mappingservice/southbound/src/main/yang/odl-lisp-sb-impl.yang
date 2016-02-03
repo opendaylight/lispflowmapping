@@ -35,7 +35,7 @@ module odl-lisp-sb-impl {
           uses config:service-ref {
               refine type {
                   mandatory true;
-                  config:required-identity mdsal:binding-broker-osgi-registry;
+                  config:required-identity mdsal:binding-async-data-broker;
               }
           }
       }
