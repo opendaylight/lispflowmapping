@@ -87,7 +87,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eid));
         LispAddressSerializer.getInstance().serialize(buf, eid);
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "02 00 00 0A " + //
+                "02 20 00 0A " + //
                 "00 02 03 04 " + // instance ID
                 "00 01 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());

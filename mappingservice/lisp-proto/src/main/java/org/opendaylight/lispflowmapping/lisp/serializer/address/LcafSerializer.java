@@ -23,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 public class LcafSerializer extends LispAddressSerializer {
 
     private static final LcafSerializer INSTANCE = new LcafSerializer();
+    private static final byte DEFAULT_IID_MASK_LENGTH = (byte) 32;
 
     // Private constructor prevents instantiation from other classes
     protected LcafSerializer() {
@@ -62,6 +63,7 @@ public class LcafSerializer extends LispAddressSerializer {
     protected void serializeLCAFAddressHeaderForInstanceId(ByteBuffer buffer, LispAddress lispAddress) {
         LispAddressSerializer lcafSerializer = InstanceIdSerializer.getInstance();
         serializeLCAFAddressHeader(buffer, lispAddress, lcafSerializer);
+        buffer.put(buffer.position() - 1, DEFAULT_IID_MASK_LENGTH);
         buffer.putShort((short) (lcafSerializer.getLcafLength(lispAddress) -
                 LispAddressSerializer.getInstance().getInstanceIdExtraSize()));
     }
