@@ -44,7 +44,6 @@
     <sal.version>0.10.0-SNAPSHOT</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
-    <xtend.dstdir>src/main/xtend-gen</xtend.dstdir>
     <yang.src.path>src/main/yang</yang.src.path>
     <yangtools.version>0.8.0-SNAPSHOT</yangtools.version>
   </properties>
@@ -286,12 +285,6 @@
           <configuration>
             <filesets>
               <fileset>
-                <directory>${xtend.dstdir}</directory>
-                <includes>
-                  <include>**</include>
-                </includes>
-              </fileset>
-              <fileset>
                 <directory>${jmxGeneratorPath}</directory>
                 <includes>
                   <include>**</include>
@@ -357,7 +350,6 @@
                   <source>${yang.src.path}</source>
                   <source>${jmxGeneratorPath}</source>
                   <source>${salGeneratorPath}</source>
-                  <source>${xtend.dstdir}</source>
                 </sources>
               </configuration>
             </execution>
