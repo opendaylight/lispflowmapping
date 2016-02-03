@@ -21,13 +21,6 @@
             <name>binding-rpc-broker</name>
           </rpc-registry>
 
-          <broker>
-            <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">
-              binding:binding-broker-osgi-registry
-            </type>
-            <name>binding-osgi-broker</name>
-          </broker>
-
           <notification-publish-service>
             <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl">
               binding:binding-new-notification-publish-service
