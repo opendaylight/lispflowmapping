@@ -171,21 +171,20 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
             InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
-        U ret = null;
         ReadOnlyTransaction readTx = txChain.newReadOnlyTransaction();
-        Optional<U> optionalDataObject;
-        CheckedFuture<Optional<U>, ReadFailedException> submitFuture = readTx.read(logicalDatastoreType, readIID);
+        CheckedFuture<Optional<U>, ReadFailedException> readFuture = readTx.read(logicalDatastoreType, readIID);
+        readTx.close();
         try {
-            optionalDataObject = submitFuture.checkedGet();
+            Optional<U> optionalDataObject = readFuture.checkedGet();
             if (optionalDataObject != null && optionalDataObject.isPresent()) {
-                ret = optionalDataObject.get();
+                return optionalDataObject.get();
             } else {
                 LOG.debug("{}: Failed to read", Thread.currentThread().getStackTrace()[1]);
             }
         } catch (ReadFailedException e) {
             LOG.warn("Failed to ....", e);
         }
-        return ret;
+        return null;
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void deleteTransaction(
