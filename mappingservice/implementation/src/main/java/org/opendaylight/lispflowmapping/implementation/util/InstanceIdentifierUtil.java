@@ -59,6 +59,8 @@ public final class InstanceIdentifierUtil {
         Address address = eid.getAddress();
         if (address instanceof InstanceId) {
             return ((InstanceId) address).getInstanceId().getIid().getValue();
+        } else if (eid.getVirtualNetworkId() != null) {
+            return eid.getVirtualNetworkId().getValue();
         }
         return 0L;
     }
