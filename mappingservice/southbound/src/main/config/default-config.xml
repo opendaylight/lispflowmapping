@@ -23,9 +23,9 @@
 
           <broker>
             <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">
-              binding:binding-broker-osgi-registry
+              binding:binding-async-data-broker
             </type>
-            <name>binding-osgi-broker</name>
+            <name>pingpong-binding-data-broker</name>
           </broker>
 
           <notification-publish-service>
