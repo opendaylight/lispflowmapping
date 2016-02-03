@@ -31,15 +31,6 @@ module odl-lisp-sb-impl {
     case lisp-sb-impl {
       when "/config:modules/config:module/config:type = 'lisp-sb-impl'";
 
-      container broker {
-          uses config:service-ref {
-              refine type {
-                  mandatory true;
-                  config:required-identity mdsal:binding-broker-osgi-registry;
-              }
-          }
-      }
-
       container notification-publish-service {
           uses config:service-ref {
               refine type {
