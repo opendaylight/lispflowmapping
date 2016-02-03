@@ -212,7 +212,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         ByteBuffer bb = hexToByteBuffer("32 00 01 01 63 99 "
                 + "83 64 23 06 a8 be 00 01 00 14 b8 c2 a2 e1 dc 4a "
                 + "08 0c f6 01 b0 9d 70 5a d4 88 95 f8 73 dd 00 00 "
-                + "05 a0 01 20 10 00 00 00 40 03 00 00 02 00 00 0a "
+                + "05 a0 01 20 10 00 00 00 40 03 00 00 02 20 00 0a "
                 + "00 00 00 01 00 01 c3 a8 c8 01 0a 32 ff 00 00 04 "
                 + "00 01 ac 10 01 02 15 1a 39 80 e3 35 e6 c4 49 a6 "
                 + "90 87 20 65 9a b7 00 00 00 00 00 00 00 00 ");
