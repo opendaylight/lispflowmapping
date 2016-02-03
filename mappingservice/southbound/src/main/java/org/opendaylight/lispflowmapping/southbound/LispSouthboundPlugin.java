@@ -25,9 +25,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
@@ -41,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, BindingAwareProvider {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -49,12 +47,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
     private RpcProviderRegistry rpcRegistry;
-    private BindingAwareBroker broker;
     private NioDatagramChannel channel;
     private volatile String bindingAddress = "0.0.0.0";
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private BindingAwareBroker.RpcRegistration<OdlLispSbService> sbRpcRegistration;
+    private RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private NioDatagramChannel xtrChannel;
     private LispSouthboundStats statistics = new LispSouthboundStats();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
@@ -66,7 +63,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         final LispSouthboundRPC sbRpcHandler = new LispSouthboundRPC(this);
 
         sbRpcRegistration = rpcRegistry.addRpcImplementation(OdlLispSbService.class, sbRpcHandler);
-        broker.registerProvider(this);
 
         synchronized (startLock) {
             lispSouthboundHandler = new LispSouthboundHandler(this);
@@ -145,10 +141,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     public void setRpcRegistryDependency(RpcProviderRegistry rpcRegistry) {
         this.rpcRegistry = rpcRegistry;
-    }
-
-    public void setBindingAwareBroker(BindingAwareBroker broker) {
-        this.broker = broker;
     }
 
     private void unloadActions() {
@@ -234,10 +226,5 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         unloadActions();
         eventLoopGroup.shutdownGracefully();
         sbRpcRegistration.close();
-    }
-
-    @Override
-    public void onSessionInitiated(ProviderContext session) {
-        LOG.debug("LispSouthboundPlugin Provider Session Initiated");
     }
 }
