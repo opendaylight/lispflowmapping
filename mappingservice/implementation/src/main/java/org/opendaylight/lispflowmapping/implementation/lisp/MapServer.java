@@ -12,9 +12,11 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -117,12 +119,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     break;
                 }
             }
-            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
-                    mapping.getEid());
+            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
 
-            if (subscriptionService && !mapping.equals(oldMapping)) {
+            if (subscriptionService && mappingChanged(oldMapping, mapping)) {
                 if (LOG.isDebugEnabled()){
-                    LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",  LispAddressStringifier.getString(mapping.getEid()));
+                    LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
+                            LispAddressStringifier.getString(mapping.getEid()));
                 }
                 subscribers = getSubscribers(mapping.getEid());
                 updated = true;
@@ -186,6 +188,38 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 removeSubscribers(notification.getMappingRecord().getEid());
             }
         }
+    }
+
+    private static boolean mappingChanged(MappingRecord oldMapping, MappingRecord newMapping) {
+        // We only check for fields we care about
+        // XXX: This code needs to be checked and updated when the YANG model is modified
+        Preconditions.checkNotNull(newMapping, "The new mapping should never be null");
+        if (oldMapping == null) {
+            LOG.trace("mappingChanged(): old mapping is null");
+            return true;
+        } else if (!Objects.equals(oldMapping.getEid(), newMapping.getEid())) {
+            LOG.trace("mappingChanged(): EID");
+            return true;
+        } else if (!Objects.equals(oldMapping.getLocatorRecord(), newMapping.getLocatorRecord())) {
+            LOG.trace("mappingChanged(): RLOC");
+            return true;
+        } else if (!Objects.equals(oldMapping.getAction(), newMapping.getAction())) {
+            LOG.trace("mappingChanged(): action");
+            return true;
+        } else if (!Objects.equals(oldMapping.getRecordTtl(), newMapping.getRecordTtl())) {
+            LOG.trace("mappingChanged(): TTL");
+            return true;
+        } else if (!Arrays.equals(oldMapping.getXtrId(), newMapping.getXtrId())) {
+            LOG.trace("mappingChanged(): xTR-ID");
+            return true;
+        } else if (!Arrays.equals(oldMapping.getSiteId(), newMapping.getSiteId())) {
+            LOG.trace("mappingChanged(): site-ID");
+            return true;
+        } else if (!Objects.equals(oldMapping.getMapVersion(), newMapping.getMapVersion())) {
+            LOG.trace("mappingChanged(): mapping version");
+            return true;
+        }
+        return false;
     }
 
     private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
