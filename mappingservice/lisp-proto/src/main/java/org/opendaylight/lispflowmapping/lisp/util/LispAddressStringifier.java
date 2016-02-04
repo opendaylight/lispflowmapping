@@ -81,65 +81,66 @@ public class LispAddressStringifier {
         Preconditions.checkNotNull(lispAddress, "lispAddress should not be null");
         Address addr = lispAddress.getAddress();
         String prefix = "";
+        String vni = "";
         String address = "";
 
         if (lispAddress.getVirtualNetworkId() != null) {
-            address = "[" + lispAddress.getVirtualNetworkId().getValue() + "] ";
+            vni = "[" + lispAddress.getVirtualNetworkId().getValue() + "] ";
         }
 
         if (addr instanceof Ipv4) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
-            address += getStringFromIpv4(dst, (Ipv4) addr);
+            address = getStringFromIpv4(dst, (Ipv4) addr);
         } else if (addr instanceof Ipv4Prefix) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
-            address += getStringFromIpv4Prefix(dst, (Ipv4Prefix) addr);
+            address = getStringFromIpv4Prefix(dst, (Ipv4Prefix) addr);
         } else if (addr instanceof Ipv6) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
-            address += getStringFromIpv6(dst, (Ipv6) addr);
+            address = getStringFromIpv6(dst, (Ipv6) addr);
         } else if (addr instanceof Ipv6Prefix) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
-            address += getStringFromIpv6Prefix(dst, (Ipv6Prefix) addr);
+            address = getStringFromIpv6Prefix(dst, (Ipv6Prefix) addr);
         } else if (addr instanceof Mac) {
             prefix = "mac" + PREFIX_SEPARATOR;
-            address += getStringFromMac(dst, (Mac) addr);
+            address = getStringFromMac(dst, (Mac) addr);
         } else if (addr instanceof InstanceId) {
             SimpleAddress pa = ((InstanceId)addr).getInstanceId().getAddress();
             // Instance ID is a separate parent hierarchy, so we use the simple address prefix
             prefix = LispSimpleAddressStringifier.getURLPrefix(pa) + PREFIX_SEPARATOR;
-            address += getStringFromInstanceId(dst, (InstanceId) addr);
+            address = getStringFromInstanceId(dst, (InstanceId) addr);
         } else if (addr instanceof NoAddress) {
             prefix = "no" + PREFIX_SEPARATOR;
-            address += getStringFromNoAddress(dst, (NoAddress) addr);
+            address = getStringFromNoAddress(dst, (NoAddress) addr);
         } else if (addr instanceof DistinguishedName) {
             prefix = "dn" + PREFIX_SEPARATOR;
-            address += getStringFromDistinguishedName(dst, (DistinguishedName) addr);
+            address = getStringFromDistinguishedName(dst, (DistinguishedName) addr);
         } else if (addr instanceof AsNumber) {
             prefix = "as" + PREFIX_SEPARATOR;
-            address += getStringFromAsNumber(dst, (AsNumber) addr);
+            address = getStringFromAsNumber(dst, (AsNumber) addr);
         } else if (addr instanceof AfiList) {
             prefix = "list" + PREFIX_SEPARATOR;
-            address += getStringFromAfiList(dst, (AfiList) addr);
+            address = getStringFromAfiList(dst, (AfiList) addr);
         } else if (addr instanceof ApplicationData) {
             prefix = "appdata" + PREFIX_SEPARATOR;
-            address += getStringFromApplicationData(dst, (ApplicationData) addr);
+            address = getStringFromApplicationData(dst, (ApplicationData) addr);
         } else if (addr instanceof ExplicitLocatorPath) {
             prefix = "elp" + PREFIX_SEPARATOR;
-            address += getStringFromExplicitLocatorPath(dst, (ExplicitLocatorPath) addr);
+            address = getStringFromExplicitLocatorPath(dst, (ExplicitLocatorPath) addr);
         } else if (addr instanceof SourceDestKey) {
             prefix = "srcdst" + PREFIX_SEPARATOR;
-            address += getStringFromSourceDestKey(dst, (SourceDestKey) addr);
+            address = getStringFromSourceDestKey(dst, (SourceDestKey) addr);
         } else if (addr instanceof KeyValueAddress) {
             prefix = "kv" + PREFIX_SEPARATOR;
-            address += getStringFromKeyValueAddress(dst, (KeyValueAddress) addr);
+            address = getStringFromKeyValueAddress(dst, (KeyValueAddress) addr);
         } else if (addr instanceof ServicePath) {
             prefix = "sp" + PREFIX_SEPARATOR;
-            address += getStringFromServicePath(dst, (ServicePath) addr);
+            address = getStringFromServicePath(dst, (ServicePath) addr);
         } else {
             return null;
         }
 
         if (dst == Destination.USER) {
-            return address;
+            return vni + address;
         } else {
             return prefix + address;
         }
