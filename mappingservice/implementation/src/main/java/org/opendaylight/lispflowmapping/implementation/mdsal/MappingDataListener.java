@@ -17,6 +17,7 @@ import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputU
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -81,10 +82,16 @@ public class MappingDataListener extends AbstractDataListener {
 
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
                         mapping.getMappingRecord());
-                try {
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Updated));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
+
+                if (mapping.getOrigin() == MappingOrigin.Northbound) {
+                    // Only publish notifications for mapping changes caused by Northbound, since Southbound has a
+                    // dedicated code path for detecting mapping updates. The notifications are used for sending SMR.
+                    try {
+                        notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
+                                MappingChange.Updated));
+                    } catch (InterruptedException e) {
+                        LOG.warn("Notification publication interrupted!");
+                    }
                 }
             }
         }
