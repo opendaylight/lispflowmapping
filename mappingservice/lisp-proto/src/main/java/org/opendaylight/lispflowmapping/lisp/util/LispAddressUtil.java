@@ -270,19 +270,28 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
-    public static Eid toEid(IpPrefix prefix, int vni) {
+    // XXX getMapping rcp fails if VNI set to 0
+    public static Eid toEidNoVni(IpPrefix prefix) {
         EidBuilder builder = new EidBuilder();
         builder.setAddress(addressFromIpPrefix(prefix));
         builder.setAddressType(addressTypeFromIpPrefix(prefix));
-        // XXX getMapping rcp fails if set to 0
-        //builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
+        return builder.build();
+    }
+
+    public static Eid toEid(IpPrefix prefix, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddress(addressFromIpPrefix(prefix));
+        builder.setAddressType(addressTypeFromIpPrefix(prefix));
+        builder.setVirtualNetworkId(vni);
         return builder.build();
     }
 
     public static Eid toIpPrefixEid(IpAddress addr, int vni) {
+        // If you touch this, be sure that sfclisp compiles!
         int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
         IpPrefix prefix = asIpPrefix(addr.getValue().toString(), mask);
-        return toEid(prefix, vni);
+        // XXX getMapping rcp fails if VNI set to 0
+        return toEidNoVni(prefix);
     }
 
     public static Eid asEid(SimpleAddress address, InstanceIdType vni) {
@@ -353,6 +362,14 @@ public final class LispAddressUtil {
         } else {
             return null;
         }
+    }
+
+    public static Eid asIpv4PrefixEid(Ipv4Address addr, InstanceIdType vni) {
+        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/" + 32)), vni);
+    }
+
+    public static Eid asIpv6PrefixEid(Ipv6Address addr, InstanceIdType vni) {
+        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/" + 128)), vni);
     }
 
     public static Eid asIpv4PrefixEid(Eid eid, Inet4Address address, short mask) {

@@ -87,6 +87,10 @@ public final class MaskUtil {
                 short mask = Short.parseShort(v6prefix[1]);
                 InetAddress normalized = normalizeIP(Inet6Address.getByName(v6prefix[0]), mask);
                 return LispAddressUtil.asIpv6PrefixEid(eid, (Inet6Address)normalized, mask);
+            } else if (address instanceof Ipv4) {
+                return LispAddressUtil.asIpv4PrefixEid(((Ipv4) address).getIpv4(), eid.getVirtualNetworkId());
+            } else if (address instanceof Ipv6) {
+                return LispAddressUtil.asIpv6PrefixEid(((Ipv6) address).getIpv6(), eid.getVirtualNetworkId());
             } else if (address instanceof InstanceId) {
                 // TODO - not absolutely necessary, but should be implemented
                 return eid;
