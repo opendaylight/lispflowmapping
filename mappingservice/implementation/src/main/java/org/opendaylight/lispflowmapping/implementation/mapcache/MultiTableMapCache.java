@@ -121,7 +121,8 @@ public class MultiTableMapCache implements IMapCache {
         if (eid == null) {
             return null;
         }
-        Map<String, ?> daoEntry = getDaoEntryBest(eid, dao);
+        Eid key = MaskUtil.normalize(eid);
+        Map<String, ?> daoEntry = getDaoEntryBest(key, dao);
         if (daoEntry != null) {
             return daoEntry.get(SubKeys.RECORD);
         } else {
