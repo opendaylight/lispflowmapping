@@ -82,6 +82,30 @@
       "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_79f52bca",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-02-06T19:57:10Z",
+      "side": 1,
+      "message": "And another problem with this is: if it can be null, it can also be incorrect if it is not null. because  it can be the old merged record not considering the new MAp-Register, which would be pure wrong. So no, we cant just skip this.",
+      "parentUuid": "9a3d3df0_d96d579a",
+      "range": {
+        "startLine": 150,
+        "startChar": 20,
+        "endLine": 150,
+        "endChar": 48
+      },
+      "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
