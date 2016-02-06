@@ -22,6 +22,24 @@
       "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_793d2bbb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-06T15:43:22Z",
+      "side": 1,
+      "message": "I don\u0027t think that this happens only with merge on. However, the time scales are different for the code execution race conditions and on the wire packet exchange, so as long as in the code we account for this, it probably won\u0027t be a problem on the wire.",
+      "parentUuid": "9a3d3df0_b93053e9",
+      "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
