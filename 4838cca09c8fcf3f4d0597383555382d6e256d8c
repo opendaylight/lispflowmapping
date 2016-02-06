@@ -22,6 +22,24 @@
       "revId": "4838cca09c8fcf3f4d0597383555382d6e256d8c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_563d96dd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-06T13:21:16Z",
+      "side": 1,
+      "message": "No this is really fixing Bug 5229, but I should have been more verbose (blame it on 4AM :P) I\u0027ll send an update with a better commit message.",
+      "parentUuid": "9a3d3df0_164cae9d",
+      "revId": "4838cca09c8fcf3f4d0597383555382d6e256d8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
