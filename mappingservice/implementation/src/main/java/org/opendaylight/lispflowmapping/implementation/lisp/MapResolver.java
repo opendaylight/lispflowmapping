@@ -21,6 +21,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
@@ -83,8 +84,7 @@ public class MapResolver implements IMapResolverAsync {
                 List<ItrRloc> itrRlocs = request.getItrRloc();
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
-                        updateSubscribers(itrRlocs.get(0).getRloc(), mapping.getEid(),
-                                srcEid);
+                        updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
                     }
                     mapping = updateLocators(mapping, itrRlocs);
                 }
@@ -111,10 +111,19 @@ public class MapResolver implements IMapResolverAsync {
         return recordBuilder.build();
     }
 
-    private void updateSubscribers(Rloc itrRloc, Eid dstEid,
-            Eid srcEid) {
+    private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid) {
         SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid);
-        Set<SubscriberRLOC> subscribers = getSubscribers(dstEid);
+        Eid subscribedEid = mapEid;
+
+        // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe itrRloc only
+        // to dst from the src/dst since that what's been requested. Note though that any updates to to the src/dst
+        // mapping will be pushed to dst as well (see sendSMRs in MapServer)
+        if (mapEid.getAddressType().equals(SourceDestKeyLcaf.class)
+                && !reqEid.getAddressType().equals(SourceDestKeyLcaf.class)) {
+            subscribedEid = SourceDestKeyHelper.getDst(mapEid);
+        }
+
+        Set<SubscriberRLOC> subscribers = getSubscribers(subscribedEid);
         if (subscribers == null) {
             subscribers = Sets.newConcurrentHashSet();
         } else if (subscribers.contains(subscriberRloc)) {
@@ -124,7 +133,7 @@ public class MapResolver implements IMapResolverAsync {
         }
         LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
         subscribers.add(subscriberRloc);
-        addSubscribers(dstEid, subscribers);
+        addSubscribers(subscribedEid, subscribers);
     }
 
     // Fixes mapping if request was for simple dst EID but the matched mapping is a SourceDest
