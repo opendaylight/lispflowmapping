@@ -61,6 +61,7 @@ module odl-mappingservice {
     typedef mapping-change {
         description "Type of mapping update";
         type enumeration {
+            enum created;
             enum updated;
             enum removed;
         }

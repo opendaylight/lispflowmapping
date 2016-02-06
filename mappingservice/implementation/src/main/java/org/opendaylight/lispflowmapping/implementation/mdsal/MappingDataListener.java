@@ -67,6 +67,17 @@ public class MappingDataListener extends AbstractDataListener {
 
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
                         mapping.getMappingRecord());
+
+                if (mapping.getOrigin() == MappingOrigin.Northbound) {
+                    // Only publish notifications for mapping changes caused by Northbound, since Southbound has a
+                    // dedicated code path for detecting mapping updates. The notifications are used for sending SMR.
+                    try {
+                        notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
+                                MappingChange.Created));
+                    } catch (InterruptedException e) {
+                        LOG.warn("Notification publication interrupted!");
+                    }
+                }
             }
         }
 
