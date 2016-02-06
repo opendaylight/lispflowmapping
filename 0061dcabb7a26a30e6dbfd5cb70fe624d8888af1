@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_b93053e9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-02-06T15:40:33Z",
+      "side": 1,
+      "message": "After an out of band chat with Lori we realized this can happen because we\u0027re writing asynchronously to the DAO. That is, we\u0027re looking the entry up and it hasn\u0027t been saved in a map-cache yet.\n\nBut, I guess, that the most important implication here is that we can\u0027t guarantee that what we\u0027re getting from the map-cache, when merging is on, is the actual merged record. We need to wait for the whole chain: \"write to datastore-\u003e MappingDataListener -\u003e MapCache(s) -\u003e dao\" to finish. \n\nVina, what do you think?",
+      "range": {
+        "startLine": 150,
+        "startChar": 20,
+        "endLine": 150,
+        "endChar": 48
+      },
+      "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
