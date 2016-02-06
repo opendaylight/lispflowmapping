@@ -19,7 +19,7 @@ public class SubscriberRLOC {
     private Rloc rloc;
     private Eid eid;
     private Date lastRequestDate;
-    private static final long SUBSCRIBER_TIMEOUT = 600000;    /* milliseconds */
+    private static final long SUBSCRIBER_TIMEOUT = 86400000L; /* 1 day (default Cisco IOS mapping TTL) */
 
     public SubscriberRLOC(Rloc srcRloc, Eid srcEid) {
         this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
