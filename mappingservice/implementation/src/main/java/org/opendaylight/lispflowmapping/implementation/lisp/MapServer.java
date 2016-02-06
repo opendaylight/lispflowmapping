@@ -150,7 +150,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddress> sourceRlocs = (Set<IpAddress>) mapService.getData(MappingOrigin.Southbound,
                             mapping.getEid(), SubKeys.SRC_RLOCS);
-                    notifyRlocs.addAll(sourceRlocs);
+                    if (sourceRlocs != null) {
+                        notifyRlocs.addAll(sourceRlocs);
+                    }
                 }
                 MapNotifyBuilderHelper.setFromMapRegisterAndMappingRecordItems(builder, mapRegister, mergedMappings);
                 rlocs = getTransportAddresses(notifyRlocs);
