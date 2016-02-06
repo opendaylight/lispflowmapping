@@ -147,6 +147,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                             mapping.getEid());
+                    if (currentRecord == null) {
+                        currentRecord = mapping;
+                    }
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddress> sourceRlocs = (Set<IpAddress>) mapService.getData(MappingOrigin.Southbound,
                             mapping.getEid(), SubKeys.SRC_RLOCS);
@@ -168,6 +171,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     }
 
     private static List<TransportAddress> getTransportAddresses(Set<IpAddress> addresses) {
+        if (addresses.isEmpty()) {
+            return null;
+        }
         List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
         for (IpAddress address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
