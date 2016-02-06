@@ -58,6 +58,30 @@
       "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d96d579a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-02-06T19:31:09Z",
+      "side": 1,
+      "message": "Well, I am thinking we are having too many issues with SB registrations going to the datastore and then Dao. If we are going to check for notifications of onMappingChanged to see if it is from SB vs NB, maybe we can change the path for SB to go to dao first and then to datastore. Or even if we dont change the order, we directly write to both dao and datastore, and then ignore datastore notifications that are result of SB. We may have to revisit this when clustering is on, but for single node should work.. Thoughts?",
+      "parentUuid": "9a3d3df0_b93053e9",
+      "range": {
+        "startLine": 150,
+        "startChar": 20,
+        "endLine": 150,
+        "endChar": 48
+      },
+      "revId": "0061dcabb7a26a30e6dbfd5cb70fe624d8888af1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
