@@ -100,8 +100,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
-        boolean failed = false;
-        boolean updated = false;
+        boolean authFailed = false;
         String password = null;
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
@@ -115,28 +114,27 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
                 if (!LispAuthenticationUtil.validate(mapRegister, password)) {
                     LOG.warn("Authentication failed");
-                    failed = true;
+                    authFailed = true;
                     break;
                 }
             }
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
-
-            if (subscriptionService && mappingChanged(oldMapping, mapping)) {
-                if (LOG.isDebugEnabled()){
-                    LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
-                            LispAddressStringifier.getString(mapping.getEid()));
-                }
-                subscribers = getSubscribers(mapping.getEid());
-                updated = true;
-            }
-            // Must update the record before sending SMRs
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
-            if (updated) {
-                updated = false;
-                sendSmrs(mapping, subscribers);
+
+            if (subscriptionService) {
+                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet()
+                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                if (mappingChanged(oldMapping, newMapping)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
+                                LispAddressStringifier.getString(mapping.getEid()));
+                    }
+                    subscribers = getSubscribers(mapping.getEid());
+                    sendSmrs(mapping, subscribers);
+                }
             }
         }
-        if (!failed && BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
+        if (!authFailed && BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
             LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
@@ -226,25 +224,22 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
         Eid eid = record.getEid();
-        handleSmr(record, subscribers, notifyHandler);
+        handleSmr(eid, subscribers, notifyHandler);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDst(eid);
             Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
-            MappingRecord newRecord = new MappingRecordBuilder().setAction(record.getAction())
-                    .setAuthoritative(record.isAuthoritative()).setLocatorRecord(record.getLocatorRecord())
-                    .setMapVersion(record.getMapVersion()).setRecordTtl(record.getRecordTtl())
-                    .setEid(dstAddr).build();
-            handleSmr(newRecord, dstSubs, notifyHandler);
+            MappingRecord newRecord = new MappingRecordBuilder(record).setEid(dstAddr).build();
+            handleSmr(newRecord.getEid(), dstSubs, notifyHandler);
         }
     }
 
-    private void handleSmr(MappingRecord record, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
+    private void handleSmr(Eid eid, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
         if (subscribers == null) {
             return;
         }
-        MapRequestBuilder mrb = MapRequestUtil.prepareSMR(record.getEid(), LispAddressUtil.toRloc(getLocalAddress()));
+        MapRequestBuilder mrb = MapRequestUtil.prepareSMR(eid, LispAddressUtil.toRloc(getLocalAddress()));
         LOG.trace("Built SMR packet: " + mrb.build().toString());
         for (SubscriberRLOC subscriber : subscribers) {
             if (subscriber.timedOut()) {
@@ -262,7 +257,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             }
         }
-        addSubscribers(record.getEid(), subscribers);
+        addSubscribers(eid, subscribers);
     }
 
     @SuppressWarnings("unchecked")

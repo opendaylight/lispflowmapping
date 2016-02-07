@@ -42,12 +42,9 @@ import com.google.common.util.concurrent.Futures;
  */
 public class DataStoreBackEnd implements TransactionChainListener {
     protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
-
-    private DataBroker broker;
     private BindingTransactionChain txChain;
 
     public DataStoreBackEnd(DataBroker broker) {
-        this.broker = broker;
         this.txChain = broker.createTransactionChain(this);
     }
 
