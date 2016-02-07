@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
@@ -31,6 +32,20 @@ public interface IMappingSystem {
      *            Value to be stored
      */
     void addMapping(MappingOrigin origin, Eid key, Object data);
+
+    /**
+     * Add mapping and persist to datastore
+     *
+     * @param origin
+     *            Table where mapping should be added
+     * @param siteId
+     *            SiteID of SB device doing the registration
+     * @param key
+     *            Key of the mapping
+     * @param data
+     *            Value to be stored
+     */
+    void addMapping(MappingOrigin origin, SiteId siteId, Eid key, Object data);
 
     /**
      * Retrieves mapping for the provided src and dst key.

@@ -61,6 +61,12 @@ public class MappingDataListener extends AbstractDataListener {
             if (entry.getValue() instanceof Mapping) {
                 Mapping mapping = (Mapping)entry.getValue();
 
+                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                // before being persisted. XXX separate NB and SB to avoid ignoring SB notifications
+                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                    continue;
+                }
+
                 LOG.trace("Received created data");
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", mapping);
@@ -68,15 +74,12 @@ public class MappingDataListener extends AbstractDataListener {
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
                         mapping.getMappingRecord());
 
-                if (mapping.getOrigin() == MappingOrigin.Northbound) {
-                    // Only publish notifications for mapping changes caused by Northbound, since Southbound has a
-                    // dedicated code path for detecting mapping updates. The notifications are used for sending SMR.
-                    try {
-                        notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
-                                MappingChange.Created));
-                    } catch (InterruptedException e) {
-                        LOG.warn("Notification publication interrupted!");
-                    }
+                try {
+                    // The notifications are used for sending SMR.
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
+                            MappingChange.Created));
+                } catch (InterruptedException e) {
+                    LOG.warn("Notification publication interrupted!");
                 }
             }
         }
@@ -87,6 +90,12 @@ public class MappingDataListener extends AbstractDataListener {
             if (entry.getValue() instanceof Mapping) {
                 Mapping mapping = (Mapping)entry.getValue();
 
+                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                // before being persisted.
+                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                    continue;
+                }
+
                 LOG.trace("Received changed data");
                 LOG.trace("Key: {}", entry.getKey());
                 LOG.trace("Value: {}", entry.getValue());
@@ -94,15 +103,12 @@ public class MappingDataListener extends AbstractDataListener {
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
                         mapping.getMappingRecord());
 
-                if (mapping.getOrigin() == MappingOrigin.Northbound) {
-                    // Only publish notifications for mapping changes caused by Northbound, since Southbound has a
-                    // dedicated code path for detecting mapping updates. The notifications are used for sending SMR.
-                    try {
-                        notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
-                                MappingChange.Updated));
-                    } catch (InterruptedException e) {
-                        LOG.warn("Notification publication interrupted!");
-                    }
+                // The notifications are used for sending SMR.
+                try {
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
+                            MappingChange.Updated));
+                } catch (InterruptedException e) {
+                    LOG.warn("Notification publication interrupted!");
                 }
             }
         }
@@ -113,6 +119,12 @@ public class MappingDataListener extends AbstractDataListener {
             DataObject dataObject = change.getOriginalData().get(entry);
             if (dataObject instanceof Mapping) {
                 Mapping mapping = (Mapping)dataObject;
+
+                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                // before being persisted.
+                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                    continue;
+                }
 
                 LOG.trace("Received deleted data");
                 LOG.trace("Key: {}", entry);

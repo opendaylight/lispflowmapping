@@ -356,8 +356,12 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data) {
-        dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
-        mappingSystem.updateMappingRegistration(origin, key);
+        // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
+        if (origin.equals(MappingOrigin.Southbound)) {
+            mappingSystem.addMapping(origin, siteId, key, data);
+        } else {
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+        }
     }
 
     @Override
