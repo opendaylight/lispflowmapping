@@ -118,12 +118,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     break;
                 }
             }
+
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
 
             if (subscriptionService) {
-                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet()
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
+                        (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",

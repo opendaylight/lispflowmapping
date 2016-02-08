@@ -358,7 +358,10 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data) {
         // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
         if (origin.equals(MappingOrigin.Southbound)) {
-            mappingSystem.addMapping(origin, siteId, key, data);
+            // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
+            // registrations
+            mappingSystem.addMapping(origin, key, data);
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
         } else {
             dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
         }

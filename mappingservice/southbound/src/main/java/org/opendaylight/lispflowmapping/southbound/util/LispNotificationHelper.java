@@ -29,19 +29,12 @@ public final class LispNotificationHelper {
 
     public static MapRegister convertMapRegister(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister mapRegister) {
-        return new MapRegisterBuilder().setAuthenticationData(mapRegister.getAuthenticationData())
-                .setMappingRecordItem(mapRegister.getMappingRecordItem()).setKeyId(mapRegister.getKeyId())
-                .setNonce(mapRegister.getNonce()).setProxyMapReply(mapRegister.isProxyMapReply())
-                .setWantMapNotify(mapRegister.isWantMapNotify()).setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent())
-                .setXtrId(mapRegister.getXtrId()).setSiteId(mapRegister.getSiteId()).build();
+        return new MapRegisterBuilder(mapRegister).build();
     }
 
     public static MapNotify convertMapNotify(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify mapNotify) {
-        return new MapNotifyBuilder().setAuthenticationData(mapNotify.getAuthenticationData())
-                .setMappingRecordItem(mapNotify.getMappingRecordItem()).setKeyId(mapNotify.getKeyId())
-                .setNonce(mapNotify.getNonce()).setXtrSiteIdPresent(mapNotify.isXtrSiteIdPresent())
-                .setXtrId(mapNotify.getXtrId()).setSiteId(mapNotify.getSiteId()).build();
+        return new MapNotifyBuilder(mapNotify).build();
     }
 
     public static MapRequest convertMapRequest(
