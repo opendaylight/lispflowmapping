@@ -42,8 +42,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AsNumberBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedNameBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6PrefixBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
@@ -535,5 +537,50 @@ public final class LispAddressUtil {
         builder.setVirtualNetworkId(null);
         builder.setAddress(new NoAddressBuilder().setNoAddress(true).build());
         return builder.build();
+    }
+
+    public static InetAddress ipAddressToInet(Address addr) {
+        try {
+            if (addr instanceof Ipv4) {
+                return Inet4Address.getByName(((Ipv4) addr).getIpv4().getValue());
+            } else if (addr instanceof Ipv6) {
+                return Inet6Address.getByName(((Ipv6) addr).getIpv6().getValue());
+            }
+        } catch (java.net.UnknownHostException e) {
+            LOG.debug("Failed to build InetAddress: {}", e);
+        }
+        return null;
+    }
+
+    public static int compareInetAddresses(InetAddress a, InetAddress b) {
+        int i;
+        if (a instanceof Inet4Address && b instanceof Inet6Address) {
+            return -1;
+        } else if (a instanceof Inet6Address && b instanceof Inet4Address) {
+            return 1;
+        } else if (a instanceof Inet4Address && b instanceof Inet4Address) {
+            byte[] aBytes = ((Inet4Address) a).getAddress();
+            byte[] bBytes = ((Inet4Address) b).getAddress();
+            for (i = 0; i < 4; i++) {
+                if (aBytes[i] < bBytes[i]) {
+                    return -1;
+                } else if (aBytes[i] > bBytes[i]) {
+                    return 1;
+                }
+            }
+            return 0;
+        } else if (a instanceof Inet6Address && b instanceof Inet6Address) {
+            byte[] aBytes = ((Inet4Address) a).getAddress();
+            byte[] bBytes = ((Inet4Address) b).getAddress();
+            for (i = 0; i < 16; i++) {
+                if (aBytes[i] < bBytes[i]) {
+                    return -1;
+                } else if (aBytes[i] > bBytes[i]) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        return 0;
     }
 }

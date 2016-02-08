@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -72,50 +73,71 @@ public final class MappingMergeUtil {
         return newLocator;
     }
 
+    private static int compareLocators(LocatorRecord a, LocatorRecord b) {
+        InetAddress aInet = LispAddressUtil.ipAddressToInet(a.getRloc().getAddress());
+        InetAddress bInet = LispAddressUtil.ipAddressToInet(b.getRloc().getAddress());
+        return LispAddressUtil.compareInetAddresses(aInet, bInet);
+    }
+
     private static void mergeLocatorRecords(MappingRecordBuilder mrb, MappingRecord newRecord) {
         List<LocatorRecord> locators = mrb.getLocatorRecord();
 
-        // Optimization: unless we had to merge any of the locators due to differences in weights, etc, we return
-        // the original 'locators' List with any new locators added
-        boolean mergeHappened = false;
-
-        // We assume locators are unique and don't show up several times (with different or identical p/w/mp/mw),
-        // so we create a LinkedHashMap (which preserves order) of the locators from the existing merged record,
-        // keyed by the Rloc
+        // We assume locators are unique and sorted and don't show up several times (with different or identical
+        // p/w/mp/mw), so we create a LinkedHashMap (which preserves order) of the locators from the existing merged
+        // record, keyed by the Rloc
         Map<Rloc, LocatorRecord> locatorMap = new LinkedHashMap<Rloc, LocatorRecord>();
+
+        // All locators to be added to the merge set are first stored in this list
+        List<LocatorRecord> newLocatorList = new ArrayList<LocatorRecord>();
+
         for (LocatorRecord locator : locators) {
             locatorMap.put(locator.getRloc(), locator);
         }
         for (LocatorRecord newLocator : newRecord.getLocatorRecord()) {
             Rloc newRloc = newLocator.getRloc();
             if (locatorMap.containsKey(newRloc)) {
-                // XXX  LocatorRecord YANG generated class doesn't override equals() so I'm not sure of the behavior
-                // here, need to verify if it works as expected
+                // overlapping locator
                 if (locatorMap.get(newRloc).equals(newLocator)) {
                     continue;
                 } else {
                     LocatorRecord mergedLocator = mergeLocators(locatorMap.get(newRloc), newLocator);
-                    locatorMap.put(newRloc, mergedLocator);
-                    mergeHappened = true;
+                    newLocatorList.add(mergedLocator);
                 }
             } else {
-                // We add both the LinkedHanshMap and the List, in case we can return the original list plus new
-                // elements and need not generate a new list with merged locators (which should be the most common
-                // scenario).
-                locatorMap.put(newRloc, newLocator);
-                locators.add(newLocator);
+                // new locator
+                newLocatorList.add(newLocator);
             }
         }
 
-        if (mergeHappened) {
+        // Build new merged and sorted locator set if need be
+        if (newLocatorList.size() != 0) {
             List<LocatorRecord> mergedLocators = new ArrayList<LocatorRecord>();
-            for (Map.Entry<Rloc, LocatorRecord> entry : locatorMap.entrySet()) {
-                mergedLocators.add(entry.getValue());
+
+            int mlIt = 0, lIt = 0;
+            while (mlIt < newLocatorList.size() && lIt < locators.size()) {
+                int cmp = compareLocators(locators.get(lIt), newLocatorList.get(mlIt));
+                if (cmp < 0) {
+                    mergedLocators.add(locators.get(lIt));
+                    lIt++;
+                } else if (cmp > 0) {
+                    mergedLocators.add(newLocatorList.get(mlIt));
+                    mlIt++;
+                } else {
+                    // when a locator appears in both lists, keep the new (merged) one and skip the old
+                    mergedLocators.add(newLocatorList.get(mlIt));
+                    mlIt++;
+                    lIt++;
+                }
+            }
+            while (lIt < locators.size()) {
+                mergedLocators.add(locators.get(lIt));
+                lIt++;
+            }
+            while (mlIt < newLocatorList.size()) {
+                mergedLocators.add(newLocatorList.get(mlIt));
+                mlIt++;
             }
             mrb.setLocatorRecord(mergedLocators);
-        } else {
-            // TODO  Check if this is necessary after and .add() was called on locators
-            mrb.setLocatorRecord(locators);
         }
     }
 
@@ -139,17 +161,21 @@ public final class MappingMergeUtil {
 
     public static MappingRecord mergeXtrIdMappings(List<Object> records, List<byte[]> expiredMappings,
             Set<IpAddress> sourceRlocs) {
-        MappingRecordBuilder mrb = new MappingRecordBuilder((MappingRecord) records.get(0));
-        byte[] xtrId = mrb.getXtrId();
-        Long timestamp = mrb.getTimestamp();
+        MappingRecordBuilder mrb = null;
+        byte[] xtrId = {};
+        Long timestamp = Long.MAX_VALUE;
 
-        for (int i = 1; i < records.size(); i++) {
+        for (int i = 0; i < records.size(); i++) {
             MappingRecord record = (MappingRecord) records.get(i);
 
             // Skip expired mappings and add them to a list to be returned to the caller
             if (timestampIsExpired(record.getTimestamp())) {
                 expiredMappings.add(record.getXtrId());
                 continue;
+            }
+
+            if (mrb == null) {
+                mrb = new MappingRecordBuilder((MappingRecord) records.get(i));
             }
 
             // Save the oldest valid timestamp
@@ -164,6 +190,10 @@ public final class MappingMergeUtil {
 
             // Save source locator for use in Map-Notify
             sourceRlocs.add(record.getSourceRloc());
+        }
+
+        if (mrb == null) {
+            LOG.warn("All mappings expired when merging! Unexpected!");
         }
         mrb.setXtrId(xtrId);
         mrb.setTimestamp(timestamp);

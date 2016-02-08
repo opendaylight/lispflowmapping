@@ -12,7 +12,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -101,6 +100,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean authFailed = false;
+        boolean mappingUpdated = false;
         String password = null;
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
@@ -118,12 +118,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     break;
                 }
             }
+
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
 
             if (subscriptionService) {
-                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet()
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
+                        (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
@@ -131,6 +133,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     }
                     subscribers = getSubscribers(mapping.getEid());
                     sendSmrs(mapping, subscribers);
+                    mappingUpdated = true;
                 }
             }
         }
@@ -153,7 +156,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     }
                 }
                 MapNotifyBuilderHelper.setFromMapRegisterAndMappingRecordItems(builder, mapRegister, mergedMappings);
-                rlocs = getTransportAddresses(notifyRlocs);
+                // send map-notify to merge group only when mapping record is changed
+                if (mappingUpdated) {
+                    rlocs = getTransportAddresses(notifyRlocs);
+                }
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
@@ -208,12 +214,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             return true;
         } else if (!Objects.equals(oldMapping.getRecordTtl(), newMapping.getRecordTtl())) {
             LOG.trace("mappingChanged(): TTL");
-            return true;
-        } else if (!Arrays.equals(oldMapping.getXtrId(), newMapping.getXtrId())) {
-            LOG.trace("mappingChanged(): xTR-ID");
-            return true;
-        } else if (!Arrays.equals(oldMapping.getSiteId(), newMapping.getSiteId())) {
-            LOG.trace("mappingChanged(): site-ID");
             return true;
         } else if (!Objects.equals(oldMapping.getMapVersion(), newMapping.getMapVersion())) {
             LOG.trace("mappingChanged(): mapping version");

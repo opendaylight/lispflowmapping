@@ -59,7 +59,9 @@ public final class MapRegisterSerializer {
                 ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY) |
                 ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isXtrSiteIdPresent()), Flags.XTRSITEID)));
         registerBuffer.position(registerBuffer.position() + Length.RES);
-        registerBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_REPLY));
+        registerBuffer.put((byte)
+                (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isMergeEnabled()), Flags.MERGE_ENABLED) |
+                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_NOTIFY)));
         registerBuffer.put((byte) mapRegister.getMappingRecordItem().size());
         registerBuffer.putLong(NumberUtil.asLong(mapRegister.getNonce()));
         registerBuffer.putShort(NumberUtil.asShort(mapRegister.getKeyId()));
@@ -93,7 +95,9 @@ public final class MapRegisterSerializer {
             builder.setXtrSiteIdPresent(xtrSiteIdPresent);
 
             registerBuffer.position(registerBuffer.position() + Length.RES);
-            builder.setWantMapNotify(ByteUtil.extractBit(registerBuffer.get(), Flags.WANT_MAP_REPLY));
+            byte mergeAndMapReply = registerBuffer.get();
+            builder.setWantMapNotify(ByteUtil.extractBit(mergeAndMapReply, Flags.WANT_MAP_NOTIFY));
+            builder.setMergeEnabled(ByteUtil.extractBit(mergeAndMapReply, Flags.MERGE_ENABLED));
             byte recordCount = (byte) ByteUtil.getUnsignedByte(registerBuffer);
             builder.setNonce(registerBuffer.getLong());
             builder.setKeyId(registerBuffer.getShort());
@@ -153,7 +157,8 @@ public final class MapRegisterSerializer {
     private interface Flags {
         byte PROXY = 0x08;
         byte XTRSITEID = 0x02;
-        byte WANT_MAP_REPLY = 0x01;
+        byte MERGE_ENABLED = 0x04;
+        byte WANT_MAP_NOTIFY = 0x01;
     }
 
     public interface Length {
