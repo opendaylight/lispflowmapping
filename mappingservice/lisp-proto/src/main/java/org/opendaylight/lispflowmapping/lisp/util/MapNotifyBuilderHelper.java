@@ -41,6 +41,8 @@ public final class MapNotifyBuilderHelper {
     private static void setNonRecordFields(MapNotifyBuilder builder, MapRegister mapRegister) {
         builder.setNonce(mapRegister.getNonce());
         builder.setKeyId(mapRegister.getKeyId());
+        builder.setMergeEnabled(mapRegister.isMergeEnabled());
+
         byte[] authenticationData = mapRegister.getAuthenticationData();
         if (authenticationData != null) {
             authenticationData = authenticationData.clone();
