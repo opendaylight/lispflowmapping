@@ -118,12 +118,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     break;
                 }
             }
+
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
 
             if (subscriptionService) {
-                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet()
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
+                        (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
@@ -145,6 +147,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                             mapping.getEid());
+                    if (currentRecord == null) {
+                        LOG.warn("NULL!");
+                        currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
+                                mapping.getEid());
+                    }
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddress> sourceRlocs = (Set<IpAddress>) mapService.getData(MappingOrigin.Southbound,
                             mapping.getEid(), SubKeys.SRC_RLOCS);
