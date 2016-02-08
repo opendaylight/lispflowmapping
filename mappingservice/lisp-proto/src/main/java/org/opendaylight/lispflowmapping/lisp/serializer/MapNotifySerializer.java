@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
@@ -52,6 +53,7 @@ public final class MapNotifySerializer {
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
         replyBuffer.put((byte) (MessageType.MapNotify.getIntValue() << 4));
         replyBuffer.position(replyBuffer.position() + Length.RES);
+        replyBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isMergeEnabled()), Flags.MERGE_ENABLED));
         if (mapNotify.getMappingRecordItem() != null) {
             replyBuffer.put((byte) mapNotify.getMappingRecordItem().size());
         } else {
@@ -90,6 +92,7 @@ public final class MapNotifySerializer {
             builder.setXtrSiteIdPresent(xtrSiteIdPresent);
 
             notifyBuffer.position(notifyBuffer.position() + Length.RES);
+            builder.setMergeEnabled(ByteUtil.extractBit(notifyBuffer.get(), Flags.MERGE_ENABLED));
 
             byte recordCount = (byte) ByteUtil.getUnsignedByte(notifyBuffer);
             builder.setNonce(notifyBuffer.getLong());
@@ -132,11 +135,12 @@ public final class MapNotifySerializer {
 
     private interface Flags {
         byte XTRSITEID = 0x08;
+        byte MERGE_ENABLED = 0x04;
     }
 
     private interface Length {
         int HEADER_SIZE = 16;
-        int RES = 2;
+        int RES = 1;
     }
 
 }

@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -83,9 +84,13 @@ public class SimpleMapCache implements IMapCache {
         return table;
     }
 
+    public static Object deserializeBytes(byte[] data) {
+        return ByteBuffer.wrap(data);
+    }
+
     private void removeExpiredXtrIdTableEntries(ILispDAO xtrIdDao, List<byte[]> expiredMappings) {
         for (byte[] xtrId : expiredMappings) {
-            xtrIdDao.removeSpecific(xtrId, SubKeys.RECORD);
+            xtrIdDao.removeSpecific(deserializeBytes(xtrId), SubKeys.RECORD);
         }
     }
 
@@ -113,7 +118,7 @@ public class SimpleMapCache implements IMapCache {
         ILispDAO xtrIdDao = null;
         if (!shouldOverwrite) {
             xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
-            xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
+            xtrIdDao.put(deserializeBytes(record.getXtrId()), new MappingEntry<>(SubKeys.RECORD, value));
         }
 
         if (ConfigIni.getInstance().mappingMergeIsSet()) {

@@ -18,7 +18,6 @@ import org.opendaylight.lispflowmapping.implementation.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
@@ -38,7 +37,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
@@ -107,13 +105,6 @@ public class MappingSystem implements IMappingSystem {
         }
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
-    }
-
-    public void addMapping(MappingOrigin origin, SiteId siteId, Eid key, Object data) {
-        // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
-        // registrations
-        addMapping(origin, key, data);
-        dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
     }
 
     public void addMapping(MappingOrigin origin, Eid key, Object value) {
