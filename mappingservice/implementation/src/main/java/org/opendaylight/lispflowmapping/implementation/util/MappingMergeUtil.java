@@ -217,7 +217,7 @@ public final class MappingMergeUtil {
         }
         // find and update locators intersection if not empty
         List<LocatorRecord> commonLocators = getCommonLocatorRecords(nbMapping, sbMapping);
-        if (!commonLocators.isEmpty()) {
+        if (commonLocators != null && !commonLocators.isEmpty()) {
             mrb.setLocatorRecord(commonLocators);
         }
 
@@ -228,6 +228,11 @@ public final class MappingMergeUtil {
         // This method updates the MappingRecord builder with the intersection of the locator records
         // from the two mappings. NB mapping records fields have precedence, only Priority is updated
         // from SB mapping if p is 255.
+
+        // Return null when NB is a negative mapping
+        if (nbMapping.getLocatorRecord() == null || nbMapping.getLocatorRecord().isEmpty()) {
+            return null;
+        }
 
         List<LocatorRecord> sbLocators = sbMapping.getLocatorRecord();
 
