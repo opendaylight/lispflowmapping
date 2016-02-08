@@ -225,6 +225,9 @@ module odl-lisp-proto {
         leaf authenticationData {
             type binary;
         }
+        leaf mergeEnabled {
+            type boolean;
+        }
         uses mapping-record-list;
         uses xtrSiteId;
     }
@@ -242,6 +245,9 @@ module odl-lisp-proto {
         }
         leaf authenticationData {
             type binary;
+        }
+        leaf mergeEnabled {
+            type boolean;
         }
         uses mapping-record-list;
         uses xtrSiteId;
