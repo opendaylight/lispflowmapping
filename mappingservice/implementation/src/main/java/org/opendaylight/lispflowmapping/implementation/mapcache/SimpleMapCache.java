@@ -127,6 +127,9 @@ public class SimpleMapCache implements IMapCache {
             MappingRecord mergedEntry = MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao),
                     expiredMappings, sourceRlocs);
             removeExpiredXtrIdTableEntries(xtrIdDao, expiredMappings);
+            if (mergedEntry == null) {
+                return;
+            }
             regdate = new Date(mergedEntry.getTimestamp());
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
             table.put(eid, new MappingEntry<>(SubKeys.RECORD, mergedEntry));
