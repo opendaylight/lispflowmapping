@@ -194,6 +194,7 @@ public final class MappingMergeUtil {
 
         if (mrb == null) {
             LOG.warn("All mappings expired when merging! Unexpected!");
+            return null;
         }
         mrb.setXtrId(xtrId);
         mrb.setTimestamp(timestamp);
