@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -53,16 +55,35 @@ public final class MaskUtil {
         return false;
     }
 
+    private static final int slashPosition(final String prefix) {
+        final int slash = prefix.lastIndexOf('/');
+        Preconditions.checkArgument(slash >= 0, "Argument %s does not contain a slash", prefix);
+        return slash;
+    }
+
+    private static String getPrefixAddress(final String prefix) {
+        return prefix.substring(0, slashPosition(prefix));
+    }
+
+    private static String getPrefixMask(final String prefix) {
+        return prefix.substring(slashPosition(prefix) + 1);
+    }
+
+    private static String[] splitPrefix(final String prefix) {
+        final int slash = slashPosition(prefix);
+        return new String[] { prefix.substring(0, slash), prefix.substring(slash + 1) };
+    }
+
     public static Eid normalize(Eid eid, short mask) {
         Address address = eid.getAddress();
         try {
             if (address instanceof Ipv4Prefix) {
-                String[] v4prefix = String.valueOf(((Ipv4Prefix)address).getIpv4Prefix().getValue()).split("/");
-                InetAddress normalized = normalizeIP(Inet4Address.getByName(v4prefix[0]), mask);
+                final String addr = getPrefixAddress(((Ipv4Prefix)address).getIpv4Prefix().getValue());
+                InetAddress normalized = normalizeIP(InetAddresses.forString(addr), mask);
                 return LispAddressUtil.asIpv4PrefixEid(eid, (Inet4Address)normalized, mask);
             } else if (address instanceof Ipv6Prefix) {
-                String[] v6prefix = String.valueOf(((Ipv6Prefix)address).getIpv6Prefix().getValue()).split("/");
-                InetAddress normalized = normalizeIP(Inet6Address.getByName(v6prefix[0]), mask);
+                final String addr = getPrefixAddress(((Ipv6Prefix)address).getIpv6Prefix().getValue());
+                InetAddress normalized = normalizeIP(InetAddresses.forString(addr), mask);
                 return LispAddressUtil.asIpv6PrefixEid(eid, (Inet6Address)normalized, mask);
             } else if (address instanceof InstanceId) {
                 // TODO - not absolutely necessary, but should be implemented
@@ -78,14 +99,14 @@ public final class MaskUtil {
         Address address = eid.getAddress();
         try {
             if (address instanceof Ipv4Prefix) {
-                String[] v4prefix = String.valueOf(((Ipv4Prefix)address).getIpv4Prefix().getValue()).split("/");
+                String[] v4prefix = splitPrefix(((Ipv4Prefix)address).getIpv4Prefix().getValue());
                 short mask = Short.parseShort(v4prefix[1]);
-                InetAddress normalized = normalizeIP(Inet4Address.getByName(v4prefix[0]), mask);
+                InetAddress normalized = normalizeIP(InetAddresses.forString(v4prefix[0]), mask);
                 return LispAddressUtil.asIpv4PrefixEid(eid, (Inet4Address)normalized, mask);
             } else if (address instanceof Ipv6Prefix) {
-                String[] v6prefix = String.valueOf(((Ipv6Prefix)address).getIpv6Prefix().getValue()).split("/");
+                String[] v6prefix = splitPrefix(((Ipv6Prefix)address).getIpv6Prefix().getValue());
                 short mask = Short.parseShort(v6prefix[1]);
-                InetAddress normalized = normalizeIP(Inet6Address.getByName(v6prefix[0]), mask);
+                InetAddress normalized = normalizeIP(InetAddresses.forString(v6prefix[0]), mask);
                 return LispAddressUtil.asIpv6PrefixEid(eid, (Inet6Address)normalized, mask);
             } else if (address instanceof Ipv4) {
                 return LispAddressUtil.asIpv4PrefixEid(((Ipv4) address).getIpv4(), eid.getVirtualNetworkId());
@@ -141,20 +162,30 @@ public final class MaskUtil {
         return getMaskForIpPrefix(address.getIpPrefix());
     }
 
+    private static String getIpPrefixString(IpPrefix prefix) {
+        if (prefix.getIpv4Prefix() != null) {
+            return prefix.getIpv4Prefix().getValue();
+        } else if (prefix.getIpv6Prefix() != null) {
+            return prefix.getIpv6Prefix().getValue();
+        } else {
+            throw new IllegalArgumentException("Invalid prefix " + prefix);
+        }
+    }
+
     public static short getMaskForIpPrefix(IpPrefix prefix) {
-        return Short.parseShort(String.valueOf(prefix.getValue()).split("/")[1]);
+        return Short.parseShort(getPrefixMask(getIpPrefixString(prefix)));
     }
 
     public static String getAddressStringForIpPrefix(IpPrefix prefix) {
-        return String.valueOf(prefix.getValue()).split("/")[0];
+        return getPrefixAddress(getIpPrefixString(prefix));
     }
 
     public static String getAddressStringForIpv4Prefix(Ipv4Prefix prefix) {
-        return String.valueOf(prefix.getIpv4Prefix().getValue()).split("/")[0];
+        return getPrefixAddress(prefix.getIpv4Prefix().getValue());
     }
 
     public static String getAddressStringForIpv6Prefix(Ipv6Prefix prefix) {
-        return String.valueOf(prefix.getIpv6Prefix().getValue()).split("/")[0];
+        return getPrefixAddress(prefix.getIpv6Prefix().getValue());
     }
 
     public static short getMaskForAddress(Address address) {
@@ -163,11 +194,9 @@ public final class MaskUtil {
         } else if (address instanceof Ipv6) {
             return IPV6_MAX_MASK;
         } else if (address instanceof Ipv4Prefix) {
-            String[] prefix = String.valueOf(((Ipv4Prefix)address).getIpv4Prefix().getValue()).split("/");  // TODO use something more efficient
-            return Short.parseShort(prefix[1]);
+            return Short.parseShort(getPrefixMask(((Ipv4Prefix)address).getIpv4Prefix().getValue()));
         } else if (address instanceof Ipv6Prefix) {
-            String[] prefix = String.valueOf(((Ipv6Prefix)address).getIpv6Prefix().getValue()).split("/");  // TODO use something more efficient
-            return Short.parseShort(prefix[1]);
+            return Short.parseShort(getPrefixMask(((Ipv6Prefix)address).getIpv6Prefix().getValue()));
         } else if (address instanceof InstanceId) {
             return getMaskForAddress(((InstanceId)address).getInstanceId().getAddress());
         }
