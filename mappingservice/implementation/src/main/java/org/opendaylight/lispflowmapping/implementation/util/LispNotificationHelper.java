@@ -7,11 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import com.google.common.base.Splitter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public final class LispNotificationHelper {
     protected static final Logger LOG = LoggerFactory.getLogger(LispNotificationHelper.class);
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
 
     // Utility class, should not be instantiated
     private LispNotificationHelper() {
@@ -56,17 +58,18 @@ public final class LispNotificationHelper {
         } else if (address instanceof KeyValueAddress) {
             SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();
             if (sa.getDistinguishedNameType() != null) {
-                String value = sa.getDistinguishedNameType().getValue();
-                String ip = value.split(":")[0];
-                int port = Integer.valueOf(value.split(":")[1]);
+                final Iterator<String> it = COLON_SPLITTER.split(sa.getDistinguishedNameType().getValue()).iterator();
+                String ip = it.next();
+                int port = Integer.valueOf(it.next());
+
                 tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
                 tab.setPort(new PortNumber(port));
             }
         } else if (address instanceof DistinguishedName) {
             DistinguishedName dname = (DistinguishedName) address;
-            String value = dname.getDistinguishedName().getValue();
-            String ip = value.split(":")[0];
-            int port = Integer.valueOf(value.split(":")[1]);
+            final Iterator<String> it = COLON_SPLITTER.split(dname.getDistinguishedName().getValue()).iterator();
+            String ip = it.next();
+            int port = Integer.valueOf(it.next());
 
             tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
             tab.setPort(new PortNumber(port));
