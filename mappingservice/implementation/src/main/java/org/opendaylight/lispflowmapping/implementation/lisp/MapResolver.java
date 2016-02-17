@@ -22,6 +22,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
@@ -169,7 +170,7 @@ public class MapResolver implements IMapResolverAsync {
             return mapping;
         }
 
-        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mapping);
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         try {
             for (LocatorRecord record : locatorRecords) {
@@ -232,10 +233,9 @@ public class MapResolver implements IMapResolverAsync {
             // By default we return the first hop
             nextHop = hops.get(0).getAddress();
             for (Hop hop : hops) {
-                SimpleAddress hopContainer = hop.getAddress();
+                Address hopAddress = LispAddressUtil.addressFromSimpleAddress(hop.getAddress());
                 for (ItrRloc itrRloc : itrRlocs) {
-                    // XXX Need conversion
-                    if (itrRloc.getRloc().equals(hopContainer)) {
+                    if (itrRloc.getRloc().getAddress().equals(hopAddress)) {
                         int i = hops.indexOf(hop);
                         if (i < hops.size() - 1) {
                             nextHop = hops.get(i + 1).getAddress();
