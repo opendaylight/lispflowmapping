@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
-import java.net.Inet6Address;
+import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -63,20 +63,12 @@ public final class Ipv6Serializer extends LispAddressSerializer {
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         Ipv6 address = (Ipv6) lispAddress.getAddress();
-        try {
-            buffer.put(Inet6Address.getByName(address.getIpv6().getValue()).getAddress());
-        } catch (UnknownHostException e) {
-            LOG.debug("Unknown host {}", address.getIpv6().getValue(), e);
-        }
+        buffer.put(InetAddresses.forString(address.getIpv6().getValue()).getAddress());
     }
 
     @Override
     protected void serializeData(ByteBuffer buffer, SimpleAddress address) {
-        try {
-            buffer.put(Inet6Address.getByName(address.getIpAddress().getIpv6Address().getValue()).getAddress());
-        } catch (UnknownHostException e) {
-            LOG.debug("Unknown host {}", address.getIpAddress().getIpv6Address().getValue(), e);
-        }
+        buffer.put(InetAddresses.forString(address.getIpAddress().getIpv6Address().getValue()).getAddress());
     }
 
     @Override
@@ -102,7 +94,7 @@ public final class Ipv6Serializer extends LispAddressSerializer {
         return new SimpleAddress(new IpAddress(deserializeData(buffer)));
     }
 
-    private Ipv6Address deserializeData(ByteBuffer buffer) {
+    private static Ipv6Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[16];
         InetAddress address = null;
         buffer.get(ipBuffer);

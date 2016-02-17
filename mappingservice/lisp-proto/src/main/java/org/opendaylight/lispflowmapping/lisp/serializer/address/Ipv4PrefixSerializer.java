@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
-import java.net.Inet4Address;
+import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -65,19 +65,12 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         Ipv4Prefix prefix = (Ipv4Prefix) lispAddress.getAddress();
         String address = MaskUtil.getAddressStringForIpv4Prefix(prefix);
-        try {
-            buffer.put(Inet4Address.getByName(address).getAddress());
-        } catch (UnknownHostException e) {
-            LOG.debug("Unknown host {}", address, e);
-        }
+        buffer.put(InetAddresses.forString(address).getAddress());
     }
 
     @Override
     protected void serializeData(ByteBuffer buffer, SimpleAddress address) {
-        try {
-            buffer.put(Inet4Address.getByName(MaskUtil.getAddressStringForIpPrefix(address.getIpPrefix())).getAddress());
-        } catch (UnknownHostException e) {
-        }
+        buffer.put(InetAddresses.forString(MaskUtil.getAddressStringForIpPrefix(address.getIpPrefix())).getAddress());
     }
 
     @Override
@@ -99,7 +92,7 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
         return new SimpleAddress(new IpPrefix(deserializeData(buffer, ctx)));
     }
 
-    private org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix
+    private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix
     deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
