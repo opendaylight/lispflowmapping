@@ -7,14 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
@@ -74,18 +73,10 @@ public final class LispAddressUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAddressUtil.class);
 
     public static final short STARTING_SERVICE_INDEX = 255;
-    private static Pattern IP4_PATTERN = null;
-    private static Pattern IP6_PATTERN = null;
-    private static final String ip4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
-    private static final String ip6Pattern = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
-    static {
-        try {
-          IP4_PATTERN = Pattern.compile(ip4Pattern, Pattern.CASE_INSENSITIVE);
-          IP6_PATTERN = Pattern.compile(ip6Pattern, Pattern.CASE_INSENSITIVE);
-        } catch (PatternSyntaxException e) {
-            LOG.debug("Caught pattern syntax exception", e);
-        }
-      }
+    private static final Pattern IP4_PATTERN =
+            Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])", Pattern.CASE_INSENSITIVE);
+    private static final Pattern IP6_PATTERN =
+            Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
 
     // Utility class, should not be instantiated
     private LispAddressUtil() {
@@ -367,11 +358,11 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv4PrefixEid(Ipv4Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/" + 32)), vni);
+        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/32")), vni);
     }
 
     public static Eid asIpv6PrefixEid(Ipv6Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/" + 128)), vni);
+        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/128")), vni);
     }
 
     public static Eid asIpv4PrefixEid(Eid eid, Inet4Address address, short mask) {
@@ -467,7 +458,7 @@ public final class LispAddressUtil {
     private static String getStringPrefix(InetAddress address, short mask) {
         StringBuilder sb = new StringBuilder();
         sb.append(address.getHostAddress());
-        sb.append("/");
+        sb.append('/');
         sb.append(mask);
         return sb.toString();
     }
@@ -540,16 +531,13 @@ public final class LispAddressUtil {
     }
 
     public static InetAddress ipAddressToInet(Address addr) {
-        try {
-            if (addr instanceof Ipv4) {
-                return Inet4Address.getByName(((Ipv4) addr).getIpv4().getValue());
-            } else if (addr instanceof Ipv6) {
-                return Inet6Address.getByName(((Ipv6) addr).getIpv6().getValue());
-            }
-        } catch (java.net.UnknownHostException e) {
-            LOG.debug("Failed to build InetAddress: {}", e);
+        if (addr instanceof Ipv4) {
+            return InetAddresses.forString(((Ipv4) addr).getIpv4().getValue());
+        } else if (addr instanceof Ipv6) {
+            return InetAddresses.forString(((Ipv6) addr).getIpv6().getValue());
+        } else {
+            return null;
         }
-        return null;
     }
 
     public static int compareInetAddresses(InetAddress a, InetAddress b) {
