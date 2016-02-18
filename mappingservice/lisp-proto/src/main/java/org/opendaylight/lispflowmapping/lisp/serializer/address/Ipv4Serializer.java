@@ -102,7 +102,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
         return new SimpleAddress(new IpAddress(deserializeData(buffer)));
     }
 
-    private Ipv4Address deserializeData(ByteBuffer buffer) {
+    private static Ipv4Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
         buffer.get(ipBuffer);
