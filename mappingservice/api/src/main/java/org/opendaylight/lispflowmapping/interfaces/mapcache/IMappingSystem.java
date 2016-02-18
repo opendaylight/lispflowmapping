@@ -167,7 +167,7 @@ public interface IMappingSystem {
      * @param overwrite
      *            Value to configure
      */
-    public void setOverwritePolicy(boolean overwrite);
+    void setOverwritePolicy(boolean overwrite);
 
     /**
      * Print all mappings. Used for testing, debugging and the karaf shell

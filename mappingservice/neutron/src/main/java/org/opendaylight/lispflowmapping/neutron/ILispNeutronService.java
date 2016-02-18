@@ -13,8 +13,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public interface ILispNeutronService {
 
-	public IFlowMapping getMappingService();
+    IFlowMapping getMappingService();
 
-	public OdlMappingserviceService getMappingDbService();
+    OdlMappingserviceService getMappingDbService();
 
 }

@@ -11,6 +11,6 @@ import io.netty.channel.socket.DatagramPacket;
 
 public interface ILispSouthboundService {
 
-    public void handlePacket(DatagramPacket packet);
+    void handlePacket(DatagramPacket packet);
 
 }

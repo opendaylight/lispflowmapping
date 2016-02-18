@@ -11,12 +11,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 
 public interface ILispAuthentication {
-    public boolean validate(MapRegister mapRegister, String key);
+    boolean validate(MapRegister mapRegister, String key);
 
-    public byte[] getAuthenticationData(MapNotify mapNotify, String key);
+    byte[] getAuthenticationData(MapNotify mapNotify, String key);
 
-    public int getAuthenticationLength();
+    int getAuthenticationLength();
 
-    public static final int MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION = 16;
+    int MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION = 16;
 
 }

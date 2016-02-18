@@ -11,8 +11,7 @@ package org.opendaylight.lispflowmapping.type.sbplugin;
  * An interface for configuring the lisp plugin address.
  */
 public interface IConfigLispSouthboundPlugin {
-    public void setLispAddress(String address);
-
-    public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort);
-    public void setXtrPort(int port);
+    void setLispAddress(String address);
+    void shouldListenOnXtrPort(boolean shouldListenOnXtrPort);
+    void setXtrPort(int port);
 }
