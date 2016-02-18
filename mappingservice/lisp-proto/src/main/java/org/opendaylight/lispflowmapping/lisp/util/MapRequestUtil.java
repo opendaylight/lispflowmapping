@@ -7,8 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -40,19 +40,11 @@ public final class MapRequestUtil {
         for (ItrRloc itr : request.getItrRloc()) {
             Address addr = itr.getRloc().getAddress();
             if (addr instanceof Ipv4) {
-                try {
-                    selectedItrRloc = InetAddress.getByName(((Ipv4) addr).getIpv4().getValue());
-                } catch (UnknownHostException e) {
-                    LOG.debug("Unknown host {}", ((Ipv4) addr).getIpv4().getValue(), e);
-                }
+                selectedItrRloc = InetAddresses.forString(((Ipv4) addr).getIpv4().getValue());
                 break;
             }
             if (addr instanceof Ipv6) {
-                try {
-                    selectedItrRloc = InetAddress.getByName(((Ipv6) addr).getIpv6().getValue());
-                } catch (UnknownHostException e) {
-                    LOG.debug("Unknown host {}", ((Ipv6) addr).getIpv6().getValue(), e);
-                }
+                selectedItrRloc = InetAddresses.forString(((Ipv6) addr).getIpv6().getValue());
                 break;
             }
         }
