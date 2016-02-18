@@ -24,10 +24,12 @@ import org.slf4j.LoggerFactory;
 public class HashMapDb implements ILispDAO, AutoCloseable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
-    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object, ConcurrentMap<String, Object>>();
+    private static final Object TABLES = (Object) "tables";
+    private static final int DEFAULT_RECORD_TIMEOUT = 240;   // SB registered mapping entries time out after 4 min
+    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object,
+            ConcurrentMap<String, Object>>();
     private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private int recordTimeOut = 240;
-    private final Object TABLES = (Object) "tables";
+    private int recordTimeOut = DEFAULT_RECORD_TIMEOUT;
 
     @Override
     public void put(Object key, MappingEntry<?>... values) {
@@ -92,7 +94,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             }
 
             private boolean isExpired(Date date) {
-                return System.currentTimeMillis() - date.getTime() > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+                return System.currentTimeMillis() - date.getTime()
+                        > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });
     }
