@@ -66,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,10 +125,10 @@ public final class LispAddressUtil {
     public static Address addressFromInet(InetAddress address) {
         if (address instanceof Inet4Address) {
             return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder()
-            .setIpv4(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address(address.getHostAddress())).build();
+            .setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address)).build();
         } else if (address instanceof Inet6Address) {
             return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder()
-            .setIpv6(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address(address.getHostAddress())).build();
+            .setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address)).build();
         }
         return null;
     }
@@ -358,18 +359,18 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv4PrefixEid(Ipv4Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/32")), vni);
+        return toEid(new IpPrefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(addr)), vni);
     }
 
     public static Eid asIpv6PrefixEid(Ipv6Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(new Ipv4Prefix(addr.getValue() + "/128")), vni);
+        return toEid(new IpPrefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(addr)), vni);
     }
 
     public static Eid asIpv4PrefixEid(Eid eid, Inet4Address address, short mask) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(eid.getAddressType());
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
-        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new Ipv4Prefix(getStringPrefix(address, mask))).build());
+        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -377,7 +378,7 @@ public final class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(eid.getAddressType());
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
-        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(new Ipv6Prefix(getStringPrefix(address, mask))).build());
+        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -453,14 +454,6 @@ public final class LispAddressUtil {
 
     public static Rloc asKeyValueAddress(String key, SimpleAddress value) {
         return asKeyValueAddressRloc(new SimpleAddress(new DistinguishedNameType(key)), value);
-    }
-
-    private static String getStringPrefix(InetAddress address, short mask) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(address.getHostAddress());
-        sb.append('/');
-        sb.append(mask);
-        return sb.toString();
     }
 
     public static SourceDestKey asSrcDst(String src, String dst, int smask, int dmask) {
