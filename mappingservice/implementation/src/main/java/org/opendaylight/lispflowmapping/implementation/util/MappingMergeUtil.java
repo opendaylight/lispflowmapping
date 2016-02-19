@@ -202,6 +202,14 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
+    public static boolean mappingIsExpired(MappingRecord mapping) {
+        Preconditions.checkNotNull(mapping, "mapping should not be null!");
+        if (mapping.getTimestamp() != null) {
+            return timestampIsExpired(mapping.getTimestamp());
+        }
+        return false;
+    }
+
     public static boolean timestampIsExpired(Date timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
         return timestampIsExpired(timestamp.getTime());
