@@ -1,0 +1,7 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Vina Ermagan <vermagan@cisco.com>
+Submitted-by: Lori Jakab <lorand.jakab@gmail.com>
+Submitted-at: Fri, 19 Feb 2016 09:27:45 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/34771
+Project: lispflowmapping
+Branch: refs/heads/stable/beryllium
