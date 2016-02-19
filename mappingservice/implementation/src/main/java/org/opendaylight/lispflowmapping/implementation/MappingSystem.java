@@ -13,11 +13,11 @@ import java.util.EnumMap;
 import java.util.List;
 
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.implementation.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.implementation.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
+import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
@@ -37,6 +37,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
@@ -60,7 +61,6 @@ public class MappingSystem implements IMappingSystem {
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
-    private BindingAwareBroker bindingAwareBroker;
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
         this.dao = dao;
@@ -175,7 +175,7 @@ public class MappingSystem implements IMappingSystem {
         Object nbMapping = pmc.getMapping(src, dst);
 
         if (nbMapping == null) {
-            return smc.getMapping(src, dst);
+            return getSbMappingWithExpiration(src, dst);
         }
         if (dst.getAddress() instanceof ServicePath) {
             return updateServicePathMappingRecord((MappingRecord) nbMapping, dst);
@@ -195,12 +195,25 @@ public class MappingSystem implements IMappingSystem {
         if (dst.getAddress() instanceof ServicePath) {
             return updateServicePathMappingRecord((MappingRecord)nbMapping, dst);
         }
-        Object sbMapping = smc.getMapping(src, dst);
+        Object sbMapping = getSbMappingWithExpiration(src, dst);
         if (sbMapping == null) {
             return nbMapping;
         }
         // both NB and SB mappings exist. Compute intersection of the mappings
         return MappingMergeUtil.computeNbSbIntersection((MappingRecord)nbMapping, (MappingRecord)sbMapping);
+    }
+
+    private Object getSbMappingWithExpiration(Eid src, Eid dst) {
+        Object mappingObject = smc.getMapping(src, dst);
+        if (mappingObject instanceof MappingRecord) {
+            MappingRecord mapping = (MappingRecord) mappingObject;
+            if (MappingMergeUtil.mappingIsExpired(mapping)) {
+                dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
+                        new SiteId(mapping.getSiteId()), mapping));
+                return null;
+            }
+        }
+        return mappingObject;
     }
 
     @Override
@@ -210,6 +223,9 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public Object getMapping(MappingOrigin origin, Eid key) {
+        if (origin.equals(MappingOrigin.Southbound)) {
+            return getSbMappingWithExpiration(null, key);
+        }
         return tableMap.get(origin).getMapping(null, key);
     }
 
@@ -269,16 +285,16 @@ public class MappingSystem implements IMappingSystem {
 
         LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
 
-        int i = 0;
+        int expiredMappings = 0;
         for (Mapping mapping : mappings) {
             if (MappingMergeUtil.mappingIsExpired(mapping.getMappingRecord())) {
                 dsbe.removeMapping(mapping);
-                i++;
+                expiredMappings++;
                 continue;
             }
             addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
         }
-        LOG.info("{} mappings were expired and were not restored", i);
+        LOG.info("{} mappings were expired and were not restored", expiredMappings);
 
         for (AuthenticationKey authKey : authKeys) {
             addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
