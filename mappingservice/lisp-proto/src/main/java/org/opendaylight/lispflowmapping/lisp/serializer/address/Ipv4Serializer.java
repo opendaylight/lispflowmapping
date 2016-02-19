@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
@@ -106,12 +107,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
         buffer.get(ipBuffer);
-        try {
-            address = InetAddress.getByAddress(ipBuffer);
-        } catch (UnknownHostException e) {
-            LOG.debug("Unknown host {}", ipBuffer, e);
-        }
-        return new Ipv4Address(address.getHostAddress());
+        return IetfInetUtil.INSTANCE.ipv4AddressFor(ipBuffer);
     }
 
     protected interface Length {
