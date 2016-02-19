@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_1e02ca09",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-02-19T23:08:29Z",
+      "side": 1,
+      "message": "Yeah, of course. But generally I\u0027d expect all sanity to be done prior to calling mappingIsExpired (and perhaps doing other checks involving the mapping). But probably that\u0027s just me. So I\u0027m fine with leaving it as is.",
+      "parentUuid": "9a3d3df0_0320b7aa",
+      "revId": "2d38d71b148b765118413e819bb754775c8878f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_83120755",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -119,6 +137,24 @@
       "side": 1,
       "message": "Northbound mappings typically don\u0027t have a timestamp set. I guess we can argue that in that case, we cannot determine if the mapping is expired or not, but I have to return something, unless I throw a RuntimeException or similar.",
       "parentUuid": "9a3d3df0_83120755",
+      "revId": "2d38d71b148b765118413e819bb754775c8878f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_be18fe75",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-02-19T23:08:29Z",
+      "side": 1,
+      "message": "Right. So we expect this to be called for NB mappings? If not, then I would just return true since the call is bogus.",
+      "parentUuid": "9a3d3df0_a30e2b39",
       "revId": "2d38d71b148b765118413e819bb754775c8878f8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
