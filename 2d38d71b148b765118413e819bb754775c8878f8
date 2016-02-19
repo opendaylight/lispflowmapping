@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_830b2729",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-19T22:58:45Z",
+      "side": 1,
+      "message": "Indeed, will do.",
+      "parentUuid": "9a3d3df0_40163556",
+      "revId": "2d38d71b148b765118413e819bb754775c8878f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_e31b1371",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_0320b7aa",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-19T22:58:45Z",
+      "side": 1,
+      "message": "The thinking behind this is that caller should make sure not to call the function with a null argument.",
+      "parentUuid": "9a3d3df0_e31b1371",
+      "revId": "2d38d71b148b765118413e819bb754775c8878f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_83120755",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -65,6 +101,24 @@
         "endLine": 210,
         "endChar": 21
       },
+      "revId": "2d38d71b148b765118413e819bb754775c8878f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_a30e2b39",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-19T22:58:45Z",
+      "side": 1,
+      "message": "Northbound mappings typically don\u0027t have a timestamp set. I guess we can argue that in that case, we cannot determine if the mapping is expired or not, but I have to return something, unless I throw a RuntimeException or similar.",
+      "parentUuid": "9a3d3df0_83120755",
       "revId": "2d38d71b148b765118413e819bb754775c8878f8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
