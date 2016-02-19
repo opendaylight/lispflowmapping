@@ -262,7 +262,6 @@ public class SimpleMapCache implements IMapCache {
                 if (timestamp != null && MappingMergeUtil.timestampIsExpired(timestamp)) {
                     dao.removeSpecific(daoEntry.getKey(), SubKeys.REGDATE);
                     dao.removeSpecific(daoEntry.getKey(), SubKeys.RECORD);
-                    return null;
                 }
                 return daoEntry.getValue().get(SubKeys.RECORD);
             }
