@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.southbound.util;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifynotification.MapNotify;
@@ -18,9 +17,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplynotification.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 
 public final class LispNotificationHelper {
     // Utility class, should not be instantiated
@@ -59,10 +57,7 @@ public final class LispNotificationHelper {
         if (inetAddress == null) {
             inetAddress = InetAddress.getLoopbackAddress();
         }
-        if (inetAddress instanceof Inet4Address) {
-            return new IpAddress(new Ipv4Address(inetAddress.getHostAddress()));
-        } else {
-            return new IpAddress(new Ipv6Address(inetAddress.getHostAddress()));
-        }
+
+        return IetfInetUtil.ipAddressFor(address);
     }
 }
