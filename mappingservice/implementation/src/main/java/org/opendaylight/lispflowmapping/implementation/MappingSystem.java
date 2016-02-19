@@ -269,9 +269,16 @@ public class MappingSystem implements IMappingSystem {
 
         LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
 
+        int i = 0;
         for (Mapping mapping : mappings) {
+            if (MappingMergeUtil.mappingIsExpired(mapping.getMappingRecord())) {
+                dsbe.removeMapping(mapping);
+                i++;
+                continue;
+            }
             addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
         }
+        LOG.info("{} mappings were expired and were not restored", i);
 
         for (AuthenticationKey authKey : authKeys) {
             addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
