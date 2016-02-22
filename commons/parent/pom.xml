@@ -434,38 +434,6 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
-        <plugin>
-          <!-- here we are defining the default generators for yang You may need
-               to override this in child poms if you want to define additional generators,
-               such as the JMX generator etc. -->
-          <groupId>org.opendaylight.yangtools</groupId>
-          <artifactId>yang-maven-plugin</artifactId>
-          <version>${yangtools.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.opendaylight.mdsal</groupId>
-              <artifactId>maven-sal-api-gen-plugin</artifactId>
-              <version>${yangtools.version}</version>
-            </dependency>
-          </dependencies>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate-sources</goal>
-              </goals>
-              <configuration>
-                <yangFilesRootDir>${yang.src.path}</yangFilesRootDir>
-                <codeGenerators>
-                  <generator>
-                    <codeGeneratorClass>org.opendaylight.yangtools.maven.sal.api.gen.plugin.CodeGeneratorImpl</codeGeneratorClass>
-                    <outputBaseDir>${salGeneratorPath}</outputBaseDir>
-                  </generator>
-                </codeGenerators>
-                <inspectDependencies>true</inspectDependencies>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
