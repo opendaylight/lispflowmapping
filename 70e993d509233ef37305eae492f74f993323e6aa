@@ -22,6 +22,24 @@
       "revId": "70e993d509233ef37305eae492f74f993323e6aa",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ccaee580",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-02-25T23:46:22Z",
+      "side": 1,
+      "message": "I didn\u0027t get used to that yet, it was just too elegant :)  Update is coming",
+      "parentUuid": "9a3d3df0_fdf6f98d",
+      "revId": "70e993d509233ef37305eae492f74f993323e6aa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
