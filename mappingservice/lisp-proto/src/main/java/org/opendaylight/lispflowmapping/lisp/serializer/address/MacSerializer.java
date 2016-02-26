@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import javax.xml.bind.DatatypeConverter;
 
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.IetfYangUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
@@ -53,16 +54,12 @@ public final class MacSerializer extends LispAddressSerializer {
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         Mac mac = (Mac) lispAddress.getAddress();
-        String macString = mac.getMac().getValue();
-        macString = macString.replaceAll(":", "");
-        buffer.put(DatatypeConverter.parseHexBinary(macString));
+        buffer.put(IetfYangUtil.INSTANCE.bytesFor(mac.getMac()));
     }
 
     @Override
     protected void serializeData(ByteBuffer buffer, SimpleAddress simpleAddress) {
-        String macString = simpleAddress.getMacAddress().getValue();
-        macString = macString.replaceAll(":", "");
-        buffer.put(DatatypeConverter.parseHexBinary(macString));
+        buffer.put(IetfYangUtil.INSTANCE.bytesFor(simpleAddress.getMacAddress());
     }
 
     @Override
@@ -91,14 +88,7 @@ public final class MacSerializer extends LispAddressSerializer {
     private MacAddress deserializeData(ByteBuffer buffer) {
         byte[] macBuffer = new byte[6];
         buffer.get(macBuffer);
-        StringBuilder sb = new StringBuilder(17);
-        for (byte b : macBuffer) {
-            if (sb.length() > 0) {
-                sb.append(':');
-            }
-            sb.append(String.format("%02x", b));
-        }
-        return new MacAddress(sb.toString());
+        return IetfYangUtil.INSTANCE.macAddressFor(macBuffer);
     }
 
     private interface Length {
