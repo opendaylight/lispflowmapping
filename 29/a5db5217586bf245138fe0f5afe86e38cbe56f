@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Robert Varga <nite@hq.sk>
+Code-Review+2: Florin Coras <florin.coras+odl@gmail.com>
+Submitted-by: Florin Coras <florin.coras+odl@gmail.com>
+Submitted-at: Fri, 26 Feb 2016 11:08:14 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/35444
+Project: lispflowmapping
+Branch: refs/heads/stable/beryllium
