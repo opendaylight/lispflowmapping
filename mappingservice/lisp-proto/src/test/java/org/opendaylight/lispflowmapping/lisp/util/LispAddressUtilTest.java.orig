@@ -71,9 +71,15 @@ public class LispAddressUtilTest {
 
     private static final byte[] IPV6_ADDRESS_BYTES_TEST = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
             15, 16};
+<<<<<<< HEAD
+    private static final Ipv6Address IPV6_ADDRESS_OBJECT_TEST = new Ipv6Address("102:304:506:708:90a:b0c:d0e:f10");
+
+    private static final String IPV6_ADDRESS_TEST = "102:304:506:708:90a:b0c:d0e:f10";
+=======
     private static final String IPV6_ADDRESS_VALUE_TEST = "102:304:506:708:90a:b0c:d0e:f10";
     private static final Ipv6Address IPV6_ADDRESS_TEST = new Ipv6Address(IPV6_ADDRESS_VALUE_TEST);
 
+>>>>>>> 7bce6f6... JUnit test - LispAddressUtil - toEid.
     private static final Short DUMMY_SERVICE_INDEX = 45;
     private static final Long DUMMY_SERVICE_PATH_ID_TYPE = 46L;
     private static final String DISTINGUISHED_NAME_TYPE_VALUE_TEST = "dummy distinguished name type";
