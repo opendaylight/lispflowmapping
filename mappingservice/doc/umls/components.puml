@@ -1,0 +1,74 @@
+@startuml
+title Mapping Service Components
+
+' === api ===
+[api]
+frame odl-lisp-sb.yang as odllispsb {
+    () "lisp-sb" as lispsb
+}
+odllispsb -- [api]
+
+frame odl-mappingservice.yang as odlmappingservice {
+    () mappingservice
+    () "mappingservice-shell" as mappingserviceshell
+    () "lisp-mappingservice" as lispmappingservice
+    () "RPCs"
+    () notification
+}
+odlmappingservice -- [api]
+
+frame odl-mappingservice-dao.yang as odlmappingservicedao {
+    () "mappingservice-dao" as mappingservicedao
+}
+odlmappingservicedao -- [api]
+
+
+' === lisp-proto ===
+'[lisp-proto]
+
+
+' === inmemorydb ===
+[inmemorydb]
+frame odl-mappingservice-dao-inmemorydb.yang as odlmappingservicedaoinmemorydb {
+    () "mappingservice-dao-inmemorydb" as mappingservicedaoinmemorydb
+}
+[inmemorydb] -- odlmappingservicedaoinmemorydb
+mappingservicedao <... mappingservicedaoinmemorydb : use
+
+
+' === implementation ===
+[implementation]
+frame odl-mappingservice-impl.yang as odlmappingserviceimpl {
+    () "mappingservice-impl" as mappingserviceimpl
+    () "lisp-mappingservice-impl" as lispmappingserviceimpl
+}
+[implementation] -- odlmappingserviceimpl
+mappingservice <... mappingserviceimpl : use
+lispmappingservice <... lispmappingserviceimpl : use
+
+frame odl-mappingservice-shell-impl.yang as odlmappingserviceshellimpl {
+    () "mappingservice-shell-impl" as mappingserviceshellimpl
+}
+[implementation] -- odlmappingserviceshellimpl
+mappingserviceshell <... mappingserviceshellimpl : use
+
+
+' === southbound ===
+[southbound]
+frame config-lisp.yang as configlisp {
+    () lispconfig
+    () "lispconfig-rpc" as lispconfigrpc
+}
+[southbound] -- configlisp
+
+frame odl-lisp-sb-impl.yang as odllispsbimpl {
+    () "lisp-sb-impl" as lispsbimpl
+}
+[southbound] -- odllispsbimpl
+lispsb <... lispsbimpl : use
+
+
+'[neutron]
+'[shell]
+
+@enduml
