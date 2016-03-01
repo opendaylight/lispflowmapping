@@ -42,6 +42,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
 public class LispAddressUtilTest {
 
@@ -54,10 +55,15 @@ public class LispAddressUtilTest {
 
     private static final byte[] IPV4_ADDRESS_BYTES_TEST = new byte[]{(byte) 192, (byte) 168, 1, 1};
     private static final String IPV4_ADDRESS_TEST = "192.168.1.1";
+    private static final Ipv4Address IPV4_ADDRESS_OBJECT_TEST = new Ipv4Address(IPV4_ADDRESS_TEST);
+    private static final IpAddress IP_ADDRESS_OBJECT_GENERAL_TEST = new IpAddress(IPV4_ADDRESS_OBJECT_TEST);
+    private static final SimpleAddress SIMPLE_ADDRESS_TEST = new SimpleAddress(IP_ADDRESS_OBJECT_GENERAL_TEST);
 
     private static final byte[] IPV6_ADDRESS_BYTES_TEST = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
             15, 16};
-    private static final String IPV6_ADDRESS_TEST = "102:304:506:708:90a:b0c:d0e:f10";
+    private static final Ipv6Address IPV6_ADDRESS_OBJECT_TEST = new Ipv6Address("102:304:506:708:90a:b0c:d0e:f11");
+
+    private static final String IPV6_ADDRESS_TEST = "102:304:506:708:90a:b0c:d0e:f11";
     private static final Short DUMMY_SERVICE_INDEX = 45;
     private static final Long DUMMY_SERVICE_PATH_ID_TYPE = 46L;
     private static final String DISTINGUISHED_NAME_TYPE_TEST = "dummy distinguished name type";
@@ -71,12 +77,11 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromSimpleAddressTest_asAnyIpAddress() {
-        final SimpleAddress simpleAddress = new SimpleAddress(new IpAddress(new Ipv4Address(IPV4_ADDRESS_TEST)));
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (simpleAddress);
+                (SIMPLE_ADDRESS_TEST);
         assertEquals(Ipv4Afi.class, addressClass);
 
-        final Address address = LispAddressUtil.addressFromSimpleAddress(simpleAddress);
+        final Address address = LispAddressUtil.addressFromSimpleAddress(SIMPLE_ADDRESS_TEST);
         assertTrue(address instanceof Ipv4);
     }
 
@@ -155,7 +160,7 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromInet_ipv4() throws UnknownHostException {
-        final InetAddress ipv4InetAddress = Inet4Address.getByAddress(IPV4_ADDRESS_BYTES_TEST);
+        final InetAddress ipv4InetAddress = Inet4Address.getByAddress(IPV4_ADDRESS_BYTES_TEST);;
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromInet(ipv4InetAddress);
         assertEquals(Ipv4Afi.class, addressClass);
 
@@ -189,7 +194,7 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromIpAddress_ipv4() {
-        final IpAddress ipv4Address = new IpAddress(new Ipv4Address(IPV4_ADDRESS_TEST));
+        final IpAddress ipv4Address = new IpAddress(IPV4_ADDRESS_OBJECT_TEST);
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromIpAddress(ipv4Address);
         assertEquals(Ipv4Afi.class, addressClass);
 
@@ -371,4 +376,33 @@ public class LispAddressUtilTest {
         assertNull(testedAddress);
     }
 
+
+    /**
+     * Tests:
+     * - {@link LispAddressUtil#toRloc(InetAddress)}
+     * - {@link LispAddressUtil#toRloc(Ipv4Address)}
+     * - {@link LispAddressUtil#toRloc(Ipv6Address)}
+     * - {@link LispAddressUtil#toRloc(SimpleAddress)}
+     * methods.
+     */
+    @Test
+    public void toRloc() throws UnknownHostException {
+        InetAddress ipv4AddressInet = Inet4Address.getByAddress(IPV4_ADDRESS_BYTES_TEST);
+        final Rloc rlocFromInetAddress = LispAddressUtil.toRloc(ipv4AddressInet);
+        assertEquals(Ipv4Afi.class, rlocFromInetAddress.getAddressType());
+        assertEquals(IPV4_ADDRESS_TEST, ((Ipv4)rlocFromInetAddress.getAddress()).getIpv4().getValue());
+
+        final Rloc rlocFromIpv4Address = LispAddressUtil.toRloc(IPV4_ADDRESS_OBJECT_TEST);
+        assertEquals(Ipv4Afi.class, rlocFromIpv4Address.getAddressType());
+        assertEquals(IPV4_ADDRESS_TEST, ((Ipv4)rlocFromIpv4Address.getAddress()).getIpv4().getValue());
+
+        final Rloc rlocFromIpv6Address = LispAddressUtil.toRloc(IPV6_ADDRESS_OBJECT_TEST);
+        assertEquals(Ipv6Afi.class, rlocFromIpv6Address.getAddressType());
+        assertEquals(IPV6_ADDRESS_TEST, ((Ipv6)rlocFromIpv6Address.getAddress()).getIpv6().getValue());
+
+        final Rloc rlocFromSimpleAddress = LispAddressUtil.toRloc(SIMPLE_ADDRESS_TEST);
+        assertEquals(Ipv4Afi.class, rlocFromSimpleAddress.getAddressType());
+        assertEquals(IPV4_ADDRESS_TEST, ((Ipv4)rlocFromSimpleAddress.getAddress()).getIpv4().getValue());
+    }
 }
+
