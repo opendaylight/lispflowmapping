@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_87430eae",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-02T15:15:04Z",
+      "side": 1,
+      "message": "I like this convention better :-)",
+      "range": {
+        "startLine": 67,
+        "startChar": 45,
+        "endLine": 67,
+        "endChar": 50
+      },
+      "revId": "3c8a329cb132484a6aca46910d49526c35d89e01",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_47f62690",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-02T15:15:04Z",
+      "side": 1,
+      "message": "Since you\u0027re testing both v4 and v6 I\u0027d change the name to asIpRloc",
+      "range": {
+        "startLine": 429,
+        "startChar": 16,
+        "endLine": 429,
+        "endChar": 26
+      },
+      "revId": "3c8a329cb132484a6aca46910d49526c35d89e01",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_c731965b",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-02T15:15:04Z",
+      "side": 1,
+      "message": "Could you add this?",
+      "range": {
+        "startLine": 452,
+        "startChar": 8,
+        "endLine": 452,
+        "endChar": 46
+      },
+      "revId": "3c8a329cb132484a6aca46910d49526c35d89e01",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_473d862a",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-02T15:15:04Z",
+      "side": 1,
+      "message": "Same comment as for IPv6.",
+      "range": {
+        "startLine": 506,
+        "startChar": 8,
+        "endLine": 506,
+        "endChar": 44
+      },
+      "revId": "3c8a329cb132484a6aca46910d49526c35d89e01",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_a748d2cc",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-02T15:15:04Z",
+      "side": 1,
+      "message": "line length :-)",
+      "range": {
+        "startLine": 555,
+        "startChar": 119,
+        "endLine": 555,
+        "endChar": 127
+      },
+      "revId": "3c8a329cb132484a6aca46910d49526c35d89e01",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
