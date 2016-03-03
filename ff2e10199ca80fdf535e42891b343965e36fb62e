@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_db696bfa",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-03T16:56:27Z",
+      "side": 1,
+      "message": "Nice catch",
+      "range": {
+        "startLine": 554,
+        "startChar": 34,
+        "endLine": 554,
+        "endChar": 35
+      },
+      "revId": "ff2e10199ca80fdf535e42891b343965e36fb62e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
