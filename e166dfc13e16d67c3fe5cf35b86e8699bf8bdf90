@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_5b239bbc",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-03T19:37:50Z",
+      "side": 1,
+      "message": "no \"the\" needed",
+      "range": {
+        "startLine": 80,
+        "startChar": 41,
+        "endLine": 80,
+        "endChar": 44
+      },
+      "revId": "e166dfc13e16d67c3fe5cf35b86e8699bf8bdf90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_f6028608",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-03T19:37:50Z",
+      "side": 1,
+      "message": "Could you parametrize these to avoid warnings (throughout the whole file)?",
+      "range": {
+        "startLine": 104,
+        "startChar": 8,
+        "endLine": 104,
+        "endChar": 11
+      },
+      "revId": "e166dfc13e16d67c3fe5cf35b86e8699bf8bdf90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_9b008303",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-03T19:37:50Z",
+      "side": 1,
+      "message": "Cool!",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 48
+      },
+      "revId": "e166dfc13e16d67c3fe5cf35b86e8699bf8bdf90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
