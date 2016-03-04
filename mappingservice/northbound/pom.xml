@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.4-Lithium-SR4</version>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.northbound</artifactId>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.2.4-Lithium-SR4</version>
   <packaging>bundle</packaging>
   <name>Mapping Service AD-SAL Northbound APIs</name>
 
@@ -22,12 +22,12 @@
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>commons.northbound</artifactId>
-      <version>0.5.4-SNAPSHOT</version>
+      <version>0.5.4-Lithium-SR4</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>containermanager</artifactId>
-      <version>0.6.4-SNAPSHOT</version>
+      <version>0.6.4-Lithium-SR4</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller.thirdparty</groupId>
