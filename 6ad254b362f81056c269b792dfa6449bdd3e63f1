@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_706b191e",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": ":). Well test was composed from perspective of person who do not know what exactly is SrcDstEid therefore was assembled like this.",
+      "parentUuid": "9a3d3df0_7b613f04",
+      "range": {
+        "startLine": 813,
+        "startChar": 8,
+        "endLine": 814,
+        "endChar": 104
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_bb574725",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-03T18:03:52Z",
       "side": 1,
       "message": "Isn\u0027t the second assert is sufficient?",
+      "range": {
+        "startLine": 853,
+        "startChar": 0,
+        "endLine": 854,
+        "endChar": 54
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d0766505",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": "yes it is, I realized it in next test",
+      "parentUuid": "9a3d3df0_bb574725",
       "range": {
         "startLine": 853,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_30d4f1bb",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": "Well, shortly not :).\nBecause I am looking at expected list of addresses whether it contains concrete (hop) address. So if it doesn\u0027t contain then it means that result (ExplicitLocatorPath) contain address which wasn\u0027t specified at input (expected list).\n\nI hope it is comprehensible.",
+      "parentUuid": "9a3d3df0_9b524333",
+      "range": {
+        "startLine": 863,
+        "startChar": 24,
+        "endLine": 863,
+        "endChar": 56
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_fb342ffd",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2016-03-03T18:03:52Z",
       "side": 1,
       "message": "\"Rloc .. should be part of rloc list\"",
+      "range": {
+        "startLine": 887,
+        "startChar": 23,
+        "endLine": 887,
+        "endChar": 94
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_90de9ddb",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 887,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": "the same reason as in previous comment.\n\nI may turn it as you wish, if it important.",
+      "parentUuid": "9a3d3df0_fb342ffd",
       "range": {
         "startLine": 887,
         "startChar": 23,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_70d959f2",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": "well If you can suggest how to specify some other object (other then Inet4Address and Inet6Address) I will do it.\nCurrently I do not know about faster way how to do it.\n\n(I tried to do private classe which would extend InetAddress but it isn\u0027t possible)",
+      "parentUuid": "9a3d3df0_9b7b63bd",
+      "range": {
+        "startLine": 970,
+        "startChar": 8,
+        "endLine": 970,
+        "endChar": 64
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_fb4d4f9b",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 1
@@ -128,6 +248,30 @@
       "writtenOn": "2016-03-03T18:03:52Z",
       "side": 1,
       "message": "s/comparation/comparison/g",
+      "range": {
+        "startLine": 971,
+        "startChar": 8,
+        "endLine": 971,
+        "endChar": 25
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_b0000103",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 971,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T07:18:03Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "9a3d3df0_fb4d4f9b",
       "range": {
         "startLine": 971,
         "startChar": 8,
