@@ -22,6 +22,30 @@
       "revId": "d05238d71e738d6ea85b1d708e650453111fe2b7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_46f3bf09",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 470,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-04T13:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_270cc293",
+      "range": {
+        "startLine": 470,
+        "startChar": 44,
+        "endLine": 470,
+        "endChar": 59
+      },
+      "revId": "d05238d71e738d6ea85b1d708e650453111fe2b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
