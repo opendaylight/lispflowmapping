@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_131617a8",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-04T11:10:16Z",
+      "side": 1,
+      "message": "Right! I was building the negated sentence, but you\u0027re right, it\u0027s clearer they way you have it now.",
+      "parentUuid": "9a3d3df0_30d4f1bb",
+      "range": {
+        "startLine": 863,
+        "startChar": 24,
+        "endLine": 863,
+        "endChar": 56
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_fb342ffd",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 1
@@ -190,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_736b231e",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 887,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-04T11:10:16Z",
+      "side": 1,
+      "message": "No worries, it\u0027s fine like this. Just change the \"at\" to \"in\".",
+      "parentUuid": "9a3d3df0_90de9ddb",
+      "range": {
+        "startLine": 887,
+        "startChar": 23,
+        "endLine": 887,
+        "endChar": 94
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_9b7b63bd",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 1
@@ -225,6 +273,30 @@
       "side": 1,
       "message": "well If you can suggest how to specify some other object (other then Inet4Address and Inet6Address) I will do it.\nCurrently I do not know about faster way how to do it.\n\n(I tried to do private classe which would extend InetAddress but it isn\u0027t possible)",
       "parentUuid": "9a3d3df0_9b7b63bd",
+      "range": {
+        "startLine": 970,
+        "startChar": 8,
+        "endLine": 970,
+        "endChar": 64
+      },
+      "revId": "6ad254b362f81056c269b792dfa6449bdd3e63f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_9370670c",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-04T11:10:16Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be sufficient to do InetAddress.getByAddress()?",
+      "parentUuid": "9a3d3df0_70d959f2",
       "range": {
         "startLine": 970,
         "startChar": 8,
