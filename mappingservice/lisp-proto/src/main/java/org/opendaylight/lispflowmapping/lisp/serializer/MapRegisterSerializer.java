@@ -22,6 +22,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
@@ -77,8 +79,8 @@ public final class MapRegisterSerializer {
         }
 
         if (mapRegister.isXtrSiteIdPresent() != null && mapRegister.isXtrSiteIdPresent()) {
-            registerBuffer.put(mapRegister.getXtrId());
-            registerBuffer.put(mapRegister.getSiteId());
+            registerBuffer.put(mapRegister.getXtrId().getValue());
+            registerBuffer.put(mapRegister.getSiteId().getValue());
         }
         registerBuffer.clear();
         return registerBuffer;
@@ -111,10 +113,12 @@ public final class MapRegisterSerializer {
                 for (int i = 0; i < recordCount; i++) {
                     mrbs.add(MappingRecordSerializer.getInstance().deserializeToBuilder(registerBuffer));
                 }
-                byte[] xtrId  = new byte[Length.XTRID_SIZE];
-                registerBuffer.get(xtrId);
-                byte[] siteId = new byte[Length.SITEID_SIZE];
-                registerBuffer.get(siteId);
+                byte[] xtrIdBuf  = new byte[Length.XTRID_SIZE];
+                registerBuffer.get(xtrIdBuf);
+                XtrId xtrId = new XtrId(xtrIdBuf);
+                byte[] siteIdBuf = new byte[Length.SITEID_SIZE];
+                registerBuffer.get(siteIdBuf);
+                SiteId siteId = new SiteId(siteIdBuf);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);
                 for (MappingRecordBuilder mrb : mrbs) {

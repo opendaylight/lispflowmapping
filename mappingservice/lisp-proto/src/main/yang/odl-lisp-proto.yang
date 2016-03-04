@@ -30,6 +30,22 @@ module odl-lisp-proto {
              in network byte order.";
     }
 
+    typedef xtr-id {
+        type binary {
+            length "16";
+        }
+        description
+            "128 bit xTR identifier.";
+    }
+
+    typedef site-id {
+        type binary {
+            length "8";
+        }
+        description
+            "64 bit site identifier.";
+    }
+
     typedef ipv6-address-binary {
         type binary {
             length "16";
@@ -119,16 +135,12 @@ module odl-lisp-proto {
 
     grouping mapping-record-metadata {
         leaf xtr-id {
-            type binary {
-                length "16";
-            }
+            type xtr-id;
             description
                 "128 bit xTR identifier.";
         }
         leaf site-id {
-            type binary {
-                length "8";
-            }
+            type site-id;
             description
                 "64 bit site identifier.";
         }
@@ -194,14 +206,10 @@ module odl-lisp-proto {
 
     grouping xtrSiteId {
         leaf xtrId {
-            type binary {
-                length "16";
-            }
+            type xtr-id;
         }
         leaf siteId {
-            type binary {
-                length "8";
-            }
+            type site-id;
         }
     }
 
