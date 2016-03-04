@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_9c8a3962",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-04T02:32:57Z",
+      "side": 1,
+      "message": "Should we remove \u0027javadoc:aggregate\u0027 from our JJB configuration [1] then?\n\n[1] https://git.opendaylight.org/gerrit/gitweb?p\u003dreleng/builder.git;a\u003dblob;f\u003djjb/lispflowmapping/lispflowmapping.cfg;h\u003de40423795c8f88eb3bb2b621cc8ea1fb773b7eba;hb\u003dHEAD",
+      "parentUuid": "9a3d3df0_5cad51e8",
+      "revId": "4f412275521840c1190f2ce7423e4fe05a7e2c82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_dca161f9",
         "filename": "pom.xml",
         "patchSetId": 1
