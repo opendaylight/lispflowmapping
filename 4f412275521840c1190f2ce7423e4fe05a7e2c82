@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_1ce0e9f8",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2016-03-04T03:25:41Z",
+      "side": 1,
+      "message": "Hmmm good question and I actually don\u0027t know the answer to that. My gut feeling is probably. Lets give it a try once this patch is merged and see what happens.",
+      "parentUuid": "9a3d3df0_9c8a3962",
+      "revId": "4f412275521840c1190f2ce7423e4fe05a7e2c82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_dca161f9",
         "filename": "pom.xml",
         "patchSetId": 1
