@@ -9,7 +9,6 @@
 package org.opendaylight.lispflowmapping.implementation.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
@@ -84,13 +84,9 @@ public class SimpleMapCache implements IMapCache {
         return table;
     }
 
-    public static Object deserializeBytes(byte[] data) {
-        return ByteBuffer.wrap(data);
-    }
-
-    private void removeExpiredXtrIdTableEntries(ILispDAO xtrIdDao, List<byte[]> expiredMappings) {
-        for (byte[] xtrId : expiredMappings) {
-            xtrIdDao.removeSpecific(deserializeBytes(xtrId), SubKeys.RECORD);
+    private void removeExpiredXtrIdTableEntries(ILispDAO xtrIdDao, List<XtrId> expiredMappings) {
+        for (XtrId xtrId : expiredMappings) {
+            xtrIdDao.removeSpecific(xtrId, SubKeys.RECORD);
         }
     }
 
@@ -118,11 +114,11 @@ public class SimpleMapCache implements IMapCache {
         ILispDAO xtrIdDao = null;
         if (!shouldOverwrite) {
             xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
-            xtrIdDao.put(deserializeBytes(record.getXtrId()), new MappingEntry<>(SubKeys.RECORD, value));
+            xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
         }
 
         if (ConfigIni.getInstance().mappingMergeIsSet()) {
-            List<byte[]> expiredMappings = new ArrayList<byte[]>();
+            List<XtrId> expiredMappings = new ArrayList<XtrId>();
             Set<IpAddress> sourceRlocs = new HashSet<IpAddress>();
             MappingRecord mergedEntry = MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao),
                     expiredMappings, sourceRlocs);

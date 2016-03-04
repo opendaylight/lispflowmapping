@@ -17,6 +17,8 @@ import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
@@ -75,8 +77,8 @@ public final class MapNotifySerializer {
         }
 
         if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
-            replyBuffer.put(mapNotify.getXtrId());
-            replyBuffer.put(mapNotify.getSiteId());
+            replyBuffer.put(mapNotify.getXtrId().getValue());
+            replyBuffer.put(mapNotify.getSiteId().getValue());
         }
         replyBuffer.clear();
         return replyBuffer;
@@ -107,10 +109,12 @@ public final class MapNotifySerializer {
                 for (int i = 0; i < recordCount; i++) {
                     mrbs.add(MappingRecordSerializer.getInstance().deserializeToBuilder(notifyBuffer));
                 }
-                byte[] xtrId  = new byte[MapRegisterSerializer.Length.XTRID_SIZE];
-                notifyBuffer.get(xtrId);
-                byte[] siteId = new byte[MapRegisterSerializer.Length.SITEID_SIZE];
-                notifyBuffer.get(siteId);
+                byte[] xtrIdBuf  = new byte[MapRegisterSerializer.Length.XTRID_SIZE];
+                notifyBuffer.get(xtrIdBuf);
+                XtrId xtrId = new XtrId(xtrIdBuf);
+                byte[] siteIdBuf = new byte[MapRegisterSerializer.Length.SITEID_SIZE];
+                notifyBuffer.get(siteIdBuf);
+                SiteId siteId = new SiteId(siteIdBuf);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);
                 for (MappingRecordBuilder mrb : mrbs) {

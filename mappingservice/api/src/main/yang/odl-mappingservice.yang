@@ -41,13 +41,6 @@ module odl-mappingservice {
         }
     }
 
-    typedef site-id {
-        description "64 bit site identifier";
-        type binary {
-            length "8";
-        }
-    }
-
     typedef vni-uri {
         description "VNI as a string lookup key in a URI";
         type inet:uri;
@@ -126,7 +119,7 @@ module odl-mappingservice {
             }
             leaf-list site-id {
                 description "Site ID";
-                type site-id;
+                type lisp-proto:site-id;
             }
             uses lisp-proto:mapping-record-container;
         }
