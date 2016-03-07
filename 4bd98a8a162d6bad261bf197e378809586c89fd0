@@ -22,6 +22,30 @@
       "revId": "4bd98a8a162d6bad261bf197e378809586c89fd0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_df766e05",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-07T06:34:56Z",
+      "side": 1,
+      "message": "if array of character is converted to string via toString method then standard toString from Object class is called\n\nif it is done through String.valueOf then at output there is concatenation of characters",
+      "parentUuid": "9a3d3df0_1b70f3da",
+      "range": {
+        "startLine": 286,
+        "startChar": 37,
+        "endLine": 286,
+        "endChar": 51
+      },
+      "revId": "4bd98a8a162d6bad261bf197e378809586c89fd0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
