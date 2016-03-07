@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_154ef796",
+        "filename": "mappingservice/inmemorydb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-07T20:34:46Z",
+      "side": 1,
+      "message": "Please remove the version, since it\u0027s provided by the parent pom\u0027s \u003cdependencyManagement\u003e and we don\u0027t want to override when versions are upgraded project-wide.",
+      "revId": "69716692d539dbfa4291117d440a18948a1c4385",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
