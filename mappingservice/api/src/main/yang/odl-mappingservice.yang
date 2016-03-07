@@ -51,6 +51,11 @@ module odl-mappingservice {
         type inet:uri;
     }
 
+    typedef xtr-id-uri {
+        description "xTR-ID as a string lookup key in a URI";
+        type inet:uri;
+    }
+
     typedef mapping-change {
         description "Type of mapping update";
         type enumeration {
@@ -66,6 +71,10 @@ module odl-mappingservice {
 
     identity eid-context {
         description "A classifier for endpoint-id elements which allows direct access to a particular element in the data tree.";
+    }
+
+    identity xtrid-context {
+        description "A classifier for xtr-id elements which allows direct access to a particular element in the data tree.";
     }
 
     grouping mapping-authkey-container {
@@ -122,6 +131,16 @@ module odl-mappingservice {
                 type lisp-proto:site-id;
             }
             uses lisp-proto:mapping-record-container;
+            list xtr-id {
+                description "A list of xTR-IDs with their associated mappings";
+                config false;
+                key "xtr-id-uri";
+                ext:context-instance "xtrid-context";
+                leaf xtr-id-uri {
+                    type xtr-id-uri;
+                }
+                uses lisp-proto:mapping-record-container;
+            }
         }
         list authentication-key {
             description "A list of authentication keys for EID prefixes within the same Virtual Network Identifier";
