@@ -280,6 +280,11 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in SFC in LispUpdater
+     */
+    @Deprecated
     public static Eid toIpPrefixEid(IpAddress addr, int vni) {
         // If you touch this, be sure that sfclisp compiles!
         int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
@@ -321,6 +326,10 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public static Eid asIpv6Eid(String address, long vni) {
         return toEid(new Ipv6Address(address), new InstanceIdType(vni));
     }
@@ -329,6 +338,11 @@ public final class LispAddressUtil {
         return toEid(new Ipv6Prefix(prefix), null);
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in LispSouthboundServiceTest
+     */
+    @Deprecated
     public static Eid asIpv6Eid(String address) {
         return toEid(new Ipv6Address(address), null);
     }
@@ -402,10 +416,19 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public static Eid asMacEid(String address, long vni) {
         return toEid(new MacAddress(address), new InstanceIdType(vni));
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in MapServerTest
+     */
+    @Deprecated
     public static Eid asMacEid(String address) {
         return toEid(new MacAddress(address), null);
     }
@@ -418,6 +441,10 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in integrationtest
+     */
     public static Eid asDistinguishedNameEid(String address, long vni) {
         return toEid(new MacAddress(address), new InstanceIdType(vni));
     }
@@ -426,6 +453,11 @@ public final class LispAddressUtil {
         return toEid(new DistinguishedNameType(address), null);
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in MapingServiceIntegrationTest
+     */
+    @Deprecated
     public static Eid asKeyValueAddressEid(SimpleAddress key, SimpleAddress value) {
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();
         kvab.setKey(key);
@@ -452,6 +484,11 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in MapServerTest and MappingServiceIntegrationTest
+     */
+    @Deprecated
     public static Rloc asKeyValueAddress(String key, SimpleAddress value) {
         return asKeyValueAddressRloc(new SimpleAddress(new DistinguishedNameType(key)), value);
     }
@@ -463,6 +500,11 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in lispflowmapping in MappingServiceIntegrationTest
+     */
+    @Deprecated
     public static Eid asSrcDstEid(String src, String dst, int smask, int dmask, int vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(SourceDestKeyLcaf.class);
@@ -483,6 +525,11 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in sfc in LispUpdater
+     */
+    @Deprecated
     public static Rloc asTeLcafRloc(List<IpAddress> hopList) {
         RlocBuilder teBuilder = new RlocBuilder();
         org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder elpBuilder =
@@ -503,6 +550,11 @@ public final class LispAddressUtil {
         return teBuilder.build();
     }
 
+    /**
+     * @deprecated
+     * Used in sfc in SfcLispUtil
+     */
+    @Deprecated
     public static List<LocatorRecord> asLocatorRecords(List<Rloc> locators) {
         List<LocatorRecord> locatorRecords = new ArrayList<LocatorRecord>();
         for (Rloc locator : locators) {
