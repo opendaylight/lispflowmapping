@@ -551,8 +551,8 @@ public final class LispAddressUtil {
             }
             return 0;
         } else if (a instanceof Inet6Address && b instanceof Inet6Address) {
-            byte[] aBytes = ((Inet4Address) a).getAddress();
-            byte[] bBytes = ((Inet4Address) b).getAddress();
+            byte[] aBytes = ((Inet6Address) a).getAddress();
+            byte[] bBytes = ((Inet6Address) b).getAddress();
             for (i = 0; i < 16; i++) {
                 if (aBytes[i] < bBytes[i]) {
                     return -1;
