@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_fc57fbc7",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-08T10:36:06Z",
+      "side": 1,
+      "message": "If it\u0027s used in LispUpdater then it should\u0027t be marked as Deprecated. And this holds for all other methods with comments that they are used in other places.",
+      "range": {
+        "startLine": 287,
+        "startChar": 3,
+        "endLine": 287,
+        "endChar": 15
+      },
+      "revId": "72564123031283b26f25e9eb383e60a8ac53afb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_bc08d3da",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-08T10:36:06Z",
+      "side": 1,
+      "message": "I would keep this for completeness.",
+      "range": {
+        "startLine": 329,
+        "startChar": 0,
+        "endLine": 332,
+        "endChar": 15
+      },
+      "revId": "72564123031283b26f25e9eb383e60a8ac53afb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_5c66e7bb",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-08T10:36:06Z",
+      "side": 1,
+      "message": "Although not used, I wouldn\u0027t mark this as deprecated since we may end up using it.",
+      "range": {
+        "startLine": 419,
+        "startChar": 0,
+        "endLine": 422,
+        "endChar": 15
+      },
+      "revId": "72564123031283b26f25e9eb383e60a8ac53afb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
