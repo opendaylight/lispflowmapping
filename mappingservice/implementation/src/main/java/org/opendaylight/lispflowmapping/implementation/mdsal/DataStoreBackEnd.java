@@ -22,6 +22,7 @@ import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListen
 import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
@@ -42,6 +43,8 @@ import com.google.common.util.concurrent.Futures;
  */
 public class DataStoreBackEnd implements TransactionChainListener {
     protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
+    private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
+            InstanceIdentifier.create(MappingDatabase.class);
     private BindingTransactionChain txChain;
 
     public DataStoreBackEnd(DataBroker broker) {
@@ -64,7 +67,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
+        writePutTransaction(path, mapping, getDestinationDatastore(mapping),
                 "Adding mapping to config datastrore failed");
     }
 
@@ -84,14 +87,23 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        deleteTransaction(path, LogicalDatastoreType.CONFIGURATION, "Deleting mapping from config datastrore failed");
+        deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from config datastrore failed");
     }
 
     public void removeAllMappings() {
         LOG.debug("MD-SAL: Removing all mappings");
-        InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
-        deleteTransaction(path, LogicalDatastoreType.CONFIGURATION,
+        removeAllConfigurationMappings();
+        removeAllOperationalMappings();
+    }
+
+    public void removeAllConfigurationMappings() {
+        deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION,
                 "Removing of all mappings in config datastore failed");
+    }
+
+    public void removeAllOperationalMappings() {
+        deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.OPERATIONAL,
+                "Removing of all mappings in operational datastore failed");
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -116,10 +128,15 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public List<Mapping> getAllMappings() {
+        List<Mapping> mappings = getAllMappings(LogicalDatastoreType.CONFIGURATION);
+        mappings.addAll(getAllMappings(LogicalDatastoreType.OPERATIONAL));
+        return mappings;
+    }
+
+    public List<Mapping> getAllMappings(LogicalDatastoreType logicalDataStore) {
         LOG.debug("MD-SAL: Get all mappings from datastore");
         List<Mapping> mappings = new ArrayList<Mapping>();
-        InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
-        MappingDatabase mdb = readTransaction(path, LogicalDatastoreType.CONFIGURATION);
+        MappingDatabase mdb = readTransaction(DATABASE_ROOT, logicalDataStore);
 
         if (mdb != null) {
             for (VirtualNetworkIdentifier id : mdb.getVirtualNetworkIdentifier()) {
@@ -136,8 +153,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     public List<AuthenticationKey> getAllAuthenticationKeys() {
         LOG.debug("MD-SAL: Get all authentication keys from datastore");
         List<AuthenticationKey> authKeys = new ArrayList<AuthenticationKey>();
-        InstanceIdentifier<MappingDatabase> path = InstanceIdentifier.create(MappingDatabase.class);
-        MappingDatabase mdb = readTransaction(path, LogicalDatastoreType.CONFIGURATION);
+        MappingDatabase mdb = readTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION);
 
         if (mdb != null) {
             for (VirtualNetworkIdentifier id : mdb.getVirtualNetworkIdentifier()) {
@@ -149,6 +165,11 @@ public class DataStoreBackEnd implements TransactionChainListener {
         }
 
         return authKeys;
+    }
+
+    private static LogicalDatastoreType getDestinationDatastore(Mapping mapping) {
+        return mapping.getOrigin().equals(MappingOrigin.Southbound) ? LogicalDatastoreType.OPERATIONAL
+                : LogicalDatastoreType.CONFIGURATION;
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
