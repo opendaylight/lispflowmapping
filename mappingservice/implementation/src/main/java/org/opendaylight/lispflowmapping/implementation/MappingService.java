@@ -362,6 +362,9 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             // registrations
             mappingSystem.addMapping(origin, key, data);
             dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+            if (((MappingRecord) data).getXtrId() != null) {
+                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
+            }
         } else {
             dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
         }

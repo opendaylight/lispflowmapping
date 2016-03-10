@@ -21,22 +21,25 @@ import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
 import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.mapping.XtrIdMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 
 /**
- * Stores data coming from the mapping database RPCs into the config datastore.
+ * Stores data coming from the mapping database RPCs into the MD-SAL datastore.
  *
  * @author Lorand Jakab
  *
@@ -58,7 +61,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Adding authentication key to config datastrore failed");
+                "Adding authentication key to MD-SAL datastore failed");
     }
 
     public void addMapping(Mapping mapping) {
@@ -68,7 +71,21 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         writePutTransaction(path, mapping, getDestinationDatastore(mapping),
-                "Adding mapping to config datastrore failed");
+                "Adding mapping to MD-SAL datastore failed");
+    }
+
+    // This method assumes that it is only called for southbound originated Map-Registers
+    public void addXtrIdMapping(XtrIdMapping mapping) {
+        XtrId xtrId = mapping.getMappingRecord().getXtrId();
+        Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
+                + "contains an xTR-ID");
+        LOG.debug("MD-SAL: Adding mapping for {}, xTR-ID {}",
+                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+
+        InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
+                .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
+        writePutTransaction(path, mapping, LogicalDatastoreType.OPERATIONAL,
+                "Adding xTR-ID mapping to MD-SAL datastore failed");
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -78,7 +95,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
         deleteTransaction(path, LogicalDatastoreType.CONFIGURATION,
-                "Deleting authentication key from config datastrore failed");
+                "Deleting authentication key from MD-SAL datastore failed");
     }
 
     public void removeMapping(Mapping mapping) {
@@ -87,7 +104,20 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from config datastrore failed");
+        deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from MD-SAL datastore failed");
+    }
+
+    public void removeXtrIdMapping(XtrIdMapping mapping) {
+        XtrId xtrId = mapping.getMappingRecord().getXtrId();
+        Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
+                + "contains an xTR-ID");
+        LOG.debug("MD-SAL: Removing mapping for {}, xTR-ID {}",
+                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+
+        InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
+                .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
+        deleteTransaction(path, LogicalDatastoreType.OPERATIONAL,
+                "Deleting xTR-ID mapping from MD-SAL datastore failed");
     }
 
     public void removeAllMappings() {
@@ -98,12 +128,12 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void removeAllConfigurationMappings() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION,
-                "Removing of all mappings in config datastore failed");
+                "Removing of all mappings in MD-SAL config datastore failed");
     }
 
     public void removeAllOperationalMappings() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.OPERATIONAL,
-                "Removing of all mappings in operational datastore failed");
+                "Removing of all mappings in MD-SAL operational datastore failed");
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -114,7 +144,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Updating authentication key in config datastrore failed");
+                "Updating authentication key in MD-SAL datastore failed");
     }
 
     public void updateMapping(Mapping mapping) {
@@ -123,8 +153,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        writePutTransaction(path, mapping, LogicalDatastoreType.CONFIGURATION,
-                "Updating mapping in config datastrore failed");
+        writePutTransaction(path, mapping, getDestinationDatastore(mapping),
+                "Updating mapping in MD-SAL datastore failed");
     }
 
     public List<Mapping> getAllMappings() {
