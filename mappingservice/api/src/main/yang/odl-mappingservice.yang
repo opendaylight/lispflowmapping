@@ -131,7 +131,7 @@ module odl-mappingservice {
                 type lisp-proto:site-id;
             }
             uses lisp-proto:mapping-record-container;
-            list xtr-id {
+            list xtr-id-mapping {
                 description "A list of xTR-IDs with their associated mappings";
                 config false;
                 key "xtr-id-uri";
