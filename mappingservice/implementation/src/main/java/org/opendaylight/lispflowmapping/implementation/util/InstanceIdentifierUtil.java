@@ -10,15 +10,19 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.InstanceId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.VniUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.XtrIdUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.mapping.XtrIdMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.mapping.XtrIdMappingKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -40,8 +44,10 @@ public final class InstanceIdentifierUtil {
     public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(Eid eid) {
         Preconditions.checkNotNull(eid, "Key needs and EID entry!");
 
-        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(Long.toString(getLispInstanceId(eid))));
-        AuthenticationKeyKey authKeyKey = new AuthenticationKeyKey(new EidUri(getURIAddressString(eid)));
+        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
+                Long.toString(getLispInstanceId(eid))));
+        AuthenticationKeyKey authKeyKey = new AuthenticationKeyKey(new EidUri(
+                LispAddressStringifier.getURIString(eid)));
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(VirtualNetworkIdentifier.class, vniKey).child(AuthenticationKey.class, authKeyKey);
     }
@@ -49,10 +55,24 @@ public final class InstanceIdentifierUtil {
     public static InstanceIdentifier<Mapping> createMappingIid(Eid eid, MappingOrigin orig) {
         Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
 
-        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(Long.toString(getLispInstanceId(eid))));
-        MappingKey eidKey = new MappingKey(new EidUri(getURIAddressString(eid)), orig);
+        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
+                Long.toString(getLispInstanceId(eid))));
+        MappingKey eidKey = new MappingKey(new EidUri(LispAddressStringifier.getURIString(eid)), orig);
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(VirtualNetworkIdentifier.class, vniKey).child(Mapping.class, eidKey);
+    }
+
+    public static InstanceIdentifier<XtrIdMapping> createXtrIdMappingIid(Eid eid, MappingOrigin orig, XtrId xtrId) {
+        Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
+        Preconditions.checkNotNull(xtrId, "Mapping needs an xTR-ID entry!");
+
+        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
+                Long.toString(getLispInstanceId(eid))));
+        MappingKey eidKey = new MappingKey(new EidUri(LispAddressStringifier.getURIString(eid)), orig);
+        XtrIdMappingKey xtrIdKey = new XtrIdMappingKey(new XtrIdUri(LispAddressStringifier.getURIString(xtrId)));
+        return InstanceIdentifier.create(MappingDatabase.class)
+                .child(VirtualNetworkIdentifier.class, vniKey).child(Mapping.class, eidKey)
+                .child(XtrIdMapping.class, xtrIdKey);
     }
 
     private static long getLispInstanceId(Eid eid) {
@@ -63,9 +83,5 @@ public final class InstanceIdentifierUtil {
             return eid.getVirtualNetworkId().getValue();
         }
         return 0L;
-    }
-
-    private static String getURIAddressString(Eid eid) {
-        return LispAddressStringifier.getURIString(eid);
     }
 }

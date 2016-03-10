@@ -29,8 +29,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding;
 
 /**
  * Utility class with static methods returning string representations of
@@ -75,6 +77,22 @@ public class LispAddressStringifier {
 
     public static String getURLString(LispAddress lispAddress) {
         return getAddrString(Destination.URL, lispAddress);
+    }
+
+    public static String getString(XtrId xtrId) {
+        return getXtrIdString(xtrId);
+    }
+
+    public static String getURIString(XtrId xtrId) {
+        return getXtrIdString(xtrId);
+    }
+
+    public static String getURLString(XtrId xtrId) {
+        return getXtrIdString(xtrId);
+    }
+
+    private static String getXtrIdString(XtrId xtrId) {
+        return BaseEncoding.base16().encode(xtrId.getValue());
     }
 
     private static String getAddrString(Destination dst, LispAddress lispAddress) {
