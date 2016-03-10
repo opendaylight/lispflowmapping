@@ -109,10 +109,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             MappingRecord mapping = record.getMappingRecord();
             if (authenticate) {
                 MappingAuthkey authkey = mapService.getAuthenticationKey(mapping.getEid());
-                if (authkey != null) {
-                    password = authkey.getKeyString();
-                }
-                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
+                if (!LispAuthenticationUtil.validate(mapRegister, authkey)) {
                     LOG.warn("Authentication failed");
                     authFailed = true;
                     break;

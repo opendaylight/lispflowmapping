@@ -43,7 +43,7 @@ public class LispMACAuthentication implements ILispAuthentication {
 
     public boolean validate(MapRegister mapRegister, String key) {
         if (key == null) {
-            LOG.warn("The authentication key is null!");
+            LOG.debug("Mapping authentication password is null!");
             return false;
         }
         ByteBuffer mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
