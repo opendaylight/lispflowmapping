@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_4ceaacdb",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1282,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-11T15:39:14Z",
+      "side": 1,
+      "message": "Do we need to change this? I\u0027m asking just because we start to have too many methods with only slightly different prototypes that do the same thing.",
+      "range": {
+        "startLine": 1282,
+        "startChar": 8,
+        "endLine": 1282,
+        "endChar": 79
+      },
+      "revId": "337c87d6240c97d9610450ccf3690f5b95f08cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
