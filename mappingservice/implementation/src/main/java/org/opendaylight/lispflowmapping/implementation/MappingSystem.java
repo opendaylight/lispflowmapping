@@ -239,7 +239,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
-        LOG.debug("Adding authentication key '{}' for {}", authKey.getKeyString(),
+        LOG.debug("Adding authentication key '{}' with key-ID {} for {}", authKey.getKeyString(), authKey.getKeyType(),
                 LispAddressStringifier.getString(key));
         smc.addAuthenticationKey(key, authKey);
     }
