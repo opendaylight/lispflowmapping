@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_2ccf6857",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-11T16:13:59Z",
+      "side": 1,
+      "message": "My memory is failing. We keep this outside for the merged mappings?",
+      "range": {
+        "startLine": 133,
+        "startChar": 12,
+        "endLine": 133,
+        "endChar": 53
+      },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ec37404b",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-11T16:13:59Z",
+      "side": 1,
+      "message": "If you agree with my other comments for DSBE, then I would leave this as xtr-id.",
+      "range": {
+        "startLine": 134,
+        "startChar": 12,
+        "endLine": 134,
+        "endChar": 31
+      },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_0ce704e5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-11T16:13:59Z",
+      "side": 1,
+      "message": "This is going to be used only by RPCs now?",
+      "range": {
+        "startLine": 67,
+        "startChar": 3,
+        "endLine": 67,
+        "endChar": 45
+      },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_2cf6488f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-11T16:13:59Z",
+      "side": 1,
+      "message": "If we have the xtr id in the path, do we need it in the mapping object (the XtrIdMapping) as well?\n\nMaybe I missed something, but what I would do instead is to extend the addMapping method above and have xtr-id as an additional parameter. If it\u0027s null, the InstanceIdentifier path would end at the MappingIid, otherwise, it would end at XtrIdMappingIid. \n\nThis way, we have only one API for NB and SB calls. Moreover, it avoids converting all SB mappings to XtrIdMappings.",
+      "range": {
+        "startLine": 85,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 109
+      },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
