@@ -19,13 +19,21 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 
 public class LispAuthenticationTest extends BaseTestCase {
+    private static final MappingAuthkey PASSWORD =
+            new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build();
+    private static final MappingAuthkey WRONG_PASSWORD =
+            new MappingAuthkeyBuilder().setKeyType(1).setKeyString("wrongPassword").build();
+    private static final Eid EID = LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32");
 
     @Test
     public void validate_WrongAuthentication() throws Exception {
@@ -46,7 +54,7 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertFalse(LispAuthenticationUtil.validate(mapRegister, "password"));
+        assertFalse(LispAuthenticationUtil.validate(mapRegister, EID, PASSWORD));
     }
 
     @Test
@@ -67,8 +75,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
-        assertFalse(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
+        assertTrue(LispAuthenticationUtil.validate(mapRegister, EID, PASSWORD));
+        assertFalse(LispAuthenticationUtil.validate(mapRegister, EID, WRONG_PASSWORD));
     }
 
     @Test
@@ -93,8 +101,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
-        assertFalse(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
+        assertTrue(LispAuthenticationUtil.validate(mapRegister, EID, PASSWORD));
+        assertFalse(LispAuthenticationUtil.validate(mapRegister, EID, WRONG_PASSWORD));
     }
 
     @Test
@@ -115,8 +123,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(LispAuthenticationUtil.validate(mapRegister, "password"));
-        assertTrue(LispAuthenticationUtil.validate(mapRegister, "wrongPassword"));
+        assertTrue(LispAuthenticationUtil.validate(mapRegister, EID, PASSWORD));
+        assertTrue(LispAuthenticationUtil.validate(mapRegister, EID, WRONG_PASSWORD));
     }
 
     // @Test

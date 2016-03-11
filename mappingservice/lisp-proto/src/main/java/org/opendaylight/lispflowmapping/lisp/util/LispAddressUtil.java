@@ -463,6 +463,16 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    public static Eid asSrcDstEid(String src, String dst, int smask, int dmask) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(SourceDestKeyLcaf.class);
+        builder.setAddress(
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
+                        .setSourceDestKey(asSrcDst(src, dst, smask, dmask)).build());
+
+        return builder.build();
+    }
+
     public static Eid asSrcDstEid(String src, String dst, int smask, int dmask, int vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(SourceDestKeyLcaf.class);
