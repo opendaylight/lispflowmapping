@@ -101,19 +101,15 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     public void handleMapRegister(MapRegister mapRegister) {
         boolean authFailed = false;
         boolean mappingUpdated = false;
-        String password = null;
+        MappingAuthkey authkey = null;
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
             if (authenticate) {
-                MappingAuthkey authkey = mapService.getAuthenticationKey(mapping.getEid());
-                if (authkey != null) {
-                    password = authkey.getKeyString();
-                }
-                if (!LispAuthenticationUtil.validate(mapRegister, password)) {
-                    LOG.warn("Authentication failed");
+                authkey = mapService.getAuthenticationKey(mapping.getEid());
+                if (!LispAuthenticationUtil.validate(mapRegister, mapping.getEid(), authkey)) {
                     authFailed = true;
                     break;
                 }
@@ -165,7 +161,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             }
             if (authenticate) {
                 builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                        password));
+                        authkey.getKeyString()));
             }
             notifyHandler.handleMapNotify(builder.build(), rlocs);
         }
