@@ -540,6 +540,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRegisterWithAuthenticationWithoutConfiguringAKey() throws SocketTimeoutException {
         cleanUP();
+        lms.setShouldAuthenticate(true);
         sendPacket(mapRegisterPacketWithAuthenticationAndMapNotify);
         try {
             receivePacket(3000);
@@ -1937,6 +1938,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         after();
         mapService.cleanCachedMappings();
         configLispPlugin.shouldListenOnXtrPort(false);
+        lms.setShouldAuthenticate(false);
         socket = initSocket(socket, LispMessage.PORT_NUM);
 
     }

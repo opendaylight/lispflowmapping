@@ -45,4 +45,12 @@ public interface IFlowMapping {
      *            Configure state of service
      */
      void setShouldUseSmr(boolean smr);
+
+     /**
+      * Configure LISP mapping service to enable/disable authentication check for southbound mappings
+      *
+      * @param shouldAuthenticate
+      *            Configure state of service
+      */
+      void setShouldAuthenticate(boolean shouldAuthenticate);
 }
