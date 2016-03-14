@@ -29,6 +29,11 @@
       <groupId>junit-addons</groupId>
       <artifactId>junit-addons</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- needed for osgi console -->
     <dependency>
       <groupId>org.eclipse.tycho</groupId>
