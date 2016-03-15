@@ -33,8 +33,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public class FlatMapCacheTest {
 
-    private static ILispDAO DAO_MOCK;
-    private static FlatMapCache FLAT_MAP_CACHE;
+    private static ILispDAO daoMock;
+    private static FlatMapCache flatMapCache;
     private static final Eid EID_MOCK = mock(Eid.class);
     private static final Object DUMMY_OBJECT = "dummy_object";
 
@@ -44,8 +44,8 @@ public class FlatMapCacheTest {
 
     @Before
     public void init() {
-        DAO_MOCK = mock(ILispDAO.class);
-        FLAT_MAP_CACHE = new FlatMapCache(DAO_MOCK);
+        daoMock = mock(ILispDAO.class);
+        flatMapCache = new FlatMapCache(daoMock);
     }
 
     /**
@@ -53,9 +53,9 @@ public class FlatMapCacheTest {
      */
     @Test
     public void addMappingTest() {
-        FLAT_MAP_CACHE.addMapping(EID_TEST, DUMMY_OBJECT, false);
-        verify(DAO_MOCK, atMost(2)).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
-        verify(DAO_MOCK).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
+        flatMapCache.addMapping(EID_TEST, DUMMY_OBJECT, false);
+        verify(daoMock, atMost(2)).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
+        verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
     /**
@@ -63,8 +63,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void getMappingTest() {
-        when(DAO_MOCK.getSpecific(NORMALIZED_EID, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, FLAT_MAP_CACHE.getMapping(EID_MOCK, EID_TEST));
+        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
+        assertEquals(DUMMY_OBJECT, flatMapCache.getMapping(EID_MOCK, EID_TEST));
     }
 
     /**
@@ -72,8 +72,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void removeMappingTest() {
-        FLAT_MAP_CACHE.removeMapping(EID_TEST, true);
-        verify(DAO_MOCK).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+        flatMapCache.removeMapping(EID_TEST, true);
+        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
     }
 
     /**
@@ -81,8 +81,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void addAuthenticationKeyTest() {
-        FLAT_MAP_CACHE.addAuthenticationKey(EID_TEST, MAPPING_AUTHKEY);
-        verify(DAO_MOCK, atMost(1)).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
+        flatMapCache.addAuthenticationKey(EID_TEST, MAPPING_AUTHKEY);
+        verify(daoMock, atMost(1)).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
     }
 
     /**
@@ -90,8 +90,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void getAuthenticationKeyTest() {
-        when(DAO_MOCK.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-        assertEquals(MAPPING_AUTHKEY, FLAT_MAP_CACHE.getAuthenticationKey(EID_TEST));
+        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
+        assertEquals(MAPPING_AUTHKEY, flatMapCache.getAuthenticationKey(EID_TEST));
     }
 
     /**
@@ -99,8 +99,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void getAuthenticationKeyTest_withNull() {
-        when(DAO_MOCK.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(new Object());
-        assertNull(FLAT_MAP_CACHE.getAuthenticationKey(EID_TEST));
+        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(new Object());
+        assertNull(flatMapCache.getAuthenticationKey(EID_TEST));
     }
 
     /**
@@ -108,8 +108,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void removeAuthenticationKeyTest() {
-        FLAT_MAP_CACHE.removeAuthenticationKey(EID_TEST);
-        verify(DAO_MOCK).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
+        flatMapCache.removeAuthenticationKey(EID_TEST);
+        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
     }
 
     /**
@@ -117,8 +117,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void updateMappingRegistrationTest() {
-        FLAT_MAP_CACHE.updateMappingRegistration(EID_TEST);
-        verify(DAO_MOCK).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
+        flatMapCache.updateMappingRegistration(EID_TEST);
+        verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
     }
 
     /**
@@ -126,8 +126,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void addDataTest() {
-        FLAT_MAP_CACHE.addData(EID_TEST, SubKeys.RECORD, DUMMY_OBJECT);
-        verify(DAO_MOCK).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
+        flatMapCache.addData(EID_TEST, SubKeys.RECORD, DUMMY_OBJECT);
+        verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
     /**
@@ -135,8 +135,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void getDataTest() {
-        when(DAO_MOCK.getSpecific(NORMALIZED_EID, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, FLAT_MAP_CACHE.getData(EID_TEST, SubKeys.RECORD));
+        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
+        assertEquals(DUMMY_OBJECT, flatMapCache.getData(EID_TEST, SubKeys.RECORD));
     }
 
     /**
@@ -144,7 +144,7 @@ public class FlatMapCacheTest {
      */
     @Test
     public void removeDataTest() {
-        FLAT_MAP_CACHE.removeData(EID_TEST, SubKeys.RECORD);
-        verify(DAO_MOCK).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+        flatMapCache.removeData(EID_TEST, SubKeys.RECORD);
+        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
     }
 }
