@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_cc3cf231",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-16T12:10:10Z",
+      "side": 1,
+      "message": "As per my DSBE comments, I think the xtr-id list should be outside the mapping list or part of the mapping list key. The former is cleaner and it should also involve moving at least the origin outside of the mapping list (As it stands, the mapping list is just a way of hiding that there are at least 2 more levels of hierarchy, and now we\u0027re adding a 3rd). While the latter minimizes the number of changes. Yes, we don\u0027t have a leaf for the merged mapping in that case, but we can use an xtr-id, say 0, for this. \n\nThe advantage is that we keep only one type of object stored and implicitly only one add/remove method. Should yang be \u0027smarter\u0027 in the future and allow complex types as list keys, if we continue to use the second method, we won\u0027t even need to do wrapping of MappingRecord in Mapping, but instead store it as is with the eid as key. If we go with method 1, except if I\u0027m mistaken, what we\u0027ll have under xtr-id is a leaf, not a leaf-list, so we won\u0027t even need wrapping.",
+      "parentUuid": "9a3d3df0_58bd3d01",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_0ce704e5",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
         "patchSetId": 2
@@ -125,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_0ce1ba29",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-16T12:10:10Z",
+      "side": 1,
+      "message": "I forgot to add a comment for that, so I\u0027ll add it here. Shouldn\u0027t this method be used only by RPCs and the MappingService for storing the merged mapping? Otherwise, what\u0027s the goal of always writing both of the leafs?",
+      "parentUuid": "9a3d3df0_18c73597",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_2cf6488f",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
         "patchSetId": 2
@@ -160,6 +196,24 @@
       "side": 1,
       "message": "Yeap, that was my first approach as well. However, the way yangtools and mdsal seem to be working is that the object stored at a certain path InstanceIdentifier\u003cT extends DataObject\u003e has to be of type T. Also, we already have to \"convert\" (actually wrap) NB and SB mappings to \"Mapping\" (we store \"MappingRecord\"s), and wrapping them \"XtrIdMapping\" is no different, since we still have to create a new object.",
       "parentUuid": "9a3d3df0_2cf6488f",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_0ca7faa7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-16T12:10:10Z",
+      "side": 1,
+      "message": "Well, this happens because xtr-id is within the mappings list, not outside it or part of the mapping list key. Should the xtr-id be part of the MappingKey, I think we can store the mapping as we did until now.",
+      "parentUuid": "9a3d3df0_b8cc49bc",
       "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
