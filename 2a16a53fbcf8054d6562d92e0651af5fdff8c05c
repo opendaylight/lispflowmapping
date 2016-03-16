@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_f8c1b180",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-16T03:12:03Z",
+      "side": 1,
+      "message": "Yes, so that the datastore model follows more closely the DAO model.",
+      "parentUuid": "9a3d3df0_2ccf6857",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_ec37404b",
         "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 134,
         "endChar": 31
       },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_58bd3d01",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-16T03:12:03Z",
+      "side": 1,
+      "message": "Well, it clashes with the type xtr-id, so I would like to make it different, and it also makes sense, we have a mapping above and the list is also containing mappings. See also my replies to the DSBE comments.",
+      "parentUuid": "9a3d3df0_ec37404b",
       "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_18c73597",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-16T03:12:03Z",
+      "side": 1,
+      "message": "No, it is always used whenever we add a mapping. We first store to the MD-SAL, and after the create/change notification we store to DAO. See MappingService.java lines 364 and 366.",
+      "parentUuid": "9a3d3df0_0ce704e5",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_2cf6488f",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
         "patchSetId": 2
@@ -88,6 +142,24 @@
         "endLine": 86,
         "endChar": 109
       },
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_b8cc49bc",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-16T03:12:03Z",
+      "side": 1,
+      "message": "Yeap, that was my first approach as well. However, the way yangtools and mdsal seem to be working is that the object stored at a certain path InstanceIdentifier\u003cT extends DataObject\u003e has to be of type T. Also, we already have to \"convert\" (actually wrap) NB and SB mappings to \"Mapping\" (we store \"MappingRecord\"s), and wrapping them \"XtrIdMapping\" is no different, since we still have to create a new object.",
+      "parentUuid": "9a3d3df0_2cf6488f",
       "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
