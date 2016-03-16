@@ -130,7 +130,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
     String lispBindAddress = "127.0.0.1";
-    String ourAddress = "127.0.0.2";
+    static String ourAddress = "127.0.0.2";
     private Rloc locatorEid;
     private DatagramSocket socket;
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
