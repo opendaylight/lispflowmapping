@@ -25,13 +25,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
-//import org.codehaus.jettison.json.JSONException;
-//import org.codehaus.jettison.json.JSONObject;
-//import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,44 +37,14 @@ import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -92,9 +58,11 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
@@ -108,23 +76,109 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.util.Filter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import org.codehaus.jettison.json.JSONException;
+//import org.codehaus.jettison.json.JSONObject;
+//import org.codehaus.jettison.json.JSONTokener;
+
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
+
+    //SMR and IID - start
+    private static final int VNI_2_VALUE = 2;
+    private static final InstanceIdType VNI_2 = new InstanceIdType((long)VNI_2_VALUE);
+
+    private static final int DEFAULT_NETWORK_MASK = 24;
+    private static final int IP_MASK = 32;
+
+    private static final String SITE_A_EID_PREFIX = "192.0.1.0";
+    private static final String SITE_B_EID_PREFIX = "192.0.2.0";
+    private static final String SITE_C_EID_PREFIX = "192.0.3.0";
+    private static final String SITE_D_EID_PREFIX = "192.0.4.0";
+    private static final String SITE_E_EID_PREFIX = "192.0.5.0";
+
+    private static final String SITE_A_IP = "192.0.1.5";
+    private static final String SITE_B_4_IP = "192.0.2.4";
+    private static final String SITE_B_5_IP = "192.0.2.5";
+    private static final String SITE_C_IP = "192.0.3.4";
+
+    private static final String SITE_A_RLOC = "1.1.1.1";
+    private static final String SITE_B_RLOC = "2.2.2.2";
+    private static final String SITE_C_RLOC = "3.3.3.3";
+    private static final String SITE_D_RLOC = "4.4.4.4";
+    private static final String SITE_E_RLOC = "5.5.5.5";
+
+
+    private static final byte[] SITE_ID_A_VALUE = new byte[]{'A',' ',' ',' ',' ',' ',' ',' '};
+    private static final byte[] SITE_ID_B_VALUE = new byte[]{'B',' ',' ',' ',' ',' ',' ',' '};
+    private static final byte[] SITE_ID_C_VALUE = new byte[]{'C',' ',' ',' ',' ',' ',' ',' '};
+    private static final byte[] SITE_ID_D_VALUE = new byte[]{'D',' ',' ',' ',' ',' ',' ',' '};
+    private static final byte[] SITE_ID_E_VALUE = new byte[]{'E',' ',' ',' ',' ',' ',' ',' '};
+
+    private static final SiteId SITE_ID_A = new SiteId(SITE_ID_A_VALUE);
+    private static final SiteId SITE_ID_B = new SiteId(SITE_ID_B_VALUE);
+    private static final SiteId SITE_ID_C = new SiteId(SITE_ID_C_VALUE);
+    private static final SiteId SITE_ID_D = new SiteId(SITE_ID_D_VALUE);
+    private static final SiteId SITE_ID_E = new SiteId(SITE_ID_E_VALUE);
+
+    private static final Integer TTL = 1440;
+    private static final String MAP_RECORD_A = "MAP_RECORD_1";
+    private static final Short DEFAULT_PRIORITY = 1;
+    private static final Short DEFAULT_WEIGHT = 1;
+    private static final Short DEFAULT_MULTICAST_PRIORITY = 255;
+    private static final Short DEFAULT_MULTICAST_WEIGHT = 0;
+    private static final Boolean DEFAULT_LOCAL_LOCATOR = true;
+    private static final Boolean DEFAULT_RLOC_PROBED = false;
+    private static final Boolean DEFAULT_ROUTED = true;
+
+    //SMR and IID - end
 
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
@@ -314,6 +368,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Inject @Filter(timeout=10000)
     private IConfigLispSouthboundPlugin configLispPlugin;
 
+
+
+
     @Test
     public void testSimpleUsage() throws Exception {
         mapRequestSimple();
@@ -381,6 +438,203 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Test
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
+    }
+
+    @Test
+    public void testMultiSiteScenario   () throws InterruptedException {
+        cleanUP();
+
+        System.setProperty("lisp.lookupPolicy", "northboundFirst");
+        System.setProperty("lisp.mappingMerge", "false");
+
+        storeDestinationSiteMappingViaSouthbound(VNI_2_VALUE, SITE_ID_A, SITE_A_EID_PREFIX, SITE_A_RLOC);
+        storeDestinationSiteMappingViaSouthbound(VNI_2_VALUE, SITE_ID_B, SITE_B_EID_PREFIX, SITE_B_RLOC);
+        storeDestinationSiteMappingViaSouthbound(VNI_2_VALUE, SITE_ID_C, SITE_C_EID_PREFIX, SITE_C_RLOC);
+        storeDestinationSiteMappingViaSouthbound(VNI_2_VALUE, SITE_ID_D, SITE_D_EID_PREFIX, SITE_D_RLOC);
+        storeDestinationSiteMappingViaSouthbound(VNI_2_VALUE, SITE_ID_E, SITE_E_EID_PREFIX, SITE_E_RLOC);
+
+        storeSourceDestinationSiteMappingViaNorthbound(VNI_2_VALUE, SITE_ID_B, SITE_C_EID_PREFIX, SITE_B_EID_PREFIX,
+                SITE_C_RLOC);
+        storeSourceDestinationSiteMappingViaNorthbound(VNI_2_VALUE, SITE_ID_C, SITE_B_EID_PREFIX, SITE_C_EID_PREFIX,
+                SITE_B_RLOC);
+        createMappingNegative(MappingOrigin.Northbound, SITE_C_EID_PREFIX, SITE_ID_C, Action.Drop);
+
+        Thread.sleep(2000);
+
+        final MapReply mapReplyFromAToB = emitMapRequestMessage(SITE_A_IP, SITE_B_4_IP, VNI_2);
+        verifySingleIpv4RlocMapping(mapReplyFromAToB, SITE_B_RLOC);
+
+        final MapReply mapReplyFromBToA = emitMapRequestMessage(SITE_B_4_IP, SITE_A_IP, VNI_2);
+        verifySingleIpv4RlocMapping(mapReplyFromBToA, SITE_A_RLOC);
+
+        final MapReply mapReplyFromBToC = emitMapRequestMessage(SITE_B_5_IP, SITE_C_IP, VNI_2);
+        verifySingleIpv4RlocMapping(mapReplyFromBToC, SITE_C_RLOC);
+
+        final MapReply mapReplyFromCToB = emitMapRequestMessage(SITE_C_IP, SITE_B_5_IP, VNI_2);
+        verifySingleIpv4RlocMapping(mapReplyFromCToB, SITE_B_RLOC);
+
+        final MapReply mapReplyFromAToC = emitMapRequestMessage(SITE_A_IP, SITE_C_IP, VNI_2);
+        verifySingleIpv4RlocMapping(mapReplyFromAToC, Action.Drop);
+    }
+
+
+    private void verifySingleIpv4RlocMapping(final MapReply mapReply, final Action action) {
+        final MappingRecord mappingRecord = verifySingleIpv4RlocMappingCommon(mapReply);
+        assertEquals(action, mappingRecord.getAction());
+    }
+
+    private void verifySingleIpv4RlocMapping(final MapReply mapReply, final String siteRloc) {
+        final MappingRecord mappingRecord = verifySingleIpv4RlocMappingCommon(mapReply);
+        final List<LocatorRecord> locatorRecords = mappingRecord.getLocatorRecord();
+        assertNotNull(locatorRecords);
+        assertEquals(1, locatorRecords.size());
+        final LocatorRecord locatorRecord = locatorRecords.get(0);
+        assertNotNull(locatorRecord);
+        final Rloc rloc = locatorRecord.getRloc();
+        assertNotNull(rloc);
+        final Address address = rloc.getAddress();
+        assertTrue(address instanceof Ipv4);
+        assertEquals(siteRloc, ((Ipv4) address).getIpv4().getValue());
+    }
+
+    private MappingRecord verifySingleIpv4RlocMappingCommon(MapReply mapReply) {
+        assertNotNull(mapReply);
+        final List<MappingRecordItem> mappingRecordItems = mapReply.getMappingRecordItem();
+        assertNotNull(mappingRecordItems);
+        assertEquals(1, mappingRecordItems.size());
+        final MappingRecordItem mappingRecordItem = mappingRecordItems.get(0);
+        assertNotNull(mappingRecordItem);
+        final MappingRecord mappingRecord = mappingRecordItem.getMappingRecord();
+        assertNotNull(mappingRecord);
+        return mappingRecord;
+    }
+
+    private void emitMapRegisterMessage(final MappingOrigin mappingOrigin, final String
+            destSiteEidPrefix, final String siteRloc, final int vniValue) {
+        final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
+        final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
+        mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
+
+        final MappingRecordBuilder mrb = prepareMappingRecord(mappingOrigin, siteRloc, null,
+                destSiteEidPrefix, vniValue);
+        mappingRecordItemBuilder.setMappingRecord(mrb.build());
+        mapRegisterBuilder.setMappingRecordItem(Collections.singletonList(mappingRecordItemBuilder.build()));
+
+
+        Eid eid = toEid(destSiteEidPrefix, new InstanceIdType((long) vniValue), DEFAULT_NETWORK_MASK);
+        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
+        sleepForSeconds(1);
+        lms.handleMapRegister(mapRegisterBuilder.build());
+    }
+
+    private Eid toEid(final String destSiteEidPrefix, final InstanceIdType vniValue, final int mask) {
+        return LispAddressUtil.toEid(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                .inet.types.rev100924.Ipv4Prefix(destSiteEidPrefix + "/" + mask), vniValue);
+
+    }
+
+    private MapReply emitMapRequestMessage(final String siteFromEidPrefix, final String siteToEidPrefix, final
+        InstanceIdType vniValue) {
+        final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
+        final EidItemBuilder eidItemBuilder = new EidItemBuilder();
+        Eid dstEid = toEid(siteToEidPrefix, vniValue, IP_MASK);
+//        LispAddressUtil.toEid(new org.opendaylight
+//                .yang
+//                .gen.v1.urn.ietf
+//                .params
+//                .xml.ns.yang.ietf
+//                .inet.types.rev100924.Ipv4Prefix(siteToEidPrefix + "/" + DEFAULT_NETWORK_MASK), vniValue);
+
+        eidItemBuilder.setEid(dstEid);
+        eidItemBuilder.setEidItemId(siteFromEidPrefix + siteToEidPrefix);
+        final List<EidItem> eidItem = Collections.singletonList(eidItemBuilder.build());
+        final Eid srcEid = toEid(siteFromEidPrefix, vniValue, IP_MASK);
+//        final Eid srcEid = LispAddressUtil.toEid(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+//                .inet.types.rev100924.Ipv4Prefix(siteFromEidPrefix + "/" + DEFAULT_NETWORK_MASK), vniValue);
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(srcEid).build());
+        mapRequestBuilder.setEidItem(eidItem);
+        return lms.handleMapRequest(mapRequestBuilder.build());
+    }
+
+    private void createMappingNegative(final MappingOrigin mapOrigin, final String siteEidPrefix, final
+    SiteId siteId, final Action action) {
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix
+                ipv4Prefix = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
+                .yang.ietf.inet.types.rev100924.Ipv4Prefix(siteEidPrefix+"/"+ DEFAULT_NETWORK_MASK);
+        final Eid eidAsIpv4Prefix = LispAddressUtil.toEid(ipv4Prefix, VNI_2);
+
+        final MappingRecordBuilder mrbNegative = prepareMappingRecord(mapOrigin, null, null, null, VNI_2_VALUE);
+        mrbNegative.setEid(eidAsIpv4Prefix);
+        mrbNegative.setAction(action);
+
+        mapService.addMapping(mapOrigin, eidAsIpv4Prefix, SITE_ID_B, mrbNegative.build());
+    }
+
+    private void storeSourceDestinationSiteMappingViaNorthbound(final int vniValue, final SiteId siteId, final String
+            siteToEidPrefix, final String siteFromEidPrefix, final String siteRloc) {
+        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Northbound, siteRloc, siteFromEidPrefix,
+                siteToEidPrefix,
+                vniValue);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), siteId, mrb.build());
+
+    }
+
+    private void storeDestinationSiteMappingViaSouthbound(final int vniValue, final SiteId siteId, final String
+            destSiteEidPrefix, final String siteRloc) {
+        emitMapRegisterMessage(MappingOrigin.Southbound, destSiteEidPrefix, siteRloc, vniValue);
+    }
+
+    private MappingRecordBuilder prepareMappingRecord(final MappingOrigin mappingOrigin, final String siteRloc, String
+            sourceSiteEidPrefix, String destSiteEidPrefix, int vniValue) {
+        final MappingRecordBuilder mrb = provideCommonMapRecordBuilder();
+        Eid eid = null;
+        if (MappingOrigin.Northbound.equals(mappingOrigin)) {
+            if (sourceSiteEidPrefix != null && destSiteEidPrefix != null) {
+                eid = LispAddressUtil.asSrcDstEid(sourceSiteEidPrefix, destSiteEidPrefix, DEFAULT_NETWORK_MASK,
+                        DEFAULT_NETWORK_MASK, vniValue);
+            }
+        } else if (MappingOrigin.Southbound.equals(mappingOrigin)) {
+            if (destSiteEidPrefix != null) {
+                eid = toEid(destSiteEidPrefix, new InstanceIdType((long) vniValue), DEFAULT_NETWORK_MASK);
+            }
+        }
+        mrb.setEid(eid);
+
+        if (siteRloc != null) {
+            mrb.setLocatorRecord(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(siteRloc)), siteRloc));
+        } else {
+            mrb.setLocatorRecord(null);
+        }
+
+        mrb.setTimestamp(System.currentTimeMillis());
+        mrb.setAction(Action.NoAction);
+        mrb.setRecordTtl(TTL);
+        return mrb;
+    }
+
+    private List<LocatorRecord> provideLocatorRecord(final Rloc rloc, final String rlocStr) {
+        final LocatorRecordBuilder locatorRecordBuilder = new LocatorRecordBuilder();
+        locatorRecordBuilder.setRloc(rloc);
+        locatorRecordBuilder.setLocatorId(rlocStr);
+        locatorRecordBuilder.setPriority(DEFAULT_PRIORITY);
+        locatorRecordBuilder.setWeight(DEFAULT_WEIGHT);
+        locatorRecordBuilder.setMulticastPriority(DEFAULT_MULTICAST_PRIORITY);
+        locatorRecordBuilder.setMulticastWeight(DEFAULT_MULTICAST_WEIGHT);
+        locatorRecordBuilder.setLocalLocator(DEFAULT_LOCAL_LOCATOR);
+        locatorRecordBuilder.setRlocProbed(DEFAULT_RLOC_PROBED);
+        locatorRecordBuilder.setRouted(DEFAULT_ROUTED);
+
+        final List<LocatorRecord> locatorRecords = new ArrayList<>();
+        locatorRecords.add(locatorRecordBuilder.build());
+        return locatorRecords;
+    }
+
+    private MappingRecordBuilder provideCommonMapRecordBuilder() {
+        final MappingRecordBuilder mappingRecordBuilder = new MappingRecordBuilder();
+        mappingRecordBuilder.setRecordTtl(1440);
+        mappingRecordBuilder.setAction(Action.NoAction);
+        mappingRecordBuilder.setAuthoritative(true);
+        return mappingRecordBuilder;
     }
 
     // ------------------------------- Simple Tests ---------------------------
