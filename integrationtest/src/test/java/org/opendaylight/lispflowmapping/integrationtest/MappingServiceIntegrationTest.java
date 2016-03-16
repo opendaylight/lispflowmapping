@@ -25,6 +25,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,6 +59,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -77,6 +79,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
@@ -378,6 +381,43 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Test
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
+    }
+
+    @Test
+    public void testSmr2() {
+        InstanceIdType vni2 = new InstanceIdType(2l);
+        final MappingRecordBuilder mappingRecordBuilder1 = new MappingRecordBuilder();
+
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix
+                ipv4Prefix = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
+                .yang.ietf.inet.types.rev100924.Ipv4Prefix("192.0.2.0/24");
+        final Eid eid = LispAddressUtil.toEid(ipv4Prefix, vni2);
+
+        mappingRecordBuilder1.setEid(eid);
+
+        //mapping from 192.0.2.1/24 to RLOC3
+        final LocatorRecordBuilder locatorRecordBuilder = new LocatorRecordBuilder();
+        locatorRecordBuilder.setRloc(LispAddressUtil.toRloc(new Ipv4Address("3.3.3.3")));
+
+        final List<LocatorRecord> locatorRecords = new ArrayList<>();
+        locatorRecords.add(locatorRecordBuilder.build());
+        mappingRecordBuilder1.setLocatorRecord(locatorRecords);
+
+        //added mapping from 192.0.2.1/24 to RLOC3 (3.3.3.3)
+        mapService.addMapping(MappingOrigin.Northbound, eid, new SiteId(new byte[]{'B'}), mappingRecordBuilder1
+                .build());
+
+
+        //negative mapping building
+        final MappingRecordBuilder mappingRecordBuilder2 = new MappingRecordBuilder();
+        mappingRecordBuilder2.setAction(Action.Drop);
+        mappingRecordBuilder2.setLocatorRecord(Collections.emptyList());
+
+        mappingRecordBuilder2.setEid(eid);
+        //adding negative mapping
+        mapService.addMapping(MappingOrigin.Northbound, eid, new SiteId(new byte[]{'B'}), mappingRecordBuilder2
+                .build());
+
     }
 
     // ------------------------------- Simple Tests ---------------------------
