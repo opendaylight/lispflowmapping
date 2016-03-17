@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a42497e_24cc7635",
+        "filename": "distribution-karaf/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-17T10:27:36Z",
+      "side": 1,
+      "message": "Without installing the karaf artifact locally integration tests will not work. I was hoping that local install should be allowed, while deploy is skipped (below).",
+      "revId": "b195fdbab4b8bf32315dc49f05cb0e810110520f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
