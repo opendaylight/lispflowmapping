@@ -221,14 +221,16 @@ public class MultiTableMapCache implements IMapCache {
         }
 
         if (MaskUtil.isMaskable(eid.getAddress())) {
-            return getAuthKeyLpm(eid, table);
-        } else if (eid.getAddress() instanceof SourceDestKey) {
-            // NOTE: this is an exact match, not a longest prefix match
-            ILispDAO srcDstDao = getSDInnerDao(eid, table);
-            if (srcDstDao != null) {
-                return getAuthKeyLpm(SourceDestKeyHelper.getSrc(eid), srcDstDao);
+            if (eid.getAddress() instanceof SourceDestKey) {
+                // NOTE: this is an exact match, not a longest prefix match
+                ILispDAO srcDstDao = getSDInnerDao(eid, table);
+                if (srcDstDao != null) {
+                    return getAuthKeyLpm(SourceDestKeyHelper.getSrc(eid), srcDstDao);
+                }
+                return null;
+            } else {
+                return getAuthKeyLpm(eid, table);
             }
-            return null;
         } else {
             Eid key = MaskUtil.normalize(eid);
             Object password = table.getSpecific(key, SubKeys.AUTH_KEY);
