@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.net.InetAddresses;
+
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -16,6 +17,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
@@ -26,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +118,8 @@ public final class MaskUtil {
             } else if (address instanceof InstanceId) {
                 // TODO - not absolutely necessary, but should be implemented
                 return eid;
+            } else if (address instanceof SourceDestKey) {
+                return normalizeSrcDst(eid);
             } else if (address instanceof ServicePath) {
                 // Build new Service Path eid with service index set to 0
                 long spi = ((ServicePath) address).getServicePath().getServicePathId().getValue();
@@ -125,6 +130,50 @@ public final class MaskUtil {
             LOG.trace("Failed to normalize eid {}: {}", eid, ExceptionUtils.getStackTrace(e));
         }
         return eid;
+    }
+
+    private static Eid normalizeSrcDst(Eid eid) {
+        final SimpleAddress normalizedSrc = normalizeSimpleAddress(
+                ((SourceDestKey) eid.getAddress()).getSourceDestKey().getSource());
+        final SimpleAddress normalizedDst = normalizeSimpleAddress(
+                ((SourceDestKey) eid.getAddress()).getSourceDestKey().getDest());
+        return LispAddressUtil.asSrcDstEid(new SourceDestKeyBuilder()
+                .setSource(normalizedSrc).setDest(normalizedDst).build(), eid.getVirtualNetworkId());
+    }
+
+    private static SimpleAddress normalizeSimpleAddress(SimpleAddress address) {
+        if (address.getIpPrefix() == null) {
+            return address;
+        }
+        return new SimpleAddress(normalizeIpPrefix(address.getIpPrefix()));
+    }
+
+    private static IpPrefix normalizeIpPrefix(IpPrefix address) {
+        IpPrefix normalized = address;
+
+        String[] prefix = null;
+        prefix = splitPrefix(String.valueOf(address.getValue()));
+        short mask = Short.parseShort(prefix[1]);
+
+        try {
+            InetAddress normalizedIP = normalizeIP(InetAddresses.forString(prefix[0]), mask);
+            normalized = ipPrefixFor(normalizedIP, mask);
+        } catch (UnknownHostException e) {
+            LOG.debug("Failed to normalize prefix {}", String.valueOf(address.getValue()), e);
+        }
+
+        return normalized;
+    }
+
+    // This is a missing method from IetfInetUtil. Will try to upstream there and remove from here
+    private static IpPrefix ipPrefixFor(InetAddress address, int maskLength) {
+        if (address instanceof Inet4Address) {
+            return new IpPrefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(address, maskLength));
+        } else if (address instanceof Inet6Address) {
+            return new IpPrefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(address, maskLength));
+        } else {
+            throw new IllegalArgumentException("Unhandled address " + address);
+        }
     }
 
     private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
