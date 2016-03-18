@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a42497e_98416d0e",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T14:53:33Z",
+      "side": 1,
+      "message": "Patch for mdsal proposed https://git.opendaylight.org/gerrit/#/c/36444/",
+      "revId": "9808d1162f617bb7562710652739b52f19bdb456",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
