@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a42497e_f816b1f0",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-18T15:49:57Z",
+      "side": 1,
+      "message": "Is there any benefit in no having this as a one liner?",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 155,
+        "endChar": 65
+      },
+      "revId": "9808d1162f617bb7562710652739b52f19bdb456",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_38bf79d2",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-18T15:49:57Z",
+      "side": 1,
+      "message": "We\u0027re catching this in normalize() so perhaps we should, like in case of normalizeIp() throw the exception.",
+      "range": {
+        "startLine": 161,
+        "startChar": 7,
+        "endLine": 161,
+        "endChar": 42
+      },
+      "revId": "9808d1162f617bb7562710652739b52f19bdb456",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a42497e_98416d0e",
         "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
         "patchSetId": 1
@@ -13,6 +59,24 @@
       "writtenOn": "2016-03-18T14:53:33Z",
       "side": 1,
       "message": "Patch for mdsal proposed https://git.opendaylight.org/gerrit/#/c/36444/",
+      "revId": "9808d1162f617bb7562710652739b52f19bdb456",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_58d36538",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-03-18T15:49:57Z",
+      "side": 1,
+      "message": "Do you prefer merging this now and fix it later?",
+      "parentUuid": "7a42497e_98416d0e",
       "revId": "9808d1162f617bb7562710652739b52f19bdb456",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
