@@ -80,6 +80,24 @@
       "revId": "9808d1162f617bb7562710652739b52f19bdb456",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_85ec61c9",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-21T10:55:32Z",
+      "side": 1,
+      "message": "I guess so, there hasn\u0027t been any reaction to my patch yet, although I explicitly added Robert as a reviewer, I can remove this later if/when the other patch is merged.",
+      "parentUuid": "7a42497e_58d36538",
+      "revId": "9808d1162f617bb7562710652739b52f19bdb456",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
