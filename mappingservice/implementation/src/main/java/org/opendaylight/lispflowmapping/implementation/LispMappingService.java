@@ -63,8 +63,10 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
-    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<Pair<MapNotify, List<TransportAddress>>>();
-    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<Pair<MapRequest, TransportAddress>>();
+    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify =
+            new ThreadLocal<Pair<MapNotify, List<TransportAddress>>>();
+    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest =
+            new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
     private OdlLispSbService lispSB = null;
     private IMapResolverAsync mapResolver;

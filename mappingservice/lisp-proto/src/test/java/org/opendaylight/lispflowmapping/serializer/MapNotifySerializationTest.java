@@ -48,9 +48,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
-        byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88, (byte) 0x2d, (byte) 0x4d,
-                (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64, (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba,
-                (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
+        byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88,
+                (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
+                (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
         mnBuilder.setAuthenticationData(authenticationData);
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
@@ -89,16 +89,15 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
-        byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88, (byte) 0x2d, (byte) 0x4d,
-                (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64, (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba,
-                (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
+        byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88,
+                (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
+                (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
         mnBuilder.setAuthenticationData(authenticationData);
 
         MapNotify mn = mnBuilder.build();
-        ArrayAssert.assertEquals(
-                MapNotifySerializer.getInstance().serialize(mn).array(),
-                MapNotifySerializer.getInstance()
-                        .serialize(MapNotifySerializer.getInstance().deserialize(MapNotifySerializer.getInstance().serialize(mn))).array());
+        ArrayAssert.assertEquals(MapNotifySerializer.getInstance().serialize(mn).array(),
+                MapNotifySerializer.getInstance().serialize(MapNotifySerializer.getInstance()
+                        .deserialize(MapNotifySerializer.getInstance().serialize(mn))).array());
 
     }
 
@@ -116,9 +115,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // xTR-ID 1
         // Site-ID 1
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 00 01 FF BB "
-        //
-                + "00 00 00 00 00 00 00 00 00 00 00 00 " //
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "00 00 00 00 00 00 00 00 00 00 00 00 "
+                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a "
                 + "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 " // xTR-ID
                 + "00 00 00 00 00 00 00 01 " // Site-ID
@@ -195,10 +193,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // 192.168.136.13
         //
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 "
-        //
                 + "04 " // Record count
-                + "FF BB 00 00 00 00 00 00 00 01 00 14 87 c1 33 cd " //
-                + "d1 1e bc 80 fd 3e 71 11 81 17 40 74 26 25 44 bd " //
+                + "FF BB 00 00 00 00 00 00 00 01 00 14 87 c1 33 cd "
+                + "d1 1e bc 80 fd 3e 71 11 81 17 40 74 26 25 44 bd "
                 + "00 00 00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " // Record
                 // 1
                 + "ff 00 00 05 00 01 c0 a8 88 0a " // contd
@@ -227,10 +224,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void deserialize__Locators() throws Exception {
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 01 01 "
-        //
-                + "FF BB 00 00 00 00 00 00 00 01 00 14 f1 b8 ab f0 " //
-                + "66 bb 2e ef 12 70 74 46 6f 6b 8e ca bf 1e 68 40 " //
-                + "00 00 00 0a " //
+                + "FF BB 00 00 00 00 00 00 00 01 00 14 f1 b8 ab f0 "
+                + "66 bb 2e ef 12 70 74 46 6f 6b 8e ca bf 1e 68 40 "
+                + "00 00 00 0a "
                 + "03 " // Locator Count
                 + "20 10 00 00 00 00 01 99 10 fe 01 "
                 // Locator 1
@@ -345,10 +341,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
     @Test
     public void deserialize__IllegalAction() throws Exception {
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 01 01 FF BB "
-        //
-                + "00 00 00 00 00 00 00 01 00 14 ec 47 1e 53 25 91 " //
-                + "2f 68 10 75 13 dd 2c e8 6e 3c ac 94 ed e4 00 00 " //
-                + "00 0a 01 20 F0 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "00 00 00 00 00 00 00 01 00 14 ec 47 1e 53 25 91 "
+                + "2f 68 10 75 13 dd 2c e8 6e 3c ac 94 ed e4 00 00 "
+                + "00 0a 01 20 F0 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
         assertEquals(1, mn.getMappingRecordItem().size());
@@ -369,10 +364,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
         MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("48 00 00 01 FF BB "
-        //
-                + "00 00 00 00 00 00 00 00 00 14 e8 f5 0b c5 c5 f2 " //
-                + "b0 21 27 a8 21 a5 68 89 ec 00 00 " //
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "00 00 00 00 00 00 00 00 00 14 e8 f5 0b c5 c5 f2 "
+                + "b0 21 27 a8 21 a5 68 89 ec 00 00 "
+                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
     }
 
@@ -390,10 +384,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 01 FF BB "
-        //
-                + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 " //
-                + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 "
+                + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 "
+                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
         assertFalse(mn.isXtrSiteIdPresent());
@@ -401,9 +394,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(1, mn.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0001, mn.getKeyId().shortValue());
-        byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a, (byte) 0x20, (byte) 0xba, (byte) 0xd8, //
-                (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f, (byte) 0x5f, (byte) 0x6e, (byte) 0x5a, //
-                (byte) 0xb2, (byte) 0x0a, (byte) 0xbf, (byte) 0xb5 };
+        byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a,
+                (byte) 0x20, (byte) 0xba, (byte) 0xd8, (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f,
+                (byte) 0x5f, (byte) 0x6e, (byte) 0x5a, (byte) 0xb2, (byte) 0x0a, (byte) 0xbf, (byte) 0xb5 };
         ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 
@@ -422,11 +415,9 @@ public class MapNotifySerializationTest extends BaseTestCase {
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
         MapNotify mn = MapNotifySerializer.getInstance().deserialize(hexToByteBuffer("40 00 00 01 FF BB "
-        //
                 + "00 00 00 00 00 00 00 02 00 20 70 30 d4 c6 10 44 0d 83 be 4d bf fd a9 8c 57 6d 68 a5 bf 32 "
-                //
-                + "11 c9 7b 58 c4 b9 9f 06 11 23 b9 38 00 00 " //
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "11 c9 7b 58 c4 b9 9f 06 11 23 b9 38 00 00 "
+                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
         assertFalse(mn.isXtrSiteIdPresent());
@@ -434,10 +425,11 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(1, mn.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0002, mn.getKeyId().shortValue());
-        byte[] expectedAuthenticationData = { (byte) 0x70, (byte) 0x30, (byte) 0xd4, (byte) 0xc6, (byte) 0x10, (byte) 0x44, (byte) 0x0d, (byte) 0x83,
-                (byte) 0xbe, (byte) 0x4d, (byte) 0xbf, (byte) 0xfd, (byte) 0xa9, (byte) 0x8c, (byte) 0x57, (byte) 0x6d, (byte) 0x68, (byte) 0xa5,
-                (byte) 0xbf, (byte) 0x32, (byte) 0x11, (byte) 0xc9, (byte) 0x7b, (byte) 0x58, (byte) 0xc4, (byte) 0xb9, (byte) 0x9f, (byte) 0x06,
-                (byte) 0x11, (byte) 0x23, (byte) 0xb9, (byte) 0x38 };
+        byte[] expectedAuthenticationData = { (byte) 0x70, (byte) 0x30, (byte) 0xd4, (byte) 0xc6, (byte) 0x10,
+                (byte) 0x44, (byte) 0x0d, (byte) 0x83, (byte) 0xbe, (byte) 0x4d, (byte) 0xbf, (byte) 0xfd, (byte) 0xa9,
+                (byte) 0x8c, (byte) 0x57, (byte) 0x6d, (byte) 0x68, (byte) 0xa5, (byte) 0xbf, (byte) 0x32, (byte) 0x11,
+                (byte) 0xc9, (byte) 0x7b, (byte) 0x58, (byte) 0xc4, (byte) 0xb9, (byte) 0x9f, (byte) 0x06, (byte) 0x11,
+                (byte) 0x23, (byte) 0xb9, (byte) 0x38 };
         ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 }

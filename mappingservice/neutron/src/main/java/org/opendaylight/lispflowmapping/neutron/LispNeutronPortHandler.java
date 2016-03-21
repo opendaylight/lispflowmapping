@@ -62,8 +62,8 @@ public class LispNeutronPortHandler extends LispNeutronService implements
         // Check if port.hostID is in map-server, if it is, get host eidtoloc
         // record?
         if (port.getBindinghostID() == null) {
-            LOG.error("Adding new Neutron port to lisp service mapping service failed. Port does not have Host_ID. Port : "
-                    + port.toString());
+            LOG.error("Adding new Neutron port to lisp mapping service failed. Port does not have Host_ID. Port: {}",
+                    port.toString());
             return;
         }
         Eid hostAddress = LispAddressUtil.asDistinguishedNameEid(port.getBindinghostID());
@@ -104,7 +104,8 @@ public class LispNeutronPortHandler extends LispNeutronService implements
                 // iana code.
 
                 eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress() + "/32");
-                lispNeutronService.getMappingDbService().addMapping(LispUtil.buildAddMappingInput(eidAddress, hostLocRecords));
+                lispNeutronService.getMappingDbService().addMapping(LispUtil.buildAddMappingInput(eidAddress,
+                        hostLocRecords));
             }
         }
 

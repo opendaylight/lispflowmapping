@@ -52,8 +52,8 @@ public final class LocatorRecordSerializer {
         replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastPriority()));
         replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastWeight()));
         replyBuffer.position(replyBuffer.position() + Length.UNUSED_FLAGS);
-        replyBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(record.isLocalLocator()), Flags.LOCAL_LOCATOR) | //
-                ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRlocProbed()), Flags.RLOC_PROBED) | //
+        replyBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(record.isLocalLocator()), Flags.LOCAL_LOCATOR) |
+                ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRlocProbed()), Flags.RLOC_PROBED) |
                 ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRouted()), Flags.ROUTED)));
         LispAddressSerializer.getInstance().serialize(replyBuffer, record.getRloc());
     }

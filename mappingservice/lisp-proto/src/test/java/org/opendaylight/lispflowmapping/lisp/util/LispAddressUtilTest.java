@@ -149,7 +149,8 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromSimpleAddressTest_asIpPrefix() {
-        final SimpleAddress simpleAddress = new SimpleAddress(new IpPrefix(new Ipv4Prefix(IPV4_ADDRESS_PREFIX_VALUE_TEST)));
+        final SimpleAddress simpleAddress = new SimpleAddress(new IpPrefix(new Ipv4Prefix(
+                IPV4_ADDRESS_PREFIX_VALUE_TEST)));
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
                 (simpleAddress);
         assertEquals(Ipv4PrefixAfi.class, addressClass);
@@ -304,8 +305,8 @@ public class LispAddressUtilTest {
         final Address address = LispAddressUtil.addressFromIpPrefix(ipv4Prefix);
         assertTrue(address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.
                 types.rev151105.lisp.address.address.Ipv4Prefix);
-        assertEquals(IPV4_ADDRESS_PREFIX_VALUE_TEST, ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.
-                address.types.rev151105.lisp.address.address.Ipv4Prefix) address).getIpv4Prefix().getValue());
+        assertEquals(IPV4_ADDRESS_PREFIX_VALUE_TEST, ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.
+                lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) address).getIpv4Prefix().getValue());
     }
 
     /**
@@ -395,7 +396,8 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromDistinguishedNameTest_withDistinguishedName() {
-        final DistinguishedNameType distinguishedNameType = new DistinguishedNameType(DISTINGUISHED_NAME_TYPE_VALUE_TEST);
+        final DistinguishedNameType distinguishedNameType = new DistinguishedNameType(
+                DISTINGUISHED_NAME_TYPE_VALUE_TEST);
         final Address testedAddress = LispAddressUtil.addressFromDistinguishedName(distinguishedNameType);
 
         assertTrue(testedAddress instanceof DistinguishedName);
@@ -755,16 +757,17 @@ public class LispAddressUtilTest {
      */
     @Test
     public void asKeyValueAddress() {
-        final Rloc rloc = LispAddressUtil.asKeyValueAddress(SIMPLE_ADDRESS_DISTINGUISHED_VALUE_TEST, SIMPLE_ADDRESS_B_TEST);
+        final Rloc rloc = LispAddressUtil.asKeyValueAddress(SIMPLE_ADDRESS_DISTINGUISHED_VALUE_TEST,
+                SIMPLE_ADDRESS_B_TEST);
         verifyKeyValueAddress(rloc, SIMPLE_ADDRESS_DISTINGUISHED_TEST);
     }
 
     private void verifyKeyValueAddress(final LispAddress lispAddress, final SimpleAddress keyValue) {
         assertEquals(KeyValueAddressLcaf.class, lispAddress.getAddressType());
         assertNull(lispAddress.getVirtualNetworkId());
-        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
-                .address.key.value.address.KeyValueAddress keyValueAddress = ((KeyValueAddress) lispAddress.getAddress()).
-                getKeyValueAddress();
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.key.value.address.KeyValueAddress keyValueAddress =
+                ((KeyValueAddress) lispAddress.getAddress()).getKeyValueAddress();
         assertNotNull(keyValueAddress);
         assertEquals(keyValue, keyValueAddress.getKey());
         assertEquals(SIMPLE_ADDRESS_B_TEST, keyValueAddress.getValue());
@@ -822,7 +825,8 @@ public class LispAddressUtilTest {
      */
     @Test
     public void asTeLcafRloc() {
-        final List<IpAddress> ipAddresses = Arrays.asList(IP_ADDRESS_OBJECT_WITH_IPV4_TEST, IP_ADDRESS_OBJECT_WITH_IPV6_TEST);
+        final List<IpAddress> ipAddresses = Arrays.asList(IP_ADDRESS_OBJECT_WITH_IPV4_TEST,
+                IP_ADDRESS_OBJECT_WITH_IPV6_TEST);
         final Rloc rloc = LispAddressUtil.asTeLcafRloc(ipAddresses);
         assertNotNull(rloc);
         assertEquals(ExplicitLocatorPathLcaf.class, rloc.getAddressType());
@@ -994,7 +998,8 @@ public class LispAddressUtilTest {
     @Ignore /* remove when https://git.opendaylight.org/gerrit/#/c/35681/2 will be merged */
     @Test
     public void toIpPrefixEid() throws UnknownHostException {
-        final Eid eid = LispAddressUtil.toIpPrefixEid(IP_ADDRESS_OBJECT_WITH_IPV4_TEST, INSTANCE_ID_TYPE_VALUE_SHORT_TEST);
+        final Eid eid = LispAddressUtil.toIpPrefixEid(IP_ADDRESS_OBJECT_WITH_IPV4_TEST,
+                INSTANCE_ID_TYPE_VALUE_SHORT_TEST);
         verifyEidContainsIpPrefix(eid, MASK_OK_DEFAULT_IPV4_TEST);
     }
 

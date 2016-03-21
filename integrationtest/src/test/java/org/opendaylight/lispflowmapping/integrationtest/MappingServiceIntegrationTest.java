@@ -244,7 +244,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithAuthenticationAndMapNotify = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithAuthenticationAndMapNotify = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 0e a4 c6 d8 a4 06 "
@@ -266,7 +267,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithNotify = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithNotify = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 07 00 00 00 14 0e a4 c6 d8 a4 06 "
@@ -288,7 +290,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithoutNotify = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithoutNotify = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
                 + "0030   00 00 00 00 00 07 00 00 00 14 0e a4 c6 d8 a4 06 "
@@ -525,8 +528,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Rloc rloc2Value = LispAddressUtil.asIpv4Rloc("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
         assertEquals(1, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
-        Rloc rloc1ReturnValueContainer = mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc();
-        Rloc rloc2ReturnValueContainer = mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getRloc();
+        Rloc rloc1ReturnValueContainer = mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord()
+                .get(0).getRloc();
+        Rloc rloc2ReturnValueContainer = mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord()
+                .get(1).getRloc();
         assertTrue((rloc1Value.equals(rloc1ReturnValueContainer) && rloc2Value.equals(rloc2ReturnValueContainer))
                 || (rloc1Value.equals(rloc2ReturnValueContainer) && rloc2Value.equals(rloc1ReturnValueContainer)));
     }
@@ -539,8 +544,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapNotify mapNotify = lms.handleMapRegister(mb).getLeft();
         MapRequest mr = createMapRequest(eid);
         MapReply mapReply = lms.handleMapRequest(mr);
-        assertEquals(mb.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc());
+        assertEquals(mb.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc(),
+                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc());
         mb = createMapRegister(eid, rloc2);
         mapNotify = lms.handleMapRegister(mb).getLeft();
         assertEquals(8, mapNotify.getNonce().longValue());
@@ -618,24 +623,33 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void northboundRetrieveSourceDestKey() throws Exception {
         cleanUP();
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAddressUtil
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4
+                address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress
+                .primitiveaddress.Ipv4) LispAddressUtil
                 .toPrimitive(LispAddressUtil.asIPAfiAddress("10.0.0.1"));
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAddressUtil
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4
+                address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress
+                .primitiveaddress.Ipv4) LispAddressUtil
                 .toPrimitive(LispAddressUtil.asIPAfiAddress("10.0.0.2"));
         int mask1 = 32;
         int mask2 = 32;
-        LcafSourceDestAddr sourceDestAddress = new LcafSourceDestAddrBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+        LcafSourceDestAddr sourceDestAddress = new LcafSourceDestAddrBuilder().setAfi(
+                AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode())
-                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(address1).build()).setSrcMaskLength((short) mask1)
-                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(address2).build()).setDstMaskLength((short) mask2).build();
+                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(address1).build())
+                .setSrcMaskLength((short) mask1)
+                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(address2).build())
+                .setDstMaskLength((short) mask2).build();
         String pass = "asdf";
 
         lms.addAuthenticationKey(LispAddressUtil.toContainer(sourceDestAddress), mask1, pass);
 
         // URL url = createGetKeyIPv4URL(address1, mask1);
         URL url = createGetKeySourceDestURL(address1.getIpv4Address().getAfi(),
-                ((LispIpv4Address) LispAddressUtil.toAFIfromPrimitive(sourceDestAddress.getSrcAddress().getPrimitiveAddress())).getIpv4Address().getValue(), sourceDestAddress.getSrcMaskLength(),
-                ((LispIpv4Address) LispAddressUtil.toAFIfromPrimitive(sourceDestAddress.getDstAddress().getPrimitiveAddress())).getIpv4Address().getValue(), sourceDestAddress.getDstMaskLength());
+                ((LispIpv4Address) LispAddressUtil.toAFIfromPrimitive(sourceDestAddress.getSrcAddress()
+                .getPrimitiveAddress())).getIpv4Address().getValue(), sourceDestAddress.getSrcMaskLength(),
+                ((LispIpv4Address) LispAddressUtil.toAFIfromPrimitive(sourceDestAddress.getDstAddress()
+                .getPrimitiveAddress())).getIpv4Address().getValue(), sourceDestAddress.getDstMaskLength());
         String reply = callURL("GET", null, "application/json", null, url);
         JSONTokener jt = new JSONTokener(reply);
         JSONObject json = new JSONObject(jt);
@@ -687,24 +701,33 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRequestBuilder.setPitr(false);
         mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
         mapRequestBuilder.getEidItem().add(
-                new EidRecordBuilder().setMask((short) mask).setLispAddressContainer(LispAddressUtil.toContainer(eid)).build());
+                new EidRecordBuilder().setMask((short) mask).setLispAddressContainer(
+                LispAddressUtil.toContainer(eid)).build());
         MapReply mapReply = lms.handleMapRequest(mapRequestBuilder.build());
 
         LispIpv4Address retrievedRloc = (LispIpv4Address) LispAddressUtil.toAFI(
-                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getLispAddressContainer());
+                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .getLispAddressContainer());
 
         assertEquals(rloc.getIpv4Address().getValue(), retrievedRloc.getIpv4Address().getValue());
 
     }
 
     private String createMapRegisterJSON(String key, LispIpv4Address eid, int mask, LispIpv4Address rloc) {
-        String jsonString = "{ " + "\"key\" : \"" + key + "\"," + "\"mapregister\" : " + "{ " + "\"proxyMapReply\" : false, "
-                + "\"eidToLocatorRecords\" : " + "[ " + "{ " + "\"authoritative\" : true," + "\"prefixGeneric\" : " + "{ " + "\"ipAddress\" : \""
-                + eid.getIpv4Address().getValue() + "\"," + "\"afi\" : " + eid.getAfi().shortValue() + "}," + "\"mapVersion\" : 0,"
-                + "\"maskLength\" : " + mask + ", " + "\"action\" : \"NoAction\"," + "\"locators\" : " + "[ " + "{ " + "\"multicastPriority\" : 1,"
-                + "\"locatorGeneric\" : " + "{ " + "\"ipAddress\" : \"" + rloc.getIpv4Address().getValue() + "\"," + "\"afi\" : "
-                + rloc.getAfi().shortValue() + "}, " + "\"routed\" : true," + "\"multicastWeight\" : 50," + "\"rlocProbed\" : false, "
-                + "\"localLocator\" : false, " + "\"priority\" : 1, " + "\"weight\" : 50 " + "} " + "], " + "\"recordTtl\" : 100" + "} " + "], "
+        String jsonString = "{ " + "\"key\" : \"" + key + "\"," + "\"mapregister\" : " + "{ "
+                + "\"proxyMapReply\" : false, "
+                + "\"eidToLocatorRecords\" : " + "[ " + "{ " + "\"authoritative\" : true," + "\"prefixGeneric\" : "
+                + "{ " + "\"ipAddress\" : \""
+                + eid.getIpv4Address().getValue() + "\"," + "\"afi\" : " + eid.getAfi().shortValue() + "},"
+                + "\"mapVersion\" : 0,"
+                + "\"maskLength\" : " + mask + ", " + "\"action\" : \"NoAction\"," + "\"locators\" : " + "[ " + "{ "
+                + "\"multicastPriority\" : 1,"
+                + "\"locatorGeneric\" : " + "{ " + "\"ipAddress\" : \"" + rloc.getIpv4Address().getValue() + "\","
+                + "\"afi\" : "
+                + rloc.getAfi().shortValue() + "}, " + "\"routed\" : true," + "\"multicastWeight\" : 50,"
+                + "\"rlocProbed\" : false, "
+                + "\"localLocator\" : false, " + "\"priority\" : 1, " + "\"weight\" : 50 " + "} " + "], "
+                + "\"recordTtl\" : 100" + "} " + "], "
                 + "\"nonce\" : 3," + "\"keyId\" : 0 " + "} " + "}";
 
         return jsonString;
@@ -745,7 +768,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         JSONObject json = new JSONObject(jt);
 
         // With just one locator, locators is not a JSONArray
-        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric").getString("ipAddress");
+        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric")
+                .getString("ipAddress");
 
         assertEquals(rloc.getIpv4Address().getValue(), rlocRetrieved);
 
@@ -795,16 +819,23 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void northboundRetrieveSourceDestMapping() throws Exception {
         cleanUP();
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAddressUtil
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4
+                address1 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress
+                .primitiveaddress.Ipv4) LispAddressUtil
                 .toPrimitive(LispAddressUtil.asIPAfiAddress("10.0.0.1"));
-        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4 address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress.primitiveaddress.Ipv4) LispAddressUtil
+        org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lispsimpleaddress.primitiveaddress.Ipv4
+                address2 = (org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev150820.lispsimpleaddress
+                .primitiveaddress.Ipv4) LispAddressUtil
                 .toPrimitive(LispAddressUtil.asIPAfiAddress("10.0.0.2"));
         int mask1 = 32;
         int mask2 = 32;
-        LcafSourceDestAddr sourceDestAddress = new LcafSourceDestAddrBuilder().setAfi(AddressFamilyNumberEnum.LCAF.getIanaCode())
+        LcafSourceDestAddr sourceDestAddress = new LcafSourceDestAddrBuilder().setAfi(
+                AddressFamilyNumberEnum.LCAF.getIanaCode())
                 .setLcafType((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode())
-                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(address1).build()).setSrcMaskLength((short) mask1)
-                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(address2).build()).setDstMaskLength((short) mask2).build();
+                .setSrcAddress(new SrcAddressBuilder().setPrimitiveAddress(
+                        address1).build()).setSrcMaskLength((short) mask1)
+                .setDstAddress(new DstAddressBuilder().setPrimitiveAddress(
+                        address2).build()).setDstMaskLength((short) mask2).build();
         LispIpv4Address rloc = LispAddressUtil.asIPAfiAddress("20.0.0.2");
 
         // Insert mapping in the database
@@ -841,42 +872,50 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         JSONObject json = new JSONObject(jt);
 
         // With just one locator, locators is not a JSONArray
-        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric").getString("ipAddress");
+        String rlocRetrieved = json.getJSONArray("locators").getJSONObject(0).getJSONObject("locatorGeneric")
+        .getString("ipAddress");
 
         assertEquals(rloc.getIpv4Address().getValue(), rlocRetrieved);
 
     }
 
     private URL createGetKeyIPv4URL(LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d", "key", address.getAfi().shortValue(),
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d", "key",
+                address.getAfi().shortValue(),
                 address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
     }
 
-    private URL createGetKeySourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d", "key", afi, srcAddress, srcMask,
+    private URL createGetKeySourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask)
+            throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d",
+                "key", afi, srcAddress, srcMask,
                 dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }
 
-    private URL createGetMappingSourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d", "mapping", afi, srcAddress,
+    private URL createGetMappingSourceDestURL(int afi, String srcAddress, int srcMask, String dstAddress, int dstMask)
+            throws MalformedURLException {
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/0/%d/%s/%d/%s/%d",
+                "mapping", afi, srcAddress,
                 srcMask, dstAddress, dstMask);
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createGetMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi()
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping",
+                iid, address.getAfi()
                 .shortValue(), address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
     }
 
     private URL createDeleteMappingIPv4URL(int iid, LispIpv4Address address, int mask) throws MalformedURLException {
-        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping", iid, address.getAfi()
+        String restUrl = String.format("http://localhost:8080/lispflowmapping/nb/v2/default/%s/%d/%d/%s/%d", "mapping",
+                iid, address.getAfi()
                 .shortValue(), address.getIpv4Address().getValue(), mask);
         URL url = new URL(restUrl);
         return url;
@@ -897,7 +936,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return authStringEnc;
     }
 
-    private String callURL(String method, String content, String accept, String body, URL url) throws IOException, JSONException {
+    private String callURL(String method, String content, String accept, String body, URL url) throws IOException,
+            JSONException {
         String authStringEnc = createAuthenticationString();
         connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
@@ -958,7 +998,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void eidPrefixLookupIPv6() throws SocketTimeoutException {
         cleanUP();
-        runPrefixTest(LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:6:7:8/64"), LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:1:2:3/128"),
+        runPrefixTest(LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:6:7:8/64"),
+                LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:1:2:3/128"),
                 LispAddressUtil.asIpv6PrefixEid("1:2:3:1:2:3:1:2/128"));
     }
 
@@ -1016,7 +1057,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRequest(mapRequest.build());
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(record.getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc());
+        assertEquals(record.getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord()
+                .get(0).getRloc());
         mapRequest.setEidItem(new ArrayList<EidItem>());
         mapRequest.getEidItem().add(new EidItemBuilder().setEid(unMatchedAddress).build());
         sendMapRequest(mapRequest.build());
@@ -1041,8 +1083,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         LOG.trace("Sending this JSON to LISP server: \n" + jsonAuthData);
         LOG.trace("Address: " + address);
 
-        byte[] expectedSha = new byte[] { (byte) 146, (byte) 234, (byte) 52, (byte) 247, (byte) 186, (byte) 232, (byte) 31, (byte) 249, (byte) 87,
-                (byte) 73, (byte) 234, (byte) 54, (byte) 225, (byte) 160, (byte) 129, (byte) 251, (byte) 73, (byte) 53, (byte) 196, (byte) 62 };
+        byte[] expectedSha = new byte[] { (byte) 146, (byte) 234, (byte) 52, (byte) 247, (byte) 186, (byte) 232,
+                (byte) 31, (byte) 249, (byte) 87,
+                (byte) 73, (byte) 234, (byte) 54, (byte) 225, (byte) 160, (byte) 129, (byte) 251, (byte) 73, (byte) 53,
+                (byte) 196, (byte) 62 };
 
         byte[] zeros = new byte[20];
 
@@ -1108,7 +1152,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         mapRegister.setKeyId((short) 1); // LispKeyIDEnum.SHA1.getKeyID()
         mapRegister
-                .setAuthenticationData(new byte[] { -15, -52, 38, -94, 125, -111, -68, -79, 68, 6, 101, 45, -1, 47, -4, -67, -113, 104, -110, -71 });
+                .setAuthenticationData(new byte[] { -15, -52, 38, -94, 125, -111, -68, -79, 68, 6, 101, 45, -1, 47, -4,
+                -67, -113, 104, -110, -71 });
 
         sendMapRegister(mapRegister.build());
 
@@ -1116,7 +1161,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         etlr.setLispAddressContainer(LispAddressUtil.toContainer(addressOutOfRange));
         mapRegister
-                .setAuthenticationData(new byte[] { -54, 68, -58, -91, -23, 22, -88, -31, 113, 39, 115, 78, -68, -123, -71, -14, -99, 67, -23, -73 });
+                .setAuthenticationData(new byte[] { -54, 68, -58, -91, -23, 22, -88, -31, 113, 39, 115, 78, -68, -123,
+                -71, -14, -99, 67, -23, -73 });
 
         sendMapRegister(mapRegister.build());
         assertNoPacketReceived(3000);
@@ -1150,7 +1196,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlrBuilder.getLocatorRecord().add(recordBuilder.build());
         mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(
+                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
         sendMapRegister(mapRegisterBuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
@@ -1165,7 +1212,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         if (srcEid != null) {
             mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(srcEid)).build());
         } else {
-            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(ourAddress)).build());
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(ourAddress))
+                    .build());
         }
         mapRequestBuilder.getItrRloc().add(
                 new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
@@ -1208,7 +1256,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlrBuilder.getLocatorRecord().add(recordBuilder.build());
         mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                etlrBuilder.build()).build());
         sendMapRegister(mapRegisterBuilder.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
@@ -1241,14 +1290,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         String macString = "01:02:03:04:05:06";
 
         SourceDestKeyBuilder builder = new SourceDestKeyBuilder();
-        builder.setSource(new SimpleAddress(new IpPrefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix(ipPrefix))));
+        builder.setSource(new SimpleAddress(new IpPrefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang
+                .ietf.inet.types.rev100924.Ipv4Prefix(ipPrefix))));
         builder.setDest(new SimpleAddress(new MacAddress(macString)));
 
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(SourceDestKeyLcaf.class);
         eb.setVirtualNetworkId(null);
-        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
-                .setSourceDestKey(builder.build()).build());
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.SourceDestKeyBuilder().setSourceDestKey(builder.build()).build());
 
         MapReply reply = registerAddressAndQuery(eb.build());
 
@@ -1355,8 +1405,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(AfiListLcaf.class);
         eb.setVirtualNetworkId(null);
-        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
-                .setAfiList(listbuilder.build()).build());
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiListBuilder().setAfiList(listbuilder.build()).build());
 
         MapReply reply = registerAddressAndQuery(eb.build());
 
@@ -1383,8 +1433,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(Ipv4PrefixAfi.class);
         eb.setVirtualNetworkId(new InstanceIdType((long) instanceId));
-        eb.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix(
-                ipString)).build());
+        eb.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
+                .yang.ietf.inet.types.rev100924.Ipv4Prefix(ipString)).build());
 
         MapReply reply = registerAddressAndQuery(eb.build());
 
@@ -1415,14 +1465,16 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(ExplicitLocatorPathLcaf.class);
         eb.setVirtualNetworkId(null);
-        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder()
-                .setExplicitLocatorPath(elpBuilder.build()).build());
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ExplicitLocatorPathBuilder().setExplicitLocatorPath(elpBuilder.build()).build());
 
         MapReply reply = registerAddressAndQuery(eb.build());
 
-        assertEquals(ExplicitLocatorPathLcaf.class, reply.getMappingRecordItem().get(0).getMappingRecord().getEid().getAddressType());
+        assertEquals(ExplicitLocatorPathLcaf.class, reply.getMappingRecordItem().get(0).getMappingRecord().getEid()
+                .getAddressType());
 
-        ExplicitLocatorPath receivedAddress = (ExplicitLocatorPath) reply.getMappingRecordItem().get(0).getMappingRecord().getEid().getAddress();
+        ExplicitLocatorPath receivedAddress = (ExplicitLocatorPath) reply.getMappingRecordItem().get(0)
+                .getMappingRecord().getEid().getAddress();
 
         Hop receivedHop1 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(0);
         Hop receivedHop2 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(1);
@@ -1464,8 +1516,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(ApplicationDataLcaf.class);
         eb.setVirtualNetworkId(null);
-        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationDataBuilder()
-                .setApplicationData(builder.build()).build());
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ApplicationDataBuilder().setApplicationData(builder.build()).build());
         Eid addressToSend = eb.build();
 
         MapReply reply = registerAddressAndQuery(addressToSend);
@@ -1477,10 +1529,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         ApplicationData receivedApplicationDataAddress = (ApplicationData) receivedAddress.getAddress();
         assertEquals(protocol, receivedApplicationDataAddress.getApplicationData().getProtocol().intValue());
         assertEquals(ipTOs, receivedApplicationDataAddress.getApplicationData().getIpTos().intValue());
-        assertEquals(localPortLow, receivedApplicationDataAddress.getApplicationData().getLocalPortLow().getValue().intValue());
-        assertEquals(localPortHigh, receivedApplicationDataAddress.getApplicationData().getLocalPortHigh().getValue().intValue());
-        assertEquals(remotePortLow, receivedApplicationDataAddress.getApplicationData().getRemotePortLow().getValue().intValue());
-        assertEquals(remotePortHigh, receivedApplicationDataAddress.getApplicationData().getRemotePortHigh().getValue().intValue());
+        assertEquals(localPortLow, receivedApplicationDataAddress.getApplicationData().getLocalPortLow().getValue()
+                .intValue());
+        assertEquals(localPortHigh, receivedApplicationDataAddress.getApplicationData().getLocalPortHigh().getValue()
+                .intValue());
+        assertEquals(remotePortLow, receivedApplicationDataAddress.getApplicationData().getRemotePortLow().getValue()
+                .intValue());
+        assertEquals(remotePortHigh, receivedApplicationDataAddress.getApplicationData().getRemotePortHigh().getValue()
+                .intValue());
 
         SimpleAddress ipAddressReceived = receivedApplicationDataAddress.getApplicationData().getAddress();
         assertEquals(ipString, ipAddressReceived.getIpAddress().getIpv4Address().getValue());
@@ -1665,7 +1721,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(ApplicationDataLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationDataBuilder()
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
                 new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
         Rloc adLcaf = rb.build();
@@ -1714,13 +1771,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(ApplicationDataLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationDataBuilder()
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
                 new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
         Rloc adLcaf = rb.build();
 
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
-        ((LispMappingService) lms).getNotificationService().registerNotificationListener(new XtrRequestMappingListener() {
+        ((LispMappingService) lms).getNotificationService().registerNotificationListener(
+                new XtrRequestMappingListener() {
 
             @Override
             public void onXtrRequestMapping(XtrRequestMapping notification) {
@@ -1744,7 +1803,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     }
 
-    private void sendProxyMapRequest(String rloc, int port, Rloc adLcaf) throws SocketTimeoutException, SocketException {
+    private void sendProxyMapRequest(String rloc, int port, Rloc adLcaf) throws SocketTimeoutException,
+            SocketException {
         String eid = "10.1.0.1/32";
         MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         sendMapRequest(mapRequest);
@@ -1780,7 +1840,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData()));
+        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(
+                datagramSocket, 30000).getData()));
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
@@ -1903,8 +1964,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Bundle b[] = bc.getBundles();
         for (Bundle element : b) {
             int state = element.getState();
-            LOG.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v" + element.getVersion() + ", state:"
-                    + stateToString(state));
+            LOG.trace("Bundle[" + element.getBundleId() + "]:" + element.getSymbolicName() + ",v"
+                    + element.getVersion() + ", state:" + stateToString(state));
             if (state != Bundle.ACTIVE && state != Bundle.RESOLVED) {
                 LOG.debug("Bundle:" + element.getSymbolicName() + " state:" + stateToString(state));
 

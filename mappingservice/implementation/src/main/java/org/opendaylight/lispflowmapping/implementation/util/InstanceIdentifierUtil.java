@@ -40,7 +40,8 @@ public final class InstanceIdentifierUtil {
     public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(Eid eid) {
         Preconditions.checkNotNull(eid, "Key needs and EID entry!");
 
-        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(Long.toString(getLispInstanceId(eid))));
+        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
+                Long.toString(getLispInstanceId(eid))));
         AuthenticationKeyKey authKeyKey = new AuthenticationKeyKey(new EidUri(getURIAddressString(eid)));
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(VirtualNetworkIdentifier.class, vniKey).child(AuthenticationKey.class, authKeyKey);
@@ -49,7 +50,8 @@ public final class InstanceIdentifierUtil {
     public static InstanceIdentifier<Mapping> createMappingIid(Eid eid, MappingOrigin orig) {
         Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
 
-        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(Long.toString(getLispInstanceId(eid))));
+        VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
+                Long.toString(getLispInstanceId(eid))));
         MappingKey eidKey = new MappingKey(new EidUri(getURIAddressString(eid)), orig);
         return InstanceIdentifier.create(MappingDatabase.class)
                 .child(VirtualNetworkIdentifier.class, vniKey).child(Mapping.class, eidKey);

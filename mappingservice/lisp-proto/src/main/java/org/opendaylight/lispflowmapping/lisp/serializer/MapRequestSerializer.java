@@ -67,8 +67,8 @@ public final class MapRequestSerializer {
                 | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isMapDataPresent()), Flags.MAP_DATA_PRESENT)
                 | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isProbe()), Flags.PROBE) | ByteUtil.boolToBit(
                 BooleanUtils.isTrue(mapRequest.isSmr()), Flags.SMR)));
-        requestBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isPitr()), Flags.PITR) | ByteUtil.boolToBit(
-                BooleanUtils.isTrue(mapRequest.isSmrInvoked()), Flags.SMR_INVOKED)));
+        requestBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isPitr()), Flags.PITR)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isSmrInvoked()), Flags.SMR_INVOKED)));
         if (mapRequest.getItrRloc() != null) {
             int IRC = mapRequest.getItrRloc().size();
             if (IRC > 0) {
@@ -154,7 +154,8 @@ public final class MapRequestSerializer {
             }
             if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
                 try {
-                    builder.setMapReply(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.MapReplyBuilder().setMappingRecord(
+                    builder.setMapReply(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105
+                            .maprequest.MapReplyBuilder().setMappingRecord(
                             MappingRecordSerializer.getInstance().deserialize(requestBuffer)).build()).build();
                 } catch (RuntimeException re) {
                     LOG.warn("Couldn't deserialize Map-Reply encapsulated in Map-Request", re);
@@ -162,7 +163,8 @@ public final class MapRequestSerializer {
             }
             return builder.build();
         } catch (RuntimeException re) {
-            throw new LispSerializationException("Couldn't deserialize Map-Request (len=" + requestBuffer.capacity() + ")", re);
+            throw new LispSerializationException("Couldn't deserialize Map-Request (len="
+                    + requestBuffer.capacity() + ")", re);
         }
     }
 

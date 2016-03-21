@@ -215,7 +215,8 @@ public class MapResolver implements IMapResolverAsync {
                                     .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
                                     .setPriority(priority).setMulticastWeight(record.getMulticastWeight())
                                     .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
-                                    .setRloc(LispAddressUtil.toRloc(nextHop)).setLocatorId(record.getLocatorId()).build());
+                                    .setRloc(LispAddressUtil.toRloc(nextHop))
+                                    .setLocatorId(record.getLocatorId()).build());
                 }
             }
         } catch (ClassCastException cce) {

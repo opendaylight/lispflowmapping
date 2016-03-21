@@ -76,8 +76,8 @@ public class ServicePathSerializer extends LcafSerializer {
         buffer.get(spi);
         spb.setServicePathId(new ServicePathIdType((long) ByteUtil.getPartialInt(spi)));
         spb.setServiceIndex((short) ByteUtil.getUnsignedByte(buffer));
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePathBuilder()
-                .setServicePath(spb.build()).build();
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ServicePathBuilder().setServicePath(spb.build()).build();
     }
 
     private interface Length {

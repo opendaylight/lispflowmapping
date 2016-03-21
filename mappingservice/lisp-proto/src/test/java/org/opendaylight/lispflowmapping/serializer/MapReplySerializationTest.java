@@ -69,7 +69,6 @@ public class MapReplySerializationTest extends BaseTestCase {
     public void deserialize__SomeFlags() throws Exception {
 
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("2A 00 00 00 00 00 "
-        //
                 + "00 00 00 00 00 00"));
         assertEquals(true, mr.isProbe());
         assertEquals(false, mr.isEchoNonceEnabled());
@@ -79,13 +78,12 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void deserialize__All() throws Exception {
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 "
-        //
-                + "00 00 00 00 00 02 00 00 " //
-                + "00 02 02 20 00 00 00 00 " //
-                + "00 01 01 02 03 04 01 02 " //
-                + "03 04 00 06 00 01 0a 0a " //
-                + "0a 0a 04 03 02 01 00 01 " //
-                + "00 02 00 01 00 02 00 03 " //
+                + "00 00 00 00 00 02 00 00 "
+                + "00 02 02 20 00 00 00 00 "
+                + "00 01 01 02 03 04 01 02 "
+                + "03 04 00 06 00 01 0a 0a "
+                + "0a 0a 04 03 02 01 00 01 "
+                + "00 02 00 01 00 02 00 03 "
                 + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
         assertEquals(2, mr.getNonce().longValue());
         assertEquals("1.2.3.4/32", ((Ipv4Prefix) mr.getMappingRecordItem().get(0)
@@ -107,19 +105,32 @@ public class MapReplySerializationTest extends BaseTestCase {
                 .getLocatorRecord().get(1).getRloc().getAddress()).getIpv6().getValue());
         assertEquals("10.10.10.10", ((Ipv4) mr.getMappingRecordItem().get(0).getMappingRecord()
                 .getLocatorRecord().get(0).getRloc().getAddress()).getIpv4().getValue());
-        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getPriority().byteValue());
-        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getWeight().byteValue());
-        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getMulticastPriority().byteValue());
-        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getMulticastWeight().byteValue());
-        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getPriority().byteValue());
-        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getWeight().byteValue());
-        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getMulticastPriority().byteValue());
-        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getMulticastWeight().byteValue());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).isLocalLocator());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).isRlocProbed());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).isRouted());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).isLocalLocator());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).isRlocProbed());
+        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .getPriority().byteValue());
+        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .getWeight().byteValue());
+        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .getMulticastPriority().byteValue());
+        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .getMulticastWeight().byteValue());
+        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .getPriority().byteValue());
+        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .getWeight().byteValue());
+        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .getMulticastPriority().byteValue());
+        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .getMulticastWeight().byteValue());
+        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .isLocalLocator());
+        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .isRlocProbed());
+        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                .isRouted());
+        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .isLocalLocator());
+        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+                .isRlocProbed());
         assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).isRouted());
     }
 
@@ -140,7 +151,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         assertEquals(2, packet.get(3));
 
         packet.position(24); // EID in first record
-        byte[] expected = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08 };
+        byte[] expected = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x08 };
         byte[] actual = new byte[16];
         packet.get(actual);
         ArrayAssert.assertEquals(expected, actual);
@@ -152,8 +164,8 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void deserialize__MultipleRecordsWithoutRLOCs() throws Exception {
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 "
-        //
-                + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
+                + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 "
+                + "00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
         assertEquals("1.2.3.4/32", ((Ipv4Prefix) mr.getMappingRecordItem().get(0)
                 .getMappingRecord().getEid().getAddress()).getIpv4Prefix().getValue());
         // XXX Why here normalized and other cases not normalized?

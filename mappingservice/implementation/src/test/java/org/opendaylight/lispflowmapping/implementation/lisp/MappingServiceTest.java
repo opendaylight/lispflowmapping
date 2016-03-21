@@ -73,7 +73,8 @@ public class MappingServiceTest extends BaseTestCase {
         MappingAuthkey authKey = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("pass").build();
         MappingEntry<MappingAuthkey> keyMappingEntry = new MappingEntry<>(SubKeys.AUTH_KEY, authKey);
         Eid key = getDefaultKey();
-        MappingEntry<MappingAuthkey>[] authKeys =(MappingEntry<MappingAuthkey>[]) (Arrays.asList(keyMappingEntry).toArray());
+        MappingEntry<MappingAuthkey>[] authKeys =(MappingEntry<MappingAuthkey>[])
+                (Arrays.asList(keyMappingEntry).toArray());
         addDsbeAddKeyExpectation();
         oneOf(dao).put(weq(key), weq(authKeys));
         mapService.addAuthenticationKey(eid, authKey);

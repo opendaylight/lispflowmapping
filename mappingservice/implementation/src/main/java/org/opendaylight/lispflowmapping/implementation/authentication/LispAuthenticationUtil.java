@@ -43,7 +43,8 @@ public final class LispAuthenticationUtil {
 
     public static byte[] createAuthenticationData(MapNotify mapNotify, String key) {
         // We assume that the key-ID is correctly set in the Map-Notify message
-        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
+        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(
+                LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
         return authentication.getAuthenticationData(mapNotify, key);
     }
 

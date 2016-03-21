@@ -60,7 +60,8 @@ public class LispSouthboundRPC implements OdlLispSbService {
         LOG.trace("sendMapNotify called!!");
         if (mapNotifyInput != null) {
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotifyInput.getMapNotify());
-            lispSbPlugin.handleSerializedLispBuffer(mapNotifyInput.getTransportAddress(), outBuffer, MessageType.MapNotify);
+            lispSbPlugin.handleSerializedLispBuffer(mapNotifyInput.getTransportAddress(), outBuffer,
+                    MessageType.MapNotify);
         } else {
             LOG.warn("MapNotify was null");
             return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
@@ -73,7 +74,8 @@ public class LispSouthboundRPC implements OdlLispSbService {
         LOG.trace("sendMapReply called!!");
         if (mapReplyInput != null) {
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReplyInput.getMapReply());
-            lispSbPlugin.handleSerializedLispBuffer(mapReplyInput.getTransportAddress(), outBuffer, MessageType.MapReply);
+            lispSbPlugin.handleSerializedLispBuffer(mapReplyInput.getTransportAddress(), outBuffer,
+                    MessageType.MapReply);
         } else {
             LOG.warn("MapReply was null");
             return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
@@ -86,7 +88,8 @@ public class LispSouthboundRPC implements OdlLispSbService {
         LOG.trace("sendMapRequest called!!");
         if (mapRequestInput != null) {
             ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequestInput.getMapRequest());
-            lispSbPlugin.handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer, MessageType.MapRequest);
+            lispSbPlugin.handleSerializedLispBuffer(mapRequestInput.getTransportAddress(), outBuffer,
+                    MessageType.MapRequest);
         } else {
             LOG.debug("MapRequest was null");
             return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
@@ -99,7 +102,8 @@ public class LispSouthboundRPC implements OdlLispSbService {
         LOG.trace("sendMapRegister called!!");
         if (mapRegisterInput != null) {
             ByteBuffer outBuffer = MapRegisterSerializer.getInstance().serialize(mapRegisterInput.getMapRegister());
-            lispSbPlugin.handleSerializedLispBuffer(mapRegisterInput.getTransportAddress(), outBuffer, MessageType.MapRegister);
+            lispSbPlugin.handleSerializedLispBuffer(mapRegisterInput.getTransportAddress(), outBuffer,
+                    MessageType.MapRegister);
         } else {
             LOG.debug("MapRegister was null");
             return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());

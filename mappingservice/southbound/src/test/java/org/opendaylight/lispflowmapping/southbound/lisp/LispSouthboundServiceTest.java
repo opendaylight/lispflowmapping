@@ -116,12 +116,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // Nonce: 0x3d8d2acd39c8d608
         // ITR-RLOC AFI=1 Address=192.168.136.10
         // Record 1: 1.2.3.4/32
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
                 + "0030   00 38 d4 31 00 00 ff 11 56 f3 c0 a8 88 0a 01 02 "
                 + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
-                + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 c0 a8 88 0a 00 20 " //
+                + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 c0 a8 88 0a 00 20 "
                 + "0060   00 01 01 02 03 04"));
         mapReplyBuilder = new MapReplyBuilder();
         mapReplyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
@@ -156,12 +157,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // 255/0
         //
 
-        mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacket = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 0e a4 c6 d8 a4 06 "
                 + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         mapNotifyBuilder = new MapNotifyBuilder();
         mapNotifyBuilder.setAuthenticationData(new byte[0]);
@@ -177,8 +179,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test(expected = LispMalformedPacketException.class)
     public void mapRegister__IllegalPacket() throws Exception {
-        mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
-                + "0010   00 68 00 00 40 00 40 11 26 15 0a 01 00 6e 0a 01 " //
+        mapRegisterPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
+                + "0010   00 68 00 00 40 00 40 11 26 15 0a 01 00 6e 0a 01 "
                 + "0020   00 01 10 f6 10 f6 00 54 03 3b 38 00 01 01 00 00 "));
 
         handleMapRegisterPacket(mapRegisterPacket);
@@ -186,18 +189,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test(expected = LispMalformedPacketException.class)
     public void mapRequest__IllegalPacket() throws Exception {
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
-                + "0030   00 38 d4 31 00 00 ff 11 56 f3 c0 a8 88 0a 01 02 " //
+                + "0030   00 38 d4 31 00 00 ff 11 56 f3 c0 a8 88 0a 01 02 "
                 + "0040   03 04 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "));
         handleMapRequestPacket(mapRequestPacket);
     }
 
     @Test(expected = LispMalformedPacketException.class)
     public void mapRequest__IllegalEncapsulatedPacket() throws Exception {
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
-                + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
+                + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "));
         handleMapRequestPacket(mapRequestPacket);
     }
@@ -221,13 +226,14 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // Priority/Weight: 255/0
         // Local RLOC: 192.168.136.51, Reachable, Priority/Weight: 6/100,
         // Multicast Priority/Weight: 255/0
-        mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
-                + "0010   00 68 00 00 40 00 40 11 26 15 0a 01 00 6e 0a 01 " //
-                + "0020   00 01 10 f6 10 f6 00 54 03 3b 38 00 01 01 00 00 " //
-                + "0030   00 00 00 00 00 00 00 01 00 14 ae d8 7b d4 9c 59 " //
-                + "0040   e9 35 75 6e f1 29 27 a3 45 20 96 06 c2 e1 00 00 " //
-                + "0050   00 0a 02 20 10 00 00 00 00 01 ac 01 01 02 01 64 " //
-                + "0060   ff 00 00 05 00 01 0a 01 00 6e 06 64 ff 00 00 05 " //
+        mapRegisterPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
+                + "0010   00 68 00 00 40 00 40 11 26 15 0a 01 00 6e 0a 01 "
+                + "0020   00 01 10 f6 10 f6 00 54 03 3b 38 00 01 01 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 ae d8 7b d4 9c 59 "
+                + "0040   e9 35 75 6e f1 29 27 a3 45 20 96 06 c2 e1 00 00 "
+                + "0050   00 0a 02 20 10 00 00 00 00 01 ac 01 01 02 01 64 "
+                + "0060   ff 00 00 05 00 01 0a 01 00 6e 06 64 ff 00 00 05 "
                 + "0070   00 01 c0 a8 88 33"));
 
         oneOf(nps).putNotification(with(lispNotificationSaver));
@@ -256,13 +262,14 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // Local RLOC: 10.0.58.156, Reachable, Priority/Weight: 1/100, Multicast
         // Priority/Weight: 255/0
 
-        mapRegisterPacket = extractWSUdpByteArray(new String("0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 " //
-                + "0010   00 68 00 00 40 00 40 11 ea c3 0a 00 3a 9c 0a 00 " //
-                + "0020   01 26 10 f6 10 f6 00 54 f5 9a 38 00 03 01 00 00 " //
-                + "0030   00 00 00 00 00 00 00 01 00 14 22 97 ff 61 ec d8 " //
-                + "0040   0f 91 c6 c4 01 ef 7f bb 77 58 39 5c 92 23 00 00 " //
-                + "0050   00 0a 01 80 10 00 00 00 00 02 26 10 00 d0 ff ff " //
-                + "0060   01 92 00 00 00 00 00 00 00 01 01 64 ff 00 00 05 " //
+        mapRegisterPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 "
+                + "0010   00 68 00 00 40 00 40 11 ea c3 0a 00 3a 9c 0a 00 "
+                + "0020   01 26 10 f6 10 f6 00 54 f5 9a 38 00 03 01 00 00 "
+                + "0030   00 00 00 00 00 00 00 01 00 14 22 97 ff 61 ec d8 "
+                + "0040   0f 91 c6 c4 01 ef 7f bb 77 58 39 5c 92 23 00 00 "
+                + "0050   00 0a 01 80 10 00 00 00 00 02 26 10 00 d0 ff ff "
+                + "0060   01 92 00 00 00 00 00 00 00 01 01 64 ff 00 00 05 "
                 + "0070   00 01 0a 00 3a 9c"));
 
         oneOf(nps).putNotification(with(lispNotificationSaver));
@@ -300,12 +307,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegister__NonSetMBit() throws Exception {
-        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
-                + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df " //
+        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
+                + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
-                + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 " //
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
 
@@ -316,12 +324,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegister__NonSetMBitWithNonZeroReservedBits() throws Exception {
-        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 02 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 c0 c7 c5 2f 57 f6 "
                 + "0040   e7 20 25 3d e8 b2 07 e2 63 de 62 2b 7a 20 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
 
@@ -331,12 +340,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegister__SetMBitWithNonZeroReservedBits() throws Exception {
-        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 03 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 a2 72 40 7b 1a ae "
                 + "0040   4e 6b e2 e5 e1 01 40 8a c9 e1 d1 80 cb 72 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
 
@@ -352,7 +362,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         System.arraycopy(mapRegisterPacket, 0, extraDataPacket, 0, mapRegisterPacket.length);
         stubMapRegister(true);
 
-        DatagramPacket dp = new DatagramPacket(wrappedBuffer(extraDataPacket), new InetSocketAddress(0), new InetSocketAddress(0));
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(extraDataPacket), new InetSocketAddress(0),
+                new InetSocketAddress(0));
         testedLispService.handlePacket(dp);
         // Check map register fields.
         // XXX: test
@@ -397,11 +408,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         assertHexEquals((byte) 0x00, result[1]);
         assertHexEquals((byte) 0x00, result[2]);
 
-        byte[] registerWithoutTypeWithoutAuthenticationData = ArrayUtils.addAll(Arrays.copyOfRange(mapRegisterPacket, 3, 16),
+        byte[] registerWithoutTypeWithoutAuthenticationData = ArrayUtils.addAll(
+                Arrays.copyOfRange(mapRegisterPacket, 3, 16),
                 Arrays.copyOfRange(mapRegisterPacket, 36, mapRegisterPacket.length));
         byte[] notifyWithoutTypeWithOutAuthenticationData = ArrayUtils.addAll(Arrays.copyOfRange(result, 3, 16),
                 Arrays.copyOfRange(result, 36, result.length));
-        ArrayAssert.assertEquals(registerWithoutTypeWithoutAuthenticationData, notifyWithoutTypeWithOutAuthenticationData);
+        ArrayAssert.assertEquals(registerWithoutTypeWithoutAuthenticationData,
+                notifyWithoutTypeWithOutAuthenticationData);
     }
 
     @Ignore
@@ -438,7 +451,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // Map-Reply Record: EID prefix: 2610:d0:ffff:192::1/128, TTL: 10,
         // Authoritative, No-Action
 
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 "
                 + "0010   00 b0 00 00 40 00 40 11 ea 7b 0a 00 3a 9c 0a 00 "
                 + "0020   01 26 10 f6 10 f6 00 9c 9b 19 80 00 00 00 60 00 "
                 + "0030   00 00 00 68 11 ff 26 10 00 d0 ff ff 01 92 00 00 "
@@ -447,8 +461,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   00 01 ff f5 bf 5d 7b 75 93 e6 00 02 26 10 00 d0 "
                 + "0070   ff ff 01 92 00 00 00 00 00 00 00 01 00 01 0a 00 "
                 + "0080   3a 9c 00 80 00 02 26 10 00 d0 ff ff 01 92 00 00 "
-                + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 " //
-                + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 " //
+                + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 "
+                + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 "
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
 
         oneOf(nps).putNotification(with(lispNotificationSaver));
@@ -456,7 +470,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"), lastMapRequest().getSourceEid().getEid());
-        assertEquals(LispAddressUtil.asIpv6PrefixEid("2610:d0:ffff:192:0:0:0:2/128"), lastMapRequest().getEidItem().get(0).getEid());
+        assertEquals(LispAddressUtil.asIpv6PrefixEid("2610:d0:ffff:192:0:0:0:2/128"),
+                lastMapRequest().getEidItem().get(0).getEid());
     }
 
     @Ignore
@@ -467,7 +482,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // (2610:d0:ffff:192::2)
         // encapsulated UDP source port: 4342
 
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 34 3e 1b 00 0c 29 f6 d6 0d 08 00 45 00 "
                 + "0010   00 b0 00 00 40 00 40 11 ea 7b 0a 00 3a 9c 0a 00 "
                 + "0020   01 26 10 f6 10 f6 00 9c 9b 19 80 00 00 00 60 00 "
                 + "0030   00 00 00 68 11 ff 26 10 00 d0 ff ff 01 92 00 00 "
@@ -476,8 +492,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   00 01 ff f5 bf 5d 7b 75 93 e6 00 02 26 10 00 d0 "
                 + "0070   ff ff 01 92 00 00 00 00 00 00 00 01 00 01 0a 00 "
                 + "0080   3a 9c 00 80 00 02 26 10 00 d0 ff ff 01 92 00 00 "
-                + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 " //
-                + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 " //
+                + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 "
+                + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 "
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
         oneOf(nps).putNotification(with(lispNotificationSaver));
         // ret(mapReply);
@@ -491,14 +507,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // encapsulated LISP packet
         // Source EID = 153.16.254.1
 
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 0c 29 7a ce 83 00 15 17 c6 4a c9 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 7a ce 83 00 15 17 c6 4a c9 08 00 45 00 "
                 + "0010   00 78 00 00 40 00 3e 11 ec b1 0a 00 01 26 0a 00 "
                 + "0020   3a 9e 10 f6 10 f6 00 64 c3 a5 80 00 00 00 45 00 "
                 + "0030   00 58 d4 31 00 00 ff 11 31 89 99 10 fe 01 0a 00 "
                 + "0040   14 c8 10 f6 10 f6 00 44 84 ee 10 00 00 01 ba f9 "
                 + "0050   ff 53 27 36 38 3a 00 01 99 10 fe 01 00 01 0a 00 "
                 + "0060   01 26 00 20 00 01 0a 00 14 c8 00 00 00 0a 01 20 "
-                + "0070   10 00 00 00 00 01 99 10 fe 01 01 64 ff 00 00 05 " //
+                + "0070   10 00 00 00 00 01 99 10 fe 01 01 64 ff 00 00 05 "
                 + "0080   00 01 0a 00 01 26"));
 
         oneOf(nps).putNotification(with(lispNotificationSaver));
@@ -528,7 +545,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte expectedRecordCount = (byte) 1;
         assertEquals(expectedRecordCount, result[MapReplyIpv4SingleLocatorPos.RECORD_COUNT]);
 
-        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
+        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()),
+                result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
         assertEquals(AddressFamily.IpV4.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
         assertEquals(0x0a0014c8, ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.EID_PREFIX));
     }
@@ -547,7 +565,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte expectedRecordCount = (byte) 1;
         assertEquals(expectedRecordCount, result[MapReplyIpv4SingleLocatorPos.RECORD_COUNT]);
 
-        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()), result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
+        assertEquals(MaskUtil.getMaskForAddress(mappingRecordBuilder.getEid().getAddress()),
+                result[MapReplyIpv4SingleLocatorPos.EID_MASK_LEN]);
         assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
         byte[] expectedIpv6 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
@@ -620,7 +639,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mappingRecordBuilder.getLocatorRecord().add(
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         mappingRecordBuilder.getLocatorRecord().add(
-                new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1")).build());
+                new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1"))
+                .build());
         stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
@@ -635,8 +655,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SecondLocatorPos.LOC_AFI));
 
         byte[] expectedIpv6Rloc = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-        ArrayAssert.assertEquals(expectedIpv6Rloc,
-                Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR, MapReplyIpv4SecondLocatorPos.LOCATOR + 16));
+        ArrayAssert.assertEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR,
+                MapReplyIpv4SecondLocatorPos.LOCATOR + 16));
 
         assertEquals(0x01, result[MapReplyIpv4SecondLocatorPos.LOCATOR_RBIT] & 0x01);
     }
@@ -647,12 +667,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // UDP: 49289 -> 4342
         // LISP(Type = 14 UNKNOWN!!!, P=1, M=1
 
-        byte[] unknownTypePacket = extractWSUdpByteArray(new String("0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        byte[] unknownTypePacket = extractWSUdpByteArray(new String(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 F8 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
                 + "0040   b0 21 27 a8 21 41 04 f3 46 5a a5 68 89 ec 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         assertNull(handlePacket(unknownTypePacket));
     }
@@ -664,15 +685,16 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // ITR-RLOC 1: 10.1.0.111
         // ITR-RLOC 2: 192.168.136.51
         //
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
-                + "0010   00 8a 00 00 40 00 40 11 25 f2 0a 01 00 6f 0a 01 " //
-                + "0020   00 01 10 f6 10 f6 00 76 06 1f 80 00 00 00 45 00 " //
-                + "0030   00 6a d4 31 00 00 ff 11 2a 3e ac 01 01 02 08 08 " //
-                + "0040   08 08 10 f6 10 f6 00 56 63 14 10 00 01 01 79 67 " //
-                + "0050   ff 75 a0 61 66 19 00 01 ac 01 01 02 00 01 0a 01 " //
-                + "0060   00 6f 00 01 c0 a8 88 33 00 20 00 01 08 08 08 08 " //
-                + "0070   00 00 00 0a 02 20 10 00 00 00 00 01 ac 01 01 02 " //
-                + "0080   01 64 ff 00 00 05 00 01 0a 01 00 6f 06 64 ff 00 " //
+        mapRequestPacket = extractWSUdpByteArray(new String(
+                  "0000   00 0c 29 7a ce 8d 00 0c 29 e4 ef 70 08 00 45 00 "
+                + "0010   00 8a 00 00 40 00 40 11 25 f2 0a 01 00 6f 0a 01 "
+                + "0020   00 01 10 f6 10 f6 00 76 06 1f 80 00 00 00 45 00 "
+                + "0030   00 6a d4 31 00 00 ff 11 2a 3e ac 01 01 02 08 08 "
+                + "0040   08 08 10 f6 10 f6 00 56 63 14 10 00 01 01 79 67 "
+                + "0050   ff 75 a0 61 66 19 00 01 ac 01 01 02 00 01 0a 01 "
+                + "0060   00 6f 00 01 c0 a8 88 33 00 20 00 01 08 08 08 08 "
+                + "0070   00 00 00 0a 02 20 10 00 00 00 00 01 ac 01 01 02 "
+                + "0080   01 64 ff 00 00 05 00 01 0a 01 00 6f 06 64 ff 00 "
                 + "0090   00 05 00 01 c0 a8 88 33"));
 
         oneOf(nps).putNotification(with(lispNotificationSaver));
@@ -715,7 +737,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private DatagramPacket handleMapRequestPacket(byte[] inPacket) {
-        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0));
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0),
+                new InetSocketAddress(0));
         // Unless we explicitly set the source port, it will be -1, which breaks some tests
         // This is till not the real port number, but it's better
         //dp.setPort(LispMessage.PORT_NUM);
@@ -724,7 +747,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private DatagramPacket handleMapRegisterPacket(byte[] inPacket) {
-        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0));
+        DatagramPacket dp = new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0),
+                new InetSocketAddress(0));
         // Unless we explicitly set the source port, it will be -1, which breaks some tests
         // This is till not the real port number, but it's better
         //dp.setPort(LispMessage.PORT_NUM);
@@ -738,7 +762,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private DatagramPacket handlePacket(byte[] inPacket) {
         // TODO get from mock
-        testedLispService.handlePacket(new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0), new InetSocketAddress(0)));
+        testedLispService.handlePacket(new DatagramPacket(wrappedBuffer(inPacket), new InetSocketAddress(0),
+                new InetSocketAddress(0)));
         return null;
     }
 

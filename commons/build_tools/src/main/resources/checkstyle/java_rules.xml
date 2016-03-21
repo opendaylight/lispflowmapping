@@ -22,13 +22,17 @@
     </module>
 
     <module name="TreeWalker">
-       <module name="RedundantImport"/>
-       <module name="UnusedImports"/>
-       <module name="AvoidStarImport"/>
-       <module name="NeedBraces"/>
-       <module name="UpperEll"/>
-       <module name="EmptyStatement"/>
-       <module name="EqualsHashCode"/>
+        <module name="LineLength">
+            <property name="max" value="120"/>
+            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        </module>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+        <module name="AvoidStarImport"/>
+        <module name="NeedBraces"/>
+        <module name="UpperEll"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
     </module>
 
 </module>

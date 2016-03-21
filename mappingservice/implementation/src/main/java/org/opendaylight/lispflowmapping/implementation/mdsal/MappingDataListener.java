@@ -132,7 +132,8 @@ public class MappingDataListener extends AbstractDataListener {
 
                 mapSystem.removeMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid());
                 try {
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping, MappingChange.Removed));
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
+                            mapping, MappingChange.Removed));
                 } catch (InterruptedException e) {
                     LOG.warn("Notification publication interrupted!");
                 }

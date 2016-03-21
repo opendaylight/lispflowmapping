@@ -23,8 +23,10 @@ public final class LispAuthenticationFactory {
     private static void initializeMap() {
         keyIDToAuthenticationMap = new HashMap<LispKeyIDEnum, ILispAuthentication>();
         keyIDToAuthenticationMap.put(LispKeyIDEnum.NONE, LispNoAuthentication.getInstance());
-        keyIDToAuthenticationMap.put(LispKeyIDEnum.SHA1, new LispMACAuthentication(LispKeyIDEnum.SHA1.getAuthenticationName()));
-        keyIDToAuthenticationMap.put(LispKeyIDEnum.SHA256, new LispMACAuthentication(LispKeyIDEnum.SHA256.getAuthenticationName()));
+        keyIDToAuthenticationMap.put(LispKeyIDEnum.SHA1,
+                new LispMACAuthentication(LispKeyIDEnum.SHA1.getAuthenticationName()));
+        keyIDToAuthenticationMap.put(LispKeyIDEnum.SHA256,
+                new LispMACAuthentication(LispKeyIDEnum.SHA256.getAuthenticationName()));
         keyIDToAuthenticationMap.put(LispKeyIDEnum.UNKNOWN, LispNoAuthentication.getInstance());
 
     }

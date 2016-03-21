@@ -68,7 +68,8 @@ public final class KeyValueAddressSerializer extends LcafSerializer {
     }
 
     @Override
-    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
+    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
+            LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(KeyValueAddressLcaf.class);
         rb.setVirtualNetworkId(null);
@@ -82,7 +83,7 @@ public final class KeyValueAddressSerializer extends LcafSerializer {
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();
         kvab.setKey(keyAddress);
         kvab.setValue(valueAddress);
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddressBuilder()
-                .setKeyValueAddress(kvab.build()).build();
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.KeyValueAddressBuilder().setKeyValueAddress(kvab.build()).build();
     }
 }

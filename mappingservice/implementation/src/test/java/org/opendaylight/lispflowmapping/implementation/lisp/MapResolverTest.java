@@ -98,7 +98,8 @@ public class MapResolverTest extends BaseTestCase {
 
         MappingRecord eidToLocators = mapReply.getMappingRecordItem().get(0).getMappingRecord();
         assertEquals(1, eidToLocators.getLocatorRecord().size());
-        LocatorRecord resultLocator = mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0);
+        LocatorRecord resultLocator = mapReply.getMappingRecordItem().get(0).getMappingRecord()
+                .getLocatorRecord().get(0);
         assertEquals(locator.isLocalLocator(), resultLocator.isLocalLocator());
         assertEquals(locator.isRouted(), resultLocator.isRouted());
         assertEquals(locator.getMulticastPriority(), resultLocator.getMulticastPriority());

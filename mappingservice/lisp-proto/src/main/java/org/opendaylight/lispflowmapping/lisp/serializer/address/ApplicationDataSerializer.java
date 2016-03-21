@@ -44,8 +44,8 @@ public final class ApplicationDataSerializer extends LcafSerializer {
 
     @Override
     protected short getLcafLength(LispAddress lispAddress) {
-        ApplicationData appData = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData)
-                lispAddress.getAddress()).getApplicationData();
+        ApplicationData appData = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                .rev151105.lisp.address.address.ApplicationData) lispAddress.getAddress()).getApplicationData();
         return (short) (Length.ALL_FIELDS + SimpleAddressSerializer.getInstance().getAddressSize(appData.getAddress()));
     }
 
@@ -56,8 +56,8 @@ public final class ApplicationDataSerializer extends LcafSerializer {
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        ApplicationData appData = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData)
-                lispAddress.getAddress()).getApplicationData();
+        ApplicationData appData = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                .rev151105.lisp.address.address.ApplicationData) lispAddress.getAddress()).getApplicationData();
         buffer.put(ByteUtil.partialIntToByteArray(NumberUtil.asInt(appData.getIpTos()), Length.TOC));
         buffer.put((byte) NumberUtil.asShort(appData.getProtocol()));
         if (appData.getLocalPortLow() != null) {
@@ -93,7 +93,8 @@ public final class ApplicationDataSerializer extends LcafSerializer {
     }
 
     @Override
-    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
+    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
+            LispAddressSerializerContext ctx) {
         RlocBuilder eb = new RlocBuilder();
         eb.setAddressType(ApplicationDataLcaf.class);
         eb.setVirtualNetworkId(null);
@@ -113,8 +114,8 @@ public final class ApplicationDataSerializer extends LcafSerializer {
         builder.setRemotePortHigh(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
         SimpleAddress address = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         builder.setAddress(address);
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationDataBuilder()
-                .setApplicationData(builder.build()).build();
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ApplicationDataBuilder().setApplicationData(builder.build()).build();
     }
 
     private interface Length {

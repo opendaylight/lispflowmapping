@@ -55,8 +55,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void deserialize__FlagsInFirstByte() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 00 00 01 3d 8d "
-        //
-                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"));
         assertFalse(mr.isAuthoritative());
         assertTrue(mr.isMapDataPresent());
@@ -64,8 +63,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertFalse(mr.isSmr());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 00 00 01 3d 8d "
-        //
-                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isAuthoritative());
         assertFalse(mr.isMapDataPresent());
@@ -73,8 +71,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertTrue(mr.isSmr());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("1C 00 00 01 3d 8d "
-        //
-                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isAuthoritative());
         assertTrue(mr.isMapDataPresent());
@@ -84,10 +81,10 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__LispMobMapRequestWithReply() throws Exception {
-        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("14 00 00 01 3e f7 " //
-                + "7f 5b 41 7c 77 3c 00 01 01 01 01 01 00 01 c0 a8 " //
-                + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 " //
-                + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("14 00 00 01 3e f7 "
+                + "7f 5b 41 7c 77 3c 00 01 01 01 01 01 00 01 c0 a8 "
+                + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 "
+                + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 "
                 + "00 01 c0 a8 38 66"));
         assertEquals("1.1.1.1", ((Ipv4) mr.getSourceEid().getEid().getAddress()).getIpv4().getValue());
         assertEquals("1.2.3.4/32",
@@ -99,7 +96,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__EmptyMapRequest() throws Exception {
 
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        ByteBuffer expected = hexToByteBuffer("10 00 00 00 00 00 " //
+        ByteBuffer expected = hexToByteBuffer("10 00 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
     }
@@ -110,18 +107,18 @@ public class MapRequestSerializationTest extends BaseTestCase {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setAuthoritative(true);
         mrBuilder.setProbe(true);
-        ByteBuffer expected = hexToByteBuffer("1A 00 00 00 00 00 " //
+        ByteBuffer expected = hexToByteBuffer("1A 00 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
         mrBuilder = new MapRequestBuilder();
         mrBuilder.setSmr(true);
         mrBuilder.setMapDataPresent(true);
-        expected = hexToByteBuffer("15 00 00 00 00 00 " //
+        expected = hexToByteBuffer("15 00 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
         mrBuilder.setAuthoritative(true);
         mrBuilder.setProbe(true);
-        expected = hexToByteBuffer("1F 00 00 00 00 00 " //
+        expected = hexToByteBuffer("1F 00 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
     }
@@ -131,11 +128,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setPitr(true);
         mrBuilder.setSmrInvoked(true);
-        ByteBuffer expected = hexToByteBuffer("10 C0 00 00 00 00 " //
+        ByteBuffer expected = hexToByteBuffer("10 C0 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
         mrBuilder.setPitr(false);
-        expected = hexToByteBuffer("10 40 00 00 00 00 " //
+        expected = hexToByteBuffer("10 40 00 00 00 00 "
                 + "00 00 00 00 00 00 00 00");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
 
@@ -144,15 +141,13 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void deserialize__FlagsInSecondByte() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 01 3d 8d "
-        //
-                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"));
         assertTrue(mr.isPitr());
         assertFalse(mr.isSmrInvoked());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 40 00 01 3d 8d "
-        //
-                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 " //
+                + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"));
         assertFalse(mr.isPitr());
         assertTrue(mr.isSmrInvoked());
@@ -161,9 +156,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void deserialize__SingleEidItem() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 "
-        //
                 + "01 " // single record
-                + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
+                + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a "
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(1, mr.getEidItem().size());
@@ -173,14 +167,14 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
     @Test
     public void deserialize__ContainsMapReply() throws Exception {
-        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 " //
+        MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 "
                 + "01 " // single record
-                + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
+                + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a "
                 + "00 20 00 01 01 02 03 04 "// end of map request
-                + "00 00 " //
-                + "00 02 01 20 00 00 00 00 " //
-                + "00 01 01 02 03 04 01 02 " //
-                + "03 04 00 06 00 01 0a 0a " //
+                + "00 00 "
+                + "00 02 01 20 00 00 00 00 "
+                + "00 01 01 02 03 04 01 02 "
+                + "03 04 00 06 00 01 0a 0a "
                 + "0a 0a"
 
         ));
@@ -282,9 +276,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void deserialize__MultipleItrRlocs() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("10 00 "
-        //
                 + "02 " // This means 3 ITR - RLOCs
-                + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
+                + "01 3d 8d 2a cd 39 c8 d6 08 00 00 "
                 + "00 01 c0 a8 88 0a " // IPv4 (ITR-RLOC #1 of 3)
                 // IPv6 (ITR-RLOC #2 of 3)
                 + "00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 " //
@@ -310,7 +303,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.setEidItem(new ArrayList<EidItem>());
         mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         ByteBuffer expected = hexToByteBuffer("12 80 01 01 00 00 " //
-                + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 20 00 01 01 02 03 04");
+                + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 "
+                + "00 07 00 08 00 20 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
     }
 
@@ -321,12 +315,16 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapRequestBuilder.setMapDataPresent(true);
         mapRequestBuilder.setPitr(true);
         mapRequestBuilder.setNonce((long) 13);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1"))).build());
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1")))
+                .build());
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
+                .build());
+        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8"))
+                .build());
         mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
+                .build());
         MapReplyBuilder mapreplyBuilder = new MapReplyBuilder();
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
 
@@ -339,10 +337,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapreplyBuilder.setMappingRecord(recordBuilder.build());
         mapRequestBuilder.setMapReply(mapreplyBuilder.build());
 
-        ByteBuffer expected = hexToByteBuffer("16 80 01 01 00 00 " //
-                + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 00 07 00 08 00 20 00 01 01 02 03 04 "// map
-                                                                                                                                                        // request
+        ByteBuffer expected = hexToByteBuffer("16 80 01 01 00 00 "
+                + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 "
+                + "00 07 00 08 00 20 00 01 01 02 03 04 "// map
                 + "00 00 00 00 01 00 00 00 00 00 00 01 00 00 00 01 00 00 00 00 00 00 00 01 00 00 00 02");
-        assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mapRequestBuilder.build()).array());
+        assertArrayEquals(expected.array(),
+                MapRequestSerializer.getInstance().serialize(mapRequestBuilder.build()).array());
     }
 }

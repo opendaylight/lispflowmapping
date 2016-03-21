@@ -141,7 +141,8 @@ public final class MapRegisterSerializer {
             registerBuffer.get(mapRegisterBytes);
             return builder.build();
         } catch (RuntimeException re) {
-            throw new LispSerializationException("Couldn't deserialize Map-Register (len=" + registerBuffer.capacity() + ")", re);
+            throw new LispSerializationException("Couldn't deserialize Map-Register (len="
+                    + registerBuffer.capacity() + ")", re);
         }
 
     }

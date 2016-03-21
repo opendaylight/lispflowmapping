@@ -45,7 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
-public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket> implements ILispSouthboundService {
+public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
+        implements ILispSouthboundService {
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
@@ -92,7 +93,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         try {
             handleMapRequest(inBuffer, extractEncapsulatedSourcePort(inBuffer));
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len="
+                    + inBuffer.capacity() + ")", re);
         }
     }
 
@@ -107,7 +109,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             RequestMappingBuilder requestMappingBuilder = new RequestMappingBuilder();
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            transportAddressBuilder.setIpAddress(
+                    LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
@@ -117,7 +120,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len="
+                    + inBuffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
@@ -132,14 +136,16 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             } else if (ipType == 6) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV6_NO_EXT - 1);
             } else {
-                throw new LispMalformedPacketException("Couldn't deserialize Map-Request: inner packet has unknown IP version: " + ipType);
+                throw new LispMalformedPacketException(
+                        "Couldn't deserialize Map-Request: inner packet has unknown IP version: " + ipType);
             }
 
             int encapsulatedSourcePort = inBuffer.getShort() & 0xFFFF;
             inBuffer.position(inBuffer.position() + PacketHeader.Length.UDP - 2);
             return encapsulatedSourcePort;
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len="
+                    + inBuffer.capacity() + ")", re);
         }
     }
 
@@ -159,7 +165,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
+                    + inBuffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
@@ -181,7 +188,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Notify (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Notify (len="
+                    + inBuffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
@@ -203,7 +211,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len="
+                    + inBuffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }

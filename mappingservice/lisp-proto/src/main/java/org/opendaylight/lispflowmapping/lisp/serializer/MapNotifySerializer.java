@@ -133,7 +133,8 @@ public final class MapNotifySerializer {
             notifyBuffer.limit(notifyBuffer.position());
             return builder.build();
         } catch (RuntimeException re) {
-            throw new LispSerializationException("Couldn't deserialize Map-Notify (len=" + notifyBuffer.capacity() + ")", re);
+            throw new LispSerializationException("Couldn't deserialize Map-Notify (len="
+                    + notifyBuffer.capacity() + ")", re);
         }
     }
 

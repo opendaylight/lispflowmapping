@@ -82,7 +82,8 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
         eb.setAddressType(KeyValueAddressLcaf.class);
         eb.setVirtualNetworkId(null);
         eb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddressBuilder()
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.KeyValueAddressBuilder()
                 .setKeyValueAddress(addressBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eb.build()));

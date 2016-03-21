@@ -75,7 +75,8 @@ public final class LispAddressUtil {
 
     public static final short STARTING_SERVICE_INDEX = 255;
     private static final Pattern IP4_PATTERN =
-            Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])",
+            Pattern.CASE_INSENSITIVE);
     private static final Pattern IP6_PATTERN =
             Pattern.compile("([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}", Pattern.CASE_INSENSITIVE);
 
@@ -124,11 +125,13 @@ public final class LispAddressUtil {
 
     public static Address addressFromInet(InetAddress address) {
         if (address instanceof Inet4Address) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder()
-            .setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address)).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv4Builder()
+                    .setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address)).build();
         } else if (address instanceof Inet6Address) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder()
-            .setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address)).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv6Builder()
+                    .setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address)).build();
         }
         return null;
     }
@@ -148,9 +151,11 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else if (address.getIpv4Address() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder().setIpv4(address.getIpv4Address()).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv4Builder().setIpv4(address.getIpv4Address()).build();
         } else if (address.getIpv6Address() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder().setIpv6(address.getIpv6Address()).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv6Builder().setIpv6(address.getIpv6Address()).build();
         }
         return null;
     }
@@ -170,9 +175,11 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else if (address.getIpv4Prefix() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder().setIpv4Prefix(address.getIpv4Prefix()).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv4PrefixBuilder().setIpv4Prefix(address.getIpv4Prefix()).build();
         } else if (address.getIpv6Prefix() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6PrefixBuilder().setIpv6Prefix(address.getIpv6Prefix()).build();
+            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                    .rev151105.lisp.address.address.Ipv6PrefixBuilder().setIpv6Prefix(address.getIpv6Prefix()).build();
         }
         return null;
     }
@@ -370,7 +377,8 @@ public final class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(eid.getAddressType());
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
-        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
+        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(
+                IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -378,7 +386,8 @@ public final class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(eid.getAddressType());
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
-        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
+        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(
+                IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -388,7 +397,10 @@ public final class LispAddressUtil {
         if (vni >= 0) {
             eb.setVirtualNetworkId(new InstanceIdType(vni));
         }
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder spb = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.service.path.ServicePathBuilder spb =
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.service.path.ServicePathBuilder();
         spb.setServicePathId(new ServicePathIdType(servicePathId));
         spb.setServiceIndex(serviceIndex);
         return eb.setAddress(addressFromServicePath(spb.build())).build();
@@ -430,7 +442,8 @@ public final class LispAddressUtil {
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();
         kvab.setKey(key);
         kvab.setValue(value);
-        KeyValueAddress address = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddressBuilder()
+        KeyValueAddress address = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                .rev151105.lisp.address.address.KeyValueAddressBuilder()
                 .setKeyValueAddress(kvab.build()).build();
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(KeyValueAddressLcaf.class);
@@ -443,7 +456,8 @@ public final class LispAddressUtil {
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();
         kvab.setKey(key);
         kvab.setValue(value);
-        KeyValueAddress address = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddressBuilder()
+        KeyValueAddress address = new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+                .rev151105.lisp.address.address.KeyValueAddressBuilder()
                 .setKeyValueAddress(kvab.build()).build();
         RlocBuilder builder = new RlocBuilder();
         builder.setAddressType(KeyValueAddressLcaf.class);
@@ -468,7 +482,8 @@ public final class LispAddressUtil {
         builder.setAddressType(SourceDestKeyLcaf.class);
         builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
         builder.setAddress(
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                        .lisp.address.address.SourceDestKeyBuilder()
                         .setSourceDestKey(asSrcDst(src, dst, smask, dmask)).build());
 
         return builder.build();
@@ -485,8 +500,10 @@ public final class LispAddressUtil {
 
     public static Rloc asTeLcafRloc(List<IpAddress> hopList) {
         RlocBuilder teBuilder = new RlocBuilder();
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder elpBuilder =
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ExplicitLocatorPathBuilder elpBuilder =
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ExplicitLocatorPathBuilder();
         ExplicitLocatorPathBuilder teAddrBuilder = new ExplicitLocatorPathBuilder();
         teAddrBuilder.setHop(new ArrayList<Hop>());
         for (IpAddress hop : hopList) {

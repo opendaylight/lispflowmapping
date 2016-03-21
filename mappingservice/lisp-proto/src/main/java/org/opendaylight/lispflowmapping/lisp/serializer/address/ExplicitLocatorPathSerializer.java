@@ -70,8 +70,9 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
             for (Hop hop : elp.getExplicitLocatorPath().getHop()) {
                 buffer.put((byte) 0);
                 if (hop.getLrsBits() != null) {
-                    buffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isLookup()), Flags.LOOKUP) | //
-                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isRlocProbe()), Flags.RLOC_PROBE) | //
+                    buffer.put((byte) (
+                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isLookup()), Flags.LOOKUP) |
+                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isRlocProbe()), Flags.RLOC_PROBE) |
                             ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isStrict()), Flags.STRICT)));
                 } else {
                     buffer.put((byte) 0);
@@ -91,7 +92,8 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
     }
 
     @Override
-    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
+    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
+            LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(ExplicitLocatorPathLcaf.class);
         rb.setVirtualNetworkId(null);
@@ -115,7 +117,8 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
             length -= SimpleAddressSerializer.getInstance().getAddressSize(address) + 2;
             hops.add(builder.build());
         }
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPathBuilder()
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.ExplicitLocatorPathBuilder()
                 .setExplicitLocatorPath(new ExplicitLocatorPathBuilder().setHop(hops).build()).build();
     }
 

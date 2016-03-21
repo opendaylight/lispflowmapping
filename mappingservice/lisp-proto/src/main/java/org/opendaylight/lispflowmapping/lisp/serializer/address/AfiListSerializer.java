@@ -44,8 +44,8 @@ public final class AfiListSerializer extends LcafSerializer {
     @Override
     protected short getLcafLength(LispAddress lispAddress) {
         short totalSize = 0;
-        AfiList afiList = (((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList)
-                lispAddress.getAddress()).getAfiList());
+        AfiList afiList = (((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiList) lispAddress.getAddress()).getAfiList());
         for (SimpleAddress address : afiList.getAddressList()) {
             totalSize += SimpleAddressSerializer.getInstance().getAddressSize(address);
         }
@@ -59,8 +59,8 @@ public final class AfiListSerializer extends LcafSerializer {
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        AfiList afiList = (((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList)
-                lispAddress.getAddress()).getAfiList());
+        AfiList afiList = (((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiList) lispAddress.getAddress()).getAfiList());
         for (SimpleAddress address : afiList.getAddressList()) {
             SimpleAddressSerializer.getInstance().serialize(buffer, address);
         }
@@ -92,7 +92,8 @@ public final class AfiListSerializer extends LcafSerializer {
             length -= SimpleAddressSerializer.getInstance().getAddressSize(address);
             addresses.add(address);
         }
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
-                .setAfiList(new AfiListBuilder().setAddressList(addresses).build()).build();
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
+                .address.address.AfiListBuilder().setAfiList(new AfiListBuilder().setAddressList(addresses).build())
+                .build();
     }
 }

@@ -45,8 +45,10 @@ public final class SourceDestKeySerializer extends LcafSerializer {
     protected short getLcafLength(LispAddress lispAddress) {
         SourceDestKey sdk = (SourceDestKey) lispAddress.getAddress();
         return (short) (Length.ALL_FIELDS
-                + SimpleAddressSerializer.getInstance().getAddressSize(new SimpleAddress(sdk.getSourceDestKey().getSource()))
-                + SimpleAddressSerializer.getInstance().getAddressSize(new SimpleAddress(sdk.getSourceDestKey().getDest())));
+                + SimpleAddressSerializer.getInstance().getAddressSize(
+                        new SimpleAddress(sdk.getSourceDestKey().getSource()))
+                + SimpleAddressSerializer.getInstance().getAddressSize(
+                        new SimpleAddress(sdk.getSourceDestKey().getDest())));
     }
 
     @Override
@@ -85,7 +87,8 @@ public final class SourceDestKeySerializer extends LcafSerializer {
     }
 
     @Override
-    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
+    protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
+            LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(SourceDestKeyLcaf.class);
         rb.setVirtualNetworkId(null);
@@ -104,8 +107,8 @@ public final class SourceDestKeySerializer extends LcafSerializer {
         SourceDestKeyBuilder sdb = new SourceDestKeyBuilder();
         sdb.setSource(srcAddress);
         sdb.setDest(dstAddress);
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
-                .setSourceDestKey(sdb.build()).build();
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.SourceDestKeyBuilder().setSourceDestKey(sdb.build()).build();
     }
 
     private interface Length {

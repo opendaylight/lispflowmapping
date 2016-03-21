@@ -96,14 +96,16 @@ public class MapServerTest extends BaseTestCase {
         recordBuilder.setEid(eid);
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         recordBuilder.getLocatorRecord().add(new LocatorRecordBuilder().setRloc(rloc).build());
-        recordBuilder.setAction(Action.NoAction).setMapVersion((short) 0).setAuthoritative(false).setRecordTtl(60).setMaskLength((short) 32);
+        recordBuilder.setAction(Action.NoAction).setMapVersion((short) 0).setAuthoritative(false).setRecordTtl(60)
+                .setMaskLength((short) 32);
         mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
-        mapRegisterWithAuthentication = MapRegisterSerializer.getInstance().deserialize(hexToByteBuffer("38 00 01 01 FF BB "
-        //
-                + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 " //
-                + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 " //
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
+        mapRegisterWithAuthentication = MapRegisterSerializer.getInstance().deserialize(
+                hexToByteBuffer("38 00 01 01 FF BB "
+                + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 "
+                + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 "
+                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         mappingEntriesSaver = new ValueSaverAction<MappingEntry<?>[]>();
@@ -154,7 +156,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setPriority((short) 55);
         eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder.build());
 
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(eidToLocatorBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(eidToLocatorBuilder.build()).build());
 
         addDefaultPutAndGetExpectations(eid);
 
@@ -176,7 +179,8 @@ public class MapServerTest extends BaseTestCase {
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
         MapRegister mr = mapRegisterBuilder.build();
 
@@ -200,7 +204,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -225,7 +230,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -250,7 +256,8 @@ public class MapServerTest extends BaseTestCase {
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
         MapRegister mr = mapRegisterBuilder.build();
 
@@ -273,7 +280,8 @@ public class MapServerTest extends BaseTestCase {
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
         MapRegister mr = mapRegisterBuilder.build();
 
@@ -297,7 +305,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -322,7 +331,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -347,7 +357,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -372,7 +383,8 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder.setEid(addr).setMaskLength((short) mask);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(addr);
@@ -400,8 +412,10 @@ public class MapServerTest extends BaseTestCase {
         locatorBuilder.setRloc(rloc);
         recordBuilder1.setEid(addr).setMaskLength((short) mask);
         recordBuilder1.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder0.build()).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder1.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder0.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder1.build()).build());
         mapRegisterBuilder.setWantMapNotify(true);
 
         addDefaultPutAndGetExpectations(eid);
@@ -434,7 +448,8 @@ public class MapServerTest extends BaseTestCase {
         recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
         recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
 
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
 
         testedMapServer.handleMapRegister(mapRegisterBuilder.build());
 
@@ -458,7 +473,8 @@ public class MapServerTest extends BaseTestCase {
         // LispAFIAddress rloc1 =
         // LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:7");
         String subkey = "bla";
-        Rloc rloc1 = LispAddressUtil.asKeyValueAddress(subkey, SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:7"));
+        Rloc rloc1 = LispAddressUtil.asKeyValueAddress(subkey,
+                SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:7"));
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         recordBuilder.setEid(eid);
         LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
@@ -468,7 +484,8 @@ public class MapServerTest extends BaseTestCase {
         recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
         recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
 
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
 
         testedMapServer.handleMapRegister(mapRegisterBuilder.build());
 
@@ -520,7 +537,8 @@ public class MapServerTest extends BaseTestCase {
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
 
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(recordBuilder.build()).build());
 
         testedMapServer.handleMapRegister(mapRegisterBuilder.build());
     }
@@ -545,8 +563,10 @@ public class MapServerTest extends BaseTestCase {
         etlr2Builder.getLocatorRecord().add(
                 getDefaultLocatorBuilder().setPriority((short) 10)
                         .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2")).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr2Builder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(etlrBuilder.build()).build());
+        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(etlr2Builder.build()).build());
         addDefaultPutAndGetExpectations(address);
         MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build()).getLeft();
 

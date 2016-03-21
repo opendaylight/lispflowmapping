@@ -34,7 +34,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket> implements ILispSouthboundService {
+public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
+        implements ILispSouthboundService {
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundHandler.class);
 
@@ -67,7 +68,8 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
             XtrRequestMappingBuilder requestMappingBuilder = new XtrRequestMappingBuilder();
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+            transportAddressBuilder.setIpAddress(
+                    LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
@@ -77,7 +79,8 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
+            throw new LispMalformedPacketException(
+                    "Couldn't deserialize Map-Request (len=" + inBuffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
@@ -97,7 +100,8 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
                 LOG.warn("Notification Provider is null!");
             }
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Reply (len=" + buffer.capacity() + ")", re);
+            throw new LispMalformedPacketException(
+                    "Couldn't deserialize Map-Reply (len=" + buffer.capacity() + ")", re);
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }

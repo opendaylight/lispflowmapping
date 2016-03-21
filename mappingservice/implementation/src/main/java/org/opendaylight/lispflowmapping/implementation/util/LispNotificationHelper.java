@@ -96,7 +96,8 @@ public final class LispNotificationHelper {
     public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
         List<Mapping> mappings = new ArrayList<Mapping>();
         for (int i=0; i<mapRegisterNotification.getMapRegister().getMappingRecordItem().size(); i++) {
-            MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem().get(i).getMappingRecord();
+            MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem().get(i)
+                    .getMappingRecord();
             MappingBuilder mb = new MappingBuilder();
             mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(
                     record.getEid())));

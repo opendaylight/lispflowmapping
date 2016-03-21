@@ -86,7 +86,8 @@ public class AfiListSerializerTest extends BaseTestCase {
         rb.setAddressType(AfiListLcaf.class);
         rb.setVirtualNetworkId(null);
         rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiListBuilder()
                 .setAfiList(listBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
@@ -108,7 +109,8 @@ public class AfiListSerializerTest extends BaseTestCase {
         rb.setAddressType(AfiListLcaf.class);
         rb.setVirtualNetworkId(null);
         rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiListBuilder()
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiListBuilder()
                 .setAfiList(listBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
@@ -126,13 +128,16 @@ public class AfiListSerializerTest extends BaseTestCase {
         AfiListBuilder listBuilder = new AfiListBuilder().setAddressList(new ArrayList<SimpleAddress>());
 
         listBuilder.getAddressList().add(ip1);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address1 = listBuilder.build();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.afi.list.AfiList address1 = listBuilder.build();
         listBuilder.setAddressList(new ArrayList<SimpleAddress>());
         listBuilder.getAddressList().add(ip1);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address2 = listBuilder.build();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.afi.list.AfiList address2 = listBuilder.build();
         listBuilder.setAddressList(new ArrayList<SimpleAddress>());
         listBuilder.getAddressList().add(ip2);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
+        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
 
         assertEquals(address1, address2);
         Assert.assertNotEquals(address2, address3);

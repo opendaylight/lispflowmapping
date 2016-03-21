@@ -93,7 +93,8 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
         eb.setAddressType(SourceDestKeyLcaf.class);
         eb.setVirtualNetworkId(null);
         eb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder()
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.SourceDestKeyBuilder()
                 .setSourceDestKey(addressBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eb.build()));
