@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public class LispNeutronService implements ILispNeutronService, BindingAwareProvider  {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
     private IFlowMapping mappingService;
     private OdlMappingserviceService lfmDbService;
     private static ILispNeutronService neutronService;

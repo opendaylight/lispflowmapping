@@ -20,50 +20,50 @@ import org.opendaylight.neutron.spi.NeutronNetwork;
 public class LispNeutronNetworkHandler extends LispNeutronService implements INeutronNetworkAware {
 
 
-	@Override
-	public int canCreateNetwork(NeutronNetwork network) {
+    @Override
+    public int canCreateNetwork(NeutronNetwork network) {
         LOG.info("Neutron canCreateNetwork : Network name: " + network.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return HttpURLConnection.HTTP_OK;
-	}
+    }
 
-	@Override
-	public void neutronNetworkCreated(NeutronNetwork network) {
+    @Override
+    public void neutronNetworkCreated(NeutronNetwork network) {
         LOG.info("Neutron Network Created : Network name: " + network.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + network.toString());
 
-	}
+    }
 
-	@Override
-	public int canUpdateNetwork(NeutronNetwork delta, NeutronNetwork original) {
+    @Override
+    public int canUpdateNetwork(NeutronNetwork delta, NeutronNetwork original) {
         LOG.info("Neutron canUpdateNetwork : Network name: " + original.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + original.toString());
 
         return HttpURLConnection.HTTP_OK;
-	}
+    }
 
-	@Override
-	public void neutronNetworkUpdated(NeutronNetwork network) {
+    @Override
+    public void neutronNetworkUpdated(NeutronNetwork network) {
         LOG.info("Neutron Network Updated : Network name: " + network.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + network.toString());
 
-	}
+    }
 
-	@Override
-	public int canDeleteNetwork(NeutronNetwork network) {
+    @Override
+    public int canDeleteNetwork(NeutronNetwork network) {
         LOG.info("Neutron canDeleteNetwork : Network name: " + network.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return HttpURLConnection.HTTP_OK;
-	}
+    }
 
-	@Override
-	public void neutronNetworkDeleted(NeutronNetwork network) {
+    @Override
+    public void neutronNetworkDeleted(NeutronNetwork network) {
         LOG.info("Neutron Network Deleted : Network name: " + network.getNetworkName());
         LOG.debug("Lisp Neutron Network: " + network.toString());
 
         return;
-	}
+    }
 
 }

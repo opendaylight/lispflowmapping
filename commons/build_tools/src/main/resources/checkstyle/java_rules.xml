@@ -5,11 +5,9 @@
 
 <module name="Checker">
 
-    <!--
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
-    -->
 
     <module name="RegexpSingleline">
         <!-- \s matches whitespace character, $ matches end of line. -->
