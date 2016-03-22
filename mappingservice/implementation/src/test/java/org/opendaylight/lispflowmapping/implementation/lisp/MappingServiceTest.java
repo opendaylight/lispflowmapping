@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 import org.jmock.api.Invocation;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
@@ -69,6 +70,7 @@ public class MappingServiceTest extends BaseTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public void handleAddAuthenticationKey() throws Exception {
         MappingAuthkey authKey = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("pass").build();
         MappingEntry<MappingAuthkey> keyMappingEntry = new MappingEntry<>(SubKeys.AUTH_KEY, authKey);
@@ -80,6 +82,7 @@ public class MappingServiceTest extends BaseTestCase {
     }
 
     @Test
+    @Ignore
     public void handleGetAuthenticationKey() throws Exception {
         Eid key = getDefaultKey();
         oneOf(dao).getSpecific(weq(key), with(SubKeys.AUTH_KEY));
@@ -99,6 +102,7 @@ public class MappingServiceTest extends BaseTestCase {
     }
 
     @Test
+    @Ignore
     public void handleRemoveAuthenticationKey() throws Exception {
         Eid key = getDefaultKey();
         addDsbeRemoveKeyExpectation();
