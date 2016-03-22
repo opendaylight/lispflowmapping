@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_e368c689",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:19:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_e330c6ea",
+      "revId": "8d185e8ecf1fea844347024b9153fe208e33f0bf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_e319e67a",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/SmrAndIIDUtil.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-22T12:00:58Z",
       "side": 1,
       "message": "Let\u0027s call this MultiSiteScenarioUtil, and rename the test too.",
+      "revId": "8d185e8ecf1fea844347024b9153fe208e33f0bf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_c3f82ac7",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/SmrAndIIDUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:19:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_e319e67a",
       "revId": "8d185e8ecf1fea844347024b9153fe208e33f0bf",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
