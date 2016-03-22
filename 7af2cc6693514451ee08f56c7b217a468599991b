@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_40889022",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "As I comment lower on the method definition, this is a bit confusing, because southbound registrations just register the xTRs own EID. I would expec this to look like: storeMappingViaSouthbound(VNI_2_VALUE, SITE_ID_A, SITE_A_EID_PREFIX, SITE_A_RLOC);\n\nBasically everything is from SITE_A. I rearranged the arguments in \"hierarchical\" order.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_208d8432",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "Even if we have specific mappings stored from the Northbound, we should have all 5 southbound registrations from the 4 xTRs at the start of each test, because that\u0027s what\u0027s happening in the real scenario. You could wrap the 5 registrations into another method if you wish. (Admittedly, the document may be confusing by spelling out only 3 SB mappings).",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_808298fe",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "I would also organize the parameter list of northbound mapping hierarchically: storeMappingViaNorthbound(VNI_2_VALUE, SITE_ID_C, destination_C, optional_source_B, SITE_C_RLOC)",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_60878c10",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "Is this to aid debugging, or just to allow mappings to settle and avoid race conditions?",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_a078742c",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "I would call this verifySingleIpv4RlocMapping, to make it clear that we expect a single IPv4 RLOC.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_c07b0028",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "I would just call this locatorRecords (plural).",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_0076883e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "Again, we don\u0027t have a siteFromEidPrefix in Map-Registers, so you should not have this argument, and just pass null into prepareMappingRecord(), which will need some small changes because of this.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_004e88c1",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "You should use LispAddressUtil.toEid(new Ipv4Prefix(siteToEidPrefix) + \"/\" + NETWORK_MASK); instead of a new method.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_80d1f8cf",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "If we break out these methods into a new file, we could avoid the class name clashes and the need for long names.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_809f3803",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "To avoid confusion, please rename createMappingNegative -\u003e createMappingNegativeWithDrop, or better yet, add action as a parameter, since negative mappings can have different actions.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_a0919454",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "This method shouldn\u0027t have siteFromEidPrefix, since from the Southbound we always register non-srcdst mappings.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_60a4ac57",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T10:41:57Z",
+      "side": 1,
+      "message": "While not strictly necessary for the tests, please add some sensible default values for other fields: priority\u003d1, weight\u003d1, multicastPriority\u003d255, multicastWeight\u003d0, localLocator\u003dtrue,rlocProbed\u003dfalse,routed\u003dtrue.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
