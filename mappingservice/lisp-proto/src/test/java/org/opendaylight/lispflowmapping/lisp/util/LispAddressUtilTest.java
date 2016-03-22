@@ -20,7 +20,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
@@ -960,8 +959,6 @@ public class LispAddressUtilTest {
         comparisonResult = LispAddressUtil.compareInetAddresses(inetIpv4B, inetIpv4B);
         assertEquals(0, comparisonResult);
 
-        // remove this ignore once https://git.opendaylight.org/gerrit/#/c/35682/1 will be merged */
-/*
         comparisonResult = LispAddressUtil.compareInetAddresses(inetIpv6A, inetIpv6B);
         assertEquals(-1, comparisonResult);
 
@@ -970,7 +967,6 @@ public class LispAddressUtilTest {
 
         comparisonResult = LispAddressUtil.compareInetAddresses(inetIpv6B, inetIpv6B);
         assertEquals(0, comparisonResult);
-*/
 
     }
 
@@ -995,7 +991,6 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#toIpPrefixEid(IpAddress, int)} method.
      */
-    @Ignore /* remove when https://git.opendaylight.org/gerrit/#/c/35681/2 will be merged */
     @Test
     public void toIpPrefixEid() throws UnknownHostException {
         final Eid eid = LispAddressUtil.toIpPrefixEid(IP_ADDRESS_OBJECT_WITH_IPV4_TEST,
