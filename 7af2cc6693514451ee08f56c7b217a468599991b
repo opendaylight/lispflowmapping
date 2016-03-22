@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_c00b002a",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_40889022",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_208d8432",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "Even if we have specific mappings stored from the Northbound, we should have all 5 southbound registrations from the 4 xTRs at the start of each test, because that\u0027s what\u0027s happening in the real scenario. You could wrap the 5 registrations into another method if you wish. (Admittedly, the document may be confusing by spelling out only 3 SB mappings).",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_a008742e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_208d8432",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_8309022f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_808298fe",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_60878c10",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "Is this to aid debugging, or just to allow mappings to settle and avoid race conditions?",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_031df266",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "This should be for \"mappings to settle\". Without it happens that mapping wasn\u0027t present in mapping system",
+      "parentUuid": "5a3f45e8_60878c10",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_0334d2dc",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_a078742c",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_c07b0028",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "I would just call this locatorRecords (plural).",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_434d3a72",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_c07b0028",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_83574202",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_0076883e",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_004e88c1",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "You should use LispAddressUtil.toEid(new Ipv4Prefix(siteToEidPrefix) + \"/\" + NETWORK_MASK); instead of a new method.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_a33d1ebe",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "I created method \ntoEid(final String siteToEidPrefix, final InstanceIdType vniValue, final int mask)\nwhich do what you have mentioned",
+      "parentUuid": "5a3f45e8_004e88c1",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_c3678ae9",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "sure",
+      "parentUuid": "5a3f45e8_80d1f8cf",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_809f3803",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -166,6 +328,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "To avoid confusion, please rename createMappingNegative -\u003e createMappingNegativeWithDrop, or better yet, add action as a parameter, since negative mappings can have different actions.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_439b7ac9",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_809f3803",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_03b9722e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_a0919454",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a3f45e8_60a4ac57",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 4
@@ -200,6 +398,24 @@
       "writtenOn": "2016-03-22T10:41:57Z",
       "side": 1,
       "message": "While not strictly necessary for the tests, please add some sensible default values for other fields: priority\u003d1, weight\u003d1, multicastPriority\u003d255, multicastWeight\u003d0, localLocator\u003dtrue,rlocProbed\u003dfalse,routed\u003dtrue.",
+      "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_e38c4682",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-03-22T13:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a3f45e8_60a4ac57",
       "revId": "7af2cc6693514451ee08f56c7b217a468599991b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
