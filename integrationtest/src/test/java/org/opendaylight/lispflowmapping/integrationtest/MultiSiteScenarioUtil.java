@@ -14,6 +14,7 @@ class MultiSiteScenarioUtil {
 
     static final Site SITE_A = new SiteA();
     static final Site SITE_B = new SiteB();
+    static final Site SITE_B_RLOC_10 = new SiteBRloc10();
     static final Site SITE_C = new SiteC();
     static final Site SITE_D4 = new SiteD4();
     static final Site SITE_D5 = new SiteD5();
@@ -23,11 +24,11 @@ class MultiSiteScenarioUtil {
     }
 
     static abstract class Site {
-        private String eidPrefix;
-        private String[] host;
-        private String rloc;
-        private SiteId siteId;
-        private final InstanceIdType vni;
+        protected String eidPrefix;
+        protected String[] host;
+        protected String rloc;
+        protected SiteId siteId;
+        protected final InstanceIdType vni;
 
         String getEidPrefix() {
             return eidPrefix;
@@ -105,6 +106,14 @@ class MultiSiteScenarioUtil {
 
         private SiteB() {
             super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
+        }
+    }
+
+    static class SiteBRloc10 extends SiteB {
+        private static final String RLOC = "10.10.10.10";
+
+        private SiteBRloc10() {
+            this.rloc = RLOC;
         }
     }
 

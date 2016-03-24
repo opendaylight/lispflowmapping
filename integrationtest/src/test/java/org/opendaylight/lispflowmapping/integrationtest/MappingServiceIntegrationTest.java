@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_RLOC_10;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -401,6 +402,22 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingBidirect(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.pingBidirect(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.pingOneway(SITE_A, 1, SITE_C, 4, Action.Drop);
+    }
+
+    /**
+     * Test scenario A, test case 4
+     */
+    @Test
+    public void testMultiSiteScenario4() {
+        cleanUP();
+        final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
+        multiSiteScenario.storeSouthboundMapping();
+        multiSiteScenario.storeNorthMappingBidirect(SITE_A, SITE_C);
+        multiSiteScenario.storeNorthMappingBidirect(SITE_B_RLOC_10, SITE_C);
+        sleepForSeconds(2);
+        //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
+        //that ping won't be successfull
+        multiSiteScenario.pingBidirect(SITE_B_RLOC_10, 5, SITE_C, 4);
     }
 
     // ------------------------------- Simple Tests ---------------------------
