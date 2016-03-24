@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 
 class MultiSiteScenarioUtil {
@@ -26,6 +27,7 @@ class MultiSiteScenarioUtil {
         private String[] host;
         private String rloc;
         private SiteId siteId;
+        private final InstanceIdType vni;
 
         String getEidPrefix() {
             return eidPrefix;
@@ -43,11 +45,17 @@ class MultiSiteScenarioUtil {
             return siteId;
         }
 
-        Site(final String eidPrefix, final String[] host, final String rloc, final SiteId siteId) {
+        InstanceIdType getVNI() {
+            return vni;
+        }
+
+        Site(final String eidPrefix, final String[] host, final String rloc, final SiteId siteId, final
+             InstanceIdType vni) {
             this.eidPrefix = eidPrefix;
             this.host = host;
             this.rloc = rloc;
             this.siteId = siteId;
+            this.vni = vni;
         }
 
     }
@@ -68,9 +76,11 @@ class MultiSiteScenarioUtil {
                 PREFIX_DIFFERENCE;
         private final static byte[] SITE_ID_VALUE = new byte[]{'A', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         public static final SiteId SITE_ID = new SiteId(SITE_ID_VALUE);
+        public static final int VNI_VALUE = 2;
+        public static final InstanceIdType VNI = new InstanceIdType((long) VNI_VALUE);
 
         private SiteA() {
-            super(EID_PREFIX, HOST, RLOC, SITE_ID);
+            super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
         }
     }
 
@@ -90,9 +100,11 @@ class MultiSiteScenarioUtil {
             PREFIX_DIFFERENCE;
         private final static byte[] SITE_ID_VALUE = new byte[]{'B', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         public static final SiteId SITE_ID = new SiteId(SITE_ID_VALUE);
+        public static final int VNI_VALUE = 2;
+        public static final InstanceIdType VNI = new InstanceIdType((long) VNI_VALUE);
 
         private SiteB() {
-            super(EID_PREFIX, HOST, RLOC, SITE_ID);
+            super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
         }
     }
 
@@ -112,9 +124,11 @@ class MultiSiteScenarioUtil {
                 PREFIX_DIFFERENCE;
         private final static byte[] SITE_ID_VALUE = new byte[]{'C', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         public static final SiteId SITE_ID = new SiteId(SITE_ID_VALUE);
+        public static final int VNI_VALUE = 2;
+        public static final InstanceIdType VNI = new InstanceIdType((long) VNI_VALUE);
 
         private SiteC() {
-            super(EID_PREFIX, HOST, RLOC, SITE_ID);
+            super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
         }
     }
 
@@ -134,9 +148,11 @@ class MultiSiteScenarioUtil {
                 PREFIX_DIFFERENCE;
         private final static byte[] SITE_ID_VALUE = new byte[]{'D', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         public static final SiteId SITE_ID = new SiteId(SITE_ID_VALUE);
+        public static final int VNI_VALUE = 2;
+        public static final InstanceIdType VNI = new InstanceIdType((long) VNI_VALUE);
 
         private SiteD4() {
-            super(EID_PREFIX, HOST, RLOC, SITE_ID);
+            super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
         }
     }
 
@@ -156,9 +172,11 @@ class MultiSiteScenarioUtil {
                 PREFIX_DIFFERENCE;
         private final static byte[] SITE_ID_VALUE = new byte[]{'D', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
         public static final SiteId SITE_ID = new SiteId(SITE_ID_VALUE);
+        public static final int VNI_VALUE = 3;
+        public static final InstanceIdType VNI = new InstanceIdType((long) VNI_VALUE);
 
         private SiteD5() {
-            super(EID_PREFIX, HOST, RLOC, SITE_ID);
+            super(EID_PREFIX, HOST, RLOC, SITE_ID, VNI);
         }
 
     }
