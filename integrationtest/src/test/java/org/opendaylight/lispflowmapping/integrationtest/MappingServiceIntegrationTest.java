@@ -14,6 +14,8 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -391,8 +393,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      * Test scenario A, test case 1
      */
     @Test
-    public void testMultiSiteScenario1() {
+    public void testMultiSiteScenario() throws SocketTimeoutException {
         cleanUP();
+
+        //test case 1
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.storeSouthboundMapping();
         multiSiteScenario.storeNorthMappingBidirect(SITE_B, SITE_C);
@@ -401,6 +405,24 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingBidirect(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.pingBidirect(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.pingOneway(SITE_A, 1, SITE_C, 4, Action.Drop);
+
+        //test case 2
+        multiSiteScenario.storeNorthMappingBidirect(SITE_A, SITE_C);
+//        final DatagramPacket datagramPacket = receivePacket();
+        sleepForSeconds(2);
+        multiSiteScenario.pingBidirect(SITE_A, 5, SITE_C, 4);
+        multiSiteScenario.pingOneway(SITE_D4, 5, SITE_C, 4, Action.Drop);
+
+        //test case 3
+        //following 2 mappings should represents "everything"
+        multiSiteScenario.storeNorthMappingBidirect(SITE_D4, SITE_C);
+        multiSiteScenario.storeNorthMappingBidirect(SITE_D5, SITE_C);
+        sleepForSeconds(2);
+        multiSiteScenario.pingBidirect(SITE_D4, 5, SITE_C, 4);
+        multiSiteScenario.pingBidirect(SITE_D5, 5, SITE_C, 3);
+
+
+
     }
 
     // ------------------------------- Simple Tests ---------------------------
