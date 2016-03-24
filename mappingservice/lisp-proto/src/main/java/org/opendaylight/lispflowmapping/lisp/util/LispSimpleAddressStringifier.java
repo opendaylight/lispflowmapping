@@ -9,12 +9,6 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier.Destination;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AsNumber;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedName;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
 
 import com.google.common.base.Preconditions;
 
@@ -37,22 +31,24 @@ public final class LispSimpleAddressStringifier {
     public static String getString(Destination dst, SimpleAddress addr) {
         Preconditions.checkNotNull(addr, "address should not be null");
 
-        if (addr instanceof Ipv4) {
-            return ((Ipv4) addr).getIpv4().getValue();
-        } else if (addr instanceof Ipv6) {
-            return ((Ipv6) addr).getIpv6().getValue();
-        } else if (addr instanceof Mac) {
-            return ((Mac) addr).getMac().getValue();
-        } else if (addr instanceof DistinguishedName) {
-            return ((DistinguishedName) addr).getDistinguishedName().getValue();
-        } else if (addr instanceof AsNumber) {
-            return "AS" + ((AsNumber) addr).getAsNumber().getValue();
-        } else if (addr instanceof NoAddress) {
-            if (dst == Destination.USER) {
-                return "No Address Present";
-            } else {
-                return "" + LispAddressStringifier.noAddrSeq++;
+        if (addr.getIpAddress() != null) {
+            if (addr.getIpAddress().getIpv4Address() != null) {
+                return addr.getIpAddress().getIpv4Address().getValue();
+            } else if (addr.getIpAddress().getIpv6Address() != null) {
+                return addr.getIpAddress().getIpv6Address().getValue();
             }
+        } else if (addr.getIpPrefix() != null) {
+            if (addr.getIpPrefix().getIpv4Prefix() != null) {
+                return addr.getIpPrefix().getIpv4Prefix().getValue();
+            } else if (addr.getIpPrefix().getIpv6Prefix() != null) {
+                return addr.getIpPrefix().getIpv6Prefix().getValue();
+            }
+        } else if (addr.getMacAddress() != null) {
+            return addr.getMacAddress().getValue();
+        } else if (addr.getDistinguishedNameType() != null) {
+            return (addr.getDistinguishedNameType().getValue());
+        } else if (addr.getAsNumber() != null) {
+            return "AS" + addr.getAsNumber().getValue();
         }
 
         return null;
@@ -61,18 +57,24 @@ public final class LispSimpleAddressStringifier {
     protected static String getURLPrefix(SimpleAddress addr) {
         Preconditions.checkNotNull(addr, "address should not be null");
 
-        if (addr instanceof Ipv4) {
-            return "ipv4";
-        } else if (addr instanceof Ipv6) {
-            return "ipv6";
-        } else if (addr instanceof Mac) {
+        if (addr.getIpAddress() != null) {
+            if (addr.getIpAddress().getIpv4Address() != null) {
+                return "ipv4";
+            } else if (addr.getIpAddress().getIpv6Address() != null) {
+                return "ipv6";
+            }
+        } else if (addr.getIpPrefix() != null) {
+            if (addr.getIpPrefix().getIpv4Prefix() != null) {
+                return "ipv4";
+            } else if (addr.getIpPrefix().getIpv6Prefix() != null) {
+                return "ipv6";
+            }
+        } else if (addr.getMacAddress() != null) {
             return "mac";
-        } else if (addr instanceof DistinguishedName) {
+        } else if (addr.getDistinguishedNameType() != null) {
             return "dn";
-        } else if (addr instanceof AsNumber) {
+        } else if (addr.getAsNumber() != null) {
             return "as";
-        } else if (addr instanceof NoAddress) {
-            return "no";
         }
 
         return null;
