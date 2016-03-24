@@ -151,18 +151,8 @@ public final class MaskUtil {
         String[] prefix = splitPrefix(String.valueOf(address.getValue()));
         short mask = Short.parseShort(prefix[1]);
 
-        return ipPrefixFor(normalizeIP(InetAddresses.forString(prefix[0]), mask), mask);
-    }
-
-    // This is a missing method from IetfInetUtil. Will try to upstream there and remove from here
-    private static IpPrefix ipPrefixFor(InetAddress address, int maskLength) {
-        if (address instanceof Inet4Address) {
-            return new IpPrefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(address, maskLength));
-        } else if (address instanceof Inet6Address) {
-            return new IpPrefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(address, maskLength));
-        } else {
-            throw new IllegalArgumentException("Unhandled address " + address);
-        }
+        InetAddress normalizedAddress = normalizeIP(InetAddresses.forString(prefix[0]), mask);
+        return IetfInetUtil.INSTANCE.ipPrefixFor(normalizedAddress.getAddress(), mask);
     }
 
     private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
