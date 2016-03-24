@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "5a3f45e8_7f5c4226",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-03-24T04:41:19Z",
+      "side": 1,
+      "message": "Hello. So I had a quick chat with florin on this. I dont think we can move this xTR-ID list out. However, if we assume that xTR-ID\u003d0 is a reserved value, then we can use that for the merged record, and then we can just extend the mapping key to be : eid , origin, xTR-id.\nThis is cleaner, but it will remove the option of making xTR-id config false. Lori, lets briefly discuss this sometime tomorrow (9 AM PST?) Thansk",
+      "parentUuid": "9a3d3df0_cc3cf231",
+      "revId": "2a16a53fbcf8054d6562d92e0651af5fdff8c05c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_0ce704e5",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEnd.java",
         "patchSetId": 2
