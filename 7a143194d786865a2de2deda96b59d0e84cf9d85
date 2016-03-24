@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_95aacfd2",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Actually, you should use storeSourceDestinationSiteMappingViaNorthbound() (which could be renamed to storeNorthMappingSrcDst() to go with the theme), because the mapping is not bidirectional. The return ping will work based on the southbound registration for site B.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_b509cb2e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Previous comment notwithstanding this is great, exactly the way I imagined it! ;)",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_d5c0d77e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Deprecated. Please use org.junit.Assert.assertTrue;",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_faafc029",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Map-Register messages can only be sent from the Southbound, so mappingOrigin is not necessary, you can hard-code it in line 111.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_b5ca6b9f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "You should add an authentication key for 0.0.0.0/0 once, just before test 1, and remove it from here, to avoid waiting for 1 second every time we send a map-register. Adding the key for all-IPs will make it possible to register any EID.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_daac8438",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "No need for the first argument.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_15487f5a",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be necessary, since it is null by default, unless something sets it otherwise.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_950e4f33",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "s/1440/TTL/",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_5a6874f5",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Please rename to plural form storeSouthboundMappings()",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_15e4ff39",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "Sonar will complain if we don\u0027t do anything here. You can add \"            LOG.trace(\"Interrupted while sleeping\", e);\"",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_5504c714",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenarioUtil.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T14:16:31Z",
+      "side": 1,
+      "message": "There\u0027s a lot of code that is just the same for each of these classes. Can we avoid that? One approach that comes to mind is by making the Site class non-abstract, non-static, with a constructor that takes site designation (like \"A\", \"B\", \"C\", ...), PREFIX_DIFFERENCE, and VNI as arguments, and sets everything else based on the code that is repeated in each of the above subclasses. I\u0027m happy with any other approach too, just please don\u0027t copy/paste this much code with slight changes only.",
+      "revId": "7a143194d786865a2de2deda96b59d0e84cf9d85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
