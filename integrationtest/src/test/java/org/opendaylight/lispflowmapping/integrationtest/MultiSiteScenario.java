@@ -15,6 +15,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
+import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest.ourAddress;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -108,7 +111,7 @@ class MultiSiteScenario {
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
         mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
 
-        final MappingRecordBuilder mrb = prepareMappingRecord(mappingOrigin,  null, dstSite);
+        final MappingRecordBuilder mrb = prepareMappingRecord(mappingOrigin, null, dstSite);
         mappingRecordItemBuilder.setMappingRecord(mrb.build());
         mapRegisterBuilder.setMappingRecordItem(Collections.singletonList(mappingRecordItemBuilder.build()));
 
@@ -136,7 +139,17 @@ class MultiSiteScenario {
         final Eid srcEid = toEid(siteFromEidPrefix, vniValue, IP_MASK);
         mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(srcEid).build());
         mapRequestBuilder.setEidItem(eidItem);
+        mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
         return lms.handleMapRequest(mapRequestBuilder.build());
+    }
+
+    private List<ItrRloc> prepareDummyItrRloc() {
+        List<ItrRloc> itrRlocs = new ArrayList<>();
+        final ItrRlocBuilder itrRlocBuilder = new ItrRlocBuilder();
+        itrRlocBuilder.setItrRlocId(ourAddress);
+        itrRlocBuilder.setRloc(LispAddressUtil.asIpv4Rloc(ourAddress));
+        itrRlocs.add(itrRlocBuilder.build());
+        return itrRlocs;
     }
 
     void storeNorthMappingNegative(final Site dstSite, final MappingRecord.Action action) {

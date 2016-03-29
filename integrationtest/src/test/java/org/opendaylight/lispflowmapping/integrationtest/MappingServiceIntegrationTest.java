@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_RLOC_10;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
@@ -20,6 +21,7 @@ import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -135,7 +137,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
     String lispBindAddress = "127.0.0.1";
-    String ourAddress = "127.0.0.2";
+    public static final String ourAddress = "127.0.0.2";
     private Rloc locatorEid;
     private DatagramSocket socket;
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
@@ -393,7 +395,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      * Test scenario A, test case 1
      */
     @Test
-    public void testMultiSiteScenario() throws SocketTimeoutException {
+    public void testMultiSiteScenario() throws IOException {
         cleanUP();
 
         //test case 1
@@ -408,7 +410,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         //test case 2
         multiSiteScenario.storeNorthMappingBidirect(SITE_A, SITE_C);
-//        final DatagramPacket datagramPacket = receivePacket();
         sleepForSeconds(2);
         multiSiteScenario.pingBidirect(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.pingOneway(SITE_D4, 5, SITE_C, 4, Action.Drop);
@@ -421,7 +422,17 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingBidirect(SITE_D4, 5, SITE_C, 4);
         multiSiteScenario.pingBidirect(SITE_D5, 5, SITE_C, 3);
 
-
+        //test case 4
+        final DatagramPacket datagramPacket = receivePacket();
+        multiSiteScenario.storeNorthMappingBidirect(SITE_B_RLOC_10, SITE_C);
+        sleepForSeconds(2);
+        final byte[] data = datagramPacket.getData();
+        assertNotNull(data);
+        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data));
+        assertTrue(deserializedMapRequest.isSmr());
+        //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
+        //that ping won't be successfull
+        multiSiteScenario.pingBidirect(SITE_B_RLOC_10, 5, SITE_C, 4);
 
     }
 
