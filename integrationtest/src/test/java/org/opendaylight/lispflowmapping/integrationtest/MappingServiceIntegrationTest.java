@@ -434,6 +434,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //that ping won't be successfull
         multiSiteScenario.pingBidirect(SITE_B_RLOC_10, 5, SITE_C, 4);
 
+        //test case 5
+        //DOES NOT WORK - original mapping is still present
+        multiSiteScenario.storeSouthboundMapping();
+        multiSiteScenario.storeNorthMappingBidirect(SITE_A, SITE_C);
+        multiSiteScenario.storeNorthMappingBidirect(SITE_B, SITE_C);
+        multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
+        sleepForSeconds(2);
+//        multiSiteScenario.pingOneway(SITE_D4, 5, SITE_C, 4, Action.Drop);
+//        multiSiteScenario.pingOneway(SITE_D5, 1, SITE_C, 4, Action.Drop);
     }
 
     // ------------------------------- Simple Tests ---------------------------
