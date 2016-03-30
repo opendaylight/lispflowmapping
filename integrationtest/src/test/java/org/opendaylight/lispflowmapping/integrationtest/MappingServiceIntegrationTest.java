@@ -392,7 +392,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
 
     /**
-     * Test scenario A, test case 1
+     * Test scenario A
      */
     @Test
     public void testMultiSiteScenario() throws IOException {
@@ -443,6 +443,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sleepForSeconds(2);
 //        multiSiteScenario.pingOneway(SITE_D4, 5, SITE_C, 4, Action.Drop);
 //        multiSiteScenario.pingOneway(SITE_D5, 1, SITE_C, 4, Action.Drop);
+
+        //test case 6
+        multiSiteScenario.pingBidirect(SITE_D5, 5, SITE_C, 3, true, false);
     }
 
     // ------------------------------- Simple Tests ---------------------------

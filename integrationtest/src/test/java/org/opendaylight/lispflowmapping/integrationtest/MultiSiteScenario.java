@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.integrationtest;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
@@ -242,14 +243,28 @@ class MultiSiteScenario {
     }
 
     void pingBidirect(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
-        pingOneway(srcSite, srcHostIndex, dstSite, dstHostIndex);
-        pingOneway(dstSite, dstHostIndex, srcSite, srcHostIndex);
+        pingBidirect(srcSite, srcHostIndex, dstSite, dstHostIndex, false, true);
     }
 
-    void pingOneway(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
+    void pingBidirect(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex, final
+                      boolean vniEqualityCheck, boolean vniEqualityValue) {
+        final InstanceIdType instanceIdTypeDst = pingOneway(srcSite, srcHostIndex, dstSite, dstHostIndex);
+        final InstanceIdType instanceIdTypeSrc = pingOneway(dstSite, dstHostIndex, srcSite, srcHostIndex);
+        if (vniEqualityCheck) {
+            if (vniEqualityValue) {
+                assertEquals("Ping doesn't work. Vni is different.", instanceIdTypeDst, instanceIdTypeSrc);
+            } else {
+                assertNotEquals("Ping work. Vni are equals.", instanceIdTypeDst, instanceIdTypeSrc);
+            }
+        }
+    }
+
+    InstanceIdType pingOneway(final Site srcSite, final int srcHostIndex, final Site dstSite, final int
+            dstHostIndex) {
         final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
                 (dstHostIndex), dstSite.getVNI());
         verifySingleIpv4RlocMapping(mapReplyFromSrcToDst, dstSite.getRloc());
+        return mapReplyFromSrcToDst.getMappingRecordItem().get(0).getMappingRecord().getEid().getVirtualNetworkId();
     }
 
     void pingOneway(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,  final
