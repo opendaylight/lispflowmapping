@@ -458,6 +458,24 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingOneway(SITE_A, 1, SITE_C, 4, Action.Drop);
         */
 
+        //test case 8
+/*
+        multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
+        sleepForSeconds(2);
+        multiSiteScenario.pingBidirect(SITE_A, 5, SITE_B, 4);
+        multiSiteScenario.pingOneway(SITE_B, 5, SITE_C, 4, Action.Drop);
+        multiSiteScenario.pingOneway(SITE_A, 1, SITE_C, 4, Action.Drop);
+*/
+
+        //test case 9
+
+/*
+        multiSiteScenario.deleteNorthMappingBidirect(SITE_A, SITE_C);
+        //somehow delete negative mapping
+*/
+
+
+
     }
 
     // ------------------------------- Simple Tests ---------------------------
