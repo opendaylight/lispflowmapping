@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -383,7 +384,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         registerQueryRegisterWithSmr();
     }
 
-    // ------------------------------- Simple Tests ---------------------------
+    @Test
+    public void multiSiteTest2() {
+        mapService.setLookupPolicy(ConfigIni.NB_AND_SB);
+        mapService.setMappingOverwrite(false);
+    }
+
+        // ------------------------------- Simple Tests ---------------------------
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
