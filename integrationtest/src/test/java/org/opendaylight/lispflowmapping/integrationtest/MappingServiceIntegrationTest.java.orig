@@ -399,6 +399,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         registerQueryRegisterWithSmr();
     }
 
+
+    // ------------------------------- Simple Tests ---------------------------
+
+
     /**
      * Test scenario A
      */
@@ -478,6 +482,28 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
     }
 
+<<<<<<< HEAD
+    private void checkSmrPacketIsGenerated() {
+        byte[] data4 = receivePacketAndGetData();
+        assertNotNull(data4);
+        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data4));
+        assertTrue(deserializedMapRequest.isSmr());
+    }
+
+    private void resetSocketAndCheckIsEmpty() {
+        restartSocket();
+        DatagramPacket datagramPacket;
+        boolean emptySocket = false;
+        try {
+            datagramPacket = receivePacket();
+        } catch (SocketTimeoutException e) {
+            emptySocket = true;
+        }
+        assertTrue(emptySocket);
+    }
+
+    // ------------------------------- Simple Tests ---------------------------
+=======
     /**
      * Test scenario B
      */
@@ -531,29 +557,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4);
 
     }
-
-    // ------------------------------- Simple Tests ---------------------------
-
-    private void checkSmrPacketIsGenerated() {
-        byte[] data4 = receivePacketAndGetData();
-        assertNotNull(data4);
-        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data4));
-        assertTrue(deserializedMapRequest.isSmr());
-    }
-
-    private void resetSocketAndCheckIsEmpty() {
-        restartSocket();
-        DatagramPacket datagramPacket;
-        boolean emptySocket = false;
-        try {
-            datagramPacket = receivePacket();
-        } catch (SocketTimeoutException e) {
-            emptySocket = true;
-        }
-        assertTrue(emptySocket);
-    }
-
-    // ------------------------------- Simple Tests ---------------------------
+>>>>>>> Test scenario B
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
