@@ -229,6 +229,17 @@ class MultiSiteScenario {
         return mappingRecordBuilder;
     }
 
+    public void deleteNorthMappingBidirect(final Site srcSite, final Site dstSite) {
+        deleteNorthMapingOneWay(srcSite, dstSite);
+        deleteNorthMapingOneWay(dstSite, srcSite);
+    }
+
+    private void deleteNorthMapingOneWay(final Site srcSite, final Site dstSite) {
+        final Eid eid = LispAddressUtil.asSrcDstEid(srcSite.getEidPrefix(), dstSite.getEidPrefix(),
+                DEFAULT_NETWORK_MASK, DEFAULT_NETWORK_MASK, dstSite.getVNI().getValue().intValue());
+        mapService.removeMapping(MappingOrigin.Northbound, eid);
+    }
+
     void storeNorthMappingBidirect(final Site srcSite, final Site dstSite) {
         storeSourceDestinationSiteMappingViaNorthbound(srcSite, dstSite);
         storeSourceDestinationSiteMappingViaNorthbound(dstSite, srcSite);

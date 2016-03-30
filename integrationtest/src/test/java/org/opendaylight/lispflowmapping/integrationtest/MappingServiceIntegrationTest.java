@@ -446,6 +446,18 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         //test case 6
         multiSiteScenario.pingBidirect(SITE_D5, 5, SITE_C, 3, true, false);
+
+        //test case 7
+        //during deletion (MappingService.removeMapping) in DataStoreBackEnd.removeMapping  mapping.getMappingRecord()
+        //is null and therefore deletion of mapping isn't successfull
+        /*
+        multiSiteScenario.deleteNorthMappingBidirect(SITE_A, SITE_C);
+        sleepForSeconds(2);
+        multiSiteScenario.pingBidirect(SITE_A, 5, SITE_B, 4);
+        multiSiteScenario.pingBidirect(SITE_B, 5, SITE_C, 4);
+        multiSiteScenario.pingOneway(SITE_A, 1, SITE_C, 4, Action.Drop);
+        */
+
     }
 
     // ------------------------------- Simple Tests ---------------------------
