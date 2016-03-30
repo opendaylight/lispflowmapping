@@ -8,9 +8,9 @@
 package org.opendaylight.lispflowmapping.integrationtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest.ourAddress;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
@@ -85,7 +85,7 @@ class MultiSiteScenario {
         assertEquals(action, mappingRecord.getAction());
     }
 
-    private void verifySingleIpv4RlocMapping(final MapReply mapReply, final String siteRloc, boolean pingWork) {
+    private Ipv4Address verifySingleIpv4RlocMapping(final MapReply mapReply) {
         final MappingRecord mappingRecord = verifySingleIpv4RlocMappingCommon(mapReply);
         final List<LocatorRecord> locatorRecords = mappingRecord.getLocatorRecord();
         assertNotNull(locatorRecords);
@@ -96,11 +96,7 @@ class MultiSiteScenario {
         assertNotNull(rloc);
         final Address address = rloc.getAddress();
         assertTrue(address instanceof Ipv4);
-        if (pingWork) {
-            assertEquals(siteRloc, ((Ipv4) address).getIpv4().getValue());
-        } else {
-            assertNotEquals(siteRloc, ((Ipv4) address).getIpv4().getValue());
-        }
+        return ((Ipv4) address).getIpv4();
     }
 
     private MappingRecord verifySingleIpv4RlocMappingCommon(MapReply mapReply) {
@@ -266,35 +262,55 @@ class MultiSiteScenario {
         storeDestinationSiteMappingViaSouthbound(SITE_D5);
     }
 
-    void pingSimulation(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
-        pingSimulation(srcSite, srcHostIndex, dstSite, dstHostIndex, true, true);
-    }
+    private void assertPing(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,
+                         boolean expectedPingWorks) {
+        final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
+                (dstHostIndex), dstSite.getVNI());
+        final Ipv4Address ipv4AddressSrcDst = verifySingleIpv4RlocMapping(mapReplyFromSrcToDst);
 
-    void pingSimulation(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex, final
-    boolean pingWorkVniValue, final boolean pingWorkReturnedRloc) {
-        final InstanceIdType instanceIdTypeDst = oneWayReachability(srcSite, srcHostIndex, dstSite, dstHostIndex, true);
-        final InstanceIdType instanceIdTypeSrc = oneWayReachability(dstSite, dstHostIndex, srcSite, srcHostIndex,
-                pingWorkReturnedRloc);
-        if (pingWorkVniValue) {
-            assertEquals("Ping doesn't work. Vni is different.", instanceIdTypeDst, instanceIdTypeSrc);
-        } else {
-            assertNotEquals("Ping work. Vni are equals.", instanceIdTypeDst, instanceIdTypeSrc);
+        boolean currentPingWorks = true;
+        currentPingWorks = currentPingWorks & ipv4AddressSrcDst.getValue().equals(dstSite.getRloc());
+
+        //it is enough if ping doesn't work once
+        if (!expectedPingWorks && !currentPingWorks) {
+            return;
+        }
+        final MapReply mapReplyFromDstToSrc = emitMapRequestMessage(dstSite.getHost(dstHostIndex), srcSite.getHost
+                (srcHostIndex), srcSite.getVNI());
+        final Ipv4Address ipv4AddressDstSrc = verifySingleIpv4RlocMapping(mapReplyFromDstToSrc);
+
+        currentPingWorks = currentPingWorks & ipv4AddressDstSrc.getValue().equals(srcSite.getRloc());
+
+        //it is enough if ping doesn't work once
+        if (!expectedPingWorks && !currentPingWorks) {
+            return;
+        }
+        final InstanceIdType iidDst = mapReplyFromSrcToDst.getMappingRecordItem().get(0).getMappingRecord().getEid().
+                getVirtualNetworkId();
+        final InstanceIdType iidSrc = mapReplyFromDstToSrc.getMappingRecordItem().get(0).getMappingRecord().getEid().
+                getVirtualNetworkId();
+
+        currentPingWorks = currentPingWorks & iidDst.equals(iidSrc);
+
+        if (expectedPingWorks != currentPingWorks) {
+            final String equality = expectedPingWorks ? "SHOULD" : "SHOULD NOT";
+            fail("Ping " + equality + " work.");
         }
     }
 
-    InstanceIdType oneWayReachability(final Site srcSite, final int srcHostIndex, final Site dstSite, final int
-            dstHostIndex, final boolean pingWork) {
-        final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
-                (dstHostIndex), dstSite.getVNI());
-        verifySingleIpv4RlocMapping(mapReplyFromSrcToDst, dstSite.getRloc(), pingWork);
-        return mapReplyFromSrcToDst.getMappingRecordItem().get(0).getMappingRecord().getEid().getVirtualNetworkId();
+    void assertPingWorks(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
+        assertPing(srcSite, srcHostIndex, dstSite, dstHostIndex, true);
     }
 
-    void oneWayReachability(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,
-                            final MappingRecord.Action action) {
+    void assertPingFails(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
+        assertPing(srcSite, srcHostIndex, dstSite, dstHostIndex, false);
+    }
+
+    void assertPingFailsBecauseActionDrop(final Site srcSite, final int srcHostIndex, final Site dstSite, final int
+            dstHostIndex) {
         final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
-                        (dstHostIndex), dstSite.getVNI());
-        verifySingleIpv4RlocMapping(mapReplyFromSrcToDst, action);
+                (dstHostIndex), dstSite.getVNI());
+        verifySingleIpv4RlocMapping(mapReplyFromSrcToDst, MappingRecord.Action.Drop);
     }
 
     private void sleepForSeconds(int seconds) {

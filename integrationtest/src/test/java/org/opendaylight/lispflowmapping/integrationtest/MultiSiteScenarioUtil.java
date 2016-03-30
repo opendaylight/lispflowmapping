@@ -24,8 +24,8 @@ class MultiSiteScenarioUtil {
 
     static final Site SITE_A = new Site("1", 'A', VNI2);
     static final Site SITE_B = new Site("2", 'B', VNI2);
-    static final Site SITE_B_RLOC_10 = new Site("2", 'B', VNI2, "10");
     static final Site SITE_C = new Site("3", 'C', VNI2);
+    static final Site SITE_C_RLOC_10 = new Site("3", 'C', VNI2, "10");
     static final Site SITE_D4 = new Site("4", 'D', VNI2);
     static final Site SITE_D5 = new Site("5", 'D', VNI3);
 
