@@ -22,6 +22,9 @@ class MultiSiteScenarioUtil {
     private final static long VNI2 = 2L;
     private final static long VNI3 = 3L;
 
+    /**
+     * constants for test scenario A
+     */
     static final Site SITE_A = new Site("1", 'A', VNI2);
     static final Site SITE_B = new Site("2", 'B', VNI2);
     static final Site SITE_C = new Site("3", 'C', VNI2);
@@ -29,6 +32,14 @@ class MultiSiteScenarioUtil {
     static final Site SITE_D4 = new Site("4", 'D', VNI2);
     static final Site SITE_D5 = new Site("5", 'D', VNI3);
 
+    /**
+     * constants for test scenario B
+     */
+    static final Site SITE_A_SB = SITE_A;
+    static final Site SITE_B_SB = SITE_B;
+    static final Site SITE_C_SB = SITE_C;
+    static final Site SITE_D_SB = new Site("3", 'D', VNI2);
+    static final Site SITE_E_SB = new Site("10", 'E', VNI3);
 
     private MultiSiteScenarioUtil() {
         throw new UnsupportedOperationException();

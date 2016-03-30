@@ -11,6 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -33,29 +38,55 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.inject.Inject;
-
-//import org.codehaus.jettison.json.JSONException;
-//import org.codehaus.jettison.json.JSONObject;
-//import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ApplicationDataLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.KeyValueAddressLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiListBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.application.data.ApplicationDataBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
@@ -86,47 +117,22 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ApplicationDataLcaf;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.KeyValueAddressLcaf;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ApplicationData;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiListBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.application.data.ApplicationDataBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.util.Filter;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.util.Filter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+//import org.codehaus.jettison.json.JSONException;
+//import org.codehaus.jettison.json.JSONObject;
+//import org.codehaus.jettison.json.JSONTokener;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
@@ -195,7 +201,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return option;
     }
 
-    @Test
+    @Test@Ignore
     public void testLispFlowMappingFeatureLoad() {
         Assert.assertTrue(true);
     }
@@ -321,7 +327,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Inject @Filter(timeout=10000)
     private IConfigLispSouthboundPlugin configLispPlugin;
 
-    @Test
+    @Test@Ignore
     public void testSimpleUsage() throws Exception {
         mapRequestSimple();
         mapRegisterWithMapNotify();
@@ -332,7 +338,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterWithoutMapNotify();
     }
 
-    @Test
+    @Test@Ignore
     public void testLCAFs() throws Exception {
         //registerAndQuery__SrcDestLCAF();
         //registerAndQuery__SrcDestLCAFOverlap();
@@ -343,7 +349,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //registerAndQuery__SegmentLCAF();
     }
 
-    @Test
+    @Test@Ignore
     public void testMask() throws Exception {
         //testPasswordExactMatch();                     TODO commented because it needs NB
         //testPasswordMaskMatch();                      TODO commented because it needs NB
@@ -351,7 +357,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         eidPrefixLookupIPv6();
     }
 /*
-    @Test
+    @Test@Ignore
     public void testNorthbound() throws Exception {
         northboundAddKey();
         northboundAddMapping();
@@ -362,7 +368,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         northboundRetrieveSourceDestMapping();
     }
 */
-    @Test
+    @Test@Ignore
     public void testOverWriting() throws Exception {
         //testMapRegisterDosntOverwritesOtherSubKeys(); TODO weird failure, needs debug
 
@@ -372,29 +378,30 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // testMapRegisterDoesntOverwritesNoSubkey();
     }
 
-    @Test
+    @Test@Ignore
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         //mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();   TODO commented because it needs NB
     }
 
-//    @Test
+//    @Test@Ignore
 //    public void testNonProxy() throws Throwable {
 //        testSimpleNonProxy();
 //        testNonProxyOtherPort();
 //        testRecievingNonProxyOnXtrPort();
 //    }
 
-    @Test
+    @Test@Ignore
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
     }
 
-
     /**
      * Test scenario A
      */
-    @Test
+    @Test@Ignore
+
+
     public void testMultiSiteScenario() throws IOException {
         cleanUP();
 
@@ -404,19 +411,17 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //test case 1
         multiSiteScenario.storeSouthboundMappings();
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
-        multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
+        multiSiteScenario.storeNorthMappingNegative(Action.Drop, true, SITE_C);
         sleepForSeconds(2);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFailsBecauseActionDrop(SITE_A, 1, SITE_C, 4);
-
         //test case 2
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A, SITE_C);
         sleepForSeconds(2);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFailsBecauseActionDrop(SITE_D4, 5, SITE_C, 4);
-
         //test case 3
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
@@ -435,7 +440,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingFails(SITE_B, 5, SITE_C, 4);
 
         //test case 5
-        multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
+        multiSiteScenario.storeNorthMappingNegative(Action.Drop, true, SITE_C);
         sleepForSeconds(2);
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
@@ -465,7 +470,38 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
     }
 
-    // ------------------------------- Simple Tests ---------------------------
+    /**
+     * Test scenario B
+     */
+    @Test
+    public void multiSiteTest2() {
+        cleanUP();
+
+        final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
+        multiSiteScenario.setCommonAuthentication();
+
+        mapService.setLookupPolicy(ConfigIni.NB_AND_SB);
+        mapService.setMappingOverwrite(false);
+
+        //test case 1
+        multiSiteScenario.storeSouthboundMappings(SITE_A_SB, SITE_B_SB, SITE_C_SB, SITE_D_SB, SITE_E_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(true, SITE_A_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(true, SITE_B_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(false, SITE_C_SB, SITE_D_SB);
+
+        multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_SB, 4);
+        multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_SB, 4);
+
+        //test case 2
+        multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_B_SB, SITE_C_SB);
+//        multiSiteScenario.storeNorthMappingNegative();
+
+
+        //test case 3
+        //test case 4
+        //test case 5
+        //test case 6
+    }
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
@@ -1365,7 +1401,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     // ------------------------------- LCAF Tests ---------------------------
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipPrefix = "10.20.30.200/32";
@@ -1401,7 +1437,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(macString, receivedMAC.getValue());
     }
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__SrcDestLCAFOverlap() throws SocketTimeoutException {
         cleanUP();
         String ipString1 = "10.10.10.0";
@@ -1446,7 +1482,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(ipPrefix2, ipAddr2.getIpv4Prefix().getValue());
     }
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__KeyValueLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipString = "10.20.30.200";
@@ -1806,7 +1842,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
-                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
+                        new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
         Rloc adLcaf = rb.build();
 
         LOG.info("testNonProxyOtherPort:" + LispAddressStringifier.getString(adLcaf));
@@ -1856,7 +1892,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
-                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
+                        new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
         Rloc adLcaf = rb.build();
 
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
