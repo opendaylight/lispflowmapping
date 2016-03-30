@@ -258,12 +258,19 @@ class MultiSiteScenario {
 //        storeNorthMappingSrcDst(dstSite, srcSite);
 //    }
 
+    //TODO: replace with method with variable number of parameters once will test scenario merged
     void storeSouthboundMappings() {
         storeDestinationSiteMappingViaSouthbound(SITE_A);
         storeDestinationSiteMappingViaSouthbound(SITE_B);
         storeDestinationSiteMappingViaSouthbound(SITE_C);
         storeDestinationSiteMappingViaSouthbound(SITE_D4);
         storeDestinationSiteMappingViaSouthbound(SITE_D5);
+    }
+
+    void storeSouthboundMappings(final Site ... sites) {
+        for (Site site : sites) {
+            storeDestinationSiteMappingViaSouthbound(site);
+        }
     }
 
     void pingSimulation(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
