@@ -13,17 +13,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest.ourAddress;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
@@ -31,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
@@ -53,6 +53,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * Contains methods for:
+ * - checking sites visibility (availability) - simulation of ping command
+ * - for preparing and processing data structures necessary for creating map request, map register LISP messages.
+ *
+ */
 class MultiSiteScenario {
 
     private final int DEFAULT_NETWORK_MASK = 24;
@@ -61,8 +67,6 @@ class MultiSiteScenario {
     private final Integer TTL = 1440;
     private final String MAP_RECORD_A = "MAP_RECORD_1";
 
-    private final Short DEFAULT_PRIORITY = 1;
-    private final Short DEFAULT_WEIGHT = 1;
     private final Short DEFAULT_MULTICAST_PRIORITY = 255;
     private final Short DEFAULT_MULTICAST_WEIGHT = 0;
     private final Boolean DEFAULT_LOCAL_LOCATOR = true;
@@ -75,27 +79,28 @@ class MultiSiteScenario {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiSiteScenario.class);
 
+    enum EidType {
+        EID_SRC_DST, EID_WITH_PREFIX
+    }
+
     MultiSiteScenario(final IMappingService mapService, final IFlowMapping lms) {
         this.mapService = mapService;
         this.lms = lms;
     }
 
-    private void verifyIpv4Address(final MapReply mapReply, final MappingRecord.Action action) {
-        final MappingRecord mappingRecord = verifyMappingRecord(mapReply);
-        assertEquals(action, mappingRecord.getAction());
-    }
-
-    private Ipv4Address verifyIpv4Address(final MappingRecord mappingRecord) {
-        final List<LocatorRecord> locatorRecords = mappingRecord.getLocatorRecord();
-        assertNotNull(locatorRecords);
-        assertEquals(1, locatorRecords.size());
-        final LocatorRecord locatorRecord = locatorRecords.get(0);
+    private Ipv4Address verifyIpv4Address(final LocatorRecord locatorRecord) {
         assertNotNull(locatorRecord);
         final Rloc rloc = locatorRecord.getRloc();
         assertNotNull(rloc);
         final Address address = rloc.getAddress();
         assertTrue(address instanceof Ipv4);
         return ((Ipv4) address).getIpv4();
+    }
+
+    private List<LocatorRecord> verifyLocatorRecordExists(final MappingRecord mappingRecord) {
+        final List<LocatorRecord> locatorRecords = mappingRecord.getLocatorRecord();
+        assertNotNull(locatorRecords);
+        return locatorRecords;
     }
 
     private MappingRecord verifyMappingRecord(MapReply mapReply) {
@@ -115,7 +120,7 @@ class MultiSiteScenario {
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
         mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
 
-        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Southbound, null, dstSite);
+        final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
         mappingRecordItemBuilder.setMappingRecord(mrb.build());
         mapRegisterBuilder.setMappingRecordItem(Collections.singletonList(mappingRecordItemBuilder.build()));
 
@@ -165,7 +170,7 @@ class MultiSiteScenario {
         final Ipv4Prefix ipv4Prefix = new Ipv4Prefix(dstSite.getEidPrefix() + "/" + DEFAULT_NETWORK_MASK);
         final Eid eidAsIpv4Prefix = LispAddressUtil.toEid(ipv4Prefix, dstSite.getVNI());
 
-        final MappingRecordBuilder mrbNegative = prepareMappingRecord(MappingOrigin.Northbound, null, dstSite);
+        final MappingRecordBuilder mrbNegative = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
         mrbNegative.setEid(eidAsIpv4Prefix);
         mrbNegative.setAction(action);
 
@@ -179,59 +184,83 @@ class MultiSiteScenario {
         mapService.removeMapping(MappingOrigin.Northbound, eidAsIpv4Prefix);
     }
 
-    void storeNorthMappingSrcDst(final Site srcSite, final Site dstSite) {
-        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Northbound, srcSite, dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), srcSite.getSiteId(), mrb.build());
+    void storeNorthMappingSrcDst(final Site srcSite, final Site ... dstSite) {
+        final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
+                dstSite);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build());
+    }
+
+    void storeNorthMappingIpPrefix(final Site... dstSite) {
+        final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build());
     }
 
     private void storeDestinationSiteMappingViaSouthbound(final Site dstSite) {
         emitMapRegisterMessage(dstSite);
     }
 
-    private MappingRecordBuilder prepareMappingRecord(final MappingOrigin mappingOrigin, final Site srcSite, final
-                                                      Site dstSite) {
+    private MappingRecordBuilder prepareMappingRecordGeneral(final EidType eidType,
+                                                             final Site srcSite, final Site dstSite) {
         final MappingRecordBuilder mrb = provideCommonMapRecordBuilder();
+        mrb.setXtrId(new XtrId(ArrayUtils.addAll(dstSite.getSiteId().getValue(), dstSite.getSiteId().getValue())));
+
         Eid eid = null;
-        if (MappingOrigin.Northbound.equals(mappingOrigin)) {
+        if (EidType.EID_SRC_DST.equals(eidType)) {
             if (srcSite != null && dstSite != null && srcSite.getEidPrefix() != null && dstSite.getEidPrefix() !=
                     null) {
                 eid = LispAddressUtil.asSrcDstEid(srcSite.getEidPrefix(), dstSite.getEidPrefix(), DEFAULT_NETWORK_MASK,
                         DEFAULT_NETWORK_MASK, dstSite.getVNI().getValue().intValue());
             }
-        } else if (MappingOrigin.Southbound.equals(mappingOrigin)) {
-            if (dstSite != null && dstSite.getEidPrefix() != null) {
-                eid = toEid(dstSite.getEidPrefix(), dstSite.getVNI(), DEFAULT_NETWORK_MASK);
-            }
         }
 
-        mrb.setEid(eid);
-
-        if (dstSite.getRloc() != null) {
-            mrb.setLocatorRecord(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(dstSite.getRloc())),
-                    dstSite.getRloc()));
-        }
-
-        mrb.setTimestamp(System.currentTimeMillis());
-        mrb.setAction(MappingRecord.Action.NoAction);
-        mrb.setRecordTtl(TTL);
+        mrb.setEid(eid == null ? toEid(dstSite.getEidPrefix(), dstSite.getVNI(), DEFAULT_NETWORK_MASK) : eid);
         return mrb;
     }
 
-    private List<LocatorRecord> provideLocatorRecord(final Rloc rloc, final String rlocStr) {
+    private MappingRecordBuilder prepareMappingRecord(final EidType eidType, final Site srcSite, final Site...
+            dstSites) {
+        assertTrue(isEidEquals(dstSites));
+        final MappingRecordBuilder mrb = prepareMappingRecordGeneral(eidType, srcSite, dstSites[0]);
+        final List<LocatorRecord> locatorRecords = new ArrayList<>();
+        for (Site dstSite : dstSites) {
+            if (dstSite.getRloc() != null) {
+                locatorRecords.add(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(dstSite.getRloc())),
+                        dstSite.getRloc(), dstSite.getWeight(), dstSite.getPriority()));
+            }
+        }
+        mrb.setLocatorRecord(locatorRecords);
+
+        return mrb;
+    }
+
+    private boolean isEidEquals(final Site... sites) {
+        String commonEid = null;
+        for (Site site : sites) {
+            final String concreteEidPrefix = site.getEidPrefix();
+            if (!concreteEidPrefix.equals(commonEid)) {
+                if (commonEid == null) {
+                    commonEid = concreteEidPrefix;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private LocatorRecord provideLocatorRecord(final Rloc rloc, final String rlocStr, final short weight, final short
+            priority) {
         final LocatorRecordBuilder locatorRecordBuilder = new LocatorRecordBuilder();
         locatorRecordBuilder.setRloc(rloc);
         locatorRecordBuilder.setLocatorId(rlocStr);
-        locatorRecordBuilder.setPriority(DEFAULT_PRIORITY);
-        locatorRecordBuilder.setWeight(DEFAULT_WEIGHT);
+        locatorRecordBuilder.setPriority(priority);
+        locatorRecordBuilder.setWeight(weight);
         locatorRecordBuilder.setMulticastPriority(DEFAULT_MULTICAST_PRIORITY);
         locatorRecordBuilder.setMulticastWeight(DEFAULT_MULTICAST_WEIGHT);
         locatorRecordBuilder.setLocalLocator(DEFAULT_LOCAL_LOCATOR);
         locatorRecordBuilder.setRlocProbed(DEFAULT_RLOC_PROBED);
         locatorRecordBuilder.setRouted(DEFAULT_ROUTED);
-
-        final List<LocatorRecord> locatorRecords = new ArrayList<>();
-        locatorRecords.add(locatorRecordBuilder.build());
-        return locatorRecords;
+        return locatorRecordBuilder.build();
     }
 
     private MappingRecordBuilder provideCommonMapRecordBuilder() {
@@ -239,6 +268,7 @@ class MultiSiteScenario {
         mappingRecordBuilder.setRecordTtl(TTL);
         mappingRecordBuilder.setAction(MappingRecord.Action.NoAction);
         mappingRecordBuilder.setAuthoritative(true);
+        mappingRecordBuilder.setTimestamp(System.currentTimeMillis());
         return mappingRecordBuilder;
     }
 
@@ -248,22 +278,14 @@ class MultiSiteScenario {
         mapService.removeMapping(MappingOrigin.Northbound, eid);
     }
 
-//    void storeNorthMappingBidirect(final Site srcSite, final Site dstSite) {
-//        storeNorthMappingSrcDst(srcSite, dstSite);
-//        storeNorthMappingSrcDst(dstSite, srcSite);
-//    }
-
-    void storeSouthboundMappings() {
-        storeDestinationSiteMappingViaSouthbound(SITE_A);
-        storeDestinationSiteMappingViaSouthbound(SITE_B);
-        storeDestinationSiteMappingViaSouthbound(SITE_C);
-        storeDestinationSiteMappingViaSouthbound(SITE_D4);
-        storeDestinationSiteMappingViaSouthbound(SITE_D5);
+    void storeSouthboundMappings(final Site ... sites) {
+        for (Site site : sites) {
+            storeDestinationSiteMappingViaSouthbound(site);
+        }
     }
 
     boolean isPossibleAssertPingResultImmediately(final boolean expectedPingWorks, final boolean isPartialyWorking,
-                                                  final
-    String  msg) {
+                                                  final String  msg) {
         //ping fail is unwanted. ping definitely failed
         if (expectedPingWorks && !isPartialyWorking) {
             fail(msg);
@@ -286,39 +308,83 @@ class MultiSiteScenario {
         return false;
     }
 
-    boolean checkActionAndRloc(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,
-                               boolean expectedPingWorks, MapReply mapReplyFromSrcToDst) {
+    boolean checkActionAndRloc(final Site dstSite, boolean expectedPingWorks, MapReply mapReplyFromSrcToDst, final
+                                Site  ... additionalSitesFromMapping) {
         final MappingRecord mappingRecord = verifyMappingRecord(mapReplyFromSrcToDst);
         final boolean isNotDroppendSrcDst = !MappingRecord.Action.Drop.equals(mappingRecord.getAction());
 
         if (isPossibleAssertPingResultImmediately(expectedPingWorks, isNotDroppendSrcDst, "Drop action has appeared " +
-                "during ping" )) {
+                "during ping")) {
             return true;
         }
 
+        final List<LocatorRecord> locatorRecords = verifyLocatorRecordExists(mappingRecord);
+        for (Site expectedTargetSite : concatenateSites(dstSite, additionalSitesFromMapping)) {
+            boolean expectedTargetFound = false;
+            for (LocatorRecord locatorRecord : locatorRecords) {
+                if (expectedTargetSite.getRloc().equals(rlocToString(locatorRecord))) {
+                    final Ipv4Address ipv4AddressSrcDst = verifyIpv4Address(locatorRecord);
+                    final boolean isRlocSrcDstEqual = ipv4AddressSrcDst.getValue().equals(expectedTargetSite.getRloc());
+                    if (isPossibleAssertPingResultImmediately(expectedPingWorks, isRlocSrcDstEqual, "Unexpected RLOC." +
+                            "Expected value " + dstSite.getRloc() + ". Real value " + ipv4AddressSrcDst.getValue() +
+                            ".")) {
+                        return true;
+                    }
 
-        final Ipv4Address ipv4AddressSrcDst = verifyIpv4Address(mappingRecord);
-        final boolean isRlocSrcDstEqual = ipv4AddressSrcDst.getValue().equals(dstSite.getRloc());
+                    final boolean isWeightEquals = expectedTargetSite.getWeight() == locatorRecord.getWeight();
+                    if (isPossibleAssertPingResultImmediately(expectedPingWorks, isWeightEquals, "Weight isn't equal." +
+                            "Expected value " + expectedTargetSite.getWeight() + ". Value from mapping" +
+                            locatorRecord.getWeight() + ".")) {
+                        return true;
+                    }
 
-        if (isPossibleAssertPingResultImmediately(expectedPingWorks, isRlocSrcDstEqual, "Unexpected RLOC. Expected " +
-                "value " + dstSite.getRloc() + ". Real value " + ipv4AddressSrcDst.getValue() + ".")) {
-            return true;
+                    final boolean isPriorityEquals = expectedTargetSite.getPriority() == locatorRecord.getPriority();
+                    if (isPossibleAssertPingResultImmediately(expectedPingWorks, isPriorityEquals, "Priority isn't " +
+                            "equal. Expected value " + expectedTargetSite.getPriority() + ". Value from mapping" +
+                            locatorRecord.getPriority() + ".")) {
+                        return true;
+                    }
+
+                    expectedTargetFound = true;
+                    break;
+                }
+            }
+            if (isPossibleAssertPingResultImmediately(expectedPingWorks, expectedTargetFound, "Mapping for " +
+                expectedTargetSite.getRloc() + " was expected but wasn't returned from mapping service." +
+                expectedTargetFound)) {
+                return true;
+            }
+
         }
+
         return false;
+    }
 
+    private String rlocToString(final LocatorRecord locatorRecord) {
+        return LispAddressStringifier.getString(locatorRecord.getRloc());
+    }
+
+    private Iterable<Site> concatenateSites(final Site dstSite, final Site... additionalSitesFromMapping) {
+        final List<Site> sites = new ArrayList<>();
+        sites.add(dstSite);
+        for (Site additionalSite : additionalSitesFromMapping) {
+            sites.add(additionalSite);
+        }
+        return sites;
     }
 
     private void assertPing(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,
-                         boolean expectedPingWorks) {
+                         boolean expectedPingWorks, final Site ... additionalSitesFromMapping) {
         final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
                 (dstHostIndex), dstSite.getVNI());
-        if (checkActionAndRloc(srcSite, srcHostIndex, dstSite, dstHostIndex, expectedPingWorks, mapReplyFromSrcToDst)) {
+        if (checkActionAndRloc(dstSite, expectedPingWorks, mapReplyFromSrcToDst,
+                additionalSitesFromMapping)) {
             return;
         }
 
         final MapReply mapReplyFromDstToSrc = emitMapRequestMessage(dstSite.getHost(dstHostIndex), srcSite.getHost
                 (srcHostIndex), srcSite.getVNI());
-        if (checkActionAndRloc(dstSite, dstHostIndex, srcSite, srcHostIndex, expectedPingWorks, mapReplyFromDstToSrc)) {
+        if (checkActionAndRloc(srcSite, expectedPingWorks, mapReplyFromDstToSrc)) {
             return;
         }
 
@@ -334,19 +400,13 @@ class MultiSiteScenario {
         }
     }
 
-    void assertPingWorks(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
-        assertPing(srcSite, srcHostIndex, dstSite, dstHostIndex, true);
+    void assertPingWorks(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex,
+                         final Site ... additionalSitesFromMapping) {
+        assertPing(srcSite, srcHostIndex, dstSite, dstHostIndex, true, additionalSitesFromMapping);
     }
 
     void assertPingFails(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
         assertPing(srcSite, srcHostIndex, dstSite, dstHostIndex, false);
-    }
-
-    void assertPingFailsBecauseActionDrop(final Site srcSite, final int srcHostIndex, final Site dstSite, final int
-            dstHostIndex) {
-        final MapReply mapReplyFromSrcToDst = emitMapRequestMessage(srcSite.getHost(srcHostIndex), dstSite.getHost
-                (dstHostIndex), dstSite.getVNI());
-        verifyIpv4Address(mapReplyFromSrcToDst, MappingRecord.Action.Drop);
     }
 
     private void sleepForSeconds(int seconds) {

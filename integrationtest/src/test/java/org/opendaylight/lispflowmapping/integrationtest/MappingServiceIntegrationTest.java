@@ -15,11 +15,19 @@ import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_50_2_SB;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_50_2_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -46,6 +54,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -391,31 +400,34 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
 
+    // ------------------------------- Simple Tests ---------------------------
+
+
     /**
      * Test scenario A
      */
     @Test
-    public void testMultiSiteScenario() throws IOException {
+    public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
 
         //test case 1
-        multiSiteScenario.storeSouthboundMappings();
+        multiSiteScenario.storeSouthboundMappings(SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
-        multiSiteScenario.assertPingFailsBecauseActionDrop(SITE_A, 1, SITE_C, 4);
+        multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
         //test case 2
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A, SITE_C);
         sleepForSeconds(2);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
-        multiSiteScenario.assertPingFailsBecauseActionDrop(SITE_D4, 5, SITE_C, 4);
+        multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
         //test case 3
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
@@ -465,7 +477,59 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
     }
 
-    // ------------------------------- Simple Tests ---------------------------
+    /**
+     * Test scenario B
+     */
+    @Test
+    public void testMultiSiteScenarioB() {
+        cleanUP();
+
+        final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
+        multiSiteScenario.setCommonAuthentication();
+
+        mapService.setLookupPolicy(ConfigIni.NB_AND_SB);
+        mapService.setMappingOverwrite(false);
+
+        //test case 1
+        multiSiteScenario.storeSouthboundMappings(SITE_A_SB, SITE_B_SB, SITE_C_WP_100_1_SB, SITE_D_WP_100_1_SB,
+                SITE_E_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(SITE_A_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(SITE_B_SB);
+        multiSiteScenario.storeNorthMappingIpPrefix(SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
+        sleepForSeconds(2);
+        multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
+        multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
+
+        //test case 2
+        multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
+        multiSiteScenario.storeNorthMappingNegative(SITE_C_SB, Action.Drop);
+        sleepForSeconds(2);
+        multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
+        multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_SB, 4);
+
+
+        //test case 3
+        multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
+        sleepForSeconds(2);
+        multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4);
+
+        //test case 4
+        multiSiteScenario.storeNorthMappingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
+        sleepForSeconds(2);
+        multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
+
+        //test case 5
+        //there are no physical devices in integration test.
+        //documents says: "Remove internal route to EID 192.0.3.0/24 in xTR4".
+        //therefore this isn't currently possible to do.
+
+        //test case 6
+        multiSiteScenario.deleteNorthMapingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
+        multiSiteScenario.deleteNorthMapingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB);
+        sleepForSeconds(2);
+        multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4);
+
+    }
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
