@@ -21,6 +21,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -31,6 +32,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
@@ -55,6 +57,8 @@ import org.slf4j.LoggerFactory;
 
 class MultiSiteScenario {
 
+    private static final Short PRIORITY_50 = 50;
+    private static final Short WEIGHT_2 = 2;
     private final int DEFAULT_NETWORK_MASK = 24;
     private final int IP_MASK = 32;
 
@@ -120,7 +124,7 @@ class MultiSiteScenario {
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
         mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
 
-        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Southbound, null, dstSite);
+        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Southbound, true, null, dstSite);
         mappingRecordItemBuilder.setMappingRecord(mrb.build());
         mapRegisterBuilder.setMappingRecordItem(Collections.singletonList(mappingRecordItemBuilder.build()));
 
@@ -166,15 +170,17 @@ class MultiSiteScenario {
         return itrRlocs;
     }
 
-    void storeNorthMappingNegative(final Site dstSite, final MappingRecord.Action action) {
-        final Ipv4Prefix ipv4Prefix = new Ipv4Prefix(dstSite.getEidPrefix() + "/" + DEFAULT_NETWORK_MASK);
-        final Eid eidAsIpv4Prefix = LispAddressUtil.toEid(ipv4Prefix, dstSite.getVNI());
+    void storeNorthMappingNegative(final MappingRecord.Action action, boolean defaultWeightPriority, final Site...
+            dstSite) {
+        final Ipv4Prefix ipv4Prefix = new Ipv4Prefix(dstSite[0].getEidPrefix() + "/" + DEFAULT_NETWORK_MASK);
+        final Eid eidAsIpv4Prefix = LispAddressUtil.toEid(ipv4Prefix, dstSite[0].getVNI());
 
-        final MappingRecordBuilder mrbNegative = prepareMappingRecord(MappingOrigin.Northbound, null, dstSite);
+        final MappingRecordBuilder mrbNegative = prepareMappingRecord(MappingOrigin.Northbound,
+                defaultWeightPriority, null, dstSite);
         mrbNegative.setEid(eidAsIpv4Prefix);
         mrbNegative.setAction(action);
 
-        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(), mrbNegative.build());
+        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite[0].getSiteId(), mrbNegative.build());
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -185,7 +191,7 @@ class MultiSiteScenario {
     }
 
     void storeNorthMappingSrcDst(final Site srcSite, final Site dstSite) {
-        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Northbound, srcSite, dstSite);
+        final MappingRecordBuilder mrb = prepareMappingRecord(MappingOrigin.Northbound, true, srcSite, dstSite);
         mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), srcSite.getSiteId(), mrb.build());
     }
 
@@ -193,9 +199,11 @@ class MultiSiteScenario {
         emitMapRegisterMessage(dstSite);
     }
 
-    private MappingRecordBuilder prepareMappingRecord(final MappingOrigin mappingOrigin, final Site srcSite, final
-                                                      Site dstSite) {
+
+    private MappingRecordBuilder prepareMappingRecordGeneral(final MappingOrigin mappingOrigin, final Site srcSite,
+                                                             final Site dstSite) {
         final MappingRecordBuilder mrb = provideCommonMapRecordBuilder();
+        mrb.setXtrId(new XtrId(ArrayUtils.addAll(dstSite.getSiteId().getValue(), dstSite.getSiteId().getValue())));
         Eid eid = null;
         if (MappingOrigin.Northbound.equals(mappingOrigin)) {
             if (srcSite != null && dstSite != null && srcSite.getEidPrefix() != null && dstSite.getEidPrefix() !=
@@ -203,40 +211,39 @@ class MultiSiteScenario {
                 eid = LispAddressUtil.asSrcDstEid(srcSite.getEidPrefix(), dstSite.getEidPrefix(), DEFAULT_NETWORK_MASK,
                         DEFAULT_NETWORK_MASK, dstSite.getVNI().getValue().intValue());
             }
-        } else if (MappingOrigin.Southbound.equals(mappingOrigin)) {
-            if (dstSite != null && dstSite.getEidPrefix() != null) {
-                eid = toEid(dstSite.getEidPrefix(), dstSite.getVNI(), DEFAULT_NETWORK_MASK);
-            }
         }
 
-        mrb.setEid(eid);
-
-        if (dstSite.getRloc() != null) {
-            mrb.setLocatorRecord(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(dstSite.getRloc())),
-                    dstSite.getRloc()));
-        }
-
-        mrb.setTimestamp(System.currentTimeMillis());
-        mrb.setAction(MappingRecord.Action.NoAction);
-        mrb.setRecordTtl(TTL);
+        mrb.setEid(eid == null ? toEid(dstSite.getEidPrefix(), dstSite.getVNI(), DEFAULT_NETWORK_MASK) : eid);
         return mrb;
     }
 
-    private List<LocatorRecord> provideLocatorRecord(final Rloc rloc, final String rlocStr) {
+    private MappingRecordBuilder prepareMappingRecord(final MappingOrigin mappingOrigin, boolean
+            defaultWeightPriority, final Site srcSite, final Site... dstSites) {
+        final MappingRecordBuilder mrb = prepareMappingRecordGeneral(mappingOrigin, srcSite, dstSites[0]);
+        final List<LocatorRecord> locatorRecords = new ArrayList<>();
+        for (Site dstSite : dstSites) {
+            if (dstSite.getRloc() != null) {
+                locatorRecords.add(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(dstSite.getRloc())),
+                        dstSite.getRloc(), defaultWeightPriority));
+            }
+        }
+        mrb.setLocatorRecord(locatorRecords);
+
+        return mrb;
+    }
+
+    private LocatorRecord provideLocatorRecord(final Rloc rloc, final String rlocStr, boolean defaultWeightPriority) {
         final LocatorRecordBuilder locatorRecordBuilder = new LocatorRecordBuilder();
         locatorRecordBuilder.setRloc(rloc);
         locatorRecordBuilder.setLocatorId(rlocStr);
-        locatorRecordBuilder.setPriority(DEFAULT_PRIORITY);
-        locatorRecordBuilder.setWeight(DEFAULT_WEIGHT);
+        locatorRecordBuilder.setPriority(defaultWeightPriority ? DEFAULT_PRIORITY : PRIORITY_50);
+        locatorRecordBuilder.setWeight(defaultWeightPriority ? DEFAULT_WEIGHT : WEIGHT_2);
         locatorRecordBuilder.setMulticastPriority(DEFAULT_MULTICAST_PRIORITY);
         locatorRecordBuilder.setMulticastWeight(DEFAULT_MULTICAST_WEIGHT);
         locatorRecordBuilder.setLocalLocator(DEFAULT_LOCAL_LOCATOR);
         locatorRecordBuilder.setRlocProbed(DEFAULT_RLOC_PROBED);
         locatorRecordBuilder.setRouted(DEFAULT_ROUTED);
-
-        final List<LocatorRecord> locatorRecords = new ArrayList<>();
-        locatorRecords.add(locatorRecordBuilder.build());
-        return locatorRecords;
+        return locatorRecordBuilder.build();
     }
 
     private MappingRecordBuilder provideCommonMapRecordBuilder() {
@@ -244,6 +251,7 @@ class MultiSiteScenario {
         mappingRecordBuilder.setRecordTtl(TTL);
         mappingRecordBuilder.setAction(MappingRecord.Action.NoAction);
         mappingRecordBuilder.setAuthoritative(true);
+        mappingRecordBuilder.setTimestamp(System.currentTimeMillis());
         return mappingRecordBuilder;
     }
 
@@ -258,12 +266,19 @@ class MultiSiteScenario {
 //        storeNorthMappingSrcDst(dstSite, srcSite);
 //    }
 
+    //TODO: REPLACE WITH METHOD WITH VARIABLE NUMBER OF PARAMETERS ONCE WILL BE
     void storeSouthboundMappings() {
         storeDestinationSiteMappingViaSouthbound(SITE_A);
         storeDestinationSiteMappingViaSouthbound(SITE_B);
         storeDestinationSiteMappingViaSouthbound(SITE_C);
         storeDestinationSiteMappingViaSouthbound(SITE_D4);
         storeDestinationSiteMappingViaSouthbound(SITE_D5);
+    }
+
+    void storeSouthboundMappings(final Site ... sites) {
+        for (Site site : sites) {
+            storeDestinationSiteMappingViaSouthbound(site);
+        }
     }
 
     void pingSimulation(final Site srcSite, final int srcHostIndex, final Site dstSite, final int dstHostIndex) {
