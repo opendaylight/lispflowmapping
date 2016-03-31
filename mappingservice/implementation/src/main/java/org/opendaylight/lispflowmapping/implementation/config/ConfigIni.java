@@ -33,6 +33,7 @@ public final class ConfigIni {
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
 
     // lookupPolicy options
+    // TODO we need an enum for this in mappingservice.api (or a YANG model)
     public static final int NB_FIRST = 0;
     public static final int NB_AND_SB = 1;
 
@@ -215,8 +216,20 @@ public final class ConfigIni {
         return mappingOverwrite;
     }
 
+    public void setMappingOverwrite(boolean mappingOverwrite) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_MAPPING_OVERWRITE, mappingOverwrite);
+        this.mappingOverwrite = mappingOverwrite;
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_MAPPING_MERGE, !(mappingOverwrite));
+        this.mappingMerge = !(mappingOverwrite);
+    }
+
     public boolean smrIsSet() {
         return smr;
+    }
+
+    public void setSmr(boolean smr) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR, smr);
+        this.smr = smr;
     }
 
     public String getElpPolicy() {
@@ -225,6 +238,13 @@ public final class ConfigIni {
 
     public int getLookupPolicy() {
         return lookupPolicy;
+    }
+
+    public void setLookupPolicy(int lookupPolicy) {
+        if (lookupPolicy != NB_FIRST || lookupPolicy != NB_AND_SB) {
+            return;
+        }
+        this.lookupPolicy = lookupPolicy;
     }
 
     public static ConfigIni getInstance() {

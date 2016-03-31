@@ -124,6 +124,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         this.overwritePolicy = overwrite;
         if (mappingSystem != null) {
             mappingSystem.setOverwritePolicy(overwrite);
+            ConfigIni.getInstance().setMappingOverwrite(overwrite);
         }
     }
 
