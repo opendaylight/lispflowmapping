@@ -106,6 +106,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         if (mapResolver != null) {
             mapResolver.setSubscriptionService(smr);
         }
+        ConfigIni.getInstance().setSmr(smr);
     }
 
     public NotificationService getNotificationService() {

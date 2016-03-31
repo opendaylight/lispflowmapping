@@ -156,6 +156,14 @@ public interface IMappingService {
     void setMappingOverwrite(boolean overwrite);
 
     /**
+     * Configures Mapping Service mapping lookup policy option.
+     *
+     * @param policy
+     *            the policy to be activated
+     */
+    void setLookupPolicy(int policy);
+
+    /**
      * Print all mappings. Used for testing, debugging and the karaf shell
      *
      * @return String consisting of all mappings
