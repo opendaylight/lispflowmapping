@@ -423,10 +423,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingSimulation(SITE_D4, 5, SITE_C, 4);
 
         //test case 4
-        final DatagramPacket datagramPacket = receivePacket();
+        socket.close();
+        socket = null;
+        final SocketListener socketListener = new SocketListener();
+        socketListener.start();
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B_RLOC_10, SITE_C);
         sleepForSeconds(2);
-        final byte[] data = datagramPacket.getData();
+        byte[] data = socketListener.provideData();
         assertNotNull(data);
         MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data));
         assertTrue(deserializedMapRequest.isSmr());
@@ -435,7 +438,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingSimulation(SITE_B_RLOC_10, 5, SITE_C, 4, true, false);
 
         //test case 5
-        multiSiteScenario.pingSimulation(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
         multiSiteScenario.oneWayReachability(SITE_D4, 5, SITE_C, 4, Action.Drop);
