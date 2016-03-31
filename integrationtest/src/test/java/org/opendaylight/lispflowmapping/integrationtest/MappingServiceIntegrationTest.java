@@ -11,12 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_RLOC_10;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -423,10 +417,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingSimulation(SITE_D4, 5, SITE_C, 4);
 
         //test case 4
-        final DatagramPacket datagramPacket = receivePacket();
+        socket.close();
+        socket = null;
+        final SocketListener socketListener = new SocketListener();
+        socketListener.start();
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B_RLOC_10, SITE_C);
         sleepForSeconds(2);
-        final byte[] data = datagramPacket.getData();
+        byte[] data = socketListener.provideData();
         assertNotNull(data);
         MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data));
         assertTrue(deserializedMapRequest.isSmr());
@@ -435,9 +432,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.pingSimulation(SITE_B_RLOC_10, 5, SITE_C, 4, true, false);
 
         //test case 5
-        multiSiteScenario.pingSimulation(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
+
         multiSiteScenario.oneWayReachability(SITE_D4, 5, SITE_C, 4, Action.Drop);
 
         //test case 6
