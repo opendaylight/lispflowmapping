@@ -418,51 +418,77 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.oneWayReachability(SITE_D4, 5, SITE_C, 4, Action.Drop);
 
         //test case 3
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
+        checkSmrPacketIsGenerated();
         multiSiteScenario.pingSimulation(SITE_D4, 5, SITE_C, 4);
 
         //test case 4
-        final DatagramPacket datagramPacket = receivePacket();
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B_RLOC_10, SITE_C);
         sleepForSeconds(2);
-        final byte[] data = datagramPacket.getData();
-        assertNotNull(data);
-        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data));
-        assertTrue(deserializedMapRequest.isSmr());
+        checkSmrPacketIsGenerated();
         //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
         //that ping won't be successfull
         multiSiteScenario.pingSimulation(SITE_B_RLOC_10, 5, SITE_C, 4, true, false);
 
         //test case 5
-        multiSiteScenario.pingSimulation(SITE_B, 5, SITE_C, 4);
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
+        checkSmrPacketIsGenerated();
         multiSiteScenario.oneWayReachability(SITE_D4, 5, SITE_C, 4, Action.Drop);
 
         //test case 6
         multiSiteScenario.pingSimulation(SITE_D5, 5, SITE_C, 3, false, true);
 
         //test case 7
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A, SITE_C);
         sleepForSeconds(2);
+        checkSmrPacketIsGenerated();
         multiSiteScenario.pingSimulation(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.pingSimulation(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.oneWayReachability(SITE_A, 1, SITE_C, 4, Action.Drop);
 
         //test case 8
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
+        checkSmrPacketIsGenerated();
         multiSiteScenario.pingSimulation(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.oneWayReachability(SITE_B, 5, SITE_C, 4, Action.Drop);
         multiSiteScenario.oneWayReachability(SITE_A, 1, SITE_C, 4, Action.Drop);
 
         //test case 9
+        resetSocketAndCheckIsEmpty();
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
+        sleepForSeconds(2);
+        checkSmrPacketIsGenerated();
         multiSiteScenario.pingSimulation(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.pingSimulation(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.pingSimulation(SITE_A, 5, SITE_C, 4);
+    }
+
+    private void checkSmrPacketIsGenerated() {
+        byte[] data4 = receivePacketAndGetData();
+        assertNotNull(data4);
+        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data4));
+        assertTrue(deserializedMapRequest.isSmr());
+    }
+
+    private void resetSocketAndCheckIsEmpty() {
+        restartSocket();
+        DatagramPacket datagramPacket;
+        boolean emptySocket = false;
+        try {
+            datagramPacket = receivePacket();
+        } catch (SocketTimeoutException e) {
+            emptySocket = true;
+        }
+        assertTrue(emptySocket);
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -1957,6 +1983,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
     }
 
+    private byte[] receivePacketAndGetData() {
+        try {
+            final DatagramPacket datagramPacket = receivePacket();
+            return datagramPacket.getData();
+        } catch (SocketTimeoutException e) {
+            return null;
+        }
+    }
+
     private DatagramPacket receivePacket() throws SocketTimeoutException {
         return receivePacket(6000);
     }
@@ -2096,6 +2131,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         configLispPlugin.shouldListenOnXtrPort(false);
         socket = initSocket(socket, LispMessage.PORT_NUM);
 
+    }
+
+    private void restartSocket() {
+        after();
+        socket = initSocket(socket, LispMessage.PORT_NUM);
     }
 
 }
