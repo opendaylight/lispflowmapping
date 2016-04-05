@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_b8637419",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_75f2959b",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_f544e575",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-05T10:33:23Z",
       "side": 1,
       "message": "Even if southbound has a mapping for C-\u003eRLOC3, you should store one from the NB too, to follow the test description.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_f844dc75",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "B-\u003eC was stored in test case 1\nA-\u003eC was stored in test case 2",
+      "parentUuid": "3a4c51b2_f544e575",
       "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_782f2ca2",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_752f35a2",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_552cb9ab",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 6
@@ -64,6 +118,24 @@
       "writtenOn": "2016-04-05T10:33:23Z",
       "side": 1,
       "message": "We will need to test more than that, but I\u0027ll get to that in the other patch.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_582cf0ab",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_552cb9ab",
       "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_380c8442",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_b5189d85",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_951da176",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 6
@@ -98,6 +188,24 @@
       "writtenOn": "2016-04-05T10:33:23Z",
       "side": 1,
       "message": "I know it doesn\u0027t affect results, but please move the store part to the top.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_5803500f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "and I also removed line 438",
+      "parentUuid": "3a4c51b2_951da176",
       "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_ab2680b8",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "but I can\u0027t hide this two imput parameters (false, true) because assertPingFails without this parameters call inside true, true \n\n\nor maybe I just don\u0027t understand your note.\nor I can change name of method",
+      "parentUuid": "3a4c51b2_f5122561",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_75061522",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 6
@@ -132,6 +258,24 @@
       "writtenOn": "2016-04-05T10:33:23Z",
       "side": 1,
       "message": "this shouldn\u0027t be needed since it was already stored and was not deleted.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_4b1a5c6f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-05T13:49:48Z",
+      "side": 1,
+      "message": "yes you are right about it",
+      "parentUuid": "3a4c51b2_75061522",
       "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
