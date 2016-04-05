@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_75f2959b",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "Since this is the main test file, I would rename \"pingSimulation\" to \"assertPingWorks\" and \"oneWayReachability\" to \"assertPingFails\" (and hide the Action.Drop part in the implementation, so it\u0027s not part of the method argument list here).",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_f544e575",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "Even if southbound has a mapping for C-\u003eRLOC3, you should store one from the NB too, to follow the test description.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_752f35a2",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "Looking at the code, this would set the RLOC for the mapping as 3.3.3.3, not 10.10.10.10, since the RLOC is taken from the destination (as it should be). So you should define a SITE_C_RLOC_10 site instead, and call storeNorthMappingSrcDst(SITE_B, SITE_C_RLOC_10) here (and the below cases too).",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_552cb9ab",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "We will need to test more than that, but I\u0027ll get to that in the other patch.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_b5189d85",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "here we should have a simple assertPingFails(SITE_B, 5, SITE_C, 4) without any additional parameters. Note that above the mapping stored is SITE_C_RLOC_10, but we test for SITE_C.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_951da176",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "I know it doesn\u0027t affect results, but please move the store part to the top.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_f5122561",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "Same here, we shoudl just have assertPingFails(SITE_D5, 5, SITE_C, 3) and hide the rest.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_75061522",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-05T10:33:23Z",
+      "side": 1,
+      "message": "this shouldn\u0027t be needed since it was already stored and was not deleted.",
+      "revId": "688bea982f3ef5391c84c5a465623fc39ab3e72b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
