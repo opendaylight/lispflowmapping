@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_a4950de6",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-06T12:11:41Z",
+      "side": 1,
+      "message": "Please remove the assertPingFailsBecauseActionDrop() method completely, and add a check for action drop in the map-reply here and on line 281, since regardless of the locators being equal, ping will fail if action is drop. This way the main test file will only have assertPingFails.",
+      "revId": "200739f4bbc256806620ccc9ef712c9f6ae5f54d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
