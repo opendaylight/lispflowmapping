@@ -1,721 +1,516 @@
 /*
- * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-
-import junitx.framework.ArrayAssert;
-
-import org.jmock.api.Invocation;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.MappingService;
-import org.opendaylight.lispflowmapping.implementation.MappingSystem;
-import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
+import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
+        .MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list
+        .MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregistermessage.MapRegisterBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container
+        .MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container
+        .MappingAuthkeyBuilder;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 
-public class MapServerTest extends BaseTestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class MapServerTest {
 
-    private LispMappingService testedMapServer;
-    private ILispDAO dao;
-    private MappingService mapService;
-    private DataStoreBackEnd dsbe;
-    private MappingSystem mapSystem;
+    @Mock private static IMappingService mapService;
+    @Mock private static IMapNotifyHandler notifyHandler;
+    @Mock private static NotificationService notificationService;
+    @Spy private static Set<SubscriberRLOC> subscriberSetMock_1 = new HashSet<>();
+    @Spy private static Set<SubscriberRLOC> subscriberSetMock_2 = new HashSet<>();
+    @Spy private static Set<SubscriberRLOC> subscriberSetMock_3 = new HashSet<>();
+    private static MapServer mapServer;
+    private static MapRegister mapRegister;
 
-    private MapRegisterBuilder mapRegisterBuilder;
-    private Eid eid;
-    private Rloc rloc;
-    private ValueSaverAction<MappingEntry<?>[]> mappingEntriesSaver;
-    private MapRegister mapRegisterWithAuthentication;
-    private String eidIpv4String = "10.31.0.5/32";
-    private String eidIpv6String = "1:1:1:1:1:1:1:0/128";
+    private static final String IPV4_STRING_1 =          "1.2.3.0";
+    private static final String IPV4_STRING_2 =        "1.2.4.0";
+    private static final String IPV4_STRING_3 =        "192.168.0.1";
+    private static final String IPV4_STRING_4 =        "192.168.0.2";
+    private static final String IPV4_STRING_5 =        "192.168.0.3";
+    private static final String IPV4_STRING_6 =        "192.168.0.4";
+    private static final String IPV4_SOURCE_STRING_1 = "127.0.0.1";
+    private static final String IPV4_SOURCE_STRING_2 = "127.0.0.2";
+    private static final String IPV4_SOURCE_STRING_3 = "127.0.0.3";
+    private static final String IPV4_SOURCE_STRING_4 = "127.0.0.4";
+    private static final String IPV4_SOURCE_STRING_5 = "127.0.0.5";
+    private static final String IPV4_SOURCE_STRING_6 = "127.0.0.6";
+    private static final String IPV4_PREFIX =          "/24";
+    private static final int MASK = 24;
+    private static final int VNI = 10;
 
-    @Override
+    private static final Eid IPV4_EID_1 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX);
+    private static final Eid IPV4_EID_2 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_2 + IPV4_PREFIX);
+    private static final Eid IPV4_SOURCE_EID_1 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_1);
+    private static final Eid IPV4_SOURCE_EID_2 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_2);
+    private static final Eid IPV4_SOURCE_EID_3 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_3);
+    private static final Eid IPV4_SOURCE_EID_4 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_4);
+    private static final Eid IPV4_SOURCE_EID_5 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_5);
+    private static final Eid IPV4_SOURCE_EID_6 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_6);
+    private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_1);
+    private static final Rloc RLOC_2 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_2);
+    private static final Rloc RLOC_3 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_3);
+    private static final Rloc RLOC_4 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_4);
+    private static final Rloc RLOC_5 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_5);
+    private static final Rloc RLOC_6 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_6);
+
+    private static final long TWO_DAYS = 86400000L * 2;
+
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,         // timedOut() == true
+            IPV4_SOURCE_EID_1, new Date(System.currentTimeMillis() - TWO_DAYS));
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_2 = new SubscriberRLOC(RLOC_2,         // timedOut() == false
+            IPV4_SOURCE_EID_2);
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_3 = new SubscriberRLOC(RLOC_3,         // timedOut() == true
+            IPV4_SOURCE_EID_3, new Date(System.currentTimeMillis() - TWO_DAYS));
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_4 = new SubscriberRLOC(RLOC_4,         // timedOut() == false
+            IPV4_SOURCE_EID_4);
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_5 = new SubscriberRLOC(RLOC_5,         // timedOut() == true
+            IPV4_SOURCE_EID_5, new Date(System.currentTimeMillis() - TWO_DAYS));
+    private static final SubscriberRLOC SUBSCRIBER_RLOC_6 = new SubscriberRLOC(RLOC_6,         // timedOut() == false
+            IPV4_SOURCE_EID_6);
+
+    private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
+            .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);
+    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
+
+    private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder().setRloc(RLOC_1).build();
+    private static final LocatorRecord LOCATOR_RECORD_2 = new LocatorRecordBuilder().setRloc(RLOC_2).build();
+
+    private static final MappingRecord OLD_MAPPING_RECORD_1 = getDefaultMappingRecordBuilder()
+            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
+    private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
+            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
+
+    private static final Set<IpAddress> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
+
     @Before
-    public void before() throws Exception {
-        super.before();
-        dao = context.mock(ILispDAO.class);
-        dsbe = context.mock(DataStoreBackEnd.class);
-
-        // map-caches init and table creation
-        allowing(dao).putTable(with(MappingOrigin.Northbound.toString()));will(returnValue(dao));
-        allowing(dao).putTable(with(MappingOrigin.Southbound.toString()));will(returnValue(dao));
-
-        mapSystem = new MappingSystem(dao, true, true, true);
-
-        mapService = new MappingService();
-        mapService.setDaoService(dao);
-        inject(mapService, "dsbe", dsbe);
-        inject(mapService, "mappingSystem", mapSystem);
-
-        testedMapServer = new LispMappingService();
-        testedMapServer.setMappingService(mapService);
-        testedMapServer.setShouldUseSmr(false);
-        testedMapServer.basicInit();
-
-        mapRegisterBuilder = new MapRegisterBuilder();
-        mapRegisterBuilder.setKeyId((short) 0);
-        mapRegisterBuilder.setAuthenticationData(new byte[0]);
-        eid = LispAddressUtil.asIpv4PrefixEid(eidIpv4String);
-        rloc = LispAddressUtil.asIpv4Rloc("192.168.136.10");
-        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
-        recordBuilder.setEid(eid);
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        recordBuilder.getLocatorRecord().add(new LocatorRecordBuilder().setRloc(rloc).build());
-        recordBuilder.setAction(Action.NoAction).setMapVersion((short) 0).setAuthoritative(false).setRecordTtl(60)
-                .setMaskLength((short) 32);
-        mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterWithAuthentication = MapRegisterSerializer.getInstance().deserialize(
-                hexToByteBuffer("38 00 01 01 FF BB "
-                + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 "
-                + "ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 "
-                + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
-                + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
-
-        mappingEntriesSaver = new ValueSaverAction<MappingEntry<?>[]>();
+    public void init() throws NoSuchFieldException, IllegalAccessException  {
+        mapServer = new MapServer(mapService, true, true, notifyHandler, notificationService);
+        subscriberSetMock_1.add(SUBSCRIBER_RLOC_1);
+        subscriberSetMock_1.add(SUBSCRIBER_RLOC_2);
+        subscriberSetMock_2.add(SUBSCRIBER_RLOC_3);
+        subscriberSetMock_2.add(SUBSCRIBER_RLOC_4);
+        subscriberSetMock_3.add(SUBSCRIBER_RLOC_5);
+        subscriberSetMock_3.add(SUBSCRIBER_RLOC_6);
+        mapRegister = getDefaultMapRegisterBuilder().build();
+        setConfigIniMappingMergeField(false);
     }
 
     @Test
-    @Ignore
-    public void handleMapRegister__NonSetMBit() throws Exception {
-        mapRegisterBuilder.setWantMapNotify(false);
+    public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_RECORD_1);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
+                .thenReturn(subscriberSetMock_1);
 
-        addDefaultPutAndGetExpectations(eid);
-        assertNull(testedMapServer.handleMapRegister(mapRegisterBuilder.build()));
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
+                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord());
+        Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
+                subscriberSetMock_1);
+        Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister).build(), null);
 
-        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(1, entries.length);
-        assertEquals(SubKeys.RECORD, entries[0].getKey());
-        assertEquals(rloc, ((MappingRecord) entries[0].getValue()).getLocatorRecord().get(0).getRloc());
+        // only 1 subscriber has timed out.
+        assertEquals(1, subscriberSetMock_1.size());
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIpv4__ValidNotifyEchoesRegister() throws Exception {
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                getDefaultMappingRecordBuilder().setEid(new EidBuilder().setAddressType(NoAddressAfi.class).setAddress(
-                        (Address) new NoAddressBuilder().setNoAddress(true).build()).build()).build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    public void handleMapRegisterTest_MappingMergeTrue() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(eid);
-        addDefaultPutAndGetExpectations(new EidBuilder().setAddressType(NoAddressAfi.class).setAddress(
-                (Address) new NoAddressBuilder().setNoAddress(true).build()).build());
-        MapRegister mr = mapRegisterBuilder.build();
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
-        assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mr.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mr.getNonce(), mapNotify.getNonce());
+        final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
+                .setMappingRecord(OLD_MAPPING_RECORD_1);
+        final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister)
+                .setMappingRecordItem(new ArrayList<>());
+        mapNotifyBuilder.getMappingRecordItem().add(mappingRecordItemBuilder.build());
+
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        // no mapping changes
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(OLD_MAPPING_RECORD_1);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
+                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord());
+        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), null);
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIpv4__CloneNotOwnYouClown() throws Exception {
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        mapRegisterBuilder.setWantMapNotify(true);
-        MappingRecordBuilder eidToLocatorBuilder = getDefaultMappingRecordBuilder();
-        eidToLocatorBuilder.setMaskLength((short) 32);
-        eid = LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32");
-        eidToLocatorBuilder.setEid(eid);
+    public void handleMapRegisterTest_verifyTransportAddresses() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
-        locatorBuilder.setPriority((short) 55);
-        eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder.build());
+        // input
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(OLD_MAPPING_RECORD_1)
+                .thenReturn(OLD_MAPPING_RECORD_2)
+                .thenReturn(getDefaultMappingRecordBuilder().build());
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
+                .thenReturn(subscriberSetMock_1);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(eidToLocatorBuilder.build()).build());
+        // result
+        final List<TransportAddress> transportAddressList = getTransportAddressList();
+        final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister);
+        mapNotifyBuilder.setMappingRecordItem(new ArrayList<>());
+        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecord(getDefaultMappingRecordBuilder().build()).build());
 
-        addDefaultPutAndGetExpectations(eid);
-
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build()).getLeft();
-
-        MappingRecord actualEidToLocator = mapNotify.getMappingRecordItem().get(0).getMappingRecord();
-        assertEquals(eid, actualEidToLocator.getEid());
-        assertEquals((byte) 55, actualEidToLocator.getLocatorRecord().get(0).getPriority().byteValue());
-
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), transportAddressList);
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIpv4__ValidMask() throws Exception {
-        int mask = 16;
-        Eid newEid = LispAddressUtil.asIpv4PrefixEid(eidIpv4String + "/" + mask);
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(newEid).setMaskLength((short) mask);
-        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setRloc(rloc);
-        recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-        MapRegister mr = mapRegisterBuilder.build();
+    public void handleMapRegisterTest_withTwoMappingRecords() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(newEid);
+        // Input
+        // Add a MappingRecord with SrcDestKey Eid Type
+        final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
+                .setMappingRecord(getDefaultMappingRecordBuilder().setEid(SOURCE_DEST_KEY_EID).build());
+        final MapRegisterBuilder mapRegisterSrcDstBuilder = getDefaultMapRegisterBuilder();
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
-        assertEquals(newEid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mr.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mr.getNonce(), mapNotify.getNonce());
+        final List<MappingRecordItem> list = mapRegisterSrcDstBuilder.getMappingRecordItem();
+        list.add(mappingRecordItemBuilder.build());
+
+        // ------------- Stubbing for SourceDestKey type Eid mapping -------------------
+
+        Mockito.when(mapService.getAuthenticationKey(SOURCE_DEST_KEY_EID)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID))
+                // ensure mappings are different
+                .thenReturn(OLD_MAPPING_RECORD_1)
+                .thenReturn(OLD_MAPPING_RECORD_2)
+                .thenReturn(OLD_MAPPING_RECORD_2);
+        // return a subscriberSet for SrcDestKeyEid MappingRecord
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID, SubKeys.SUBSCRIBERS))
+                .thenReturn(subscriberSetMock_1);
+
+        // return a subscriberSet for SrcDestKeyEid destination MappingRecord
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, SourceDestKeyHelper.getDst(SOURCE_DEST_KEY_EID),
+                SubKeys.SUBSCRIBERS)).thenReturn(subscriberSetMock_2);
+
+        // ----------------- Stubbing for Ipv4 type Eid mapping ------------------------
+
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                // ensure mappings are different
+                .thenReturn(OLD_MAPPING_RECORD_1)
+                .thenReturn(OLD_MAPPING_RECORD_2);
+        // return a subscriberSet for Ipv4Eid MappingRecord
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1,SubKeys.SUBSCRIBERS))
+                .thenReturn(subscriberSetMock_3);
+
+        // -----------------------------------------------------------------------------
+
+        // result
+        mapServer.handleMapRegister(mapRegisterSrcDstBuilder.build());
+
+        // for SrcDstKey mapping
+        final ArgumentCaptor<MapRequest> captor_1 = ArgumentCaptor.forClass(MapRequest.class);
+        Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_1.capture(), Mockito.eq(RLOC_2));
+        Mockito.verify(mapService).addData(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID, SubKeys.SUBSCRIBERS,
+                subscriberSetMock_1);
+        final Eid resultEid_1 = captor_1.getValue().getEidItem().iterator().next().getEid();
+        assertEquals(IPV4_SOURCE_EID_2, resultEid_1);
+
+        // for SrcDst destination mapping
+        final ArgumentCaptor<MapRequest> captor_2 = ArgumentCaptor.forClass(MapRequest.class);
+        Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_2.capture(), Mockito.eq(RLOC_4));
+        Mockito.verify(mapService).addData(MappingOrigin.Southbound, SourceDestKeyHelper.getDst(SOURCE_DEST_KEY_EID),
+                SubKeys.SUBSCRIBERS, subscriberSetMock_2);
+        final Eid resultEid_2 = captor_2.getValue().getEidItem().iterator().next().getEid();
+        assertEquals(IPV4_SOURCE_EID_4, resultEid_2);
+
+        // for Ipv4 mapping
+        final ArgumentCaptor<MapRequest> captor_3 = ArgumentCaptor.forClass(MapRequest.class);
+        Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_3.capture(), Mockito.eq(RLOC_6));
+        Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
+                subscriberSetMock_3);
+        final Eid resultEid_3 = captor_3.getValue().getEidItem().iterator().next().getEid();
+        assertEquals(IPV4_SOURCE_EID_6, resultEid_3);
     }
 
     @Test
-    @Ignore
-    public void handleMapRegister__NonMaskable() throws Exception {
-        int mask = 16;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asMacEid("01:01:01:01:01:01");
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withDifferentEid() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(addr);
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setEid(IPV4_EID_2);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapRegister mapRegister = mapRegisterBuilder.build();
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
-    @Ignore
-    public void handleMapRegister__ZeroMask() throws Exception {
-        int mask = 0;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asMacEid("01:01:01:01:01:01");
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withDifferentRLOC() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(addr);
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder();
+        // apply the change
+        mappingRecordBuilder_1.getLocatorRecord().add(new LocatorRecordBuilder().build());
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapRegister mapRegister = mapRegisterBuilder.build();
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIPv4__ZeroMask() throws Exception {
-        int mask = 0;
-        Eid newEid = LispAddressUtil.asIpv4PrefixEid(eidIpv4String + "/" + mask);
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(newEid).setMaskLength((short) mask);
-        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setRloc(rloc);
-        recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-        MapRegister mr = mapRegisterBuilder.build();
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withDifferentAction() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(newEid);
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setAction(MappingRecord.Action.NativelyForward);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
-        assertEquals(newEid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mr.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mr.getNonce(), mapNotify.getNonce());
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
+
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIpv4__ValidMask32() throws Exception {
-        int mask = 32;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(eid).setMaskLength((short) mask);
-        LocatorRecordBuilder locator = getDefaultLocatorBuilder();
-        locator.setRloc(rloc);
-        recordBuilder.getLocatorRecord().add(locator.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-        MapRegister mr = mapRegisterBuilder.build();
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withDifferentTTL() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(eid);
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setRecordTtl(10);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mr).getLeft();
-        assertEquals(eid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mr.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mr.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mr.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mr.getNonce(), mapNotify.getNonce());
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
+
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
-    @Ignore
-   public void handleMapRegisterIpv6__ValidMask96() throws Exception {
-        int mask = 96;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String + "/" + mask);
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withDifferentMapVersion() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(addr);
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setMapVersion((short) 10);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapRegister mapRegister = mapRegisterBuilder.build();
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
     @Test
-    @Ignore
-    public void handleMapRegisterIpv6__ZeroMask() throws Exception {
-        int mask = 0;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String + "/" + mask);
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void mappingChangedTest_withNullMap() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
 
-        addDefaultPutAndGetExpectations(addr);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        MapRegister mapRegister = mapRegisterBuilder.build();
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
+                .thenReturn(null)
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
+        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
+        assertEquals(2, captor.getValue().size());
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv6__ValidMask48() throws Exception {
-        int mask = 48;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String +"/" + mask);
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
+    private static MapRegisterBuilder getDefaultMapRegisterBuilder() {
+        final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder()
+                .setProxyMapReply(true)
+                .setWantMapNotify(true)
+                .setKeyId((short) 0)
+                .setMappingRecordItem(new ArrayList<>())
+                .setMergeEnabled(true)
+                .setNonce(1L)
+                .setSiteId(new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7}))
+                .setXtrId(new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}))
+                .setXtrSiteIdPresent(true);
+        mapRegisterBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
-        addDefaultPutAndGetExpectations(addr);
-
-        MapRegister mapRegister = mapRegisterBuilder.build();
-
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+        return mapRegisterBuilder;
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv6__ValidMask128() throws Exception {
-        int mask = 128;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String);
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-
-        addDefaultPutAndGetExpectations(addr);
-
-        MapRegister mapRegister = mapRegisterBuilder.build();
-
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder() {
+        return new MappingRecordItemBuilder()
+                .setMappingRecordItemId("mapping-record-item-id")
+                .setKey(new MappingRecordItemKey("mapping-record-item-key"))
+                .setMappingRecord(getDefaultMappingRecordBuilder().build());
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegisterIPV4AndIpv6__ValidMask96() throws Exception {
-        int mask = 96;
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        MappingRecordBuilder recordBuilder0 = getDefaultMappingRecordBuilder();
-        recordBuilder0.setEid(eid).setMaskLength((short) 32);
-        Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String + "/" + mask);
-        MappingRecordBuilder recordBuilder1 = getDefaultMappingRecordBuilder();
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        locatorBuilder.setRloc(rloc);
-        recordBuilder1.setEid(addr).setMaskLength((short) mask);
-        recordBuilder1.getLocatorRecord().add(locatorBuilder.build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder0.build()).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder1.build()).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-
-        addDefaultPutAndGetExpectations(eid);
-        addDefaultPutAndGetExpectations(addr);
-
-        MapRegister mapRegister = mapRegisterBuilder.build();
-
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegister).getLeft();
-        assertEquals(eid, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getEid());
-        assertEquals(addr, mapNotify.getMappingRecordItem().get(1).getMappingRecord().getEid());
-        ArrayAssert.assertEquals(mapRegister.getAuthenticationData(), mapNotify.getAuthenticationData());
-        assertEquals(mapRegister.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegister.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegister.getNonce(), mapNotify.getNonce());
+    private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
+        return new MappingRecordBuilder()
+                .setAction(MappingRecord.Action.NoAction)
+                .setAuthoritative(false)
+                .setLocatorRecord(new ArrayList<>())
+                .setMapVersion((short) 0)
+                .setRecordTtl(60)
+                .setEid(IPV4_EID_1);
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegister__MultipleRLOCs() throws Exception {
-        addDefaultPutAndGetExpectations(eid);
+    private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
+        final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
+                .setNonce(mapRegister.getNonce())
+                .setKeyId(mapRegister.getKeyId())
+                .setMergeEnabled(mapRegister.isMergeEnabled())
+                .setMappingRecordItem(new ArrayList<>())
+                .setAuthenticationData(new byte[]{});
+        mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Rloc rloc0 = rloc;
-        Rloc rloc1 = LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:7");
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(eid);
-        LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
-        locatorBuilder1.setRloc(rloc0);
-        LocatorRecordBuilder locatorBuilder2 = getDefaultLocatorBuilder();
-        locatorBuilder2.setRloc(rloc1);
-        recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
-        recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
-
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-
-        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(1, entries.length);
-
-        assertEquals(SubKeys.RECORD, entries[0].getKey());
-        assertEquals(rloc0, ((MappingRecord) entries[0].getValue()).getLocatorRecord()
-                .get(0).getRloc());
-        assertEquals(rloc1, ((MappingRecord) entries[0].getValue()).getLocatorRecord()
-                .get(1).getRloc());
-
+        return mapNotifyBuilder;
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegister__MultipleTypes() throws Exception {
-        addDefaultPutAndGetExpectations(eid);
-
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        Rloc rloc0 = rloc;
-        // LispAFIAddress rloc1 =
-        // LispAddressUtil.asIPv6AfiAddress("0:0:0:0:0:0:0:7");
-        String subkey = "bla";
-        Rloc rloc1 = LispAddressUtil.asKeyValueAddress(subkey,
-                SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:7"));
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(eid);
-        LocatorRecordBuilder locatorBuilder1 = getDefaultLocatorBuilder();
-        locatorBuilder1.setRloc(rloc0);
-        LocatorRecordBuilder locatorBuilder2 = getDefaultLocatorBuilder();
-        locatorBuilder2.setRloc(rloc1);
-        recordBuilder.getLocatorRecord().add(locatorBuilder1.build());
-        recordBuilder.getLocatorRecord().add(locatorBuilder2.build());
-
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
-
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-
-        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(1, entries.length);
-        MappingRecord storedMapping = (MappingRecord) entries[0].getValue();
-        assertEquals(2, storedMapping.getLocatorRecord().size());
-        assertEquals(SubKeys.RECORD, entries[0].getKey());
-        assertEquals(rloc0, storedMapping.getLocatorRecord().get(0).getRloc());
-        assertEquals(rloc1, storedMapping.getLocatorRecord().get(1).getRloc());
-
+    private static void setConfigIniMappingMergeField(boolean value) throws NoSuchFieldException,
+            IllegalAccessException {
+        final Field mappingMergeField = CONFIG_INI.getClass().getDeclaredField("mappingMerge");
+        mappingMergeField.setAccessible(true);
+        mappingMergeField.setBoolean(CONFIG_INI, value);
     }
 
-    @Test
-    @Ignore
-    public void handleMapRegister__TestOverwrite() throws Exception {
-        addDefaultPutAndGetExpectations(eid);
+    private static Set<IpAddress> getDefaultIpAddressSet() {
+        final IpAddress ipAddress = new IpAddress(new Ipv4Address(IPV4_STRING_3));
+        final IpAddress ipAddress_2 = new IpAddress(new Ipv4Address(IPV4_STRING_4));
+        final Set<IpAddress> addressSet = Sets.newHashSet(ipAddress, ipAddress_2);
 
-        addEidToLocatorRecord();
-
-        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-        assertEquals(1, entries.length);
-
-        assertEquals(SubKeys.RECORD, entries[0].getKey());
-        assertEquals(rloc, ((MappingRecord) entries[0].getValue()).getLocatorRecord().get(0).getRloc());
+        return addressSet;
     }
 
-//    @Test
-//    public void handleMapRegister__TestDontOverwrite() throws Exception {
-//        int hc = rloc.getAddress().hashCode();
-//
-//        addDefaultPutAndGetExpectations(eid);
-//        testedMapServer.setOverwrite(false);
-//
-//        addEidToLocatorRecord();
-//
-//        MappingEntry<?>[] entries = mappingEntriesSaver.lastValue;
-//        assertEquals(1, entries.length);
-//
-//        assertEquals(String.valueOf(hc), entries[0].getKey());
-//        assertEquals(rloc, ((EidToLocatorRecord) entries[0].getValue()).getLocatorRecord()
-//                .get(0).getEid());
-//    }
+    private static List<TransportAddress> getTransportAddressList() {
+        TransportAddressBuilder transportAddressBuilder_1 = new TransportAddressBuilder()
+                .setIpAddress(new IpAddress(new Ipv4Address(IPV4_STRING_3)))
+                .setPort(new PortNumber(LispMessage.PORT_NUM));
 
-    private void addEidToLocatorRecord() {
-        MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(eid);
-        LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
-        locatorBuilder.setRloc(rloc);
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
+        TransportAddressBuilder transportAddressBuilder_2 = new TransportAddressBuilder()
+                .setIpAddress(new IpAddress(new Ipv4Address(IPV4_STRING_4)))
+                .setPort(new PortNumber(LispMessage.PORT_NUM));
 
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(recordBuilder.build()).build());
+        final List<TransportAddress> transportAddressList = Lists.newArrayList(
+                transportAddressBuilder_2.build(),
+                transportAddressBuilder_1.build());
 
-        testedMapServer.handleMapRegister(mapRegisterBuilder.build());
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRegister__MultipleEIDs() throws Exception {
-        addDefaultPutAndGetExpectations(eid);
-
-        Rloc rloc1 = LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:7");
-        mapRegisterBuilder = getDefaultMapRegisterBuilder();
-        MappingRecordBuilder etlrBuilder = getDefaultMappingRecordBuilder();
-        etlrBuilder.getLocatorRecord().add(getDefaultLocatorBuilder().setRloc(rloc1).build());
-        mapRegisterBuilder.setWantMapNotify(true);
-        etlrBuilder.setEid(eid);
-
-        MappingRecordBuilder etlr2Builder = getDefaultMappingRecordBuilder();
-        Eid address = LispAddressUtil.asIpv4PrefixEid("1.1.1.1");
-        etlr2Builder.setEid(address);
-        etlr2Builder.setMaskLength((short) 32);
-        int recordTtl = 5;
-        etlr2Builder.setRecordTtl(recordTtl);
-        etlr2Builder.getLocatorRecord().add(
-                getDefaultLocatorBuilder().setPriority((short) 10)
-                        .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2")).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(etlrBuilder.build()).build());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(etlr2Builder.build()).build());
-        addDefaultPutAndGetExpectations(address);
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterBuilder.build()).getLeft();
-
-        assertEquals(rloc1, mapNotify.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
-                .getRloc());
-        assertEquals(LispAddressUtil.asIpv4Rloc("2.2.2.2"), mapNotify.getMappingRecordItem().get(1).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc());
-        assertEquals(address, mapNotify.getMappingRecordItem().get(1).getMappingRecord().getEid());
-        assertEquals(recordTtl, mapNotify.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().intValue());
-
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv4__CheckWrongPassword() throws Exception {
-
-        addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"), 0, 31, "bla");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
-        assertEquals(null, mapNotify);
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv4__CheckNoPasswordAndThenPassword() throws Exception {
-
-        addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"), 0, 25, "password");
-        addPutExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1"));
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
-        assertEquals(mapRegisterWithAuthentication.getMappingRecordItem(), mapNotify.getMappingRecordItem());
-        assertEquals(mapRegisterWithAuthentication.getKeyId(), mapNotify.getKeyId());
-        assertEquals(mapRegisterWithAuthentication.getNonce(), mapNotify.getNonce());
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv4__CheckNoPassword() throws Exception {
-
-        addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), 30, 0, "password");
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
-        assertEquals(null, mapNotify);
-    }
-
-    @Test
-    @Ignore
-    public void handleMapRegisterIpv4__CheckNoreturn() throws Exception {
-
-        addGetExpectations(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"));
-        MapNotify mapNotify = testedMapServer.handleMapRegister(mapRegisterWithAuthentication).getLeft();
-        assertEquals(mapNotify, null);
-    }
-
-    private void addDefaultPutAndGetExpectations(Eid addr) {
-        addPutExpectations(addr);
-        addGetExpectations(addr);
-    }
-
-    private void addGetExpectations(Eid address) {
-        addGetExpectations(address, 0, 0, SubKeys.AUTH_KEY);
-    }
-
-    private void prepareDsbe() {
-        ValueSaverAction<Mapping> dsbeAddMappingSaverAction = new ValueSaverAction<Mapping>() {
-            @Override
-            public Object invoke(Invocation invocation) throws Throwable {
-                mapSystem.addMapping(lastValue.getOrigin(), lastValue.getMappingRecord().getEid(),
-                        (Object) lastValue.getMappingRecord());
-                return null;
-            }
-        };
-        oneOf(dsbe).addMapping(with(dsbeAddMappingSaverAction)); will(dsbeAddMappingSaverAction);
-    }
-
-    private void addPutExpectations(Eid address) {
-        // needed for mapping-service addMapping
-        prepareDsbe();
-        exactly(2).of(dao).put(weq(address), with(mappingEntriesSaver));
-    }
-
-    private void addGetExpectations(Eid address, int withoutPassword, int withPassword, String password) {
-        if (withoutPassword > 0) {
-            String result = null;
-            result = null;
-            allowing(dao).getSpecific(with(address), with(SubKeys.AUTH_KEY));
-            ret(result);
-        }
-        if (withPassword > 0) {
-            String result = null;
-            result = password;
-            allowing(dao).getSpecific(with(address), with(SubKeys.AUTH_KEY));
-            ret(result);
-        }
-        for (int i = MaskUtil.getMaskForAddress(address.getAddress()); i >= 0; i--) {
-            Eid addr = MaskUtil.normalize(address, (short) i);
-            allowing(dao).getSpecific(with(addr), with(SubKeys.AUTH_KEY)); ret(null);
-            // check if mapping exists before insertion
-            allowing(dao).get(with(addr));will(returnValue(null));
-        }
-
-    }
-
-    private MapRegisterBuilder getDefaultMapRegisterBuilder() {
-        MapRegisterBuilder mrb = new MapRegisterBuilder();
-        mrb.setKeyId((short) 0);
-        mrb.setNonce((long) 0);
-        mrb.setWantMapNotify(false);
-        mrb.setProxyMapReply(false);
-        mrb.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mrb.setAuthenticationData(new byte[0]);
-        return mrb;
-    }
-
-    private MappingRecordBuilder getDefaultMappingRecordBuilder() {
-        MappingRecordBuilder builder = new MappingRecordBuilder();
-        builder.setAction(Action.NoAction);
-        builder.setAuthoritative(false);
-        builder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        builder.setMapVersion((short) 0);
-        builder.setMaskLength((short) 32);
-        builder.setRecordTtl(60);
-        return builder;
-    }
-
-    private LocatorRecordBuilder getDefaultLocatorBuilder() {
-        LocatorRecordBuilder builder = new LocatorRecordBuilder();
-        builder.setLocalLocator(false);
-        builder.setMulticastPriority((short) 0);
-        builder.setMulticastWeight((short) 0);
-        builder.setPriority((short) 0);
-        builder.setRlocProbed(false);
-        builder.setRouted(false);
-        builder.setWeight((short) 0);
-        return builder;
+        return transportAddressList;
     }
 }
