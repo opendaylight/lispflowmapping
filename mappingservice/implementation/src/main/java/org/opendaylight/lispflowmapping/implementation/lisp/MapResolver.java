@@ -18,6 +18,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -132,7 +133,9 @@ public class MapResolver implements IMapResolverAsync {
             // timestamp
             subscribers.remove(subscriberRloc);
         }
-        LOG.trace("Adding new subscriber: " + subscriberRloc.toString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding new subscriber: " + LispAddressStringifier.getString(subscriberRloc.getSrcRloc()));
+        }
         subscribers.add(subscriberRloc);
         addSubscribers(subscribedEid, subscribers);
     }
