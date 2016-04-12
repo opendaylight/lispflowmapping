@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_0aaa2319",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_e4ed70f1",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_c4d034fa",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-11T16:19:07Z",
       "side": 1,
       "message": "This is actually removing the southbound mapping of Site D",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_eaa6d752",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "well ok then. I try to prepare method for removing southbound.",
+      "parentUuid": "1a494da4_c4d034fa",
       "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_aa732fe6",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_e49bb070",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_84b46cf3",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2016-04-11T16:19:07Z",
       "side": 1,
       "message": "Please remove the first argument, since it\u0027s not used.",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_6a49278b",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_84b46cf3",
       "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_aa5a0f4e",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "check for equality of eid prefixes was added.",
+      "parentUuid": "1a494da4_24947836",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_e4a9f07c",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -98,6 +188,24 @@
       "writtenOn": "2016-04-11T16:19:07Z",
       "side": 1,
       "message": "Why not put dstSite into the vararg (rename from additionalSitesFromMapping to dstSites) and avoid needing concatenateSItes(). I think it would be easier to read.",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_8a3bd3ea",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "because additionalSitesFromMapping aren\u0027t destination sites for this case. ping is done from site A to site B but not also D, E....\nAdditionalSitesFromMapping represents only list of records which should be also returned.\nIt could be concatenaded at input of method checkActionAndRloc but not higher.",
+      "parentUuid": "1a494da4_e4a9f07c",
       "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_0a2fc3a2",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "no method getString() in class LispAddressUtil has been found.",
+      "parentUuid": "1a494da4_24bbd8c5",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_04adfc88",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -132,6 +258,24 @@
       "writtenOn": "2016-04-11T16:19:07Z",
       "side": 1,
       "message": "s/concateSite/concatenateSites/",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_ea2b7792",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_04adfc88",
       "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false

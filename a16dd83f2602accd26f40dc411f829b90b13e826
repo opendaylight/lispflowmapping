@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_aaaccf36",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "1a494da4_04f17ccd",
+      "revId": "a16dd83f2602accd26f40dc411f829b90b13e826",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_a491a854",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_4a638b1a",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "1a494da4_a491a854",
+      "revId": "a16dd83f2602accd26f40dc411f829b90b13e826",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_c494b446",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -47,6 +83,24 @@
       "writtenOn": "2016-04-11T16:19:07Z",
       "side": 0,
       "message": "Pease change srcSite.getSiteId() to be consistent with the usage in storeNorthMappingIpPrefix()",
+      "revId": "a16dd83f2602accd26f40dc411f829b90b13e826",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_2a36ff03",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-12T07:33:45Z",
+      "side": 0,
+      "message": "should be done (replaced with dstSite.getSiteId()",
+      "parentUuid": "1a494da4_c494b446",
       "revId": "a16dd83f2602accd26f40dc411f829b90b13e826",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
