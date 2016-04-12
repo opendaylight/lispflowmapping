@@ -212,6 +212,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_55ffac01",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-12T07:51:28Z",
+      "side": 1,
+      "message": "Ok, it make things a bit less readable, but I understand.",
+      "parentUuid": "1a494da4_8a3bd3ea",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_24bbd8c5",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 8
@@ -241,6 +259,24 @@
       "side": 1,
       "message": "no method getString() in class LispAddressUtil has been found.",
       "parentUuid": "1a494da4_24bbd8c5",
+      "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_ea02570a",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-12T07:51:28Z",
+      "side": 1,
+      "message": "Sorry, my mistake. I meant LispAddressStringifier.",
+      "parentUuid": "1a494da4_0a2fc3a2",
       "revId": "7efef41352bb8681480bd698817d24b4e393a69d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
