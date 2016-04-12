@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -237,10 +238,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         }
         MapRequestBuilder mrb = MapRequestUtil.prepareSMR(eid, LispAddressUtil.toRloc(getLocalAddress()));
         LOG.trace("Built SMR packet: " + mrb.build().toString());
-        for (SubscriberRLOC subscriber : subscribers) {
+        // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a SubscriberRLOC
+        // from a Set.
+        Iterator<SubscriberRLOC> iterator = subscribers.iterator();
+        while (iterator.hasNext()) {
+            SubscriberRLOC subscriber = iterator.next();
             if (subscriber.timedOut()) {
                 LOG.trace("Lazy removing expired subscriber entry " + subscriber.toString());
-                subscribers.remove(subscriber);
+                iterator.remove();
             } else {
                 try {
                     // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request.
