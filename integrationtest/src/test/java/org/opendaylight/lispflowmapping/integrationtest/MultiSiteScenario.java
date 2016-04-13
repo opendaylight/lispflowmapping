@@ -15,13 +15,17 @@ import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceInt
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -30,6 +34,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -43,6 +48,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -423,5 +429,72 @@ class MultiSiteScenario {
             LOG.trace("Interrupted while sleeping", e);
         }
     }
+
+
+    private List<MapRequest> translateBuffersToMapRequest(byte[][] buffers) {
+        final List<MapRequest> mapRequests = new ArrayList<>();
+        for (byte[] buffer : buffers) {
+            final MapRequest mapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buffer));
+            assertNotNull(mapRequest);
+            mapRequests.add(mapRequest);
+        }
+        return mapRequests;
+    }
+
+    private Set<Eid> prepareExpectedEid(final String ... hosts) {
+        final Set<Eid> eids = new HashSet<>();
+        for (String host : hosts) {
+            eids.add(LispAddressUtil.asIpv4PrefixEid(host + "/32", new InstanceIdType(2L)));
+        }
+        return eids;
+    }
+
+    private SourceEid prepareSourceEid(final String eidPrefix) {
+        final SourceEidBuilder sourceEidBuilder = new SourceEidBuilder();
+        final Eid eid = LispAddressUtil.asIpv4Eid(eidPrefix, 2L);
+        return sourceEidBuilder.setEid(eid).build();
+    }
+
+    void checkSMR(final SocketReader socketReader, final String site, final String ... hosts) {
+        List<MapRequest> mapRequests = translateBuffersToMapRequest(socketReader.getBuffers(hosts.length));
+        final Set<Eid> eids = prepareExpectedEid(hosts);
+        final SourceEid expectedSourceEid = prepareSourceEid(site);
+        for(MapRequest mapRequest : mapRequests) {
+            assertTrue(mapRequest.isSmr());
+            final SourceEid receivedSourceEid = mapRequest.getSourceEid();
+            assertEquals(expectedSourceEid, receivedSourceEid);
+            final List<EidItem> currentEidItems = mapRequest.getEidItem();
+            assertNotNull(currentEidItems);
+            assertTrue(SMRContainsExpectedEid(eids, currentEidItems));
+        }
+        //all expected eids should be after looping via mapRequests matched.
+        assertTrue("Expected eids wasn't/weren't found " + eids, eids.isEmpty());
+    }
+
+    private boolean SMRContainsExpectedEid(Set<Eid> eids, List<EidItem> currentEidItems) {
+        for (EidItem eidItem : currentEidItems) {
+            //if eid from map request is matched then it is removed from set of expected eids
+            if (!eids.remove(eidItem.getEid())) {
+                fail("SMR contained " + eidItem.getEid() + " which wasn't expected.");
+            }
+        }
+        return true;
+    }
+
+    private void compareEids(final List<Eid> expectedEids, final List<EidItem> currentEidItems) {
+        for (Eid expectedEid : expectedEids) {
+            boolean currentExpectedEidFound = false;
+            for (EidItem eidItem : currentEidItems) {
+                if (expectedEid.equals(eidItem.getEid())) {
+                    currentExpectedEidFound = true;
+                    break;
+                }
+            }
+            if (!currentExpectedEidFound) {
+                fail("Eid "+expectedEid+" was expected, but wasn't found in SMR.");
+            }
+        }
+    }
+
 
 }
