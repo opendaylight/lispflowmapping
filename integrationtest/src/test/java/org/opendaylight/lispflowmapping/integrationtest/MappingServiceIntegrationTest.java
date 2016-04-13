@@ -41,8 +41,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import javax.inject.Inject;
 
 //import org.codehaus.jettison.json.JSONException;
@@ -90,6 +91,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -405,7 +407,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
 
     /**
-     * Test scenario A
+     * TEST SCENARIO A
      */
     @Test
     public void testMultiSiteScenarioA() throws IOException {
@@ -414,7 +416,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
 
-        //test case 1
+        resetSocketAndCheckIsEmpty();
+        final SocketReader socketReader = receivePacketInThread(socket);
+
+        //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
@@ -423,66 +428,125 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 2
+        //TEST CASE 2
+        //following action should generate SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.1/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A, SITE_C);
         sleepForSeconds(2);
+
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
-        //test case 3
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 3
+        // following action should generate SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.1/32
+        // 3) 192.0.1.5/32
+        // 4) 192.0.4.5/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1), SITE_A.getHost(5),
+                SITE_D4.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_D4, 5, SITE_C, 4);
 
-        //test case 4
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 4
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C_RLOC_10);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D4.getHost(5));
         //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
         //that ping won't be successfull
         multiSiteScenario.assertPingFails(SITE_B, 5, SITE_C, 4);
 
-        //test case 5
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 5
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D4.getHost(5), SITE_B.getHost(5));
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
-        //test case 6
+        //TEST CASE 6
         multiSiteScenario.assertPingFails(SITE_D5, 5, SITE_C, 3);
 
-        //test case 7
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 7
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A, SITE_C);
+        sleepForSeconds(2);
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5), SITE_B.getHost(5));
+
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5), SITE_B.getHost(5));
+
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 8
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 8
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        // 4) 192.0.1.1/32
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B, SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5), SITE_B.getHost(5),
+                SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingFails(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 9
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 9
+        // following action should generate SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        // 4) 192.0.1.1/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5), SITE_B.getHost(5),
+                SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
     }
 
+    private List<MapRequest> translateBuffersToMapRequest(byte[][] buffers) {
+        final List<MapRequest> mapRequests = new ArrayList<>();
+        for (byte[] buffer : buffers) {
+            final MapRequest mapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buffer));
+            assertNotNull(mapRequest);
+            mapRequests.add(mapRequest);
+        }
+        return mapRequests;
+    }
+
+    private Set<Eid> prepareExpectedEid(final String ... hosts) {
+        final Set<Eid> eids = new HashSet<>();
+        for (String host : hosts) {
+            eids.add(LispAddressUtil.asIpv4PrefixEid(host + "/32", new InstanceIdType(2L)));
+        }
+        return eids;
+    }
+
+    private SourceEid prepareSourceEid(final String eidPrefix) {
+        final SourceEidBuilder sourceEidBuilder = new SourceEidBuilder();
+        final Eid eid = LispAddressUtil.asIpv4Eid(eidPrefix, 2L);
+        return sourceEidBuilder.setEid(eid).build();
+    }
     /**
      * Test scenario B
      */
@@ -539,11 +603,43 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     // ------------------------------- Simple Tests ---------------------------
 
-    private void checkSmrPacketIsGenerated() {
-        byte[] data4 = receivePacketAndGetData();
-        assertNotNull(data4);
-        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data4));
-        assertTrue(deserializedMapRequest.isSmr());
+    private void checkSMR(final SocketReader socketReader, final String site, final String ... hosts) {
+        List<MapRequest> mapRequests = translateBuffersToMapRequest(socketReader.getBuffers(hosts.length));
+        final Set<Eid> eids = prepareExpectedEid(hosts);
+        final SourceEid expectedSourceEid = prepareSourceEid(site);
+        for(MapRequest mapRequest : mapRequests) {
+            assertTrue(mapRequest.isSmr());
+            final SourceEid receivedSourceEid = mapRequest.getSourceEid();
+            assertEquals(expectedSourceEid, receivedSourceEid);
+            final List<EidItem> currentEidItems = mapRequest.getEidItem();
+            assertNotNull(currentEidItems);
+            assertTrue(containsSMRExpectedEid(eids, currentEidItems));
+        }
+        assertTrue("Expected eids wasn't/weren't found " + eids, eids.isEmpty());
+    }
+
+    private boolean containsSMRExpectedEid(Set<Eid> eids, List<EidItem> currentEidItems) {
+        for (EidItem eidItem : currentEidItems) {
+            if (!eids.remove(eidItem.getEid())) {
+                fail("SMR contained " + eidItem.getEid() + " which wasn't expected.");
+            }
+        }
+        return true;
+    }
+
+    private void compareEids(final List<Eid> expectedEids, final List<EidItem> currentEidItems) {
+        for (Eid expectedEid : expectedEids) {
+            boolean currentExpectedEidFound = false;
+            for (EidItem eidItem : currentEidItems) {
+                if (expectedEid.equals(eidItem.getEid())) {
+                    currentExpectedEidFound = true;
+                    break;
+                }
+            }
+            if (!currentExpectedEidFound) {
+                fail("Eid "+expectedEid+" was expected, but wasn't found in SMR.");
+            }
+        }
     }
 
     private void resetSocketAndCheckIsEmpty() {
@@ -551,14 +647,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         DatagramPacket datagramPacket;
         boolean emptySocket = false;
         try {
-            datagramPacket = receivePacket();
+            datagramPacket = receivePacket(1000);
         } catch (SocketTimeoutException e) {
             emptySocket = true;
         }
         assertTrue(emptySocket);
     }
-
-    // ------------------------------- Simple Tests ---------------------------
 
     public void mapRequestSimple() throws SocketTimeoutException {
         cleanUP();
@@ -2078,6 +2172,21 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             return receivePacket;
         } catch (SocketTimeoutException ste) {
             throw ste;
+        } catch (Throwable t) {
+            fail();
+            return null;
+        }
+    }
+
+    private SocketReader receivePacketInThread(final DatagramSocket socket) throws
+            SocketTimeoutException {
+        try {
+            socket.setSoTimeout(0);
+            final SocketReader socketReader = new SocketReader(socket);
+            final Thread thread = new Thread(socketReader);
+            thread.setName("Socket reader - multisite integration test - lispflowmapping");
+            thread.start();
+            return socketReader;
         } catch (Throwable t) {
             fail();
             return null;
