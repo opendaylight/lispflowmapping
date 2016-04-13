@@ -308,6 +308,10 @@ public final class LispAddressUtil {
         return toEid(new Ipv4Prefix(prefix), null);
     }
 
+    public static Eid asIpv4PrefixEid(final String prefix, final InstanceIdType iiType) {
+        return toEid(new Ipv4Prefix(prefix), iiType);
+    }
+
     public static Eid asIpv4Eid(String address) {
         return toEid(new Ipv4Address(address), null);
     }

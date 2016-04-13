@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.lispflowmapping.integrationtest;
+
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+
+public class SocketReader implements Runnable {
+
+    private final DatagramSocket socket;
+
+    /**
+     * array of buffers where SMR messages are stored
+     */
+    private byte[][] buffers = new byte[100][4096];
+
+    /**
+     * Index to array of buffers where current writting is done
+     */
+    private int currentBufferWriteIndex = 0;
+
+    /**
+     * Index to array of buffers from where current reading is done
+     */
+    private int currentBufferReaderIndex = 0;
+    private DatagramPacket receivePacket;
+    private boolean readFromSocket = true;
+
+    private SocketReader(DatagramSocket receivedSocket) {
+        this.socket = receivedSocket;
+    }
+
+    static SocketReader startReadingInStandaloneThread(final DatagramSocket socket) throws SocketTimeoutException {
+        try {
+            socket.setSoTimeout(0);
+            final SocketReader socketReader = new SocketReader(socket);
+            final Thread thread = new Thread(socketReader);
+            thread.setName("Socket reader - multisite integration test - lispflowmapping");
+            thread.start();
+            return socketReader;
+        } catch (Throwable t) {
+            fail();
+            return null;
+        }
+    }
+
+    @Override
+    public void run() {
+        while (readFromSocket) {
+            receivePacket = new DatagramPacket(buffers[currentBufferWriteIndex], buffers[currentBufferWriteIndex].
+                    length);
+            try {
+                socket.receive(receivePacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            currentBufferWriteIndex++;
+        }
+        System.out.println("koniec");
+    }
+
+    void stopReading() {
+        readFromSocket = false;
+        socket.close();
+    }
+
+    /**
+     * Read from buffers {@code count} number of buffers from current postion.
+     *
+     * @param count how many buffer should be returned.
+     * @return array of buffers
+     */
+    byte[][] getBuffers(final int count) {
+        final byte[][] subBuffer = Arrays.copyOfRange(buffers, currentBufferReaderIndex, currentBufferReaderIndex +
+                count);
+        currentBufferReaderIndex = currentBufferReaderIndex + count;
+        return subBuffer;
+    }
+
+}
