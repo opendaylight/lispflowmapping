@@ -19,7 +19,7 @@ class MultiSiteScenarioUtil {
     private final static String HOST4 = ".4";
     private final static String HOST5 = ".5";
 
-    private final static long VNI2 = 2L;
+    protected final static long VNI2 = 2L;
     private final static long VNI3 = 3L;
 
     static final Short DEFAULT_PRIORITY = 1;

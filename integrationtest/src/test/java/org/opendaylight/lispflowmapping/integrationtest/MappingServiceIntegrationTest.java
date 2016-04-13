@@ -405,7 +405,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
 
     /**
-     * Test scenario A
+     * TEST SCENARIO A
      */
     @Test
     public void testMultiSiteScenarioA() throws IOException {
@@ -414,7 +414,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
 
-        //test case 1
+        restartSocket();
+        final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
+
+        //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
@@ -423,80 +426,126 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 2
+        //TEST CASE 2
+        //following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.1/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A, SITE_C);
         sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
-        //test case 3
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 3
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.1/32
+        // 3) 192.0.1.5/32
+        // 4) 192.0.4.5/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1), SITE_A
+                        .getHost(5),
+                SITE_D4.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_D4, 5, SITE_C, 4);
 
-        //test case 4
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 4
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C_RLOC_10);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D4.getHost(5));
         //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
         //that ping won't be successfull
         multiSiteScenario.assertPingFails(SITE_B, 5, SITE_C, 4);
 
-        //test case 5
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 5
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D4.getHost(5), SITE_B.getHost(5));
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
 
-        //test case 6
+        //TEST CASE 6
         multiSiteScenario.assertPingFails(SITE_D5, 5, SITE_C, 3);
 
-        //test case 7
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 7
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A, SITE_C);
+        sleepForSeconds(2);
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
+                SITE_B.getHost(5));
+
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
+                SITE_B.getHost(5));
+
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 8
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 8
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        // 4) 192.0.1.1/32
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B, SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
+                SITE_B.getHost(5),
+                SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingFails(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
 
-        //test case 9
-        resetSocketAndCheckIsEmpty();
+        //TEST CASE 9
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.4.5/32
+        // 2) 192.0.2.5/32
+        // 3) 192.0.5.5/32
+        // 4) 192.0.1.1/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
         sleepForSeconds(2);
-        checkSmrPacketIsGenerated();
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
+                SITE_B.getHost(5),
+                SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
+
+        socketReader.stopReading();
+
     }
 
     /**
-     * Test scenario B
+     * TEST SCENARIO B
      */
     @Test
-    public void testMultiSiteScenarioB() {
+    public void testMultiSiteScenarioB() throws IOException {
         cleanUP();
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
 
+        restartSocket();
+        final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
+
         mapService.setLookupPolicy(ConfigIni.NB_AND_SB);
         mapService.setMappingOverwrite(false);
 
-        //test case 1
+        //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(SITE_A_SB, SITE_B_SB, SITE_C_WP_100_1_SB, SITE_D_WP_100_1_SB,
                 SITE_E_SB);
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_A_SB);
@@ -506,56 +555,67 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
         multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
 
-        //test case 2
+        //TEST CASE 2
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
+        sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
+
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingNegative(SITE_C_SB, Action.Drop);
         sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
+
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
         multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_SB, 4);
 
 
-        //test case 3
+        //TEST CASE 3
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
         sleepForSeconds(2);
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4);
 
-        //test case 4
+        //TEST CASE 4
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
         sleepForSeconds(2);
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
 
-        //test case 5
+        //TEST CASE 5
         multiSiteScenario.deleteSouthboundMappings(SITE_D_DELETE_SB);
         sleepForSeconds(2);
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
+
         multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4);
 
-        //test case 6
+        //TEST CASE 6
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
+        sleepForSeconds(2);
+        // following action should trigger generatting of SMR messages:
+        // 1) 192.0.2.5/32
+        // 2) 192.0.1.5/32
+        multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
+
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB);
         sleepForSeconds(2);
         multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4);
 
-    }
+        socketReader.stopReading();
 
-    // ------------------------------- Simple Tests ---------------------------
-
-    private void checkSmrPacketIsGenerated() {
-        byte[] data4 = receivePacketAndGetData();
-        assertNotNull(data4);
-        MapRequest deserializedMapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(data4));
-        assertTrue(deserializedMapRequest.isSmr());
-    }
-
-    private void resetSocketAndCheckIsEmpty() {
-        restartSocket();
-        DatagramPacket datagramPacket;
-        boolean emptySocket = false;
-        try {
-            datagramPacket = receivePacket();
-        } catch (SocketTimeoutException e) {
-            emptySocket = true;
-        }
-        assertTrue(emptySocket);
     }
 
     // ------------------------------- Simple Tests ---------------------------
@@ -2047,15 +2107,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             socket.send(packet);
         } catch (Throwable t) {
             fail();
-        }
-    }
-
-    private byte[] receivePacketAndGetData() {
-        try {
-            final DatagramPacket datagramPacket = receivePacket();
-            return datagramPacket.getData();
-        } catch (SocketTimeoutException e) {
-            return null;
         }
     }
 
