@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a494da4_e9aedce6",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-14T14:18:33Z",
+      "side": 0,
+      "message": "Could you please move this down to the other private methods like receivePacket() ? Also it seems like receivePacketAndGetData() can be removed now.",
+      "revId": "6fbfc1c09069b483e9fa90138b4287b96bb49d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

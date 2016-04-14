@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a494da4_a9a5f405",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-14T14:18:33Z",
+      "side": 1,
+      "message": "Please use IP_MASK here instead of \"/32\" and MultiSiteScenarioUtil.VNI2 (if we make it protected) or a new costant in this file.",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_89aab8d2",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-14T14:18:33Z",
+      "side": 1,
+      "message": "Same comment about the constant.",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_e967fce8",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/SocketReader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-14T14:18:33Z",
+      "side": 1,
+      "message": "This is not useful in Karaf, please use something like:\nLOG.debug(\"Problem while reading SMR test socket!\", e);",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
