@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a494da4_69d3ec38",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-14T14:28:48Z",
+      "side": 1,
+      "message": "one more thing: can we make this just receivePacket(1000); without the assignment and remove the variable declaration to avoid an unused variable warning?",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_a9a5f405",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 5
