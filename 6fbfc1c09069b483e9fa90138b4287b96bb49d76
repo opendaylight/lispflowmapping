@@ -16,6 +16,24 @@
       "revId": "6fbfc1c09069b483e9fa90138b4287b96bb49d76",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_104b682c",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-15T06:46:20Z",
+      "side": 0,
+      "message": "yes probably isn\u0027t necessary to completely reset socket and immediately check whether something is received.\nSo done.",
+      "parentUuid": "1a494da4_e9aedce6",
+      "revId": "6fbfc1c09069b483e9fa90138b4287b96bb49d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }

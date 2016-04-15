@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_f047dc1b",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-15T06:46:20Z",
+      "side": 1,
+      "message": "as mentioned in previous comment. This check probably isn\u0027t necessary therefore I completely removed it.",
+      "parentUuid": "1a494da4_69d3ec38",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_a9a5f405",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-14T14:18:33Z",
       "side": 1,
       "message": "Please use IP_MASK here instead of \"/32\" and MultiSiteScenarioUtil.VNI2 (if we make it protected) or a new costant in this file.",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_500330b8",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-15T06:46:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_a9a5f405",
       "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a494da4_300024aa",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-15T06:46:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_89aab8d2",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_e967fce8",
         "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/SocketReader.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2016-04-14T14:18:33Z",
       "side": 1,
       "message": "This is not useful in Karaf, please use something like:\nLOG.debug(\"Problem while reading SMR test socket!\", e);",
+      "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a494da4_902c984c",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/SocketReader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-15T06:46:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a494da4_e967fce8",
       "revId": "924b17e78020834ec4377cc0cc0c8b23e4e2b7a1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
