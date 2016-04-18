@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_e31c40c4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-18T17:28:09Z",
+      "side": 1,
+      "message": "When \u0027switch\u0027 matches WRITE, we log both \"Received created data\" and \"Received updated data\"",
+      "revId": "93ad1a459ea710139e9d5a462d861a76a083fbcf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
