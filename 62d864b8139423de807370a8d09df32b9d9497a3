@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "fa57193c_fd9223f5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-18T11:23:21Z",
+      "side": 1,
+      "message": "There are arguments on both sides, but for consistency we prefer present tense for commit messages, so for example in this case \"Add\" instead of \"Added\". We don\u0027t have it documented anywhere, and are not very strict about it, just wanted to note it. :)",
+      "revId": "62d864b8139423de807370a8d09df32b9d9497a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_3d95bbe4",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/NewAbstractDataListener.java",
         "patchSetId": 1
