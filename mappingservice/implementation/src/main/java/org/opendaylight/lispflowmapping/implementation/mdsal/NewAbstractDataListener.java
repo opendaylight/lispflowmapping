@@ -27,6 +27,7 @@ public abstract class NewAbstractDataListener<T extends DataObject> implements D
     public void registerDataChangeListener() {
         final DataTreeIdentifier<T> dataTreeIdentifier = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION,
                 path);
+
         registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
     }
 

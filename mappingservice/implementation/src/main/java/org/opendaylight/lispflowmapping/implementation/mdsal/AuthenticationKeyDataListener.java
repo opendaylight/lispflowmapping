@@ -7,19 +7,18 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import java.util.Map;
-import java.util.Set;
-
+import java.util.Collection;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 
 /**
  * DataListener for all AuthenticationKey modification events.
@@ -27,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public class AuthenticationKeyDataListener extends AbstractDataListener {
+public class AuthenticationKeyDataListener extends NewAbstractDataListener<AuthenticationKey> {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
     private IMappingSystem mapSystem;
 
@@ -41,49 +40,34 @@ public class AuthenticationKeyDataListener extends AbstractDataListener {
     }
 
     @Override
-    public void onDataChanged(
-            AsyncDataChangeEvent<InstanceIdentifier<?>, DataObject> change) {
+    public void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
+        for (DataTreeModification<AuthenticationKey> change : changes) {
+            final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 
-        // Process newly created authentication keys
-        Map<InstanceIdentifier<?>, DataObject> createdData = change.getCreatedData();
-        for (Map.Entry<InstanceIdentifier<?>, DataObject> entry : createdData.entrySet()) {
-            if (entry.getValue() instanceof AuthenticationKey) {
-                AuthenticationKey authkey = (AuthenticationKey)entry.getValue();
-
-                LOG.trace("Received created data");
-                LOG.trace("Key: {}", entry.getKey());
-                LOG.trace("Value: {}", authkey);
-
-                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey());
-            }
-        }
-
-        // Process updated authentication keys
-        Map<InstanceIdentifier<?>, DataObject> updatedData = change.getUpdatedData();
-        for (Map.Entry<InstanceIdentifier<?>, DataObject> entry : updatedData.entrySet()) {
-            if (entry.getValue() instanceof AuthenticationKey) {
-                AuthenticationKey authkey = (AuthenticationKey)entry.getValue();
-
-                LOG.trace("Received changed data");
-                LOG.trace("Key: {}", entry.getKey());
-                LOG.trace("Value: {}", authkey);
-
-                mapSystem.addAuthenticationKey(authkey.getEid(), authkey.getMappingAuthkey());
-            }
-        }
-
-        // Process deleted authentication keys
-        Set<InstanceIdentifier<?>> removedData = change.getRemovedPaths();
-        for (InstanceIdentifier<?> entry : removedData) {
-            DataObject dataObject = change.getOriginalData().get(entry);
-            if (dataObject instanceof AuthenticationKey) {
-                AuthenticationKey authkey = (AuthenticationKey)dataObject;
+            if (ModificationType.DELETE == mod.getModificationType()) {
+                final AuthenticationKey authKey = mod.getDataBefore();
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", entry);
-                LOG.trace("Value: {}", authkey);
+                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Value: {}", authKey);
 
-                mapSystem.removeAuthenticationKey(authkey.getEid());
+                mapSystem.removeAuthenticationKey(authKey.getEid());
+            } else if (ModificationType.WRITE == mod.getModificationType() || ModificationType.SUBTREE_MODIFIED == mod
+                    .getModificationType()) {
+                if (ModificationType.WRITE == mod.getModificationType()) {
+                    LOG.trace("Received created data");
+                } else {
+                    LOG.trace("Received updated data");
+                }
+                // Process newly created or updated authentication keys
+                final AuthenticationKey authKey = mod.getDataAfter();
+
+                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Value: {}", authKey);
+
+                mapSystem.addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
+            } else {
+                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
         }
     }
