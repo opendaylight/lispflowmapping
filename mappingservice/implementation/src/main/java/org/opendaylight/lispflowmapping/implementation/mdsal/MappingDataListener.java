@@ -7,12 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import java.util.Map;
-import java.util.Set;
-
+import java.util.Collection;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.data.AsyncDataChangeEvent;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
@@ -20,7 +20,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras
  *
  */
-public class MappingDataListener extends AbstractDataListener {
+public class MappingDataListener extends NewAbstractDataListener<Mapping> {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
     private NotificationPublishService notificationPublishService;
@@ -51,74 +50,19 @@ public class MappingDataListener extends AbstractDataListener {
         this.notificationPublishService = nps;
     }
 
+    void setMappingSystem(IMappingSystem msmr) {
+        this.mapSystem = msmr;
+    }
+
     @Override
-    public void onDataChanged(
-            AsyncDataChangeEvent<InstanceIdentifier<?>, DataObject> change) {
+    public void onDataTreeChanged(Collection<DataTreeModification<Mapping>> changes) {
+        for (DataTreeModification<Mapping> change : changes) {
+            final DataObjectModification<Mapping> mod = change.getRootNode();
 
-     // Process newly created mappings
-        Map<InstanceIdentifier<?>, DataObject> createdData = change.getCreatedData();
-        for (Map.Entry<InstanceIdentifier<?>, DataObject> entry : createdData.entrySet()) {
-            if (entry.getValue() instanceof Mapping) {
-                Mapping mapping = (Mapping)entry.getValue();
+            if (ModificationType.DELETE == mod.getModificationType()) {
+                // Process deleted mappings
 
-                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted. XXX separate NB and SB to avoid ignoring SB notifications
-                if (mapping.getOrigin() == MappingOrigin.Southbound) {
-                    continue;
-                }
-
-                LOG.trace("Received created data");
-                LOG.trace("Key: {}", entry.getKey());
-                LOG.trace("Value: {}", mapping);
-
-                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
-                        mapping.getMappingRecord());
-
-                try {
-                    // The notifications are used for sending SMR.
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
-                            MappingChange.Created));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
-            }
-        }
-
-        // Process updated mappings
-        Map<InstanceIdentifier<?>, DataObject> updatedData = change.getUpdatedData();
-        for (Map.Entry<InstanceIdentifier<?>, DataObject> entry : updatedData.entrySet()) {
-            if (entry.getValue() instanceof Mapping) {
-                Mapping mapping = (Mapping)entry.getValue();
-
-                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted.
-                if (mapping.getOrigin() == MappingOrigin.Southbound) {
-                    continue;
-                }
-
-                LOG.trace("Received changed data");
-                LOG.trace("Key: {}", entry.getKey());
-                LOG.trace("Value: {}", entry.getValue());
-
-                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
-                        mapping.getMappingRecord());
-
-                // The notifications are used for sending SMR.
-                try {
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
-                            MappingChange.Updated));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
-            }
-        }
-
-        // Process deleted mappings
-        Set<InstanceIdentifier<?>> removedData = change.getRemovedPaths();
-        for (InstanceIdentifier<?> entry : removedData) {
-            DataObject dataObject = change.getOriginalData().get(entry);
-            if (dataObject instanceof Mapping) {
-                Mapping mapping = (Mapping)dataObject;
+                final Mapping mapping = mod.getDataBefore();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
                 // before being persisted.
@@ -127,8 +71,8 @@ public class MappingDataListener extends AbstractDataListener {
                 }
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", entry);
-                LOG.trace("Value: {}", dataObject);
+                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Value: {}", mapping);
 
                 mapSystem.removeMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid());
                 try {
@@ -137,11 +81,37 @@ public class MappingDataListener extends AbstractDataListener {
                 } catch (InterruptedException e) {
                     LOG.warn("Notification publication interrupted!");
                 }
+
+            } else if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType() || ModificationType.WRITE == mod
+                    .getModificationType()) {
+                final Mapping mapping = mod.getDataAfter();
+
+                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                // before being persisted. XXX separate NB and SB to avoid ignoring SB notifications
+                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                    continue;
+                }
+
+                LOG.trace("Received created data");
+                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Value: {}", mapping);
+
+                mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
+                        mapping.getMappingRecord());
+
+                try {
+                    // The notifications are used for sending SMR.
+                    final MappingChange mappingChange = ModificationType.SUBTREE_MODIFIED ==
+                            mod.getModificationType() ? MappingChange.Updated : MappingChange.Created;
+                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(mapping,
+                            mappingChange));
+                } catch (InterruptedException e) {
+                    LOG.warn("Notification publication interrupted!");
+                }
+
+            } else {
+                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
         }
-    }
-
-    void setMappingSystem(IMappingSystem msmr) {
-        this.mapSystem = msmr;
     }
 }
