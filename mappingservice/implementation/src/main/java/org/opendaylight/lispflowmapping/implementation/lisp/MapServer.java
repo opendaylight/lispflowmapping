@@ -104,7 +104,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         boolean mappingUpdated = false;
         MappingAuthkey authkey = null;
         Set<SubscriberRLOC> subscribers = null;
-        MappingRecord oldMapping;
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
@@ -116,14 +115,19 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             }
 
-            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+            final MappingRecord oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping
+                    .getEid());
+            final MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
+                    (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+            final boolean isMappingChanged = mappingChanged(oldMapping, newMapping);
+
+            if (isMappingChanged) {
+                mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+            }
 
             if (subscriptionService) {
-                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
-                        (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
 
-                if (mappingChanged(oldMapping, newMapping)) {
+                if (isMappingChanged) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
                                 LispAddressStringifier.getString(mapping.getEid()));
