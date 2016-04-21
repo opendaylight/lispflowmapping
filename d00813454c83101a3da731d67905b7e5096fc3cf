@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_6b959ee3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-21T07:19:39Z",
+      "side": 1,
+      "message": "Done, thanks for reviewing!",
+      "parentUuid": "fa57193c_ebda4ee8",
+      "revId": "d00813454c83101a3da731d67905b7e5096fc3cf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
