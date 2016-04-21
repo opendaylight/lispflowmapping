@@ -24,6 +24,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -43,8 +44,6 @@ import com.google.common.base.Preconditions;
  */
 public final class MappingMergeUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingMergeUtil.class);
-    // A mapping registration is valid for this many milliseconds
-    private static final long REGISTRATION_VALIDITY = 200000L;
 
     // Utility class, should not be instantiated
     private MappingMergeUtil() {
@@ -218,7 +217,7 @@ public final class MappingMergeUtil {
 
     public static boolean timestampIsExpired(Long timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        if ((System.currentTimeMillis() - timestamp) > REGISTRATION_VALIDITY) {
+        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb() ) {
             return true;
         }
         return false;

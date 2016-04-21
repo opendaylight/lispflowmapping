@@ -12,14 +12,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 
 public final class ConfigIni {
+
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingMerge;
     private boolean mappingOverwrite;
     private boolean smr;
     private String elpPolicy;
-    private int lookupPolicy;
+    private IMappingService.LookupPolicy lookupPolicy;
+    private long registrationValiditySb;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
@@ -31,11 +34,10 @@ public final class ConfigIni {
     private static final String LISP_MAPPING_OVERWRITE = "lisp.mappingOverwrite";
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
+    private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
 
-    // lookupPolicy options
-    // TODO we need an enum for this in mappingservice.api (or a YANG model)
-    public static final int NB_FIRST = 0;
-    public static final int NB_AND_SB = 1;
+    // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
+    public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
 
     private static final ConfigIni INSTANCE = new ConfigIni();
 
@@ -52,11 +54,44 @@ public final class ConfigIni {
         initSmr(context);
         initElpPolicy(context);
         initLookupPolicy(context);
+        initRegisterValiditySb(context);
+    }
+
+    private void initRegisterValiditySb(BundleContext context) {
+        // set the default value first
+        this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_REGISTER_VALIDITY_SB);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_REGISTER_VALIDITY_SB);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '3.33 minutes' "
+                        , LISP_REGISTER_VALIDITY_SB);
+                return;
+            }
+        }
+
+        try {
+            final long regValidity = Long.parseLong(str.trim());
+            if (regValidity >= MIN_REGISTRATION_VALIDITY_SB) {
+                this.registrationValiditySb = regValidity;
+            }
+        }
+        catch (NumberFormatException e) {
+            this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
+            LOG.debug("Configuration variable 'registerValiditySb' was not set correctly. Registration validity for"
+                    + "South Bound Map Registers is set to default value of 3.3 minutes");
+        }
     }
 
     private void initLookupPolicy(BundleContext context) {
         // set the default value first
-        this.lookupPolicy = NB_FIRST;
+        this.lookupPolicy = IMappingService.LookupPolicy.NB_FIRST;
 
         String str = null;
 
@@ -74,7 +109,7 @@ public final class ConfigIni {
         }
 
         if (str.trim().equalsIgnoreCase("northboundAndSouthbound")) {
-            this.lookupPolicy = NB_AND_SB;
+            this.lookupPolicy = IMappingService.LookupPolicy.NB_AND_SB;
             LOG.debug("Setting configuration variable '{}' to 'northboundAndSouthbound' (Southbound is always "
                     + "looked up and can filter Northbound if intersection is not empty)", LISP_LOOKUP_POLICY);
         } else {
@@ -236,15 +271,16 @@ public final class ConfigIni {
         return elpPolicy;
     }
 
-    public int getLookupPolicy() {
+    public IMappingService.LookupPolicy getLookupPolicy() {
         return lookupPolicy;
     }
 
-    public void setLookupPolicy(int lookupPolicy) {
-        if (lookupPolicy != NB_FIRST || lookupPolicy != NB_AND_SB) {
-            return;
-        }
-        this.lookupPolicy = lookupPolicy;
+    public long getRegistrationValiditySb() {
+        return registrationValiditySb;
+    }
+
+    public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
+            this.lookupPolicy = lookupPolicy;
     }
 
     public static ConfigIni getInstance() {

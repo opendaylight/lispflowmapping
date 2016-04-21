@@ -55,7 +55,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
-import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -223,7 +222,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Before
     public void before() throws Exception {
         areWeReady();
-        mapService.setLookupPolicy(ConfigIni.NB_FIRST);
+        mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         mapService.setMappingOverwrite(true);
 
         locatorEid = LispAddressUtil.asIpv4Rloc("4.3.2.1");
@@ -542,7 +541,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         restartSocket();
         final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
 
-        mapService.setLookupPolicy(ConfigIni.NB_AND_SB);
+        mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         mapService.setMappingOverwrite(false);
 
         //TEST CASE 1

@@ -129,7 +129,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void setLookupPolicy(int policy) {
+    public void setLookupPolicy(IMappingService.LookupPolicy policy) {
         ConfigIni.getInstance().setLookupPolicy(policy);
     }
 

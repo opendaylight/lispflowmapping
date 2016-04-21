@@ -22,6 +22,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  */
 
 public interface IMappingService {
+
+    public enum LookupPolicy {NB_FIRST, NB_AND_SB}
+
     /**
      * Add mapping
      *
@@ -161,7 +164,7 @@ public interface IMappingService {
      * @param policy
      *            the policy to be activated
      */
-    void setLookupPolicy(int policy);
+    void setLookupPolicy(LookupPolicy policy);
 
     /**
      * Print all mappings. Used for testing, debugging and the karaf shell
