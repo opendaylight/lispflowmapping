@@ -142,7 +142,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         // After this invocation we assume that the thread local is filled with the reply
         if (tlsMapRequest.get() != null) {
             SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
-            new MapRequestBuilder(tlsMapRequest.get().getLeft());
             smrib.setMapRequest(new MapRequestBuilder(tlsMapRequest.get().getLeft()).build());
             smrib.setTransportAddress(tlsMapRequest.get().getRight());
             getLispSB().sendMapRequest(smrib.build());
@@ -153,17 +152,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
-        LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
-                        .getMappingRecord().getEid()));
-
-        tlsMapNotify.set(null);
-        mapServer.handleMapRegister(mapRegister);
-        // After this invocation we assume that the thread local is filled with the reply
-        return tlsMapNotify.get();
-    }
-
-    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister, boolean smr) {
         LOG.debug("DAO: Adding mapping for {}",
                 LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
                         .getMappingRecord().getEid()));
