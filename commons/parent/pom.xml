@@ -38,7 +38,6 @@
     <lispflowmapping.version>1.4.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.4.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.7.0-SNAPSHOT</neutron.version>
-    <nexusproxy>https://nexus.opendaylight.org/content</nexusproxy>
     <nsf.version>0.7.0-SNAPSHOT</nsf.version>
     <restconf.version>1.4.0-SNAPSHOT</restconf.version>
     <sal.version>0.11.0-SNAPSHOT</sal.version>
