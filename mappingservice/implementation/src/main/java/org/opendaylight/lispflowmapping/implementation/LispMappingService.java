@@ -163,17 +163,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         return tlsMapNotify.get();
     }
 
-    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister, boolean smr) {
-        LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
-                        .getMappingRecord().getEid()));
-
-        tlsMapNotify.set(null);
-        mapServer.handleMapRegister(mapRegister);
-        // After this invocation we assume that the thread local is filled with the reply
-        return tlsMapNotify.get();
-    }
-
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
         this.shouldAuthenticate = shouldAuthenticate;
         this.mapResolver.setShouldAuthenticate(shouldAuthenticate);

@@ -994,7 +994,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapRegister.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr.build()).build());
-        lms.handleMapRegister(mapRegister.build(), false);
+        lms.handleMapRegister(mapRegister.build());
 
         // Get mapping using NB interface. No IID used
         URL url = createGetMappingIPv4URL(0, eid, mask);
@@ -1036,7 +1036,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapRegister.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr.build()).build());
-        lms.handleMapRegister(mapRegister.build(), false);
+        lms.handleMapRegister(mapRegister.build());
 
         // Delete mapping using NB interface. No IID used
         URL url = createDeleteMappingIPv4URL(0, eid, mask);
@@ -1094,7 +1094,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapRegister.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr.build()).build());
-        lms.handleMapRegister(mapRegister.build(), false);
+        lms.handleMapRegister(mapRegister.build());
 
         // Get mapping using NB interface. No IID used
         URL url = createGetMappingSourceDestURL(address1.getIpv4Address().getAfi(),
