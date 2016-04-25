@@ -18,6 +18,8 @@ import java.util.Set;
 
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
@@ -237,15 +239,39 @@ public final class MappingMergeUtil {
             short sbMask = MaskUtil.getMaskForAddress(sbMapping.getEid().getAddress());
             short nbMask = MaskUtil.getMaskForAddress(nbMapping.getEid().getAddress());
 
-            if (nbMapping.getEid().getAddress() instanceof SourceDestKey) {
+            if (nbMapping.getEid().getAddress() instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang
+                    .ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey) {
                 nbMask = SourceDestKeyHelper.getDstMask(nbMapping.getEid());
                 if ( nbMask < sbMask) {
                     // We have to create a new SourceDest EID, where the source is same as the
                     // one in NB record, and dest EID is the more specific from SB mapping record.
 
-                    SourceDestKeyBuilder sdb = new SourceDestKeyBuilder(
-                            ((SourceDestKey) nbMapping.getEid().getAddress()));
-                    sdb.setDest(new SimpleAddress ((IpPrefix) sbMapping.getEid().getAddress()));
+                    SourceDestKey srcDstKey = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp
+                            .address.types.rev151105.lisp.address.address.SourceDestKey) nbMapping.getEid()
+                            .getAddress()).getSourceDestKey();
+                    SourceDestKeyBuilder sdb = new SourceDestKeyBuilder(srcDstKey);
+
+                    if (sbMapping.getEid().getAddress() instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
+                            .yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) {
+                        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
+                                .address.address.Ipv4Prefix lispPrefix = (org.opendaylight.yang.gen.v1.urn.ietf.params
+                                .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix)
+                                sbMapping.getEid().getAddress();
+
+                        Ipv4Prefix inetPrefix = new Ipv4Prefix(lispPrefix.getIpv4Prefix());
+                        sdb.setDest(new SimpleAddress(new IpPrefix(inetPrefix)));
+                    } else if (sbMapping.getEid().getAddress() instanceof org.opendaylight.yang.gen.v1.urn.ietf.params
+                            .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) {
+                        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
+                                .address.address.Ipv6Prefix lispPrefix = (org.opendaylight.yang.gen.v1.urn.ietf.params
+                                .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix)
+                                sbMapping.getEid().getAddress();
+
+                        Ipv6Prefix inetPrefix = new Ipv6Prefix(lispPrefix.getIpv6Prefix());
+                        sdb.setDest(new SimpleAddress(new IpPrefix(inetPrefix)));
+                    } else {
+                        LOG.warn("Southbound mapping address is not an IpPrefix");
+                    }
                     mrb.setEid(LispAddressUtil.asSrcDstEid(sdb.build(), nbMapping.getEid().getVirtualNetworkId()));
                 }
             } else if (nbMask < sbMask) {
