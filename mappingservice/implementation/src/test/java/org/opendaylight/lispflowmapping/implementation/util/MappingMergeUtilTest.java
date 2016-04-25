@@ -15,17 +15,19 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -61,9 +63,12 @@ public class MappingMergeUtilTest {
     private static final Rloc IPV4_RLOC_2 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_2);
     private static final Rloc IPV4_RLOC_3 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_3);
     private static final Rloc IPV4_RLOC_4 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_4);
-    private static final IpAddress IPV4_SOURCE_RLOC_1 = new IpAddress(new Ipv4Address("192.168.0.1"));
-    private static final IpAddress IPV4_SOURCE_RLOC_2 = new IpAddress(new Ipv4Address("192.168.0.2"));
-    private static final IpAddress IPV4_SOURCE_RLOC_3 = new IpAddress(new Ipv4Address("192.168.0.3"));
+    private static final IpAddressBinary IPV4_SOURCE_RLOC_1 = new IpAddressBinary(
+            new Ipv4AddressBinary(new byte[] {1, 1, 1, 1}));
+    private static final IpAddressBinary IPV4_SOURCE_RLOC_2 = new IpAddressBinary(
+            new Ipv4AddressBinary(new byte[] {2, 2, 2, 2}));
+    private static final IpAddressBinary IPV4_SOURCE_RLOC_3 = new IpAddressBinary(
+            new Ipv4AddressBinary(new byte[] {3, 3, 3, 3}));
 
     private static final String LOCATOR_ID_STRING = "locator-id";
 
@@ -449,7 +454,7 @@ public class MappingMergeUtilTest {
                 .setXtrId(XTR_ID_3)
                 .setTimestamp(timestamp_3).build();
 
-        Set<IpAddress> sourceRlocs = Sets.newHashSet();
+        Set<IpAddressBinary> sourceRlocs = Sets.newHashSet();
         final List<XtrId> expiredMappings = Lists.newArrayList();
         final List<Object> mappingRecords =
                 Lists.newArrayList(expiredMappingRecord_1, expiredMappingRecord_2, expiredMappingRecord_3);

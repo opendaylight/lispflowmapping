@@ -5,6 +5,7 @@ module odl-lisp-proto {
     prefix "lisp-proto";
 
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
+    import odl-inet-binary-types { prefix inet-bin; revision-date 2016-03-03; }
     import odl-lisp-address-types { prefix odl-lisp-address; revision-date 2016-05-04; }
 
     organization "LISP Flow Mapping";
@@ -40,7 +41,7 @@ module odl-lisp-proto {
     grouping transport-address {
         container transport-address {
             leaf ipAddress {
-                type inet:ip-address;
+                type inet-bin:ip-address-binary;
                 reference "http://www.iana.org/assignments/safi-namespace/safi-namespace.xhtml";
             }
             leaf port {
@@ -116,7 +117,7 @@ module odl-lisp-proto {
                 "64 bit site identifier.";
         }
         leaf source-rloc {
-            type inet:ip-address;
+            type inet-bin:ip-address-binary;
             description
                 "The Source IP address used for sending the enclosing control
                  packet in RLOC space.";

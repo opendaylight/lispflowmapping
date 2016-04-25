@@ -35,9 +35,9 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -140,15 +140,15 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
             if (merge) {
-                Set<IpAddress> notifyRlocs = new HashSet<IpAddress>();
+                Set<IpAddressBinary> notifyRlocs = new HashSet<IpAddressBinary>();
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
                             mapping.getEid());
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
-                    Set<IpAddress> sourceRlocs = (Set<IpAddress>) mapService.getData(MappingOrigin.Southbound,
-                            mapping.getEid(), SubKeys.SRC_RLOCS);
+                    Set<IpAddressBinary> sourceRlocs = (Set<IpAddressBinary>) mapService.getData(
+                            MappingOrigin.Southbound, mapping.getEid(), SubKeys.SRC_RLOCS);
                     if (sourceRlocs != null) {
                         notifyRlocs.addAll(sourceRlocs);
                     }
@@ -169,9 +169,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         }
     }
 
-    private static List<TransportAddress> getTransportAddresses(Set<IpAddress> addresses) {
+    private static List<TransportAddress> getTransportAddresses(Set<IpAddressBinary> addresses) {
         List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
-        for (IpAddress address : addresses) {
+        for (IpAddressBinary address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
             tab.setIpAddress(address);
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
