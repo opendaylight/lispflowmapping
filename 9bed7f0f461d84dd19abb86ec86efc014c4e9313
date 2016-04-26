@@ -16,6 +16,24 @@
       "revId": "9bed7f0f461d84dd19abb86ec86efc014c4e9313",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_88658a47",
+        "filename": "mappingservice/lisp-proto/src/main/yang/map-register-cache.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-04-26T11:07:40Z",
+      "side": 1,
+      "message": "I agree and I will done.\nIn first version I started to do it as POJO but it was necessary to do quite lot of work which is automated so I helped myself by yang-maven-plugin.",
+      "parentUuid": "fa57193c_a88fae22",
+      "revId": "9bed7f0f461d84dd19abb86ec86efc014c4e9313",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
