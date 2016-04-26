@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_de99fc6f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T17:15:33Z",
+      "side": 1,
+      "message": "I\u0027m not sure I know what you\u0027re referring to...?",
+      "parentUuid": "fa57193c_23257fc2",
+      "revId": "9f07376143ee78c7d692ce8855bbb68b266af5ed",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_c3400359",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -42,6 +60,24 @@
         "endLine": 313,
         "endChar": 58
       },
+      "revId": "9f07376143ee78c7d692ce8855bbb68b266af5ed",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5e768c3f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T17:15:33Z",
+      "side": 1,
+      "message": "Yeah, I thought about it too, but I wasn\u0027t sure if we\u0027re going to reuse it somewhere else. We can go either way, but this Gerrit is a cherry-pick, so we should file a new one.",
+      "parentUuid": "fa57193c_c3400359",
       "revId": "9f07376143ee78c7d692ce8855bbb68b266af5ed",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
