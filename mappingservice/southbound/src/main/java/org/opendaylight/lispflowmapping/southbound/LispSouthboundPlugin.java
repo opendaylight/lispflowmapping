@@ -154,14 +154,13 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         LOG.info("LISP (RFC6830) Southbound Plugin is down!");
     }
 
-    public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
-            final MessageType packetType) {
-        InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
-        InetSocketAddress recipient = new InetSocketAddress(ip, address.getPort().getValue());
-        // the wrappedBuffer() method doesn't copy data, so this conversion shouldn't hurt performance
-        ByteBuf data = wrappedBuffer(outBuffer.array());
+    public void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer,
+            final MessageType packetType, final int portNumber) {
+        InetSocketAddress recipient = new InetSocketAddress(address, portNumber);
+        outBuffer.position(0);
+        ByteBuf data = wrappedBuffer(outBuffer);
         DatagramPacket packet = new DatagramPacket(data, recipient);
-        LOG.debug("Sending {} on port {} to address: {}", packetType, address.getPort().getValue(), ip);
+        LOG.debug("Sending {} on port {} to address: {}", packetType, portNumber, address);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Buffer:\n{}", ByteBufUtil.prettyHexDump(data));
         }
@@ -178,6 +177,12 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             }
         });
         channel.flush();
+    }
+
+    public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
+            final MessageType packetType) {
+        InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
+        handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue());
     }
 
     public LispSouthboundStats getStats() {
