@@ -97,8 +97,7 @@ public class MapServerTest extends BaseTestCase {
         recordBuilder.setEid(eid);
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         recordBuilder.getLocatorRecord().add(new LocatorRecordBuilder().setRloc(rloc).build());
-        recordBuilder.setAction(Action.NoAction).setMapVersion((short) 0).setAuthoritative(false).setRecordTtl(60)
-                .setMaskLength((short) 32);
+        recordBuilder.setAction(Action.NoAction).setMapVersion((short) 0).setAuthoritative(false).setRecordTtl(60);
         mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -151,7 +150,6 @@ public class MapServerTest extends BaseTestCase {
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         mapRegisterBuilder.setWantMapNotify(true);
         MappingRecordBuilder eidToLocatorBuilder = getDefaultMappingRecordBuilder();
-        eidToLocatorBuilder.setMaskLength((short) 32);
         eid = LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32");
         eidToLocatorBuilder.setEid(eid);
 
@@ -180,7 +178,7 @@ public class MapServerTest extends BaseTestCase {
         Eid newEid = LispAddressUtil.asIpv4PrefixEid(eidIpv4String + "/" + mask);
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(newEid).setMaskLength((short) mask);
+        recordBuilder.setEid(newEid);
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
@@ -202,13 +200,12 @@ public class MapServerTest extends BaseTestCase {
     @Test
     @Ignore
     public void handleMapRegister__NonMaskable() throws Exception {
-        int mask = 16;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         Eid addr = LispAddressUtil.asMacEid("01:01:01:01:01:01");
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -229,13 +226,12 @@ public class MapServerTest extends BaseTestCase {
     @Test
     @Ignore
     public void handleMapRegister__ZeroMask() throws Exception {
-        int mask = 0;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         Eid addr = LispAddressUtil.asMacEid("01:01:01:01:01:01");
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -260,7 +256,7 @@ public class MapServerTest extends BaseTestCase {
         Eid newEid = LispAddressUtil.asIpv4PrefixEid(eidIpv4String + "/" + mask);
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(newEid).setMaskLength((short) mask);
+        recordBuilder.setEid(newEid);
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
@@ -282,10 +278,9 @@ public class MapServerTest extends BaseTestCase {
     @Test
     @Ignore
     public void handleMapRegisterIpv4__ValidMask32() throws Exception {
-        int mask = 32;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
-        recordBuilder.setEid(eid).setMaskLength((short) mask);
+        recordBuilder.setEid(eid);
         LocatorRecordBuilder locator = getDefaultLocatorBuilder();
         locator.setRloc(rloc);
         recordBuilder.getLocatorRecord().add(locator.build());
@@ -313,7 +308,7 @@ public class MapServerTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -340,7 +335,7 @@ public class MapServerTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -367,7 +362,7 @@ public class MapServerTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -388,13 +383,12 @@ public class MapServerTest extends BaseTestCase {
     @Test
     @Ignore
     public void handleMapRegisterIpv6__ValidMask128() throws Exception {
-        int mask = 128;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String);
         MappingRecordBuilder recordBuilder = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
-        recordBuilder.setEid(addr).setMaskLength((short) mask);
+        recordBuilder.setEid(addr);
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder.build()).build());
@@ -418,13 +412,13 @@ public class MapServerTest extends BaseTestCase {
         int mask = 96;
         mapRegisterBuilder = getDefaultMapRegisterBuilder();
         MappingRecordBuilder recordBuilder0 = getDefaultMappingRecordBuilder();
-        recordBuilder0.setEid(eid).setMaskLength((short) 32);
+        recordBuilder0.setEid(eid);
         Eid addr = LispAddressUtil.asIpv6PrefixEid(eidIpv6String + "/" + mask);
         MappingRecordBuilder recordBuilder1 = getDefaultMappingRecordBuilder();
         LocatorRecordBuilder locatorBuilder = getDefaultLocatorBuilder();
         locatorBuilder.setRloc(rloc);
         locatorBuilder.setRloc(rloc);
-        recordBuilder1.setEid(addr).setMaskLength((short) mask);
+        recordBuilder1.setEid(addr);
         recordBuilder1.getLocatorRecord().add(locatorBuilder.build());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(recordBuilder0.build()).build());
@@ -575,7 +569,6 @@ public class MapServerTest extends BaseTestCase {
         MappingRecordBuilder etlr2Builder = getDefaultMappingRecordBuilder();
         Eid address = LispAddressUtil.asIpv4PrefixEid("1.1.1.1");
         etlr2Builder.setEid(address);
-        etlr2Builder.setMaskLength((short) 32);
         int recordTtl = 5;
         etlr2Builder.setRecordTtl(recordTtl);
         etlr2Builder.getLocatorRecord().add(
@@ -702,7 +695,6 @@ public class MapServerTest extends BaseTestCase {
         builder.setAuthoritative(false);
         builder.setLocatorRecord(new ArrayList<LocatorRecord>());
         builder.setMapVersion((short) 0);
-        builder.setMaskLength((short) 32);
         builder.setRecordTtl(60);
         return builder;
     }

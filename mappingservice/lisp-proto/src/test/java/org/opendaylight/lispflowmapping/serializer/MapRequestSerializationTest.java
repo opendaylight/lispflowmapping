@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
@@ -187,7 +188,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(false, record.isAuthoritative());
         assertEquals(Action.NoAction, record.getAction());
         assertEquals(0, record.getMapVersion().shortValue());
-        assertEquals(32, record.getMaskLength().shortValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(record.getEid().getAddress()));
         assertEquals(2, record.getRecordTtl().byteValue());
         assertEquals("10.10.10.10",
                 ((Ipv4) record.getLocatorRecord().get(0).getRloc().getAddress()).getIpv4().getValue());

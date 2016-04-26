@@ -41,7 +41,7 @@ public final class MappingRecordSerializer {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
         byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
-        builder.setMaskLength((short) ByteUtil.getUnsignedByte(buffer));
+        short maskLength = ((short) ByteUtil.getUnsignedByte(buffer));
         byte actionAndAuthoritative = buffer.get();
         Action act = Action.forValue(actionAndAuthoritative >> 5);
         if (act == null) {
@@ -52,7 +52,7 @@ public final class MappingRecordSerializer {
         buffer.position(buffer.position() + Length.RESERVED);
         builder.setMapVersion(buffer.getShort());
 
-        LispAddressSerializerContext ctx = new LispAddressSerializerContext(builder.getMaskLength());
+        LispAddressSerializerContext ctx = new LispAddressSerializerContext(maskLength);
         builder.setEid(LispAddressSerializer.getInstance().deserializeEid(buffer, ctx));
 
         builder.setLocatorRecord(new ArrayList<LocatorRecord>());
