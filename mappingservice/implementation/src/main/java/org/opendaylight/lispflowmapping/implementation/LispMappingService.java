@@ -40,6 +40,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Od
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadata;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestmessage.MapRequestBuilder;
@@ -51,6 +54,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -240,9 +244,13 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     @Override
     public void onMappingKeepAlive(MappingKeepAlive notification) {
-        LOG.debug("Received MappingKeepAlive notification, ignoring");
-        // TODO This notification means that SB received a Map-Register which was cached. Will need to update
-        // timestamps in stored mappings
+        final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
+        for (EidLispAddress eidLispAddress : cacheMetadata.getEidLispAddress()) {
+            final Eid eid = eidLispAddress.getEid();
+            final Long timestamp = cacheMetadata.getTimestamp();
+            LOG.debug("Update map registration for eid {} with timestamp {}", eid, timestamp);
+            mapService.updateMappingRegistration(MappingOrigin.Southbound, eid, timestamp);
+        }
     }
 
     private OdlLispSbService getLispSB() {

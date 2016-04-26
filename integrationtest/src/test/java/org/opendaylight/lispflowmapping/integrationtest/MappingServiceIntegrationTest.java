@@ -1992,6 +1992,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         @Override
         public void onMappingKeepAlive(MappingKeepAlive notification) {
+
         }
 
     }
