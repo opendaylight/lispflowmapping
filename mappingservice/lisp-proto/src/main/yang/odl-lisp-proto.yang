@@ -444,4 +444,32 @@ module odl-lisp-proto {
     notification xtrReplyMapping {
         uses MapReplyNotification;
     }
+
+    notification mappingKeepAlive {
+        list eid-lisp-address {
+            uses eid-container;
+            description "List of EID-Prefixes from map register message.";
+        }
+        leaf xtr-id {
+            type xtr-id;
+            description "Identification of xTR according to
+            https://tools.ietf.org/html/draft-ermagan-lisp-nat-traversal-10#page-10.
+            Comes from map register message.";
+        }
+        leaf site-id {
+            type site-id;
+            description "Site identificator according to
+            https://tools.ietf.org/html/draft-ermagan-lisp-nat-traversal-10#page-10
+            Comes from map register message."
+        }
+        leaf merge-enabled {
+            type boolean;
+            description "Value of 22th bit in map register message."
+        }
+        leaf timestamp {
+            type int64;
+            description "Time of creation of last refresh."
+        }
+    }
+
 }
