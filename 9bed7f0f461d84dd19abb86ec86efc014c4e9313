@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_a88fae22",
+        "filename": "mappingservice/lisp-proto/src/main/yang/map-register-cache.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T10:00:51Z",
+      "side": 1,
+      "message": "Since this work is an internal performance optimization and we don\u0027t intend to export it as an API, we don\u0027t need a YANG file for it, you can define the data structures as POJOs, so that we minimize any type of overhead.",
+      "revId": "9bed7f0f461d84dd19abb86ec86efc014c4e9313",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
