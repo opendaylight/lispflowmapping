@@ -429,6 +429,27 @@ module odl-lisp-proto {
         uses MapNotifyNotification;
     }
 
+    notification mappingKeepAlive {
+        leaf vni {
+            type lisp-address:instance-id-type;
+        }
+        list eid-lisp-address {
+            uses eid-container;
+        }
+        leaf xtr-id {
+            type xtr-id;
+        }
+        leaf site-id {
+            type site-id;
+        }
+        leaf merge-enabled {
+            type boolean;
+        }
+        leaf timestamp {
+            type int64;
+        }
+    }
+
     notification requestMapping {
         uses MapRequestNotification;
     }
