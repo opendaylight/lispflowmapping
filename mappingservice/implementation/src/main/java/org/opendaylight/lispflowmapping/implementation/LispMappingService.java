@@ -292,4 +292,10 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     public void close() throws Exception {
         destroy();
     }
+
+
+    @Override
+    public void onMappingKeepAlive(MappingKeepAlive notification) {
+        //TODO: do something smart
+    }
 }
