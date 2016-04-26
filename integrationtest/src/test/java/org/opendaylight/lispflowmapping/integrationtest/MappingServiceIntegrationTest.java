@@ -1971,6 +1971,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
 
         @Override
+        public void onMappingKeepAlive(MappingKeepAlive notification) {
+
+        }
+
+        @Override
         public void onAddMapping(AddMapping notification) {
         }
 
@@ -1988,10 +1993,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         @Override
         public void onXtrRequestMapping(XtrRequestMapping notification) {
-        }
-
-        @Override
-        public void onMappingKeepAlive(MappingKeepAlive notification) {
         }
 
     }
