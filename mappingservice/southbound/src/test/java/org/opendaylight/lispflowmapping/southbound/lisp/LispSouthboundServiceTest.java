@@ -9,32 +9,33 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import io.netty.channel.socket.DatagramPacket;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import io.netty.channel.socket.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import junitx.framework.ArrayAssert;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.cache.MapRegisterCache;
+import org.opendaylight.lispflowmapping.lisp.serializer.cache.MapRegisterCacheKey;
+import org.opendaylight.lispflowmapping.lisp.serializer.cache.MapRegisterCacheKeyBuilder;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
@@ -72,6 +73,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private MapNotifyBuilder mapNotifyBuilder;
     private MapReplyBuilder mapReplyBuilder;
     private MappingRecordBuilder mappingRecordBuilder;
+    private MapRegisterCache mapRegisterCache;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -98,7 +100,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         super.before();
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
-        testedLispService = new LispSouthboundHandler(null);
+        mapRegisterCache = new MapRegisterCache();
+        testedLispService = new LispSouthboundHandler(null, mapRegisterCache);
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
@@ -700,6 +703,65 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRequestAsByteArray(mapRequestPacket);
 
+    }
+
+    private  byte[] joinArrays(byte[] firstArray, byte[] ... arrays) {
+        byte[] result = firstArray;
+        for(byte[] array : arrays) {
+            result = ArrayUtils.addAll(result, array);
+        }
+        return result;
+    }
+
+    /**
+     * It tests whether map register message is stored to local cache
+     */
+    @Test
+    public void handlePacket_mapRegisterMessageCache() throws InterruptedException {
+        byte[] eidPrefix = new byte[] {0x0a, 0x0a, 0x0a, 0x0a};
+        byte[] xTRId = new byte[]{
+                  0x53, 0x61, 0x6e, 0x20    //xTR id
+                ,0x4a, 0x6f, 0x73, 0x65    //xTR id
+                ,0x2c, 0x20, 0x32, 0x66    //xTR id
+                ,0x33, 0x72, 0x32, 0x64    //xTR id
+        };
+        byte[] siteId = new byte[]{
+                 0x33, 0x2c, 0x31, 0x34    //site id
+                ,0x31, 0x35, 0x39, 0x32    //site id
+        };
+
+        byte[] data1 = new byte[] {
+                 0x33, 0x00, 0x00, 0x01
+                ,0x00, 0x00, 0x00, 0x00    //nonce
+                ,0x00, 0x00, 0x00, 0x00    //nonce
+                ,0x10, 0x10, 0x00, 0x0c
+                ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
+                ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
+                ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
+                ,0x00, 0x00, 0x00, 0x6f    //TTL
+                ,0x01, 0x08, 0x00, 0x00
+                ,0x00, 0x01, 0x00, 0x01    //Rsvd, Map-Version Number, EID-Prefix-AFI
+        };
+
+        byte[] data2 = new byte[] {
+                 0x01, 0x0c, 0x0d, 0x0b    //Priority, Weight, M Priority, M Weight
+                ,0x00, 0x00, 0x00, 0x01    //Unused Flags, L, p, R, Loc-Afi
+                ,0x0c, 0x0c, 0x0c, 0x0c    //Locator
+        };
+
+
+        final byte[] mapRegisterMessage = joinArrays(data1, eidPrefix, data2, xTRId, siteId);
+
+
+        oneOf(nps).putNotification(with(lispNotificationSaver));
+        final MapRegisterCacheKeyBuilder mapRegisterCacheKeyBuilder = new MapRegisterCacheKeyBuilder();
+        mapRegisterCacheKeyBuilder.setXTRId(xTRId);
+        mapRegisterCacheKeyBuilder.setSiteId(siteId);
+        mapRegisterCacheKeyBuilder.setEidPrefix(eidPrefix);
+        final MapRegisterCacheKey mapRegisterCacheKey = mapRegisterCacheKeyBuilder.build();
+        assertFalse(mapRegisterCache.isMapRegisterKeyInCache(mapRegisterCacheKey));
+        handlePacket(mapRegisterMessage);
+        assertTrue(mapRegisterCache.isMapRegisterKeyInCache(mapRegisterCacheKey));
     }
 
     private void stubMapRegister(final boolean setNotifyFromRegister) {
