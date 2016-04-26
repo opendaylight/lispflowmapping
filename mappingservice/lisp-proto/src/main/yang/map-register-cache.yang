@@ -1,0 +1,34 @@
+module map-register-cache {
+
+    yang-version 1;
+    namespace "mapregister:cache";
+    prefix "mapregister-cache";
+
+    description
+        "It define structure for holding map-register messages in cache";
+
+    revision "2016-04-25" {
+        description "Initial module";
+    }
+
+
+    container map-register-cache-key {
+        leaf eid-prefix {
+            type binary;
+        }
+
+        leaf xTR-id {
+            type binary;
+        }
+
+        leaf site-id {
+            type binary;
+        }
+    }
+
+    container map-register-cache-value {
+        leaf val {
+            type binary;
+        }
+    }
+}
