@@ -13,51 +13,68 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
-import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCacheKey;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCacheValue;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterPartialDeserializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
+import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReplyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAliveBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mappingkeepalive.EidLispAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mappingkeepalive.EidLispAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
 public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService {
+    private final MapRegisterCache mapRegisterCache;
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
     private LispSouthboundStats lispSbStats = null;
 
-    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
+    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin, final MapRegisterCache mapRegisterCache) {
         this.lispSbPlugin = lispSbPlugin;
         if (lispSbPlugin != null) {
             this.lispSbStats = lispSbPlugin.getStats();
         }
+        this.mapRegisterCache = mapRegisterCache;
+    }
+
+    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
+        this(lispSbPlugin, new MapRegisterCache());
     }
 
     public void setNotificationProvider(NotificationPublishService nps) {
@@ -151,18 +168,34 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
-            MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
-            AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
-            addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
-            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
-            addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(addMappingBuilder.build());
-                LOG.trace("MapRegister was published!");
+            final Map.Entry<MapRegisterCacheKey, MapRegisterCacheValue> cacheEntry = MapRegisterPartialDeserializer
+                    .deserializePartially(inBuffer, sourceAddress);
+            if (cacheEntry != null && mapRegisterCache.isMapRegisterKeyInCache(cacheEntry.getKey()) &&
+                    mapRegisterCache.isMapRegisterMsgCurrent(cacheEntry.getKey())) {
+                    LOG.debug("Map register message {} was already processed.", cacheEntry.getKey());
+                    mapRegisterCache.refreshRecord(cacheEntry.getKey());
+                    sendNotificationIfPossible(createMappingKeepAlive(cacheEntry.getValue()));
+                    if (cacheEntry.getValue().isWantMapNotifyBitSet()) {
+                        sendMapNotify(sourceAddress, inBuffer, port);
+                    }
             } else {
-                LOG.warn("Notification Provider is null!");
+                MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
+                AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
+                addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
+                TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
+                transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+                transportAddressBuilder.setPort(new PortNumber(port));
+                addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
+                sendNotificationIfPossible(addMappingBuilder.build());
+                if (cacheEntry != null) {
+                    final MapRegisterCacheValue value = cacheEntry.getValue();
+                    value.setEids(provideEidPrefixesFromMessage(mapRegister));
+                    value.setXtrId(mapRegister.getXtrId());
+                    value.setSiteId(mapRegister.getSiteId());
+                    value.setTimestamp(System.currentTimeMillis());
+                    mapRegisterCache.addMapRegisterEntryToCache(cacheEntry.getKey(), value);
+                    sendNotificationIfPossible(createMappingKeepAlive(value));
+                }
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
@@ -170,6 +203,45 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
+    }
+
+    private void sendNotificationIfPossible(final Notification notification) throws InterruptedException {
+        if (notificationPublishService != null) {
+            notificationPublishService.putNotification(notification);
+            LOG.trace("{} was published.", notification.getClass());
+        } else {
+            LOG.warn("Notification Provider is null!");
+        }
+    }
+
+    private MappingKeepAlive createMappingKeepAlive(final MapRegisterCacheValue value) {
+        MappingKeepAliveBuilder mappingKeepAliveBuilder = new MappingKeepAliveBuilder();
+        mappingKeepAliveBuilder.setEidLispAddress(value.getEids());
+        mappingKeepAliveBuilder.setMergeEnabled(value.isMergeBitSet());
+        mappingKeepAliveBuilder.setSiteId(value.getSiteId());
+        mappingKeepAliveBuilder.setXtrId(value.getXtrId());
+        return mappingKeepAliveBuilder.build();
+    }
+
+    private void sendMapNotify(final InetAddress inetAddress, final ByteBuffer inBuffer, int portNumber) {
+        ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
+        lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
+    }
+
+    private ByteBuffer transformMapRegisterToMapNotify(final ByteBuffer buffer) {
+        buffer.position(0);
+        //TODO: also reset of authentication data is required. other trello card is opened for this task.
+        byte[] byteReplacement = new byte[] {0x04, 0x00, 0x00};
+        buffer.put(byteReplacement);
+        return buffer;
+    }
+
+    private List<EidLispAddress> provideEidPrefixesFromMessage(final MapRegister mapRegister) {
+        List<EidLispAddress> eidsResult = new ArrayList<>();
+        for (MappingRecordItem mappingRecordItem : mapRegister.getMappingRecordItem()) {
+            eidsResult.add(new EidLispAddressBuilder().setEid(mappingRecordItem.getMappingRecord().getEid()).build());
+        }
+        return eidsResult;
     }
 
     private void handleMapNotify(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
