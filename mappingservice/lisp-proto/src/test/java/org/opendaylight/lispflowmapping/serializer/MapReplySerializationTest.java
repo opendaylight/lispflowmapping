@@ -19,6 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
@@ -97,8 +98,10 @@ public class MapReplySerializationTest extends BaseTestCase {
         assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
         assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());
         assertEquals(2, mr.getMappingRecordItem().get(1).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(32, mr.getMappingRecordItem().get(0).getMappingRecord().getMaskLength().shortValue());
-        assertEquals(16, mr.getMappingRecordItem().get(1).getMappingRecord().getMaskLength().shortValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(0).getMappingRecord()
+                .getEid().getAddress()));
+        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(1).getMappingRecord()
+                .getEid().getAddress()));
         assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getRecordTtl().byteValue());
         assertEquals(0, mr.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().byteValue());
         assertEquals("1:2:3:4:5:6:7:8", ((Ipv6) mr.getMappingRecordItem().get(0).getMappingRecord()
@@ -177,8 +180,10 @@ public class MapReplySerializationTest extends BaseTestCase {
         assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
         assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());
         assertEquals(2, mr.getMappingRecordItem().get(1).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(32, mr.getMappingRecordItem().get(0).getMappingRecord().getMaskLength().shortValue());
-        assertEquals(16, mr.getMappingRecordItem().get(1).getMappingRecord().getMaskLength().shortValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(0).getMappingRecord()
+                .getEid().getAddress()));
+        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(1).getMappingRecord()
+                .getEid().getAddress()));
         assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getRecordTtl().byteValue());
         assertEquals(0, mr.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().byteValue());
     }

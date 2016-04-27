@@ -1803,7 +1803,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
         etlrBuilder.setEid(eid);
-        etlrBuilder.setMaskLength((short) 32);
         etlrBuilder.setRecordTtl(254);
 
         LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
@@ -1905,7 +1904,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterbuilder.setKeyId((short) 0);
         MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
         etlrBuilder.setEid(eid);
-        etlrBuilder.setMaskLength((short) 24);
         etlrBuilder.setRecordTtl(254);
         etlrBuilder.setAuthoritative(false);
         etlrBuilder.setAction(Action.NoAction);

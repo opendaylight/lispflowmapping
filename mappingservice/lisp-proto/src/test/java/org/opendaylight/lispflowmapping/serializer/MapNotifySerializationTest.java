@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -319,8 +320,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(10, record0.getRecordTtl().intValue());
         assertEquals(13, record3.getRecordTtl().intValue());
 
-        assertEquals(32, record0.getMaskLength().intValue());
-        assertEquals(23, record1.getMaskLength().intValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(record0.getEid().getAddress()));
+        assertEquals(23, MaskUtil.getMaskForAddress(record1.getEid().getAddress()));
 
         assertEquals(Action.NoAction, record0.getAction());
         assertEquals(Action.SendMapRequest, record1.getAction());

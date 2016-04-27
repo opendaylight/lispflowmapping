@@ -136,7 +136,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mappingRecordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
         mappingRecordBuilder.setRecordTtl(10);
         mappingRecordBuilder.setMapVersion((short) 0);
-        mappingRecordBuilder.setMaskLength((short) 0);
         mappingRecordBuilder.setAction(Action.NativelyForward);
         mappingRecordBuilder.setAuthoritative(false);
         // eidToLocatorBuilder.setPrefix(new LispIpv4Address(0));

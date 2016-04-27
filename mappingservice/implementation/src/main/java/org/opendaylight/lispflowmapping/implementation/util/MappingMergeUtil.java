@@ -257,7 +257,6 @@ public final class MappingMergeUtil {
             } else if (nbMask < sbMask) {
                 // Both EIDs are IP prefixes. SB mapping is a subprefix so we have to update EID intersection
                 mrb.setEid(sbMapping.getEid());
-                mrb.setMaskLength(sbMask);
             }
         }
         // find and update locators intersection if not empty

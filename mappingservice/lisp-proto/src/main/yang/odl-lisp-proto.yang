@@ -166,9 +166,6 @@ module odl-lisp-proto {
             leaf recordTtl {
                 type int32;
             }
-            leaf maskLength {
-                type uint8;
-            }
             leaf mapVersion {
                 type int16;
             }
