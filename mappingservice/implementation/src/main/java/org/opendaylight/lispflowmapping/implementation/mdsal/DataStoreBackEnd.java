@@ -55,8 +55,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Adding authentication key '{}' for {}", authenticationKey.getMappingAuthkey().getKeyString(),
-                LispAddressStringifier.getString(authenticationKey.getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Adding authentication key '{}' for {}", authenticationKey.getMappingAuthkey().getKeyString(),
+                    LispAddressStringifier.getString(authenticationKey.getEid()));
+        }
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
@@ -65,8 +67,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void addMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Adding mapping for {}",
-                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Adding mapping for {}",
+                    LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        }
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
@@ -79,8 +83,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
         Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
                 + "contains an xTR-ID");
-        LOG.debug("MD-SAL: Adding mapping for {}, xTR-ID {}",
-                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Adding mapping for {}, xTR-ID {}",
+                    LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+        }
 
         InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
@@ -89,8 +95,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Removing authentication key for {}",
-                LispAddressStringifier.getString(authenticationKey.getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Removing authentication key for {}",
+                    LispAddressStringifier.getString(authenticationKey.getEid()));
+        }
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
@@ -99,8 +107,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void removeMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Removing mapping for {}",
-                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Removing mapping for {}",
+                    LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        }
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
@@ -111,8 +121,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
         Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
                 + "contains an xTR-ID");
-        LOG.debug("MD-SAL: Removing mapping for {}, xTR-ID {}",
-                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Removing mapping for {}, xTR-ID {}",
+                    LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
+        }
 
         InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
@@ -137,9 +149,11 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
-        LOG.debug("MD-SAL: Updating authentication key for {} with '{}'",
-                LispAddressStringifier.getString(authenticationKey.getEid()),
-                authenticationKey.getMappingAuthkey().getKeyString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Updating authentication key for {} with '{}'",
+                    LispAddressStringifier.getString(authenticationKey.getEid()),
+                    authenticationKey.getMappingAuthkey().getKeyString());
+        }
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
@@ -148,8 +162,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     public void updateMapping(Mapping mapping) {
-        LOG.debug("MD-SAL: Updating mapping for {}",
-                LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Updating mapping for {}",
+                    LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
+        }
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());

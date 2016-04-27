@@ -246,32 +246,42 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public MappingAuthkey getAuthenticationKey(Eid key) {
-        LOG.debug("Retrieving authentication key for {}", LispAddressStringifier.getString(key));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieving authentication key for {}", LispAddressStringifier.getString(key));
+        }
         return smc.getAuthenticationKey(key);
     }
 
     @Override
     public void removeAuthenticationKey(Eid key) {
-        LOG.debug("Removing authentication key for {}", LispAddressStringifier.getString(key));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing authentication key for {}", LispAddressStringifier.getString(key));
+        }
         smc.removeAuthenticationKey(key);
     }
 
     @Override
     public void addData(MappingOrigin origin, Eid key, String subKey, Object data) {
-        LOG.debug("Add data of class {} for key {} and subkey {}", data.getClass(),
-                LispAddressStringifier.getString(key), subKey);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Add data of class {} for key {} and subkey {}", data.getClass(),
+                    LispAddressStringifier.getString(key), subKey);
+        }
         tableMap.get(origin).addData(key, subKey, data);
     }
 
     @Override
     public Object getData(MappingOrigin origin, Eid key, String subKey) {
-        LOG.debug("Retrieving data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieving data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+        }
         return tableMap.get(origin).getData(key, subKey);
     }
 
     @Override
     public void removeData(MappingOrigin origin, Eid key, String subKey) {
-        LOG.debug("Removing data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+        }
         tableMap.get(origin).removeData(key, subKey);
     }
 
