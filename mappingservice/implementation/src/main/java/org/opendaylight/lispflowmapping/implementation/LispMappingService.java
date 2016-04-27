@@ -133,8 +133,10 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     public MapReply handleMapRequest(MapRequest request) {
-        LOG.debug("DAO: Retrieving mapping for {}",
-                LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Retrieving mapping for {}",
+                    LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
+        }
 
         tlsMapReply.set(null);
         tlsMapRequest.set(null);
@@ -152,9 +154,11 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
-        LOG.debug("DAO: Adding mapping for {}",
-                LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
-                        .getMappingRecord().getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Adding mapping for {}",
+                    LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
+                            .getMappingRecord().getEid()));
+        }
 
         tlsMapNotify.set(null);
         mapServer.handleMapRegister(mapRegister);
@@ -252,10 +256,12 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     @Override
     public void handleSMR(MapRequest smr, Rloc subscriber) {
-        LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
-                LispAddressStringifier.getString(subscriber),
-                LispAddressStringifier.getString(smr.getSourceEid().getEid()),
-                LispAddressStringifier.getString(smr.getEidItem().get(0).getEid()));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
+                    LispAddressStringifier.getString(subscriber),
+                    LispAddressStringifier.getString(smr.getSourceEid().getEid()),
+                    LispAddressStringifier.getString(smr.getEidItem().get(0).getEid()));
+        }
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromRloc(subscriber));
