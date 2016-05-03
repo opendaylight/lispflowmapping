@@ -1,4 +1,4 @@
-package org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105;
+package org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303;
 
 
 /**
