@@ -5,7 +5,7 @@ module odl-lisp-proto {
     prefix "lisp-proto";
 
     import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
-    import ietf-lisp-address-types { prefix lisp-address; revision-date 2015-11-05; }
+    import odl-lisp-address-types { prefix odl-lisp-address; revision-date 2016-05-04; }
 
     organization "LISP Flow Mapping";
 
@@ -19,15 +19,6 @@ module odl-lisp-proto {
     revision "2015-11-05" {
         description "Renamed the module to lisp-proto.";
         reference "https://tools.ietf.org/html/rfc6830";
-    }
-
-    typedef ipv4-address-binary {
-        type binary {
-            length "4";
-        }
-        description
-            "The ipv4-address-binary type represents an IPv4 address in binary
-             in network byte order.";
     }
 
     typedef xtr-id {
@@ -46,26 +37,6 @@ module odl-lisp-proto {
             "64 bit site identifier.";
     }
 
-    typedef ipv6-address-binary {
-        type binary {
-            length "16";
-        }
-        description
-            "The ipv6-address-binary type represents an IPv6 address in binary
-             in network byte order.";
-    }
-
-    typedef ip-address-binary {
-        type union {
-            type ipv4-address-binary;
-            type ipv6-address-binary;
-        }
-        description
-            "The ip-address-binary type represents an IP address in binary
-             in network byte order, and is IP version neutral.  The length of
-             the byte array implies the IP version.";
-    }
-
     grouping transport-address {
         container transport-address {
             leaf ipAddress {
@@ -80,13 +51,13 @@ module odl-lisp-proto {
 
     grouping eid-container {
         container eid {
-            uses lisp-address:lisp-address;
+            uses odl-lisp-address:augmented-lisp-address;
         }
     }
 
     grouping rloc-container {
         container rloc {
-            uses lisp-address:lisp-address;
+            uses odl-lisp-address:augmented-lisp-address;
         }
     }
 
