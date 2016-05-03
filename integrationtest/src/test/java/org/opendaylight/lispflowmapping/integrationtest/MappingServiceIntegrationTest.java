@@ -417,7 +417,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
 
         //TEST CASE 1
-        multiSiteScenario.storeSouthboundMappings(SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
+        multiSiteScenario.storeSouthboundMappings(false, SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
         sleepForSeconds(2);
@@ -545,7 +545,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapService.setMappingOverwrite(false);
 
         //TEST CASE 1
-        multiSiteScenario.storeSouthboundMappings(SITE_A_SB, SITE_B_SB, SITE_C_WP_100_1_SB, SITE_D_WP_100_1_SB,
+        multiSiteScenario.storeSouthboundMappings(true, SITE_A_SB, SITE_B_SB, SITE_C_WP_100_1_SB, SITE_D_WP_100_1_SB,
                 SITE_E_SB);
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_A_SB);
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_B_SB);

@@ -28,8 +28,10 @@ public interface IMapCache {
      *            Value to be stored
      * @param shouldOverwrite
      *            Select if mappings with the same key are overwritten
+     * @param merge
+     *            Select if mappings with the same key are merged
      */
-    void addMapping(Eid key, Object data, boolean shouldOverwrite);
+    void addMapping(Eid key, Object data, boolean shouldOverwrite, boolean merge);
 
     /**
      * Retrieves mapping for the provided srcKey and dstKey.

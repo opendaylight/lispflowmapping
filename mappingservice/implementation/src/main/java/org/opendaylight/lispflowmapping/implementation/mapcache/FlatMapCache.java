@@ -35,7 +35,7 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(Eid eid, Object data, boolean shouldOverwrite) {
+    public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge) {
         Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));

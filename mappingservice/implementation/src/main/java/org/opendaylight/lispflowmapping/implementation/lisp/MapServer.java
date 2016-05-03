@@ -102,6 +102,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     public void handleMapRegister(MapRegister mapRegister) {
         boolean authFailed = false;
         boolean mappingUpdated = false;
+        boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
         MappingAuthkey authkey = null;
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
@@ -117,10 +118,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             }
 
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping);
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
 
             if (subscriptionService) {
-                MappingRecord newMapping = ConfigIni.getInstance().mappingMergeIsSet() ?
+                MappingRecord newMapping = merge ?
                         (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
@@ -138,7 +139,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
-            if (ConfigIni.getInstance().mappingMergeIsSet()) {
+            if (merge) {
                 Set<IpAddress> notifyRlocs = new HashSet<IpAddress>();
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {

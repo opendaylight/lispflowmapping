@@ -400,9 +400,9 @@ public class MappingServiceTest {
         final MappingRecord data = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
 
-        mappingService.addMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data);
+        mappingService.addMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data, false);
 
-        Mockito.verify(mappingSystem).addMapping(MappingOrigin.Southbound, IPV4_EID, data);
+        Mockito.verify(mappingSystem).addMapping(MappingOrigin.Southbound, IPV4_EID, data, false);
         Mockito.verify(dsbe).addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data));
         Mockito.verify(dsbe).addXtrIdMapping(DSBEInputUtil.toXtrIdMapping(data));
     }
@@ -420,7 +420,7 @@ public class MappingServiceTest {
         final MappingRecord data = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
 
-        mappingService.addMapping(origin, IPV4_EID, SITE_ID, data);
+        mappingService.addMapping(origin, IPV4_EID, SITE_ID, data, false);
         Mockito.verify(dsbe).addMapping(DSBEInputUtil.toMapping(origin, IPV4_EID, SITE_ID, data));
         Mockito.verifyZeroInteractions(mappingSystem);
         Mockito.verifyNoMoreInteractions(dsbe);

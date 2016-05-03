@@ -121,8 +121,9 @@ class MultiSiteScenario {
         return mappingRecord;
     }
 
-    private void emitMapRegisterMessage(final Site dstSite) {
+    private void emitMapRegisterMessage(final Site dstSite, final boolean merge) {
         final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
+        mapRegisterBuilder.setMergeEnabled(merge);
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
         mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
 
@@ -180,7 +181,8 @@ class MultiSiteScenario {
         mrbNegative.setEid(eidAsIpv4Prefix);
         mrbNegative.setAction(action);
 
-        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(), mrbNegative.build());
+        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(), mrbNegative.build(),
+                false);
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -193,16 +195,16 @@ class MultiSiteScenario {
     void storeNorthMappingSrcDst(final Site srcSite, final Site ... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
                 dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build());
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
     }
 
     void storeNorthMappingIpPrefix(final Site... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build());
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
     }
 
-    private void storeDestinationSiteMappingViaSouthbound(final Site dstSite) {
-        emitMapRegisterMessage(dstSite);
+    private void storeDestinationSiteMappingViaSouthbound(final Site dstSite, final boolean merge) {
+        emitMapRegisterMessage(dstSite, merge);
     }
 
     private MappingRecordBuilder prepareMappingRecordGeneral(final EidType eidType,
@@ -287,13 +289,13 @@ class MultiSiteScenario {
     }
 
     void deleteSouthboundMappings(final Site dstSite) {
-        emitMapRegisterMessage(dstSite);
+        emitMapRegisterMessage(dstSite, false);
 
     }
 
-    void storeSouthboundMappings(final Site ... sites) {
+    void storeSouthboundMappings(final boolean merge, final Site ... sites) {
         for (Site site : sites) {
-            storeDestinationSiteMappingViaSouthbound(site);
+            storeDestinationSiteMappingViaSouthbound(site, merge);
         }
     }
 

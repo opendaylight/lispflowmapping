@@ -36,8 +36,10 @@ public interface IMappingService {
      *            Site that stores the mapping
      * @param data
      *            Value to be stored
+     * @param merge
+     *            Select if mappings with the same key are merged
      */
-    void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data);
+    void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge);
 
     /**
      * Retrieves mapping with given origin for the provided key. The lookup policy for the key is defined in the Mapping

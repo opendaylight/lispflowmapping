@@ -64,7 +64,7 @@ public class MultiTableMapCache implements IMapCache {
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 

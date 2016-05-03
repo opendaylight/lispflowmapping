@@ -108,8 +108,8 @@ public class MappingSystem implements IMappingSystem {
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
-    public void addMapping(MappingOrigin origin, Eid key, Object value) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true);
+    public void addMapping(MappingOrigin origin, Eid key, Object value, boolean merge) {
+        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
     }
 
     public void updateMappingRegistration(MappingOrigin origin, Eid key) {
@@ -302,7 +302,7 @@ public class MappingSystem implements IMappingSystem {
                 expiredMappings++;
                 continue;
             }
-            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord());
+            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord(), false);
         }
         LOG.info("{} mappings were expired and were not restored", expiredMappings);
 

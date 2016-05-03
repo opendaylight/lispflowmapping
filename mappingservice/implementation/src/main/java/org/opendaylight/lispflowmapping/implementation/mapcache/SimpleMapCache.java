@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -92,7 +91,7 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite) {
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
         if (value == null) {
             LOG.warn("addMapping() called with null 'value', ignoring");
             return;
@@ -104,7 +103,7 @@ public class SimpleMapCache implements IMapCache {
         }
 
         MappingRecord record = (MappingRecord) value;
-        if (record.getXtrId() == null && !shouldOverwrite && ConfigIni.getInstance().mappingMergeIsSet()) {
+        if (record.getXtrId() == null && !shouldOverwrite && shouldMerge) {
             LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
             return;
         }
@@ -119,7 +118,7 @@ public class SimpleMapCache implements IMapCache {
             xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
         }
 
-        if (ConfigIni.getInstance().mappingMergeIsSet()) {
+        if (shouldMerge) {
             List<XtrId> expiredMappings = new ArrayList<XtrId>();
             Set<IpAddress> sourceRlocs = new HashSet<IpAddress>();
             MappingRecord mergedEntry = MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao),

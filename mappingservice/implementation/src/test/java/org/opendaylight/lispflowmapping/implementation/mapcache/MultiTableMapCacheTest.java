@@ -102,7 +102,7 @@ public class MultiTableMapCacheTest {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(dstKey, SubKeys.LCAF_SRCDST)).thenReturn(srcDstDaoMock);
 
-        multiTableMapCache.addMapping(EID_SOURCE_DEST_KEY_TYPE, DUMMY_OBJECT, true);
+        multiTableMapCache.addMapping(EID_SOURCE_DEST_KEY_TYPE, DUMMY_OBJECT, true, false);
         verify(srcDstDaoMock, times(2)).put(srcKey, new MappingEntry<>(anyString(), any(Date.class)));
         verify(srcDstDaoMock).put(srcKey, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
@@ -118,7 +118,7 @@ public class MultiTableMapCacheTest {
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
 
-        multiTableMapCache.addMapping(eid_ipv4Type, DUMMY_OBJECT, true);
+        multiTableMapCache.addMapping(eid_ipv4Type, DUMMY_OBJECT, true, false);
         verify(tableDaoMock, times(2)).put(normalized_Eid, new MappingEntry<>(anyString(), any(Date.class)));
         verify(tableDaoMock).put(normalized_Eid, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }

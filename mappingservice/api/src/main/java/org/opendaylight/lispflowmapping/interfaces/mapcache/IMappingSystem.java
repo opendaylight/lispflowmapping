@@ -29,8 +29,10 @@ public interface IMappingSystem {
      *            Key of the mapping
      * @param data
      *            Value to be stored
+     * @param merge
+     *            Select if mappings with the same key are merged
      */
-    void addMapping(MappingOrigin origin, Eid key, Object data);
+    void addMapping(MappingOrigin origin, Eid key, Object data, boolean merge);
 
     /**
      * Retrieves mapping for the provided src and dst key.

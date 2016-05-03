@@ -158,7 +158,7 @@ public class MapServerTest {
 
         mapServer.handleMapRegister(mapRegister);
         Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
-                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord());
+                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), false);
         Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
                 subscriberSetMock_1);
         Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister).build(), null);
@@ -184,7 +184,7 @@ public class MapServerTest {
 
         mapServer.handleMapRegister(mapRegister);
         Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
-                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord());
+                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), true);
         Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), null);
     }
 

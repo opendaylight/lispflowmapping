@@ -57,7 +57,7 @@ public class FlatMapCacheTest {
      */
     @Test
     public void addMappingTest() {
-        flatMapCache.addMapping(EID_TEST, DUMMY_OBJECT, false);
+        flatMapCache.addMapping(EID_TEST, DUMMY_OBJECT, true, false);
         verify(daoMock, atMost(2)).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
         verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }

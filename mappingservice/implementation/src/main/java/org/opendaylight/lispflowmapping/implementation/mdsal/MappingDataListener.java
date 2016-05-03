@@ -105,7 +105,7 @@ public class MappingDataListener extends NewAbstractDataListener<Mapping> {
                 LOG.trace("Value: {}", mapping);
 
                 mapSystem.addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
-                        mapping.getMappingRecord());
+                        mapping.getMappingRecord(), false);
 
                 try {
                     // The notifications are used for sending SMR.
