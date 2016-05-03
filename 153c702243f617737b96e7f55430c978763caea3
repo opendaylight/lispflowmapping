@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_31dadb78",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 14
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-03T13:33:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_b688a123",
+      "revId": "153c702243f617737b96e7f55430c978763caea3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_3695b140",
         "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
         "patchSetId": 14
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_91e76740",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 14
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-03T13:33:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_3695b140",
+      "revId": "153c702243f617737b96e7f55430c978763caea3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_56c1452d",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
         "patchSetId": 14
@@ -47,6 +83,24 @@
       "writtenOn": "2016-05-03T12:21:15Z",
       "side": 1,
       "message": "We should remove expired entries, to avoid accumulating them over time.",
+      "revId": "153c702243f617737b96e7f55430c978763caea3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_166a2d1a",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-03T13:33:39Z",
+      "side": 1,
+      "message": "defenetly. If you compare with patch 12, it was done like you mentioned, but I wanted to simplyfy method (to be self explanatory and not to do other action inside) and I forget to copy also removing part of code",
+      "parentUuid": "fa57193c_56c1452d",
       "revId": "153c702243f617737b96e7f55430c978763caea3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
