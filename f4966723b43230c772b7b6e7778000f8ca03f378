@@ -16,6 +16,24 @@
       "revId": "f4966723b43230c772b7b6e7778000f8ca03f378",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_76060922",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-03T13:33:39Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "fa57193c_96e2bdd3",
+      "revId": "f4966723b43230c772b7b6e7778000f8ca03f378",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
