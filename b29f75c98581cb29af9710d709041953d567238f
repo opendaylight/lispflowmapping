@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_2738d69f",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-binary-address-types.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-04T22:37:17Z",
+      "side": 1,
+      "message": "great! thanks.",
+      "parentUuid": "fa57193c_a26337b0",
+      "revId": "b29f75c98581cb29af9710d709041953d567238f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_a7bfc9cf",
         "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
         "patchSetId": 2
