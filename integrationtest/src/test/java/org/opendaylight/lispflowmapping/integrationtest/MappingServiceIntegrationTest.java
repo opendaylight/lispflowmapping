@@ -153,7 +153,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
-    public static final String JERSEY = "com.sun.jersey";
     private static final int MAX_NOTIFICATION_RETRYS = 20;
     private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
     private static final MappingAuthkey AUTH_KEY =
