@@ -43,6 +43,11 @@
       <artifactId>powermock-module-junit4</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.inmemorydb</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- needed for osgi console -->
     <dependency>
       <groupId>org.eclipse.tycho</groupId>
