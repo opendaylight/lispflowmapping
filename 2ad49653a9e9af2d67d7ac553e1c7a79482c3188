@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_b9eec9ea",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "it would be suitable if this grouping would be closer to one which relates with cache value\nand also name pattern could be equal - map-register-cache-value-container",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_99e78512",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "I thought that instance id is part of eid (special case for case when AFI is 16387)",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f9d84155",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "if type isn\u0027t binary. I will be necessary to create instance of XtrId object to create key",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_39e3d908",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "the same as previous comment",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d9c8dd76",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "what is purpose of key in this list? Will be necessary to search in list?",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_99ce6582",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "If I remember correctly we discussed that this bit should be 0 to store entry in cache. Therefore it isn\u0027t necessary store its value.\nBtw want-map-notify bit is probably missing",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d99f3d5e",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-06T11:49:03Z",
+      "side": 1,
+      "message": "what is purpose of this grouping?\nwhy can\u0027t be\nmap-register-cache-metadata-grouping\ndirectly used in map-register-cache-value-grouping",
+      "revId": "2ad49653a9e9af2d67d7ac553e1c7a79482c3188",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
