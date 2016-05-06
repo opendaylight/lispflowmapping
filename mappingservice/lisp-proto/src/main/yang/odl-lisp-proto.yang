@@ -285,6 +285,82 @@ module odl-lisp-proto {
         uses mapping-record-list;
     }
 
+    grouping map-register-cache-key-container {
+        container map-register-cache-key {
+            leaf instance-id {
+                type binary;
+                description
+                    "The Instance-ID LCAF field as binary data";
+            }
+            leaf eid-prefix {
+                type binary;
+                description
+                    "The EID prefix stored as binary data";
+            }
+            leaf xtr-id {
+                type xtr-id;
+                description
+                    "128 bit xTR identifier.";
+            }
+            leaf site-id {
+                type site-id;
+                description
+                    "64 bit site identifier.";
+            }
+        }
+    }
+
+    grouping map-register-cache-metadata-grouping {
+        list eid-lisp-address {
+            key "eid-lisp-address-id";
+            leaf eid-lisp-address-id {
+                type string;
+            }
+            uses eid-container;
+            description "List of EID-Prefixes from Map-Register message.";
+        }
+        leaf xtr-id {
+            type xtr-id;
+            description
+                "128 bit xTR identifier.";
+        }
+        leaf site-id {
+            type site-id;
+            description
+                "64 bit site identifier.";
+        }
+        leaf timestamp {
+            type int64;
+            description
+                "Milliseconds since January 1, 1970, 00:00:00 GMT";
+        }
+        leaf merge-enabled {
+            type boolean;
+            description "Value of 22th bit in map register message.";
+        }
+        description
+            "This is a collection of fields which are not present in the actual
+            mapping record defined in RFC 6830, but are used internally in
+            OpenDaylight";
+    }
+
+    grouping map-register-cache-metadata-container {
+        container map-register-cache-metadata {
+            uses map-register-cache-metadata-grouping;
+        }
+    }
+
+    grouping map-register-cache-value-grouping {
+        container map-register-cache-value {
+            uses map-register-cache-metadata-container;
+            leaf packet-data {
+                type binary;
+                description
+                    "Map-Register packet contents";
+            }
+        }
+    }
+
     typedef message-type {
         type enumeration {
             enum reserved {
@@ -411,5 +487,9 @@ module odl-lisp-proto {
 
     notification xtrReplyMapping {
         uses MapReplyNotification;
+    }
+
+    notification mappingKeepAlive {
+        uses map-register-cache-metadata-container;
     }
 }

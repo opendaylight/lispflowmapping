@@ -35,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
@@ -235,6 +236,13 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     @Override
     public void onXtrReplyMapping(XtrReplyMapping notification) {
         LOG.debug("Received XtrReplyMapping notification, ignoring");
+    }
+
+    @Override
+    public void onMappingKeepAlive(MappingKeepAlive notification) {
+        LOG.debug("Received MappingKeepAlive notification, ignoring");
+        // TODO This notification means that SB received a Map-Register which was cached. Will need to update
+        // timestamps in stored mappings
     }
 
     private OdlLispSbService getLispSB() {
