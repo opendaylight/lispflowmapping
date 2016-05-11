@@ -45,6 +45,24 @@
       "revId": "0458fbdf82be5dc17a942513de728a08d58fdc1c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e5f3689d",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-11T08:24:12Z",
+      "side": 1,
+      "message": "Makes sense, will send an updated patch in a jiffy.",
+      "parentUuid": "fa57193c_c5b104e3",
+      "revId": "0458fbdf82be5dc17a942513de728a08d58fdc1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
