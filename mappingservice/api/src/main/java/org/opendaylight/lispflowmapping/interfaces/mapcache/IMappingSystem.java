@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadata;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
@@ -72,8 +73,10 @@ public interface IMappingSystem {
      *            Table for mapping that should be updated
      * @param key
      *            The key whose registration must be updated
+     * @param metadata
+     *            Information to be used for the update, such as timestamp, etc.
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key);
+    void updateMappingRegistration(MappingOrigin origin, Eid key, MapRegisterCacheMetadata metadata);
 
     /**
      * Remove mapping

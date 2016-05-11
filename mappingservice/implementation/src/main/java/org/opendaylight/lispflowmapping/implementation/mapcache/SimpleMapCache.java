@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadata;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
@@ -398,14 +399,21 @@ public class SimpleMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid eid) {
+    public void updateMappingRegistration(Eid eid, MapRegisterCacheMetadata metadata) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
+        Long timestamp = null;
+        if (metadata != null) {
+            timestamp = metadata.getTimestamp();
+        }
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
+        }
         Map<String, Object> daoEntry = getDaoEntryBest(eid, table);
         if (daoEntry != null) {
-            daoEntry.put(SubKeys.REGDATE, new Date(System.currentTimeMillis()));
+            daoEntry.put(SubKeys.REGDATE, new Date(timestamp));
         }
     }
 
