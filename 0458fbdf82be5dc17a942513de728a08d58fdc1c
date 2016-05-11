@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_65bab8c1",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-11T07:59:26Z",
+      "side": 1,
+      "message": "If this grouping is not going to be used anywhere other than in the metadata container, perhaps we can make this more concise by directly defining grouping map-register-cache-metadata-container { container map-register-cache-metadata { ... }} here?",
+      "range": {
+        "startLine": 310,
+        "startChar": 3,
+        "endLine": 310,
+        "endChar": 51
+      },
+      "revId": "0458fbdf82be5dc17a942513de728a08d58fdc1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c5b104e3",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-11T07:59:26Z",
+      "side": 1,
+      "message": "see comment above. We can merge this with the metadata grouping. this way it is in sync with the key grouping definintion as well.",
+      "range": {
+        "startLine": 352,
+        "startChar": 3,
+        "endLine": 355,
+        "endChar": 9
+      },
+      "revId": "0458fbdf82be5dc17a942513de728a08d58fdc1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
