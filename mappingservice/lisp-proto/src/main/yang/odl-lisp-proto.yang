@@ -285,6 +285,82 @@ module odl-lisp-proto {
         uses mapping-record-list;
     }
 
+    grouping map-register-cache-key-container {
+        container map-register-cache-key {
+            leaf eid-prefix {
+                type binary;
+                description
+                    "The EID prefix stored as binary data";
+            }
+            leaf xtr-id {
+                type binary;
+                description
+                    "128 bit xTR identifier.";
+            }
+            leaf site-id {
+                type binary;
+                description
+                    "64 bit site identifier.";
+            }
+            description
+                "The lookup key in the Map-Register fast path.";
+        }
+    }
+
+    grouping map-register-cache-metadata-container {
+        container map-register-cache-metadata {
+            list eid-lisp-address {
+                key "eid-lisp-address-id";
+                leaf eid-lisp-address-id {
+                    type string;
+                }
+                uses eid-container;
+                description "List of EID-Prefixes from Map-Register message.";
+            }
+            leaf xtr-id {
+                type xtr-id;
+                description
+                    "128 bit xTR identifier.";
+            }
+            leaf site-id {
+                type site-id;
+                description
+                    "64 bit site identifier.";
+            }
+            leaf timestamp {
+                type int64;
+                description
+                    "Milliseconds since January 1, 1970, 00:00:00 GMT";
+            }
+            leaf want-map-notify {
+                type boolean;
+                description
+                    "xTR askes for Map-Register acknowledgement in form of
+                    a Map-Notify control message.";
+            }
+            leaf merge-enabled {
+                type boolean;
+                description "Value of 22th bit in map register message.";
+            }
+            description
+                "The Map-Register cache metadata is information for a mapping
+                database about mapping update event, without the full Map-Register
+                packet data. The metadata and the packet data together will form
+                the Map-Register cache value.";
+        }
+    }
+
+    grouping map-register-cache-value-grouping {
+        container map-register-cache-value {
+            uses map-register-cache-metadata-container;
+            leaf packet-data {
+                type binary;
+                description
+                    "Map-Register packet contents";
+            }
+        }
+    }
+
     typedef message-type {
         type enumeration {
             enum reserved {
@@ -411,5 +487,9 @@ module odl-lisp-proto {
 
     notification xtrReplyMapping {
         uses MapReplyNotification;
+    }
+
+    notification mappingKeepAlive {
+        uses map-register-cache-metadata-container;
     }
 }
