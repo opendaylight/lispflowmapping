@@ -11,12 +11,14 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,9 +35,9 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -75,7 +77,7 @@ public class MapServerTest {
     private static MapServer mapServer;
     private static MapRegister mapRegister;
 
-    private static final String IPV4_STRING_1 =          "1.2.3.0";
+    private static final String IPV4_STRING_1 =        "1.2.3.0";
     private static final String IPV4_STRING_2 =        "1.2.4.0";
     private static final String IPV4_STRING_3 =        "192.168.0.1";
     private static final String IPV4_STRING_4 =        "192.168.0.2";
@@ -106,6 +108,11 @@ public class MapServerTest {
     private static final Rloc RLOC_5 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_5);
     private static final Rloc RLOC_6 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_6);
 
+    private static final IpAddressBinary IPV4_BINARY_1 =
+            new IpAddressBinary(new Ipv4AddressBinary(new byte[] {1, 2, 3, 0}));
+    private static final IpAddressBinary IPV4_BINARY_2 =
+            new IpAddressBinary(new Ipv4AddressBinary(new byte[] {1, 2, 4, 0}));
+
     private static final long TWO_DAYS = 86400000L * 2;
 
     private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,         // timedOut() == true
@@ -134,7 +141,7 @@ public class MapServerTest {
     private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
 
-    private static final Set<IpAddress> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
+    private static final Set<IpAddressBinary> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException  {
@@ -490,26 +497,24 @@ public class MapServerTest {
         mappingMergeField.setBoolean(CONFIG_INI, value);
     }
 
-    private static Set<IpAddress> getDefaultIpAddressSet() {
-        final IpAddress ipAddress = new IpAddress(new Ipv4Address(IPV4_STRING_3));
-        final IpAddress ipAddress_2 = new IpAddress(new Ipv4Address(IPV4_STRING_4));
-        final Set<IpAddress> addressSet = Sets.newHashSet(ipAddress, ipAddress_2);
+    private static Set<IpAddressBinary> getDefaultIpAddressSet() {
+        final Set<IpAddressBinary> addressSet = Sets.newHashSet(IPV4_BINARY_1, IPV4_BINARY_2);
 
         return addressSet;
     }
 
     private static List<TransportAddress> getTransportAddressList() {
         TransportAddressBuilder transportAddressBuilder_1 = new TransportAddressBuilder()
-                .setIpAddress(new IpAddress(new Ipv4Address(IPV4_STRING_3)))
+                .setIpAddress(IPV4_BINARY_1)
                 .setPort(new PortNumber(LispMessage.PORT_NUM));
 
         TransportAddressBuilder transportAddressBuilder_2 = new TransportAddressBuilder()
-                .setIpAddress(new IpAddress(new Ipv4Address(IPV4_STRING_4)))
+                .setIpAddress(IPV4_BINARY_2)
                 .setPort(new PortNumber(LispMessage.PORT_NUM));
 
         final List<TransportAddress> transportAddressList = Lists.newArrayList(
-                transportAddressBuilder_2.build(),
-                transportAddressBuilder_1.build());
+                transportAddressBuilder_1.build(),
+                transportAddressBuilder_2.build());
 
         return transportAddressList;
     }

@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -147,16 +148,18 @@ public final class MapRegisterSerializer {
 
     }
 
-    private static IpAddress getSourceRloc(InetAddress sourceRloc) {
+    private static IpAddressBinary getSourceRloc(InetAddress sourceRloc) {
         if (sourceRloc == null) {
-            sourceRloc = InetAddress.getLoopbackAddress();
+            sourceRloc = Inet4Address.getLoopbackAddress();
         }
 
         if (sourceRloc instanceof Inet4Address) {
-            return new IpAddress(new Ipv4Address(sourceRloc.getHostAddress()));
-        } else {
-            return new IpAddress(new Ipv6Address(sourceRloc.getHostAddress()));
+            return new IpAddressBinary(new Ipv4AddressBinary(sourceRloc.getAddress()));
+        } else if (sourceRloc instanceof Inet6Address) {
+            return new IpAddressBinary(new Ipv6AddressBinary(sourceRloc.getAddress()));
         }
+
+        return null;
     }
 
     private interface Flags {

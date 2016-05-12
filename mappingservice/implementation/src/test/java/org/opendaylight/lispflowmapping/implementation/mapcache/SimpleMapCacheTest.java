@@ -29,9 +29,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -56,12 +56,12 @@ public class SimpleMapCacheTest {
     private static SimpleMapCache simpleMapCache;
 
     private static final String IPV4_STRING_1 =      "1.2.3.0";
-    private static final String IPV4_STRING_2 =      "1.2.4.0";
     private static final String IPV4_STRING_DST =    "192.168.0.1";
     private static final String IPV4_PREFIX_STRING = "/24";
     private static final short MASK = 24;
     private static final long VNI_0 = 0L;
     private static final long VNI_100 = 100L;
+    private static final byte[] IPV4_RLOC_BINARY = new byte[] {0, 1, 4, 0};
     private static final byte[] XTR_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
     private static final Eid EID_IPV4_PREFIX_1_VNI = LispAddressUtil
@@ -75,7 +75,7 @@ public class SimpleMapCacheTest {
     private static final Eid NORMALIZED_EID_2 = MaskUtil.normalize(EID_IPV4_PREFIX_2);
     private static final Eid NORMALIZED_EID_IPV4 = MaskUtil.normalize(EID_IPV4);
 
-    private static final IpAddress IP_ADDRESS = new IpAddress(new Ipv4Address(IPV4_STRING_2));
+    private static final IpAddressBinary IP_ADDRESS = new IpAddressBinary(new Ipv4AddressBinary(IPV4_RLOC_BINARY));
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
     private static final long REGISTRATION_VALIDITY = CONFIG_INI.getRegistrationValiditySb();
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
@@ -501,7 +501,7 @@ public class SimpleMapCacheTest {
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
 
-        Set<IpAddress> ipAddresses = Sets.newHashSet(IP_ADDRESS);
+        Set<IpAddressBinary> ipAddresses = Sets.newHashSet(IP_ADDRESS);
         List<Object> records = Lists.newArrayList(getDefaultMappingRecordBuilder().build());
         PowerMockito.doReturn(records).when(simpleMapCache,         // stubs private getXtrIdMappingList method
                 PowerMockito.method(SimpleMapCache.class, "getXtrIdMappingList", ILispDAO.class))

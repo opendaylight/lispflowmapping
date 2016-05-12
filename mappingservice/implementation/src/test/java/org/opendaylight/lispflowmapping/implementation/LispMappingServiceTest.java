@@ -11,8 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,9 +29,9 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
@@ -66,8 +68,9 @@ public class LispMappingServiceTest {
     @Mock private static MapRegister mapRegisterMock;
     @InjectMocks private static LispMappingService lispMappingService;
 
+    private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
+    private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
     private static final String IPV4_STRING_1 =      "1.2.3.0";
-    private static final String IPV4_STRING_2 =      "1.2.4.0";
     private static final String IPV4_SOURCE_STRING = "192.168.0.1";
     private static final String IPV4_PREFIX_STRING = "/24";
 
@@ -80,13 +83,13 @@ public class LispMappingServiceTest {
             .setMappingRecord(new MappingRecordBuilder().setEid(IPV4_PREFIX_EID_1).build());
 
     private static final TransportAddress TRANSPORT_ADDRESS_1 = new TransportAddressBuilder()
-            .setIpAddress(new IpAddress(Ipv4Address.getDefaultInstance(IPV4_STRING_1)))
+            .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
             .setPort(new PortNumber(9999)).build();
     private static final TransportAddress TRANSPORT_ADDRESS_2 = new TransportAddressBuilder()
-            .setIpAddress(new IpAddress(Ipv4Address.getDefaultInstance(IPV4_STRING_2)))
+            .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_2)))
             .setPort(new PortNumber(8888)).build();
     private static final TransportAddress TRANSPORT_ADDRESS = new TransportAddressBuilder()
-            .setIpAddress(new IpAddress(Ipv4Address.getDefaultInstance(IPV4_STRING_1)))
+            .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
             .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
 
     /**
