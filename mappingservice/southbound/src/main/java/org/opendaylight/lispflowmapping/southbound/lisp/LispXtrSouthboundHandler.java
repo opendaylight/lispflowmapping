@@ -69,7 +69,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(
-                    LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+                    LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {

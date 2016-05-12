@@ -110,7 +110,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             requestMappingBuilder.setMapRequest(LispNotificationHelper.convertMapRequest(request));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(
-                    LispNotificationHelper.getIpAddressFromInetAddress(finalSourceAddress));
+                    LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
@@ -155,7 +155,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
             addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            transportAddressBuilder.setIpAddress(LispNotificationHelper
+                    .getIpAddressBinaryFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
@@ -178,7 +179,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             GotMapNotifyBuilder gotMapNotifyBuilder = new GotMapNotifyBuilder();
             gotMapNotifyBuilder.setMapNotify(LispNotificationHelper.convertMapNotify(mapNotify));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            transportAddressBuilder.setIpAddress(LispNotificationHelper
+                    .getIpAddressBinaryFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapNotifyBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
@@ -201,7 +203,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             GotMapReplyBuilder gotMapReplyBuilder = new GotMapReplyBuilder();
             gotMapReplyBuilder.setMapReply(LispNotificationHelper.convertMapReply(mapReply));
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+            transportAddressBuilder.setIpAddress(LispNotificationHelper
+                    .getIpAddressBinaryFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapReplyBuilder.setTransportAddress(transportAddressBuilder.build());
             if (notificationPublishService != null) {
