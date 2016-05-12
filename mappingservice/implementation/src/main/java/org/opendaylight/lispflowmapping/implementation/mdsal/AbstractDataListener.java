@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,25 +8,27 @@
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * The superclass for the different MD-SAL data change event listeners.
  *
- * @author Lorand Jakab
- *
  */
-public abstract class AbstractDataListener implements DataChangeListener {
+public abstract class AbstractDataListener<T extends DataObject> implements DataTreeChangeListener<T> {
     private DataBroker broker;
-    private InstanceIdentifier<?> path;
-    private ListenerRegistration<DataChangeListener> registration;
+    private InstanceIdentifier<T> path;
+    private ListenerRegistration<DataTreeChangeListener<T>> registration;
 
     public void registerDataChangeListener() {
-        registration = broker.registerDataChangeListener(LogicalDatastoreType.CONFIGURATION,
-                path, this, DataBroker.DataChangeScope.SUBTREE);
+        final DataTreeIdentifier<T> dataTreeIdentifier = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION,
+                path);
+
+        registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
     }
 
     public void closeDataChangeListener() {
@@ -37,7 +39,8 @@ public abstract class AbstractDataListener implements DataChangeListener {
         this.broker = broker;
     }
 
-    void setPath(InstanceIdentifier<?> path) {
+    void setPath(InstanceIdentifier<T> path) {
         this.path = path;
     }
+
 }

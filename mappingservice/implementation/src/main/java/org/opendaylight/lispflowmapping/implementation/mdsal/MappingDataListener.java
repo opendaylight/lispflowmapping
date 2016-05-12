@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras
  *
  */
-public class MappingDataListener extends NewAbstractDataListener<Mapping> {
+public class MappingDataListener extends AbstractDataListener<Mapping> {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
     private NotificationPublishService notificationPublishService;

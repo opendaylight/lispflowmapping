@@ -26,7 +26,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.Mod
  * @author Lorand Jakab
  *
  */
-public class AuthenticationKeyDataListener extends NewAbstractDataListener<AuthenticationKey> {
+public class AuthenticationKeyDataListener extends AbstractDataListener<AuthenticationKey> {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
     private IMappingSystem mapSystem;
 
