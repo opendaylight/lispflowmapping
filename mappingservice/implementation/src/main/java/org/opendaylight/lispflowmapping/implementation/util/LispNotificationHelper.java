@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import com.google.common.base.Splitter;
+import com.google.common.net.InetAddresses;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -17,6 +18,8 @@ import java.util.List;
 
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -28,7 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
@@ -51,11 +54,16 @@ public final class LispNotificationHelper {
     public static TransportAddress getTransportAddressFromRloc(Rloc rloc) {
         TransportAddressBuilder tab = new TransportAddressBuilder();
         Address address = rloc.getAddress();
+        // once we switch to using Ipv4Binary and Ipv6Binary by default for RLOCs, we will only need to keep the below
+        // for backwards compatibility reasons, but the default will be to just return the reference for the binary
+        // object, yey!
         if (address instanceof Ipv4) {
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv4) address).getIpv4().getValue()));
+            String ipv4 = ((Ipv4) address).getIpv4().getValue();
+            tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv4).getAddress()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
         } else if (address instanceof Ipv6) {
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(((Ipv6) address).getIpv6().getValue()));
+            String ipv6 = ((Ipv6) address).getIpv6().getValue();
+            tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv6).getAddress()));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
         } else if (address instanceof KeyValueAddress) {
             SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();
@@ -64,7 +72,7 @@ public final class LispNotificationHelper {
                 String ip = it.next();
                 int port = Integer.valueOf(it.next());
 
-                tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
+                tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ip).getAddress()));
                 tab.setPort(new PortNumber(port));
             }
         } else if (address instanceof DistinguishedName) {
@@ -73,11 +81,11 @@ public final class LispNotificationHelper {
             String ip = it.next();
             int port = Integer.valueOf(it.next());
 
-            tab.setIpAddress(IpAddressBuilder.getDefaultInstance(ip));
+            tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ip).getAddress()));
             tab.setPort(new PortNumber(port));
         } else if (address instanceof ApplicationData) {
             ApplicationData appData = (ApplicationData) address;
-            tab.setIpAddress(appData.getApplicationData().getAddress().getIpAddress());
+            tab.setIpAddress(getIpAddressBinary(appData.getApplicationData().getAddress().getIpAddress()));
             tab.setPort(new PortNumber(appData.getApplicationData().getLocalPortLow()));
         }
         return tab.build();
@@ -118,5 +126,18 @@ public final class LispNotificationHelper {
         } else {
             return null;
         }
+    }
+
+    // We will see if we need to keep this method post full binary-migration, and if yes, will probably move to
+    // LispAddressUtil (and add tests!)
+    private static IpAddressBinary getIpAddressBinary(IpAddress address) {
+        if (address.getIpv4Address() != null) {
+            String ipv4 = address.getIpv4Address().getValue();
+            return IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv4).getAddress());
+        } else if (address.getIpv6Address() != null) {
+            String ipv6 = address.getIpv6Address().getValue();
+            return IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv6).getAddress());
+        }
+        return null;
     }
 }

@@ -9,6 +9,8 @@ package org.opendaylight.lispflowmapping.southbound.util;
 
 import java.net.InetAddress;
 
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifynotification.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifynotification.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegister;
@@ -17,8 +19,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplynotification.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 
 public final class LispNotificationHelper {
     // Utility class, should not be instantiated
@@ -52,12 +52,12 @@ public final class LispNotificationHelper {
                 .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
     }
 
-    public static IpAddress getIpAddressFromInetAddress(InetAddress address) {
+    public static IpAddressBinary getIpAddressBinaryFromInetAddress(InetAddress address) {
         InetAddress inetAddress = address;
         if (inetAddress == null) {
             inetAddress = InetAddress.getLoopbackAddress();
         }
 
-        return IetfInetUtil.INSTANCE.ipAddressFor(address);
+        return IpAddressBinaryBuilder.getDefaultInstance(address.getAddress());
     }
 }

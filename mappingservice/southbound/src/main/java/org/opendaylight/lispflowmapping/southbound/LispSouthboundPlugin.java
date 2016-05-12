@@ -22,8 +22,10 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
+
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
@@ -31,13 +33,14 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.net.InetAddresses;
+import com.google.common.base.Preconditions;
 
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -156,7 +159,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
             final MessageType packetType) {
-        InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
+        InetAddress ip = getInetAddress(address);
         InetSocketAddress recipient = new InetSocketAddress(ip, address.getPort().getValue());
         // the wrappedBuffer() method doesn't copy data, so this conversion shouldn't hurt performance
         ByteBuf data = wrappedBuffer(outBuffer.array());
@@ -178,6 +181,21 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             }
         });
         channel.flush();
+    }
+
+    private InetAddress getInetAddress(TransportAddress address) {
+        Preconditions.checkNotNull(address, "TransportAddress must not be null");
+        IpAddressBinary ip = address.getIpAddress();
+        try {
+            if (ip.getIpv4AddressBinary() != null) {
+                return InetAddress.getByAddress(ip.getIpv4AddressBinary().getValue());
+            } else if (ip.getIpv6AddressBinary() != null) {
+                return InetAddress.getByAddress(ip.getIpv6AddressBinary().getValue());
+            }
+        } catch (UnknownHostException e) {
+            LOG.debug("Could not convert TransportAddress {} to InetAddress", address, e);
+        }
+        return null;
     }
 
     public LispSouthboundStats getStats() {
