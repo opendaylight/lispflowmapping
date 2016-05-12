@@ -33,23 +33,27 @@ module odl-lisp-address-types {
     grouping augmented-lisp-address {
         uses laddr:lisp-address {
             augment "address" {
-                leaf ipv4-binary {
-                    when "../../address-type = 'ipv4-binary-afi'" {
-                      description
-                        "When AFI is IPv4 (binary).";
+                case ipv4-binary {
+                    leaf ipv4-binary {
+                        when "../../address-type = 'ipv4-binary-afi'" {
+                          description
+                            "When AFI is IPv4 (binary).";
+                        }
+                        type bin:ipv4-address-binary;
+                        description
+                          "IPv4 (binary) address.";
                     }
-                    type bin:ipv4-address-binary;
-                    description
-                      "IPv4 (binary) address.";
                 }
-                leaf ipv6-binary {
-                    when "../../address-type = 'ipv6-binary-afi'" {
-                      description
-                        "When AFI is IPv6 (binary).";
+                case ipv6-binary {
+                    leaf ipv6-binary {
+                        when "../../address-type = 'ipv6-binary-afi'" {
+                          description
+                            "When AFI is IPv6 (binary).";
+                        }
+                        type bin:ipv6-address-binary;
+                        description
+                          "IPv6 (binary) address.";
                     }
-                    type bin:ipv6-address-binary;
-                    description
-                      "IPv6 (binary) address.";
                 }
             }
         }
