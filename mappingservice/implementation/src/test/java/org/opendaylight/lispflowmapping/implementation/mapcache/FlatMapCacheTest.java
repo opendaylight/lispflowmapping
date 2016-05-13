@@ -121,7 +121,7 @@ public class FlatMapCacheTest {
      */
     @Test
     public void updateMappingRegistrationTest() {
-        flatMapCache.updateMappingRegistration(EID_TEST);
+        flatMapCache.updateMappingRegistration(EID_TEST, null);
         verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
     }
 

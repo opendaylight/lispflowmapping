@@ -377,6 +377,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
+        mappingSystem.updateMappingRegistration(origin, key, timestamp);
+    }
+
+    @Override
     public Object getMapping(MappingOrigin origin, Eid key) {
         return mappingSystem.getMapping(origin, key);
     }

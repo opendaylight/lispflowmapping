@@ -398,14 +398,17 @@ public class SimpleMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid eid) {
+    public void updateMappingRegistration(Eid eid, Long timestamp) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
+        }
         Map<String, Object> daoEntry = getDaoEntryBest(eid, table);
         if (daoEntry != null) {
-            daoEntry.put(SubKeys.REGDATE, new Date(System.currentTimeMillis()));
+            daoEntry.put(SubKeys.REGDATE, new Date(timestamp));
         }
     }
 

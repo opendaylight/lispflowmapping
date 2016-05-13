@@ -66,14 +66,16 @@ public interface IMappingSystem {
     Object getMapping(MappingOrigin origin, Eid key);
 
     /**
-     * Update key registration
+     * Update mapping registration
      *
      * @param origin
      *            Table for mapping that should be updated
      * @param key
-     *            The key whose registration must be updated
+     *            The EID whose registration must be updated
+     * @param timestamp
+     *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key);
+    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
 
     /**
      * Remove mapping

@@ -80,10 +80,13 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid eid) {
+    public void updateMappingRegistration(Eid eid, Long timestamp) {
         Eid key = MaskUtil.normalize(eid);
         if (dao.get(key) != null) {
-            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
+            if (timestamp == null) {
+                timestamp = System.currentTimeMillis();
+            }
+            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(timestamp)));
         }
     }
 
