@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_7807f61c",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-13T07:20:56Z",
+      "side": 1,
+      "message": "I kept Florin\u0027s terminology, where I think key refers to the key into the map cache structures, meaning that this method updates the Mapping Registration for Eid \u0027key\u0027. But I agree it may be confusing and other methods do refer to mapping, so I will update.",
+      "parentUuid": "fa57193c_b8050e7c",
+      "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5845d2b1",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
         "patchSetId": 1
@@ -42,6 +60,24 @@
         "endLine": 94,
         "endChar": 79
       },
+      "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b3008f02",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-13T07:20:56Z",
+      "side": 1,
+      "message": "My intention was to do exactly that: parse over the EID list from the metadata in the MappingService, and then call this method once for each EID. The lower layers will simple ignore the EID list from the metadata.",
+      "parentUuid": "fa57193c_5845d2b1",
       "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_f30a0720",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-13T07:20:56Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "fa57193c_f8ff8665",
+      "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_d802826e",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mappingservice/IMappingService.java",
         "patchSetId": 1
@@ -88,6 +142,24 @@
         "endLine": 80,
         "endChar": 30
       },
+      "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d30d4339",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mappingservice/IMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-13T07:20:56Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "fa57193c_d802826e",
       "revId": "e043538163c7b4dcbbce557a4411e4d0780c5cde",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
