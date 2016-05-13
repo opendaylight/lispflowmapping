@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
@@ -19,9 +20,9 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 public class InstanceIdSerializerTest extends BaseTestCase {
@@ -34,10 +35,10 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
                 new LispAddressSerializerContext(null));
 
-        assertEquals(Ipv4Afi.class, address.getAddressType());
-        Ipv4 ipv4 = (Ipv4) address.getAddress();
+        assertEquals(Ipv4BinaryAfi.class, address.getAddressType());
+        Ipv4Binary ipv4 = (Ipv4Binary) address.getAddress();
 
-        assertEquals("17.34.51.68", ipv4.getIpv4().getValue());
+        assertArrayEquals(new byte[] {0x11, 0x22, 0x33, 0x44}, ipv4.getIpv4Binary().getValue());
         assertEquals(0x00BBCCDD, address.getVirtualNetworkId().getValue().longValue());
     }
 
@@ -76,7 +77,11 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 new LispAddressSerializerContext(null));
         // IPv6
 
-        assertEquals("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd", ((Ipv6) address.getAddress()).getIpv6().getValue());
+        assertArrayEquals(new byte[] {(byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44,
+                                      (byte) 0x55, (byte) 0x66, (byte) 0x77, (byte) 0x88,
+                                      (byte) 0x99, (byte) 0xAA, (byte) 0xBB, (byte) 0xCC,
+                                      (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD},
+                ((Ipv6Binary) address.getAddress()).getIpv6Binary().getValue());
 
     }
 

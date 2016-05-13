@@ -7,6 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
@@ -29,10 +32,15 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
+import com.google.common.net.InetAddresses;
 
 /**
  * Utility class with static methods returning string representations of
@@ -43,6 +51,7 @@ import com.google.common.io.BaseEncoding;
  *
  */
 public class LispAddressStringifier {
+    protected static final Logger LOG = LoggerFactory.getLogger(LispAddressStringifier.class);
 
     private static final String PREFIX_SEPARATOR = ":";
     /*
@@ -109,12 +118,18 @@ public class LispAddressStringifier {
         if (addr instanceof Ipv4) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
             address = getStringFromIpv4(dst, (Ipv4) addr);
+        } else if (addr instanceof Ipv4Binary) {
+            prefix = "ipv4" + PREFIX_SEPARATOR;
+            address = getStringFromIpv4Binary(dst, (Ipv4Binary) addr);
         } else if (addr instanceof Ipv4Prefix) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
             address = getStringFromIpv4Prefix(dst, (Ipv4Prefix) addr);
         } else if (addr instanceof Ipv6) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
             address = getStringFromIpv6(dst, (Ipv6) addr);
+        } else if (addr instanceof Ipv6Binary) {
+            prefix = "ipv6" + PREFIX_SEPARATOR;
+            address = getStringFromIpv6Binary(dst, (Ipv6Binary) addr);
         } else if (addr instanceof Ipv6Prefix) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
             address = getStringFromIpv6Prefix(dst, (Ipv6Prefix) addr);
@@ -187,6 +202,16 @@ public class LispAddressStringifier {
         return addr.getIpv4().getValue();
     }
 
+    protected static String getStringFromIpv4Binary(Destination dst, Ipv4Binary addr) {
+        // AFI = 1; IPv4
+        try {
+            return InetAddresses.toAddrString(Inet4Address.getByAddress(addr.getIpv4Binary().getValue()));
+        } catch (UnknownHostException e) {
+            LOG.debug("Cannot convert binary IPv4 to string", e);
+        }
+        return null;
+    }
+
     protected static String getStringFromIpv4Prefix(Destination dst, Ipv4Prefix addr) {
         // AFI = 1; IPv4
         String prefix = addr.getIpv4Prefix().getValue();
@@ -196,6 +221,16 @@ public class LispAddressStringifier {
     protected static String getStringFromIpv6(Destination dst, Ipv6 addr) {
         // AFI = 2; IPv6
         return addr.getIpv6().getValue();
+    }
+
+    protected static String getStringFromIpv6Binary(Destination dst, Ipv6Binary addr) {
+        // AFI = 2; IPv6
+        try {
+            return InetAddresses.toAddrString(Inet6Address.getByAddress(addr.getIpv6Binary().getValue()));
+        } catch (UnknownHostException e) {
+            LOG.debug("Cannot convert binary IPv6 to string", e);
+        }
+        return null;
     }
 
     protected static String getStringFromIpv6Prefix(Destination dst, Ipv6Prefix addr) {

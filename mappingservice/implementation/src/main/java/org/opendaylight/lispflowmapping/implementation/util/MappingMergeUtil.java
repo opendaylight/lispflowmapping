@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -77,9 +76,9 @@ public final class MappingMergeUtil {
     }
 
     private static int compareLocators(LocatorRecord a, LocatorRecord b) {
-        InetAddress aInet = LispAddressUtil.ipAddressToInet(a.getRloc().getAddress());
-        InetAddress bInet = LispAddressUtil.ipAddressToInet(b.getRloc().getAddress());
-        return LispAddressUtil.compareInetAddresses(aInet, bInet);
+        byte[] aIp = LispAddressUtil.ipAddressToByteArray(a.getRloc().getAddress());
+        byte[] bIp = LispAddressUtil.ipAddressToByteArray(b.getRloc().getAddress());
+        return LispAddressUtil.compareIpAddressByteArrays(aIp, bIp);
     }
 
     private static void mergeLocatorRecords(MappingRecordBuilder mrb, MappingRecord newRecord) {
