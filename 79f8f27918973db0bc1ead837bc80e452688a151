@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_7ff4f5f1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "Another change that we don\u0027t actually need. In general, if we change other things in the file too, we can slip in some whitespace changes to make things more uniform, but having a single white space change in a random file in a patch just adds one more file to the change-set for no good reason.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5ff771f5",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 28
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "Do we really need mockito-all? Even if other project may pull in all dependencies, we strive to make pom files to include only the bare minimum necessary",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_df50a1d6",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "We will eventually make this configurable, and will live in a single \"central\" place. But I see that now this is re-defined in the Test class too. It may be worth adding a comment here along the lines of \"If you modify this value, please update the LispSouthboundServiceTest class too.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_dfed41b9",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "Our map-cache implementations remove expired entries internally, and return null. For consistency, I would prefer the same to happen here: getEntry() should check if the entry it found is expired, and if so, delete it and return null (we call this lazy-removal, since we don\u0027t proactively remove expired entries, but we still keep the code to do so internal to the cache implementation, so the caller doesn\u0027t have to know about it). If there is a good reason not to do so, I can be convinced to keep things as-is though.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9f68e922",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "We should also check if the cacheValue stored in the cache is the same as entry.getValue(), otherwise we don\u0027t have a cache hit since the packet data changed and we need to go through the slow path.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_dfa8a179",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "For consistency please s/site id/site-ID/ and s/xTR Id/xTR-ID/",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_3fb71dda",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "Small nit, I would put inBuffer as first argument, and then sourceAddress and port, since they kinda belong together.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5febf1af",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "Why reuse the original value if we\u0027re going to overwrite every field anyway? This way, AFAIK, the code will first set the value of each member from the original one, and then again from what we set here. If we would just create an empty builder, we would set fields only once? But maybe I\u0027m missing something...",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5f393140",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "We\u0027re going to use the cache from multiple threads in the future, so I would use ConcurrentHashMap() from the start, unless there is a good reason not to.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5fd5b1b7",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily defines these values so we don\u0027t have to.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_7f0d1590",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "you mean \"are not extracted\" right?",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_1ff2196f",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 1,
+      "message": "I don\u0027t think we need a TODO here, since if anything in the payload changes we go to the slow path, so we\u0027re safe here. Vina?",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

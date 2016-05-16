@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_3fea7d0f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 1995,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-16T13:55:56Z",
+      "side": 0,
+      "message": "I don\u0027t think we need this change, it does no functional change, and the notification is the last item in the YANG file too, so it\u0027s ok to stay at the bottom.",
+      "revId": "09908fefa6e9c38ecdc3f2c36e924fc135e421c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
