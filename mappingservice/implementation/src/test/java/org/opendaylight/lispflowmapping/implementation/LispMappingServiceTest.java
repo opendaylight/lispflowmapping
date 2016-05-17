@@ -299,7 +299,6 @@ public class LispMappingServiceTest {
 
         lispMappingService.setShouldAuthenticate(value);
         Mockito.verify(mapResolverMock).setShouldAuthenticate(value);
-        Mockito.verify(mapServerMock).setShouldAuthenticate(value);
     }
 
     private static Pair<MapNotify, List<TransportAddress>> getDefaultMapNotifyPair() {

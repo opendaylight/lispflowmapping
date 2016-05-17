@@ -37,14 +37,16 @@ final class MapRegisterCacheTestUtil {
     };
 
     final static byte[] keyId = new byte[] {
-            0x10, 0x10                 //key ID
+            0x00, 0x01                 //key ID
     };
 
     final static byte[] authenticationData = new byte[]{
-            0x00, 0x0c                 //authentication data length
-            ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
-            ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
-            ,0x7f, 0x7f, 0x7f, 0x7f    //auth data
+            0x00, 0x14                 //authentication data length
+            ,(byte)0xfa, 0x50, 0x1d, (byte)0xd6    //auth data
+            ,0x63, 0x53, 0x67, 0x6c    //auth data
+            ,0x00, 0x3c, 0x61, 0x67    //auth data
+            ,0x35, (byte) 0xb8, (byte) 0xcf, 0x16    //auth data
+            ,(byte) 0x91, (byte) 0xcd, 0x6b, (byte) 0x95    //auth data
     };
 
     final static byte[] data2 = new byte[]{
