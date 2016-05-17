@@ -112,8 +112,8 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
     }
 
-    public void updateMappingRegistration(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).updateMappingRegistration(key);
+    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
+        tableMap.get(origin).updateMappingRegistration(key, timestamp);
     }
 
     private MappingRecord updateServicePathMappingRecord(MappingRecord mapping, Eid eid) {

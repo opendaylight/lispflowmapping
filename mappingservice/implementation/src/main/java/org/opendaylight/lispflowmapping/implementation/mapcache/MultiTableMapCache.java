@@ -334,7 +334,7 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid key) {
+    public void updateMappingRegistration(Eid key, Long timestamp) {
 
     }
 

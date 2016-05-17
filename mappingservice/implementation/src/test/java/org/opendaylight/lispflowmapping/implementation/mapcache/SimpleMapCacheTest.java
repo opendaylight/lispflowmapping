@@ -420,7 +420,7 @@ public class SimpleMapCacheTest {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.get(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
 
-        simpleMapCache.updateMappingRegistration(EID_IPV4);
+        simpleMapCache.updateMappingRegistration(EID_IPV4, null);
         Mockito.verify(entryMock).put(Mockito.eq(SubKeys.REGDATE), Mockito.any(Date.class));
     }
 
@@ -431,7 +431,7 @@ public class SimpleMapCacheTest {
     public void updateMappingRegistrationTest_withNullVniTable() {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(null);
 
-        simpleMapCache.updateMappingRegistration(EID_IPV4);
+        simpleMapCache.updateMappingRegistration(EID_IPV4, null);
         Mockito.verifyZeroInteractions(tableMock);
     }
 

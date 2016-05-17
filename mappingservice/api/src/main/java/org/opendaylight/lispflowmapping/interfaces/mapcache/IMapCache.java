@@ -83,12 +83,14 @@ public interface IMapCache {
     void removeAuthenticationKey(Eid key);
 
     /**
-     * Update key registration
+     * Update mapping registration
      *
      * @param key
-     *            The key whose registration must be updated
+     *            The EID whose registration must be updated
+     * @param timestamp
+     *            New timestamp for the mapping
      */
-    void updateMappingRegistration(Eid key);
+    void updateMappingRegistration(Eid key, Long timestamp);
 
     /**
      * Add data for key
