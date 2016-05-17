@@ -5,21 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.implementation.authentication;
+package org.opendaylight.lispflowmapping.southbound.authentication;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +37,20 @@ public class LispMACAuthentication implements ILispAuthentication {
         }
     }
 
-    public boolean validate(MapRegister mapRegister, String key) {
+    @Override
+    public boolean validate(ByteBuffer mapRegisterBuffer, byte[] expectedAuthData, String key) {
         if (key == null) {
             LOG.warn("Authentication failed: mapping authentication password is null!");
             return false;
         }
-        ByteBuffer mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
         if (mapRegisterBuffer == null) {
             return true;
         }
 
-        mapRegisterBuffer.position(MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
+        mapRegisterBuffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
-        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key),
-                mapRegister.getAuthenticationData());
+        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key), expectedAuthData);
     }
 
     protected byte[] getAuthenticationData(byte[] data, String key) {
