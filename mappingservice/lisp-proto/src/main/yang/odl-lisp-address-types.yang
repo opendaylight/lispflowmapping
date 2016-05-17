@@ -30,6 +30,18 @@ module odl-lisp-address-types {
             "IANA IPv6 address family (binary representation).";
     }
 
+    identity ipv4-prefix-binary-afi {
+        base laddr:lisp-address-family;
+        description
+          "IANA IPv4 address family prefix (binary representation).";
+      }
+
+    identity ipv6-prefix-binary-afi {
+        base laddr:lisp-address-family;
+        description
+          "IANA IPv6 address family prefix (binary representation).";
+    }
+
     grouping augmented-lisp-address {
         uses laddr:lisp-address {
             augment "address" {
@@ -53,6 +65,42 @@ module odl-lisp-address-types {
                         type bin:ipv6-address-binary;
                         description
                           "IPv6 (binary) address.";
+                    }
+                }
+                case ipv4-prefix-binary {
+                    container ipv4-prefix-binary {
+                        when "../../address-type = 'ipv4-prefix-binary-afi'" {
+                          description
+                            "When AFI is IPv4 (binary).";
+                        }
+                        leaf network-address {
+                            type bin:ipv4-address-binary;
+                            description "IPv4 binary address.";
+                        }
+                        leaf mask-length {
+                            type uint8 {
+                                range "0..32";
+                            }
+                            description "IPv4 mask length.";
+                        }
+                    }
+                }
+                case ipv6-prefix-binary {
+                    container ipv6-prefix-binary {
+                        when "../../address-type = 'ipv6-prefix-binary-afi'" {
+                          description
+                            "When AFI is IPv6 (binary).";
+                        }
+                        leaf network-address {
+                            type bin:ipv6-address-binary;
+                            description "IPv6 binary address.";
+                        }
+                        leaf mask-length {
+                            type uint8 {
+                                range "0..128";
+                            }
+                            description "IPv6 mask length.";
+                        }
                     }
                 }
             }
