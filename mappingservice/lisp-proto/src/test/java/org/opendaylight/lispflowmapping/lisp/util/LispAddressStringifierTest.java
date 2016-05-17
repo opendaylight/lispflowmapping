@@ -11,8 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.google.common.io.BaseEncoding;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
@@ -88,6 +90,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
         .explicit.locator.path.explicit.locator.path.HopKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 
@@ -104,11 +112,26 @@ public class LispAddressStringifierTest {
             .setAddress(IPV4)
             .setVirtualNetworkId(new InstanceIdType(VNI)).build();
 
+    // Ipv4Binary
+    private static final byte[] IPV4_BYTES = new byte[]{(byte) 192, (byte) 168, 0, 1};
+    private static final Ipv4AddressBinary IPV4_ADDRESS_BINARY = new Ipv4AddressBinary(IPV4_BYTES);
+    private static final Ipv4Binary IPV4_BINARY = new Ipv4BinaryBuilder().setIpv4Binary(IPV4_ADDRESS_BINARY).build();
+    private static final LispAddress LISP_IPV4_BINARY = new EidBuilder()
+            .setAddress(IPV4_BINARY)
+            .setVirtualNetworkId(new InstanceIdType(VNI)).build();
+
     // Ipv6
     private static final String IPV6_STRING = "1111:2222:3333:4444:5555:6666:7777:8888";
     private static final Ipv6Address IPV6_ADDRESS = new Ipv6Address(IPV6_STRING);
     private static final Ipv6 IPV6 = new Ipv6Builder().setIpv6(new Ipv6Address(IPV6_STRING)).build();
     private static final LispAddress LISP_IPV6 = new EidBuilder().setAddress(IPV6).build();
+
+    // Ipv6Binary
+    private static final byte[] IPV6_BYTES = new byte[]
+            {17, 17, 34, 34, 51, 51, 68, 68, 85, 85, 102, 102, 119, 119, -120, -120};
+    private static final Ipv6AddressBinary IPV6_ADDRESS_BINARY = new Ipv6AddressBinary(IPV6_BYTES);
+    private static final Ipv6Binary IPV6_BINARY = new Ipv6BinaryBuilder().setIpv6Binary(IPV6_ADDRESS_BINARY).build();
+    private static final LispAddress LISP_IPV6_BINARY = new EidBuilder().setAddress(IPV6_BINARY).build();
 
     // Ipv4Prefix
     private static final String PREFIX = "/24";
@@ -273,6 +296,14 @@ public class LispAddressStringifierTest {
     }
 
     /**
+     * Tests {@link LispAddressStringifier#getString} with Ipv4Binary address type.
+     */
+    @Test
+    public void getStringTest_withIpv4Binary() {
+        assertEquals("[" + VNI + "] " + IPV4_STRING, LispAddressStringifier.getString(LISP_IPV4_BINARY));
+    }
+
+    /**
      * Tests {@link LispAddressStringifier#getString} with Ipv4Prefix address type.
      */
     @Test
@@ -286,6 +317,14 @@ public class LispAddressStringifierTest {
     @Test
     public void getStringTest_withIpv6() {
         assertEquals(IPV6_STRING, LispAddressStringifier.getString(LISP_IPV6));
+    }
+
+    /**
+     * Tests {@link LispAddressStringifier#getString} with Ipv6Binary address type.
+     */
+    @Test
+    public void getStringTest_withIpv6Binary() {
+        assertEquals(IPV6_STRING, LispAddressStringifier.getString(LISP_IPV6_BINARY));
     }
 
     /**
