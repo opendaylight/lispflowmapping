@@ -7,17 +7,17 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
 import java.util.concurrent.Future;
-
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
@@ -60,9 +60,6 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.Futures;
-
 /**
  * Dispatcher of API calls that implements the RPC and Java APIs in mappingservice.yang and IMappingService
  * respectively. It also coordinates and acts as container for all objects in charge of
@@ -82,7 +79,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private MappingSystem mappingSystem;
     private DataStoreBackEnd dsbe;
     private RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
-    private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
     private ILispDAO dao;
 
@@ -143,7 +139,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         mappingSystem.setDataStoreBackEnd(dsbe);
         mappingSystem.initialize();
 
-        keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
         mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
     }
 
@@ -445,7 +440,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public void close() throws Exception {
         LOG.info("Mapping Service is being destroyed!");
         mappingServiceRpc.close();
-        keyListener.closeDataChangeListener();
         mappingListener.closeDataChangeListener();
     }
 

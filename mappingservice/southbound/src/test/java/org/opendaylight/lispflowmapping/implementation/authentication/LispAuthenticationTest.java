@@ -7,16 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
 import java.util.ArrayList;
-
 import junitx.framework.ArrayAssert;
-
+import org.junit.Assert;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -47,13 +43,14 @@ public class LispAuthenticationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(hexToByteBuffer("38 00 01 01 FF BB "
+        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(BaseTestCase.hexToByteBuffer("38 00" +
+                " 01 01 FF BB "
                 + "00 00 00 00 00 00 00 01 00 14 e8 f5 0b c5 c5 f2 "
                 + "b0 21 27 a8 21 41 04 f3 46 5a 5a 5b 5c 5d 00 00 "
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertFalse(validate(mapRegister, EID, 1, PASSWORD));
+        Assert.assertFalse(validate(mapRegister, EID, 1, PASSWORD));
     }
 
     @Test
@@ -69,13 +66,14 @@ public class LispAuthenticationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(hexToByteBuffer("38 00 01 01 FF BB "
+        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(BaseTestCase.hexToByteBuffer("38 00" +
+                " 01 01 FF BB "
                 + "00 00 00 00 00 00 00 01 00 14 2c 61 b9 c9 9a 20 ba d8 f5 40 d3 55 6f 5f 6e 5a b2 0a bf b5 00 00 "
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(validate(mapRegister, EID, 1, PASSWORD));
-        assertFalse(validate(mapRegister, EID, 1, WRONG_PASSWORD));
+        Assert.assertTrue(validate(mapRegister, EID, 1, PASSWORD));
+        Assert.assertFalse(validate(mapRegister, EID, 1, WRONG_PASSWORD));
     }
 
     @Test
@@ -95,7 +93,7 @@ public class LispAuthenticationTest extends BaseTestCase {
         MapRegister mapRegister = MapRegisterSerializer
                 .getInstance()
                 .deserialize(
-                        hexToByteBuffer("38 00 01 01 FF BB "
+                        BaseTestCase.hexToByteBuffer("38 00 01 01 FF BB "
                                 + "00 00 00 00 00 00 00 02 00 20 "
                                 + "70 30 d4 c6 10 44 0d 83 be 4d bf fd a9 8c 57 6d "
                                 + "68 a5 bf 32 11 c9 7b 58 c4 b9 9f 06 11 23 b9 38 "
@@ -103,8 +101,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(validate(mapRegister, EID, 2, PASSWORD));
-        assertFalse(validate(mapRegister, EID, 2, WRONG_PASSWORD));
+        Assert.assertTrue(validate(mapRegister, EID, 2, PASSWORD));
+        Assert.assertFalse(validate(mapRegister, EID, 2, WRONG_PASSWORD));
     }
 
     @Test
@@ -119,14 +117,15 @@ public class LispAuthenticationTest extends BaseTestCase {
         // Local RLOC: 192.168.136.10 (RLOC=0xC0A8880A), Reachable,
         // Priority/Weight: 1/100, Multicast Priority/Weight: 255/0
         //
-        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(hexToByteBuffer("38 00 01 01 FF BB "
+        MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(BaseTestCase.hexToByteBuffer("38 00" +
+                " 01 01 FF BB "
                 + "00 00 00 00 00 00 00 00 00 00 "
                 + "00 00 "
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(validate(mapRegister, EID, 0, PASSWORD));
-        assertTrue(validate(mapRegister, EID, 0, WRONG_PASSWORD));
+        Assert.assertTrue(validate(mapRegister, EID, 0, PASSWORD));
+        Assert.assertTrue(validate(mapRegister, EID, 0, WRONG_PASSWORD));
     }
 
     // @Test
