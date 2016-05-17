@@ -29,6 +29,14 @@
       <groupId>junit-addons</groupId>
       <artifactId>junit-addons</artifactId>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.mapcache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.inmemorydb</artifactId>
+    </dependency>
   </dependencies>
 
   <!--
