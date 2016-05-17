@@ -340,8 +340,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterWithMapNotifyAndMapRequest();
         registerAndQuery__MAC();
         mapRequestMapRegisterAndMapRequest();
-        //TODO uncomment followign test once authentication check will be moved to LispSouthboundHandler
-//        mapRegisterWithAuthenticationWithoutConfiguringAKey();
+        mapRegisterWithAuthenticationWithoutConfiguringAKey();
         mapRegisterWithoutMapNotify();
     }
 

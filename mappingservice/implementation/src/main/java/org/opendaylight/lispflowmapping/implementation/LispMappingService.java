@@ -62,8 +62,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         IMapNotifyHandler, OdlLispProtoListener, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
-    private volatile boolean shouldAuthenticate = true;
-
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
@@ -122,12 +120,12 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
         broker.registerProvider(this);
         notificationService.registerNotificationListener(this);
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
-        mapServer = new MapServer(mapService, shouldAuthenticate, smr, this, notificationService);
+        mapServer = new MapServer(mapService, smr, this, notificationService);
     }
 
     public void basicInit() {
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
-        mapServer = new MapServer(mapService, shouldAuthenticate, smr, this, notificationService);
+        mapServer = new MapServer(mapService, smr, this, notificationService);
     }
 
     @Override
@@ -172,13 +170,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        this.shouldAuthenticate = shouldAuthenticate;
         this.mapResolver.setShouldAuthenticate(shouldAuthenticate);
-        this.mapServer.setShouldAuthenticate(shouldAuthenticate);
-    }
-
-    public boolean shouldAuthenticate() {
-        return shouldAuthenticate;
     }
 
     private void sendMapNotify(MapNotify mapNotify, TransportAddress address) {

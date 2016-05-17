@@ -64,16 +64,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private IMappingService mapService;
-    private boolean authenticate;
     private boolean subscriptionService;
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
 
-    public MapServer(IMappingService mapService, boolean authenticate, boolean subscriptionService,
+    public MapServer(IMappingService mapService, boolean subscriptionService,
             IMapNotifyHandler notifyHandler, NotificationService notificationService) {
         Preconditions.checkNotNull(mapService);
         this.mapService = mapService;
-        this.authenticate = authenticate;
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
@@ -85,16 +83,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     @Override
     public void setSubscriptionService(boolean subscriptionService) {
         this.subscriptionService = subscriptionService;
-    }
-
-    @Override
-    public boolean shouldAuthenticate() {
-        return authenticate;
-    }
-
-    @Override
-    public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        authenticate = shouldAuthenticate;
     }
 
     @SuppressWarnings("unchecked")
