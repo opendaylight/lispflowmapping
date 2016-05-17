@@ -15,7 +15,9 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.ApplicationDataS
 import org.opendaylight.lispflowmapping.lisp.serializer.address.DistinguishedNameSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.ExplicitLocatorPathSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.InstanceIdSerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4BinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4PrefixSerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6BinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6PrefixSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6Serializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.KeyValueAddressSerializer;
@@ -42,6 +44,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ServicePathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
 
 /**
  * Factory for LispAddress (de)serializers
@@ -60,8 +64,10 @@ public final class LispAddressSerializerFactory {
         addressTypeToSerializerMap = new HashMap<Class<? extends LispAddressFamily>, LispAddressSerializer>();
         addressTypeToSerializerMap.put(NoAddressAfi.class, NoAddressSerializer.getInstance());
         addressTypeToSerializerMap.put(Ipv4Afi.class, Ipv4Serializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv4BinaryAfi.class, Ipv4BinarySerializer.getInstance());
         addressTypeToSerializerMap.put(Ipv4PrefixAfi.class, Ipv4PrefixSerializer.getInstance());
         addressTypeToSerializerMap.put(Ipv6Afi.class, Ipv6Serializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv6BinaryAfi.class, Ipv6BinarySerializer.getInstance());
         addressTypeToSerializerMap.put(Ipv6PrefixAfi.class, Ipv6PrefixSerializer.getInstance());
         addressTypeToSerializerMap.put(MacAfi.class, MacSerializer.getInstance());
         addressTypeToSerializerMap.put(DistinguishedNameAfi.class, DistinguishedNameSerializer.getInstance());

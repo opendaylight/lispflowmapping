@@ -28,6 +28,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,7 +221,11 @@ public final class MaskUtil {
     public static short getMaskForAddress(Address address) {
         if (address instanceof Ipv4) {
             return IPV4_MAX_MASK;
+        } else if (address instanceof Ipv4Binary) {
+            return IPV4_MAX_MASK;
         } else if (address instanceof Ipv6) {
+            return IPV6_MAX_MASK;
+        } else if (address instanceof Ipv6Binary) {
             return IPV6_MAX_MASK;
         } else if (address instanceof Ipv4Prefix) {
             return Short.parseShort(getPrefixMask(((Ipv4Prefix)address).getIpv4Prefix().getValue()));
