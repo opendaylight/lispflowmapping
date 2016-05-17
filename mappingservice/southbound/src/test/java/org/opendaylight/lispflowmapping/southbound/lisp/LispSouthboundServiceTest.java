@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.authenticationData;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data1;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data2;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data3;
@@ -36,11 +35,14 @@ import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.InOrder;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -49,11 +51,13 @@ import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
@@ -78,6 +82,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
@@ -96,6 +101,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private LispSouthboundPlugin mockLispSouthboundPlugin;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
+    private static SimpleMapCache smc;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -116,6 +122,28 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
+    @BeforeClass
+    public static void initTests() {
+        smc = Mockito.mock(SimpleMapCache.class);
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("10.10.10.10/8"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid
+                ("2610:d0:ffff:192:0:0:0:1/128"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("125.124.123.122/8", new
+                InstanceIdType(21L)))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asMacEid("0a:0b:0c:0d:0e:0f"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid
+                ("f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+    }
+
     @Override
     @Before
     public void before() throws Exception {
@@ -124,7 +152,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapServer = context.mock(IMapServer.class);
         mapRegisterCache = new MapRegisterCache();
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache, Mockito.mock
+                (DataBroker.class));
+        testedLispService.setSimpleMapCache(smc);
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
@@ -333,13 +363,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     public void mapRegister__NonSetMBit() throws Exception {
         byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String(
-                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
-                + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
-                + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
-                + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
-                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
+                "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
+                        + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
+                        + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
+                        + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
+                        + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
+                        + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
+                        + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
 
         handleMapRegisterPacket(registerWithNonSetMBit);
@@ -413,6 +443,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     void mapRegisterInvocationForCacheTest(byte[] eidPrefixAfi, byte[] eidPrefix) {
+        mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.authenticationData);
+    }
+
+    void mapRegisterInvocationForCacheTest(byte[] eidPrefixAfi, byte[] eidPrefix, byte[] authenticationData) {
         final byte[] mapRegisterMessage = MapRegisterCacheTestUtil.joinArrays(data1, nonce, keyId,
                 authenticationData, data2, eidPrefixAfi, eidPrefix, data3, xTRId, siteId);
         handlePacket(mapRegisterMessage);
@@ -430,7 +464,16 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte[] eidPrefix = new byte[] {
                 0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
         };
-        cacheTest(eidPrefixAfi, eidPrefix);
+
+        byte[] authenticationData = new byte[]{
+                0x00, 0x14
+                ,(byte)0xB2,(byte)0x8E,0x6,(byte)0x9D
+                ,0x61,(byte)0xD8,0xC,0x24
+                ,(byte)0x80,0x61,0x5A,0x20
+                ,0xD,0x50,0x5E,(byte)0xAE
+                ,0x47,(byte)0xF7,(byte)0x86,0x36
+        };
+        cacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.authenticationData);
     }
 
     /**
@@ -448,7 +491,17 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 ,0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
                 ,0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
         };
-        cacheTest(eidPrefixAfi, eidPrefix);
+
+        byte[] authenticationData = new byte[]{
+                0x00, 0x14
+                ,0x41,(byte)0x83,0x13,0x7C
+                ,0x48,(byte)0xEE,0x75,(byte)0x9A
+                ,0x4,(byte)0x8C,0x46,(byte)0xA6
+                ,0x1B,0x13,(byte)0xC8,0x4D
+                ,(byte)0xA1,0x17,0x53,(byte)0xC3
+        };
+
+        cacheTest(eidPrefixAfi, eidPrefix, authenticationData);
     }
 
     /**
@@ -464,7 +517,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 0x0a, 0x0b, 0x0c, 0x0d     //mac address
                 ,0x0e, 0x0f                 //mac address
         };
-        cacheTest(eidPrefixAfi, eidPrefix);
+        byte[] authenticationData = new byte[]{
+                0x00, 0x14
+                ,(byte)0xB2,(byte)0x8E,0x6,(byte)0x9D
+                ,0x61,(byte)0xD8,0xC,0x24
+                ,(byte)0x80,0x61,0x5A,0x20
+                ,0xD,0x50,0x5E,(byte)0xAE
+                ,0x47,(byte)0xF7,(byte)0x86,0x36
+        };
+        cacheTest(eidPrefixAfi, eidPrefix, authenticationData);
     }
 
     /**
@@ -489,7 +550,18 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         byte[] eidPrefix = joinArrays(lcafRsvd1, lcafFlags, lcafType, lcafIIDMaskLength, lcafLength, lcafInstanceId,
                 lcafAfi, lcafAddress);
-        cacheTest(eidPrefixAfi, eidPrefix);
+
+        byte[] authenticationData = new byte[]{
+                0x00, 0x14                 //authentication data length
+                ,0x68, 0x1d, (byte) 0x9e, 0x6e    //auth data
+                ,0x5e, 0x32, (byte) 0x88, 0x1a    //auth data
+                ,(byte) 0xae, 0x6b, (byte) 0xe3, 0x40    //auth data
+                ,0x30, (byte) 0x0b, (byte) 0xb6, (byte) 0xa0    //auth data
+                ,0x71, (byte) 0xf4, (byte) 0x8c, 0x5f    //auth data
+        };
+
+
+        cacheTest(eidPrefixAfi, eidPrefix, authenticationData);
     }
 
     /**
@@ -497,14 +569,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
      * @param eidPrefixAfi
      * @param eidPrefix
      */
-    public void cacheTest(byte[] eidPrefixAfi, byte[] eidPrefix) throws InterruptedException {
+    public void cacheTest(byte[] eidPrefixAfi, byte[] eidPrefix, byte[] authenticationData) throws
+            InterruptedException {
         final MapRegisterCacheKey mapRegisterCacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
 
         final NotificationPublishService mockedNotificationProvider = mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(mockedNotificationProvider);
 
         MapRegisterCacheTestUtil.beforeMapRegisterInvocationValidation(mapRegisterCacheKey, mapRegisterCache);
-        mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
+        mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, authenticationData);
         MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(mockedNotificationProvider,
                 mapRegisterCacheKey, mapRegisterCache, eidPrefixAfi, eidPrefix);
     }
@@ -530,7 +603,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private void cacheRecordExpirationTest(boolean cacheRecordTimeouted) {
         mapRegisterCache = mock(MapRegisterCache.class);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache,
+                Mockito.mock(DataBroker.class));
+        testedLispService.setSimpleMapCache(smc);
 
         byte[] eidPrefixAfi = new byte[] {0x00, 0x01};
 

@@ -13,19 +13,6 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 public interface IGenericMapServer {
 
     /**
-     * @return Should the Map Server use authentication.
-     */
-    boolean shouldAuthenticate();
-
-    /**
-     * Configure Map server to use authentication
-     *
-     * @param shouldAuthenticate
-     *            Set authentication
-     */
-    void setShouldAuthenticate(boolean shouldAuthenticate);
-
-    /**
      * Configure Map Server to notify mapping subscribers on mapping updates
      *
      * @param subscriptionService
