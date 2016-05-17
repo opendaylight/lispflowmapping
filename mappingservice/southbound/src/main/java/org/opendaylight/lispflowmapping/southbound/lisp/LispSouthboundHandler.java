@@ -13,40 +13,45 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
-import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
+import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReplyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
 public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService {
+    private static final int BEHIND_FIRST_BYTE = 1;
+    private IMappingService mappingservice = null;
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
@@ -58,6 +63,18 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         if (lispSbPlugin != null) {
             this.lispSbStats = lispSbPlugin.getStats();
         }
+    }
+
+    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin, IMappingService mappingservice) {
+        this.lispSbPlugin = lispSbPlugin;
+        if (lispSbPlugin != null) {
+            this.lispSbStats = lispSbPlugin.getStats();
+        }
+        this.mappingservice = mappingservice;
+    }
+
+    public void setMappingService(final IMappingService mappingService) {
+        this.mappingservice = mappingService;
     }
 
     public void setNotificationProvider(NotificationPublishService nps) {
@@ -144,7 +161,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             inBuffer.position(inBuffer.position() + PacketHeader.Length.UDP - 2);
             return encapsulatedSourcePort;
         } catch (RuntimeException re) {
-            throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len="
+            throw new LispMalformedPacketException("Couldn't deserialize Map-RequestLispAuthenticationUtil (len="
                     + inBuffer.capacity() + ")", re);
         }
     }
@@ -152,17 +169,19 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
-            AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
-            addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
-            TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-            transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
-            addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(addMappingBuilder.build());
-                LOG.trace("MapRegister was published!");
-            } else {
-                LOG.warn("Notification Provider is null!");
+            if (isAuthenticationSuccessful(mapRegister, inBuffer, true)) {
+                AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
+                addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
+                TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
+                transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressFromInetAddress(sourceAddress));
+                transportAddressBuilder.setPort(new PortNumber(port));
+                addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
+                if (notificationPublishService != null) {
+                    notificationPublishService.putNotification(addMappingBuilder.build());
+                    LOG.trace("MapRegister was published!");
+                } else {
+                    LOG.warn("Notification Provider is null!");
+                }
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
@@ -170,6 +189,25 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
+    }
+
+
+
+    private boolean isAuthenticationSuccessful(final MapRegister mapRegister, final ByteBuffer byteBuffer, final
+        boolean authenticationEnabled) {
+        //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
+        if (!authenticationEnabled) {
+            return true;
+        }
+
+        for (MappingRecordItem recordItem : mapRegister.getMappingRecordItem()) {
+            final MappingRecord mappingRecord = recordItem.getMappingRecord();
+            final MappingAuthkey authKey = mappingservice.getAuthenticationKey(mappingRecord.getEid());
+            if (!LispAuthenticationUtil.validate(mapRegister, byteBuffer, mappingRecord.getEid(), authKey)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void handleMapNotify(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
@@ -194,6 +232,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             LOG.warn("Notification publication interrupted!");
         }
     }
+
 
     private void handleMapReply(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {

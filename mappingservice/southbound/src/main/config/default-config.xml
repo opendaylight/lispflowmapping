@@ -27,6 +27,13 @@
             </type>
             <name>binding-notification-publish-adapter</name>
           </notification-publish-service>
+
+          <mappingservice>
+            <type xmlns:ms="urn:opendaylight:lfm:mappingservice">
+              ms:mappingservice
+            </type>
+            <name>mappingservice</name>
+          </mappingservice>
         </module>
       </modules>
 

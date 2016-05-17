@@ -33,9 +33,11 @@ public class LfmMappingServiceSbModule extends org.opendaylight.controller.confi
     public java.lang.AutoCloseable createInstance() {
         LOG.debug("LfmMappingServiceSb Module up!");
 
+
         sbPlugin = new LispSouthboundPlugin();
         sbPlugin.setNotificationPublishService(getNotificationPublishServiceDependency());
         sbPlugin.setRpcRegistryDependency(getRpcRegistryDependency());
+        sbPlugin.setMappingservice(getMappingserviceDependency());
         sbPlugin.init();
 
         return sbPlugin;

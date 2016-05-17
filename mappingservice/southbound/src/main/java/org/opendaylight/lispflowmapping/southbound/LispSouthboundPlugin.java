@@ -9,6 +9,8 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+
+import com.google.common.net.InetAddresses;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -19,7 +21,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -27,6 +28,7 @@ import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -36,8 +38,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.net.InetAddresses;
 
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -56,6 +56,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispSouthboundStats statistics = new LispSouthboundStats();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
+    private IMappingService mappingservice;
 
 
     public void init() {
@@ -226,5 +227,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         unloadActions();
         eventLoopGroup.shutdownGracefully();
         sbRpcRegistration.close();
+    }
+
+    public void setMappingservice(IMappingService mappingservice) {
+        this.mappingservice = mappingservice;
     }
 }

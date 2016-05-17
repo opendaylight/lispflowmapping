@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.authentication;
 
+import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
@@ -31,6 +32,11 @@ public final class LispNoAuthentication implements ILispAuthentication {
 
     public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
         return authenticationData;
+    }
+
+    @Override
+    public boolean validate(ByteBuffer mapRegisterBuffer, byte[] expectedAuthData, String key) {
+        return true;
     }
 
     public boolean validate(MapRegister mapRegister, String key) {

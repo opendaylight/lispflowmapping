@@ -9,32 +9,34 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import io.netty.channel.socket.DatagramPacket;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import io.netty.channel.socket.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import junitx.framework.ArrayAssert;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
@@ -58,6 +60,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
@@ -72,6 +75,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private MapNotifyBuilder mapNotifyBuilder;
     private MapReplyBuilder mapReplyBuilder;
     private MappingRecordBuilder mappingRecordBuilder;
+
+    private static IMappingService mockedMapingService;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -92,6 +97,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
+    @BeforeClass
+    public static void initTests() {
+
+        mockedMapingService = Mockito.mock(IMappingService.class);
+        Mockito.when(mockedMapingService.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixEid
+                ("2610:d0:ffff:192:0:0:0:1/128")))).thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString
+                ("password").build());
+    }
+
     @Override
     @Before
     public void before() throws Exception {
@@ -99,6 +113,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
         testedLispService = new LispSouthboundHandler(null);
+        testedLispService.setMappingService(mockedMapingService);
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
