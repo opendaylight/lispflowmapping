@@ -14,16 +14,21 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Maps;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
@@ -55,8 +60,10 @@ public class MultiTableMapCacheTest {
     private static ILispDAO tableDaoMock;
     private static ILispDAO dbMock;
 
-    private static final Ipv4Prefix IPV_4_PREFIX_SRC = new Ipv4Prefix("127.0.0.1/24");
-    private static final Ipv4Prefix IPV_4_PREFIX_DST = new Ipv4Prefix("192.168.0.1/24");
+    private static final String IPV4_STRING_1 = "127.0.0.1/24";
+    private static final String IPV4_STRING_2 = "127.0.0.1/24";
+    private static final Ipv4Prefix IPV_4_PREFIX_SRC = new Ipv4Prefix(IPV4_STRING_1);
+    private static final Ipv4Prefix IPV_4_PREFIX_DST = new Ipv4Prefix(IPV4_STRING_2);
     private static final long VNI = 100L;
 
     private static final Eid EID_TEST = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
@@ -67,11 +74,11 @@ public class MultiTableMapCacheTest {
                             .address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder()
                             .setSource(new SimpleAddress(new IpPrefix(IPV_4_PREFIX_SRC)))
                             .setDest(new SimpleAddress(new IpPrefix(IPV_4_PREFIX_DST))).build()).build()).build();
-    private static final Eid EID_IPV4_PREFIX_SRC = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
-            .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV_4_PREFIX_SRC).build()).build();
+    private static final Eid EID_IPV4_PREFIX_SRC = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1);
     private static final Eid EID_IPV4_PREFIX_DST = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
             .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV_4_PREFIX_DST).build()).build();
     private static final Eid NORMALIZED_SRCDST_EID = MaskUtil.normalize(EID_SOURCE_DEST_KEY_TYPE);
+    private static final Eid NORMALIZED_PREFIX_SRC_EID = MaskUtil.normalize(EID_IPV4_PREFIX_SRC);
     private static final Eid EID_MAC = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
             .setAddress(new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build()).build();
     private static final Eid NORMALIZED_EID = MaskUtil.normalize(EID_TEST);
@@ -112,15 +119,11 @@ public class MultiTableMapCacheTest {
      */
     @Test
     public void addMappingTest_withoutSourceDestKey() {
-        final Eid eid_ipv4Type = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
-                .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV_4_PREFIX_SRC).build()).build();
-        final Eid normalized_Eid = MaskUtil.normalize(eid_ipv4Type);
+        when(daoMock.getSpecific(0L, SubKeys.VNI)).thenReturn(tableDaoMock);
 
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-
-        multiTableMapCache.addMapping(eid_ipv4Type, DUMMY_OBJECT, true, false);
-        verify(tableDaoMock, times(2)).put(normalized_Eid, new MappingEntry<>(anyString(), any(Date.class)));
-        verify(tableDaoMock).put(normalized_Eid, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
+        multiTableMapCache.addMapping(EID_IPV4_PREFIX_SRC, DUMMY_OBJECT, true, false);
+        verify(tableDaoMock, times(2)).put(NORMALIZED_PREFIX_SRC_EID, new MappingEntry<>(anyString(), any(Date.class)));
+        verify(tableDaoMock).put(NORMALIZED_PREFIX_SRC_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
     /**
@@ -136,12 +139,8 @@ public class MultiTableMapCacheTest {
         final Eid srcAddr = SourceDestKeyHelper.getSrc(EID_SOURCE_DEST_KEY_TYPE);
         final Eid normalizedSrcAddr = MaskUtil.normalize(srcAddr);
 
-        final Map<String, Object> entry = Maps.newConcurrentMap();
-        entry.put(SubKeys.RECORD, DUMMY_OBJECT);
-        entry.put(SubKeys.LCAF_SRCDST, srcDstDaoMock);
-
-        final Map<String, Object> entry2 = Maps.newConcurrentMap();
-        entry2.put(SubKeys.RECORD, DUMMY_OBJECT_2);
+        final Map<String, Object> entry = getEntry1();
+        final Map<String, Object> entry2 = getEntry2();
 
         when(tableDaoMock.get(normalizedDstAddr)).thenReturn(entry);
         when(srcDstDaoMock.get(normalizedSrcAddr)).thenReturn(entry2);
@@ -163,6 +162,15 @@ public class MultiTableMapCacheTest {
     }
 
     /**
+     * Tests {@link MultiTableMapCache#getMapping} with table == null.
+     */
+    @Test
+    public void getMappingTest_withNullTable() {
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+        assertNull(multiTableMapCache.getMapping(null, EID_TEST));
+    }
+
+    /**
      * Tests {@link MultiTableMapCache#getMapping} with Ipv4Prefix address type.
      */
     @Test
@@ -170,12 +178,8 @@ public class MultiTableMapCacheTest {
         final Eid key = MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24);
         final Eid key2 = MaskUtil.normalize(MaskUtil.normalize(EID_IPV4_PREFIX_SRC), (short) 24);
 
-        final Map<String, Object> entry = Maps.newConcurrentMap();
-        entry.put(SubKeys.RECORD, DUMMY_OBJECT);
-        entry.put(SubKeys.LCAF_SRCDST, srcDstDaoMock);
-
-        final Map<String, Object> entry2 = Maps.newConcurrentMap();
-        entry2.put(SubKeys.RECORD, DUMMY_OBJECT_2);
+        final Map<String, Object> entry = getEntry1();
+        final Map<String, Object> entry2 = getEntry2();
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.get(key)).thenReturn(entry);
@@ -186,7 +190,7 @@ public class MultiTableMapCacheTest {
     }
 
     /**
-     * Tests {@link MultiTableMapCache#removeMapping}.
+     * Tests {@link MultiTableMapCache#removeMapping} method with SourceDestKey type address.
      */
     @Test
     public void removeMappingTest() {
@@ -198,6 +202,31 @@ public class MultiTableMapCacheTest {
         multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
         verify(dbMock).removeSpecific(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID),
                 SubKeys.RECORD);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#removeMapping} method with Ipv4 type address.
+     */
+    @Test
+    public void removeMappingTest_with() {
+
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
+
+        multiTableMapCache.removeMapping(EID_TEST, true);
+        verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#removeMapping} method with table == null.
+     */
+    @Test
+    public void removeMappingTest_withNUllTable() {
+
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+
+        multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
+        verifyZeroInteractions(tableDaoMock);
+        verifyZeroInteractions(dbMock);
     }
 
     /**
@@ -225,7 +254,7 @@ public class MultiTableMapCacheTest {
         final short maskLength = MaskUtil.getMaskForAddress(EID_IPV4_PREFIX_SRC.getAddress());
         final Eid key = MaskUtil.normalize(EID_IPV4_PREFIX_SRC, maskLength);
 
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
+        when(daoMock.getSpecific(0L, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
 
         assertEquals(MAPPING_AUTHKEY, multiTableMapCache.getAuthenticationKey(EID_IPV4_PREFIX_SRC));
@@ -250,6 +279,20 @@ public class MultiTableMapCacheTest {
     }
 
     /**
+     * Tests {@link MultiTableMapCache#getAuthenticationKey} with SourceDestKey address, srcDstDao == null.
+     */
+    @Test
+    public void getAuthenticationKeyTest_withSourceDestKey_nullDao() {
+        final Eid eidDst = SourceDestKeyHelper.getDst(EID_SOURCE_DEST_KEY_TYPE);
+
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
+        when(tableDaoMock.getSpecific(eidDst, SubKeys.LCAF_SRCDST))
+                .thenReturn(null);
+
+        assertNull(multiTableMapCache.getAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE));
+    }
+
+    /**
      * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address.
      */
     @Test
@@ -260,6 +303,28 @@ public class MultiTableMapCacheTest {
         when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
 
         assertEquals(MAPPING_AUTHKEY, multiTableMapCache.getAuthenticationKey(EID_MAC));
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address, failed authentication.
+     */
+    @Test
+    public void getAuthenticationKeyTest_withMac_failedAuthentication() {
+        final Eid key = MaskUtil.normalize(EID_MAC);
+
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
+        when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(null);
+
+        assertNull(multiTableMapCache.getAuthenticationKey(EID_MAC));
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address, table == null.
+     */
+    @Test
+    public void getAuthenticationKeyTest_withMac_nullTable() {
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+        assertNull(multiTableMapCache.getAuthenticationKey(EID_MAC));
     }
 
     /**
@@ -284,6 +349,17 @@ public class MultiTableMapCacheTest {
 
         multiTableMapCache.removeAuthenticationKey(EID_TEST);
         verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#removeAuthenticationKey} with table == null.
+     */
+    @Test
+    public void removeAuthenticationKeyTest_withNullTable() {
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+
+        multiTableMapCache.removeAuthenticationKey(EID_TEST);
+        verifyZeroInteractions(tableDaoMock);
     }
 
     /**
@@ -337,6 +413,15 @@ public class MultiTableMapCacheTest {
     }
 
     /**
+     * Tests {@link MultiTableMapCache#getData} with table == null.
+     */
+    @Test
+    public void getDataTest_withNullTable() {
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+        assertNull(multiTableMapCache.getData(EID_TEST, SubKeys.RECORD));
+    }
+
+    /**
      * Tests {@link MultiTableMapCache#removeData} with SourceDestKey address type.
      */
     @Test
@@ -358,5 +443,91 @@ public class MultiTableMapCacheTest {
 
         multiTableMapCache.removeData(EID_TEST, SubKeys.RECORD);
         verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#removeData} with table == null.
+     */
+    @Test
+    public void removeDataTest_withNullTable() {
+        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
+        multiTableMapCache.removeData(EID_TEST, SubKeys.RECORD);
+
+        Mockito.verifyZeroInteractions(tableDaoMock);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#getMappingExactSD} method.
+     */
+    @Test
+    public void getMappingExactSDTest() throws NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException {
+        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
+                ILispDAO.class);
+        getMappingExactSD.setAccessible(true);
+
+        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(getEntry1());
+        when(srcDstDaoMock.getSpecific(EID_IPV4_PREFIX_SRC, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
+
+        Object result = getMappingExactSD.invoke(
+                multiTableMapCache, EID_IPV4_PREFIX_SRC, EID_IPV4_PREFIX_DST, tableDaoMock);
+        assertEquals(DUMMY_OBJECT, result);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#getMappingExactSD} method with null src eid.
+     */
+    @Test
+    public void getMappingExactSDTest_withNullSrcEid() throws NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException {
+        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
+                ILispDAO.class);
+        getMappingExactSD.setAccessible(true);
+
+        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(getEntry1());
+
+        Object result = getMappingExactSD.invoke(
+                multiTableMapCache, null, EID_IPV4_PREFIX_DST, tableDaoMock);
+        assertEquals(DUMMY_OBJECT, result);
+    }
+
+    /**
+     * Tests {@link MultiTableMapCache#getMappingExactSD} method with null entry.
+     */
+    @Test
+    public void getMappingExactSDTest_withNullEntry() throws NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException {
+        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
+                ILispDAO.class);
+        getMappingExactSD.setAccessible(true);
+
+        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(null);
+
+        Object result = getMappingExactSD.invoke(
+                multiTableMapCache, null, EID_IPV4_PREFIX_DST, tableDaoMock);
+        assertNull(result);
+    }
+
+    /**
+     * The following test is for coverage-increase purpose only.
+     */
+    @Test
+    public void otherTest() {
+        multiTableMapCache.printMappings();
+    }
+
+    private Map<String, Object> getEntry1() {
+        Map<String, Object> entry = Maps.newConcurrentMap();
+        entry.put(SubKeys.RECORD, DUMMY_OBJECT);
+        entry.put(SubKeys.LCAF_SRCDST, srcDstDaoMock);
+
+        return entry;
+    }
+
+    private Map<String, Object> getEntry2() {
+        Map<String, Object> entry = Maps.newConcurrentMap();
+        entry.put(SubKeys.RECORD, DUMMY_OBJECT_2);
+
+        return entry;
     }
 }
