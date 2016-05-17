@@ -9,6 +9,8 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+
+import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -19,19 +21,21 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
-
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
@@ -39,8 +43,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -59,6 +61,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispSouthboundStats statistics = new LispSouthboundStats();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
+    private IMappingService mappingservice;
+    private ILispDAO dao;
+    private DataBroker dataBroker;
 
 
     public void init() {
@@ -68,7 +73,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         sbRpcRegistration = rpcRegistry.addRpcImplementation(OdlLispSbService.class, sbRpcHandler);
 
         synchronized (startLock) {
-            lispSouthboundHandler = new LispSouthboundHandler(this);
+            lispSouthboundHandler = new LispSouthboundHandler(this, new MapRegisterCache(), dao, dataBroker);
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
             lispXtrSouthboundHandler.setNotificationProvider(this.notificationPublishService);
@@ -244,10 +249,19 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
+    public void setDao(ILispDAO dao) {
+        this.dao = dao;
+    }
+
+    public void setDataBroker(final DataBroker dataBroker) {
+        this.dataBroker = dataBroker;
+    }
+
     @Override
     public void close() throws Exception {
         unloadActions();
         eventLoopGroup.shutdownGracefully();
         sbRpcRegistration.close();
+        lispSouthboundHandler.close();
     }
 }

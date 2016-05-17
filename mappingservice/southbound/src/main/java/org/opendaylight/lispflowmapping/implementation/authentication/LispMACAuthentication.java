@@ -41,21 +41,29 @@ public class LispMACAuthentication implements ILispAuthentication {
         }
     }
 
-    public boolean validate(MapRegister mapRegister, String key) {
+    @Override
+    public boolean validate(ByteBuffer mapRegisterBuffer, byte[] expectedAuthData, String key) {
         if (key == null) {
             LOG.warn("Authentication failed: mapping authentication password is null!");
             return false;
         }
-        ByteBuffer mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
         if (mapRegisterBuffer == null) {
             return true;
         }
 
-        mapRegisterBuffer.position(MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
+        mapRegisterBuffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
-        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key),
-                mapRegister.getAuthenticationData());
+        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key), expectedAuthData);
+    }
+
+    @Override
+    public boolean validate(MapRegister mapRegister, String key) {
+        ByteBuffer mapRegisterBuffer = null;
+        if (key != null) {
+            mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
+        }
+        return validate(mapRegisterBuffer, mapRegister.getAuthenticationData(), key);
     }
 
     protected byte[] getAuthenticationData(byte[] data, String key) {
