@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.serializer;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
@@ -21,9 +22,9 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -104,10 +105,12 @@ public class MapReplySerializationTest extends BaseTestCase {
                 .getEid().getAddress()));
         assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getRecordTtl().byteValue());
         assertEquals(0, mr.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().byteValue());
-        assertEquals("1:2:3:4:5:6:7:8", ((Ipv6) mr.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(1).getRloc().getAddress()).getIpv6().getValue());
-        assertEquals("10.10.10.10", ((Ipv4) mr.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc().getAddress()).getIpv4().getValue());
+        assertArrayEquals(new byte[] {0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8},
+                ((Ipv6Binary) mr.getMappingRecordItem().get(0).getMappingRecord()
+                .getLocatorRecord().get(1).getRloc().getAddress()).getIpv6Binary().getValue());
+        assertArrayEquals(new byte[] {10, 10, 10, 10},
+                ((Ipv4Binary) mr.getMappingRecordItem().get(0).getMappingRecord()
+                .getLocatorRecord().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
         assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
                 .getPriority().byteValue());
         assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
