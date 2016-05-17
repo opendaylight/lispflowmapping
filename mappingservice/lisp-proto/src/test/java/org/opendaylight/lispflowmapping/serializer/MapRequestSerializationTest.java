@@ -22,10 +22,10 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -87,7 +87,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 "
                 + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 "
                 + "00 01 c0 a8 38 66"));
-        assertEquals("1.1.1.1", ((Ipv4) mr.getSourceEid().getEid().getAddress()).getIpv4().getValue());
+        assertArrayEquals(new byte[] {1, 1, 1, 1},
+                ((Ipv4Binary) mr.getSourceEid().getEid().getAddress()).getIpv4Binary().getValue());
         assertEquals("1.2.3.4/32",
                 ((Ipv4Prefix) mr.getEidItem().get(0).getEid().getAddress()).getIpv4Prefix().getValue());
 
@@ -190,8 +191,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(0, record.getMapVersion().shortValue());
         assertEquals(32, MaskUtil.getMaskForAddress(record.getEid().getAddress()));
         assertEquals(2, record.getRecordTtl().byteValue());
-        assertEquals("10.10.10.10",
-                ((Ipv4) record.getLocatorRecord().get(0).getRloc().getAddress()).getIpv4().getValue());
+        assertArrayEquals(new byte[] {10, 10, 10, 10},
+                ((Ipv4Binary) record.getLocatorRecord().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
         assertEquals(1, record.getLocatorRecord().get(0).getPriority().byteValue());
         assertEquals(2, record.getLocatorRecord().get(0).getWeight().byteValue());
         assertEquals(3, record.getLocatorRecord().get(0).getMulticastPriority().byteValue());
@@ -250,7 +251,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(1, mr.getItrRloc().size());
-        assertEquals("192.168.136.10", ((Ipv4) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4().getValue());
+        assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
+                ((Ipv4Binary) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
     }
 
     @Test
@@ -286,9 +288,12 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(3, mr.getItrRloc().size());
-        assertEquals("192.168.136.10", ((Ipv4) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4().getValue());
-        assertEquals("0:0:0:0:0:0:0:1", ((Ipv6) mr.getItrRloc().get(1).getRloc().getAddress()).getIpv6().getValue());
-        assertEquals("17.34.52.86", ((Ipv4) mr.getItrRloc().get(2).getRloc().getAddress()).getIpv4().getValue());
+        assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
+                ((Ipv4Binary) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
+        assertArrayEquals(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                ((Ipv6Binary) mr.getItrRloc().get(1).getRloc().getAddress()).getIpv6Binary().getValue());
+        assertArrayEquals(new byte[] {17, 34, 52, 86},
+                ((Ipv4Binary) mr.getItrRloc().get(2).getRloc().getAddress()).getIpv4Binary().getValue());
     }
 
     @Test

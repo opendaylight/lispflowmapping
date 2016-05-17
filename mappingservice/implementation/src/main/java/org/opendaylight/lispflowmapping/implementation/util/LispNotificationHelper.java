@@ -20,6 +20,10 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -64,6 +68,14 @@ public final class LispNotificationHelper {
         } else if (address instanceof Ipv6) {
             String ipv6 = ((Ipv6) address).getIpv6().getValue();
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv6).getAddress()));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+        } else if (address instanceof Ipv4Binary) {
+            Ipv4AddressBinary ipv6 = ((Ipv4Binary) address).getIpv4Binary();
+            tab.setIpAddress(new IpAddressBinary(ipv6));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+        } else if (address instanceof Ipv6Binary) {
+            Ipv6AddressBinary ipv6 = ((Ipv6Binary) address).getIpv6Binary();
+            tab.setIpAddress(new IpAddressBinary(ipv6));
             tab.setPort(new PortNumber(LispMessage.PORT_NUM));
         } else if (address instanceof KeyValueAddress) {
             SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();

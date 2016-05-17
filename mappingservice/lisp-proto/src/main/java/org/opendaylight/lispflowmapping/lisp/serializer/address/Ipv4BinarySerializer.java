@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -15,11 +15,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -31,17 +32,17 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public final class Ipv4Serializer extends LispAddressSerializer {
+public final class Ipv4BinarySerializer extends LispAddressSerializer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(Ipv4Serializer.class);
 
-    private static final Ipv4Serializer INSTANCE = new Ipv4Serializer();
+    private static final Ipv4BinarySerializer INSTANCE = new Ipv4BinarySerializer();
 
     // Private constructor prevents instantiation from other classes
-    private Ipv4Serializer() {
+    private Ipv4BinarySerializer() {
     }
 
-    public static Ipv4Serializer getInstance() {
+    public static Ipv4BinarySerializer getInstance() {
         return INSTANCE;
     }
 
@@ -62,12 +63,8 @@ public final class Ipv4Serializer extends LispAddressSerializer {
 
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
-        Ipv4 address = (Ipv4) lispAddress.getAddress();
-        try {
-            buffer.put(Inet4Address.getByName(address.getIpv4().getValue()).getAddress());
-        } catch (UnknownHostException e) {
-            LOG.debug("Unknown host {}", address.getIpv4().getValue(), e);
-        }
+        Ipv4Binary address = (Ipv4Binary) lispAddress.getAddress();
+        buffer.put(address.getIpv4Binary().getValue());
     }
 
     @Override
@@ -82,27 +79,33 @@ public final class Ipv4Serializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(Ipv4Afi.class);
+        eb.setAddressType(Ipv4BinaryAfi.class);
         eb.setVirtualNetworkId(getVni(ctx));
-        eb.setAddress(new Ipv4Builder().setIpv4(deserializeData(buffer)).build());
+        eb.setAddress(new Ipv4BinaryBuilder().setIpv4Binary(deserializeData(buffer)).build());
         return eb.build();
     }
 
     @Override
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(Ipv4Afi.class);
+        rb.setAddressType(Ipv4BinaryAfi.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress(new Ipv4Builder().setIpv4(deserializeData(buffer)).build());
+        rb.setAddress(new Ipv4BinaryBuilder().setIpv4Binary(deserializeData(buffer)).build());
         return rb.build();
     }
 
     @Override
     protected SimpleAddress deserializeSimpleAddressData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
-        return new SimpleAddress(new IpAddress(deserializeData(buffer)));
+        return new SimpleAddress(new IpAddress(deserializeDataNonBinary(buffer)));
     }
 
-    private static Ipv4Address deserializeData(ByteBuffer buffer) {
+    private static Ipv4AddressBinary deserializeData(ByteBuffer buffer) {
+        byte[] ipBuffer = new byte[4];
+        buffer.get(ipBuffer);
+        return new Ipv4AddressBinary(ipBuffer);
+    }
+
+    private static Ipv4Address deserializeDataNonBinary(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         buffer.get(ipBuffer);
         return IetfInetUtil.INSTANCE.ipv4AddressFor(ipBuffer);
