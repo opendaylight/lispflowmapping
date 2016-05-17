@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import com.google.common.base.Preconditions;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -18,11 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -58,8 +57,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
@@ -109,13 +106,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
-            if (authenticate) {
-                authkey = mapService.getAuthenticationKey(mapping.getEid());
-                if (!LispAuthenticationUtil.validate(mapRegister, mapping.getEid(), authkey)) {
-                    authFailed = true;
-                    break;
-                }
-            }
+//            if (authenticate) {
+//                authkey = mapService.getAuthenticationKey(mapping.getEid());
+//                if (!LispAuthenticationUtil.validate(mapRegister, mapping.getEid(), authkey)) {
+//                    authFailed = true;
+//                    break;
+//                }
+//            }
 
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
@@ -161,10 +158,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
-            if (authenticate) {
-                builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                        authkey.getKeyString()));
-            }
+//            if (authenticate) {
+//                builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
+//                        authkey.getKeyString()));
+//            }
             notifyHandler.handleMapNotify(builder.build(), rlocs);
         }
     }

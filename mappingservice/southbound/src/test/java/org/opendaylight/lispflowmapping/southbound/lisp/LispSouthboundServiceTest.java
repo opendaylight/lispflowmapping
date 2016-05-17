@@ -34,12 +34,17 @@ import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.mockito.Matchers;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -77,6 +82,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
@@ -95,6 +101,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private LispSouthboundPlugin mockLispSouthboundPlugin;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
+
+    private static IMappingService mockedMapingService;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -115,6 +123,15 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
+    @BeforeClass
+    public static void initTests() {
+
+        mockedMapingService = Mockito.mock(IMappingService.class);
+        Mockito.when(mockedMapingService.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixEid
+                ("2610:d0:ffff:192:0:0:0:1/128")))).thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString
+                ("password").build());
+    }
+
     @Override
     @Before
     public void before() throws Exception {
@@ -123,7 +140,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapServer = context.mock(IMapServer.class);
         mapRegisterCache = new MapRegisterCache();
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, mapRegisterCache, Mockito.mock(ILispDAO
+                .class), Mockito.mock(DataBroker.class));
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispNotificationSaver = new ValueSaverAction<Notification>();
@@ -332,13 +350,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Test
     public void mapRegister__NonSetMBit() throws Exception {
         byte[] registerWithNonSetMBit = extractWSUdpByteArray(new String(
-                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
-                + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
-                + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
-                + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
-                + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
-                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
+                "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
+                        + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
+                        + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
+                        + "0030   00 00 00 00 00 00 00 01 00 14 79 d1 44 66 19 99 "
+                        + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
+                        + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
+                        + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
         stubMapRegister(true);
 
         handleMapRegisterPacket(registerWithNonSetMBit);
