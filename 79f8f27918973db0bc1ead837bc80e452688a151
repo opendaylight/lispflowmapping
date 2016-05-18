@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_6bbd5068",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agreed. Please remove.",
+      "parentUuid": "fa57193c_7ff4f5f1",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5ff771f5",
         "filename": "mappingservice/southbound/pom.xml",
         "patchSetId": 28
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "Do we really need mockito-all? Even if other project may pull in all dependencies, we strive to make pom files to include only the bare minimum necessary",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_4bc04ce0",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 28
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agreed.",
+      "parentUuid": "fa57193c_5ff771f5",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,47 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_ab6e48ff",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agreed, please add a comment here. I also added a card in Trello for changing to configurable so we dont forget.",
+      "parentUuid": "fa57193c_df50a1d6",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_46a5e1b3",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "See comment below regarding building MapRegisterCacheValue in partial deserializer.",
+      "range": {
+        "startLine": 181,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 110
+      },
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_dfed41b9",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -70,6 +147,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_eb5e8044",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agreed. If we do this, the constant timeout value can be moved to the MapRegisterCache.java. This way you may be able to avoid redefining it in the test file as well.",
+      "parentUuid": "fa57193c_dfed41b9",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_9f68e922",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -81,6 +176,24 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "We should also check if the cacheValue stored in the cache is the same as entry.getValue(), otherwise we don\u0027t have a cache hit since the packet data changed and we need to go through the slow path.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_eb25e0c2",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Right, this is critical. We should assume a \" cache hit\" only if\n- an entry exists for this cache key , AND\n- the entry has the same value. \nOtherwise, even if the Map Register content has changed, we are assuming a hit, which would be incorrect. A Map Register change should be detected and processed by fully deserializing the Map Register and sending it to the Mapping Service (i.e. slow path).",
+      "parentUuid": "fa57193c_9f68e922",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +234,29 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_86809947",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Original cache value is confusing as this is the new entry. please change the name to newCacheValue or entryCacheValue for readability.",
+      "range": {
+        "startLine": 205,
+        "startChar": 48,
+        "endLine": 205,
+        "endChar": 54
+      },
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5febf1af",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -132,6 +268,24 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "Why reuse the original value if we\u0027re going to overwrite every field anyway? This way, AFAIK, the code will first set the value of each member from the original one, and then again from what we set here. If we would just create an empty builder, we would set fields only once? But maybe I\u0027m missing something...",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c6461121",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "I think Josef is not fully extracting the meta data in the partial deserializer. That is why he needs to rebuild it here. \nHowever, we dont need to parse ANY metadata in the partial deserializer. If we have a hit in the cache (meaning a cacheValue for this cacheKey exists, and its payload is equal to the payload of the current Map Register) then we can reuse the meta data (wantMapNotify, etc. ) form the actual cache hit, as they should be the same as the current Map Register. So, I suggest returning a map of cacheKey and payload in the partial deserialize method , as opposed to a cacheKey and cacheValue. This way, we avoid building new cacheValue objects in the deserializer, and when we have a hit. A cacheValue object should only be built here when we have a cache miss. Then you dont need the final MapRegisterCacheValue originCacheValue at all.",
+      "parentUuid": "fa57193c_5febf1af",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +309,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_c6d8d181",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agree, critical point. Please change to ConcurrentHashMap()",
+      "parentUuid": "fa57193c_5f393140",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5fd5b1b7",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
         "patchSetId": 28
@@ -166,6 +338,24 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily defines these values so we don\u0027t have to.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c677313a",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Agreed.",
+      "parentUuid": "fa57193c_5fd5b1b7",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -200,6 +390,47 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "I don\u0027t think we need a TODO here, since if anything in the payload changes we go to the slow path, so we\u0027re safe here. Vina?",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_26aeed85",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Correct, we use the first EID prefix in the MapRegister as the cacheKey.  the rest of the EID prefixes if Map Register is multi record are part of the payload, and dont need to be parsed. These are parsed when a new cache entry is being created and MapRegister is fully deserialized, and are stored in the metadata at that time. \nPlease remove the TODO and associated comment.",
+      "parentUuid": "fa57193c_1ff2196f",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c6c5713e",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/MapRegisterCacheForTest.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-18T07:47:56Z",
+      "side": 1,
+      "message": "Maybe we should move this to the MapRegisterCache.java itself and avoid the extra class?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 0
+      },
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
