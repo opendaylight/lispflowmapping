@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e64b5529",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_7ff4f5f1",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5ff771f5",
         "filename": "mappingservice/southbound/pom.xml",
         "patchSetId": 28
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_66b745d9",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 28
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "replaced with mockito-core",
+      "parentUuid": "fa57193c_5ff771f5",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_df50a1d6",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -100,6 +136,24 @@
       "writtenOn": "2016-05-18T07:47:56Z",
       "side": 1,
       "message": "Agreed, please add a comment here. I also added a card in Trello for changing to configurable so we dont forget.",
+      "parentUuid": "fa57193c_df50a1d6",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a6b15de3",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
       "parentUuid": "fa57193c_df50a1d6",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
@@ -165,6 +219,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e626b515",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "ok\n\nmain reason of separating to two methods was to keep methods simplier and not to do too much things in one method",
+      "parentUuid": "fa57193c_dfed41b9",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_9f68e922",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -200,6 +272,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_46cb211e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "I added method isStoredValueEqualToMapRegisterMsg where I check equality of byte arrays stored as representation of significant bytes from map register message",
+      "parentUuid": "fa57193c_9f68e922",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_dfa8a179",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -217,6 +307,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_216d3799",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_dfa8a179",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_3fb71dda",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -228,6 +336,24 @@
       "writtenOn": "2016-05-16T13:55:56Z",
       "side": 1,
       "message": "Small nit, I would put inBuffer as first argument, and then sourceAddress and port, since they kinda belong together.",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_61060fd0",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_3fb71dda",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -292,6 +418,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_c1f43bd1",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "there were two additional values, which were set in original metadata\nMergeEnabled\nWantMapNotify.\n\nBut probably you are right that it would be effective just to throw origin metadata away",
+      "parentUuid": "fa57193c_5febf1af",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5f393140",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
         "patchSetId": 28
@@ -327,6 +471,42 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_612d6f46",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_5f393140",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_41302b9e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterCache.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c6d8d181",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5fd5b1b7",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
         "patchSetId": 28
@@ -355,6 +535,42 @@
       "writtenOn": "2016-05-18T07:47:56Z",
       "side": 1,
       "message": "Agreed.",
+      "parentUuid": "fa57193c_5fd5b1b7",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_211b771c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c677313a",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c11b9b1a",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "Done",
       "parentUuid": "fa57193c_5fd5b1b7",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
@@ -425,6 +641,30 @@
       "writtenOn": "2016-05-18T07:47:56Z",
       "side": 1,
       "message": "Maybe we should move this to the MapRegisterCache.java itself and avoid the extra class?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 0
+      },
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_011633f1",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/MapRegisterCacheForTest.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-18T12:34:02Z",
+      "side": 1,
+      "message": "yes we can, but I am not sure if it is good approach to provide to class method which it doesn\u0027t need for its life.",
+      "parentUuid": "fa57193c_c6c5713e",
       "range": {
         "startLine": 13,
         "startChar": 0,
