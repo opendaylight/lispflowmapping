@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.implementation.mapcache;
+package org.opendaylight.lispflowmapping.mapcache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -76,8 +75,8 @@ public class SimpleMapCacheTest {
     private static final Eid NORMALIZED_EID_IPV4 = MaskUtil.normalize(EID_IPV4);
 
     private static final IpAddressBinary IP_ADDRESS = new IpAddressBinary(new Ipv4AddressBinary(IPV4_RLOC_BINARY));
-    private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
-    private static final long REGISTRATION_VALIDITY = CONFIG_INI.getRegistrationValiditySb();
+    // TODO Get from configuration when ready
+    private static final long REGISTRATION_VALIDITY = 200000L;
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
             .setKeyString("pass")
             .setKeyType(1).build();

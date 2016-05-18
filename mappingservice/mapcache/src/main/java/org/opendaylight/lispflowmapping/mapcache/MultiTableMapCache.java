@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.mapcache;
+package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Date;
 import java.util.Map;

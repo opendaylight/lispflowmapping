@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.implementation.mapcache;
+package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
