@@ -11,8 +11,11 @@ import java.util.Collection;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
@@ -20,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,27 +35,33 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras
  *
  */
-public class MappingDataListener extends AbstractDataListener<Mapping> {
+public class MappingDataListener implements DataTreeChangeListener<Mapping> {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
     private NotificationPublishService notificationPublishService;
+    private final DataBroker dataBroker;
+    private final IMappingSystem msmr;
+    private InstanceIdentifier<Mapping> path;
 
-    public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationPublishService nps) {
-        setBroker(broker);
-        setMappingSystem(msmr);
-        setNotificationProviderService(nps);
-        setPath(InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
-                .child(Mapping.class));
+    public MappingDataListener(DataBroker dataBroker, IMappingSystem msmr, NotificationPublishService nps) {
+        this.dataBroker = dataBroker;
+        this.msmr = msmr;
+        this.notificationPublishService = nps;
+        this.path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class).child(Mapping
+                .class);
         LOG.trace("Registering Mapping listener.");
         registerDataChangeListener();
     }
+    private ListenerRegistration<DataTreeChangeListener<Mapping>> registration;
 
-    public void setNotificationProviderService(NotificationPublishService nps) {
-        this.notificationPublishService = nps;
+    public void registerDataChangeListener() {
+        final DataTreeIdentifier<Mapping> dataTreeIdentifier = new DataTreeIdentifier<>(LogicalDatastoreType
+                .CONFIGURATION, path);
+        registration = dataBroker.registerDataTreeChangeListener(dataTreeIdentifier, this);
     }
 
-    void setMappingSystem(IMappingSystem msmr) {
-        this.mapSystem = msmr;
+    public void closeDataChangeListener() {
+        registration.close();
     }
 
     @Override
