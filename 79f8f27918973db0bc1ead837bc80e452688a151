@@ -161,6 +161,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_81a3634e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_ab6e48ff",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_46a5e1b3",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -290,6 +308,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_a1b78785",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "my comment is incorrect the current name of method is\nresolveCacheValue()\n\nthis method do all necessary operations which are required to say whether obtained is really relevant or not.",
+      "parentUuid": "fa57193c_eb25e0c2",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_dfa8a179",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -383,6 +419,30 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_c1ab9b1c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "This part of code was completely removed.",
+      "parentUuid": "fa57193c_86809947",
+      "range": {
+        "startLine": 205,
+        "startChar": 48,
+        "endLine": 205,
+        "endChar": 54
+      },
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_5febf1af",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 28
@@ -430,6 +490,24 @@
       "side": 1,
       "message": "there were two additional values, which were set in original metadata\nMergeEnabled\nWantMapNotify.\n\nBut probably you are right that it would be effective just to throw origin metadata away",
       "parentUuid": "fa57193c_5febf1af",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_1c1e9c63",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "done as you suggested.",
+      "parentUuid": "fa57193c_c6461121",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -595,6 +673,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_1c35fcd9",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "yes. I probably should have used \"ommit\" word.",
+      "parentUuid": "fa57193c_7f0d1590",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_1ff2196f",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
         "patchSetId": 28
@@ -624,6 +720,42 @@
       "side": 1,
       "message": "Correct, we use the first EID prefix in the MapRegister as the cacheKey.  the rest of the EID prefixes if Map Register is multi record are part of the payload, and dont need to be parsed. These are parsed when a new cache entry is being created and MapRegister is fully deserialized, and are stored in the metadata at that time. \nPlease remove the TODO and associated comment.",
       "parentUuid": "fa57193c_1ff2196f",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_bc6330dc",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_1ff2196f",
+      "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_dc68a4bc",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/cache/MapRegisterPartialDeserializer.java",
+        "patchSetId": 28
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T06:55:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_26aeed85",
       "revId": "79f8f27918973db0bc1ead837bc80e452688a151",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
