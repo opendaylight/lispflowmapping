@@ -11,13 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
-import java.util.AbstractMap;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +41,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(SimpleMapCache.class)
+@PrepareForTest(MappingMergeUtil.class)
 public class SimpleMapCacheTest {
 
     private static ILispDAO tableMock;
@@ -73,6 +69,7 @@ public class SimpleMapCacheTest {
     private static final Eid NORMALIZED_EID_1 = MaskUtil.normalize(EID_IPV4_PREFIX_1_VNI);
     private static final Eid NORMALIZED_EID_2 = MaskUtil.normalize(EID_IPV4_PREFIX_2);
     private static final Eid NORMALIZED_EID_IPV4 = MaskUtil.normalize(EID_IPV4);
+    private static final Eid NORMALIZED_EID_IPV4_PREFIX_DST = MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24);
 
     private static final IpAddressBinary IP_ADDRESS = new IpAddressBinary(new Ipv4AddressBinary(IPV4_RLOC_BINARY));
     // TODO Get from configuration when ready
@@ -88,7 +85,7 @@ public class SimpleMapCacheTest {
         tableMock = Mockito.mock(ILispDAO.class);
         xtrIdDaoMock = Mockito.mock(ILispDAO.class);
         mappingRecordMock = Mockito.mock(MappingRecord.class);
-        simpleMapCache = PowerMockito.spy(new SimpleMapCache(daoMock));
+        simpleMapCache = new SimpleMapCache(daoMock);
     }
 
     /**
@@ -277,19 +274,13 @@ public class SimpleMapCacheTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getMappingLpmEidTest() throws Exception {
-        final AbstractMap.SimpleImmutableEntry<Eid, Map<String, Object>> daoEntryMock =
-                Mockito.mock(AbstractMap.SimpleImmutableEntry.class);
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
         final MappingRecord expiredMappingRecord = getDefaultMappingRecordBuilder().setTimestamp(1L).build(); // expired
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build(); // not expired
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        PowerMockito.doReturn(daoEntryMock) // stubbing private method getDaoPairEntryBest(Eid, ILispDAO)
-                .when(simpleMapCache,
-                        PowerMockito.method(SimpleMapCache.class, "getDaoPairEntryBest", Eid.class, ILispDAO.class))
-                .withArguments(EID_IPV4_PREFIX_DST, tableMock);
-        Mockito.when(daoEntryMock.getValue()).thenReturn(mapMock);
+        Mockito.when(tableMock.get(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapMock);
         Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
         Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4_PREFIX_DST, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD))
@@ -310,23 +301,14 @@ public class SimpleMapCacheTest {
     @Test
     @SuppressWarnings("unchecked")
     public void getMappingLpmEidTest_withNullXtrId() throws Exception {
-        final AbstractMap.SimpleImmutableEntry<Eid, Map<String, Object>> daoEntryMock =
-                Mockito.mock(AbstractMap.SimpleImmutableEntry.class);
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
-
-
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        PowerMockito.doReturn(daoEntryMock) // stubbing private method getDaoPairEntryBest(Eid, ILispDAO)
-                .when(simpleMapCache,
-                        PowerMockito.method(SimpleMapCache.class, "getDaoPairEntryBest", Eid.class, ILispDAO.class))
-                .withArguments(EID_IPV4_PREFIX_DST, tableMock);
-        Mockito.when(daoEntryMock.getValue()).thenReturn(mapMock);
+        Mockito.when(tableMock.get(MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24))).thenReturn(mapMock);
         Mockito.when(mapMock.get(SubKeys.REGDATE)).thenReturn(EXPIRED_DATE);
-        Mockito.when(daoEntryMock.getKey()).thenReturn(NORMALIZED_EID_1);
 
         simpleMapCache.getMapping(null, EID_IPV4_PREFIX_DST, null);
-        Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_1, SubKeys.REGDATE);
-        Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_1, SubKeys.RECORD);
+        Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_IPV4_PREFIX_DST, SubKeys.REGDATE);
+        Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_IPV4_PREFIX_DST, SubKeys.RECORD);
         Mockito.verify(mapMock).get(SubKeys.RECORD);
 
     }
@@ -494,17 +476,16 @@ public class SimpleMapCacheTest {
      * Tests {@link SimpleMapCache#addMapping} method with mapping merge allowed.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void addMappingTest_mappingMergeTrue() throws Exception {
         Mockito.when(mappingRecordMock.getTimestamp()).thenReturn(System.currentTimeMillis());
         Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
 
-        Set<IpAddressBinary> ipAddresses = Sets.newHashSet(IP_ADDRESS);
-        List<Object> records = Lists.newArrayList(getDefaultMappingRecordBuilder().build());
-        PowerMockito.doReturn(records).when(simpleMapCache,         // stubs private getXtrIdMappingList method
-                PowerMockito.method(SimpleMapCache.class, "getXtrIdMappingList", ILispDAO.class))
-                .withArguments(xtrIdDaoMock);
+        PowerMockito.mockStatic(MappingMergeUtil.class);
+        PowerMockito.when(MappingMergeUtil.mergeXtrIdMappings(Mockito.anyList(), Mockito.anyList(), Mockito.anySet()))
+                .thenReturn(getDefaultMappingRecordBuilder().build());
 
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, true);
         Mockito.verify(xtrIdDaoMock).put(new XtrId(XTR_ID), new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
@@ -512,32 +493,6 @@ public class SimpleMapCacheTest {
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, new Date(Long.MAX_VALUE)));
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, getDefaultMappingRecordBuilder().build()));
-        Mockito.verify(tableMock).put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.SRC_RLOCS, ipAddresses));
-        Mockito.verifyNoMoreInteractions(xtrIdDaoMock);
-        //Mockito.verifyZeroInteractions(xtrIdDaoMock).removeSpecific(new XtrId(XTR_ID), SubKeys.RECORD);
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#addMapping} method with mapping merge allowed and expired mapping.
-     */
-    @Test
-    public void addMappingTest_mappingMergeTrue_expiredXtrMapping() throws Exception {
-        Mockito.when(mappingRecordMock.getTimestamp()).thenReturn(System.currentTimeMillis());
-        Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
-        Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
-
-        List<Object> records = Lists.newArrayList(getDefaultMappingRecordBuilder()
-                .setXtrId(new XtrId(XTR_ID))
-                .setTimestamp(EXPIRED_DATE.getTime()).build());
-        PowerMockito.doReturn(records).when(simpleMapCache,         // stubs private getXtrIdMappingList method
-                PowerMockito.method(SimpleMapCache.class, "getXtrIdMappingList", ILispDAO.class))
-                .withArguments(xtrIdDaoMock);
-
-        simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, true);
-        Mockito.verify(xtrIdDaoMock).put(new XtrId(XTR_ID), new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
-        Mockito.verify(xtrIdDaoMock).removeSpecific(new XtrId(XTR_ID), SubKeys.RECORD);
-        Mockito.verify(tableMock, Mockito.never()).put(Mockito.any(Eid.class), Mockito.any(MappingEntry.class));
     }
 
     /**
