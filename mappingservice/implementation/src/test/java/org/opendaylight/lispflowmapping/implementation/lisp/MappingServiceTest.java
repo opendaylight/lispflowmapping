@@ -22,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
-import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
@@ -33,8 +32,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Si
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
-        .MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
@@ -64,10 +62,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container
-        .MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container
-        .MappingAuthkeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -80,7 +76,6 @@ public class MappingServiceTest {
     @Mock(name = "dsbe") private static DataStoreBackEnd dsbe;
     @Mock(name = "mappingServiceRpc") private static BindingAwareBroker
             .RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
-    @Mock(name = "keyListener") private static AuthenticationKeyDataListener keyListener;
     @Mock(name = "mappingListener") private static MappingDataListener mappingListener;
 
     private static final String IPV4_STRING = "1.2.3.0";
@@ -534,7 +529,6 @@ public class MappingServiceTest {
     public void close() throws Exception {
         mappingService.close();
         Mockito.verify(mappingServiceRpc).close();
-        Mockito.verify(keyListener).closeDataChangeListener();
         Mockito.verify(mappingListener).closeDataChangeListener();
     }
 
