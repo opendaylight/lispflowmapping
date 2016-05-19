@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_323904a5",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 1995,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T11:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_a7faf4ba",
+      "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_c7ff28a9",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 33
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-19T09:25:41Z",
       "side": 1,
       "message": "Please use LispAddressStringifier to log Eid objects, otherwise they\u0027re hard to read.",
+      "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9247301d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T11:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c7ff28a9",
       "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_d251a8d9",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 33
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T11:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_272ee443",
+      "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_c7c0c82c",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 33
@@ -64,6 +118,24 @@
       "writtenOn": "2016-05-19T09:25:41Z",
       "side": 1,
       "message": "We should treat timeout and payload matching separately. We only remove an entry if it\u0027s timed out. If it\u0027s not, we still keep it in the cache even if payloads don\u0027t match, since another payload may arrive during the validity period.",
+      "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d2ed28f1",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 33
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-19T11:47:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c7c0c82c",
       "revId": "c629bdebbd19749d3b3a5c2cff8fa79d235e7e55",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
