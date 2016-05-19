@@ -17,7 +17,6 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
@@ -82,7 +81,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private MappingSystem mappingSystem;
     private DataStoreBackEnd dsbe;
     private RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
-    private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
     private ILispDAO dao;
 
@@ -143,7 +141,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         mappingSystem.setDataStoreBackEnd(dsbe);
         mappingSystem.initialize();
 
-        keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
         mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
     }
 
@@ -445,7 +442,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public void close() throws Exception {
         LOG.info("Mapping Service is being destroyed!");
         mappingServiceRpc.close();
-        keyListener.closeDataChangeListener();
         mappingListener.closeDataChangeListener();
     }
 
