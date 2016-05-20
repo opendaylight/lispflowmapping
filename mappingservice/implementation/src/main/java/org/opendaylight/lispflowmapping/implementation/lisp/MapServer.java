@@ -22,7 +22,6 @@ import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.lispflowmapping.implementation.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -109,13 +108,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
-            if (authenticate) {
-                authkey = mapService.getAuthenticationKey(mapping.getEid());
-                if (!LispAuthenticationUtil.validate(mapRegister, mapping.getEid(), authkey)) {
-                    authFailed = true;
-                    break;
-                }
-            }
 
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
@@ -160,10 +152,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
-            }
-            if (authenticate) {
-                builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
-                        authkey.getKeyString()));
             }
             notifyHandler.handleMapNotify(builder.build(), rlocs);
         }
