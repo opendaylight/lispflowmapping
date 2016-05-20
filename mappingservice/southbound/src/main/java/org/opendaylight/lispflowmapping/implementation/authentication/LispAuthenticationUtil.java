@@ -23,7 +23,7 @@ public final class LispAuthenticationUtil {
     private LispAuthenticationUtil() {
     }
 
-    public static boolean validate(MapRegister mapRegister, Eid eid, MappingAuthkey key) {
+    private static boolean validate(MapRegister mapRegister, Eid eid, MappingAuthkey key) {
         if (key == null) {
             LOG.warn("Authentication failed: mapping authentication key is null");
             return false;

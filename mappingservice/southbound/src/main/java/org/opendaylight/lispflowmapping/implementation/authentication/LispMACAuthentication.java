@@ -47,11 +47,11 @@ public class LispMACAuthentication implements ILispAuthentication {
             return false;
         }
         ByteBuffer mapRegisterBuffer = MapRegisterSerializer.getInstance().serialize(mapRegister);
-        if (mapRegisterBuffer == null) {
+        if (mapRegister == null) {
             return true;
         }
 
-        mapRegisterBuffer.position(MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
+        mapRegisterBuffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
         return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key),
