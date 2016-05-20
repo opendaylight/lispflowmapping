@@ -47,60 +47,44 @@ module odl-lisp-address-types {
             augment "address" {
                 case ipv4-binary {
                     leaf ipv4-binary {
-                        when "../../address-type = 'ipv4-binary-afi'" {
-                          description
-                            "When AFI is IPv4 (binary).";
-                        }
                         type bin:ipv4-address-binary;
                         description
-                          "IPv4 (binary) address.";
+                            "IPv4 (binary) address.";
                     }
                 }
                 case ipv6-binary {
                     leaf ipv6-binary {
-                        when "../../address-type = 'ipv6-binary-afi'" {
-                          description
-                            "When AFI is IPv6 (binary).";
-                        }
                         type bin:ipv6-address-binary;
                         description
-                          "IPv6 (binary) address.";
+                            "IPv6 (binary) address.";
                     }
                 }
                 case ipv4-prefix-binary {
-                    container ipv4-prefix-binary {
-                        when "../../address-type = 'ipv4-prefix-binary-afi'" {
-                          description
-                            "When AFI is IPv4 (binary).";
+                    leaf ipv4-binary {
+                        type bin:ipv4-address-binary;
+                        description
+                            "IPv4 (binary) address.";
+                    }
+                    leaf mask-length {
+                        type uint8 {
+                            range "0..32";
                         }
-                        leaf network-address {
-                            type bin:ipv4-address-binary;
-                            description "IPv4 binary address.";
-                        }
-                        leaf mask-length {
-                            type uint8 {
-                                range "0..32";
-                            }
-                            description "IPv4 mask length.";
-                        }
+                        description
+                            "IPv4 mask length.";
                     }
                 }
                 case ipv6-prefix-binary {
-                    container ipv6-prefix-binary {
-                        when "../../address-type = 'ipv6-prefix-binary-afi'" {
-                          description
-                            "When AFI is IPv6 (binary).";
+                    leaf ipv6-binary {
+                        type bin:ipv6-address-binary;
+                        description
+                            "IPv6 (binary) address.";
+                    }
+                    leaf mask-length {
+                        type uint8 {
+                            range "0..128";
                         }
-                        leaf network-address {
-                            type bin:ipv6-address-binary;
-                            description "IPv6 binary address.";
-                        }
-                        leaf mask-length {
-                            type uint8 {
-                                range "0..128";
-                            }
-                            description "IPv6 mask length.";
-                        }
+                        description
+                            "IPv6 mask length.";
                     }
                 }
             }
