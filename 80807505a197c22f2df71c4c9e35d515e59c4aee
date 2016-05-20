@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_74f40187",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-address-types.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-20T23:26:05Z",
+      "side": 1,
+      "message": "Why are you removing the when clauses? Not a very big deal, just want to understand, because if we include it on some places and not in others, we can never properly rely on it.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "80807505a197c22f2df71c4c9e35d515e59c4aee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
