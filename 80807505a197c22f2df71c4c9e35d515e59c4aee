@@ -22,6 +22,24 @@
       "revId": "80807505a197c22f2df71c4c9e35d515e59c4aee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_6f3d4abb",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-address-types.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-21T12:58:10Z",
+      "side": 1,
+      "message": "Again, this is because this file is ODL specific, and yangtools doesn\u0027t take it into account. The file seems more readable without them. But not a big deal for me either, if you prefer I\u0027ll pu them back for consistency.",
+      "parentUuid": "fa57193c_74f40187",
+      "revId": "80807505a197c22f2df71c4c9e35d515e59c4aee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
