@@ -14,8 +14,6 @@ import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +79,15 @@ public class LispMACAuthentication implements ILispAuthentication {
         this.algorithm = algorithm;
     }
 
-    public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
-        return getAuthenticationData(MapNotifySerializer.getInstance().serialize(mapNotify).array(), key);
+    public byte[] getAuthenticationData(final ByteBuffer buffer, final String key) {
+        byte[] bufferAsArray;
+        if (buffer.hasArray()) {
+            bufferAsArray = buffer.array();
+        } else {
+            bufferAsArray = new byte[buffer.limit()];
+        }
+
+        return getAuthenticationData(bufferAsArray, key);
     }
 
 }
