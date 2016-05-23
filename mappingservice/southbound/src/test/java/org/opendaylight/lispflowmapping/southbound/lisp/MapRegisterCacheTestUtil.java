@@ -103,7 +103,16 @@ final class MapRegisterCacheTestUtil {
                 0x04, 0x00, 0x00, 0x01
         };
 
-        final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, nonce, keyId, authenticationData,
+        final byte[] newAuthenticationData = new byte []{
+                0x00, 0x14,
+                (byte)0xA6,(byte)0xF6,0x7F,(byte)0xC9
+                ,0x31,(byte)0x83,0x28,0x5F
+                ,(byte)0xDA,0x49,(byte)0xC7,0x3C
+                ,0x3E,0x46,0x13,0x27
+                ,(byte)0xA7,0x35,0x3D,0x3A
+        };
+
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, nonce, keyId, newAuthenticationData,
                 data2, eidPrefixAfi, eidPrefix, data3, xTRId, siteId));
 
         verify(mockLispSouthboundPlugin).handleSerializedLispBuffer(

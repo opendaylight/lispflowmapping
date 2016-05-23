@@ -53,6 +53,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
@@ -94,6 +97,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.VniUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
@@ -125,6 +134,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev100924.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierKey;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.util.Filter;
@@ -638,11 +650,25 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRegisterWithMapNotify() throws SocketTimeoutException {
         cleanUP();
-        mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), NULL_AUTH_KEY);
+        insertAuthDataToDataStore(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"),
+                NULL_AUTH_KEY);
         sleepForSeconds(1);
         sendPacket(mapRegisterPacketWithNotify);
         MapNotify reply = receiveMapNotify();
         assertEquals(7, reply.getNonce().longValue());
+    }
+
+    private void insertAuthDataToDataStore(final Eid eid, final MappingAuthkey authKey) {
+        final DataBroker dataBroker = getSession().getSALService(DataBroker.class);
+        final WriteTransaction wTx = dataBroker.newWriteOnlyTransaction();
+        final EidUri eidUri = new EidUri("eidUri");
+        final InstanceIdentifier<AuthenticationKey> iiToAuthenticationKey = InstanceIdentifier.create
+                (MappingDatabase.class).child(VirtualNetworkIdentifier.class, new VirtualNetworkIdentifierKey(new
+                VniUri("0"))).child(AuthenticationKey.class, new AuthenticationKeyKey(eidUri));
+        final AuthenticationKey data = new AuthenticationKeyBuilder().setMappingAuthkey(authKey).setEid(eid).
+                setEidUri(eidUri).build();
+        wTx.put(LogicalDatastoreType.CONFIGURATION, iiToAuthenticationKey, data, true);
+        wTx.submit();
     }
 
     public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
