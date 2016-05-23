@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import junitx.framework.ArrayAssert;
 
 import org.junit.Test;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
@@ -185,7 +186,8 @@ public class LispAuthenticationTest extends BaseTestCase {
         etlrBuilder.setRecordTtl(55);
         mapNotifyBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-        ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(mapNotifyBuilder.build(),
+        final ByteBuffer serializedMapNotifyMsg = MapNotifySerializer.getInstance().serialize(mapNotifyBuilder.build());
+        ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(serializedMapNotifyMsg,
                 "password"));
 
     }
