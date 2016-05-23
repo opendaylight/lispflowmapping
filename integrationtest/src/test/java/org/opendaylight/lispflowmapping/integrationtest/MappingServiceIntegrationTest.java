@@ -45,6 +45,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+
+
 //import org.codehaus.jettison.json.JSONException;
 //import org.codehaus.jettison.json.JSONObject;
 //import org.codehaus.jettison.json.JSONTokener;
@@ -65,6 +67,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
@@ -638,7 +641,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRegisterWithMapNotify() throws SocketTimeoutException {
         cleanUP();
-        mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), NULL_AUTH_KEY);
+        mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), NULL_AUTH_KEY);
         sleepForSeconds(1);
         sendPacket(mapRegisterPacketWithNotify);
         MapNotify reply = receiveMapNotify();
@@ -647,7 +650,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRegisterWithMapNotifyAndMapRequest() throws SocketTimeoutException {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
 
         MapReply mapReply = registerAddressAndQuery(eid);
 
@@ -673,7 +676,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequest() throws SocketTimeoutException {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
 
@@ -716,7 +719,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterDosntOverwritesOtherSubKeys() throws SocketTimeoutException {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         SimpleAddress rloc1Value = new SimpleAddress(new IpAddress(new Ipv4Address("4.3.2.1")));
         Rloc rloc1 = LispAddressUtil.asKeyValueAddress("subkey1", rloc1Value);
         SimpleAddress rloc2Value = new SimpleAddress(new IpAddress(new Ipv4Address("4.3.2.2")));
@@ -731,7 +734,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterOverwritesSameSubkey() throws SocketTimeoutException {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         SimpleAddress rloc1Value = new SimpleAddress(new IpAddress(new Ipv4Address("4.3.2.1")));
         Rloc rloc1 = LispAddressUtil.asKeyValueAddress("subkey1", rloc1Value);
         SimpleAddress rloc2Value = new SimpleAddress(new IpAddress(new Ipv4Address("4.3.2.2")));
@@ -745,7 +748,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void testMapRegisterOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
         mapService.setMappingOverwrite(true);
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         Rloc rloc1Value = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         Rloc rloc2Value = LispAddressUtil.asIpv4Rloc("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
@@ -757,7 +760,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void testMapRegisterDoesntOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
         mapService.setMappingOverwrite(false);
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         Rloc rloc1Value = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         Rloc rloc2Value = LispAddressUtil.asIpv4Rloc("4.3.2.2");
         MapReply mapReply = sendMapRegisterTwiceWithDiffrentValues(eid, rloc1Value, rloc2Value);
@@ -814,7 +817,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void registerQueryRegisterWithSmr() throws SocketTimeoutException {
         cleanUP();
         lms.setShouldUseSmr(true);
-        mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), NULL_AUTH_KEY);
+        mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), NULL_AUTH_KEY);
         sleepForSeconds(1);
 
         sendPacket(mapRegisterPacketWithNotify);
@@ -833,7 +836,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Eid sourceEid = smr.getSourceEid().getEid();
         assertTrue(LispAddressUtil.asIpv4Eid("153.16.254.1").equals(sourceEid));
         Eid smrEid = smr.getEidItem().get(0).getEid();
-        assertTrue(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32").equals(smrEid));
+        assertTrue(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32").equals(smrEid));
     }
 
     // --------------------- Northbound Tests ---------------------------
@@ -1226,15 +1229,16 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void eidPrefixLookupIPv4() throws SocketTimeoutException {
         cleanUP();
-        runPrefixTest(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/16"), LispAddressUtil.asIpv4PrefixEid("1.2.3.2/32"),
-                LispAddressUtil.asIpv4PrefixEid("1.1.1.1/32"));
+        runPrefixTest(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/16"),
+                LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.2/32"),
+                LispAddressUtil.asIpv4PrefixBinaryEid("1.1.1.1/32"));
     }
 
     public void eidPrefixLookupIPv6() throws SocketTimeoutException {
         cleanUP();
-        runPrefixTest(LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:6:7:8/64"),
-                LispAddressUtil.asIpv6PrefixEid("1:2:3:4:5:1:2:3/128"),
-                LispAddressUtil.asIpv6PrefixEid("1:2:3:1:2:3:1:2/128"));
+        runPrefixTest(LispAddressUtil.asIpv6PrefixBinaryEid("1:2:3:4:5:6:7:8/64"),
+                LispAddressUtil.asIpv6PrefixBinaryEid("1:2:3:4:5:1:2:3/128"),
+                LispAddressUtil.asIpv6PrefixBinaryEid("1:2:3:1:2:3:1:2/128"));
     }
 
     private void runPrefixTest(Eid registerEID, Eid matchedAddress, Eid unMatchedAddress)
@@ -1562,7 +1566,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         String ipPrefix2 = ipString2 + "/24";
 
         Eid srcDst = LispAddressUtil.asSrcDstEid(ipString1, ipString2, 24, 24, 0);
-        registerAddress(LispAddressUtil.asIpv4PrefixEid(ipPrefix2));
+        registerAddress(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2));
         registerAddress(srcDst);
 
         // exact match
@@ -1582,20 +1586,18 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(ipPrefix2, receivedAddr2.getIpv4Prefix().getValue());
 
         // srcEid/dstEid match
-        reply = queryForAddress(LispAddressUtil.asIpv4PrefixEid("20.20.20.1/32"), "10.10.10.1");
+        reply = queryForAddress(LispAddressUtil.asIpv4PrefixBinaryEid("20.20.20.1/32"), "10.10.10.1");
         fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(Ipv4PrefixAfi.class, fromNetwork.getAddressType());
+        assertEquals(Ipv4PrefixBinaryAfi.class, fromNetwork.getAddressType());
 
-        Ipv4Prefix ipAddr2 = (Ipv4Prefix) fromNetwork.getAddress();
-        assertEquals(ipPrefix2, ipAddr2.getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
 
         // dstEid match only
-        reply = queryForAddress(LispAddressUtil.asIpv4PrefixEid("20.20.20.1/32"), "1.2.3.4");
+        reply = queryForAddress(LispAddressUtil.asIpv4PrefixBinaryEid("20.20.20.1/32"), "1.2.3.4");
         fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(Ipv4PrefixAfi.class, fromNetwork.getAddressType());
+        assertEquals(Ipv4PrefixBinaryAfi.class, fromNetwork.getAddressType());
 
-        ipAddr2 = (Ipv4Prefix) fromNetwork.getAddress();
-        assertEquals(ipPrefix2, ipAddr2.getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
     }
 
     @Test
@@ -1780,7 +1782,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
@@ -1832,7 +1834,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse() throws Exception {
         cleanUP();
-        Eid eid = LispAddressUtil.asIpv6PrefixEid("1.2.3.4/32");
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         MapRequest mapRequest = createMapRequest(eid);
 
         testTTLBeforeRegister(mapRequest);
@@ -2054,13 +2056,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapRequest createNonProxyMapRequest(String eid, Rloc adLcaf) throws SocketTimeoutException {
-        MapRegister mr = createMapRegister(LispAddressUtil.asIpv4PrefixEid(eid));
+        MapRegister mr = createMapRegister(LispAddressUtil.asIpv4PrefixBinaryEid(eid));
         LocatorRecord record = new LocatorRecordBuilder(mr.getMappingRecordItem().get(0).getMappingRecord()
                 .getLocatorRecord().get(0)).setRloc(adLcaf).build();
         mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().set(0, record);
         sendMapRegister(mr);
         assertMapNotifyReceived();
-        MapRequest mapRequest = createMapRequest(LispAddressUtil.asIpv4PrefixEid(eid));
+        MapRequest mapRequest = createMapRequest(LispAddressUtil.asIpv4PrefixBinaryEid(eid));
         MapRequestBuilder builder = new MapRequestBuilder(mapRequest);
         builder.setPitr(true);
         mapRequest = builder.build();

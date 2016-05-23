@@ -22,15 +22,17 @@ import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheT
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.nonce;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.siteId;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.xTRId;
-
 import io.netty.channel.socket.DatagramPacket;
+
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import junitx.framework.ArrayAssert;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
@@ -52,10 +54,9 @@ import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
@@ -301,9 +302,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         handleMapRegisterPacket(mapRegisterPacket);
 
         MappingRecord eidToLocatorRecord = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
-        assertEquals("2610:d0:ffff:192:0:0:0:1/128",
-                ((Ipv6Prefix) eidToLocatorRecord.getEid().getAddress()).getIpv6Prefix().getValue());
-        assertEquals(Ipv6PrefixAfi.class, eidToLocatorRecord.getEid().getAddressType());
+        assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:1/128"),
+                eidToLocatorRecord.getEid());
+        assertEquals(Ipv6PrefixBinaryAfi.class, eidToLocatorRecord.getEid().getAddressType());
 
         assertEquals(LispAddressUtil.asIpv4Rloc("10.0.58.156"), eidToLocatorRecord.getLocatorRecord().get(0).getRloc());
     }
@@ -314,7 +315,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         handleMapRegisterPacket(mapRegisterPacket);
 
         MappingRecord eidToLocator = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
-        assertEquals(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), eidToLocator.getEid());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), eidToLocator.getEid());
 
         assertEquals(1, eidToLocator.getLocatorRecord().size());
         assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), eidToLocator.getLocatorRecord().get(0).getRloc());
@@ -648,8 +649,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         List<EidItem> eids = lastMapRequest().getEidItem();
         assertEquals(1, eids.size());
         Eid lispAddress = eids.get(0).getEid();
-        assertEquals(Ipv4PrefixAfi.class, lispAddress.getAddressType());
-        assertEquals(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"), lispAddress);
+        assertEquals(Ipv4PrefixBinaryAfi.class, lispAddress.getAddressType());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), lispAddress);
         assertEquals(0x3d8d2acd39c8d608L, lastMapRequest().getNonce().longValue());
     }
 
@@ -685,7 +686,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"), lastMapRequest().getSourceEid().getEid());
-        assertEquals(LispAddressUtil.asIpv6PrefixEid("2610:d0:ffff:192:0:0:0:2/128"),
+        assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:2/128"),
                 lastMapRequest().getEidItem().get(0).getEid());
     }
 

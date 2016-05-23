@@ -22,12 +22,9 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -89,8 +86,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 01 c0 a8 38 66"));
         assertArrayEquals(new byte[] {1, 1, 1, 1},
                 ((Ipv4Binary) mr.getSourceEid().getEid().getAddress()).getIpv4Binary().getValue());
-        assertEquals("1.2.3.4/32",
-                ((Ipv4Prefix) mr.getEidItem().get(0).getEid().getAddress()).getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
 
     }
 
@@ -163,8 +159,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"));
 
         assertEquals(1, mr.getEidItem().size());
-        Eid eid = mr.getEidItem().get(0).getEid();
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
     }
 
     @Test
@@ -182,10 +177,9 @@ public class MapRequestSerializationTest extends BaseTestCase {
         ));
 
         assertEquals(1, mr.getEidItem().size());
-        Eid eid = mr.getEidItem().get(0).getEid();
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
         MappingRecord record = mr.getMapReply().getMappingRecord();
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) record.getEid().getAddress()).getIpv4Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), record.getEid());
         assertEquals(false, record.isAuthoritative());
         assertEquals(Action.NoAction, record.getAction());
         assertEquals(0, record.getMapVersion().shortValue());
@@ -222,12 +216,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 80 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05"));
 
         assertEquals(2, mr.getEidItem().size());
-
-        Eid eid = mr.getEidItem().get(0).getEid();
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) eid.getAddress()).getIpv4Prefix().getValue());
-
-        eid = mr.getEidItem().get(1).getEid();
-        assertEquals("0:0:0:0:0:0:0:5/128", ((Ipv6Prefix) eid.getAddress()).getIpv6Prefix().getValue());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
+        assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("0:0:0:0:0:0:0:5/128"), mr.getEidItem().get(1).getEid());
     }
 
     @Test
