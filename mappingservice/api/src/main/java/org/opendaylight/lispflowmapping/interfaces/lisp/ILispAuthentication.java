@@ -8,13 +8,12 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import java.nio.ByteBuffer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 
 public interface ILispAuthentication {
 
     boolean validate(ByteBuffer mapRegisterBuffer, byte[] expectedAuthData, String key);
 
-    byte[] getAuthenticationData(MapNotify mapNotify, String key);
+    byte[] getAuthenticationData(ByteBuffer buffer, String key);
 
     int getAuthenticationLength();
 
