@@ -29,7 +29,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +67,11 @@ public final class MaskUtil {
         return slash;
     }
 
-    private static String getPrefixAddress(final String prefix) {
+    protected static String getPrefixAddress(final String prefix) {
         return prefix.substring(0, slashPosition(prefix));
     }
 
-    private static String getPrefixMask(final String prefix) {
+    protected static String getPrefixMask(final String prefix) {
         return prefix.substring(slashPosition(prefix) + 1);
     }
 
@@ -221,18 +223,22 @@ public final class MaskUtil {
     public static short getMaskForAddress(Address address) {
         if (address instanceof Ipv4) {
             return IPV4_MAX_MASK;
-        } else if (address instanceof Ipv4Binary) {
-            return IPV4_MAX_MASK;
         } else if (address instanceof Ipv6) {
             return IPV6_MAX_MASK;
+        } else if (address instanceof Ipv4Binary) {
+            return IPV4_MAX_MASK;
         } else if (address instanceof Ipv6Binary) {
             return IPV6_MAX_MASK;
         } else if (address instanceof Ipv4Prefix) {
-            return Short.parseShort(getPrefixMask(((Ipv4Prefix)address).getIpv4Prefix().getValue()));
+            return Short.parseShort(getPrefixMask(((Ipv4Prefix) address).getIpv4Prefix().getValue()));
         } else if (address instanceof Ipv6Prefix) {
-            return Short.parseShort(getPrefixMask(((Ipv6Prefix)address).getIpv6Prefix().getValue()));
+            return Short.parseShort(getPrefixMask(((Ipv6Prefix) address).getIpv6Prefix().getValue()));
         } else if (address instanceof InstanceId) {
             return getMaskForAddress(((InstanceId)address).getInstanceId().getAddress());
+        } else if (address instanceof Ipv4PrefixBinary) {
+            return ((Ipv4PrefixBinary) address).getIpv4MaskLength();
+        } else if (address instanceof Ipv6PrefixBinary) {
+            return ((Ipv6PrefixBinary) address).getIpv6MaskLength();
         }
         return -1;
     }

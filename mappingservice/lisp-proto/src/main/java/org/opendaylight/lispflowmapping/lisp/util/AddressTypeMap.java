@@ -31,7 +31,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 
 /**
  * This class contains static HashMaps of AFIs and LCAF types to LispAddressFamily identities
@@ -51,9 +53,9 @@ public final class AddressTypeMap {
         afiToAddressTypeMap = new HashMap<Short, Class<? extends LispAddressFamily>>();
         afiToAddressTypeMap.put((short) 0, NoAddressAfi.class);
         afiToAddressTypeMap.put((short) AddressFamily.IpV4.getIntValue(), Ipv4BinaryAfi.class);
-        afiToAddressTypeMap.put((short) (AddressFamily.IpV4.getIntValue() * -1), Ipv4PrefixAfi.class);
+        afiToAddressTypeMap.put((short) (AddressFamily.IpV4.getIntValue() * -1), Ipv4PrefixBinaryAfi.class);
         afiToAddressTypeMap.put((short) AddressFamily.IpV6.getIntValue(), Ipv6BinaryAfi.class);
-        afiToAddressTypeMap.put((short) (AddressFamily.IpV6.getIntValue() * -1), Ipv6PrefixAfi.class);
+        afiToAddressTypeMap.put((short) (AddressFamily.IpV6.getIntValue() * -1), Ipv6PrefixBinaryAfi.class);
         afiToAddressTypeMap.put((short) AddressFamily.DistinguishedName.getIntValue(), DistinguishedNameAfi.class);
         afiToAddressTypeMap.put((short) AddressFamily.AsNumber.getIntValue(), AsNumberAfi.class);
         afiToAddressTypeMap.put((short) AddressFamily.LispCanonicalAddressFormat.getIntValue(), Lcaf.class);

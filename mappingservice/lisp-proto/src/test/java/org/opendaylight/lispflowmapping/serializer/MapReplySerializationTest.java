@@ -22,8 +22,8 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -88,11 +88,11 @@ public class MapReplySerializationTest extends BaseTestCase {
                 + "00 02 00 01 00 02 00 03 "
                 + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
         assertEquals(2, mr.getNonce().longValue());
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) mr.getMappingRecordItem().get(0)
-                .getMappingRecord().getEid().getAddress()).getIpv4Prefix().getValue());
+        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(0)
+                .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         // XXX Why here normalized and other cases not normalized?
-        assertEquals("4.3.0.0/16", ((Ipv4Prefix) mr.getMappingRecordItem().get(1)
-                .getMappingRecord().getEid().getAddress()).getIpv4Prefix().getValue());
+        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
+                .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
         assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
         assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
@@ -172,11 +172,11 @@ public class MapReplySerializationTest extends BaseTestCase {
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 "
                 + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 "
                 + "00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
-        assertEquals("1.2.3.4/32", ((Ipv4Prefix) mr.getMappingRecordItem().get(0)
-                .getMappingRecord().getEid().getAddress()).getIpv4Prefix().getValue());
+        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(0)
+                .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         // XXX Why here normalized and other cases not normalized?
-        assertEquals("4.3.0.0/16", ((Ipv4Prefix) mr.getMappingRecordItem().get(1)
-                .getMappingRecord().getEid().getAddress()).getIpv4Prefix().getValue());
+        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
+                .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
         assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
         assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());

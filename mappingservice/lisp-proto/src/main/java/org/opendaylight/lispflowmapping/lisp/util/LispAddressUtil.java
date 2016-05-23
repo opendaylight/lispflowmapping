@@ -56,11 +56,17 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -314,6 +320,22 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
+    public static Eid toEid(Ipv4PrefixBinary prefix, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(Ipv4PrefixBinaryAfi.class);
+        builder.setVirtualNetworkId(vni);
+        builder.setAddress((Address) prefix);
+        return builder.build();
+    }
+
+    public static Eid toEid(Ipv6PrefixBinary prefix, InstanceIdType vni) {
+        EidBuilder builder = new EidBuilder();
+        builder.setAddressType(Ipv6PrefixBinaryAfi.class);
+        builder.setVirtualNetworkId(vni);
+        builder.setAddress((Address) prefix);
+        return builder.build();
+    }
+
     public static Eid toEid(Ipv4Address address, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(Ipv4Afi.class);
@@ -364,11 +386,23 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv4PrefixEid(String prefix) {
-        return toEid(new Ipv4Prefix(prefix), null);
+        return asIpv4PrefixEid(prefix, null);
     }
 
     public static Eid asIpv4PrefixEid(final String prefix, final InstanceIdType iiType) {
         return toEid(new Ipv4Prefix(prefix), iiType);
+    }
+
+    public static Eid asIpv4PrefixBinaryEid(final String prefix) {
+        return asIpv4PrefixBinaryEid(prefix, null);
+    }
+
+    public static Eid asIpv4PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
+        String address = MaskUtil.getPrefixAddress(prefix);
+        short mask = Short.valueOf(MaskUtil.getPrefixMask(prefix));
+        byte[] ipv4 = InetAddresses.forString(address).getAddress();
+        return toEid(new Ipv4PrefixBinaryBuilder().setIpv4AddressBinary(new Ipv4AddressBinary(ipv4))
+                .setIpv4MaskLength(mask).build(), iiType);
     }
 
     public static Eid asIpv4Eid(String address) {
@@ -409,6 +443,18 @@ public final class LispAddressUtil {
 
     public static Eid asIpv6Eid(String address) {
         return toEid(new Ipv6AddressBinary(InetAddresses.forString(address).getAddress()), null);
+    }
+
+    public static Eid asIpv6PrefixBinaryEid(final String prefix) {
+        return asIpv6PrefixBinaryEid(prefix, null);
+    }
+
+    public static Eid asIpv6PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
+        String address = MaskUtil.getPrefixAddress(prefix);
+        short mask = Short.valueOf(MaskUtil.getPrefixMask(prefix));
+        byte[] ipv6 = InetAddresses.forString(address).getAddress();
+        return toEid(new Ipv6PrefixBinaryBuilder().setIpv6AddressBinary(new Ipv6AddressBinary(ipv6))
+                .setIpv6MaskLength(mask).build(), iiType);
     }
 
     public static Eid asIpv4Eid(String address, long vni) {
