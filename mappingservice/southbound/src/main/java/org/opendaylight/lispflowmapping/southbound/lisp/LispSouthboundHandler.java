@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.southbound.authentication.LispAuthenticationUtil;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -203,7 +205,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 mapRegisterCache.refreshEntry(cacheKey);
                 sendNotificationIfPossible(createMappingKeepAlive(cacheValue));
                 if (mapRegisterValue.isWantMapNotify()) {
-                    sendMapNotifyMsg(inBuffer, sourceAddress, port);
+                    sendMapNotifyMsg(inBuffer, sourceAddress, port, mapRegisterValue.getEidLispAddress());
                 }
             } else {
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
@@ -274,17 +276,56 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         return mappingKeepAliveBuilder.build();
     }
 
-    private void sendMapNotifyMsg(final ByteBuffer inBuffer, final InetAddress inetAddress, int portNumber) {
-        ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
-        outBuffer.position(0);
-        lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
+    private void sendMapNotifyMsg(final ByteBuffer inBuffer, final InetAddress inetAddress, int portNumber,
+                                  List<EidLispAddress> cacheValue) {
+
+        final String authKey = provideAuthenticateKey(cacheValue);
+        if (authKey != null) {
+            ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
+            outBuffer = calculateAndSetNewMAC(outBuffer, authKey);
+            outBuffer.position(0);
+            lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
+        }
+    }
+
+    /**
+     * Returns null if not all of eids have the same value of authentication key
+     */
+    private String provideAuthenticateKey(final List<EidLispAddress> eidLispAddresses) {
+        MappingAuthkey firstAuthKey = null;
+        for (int i = 0; i < eidLispAddresses.size(); i++) {
+            final Eid eid = eidLispAddresses.get(i).getEid();
+            if (i == 0) {
+                firstAuthKey = smc.getAuthenticationKey(eid);
+            } else {
+                final MappingAuthkey authKey = smc.getAuthenticationKey(eid);
+                if (!Objects.equals(firstAuthKey, authKey)) {
+                    return null;
+                }
+            }
+        }
+        return firstAuthKey.getKeyString();
+
+    }
+
+    /**
+     * Calculates new message authentication code (MAC) for notify message.
+     *
+     * @param buffer
+     * @return
+     */
+    private ByteBuffer calculateAndSetNewMAC(final ByteBuffer buffer, final String authKey) {
+        final byte[] authenticationData = LispAuthenticationUtil.createAuthenticationData(buffer, authKey);
+        buffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
+        buffer.put(authenticationData);
+        return buffer;
     }
 
     private ByteBuffer transformMapRegisterToMapNotify(final ByteBuffer buffer) {
         buffer.position(0);
-        //TODO: also reset of authentication data is required. other trello card is opened for this task.
         byte[] byteReplacement = new byte[] {0x04, 0x00, 0x00};
         buffer.put(byteReplacement);
+
         return buffer;
     }
 
