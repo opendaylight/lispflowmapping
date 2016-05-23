@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.implementation.authentication;
 
 import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 
 public final class LispNoAuthentication implements ILispAuthentication {
 
@@ -29,7 +28,7 @@ public final class LispNoAuthentication implements ILispAuthentication {
         return 0;
     }
 
-    public byte[] getAuthenticationData(MapNotify mapNotify, String key) {
+    public byte[] getAuthenticationData(ByteBuffer buffer, String key) {
         return authenticationData;
     }
 
