@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.implementation.authentication;
 import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
@@ -19,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 public final class LispAuthenticationUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAuthenticationUtil.class);
+
+    private static final short MAP_REGISTER_AND_MAP_NOTIFY_KEY_ID_POS = 12;
 
     // Utility class, should not be instantiated
     private LispAuthenticationUtil() {
@@ -49,10 +50,13 @@ public final class LispAuthenticationUtil {
                 key.getKeyString());
     }
 
-    public static byte[] createAuthenticationData(MapNotify mapNotify, String key) {
-        // We assume that the key-ID is correctly set in the Map-Notify message
-        ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(
-                LispKeyIDEnum.valueOf(mapNotify.getKeyId()));
-        return authentication.getAuthenticationData(mapNotify, key);
+    public static byte[] createAuthenticationData(final ByteBuffer buffer, String authKey) {
+        final short keyId = buffer.getShort(MAP_REGISTER_AND_MAP_NOTIFY_KEY_ID_POS);
+        final ILispAuthentication authentication = LispAuthenticationFactory.getAuthentication(
+                LispKeyIDEnum.valueOf(keyId));
+        final int authenticationLength = authentication.getAuthenticationLength();
+        buffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
+        buffer.put(new byte[authenticationLength]);
+        return authentication.getAuthenticationData(buffer, authKey);
     }
 }
