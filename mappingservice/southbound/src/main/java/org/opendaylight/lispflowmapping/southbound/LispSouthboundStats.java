@@ -22,6 +22,8 @@ public class LispSouthboundStats {
     private long tx[] = new long[MAX_LISP_TYPES + 1];
     private long rxUnknown = 0;
     private long txErrors = 0;
+    private long cacheHits = 0;
+    private long cacheMisses = 0;
 
     public LispSouthboundStats() {
         resetStats();
@@ -64,6 +66,22 @@ public class LispSouthboundStats {
 
     public void incrementTxErrors() {
         this.txErrors = incrementWithWrap(txErrors);
+    }
+
+    public long getCacheHits() {
+        return cacheHits;
+    }
+
+    public void incrementCacheHits() {
+        this.cacheHits = incrementWithWrap(cacheHits);
+    }
+
+    public long getCacheMisses() {
+        return cacheMisses;
+    }
+
+    public void incrementCacheMisses() {
+        this.cacheMisses = incrementWithWrap(cacheMisses);
     }
 
     private static long incrementWithWrap(long value) {
