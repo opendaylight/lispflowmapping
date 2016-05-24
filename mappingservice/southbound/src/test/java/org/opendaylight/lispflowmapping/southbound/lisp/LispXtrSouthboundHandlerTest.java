@@ -27,11 +27,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
         .address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -49,9 +50,7 @@ public class LispXtrSouthboundHandlerTest {
     @Mock(name = "notificationPublishService") private static NotificationPublishService notificationPublishServiceMock;
     @InjectMocks private static LispXtrSouthboundHandler handler;
 
-    private static final String IPV4_STRING_1 =      "1.2.3.4";
-    private static final String IPV4_STRING_2 =      "127.0.0.1";
-    private static final String IPV4_STRING_PREFIX = "/32";
+    private static final String IPV4_STRING_1 = "1.2.3.4";
 
     private static final long NONCE = 4435248268955932168L;
     private static final int HEADER_LENGTH = 74;
@@ -249,7 +248,9 @@ public class LispXtrSouthboundHandlerTest {
                 .build();
 
         final EidItem eidItem = new EidItemBuilder()
-                .setEid(LispAddressUtil.toEid(new Ipv4Prefix(IPV4_STRING_2 + IPV4_STRING_PREFIX), null)).build();
+                .setEid(LispAddressUtil.toEid(new Ipv4PrefixBinaryBuilder()
+                        .setIpv4AddressBinary(new Ipv4AddressBinary(new byte[]{127, 0, 0, 1}))
+                        .setIpv4MaskLength((short) 32).build(), null)).build();
 
         return new MapRequestBuilder()
                 .setItrRloc(Lists.newArrayList(itrRloc))
