@@ -19,7 +19,15 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.inmemorydb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.mapcache</artifactId>
     </dependency>
     <dependency>
       <groupId>io.netty</groupId>

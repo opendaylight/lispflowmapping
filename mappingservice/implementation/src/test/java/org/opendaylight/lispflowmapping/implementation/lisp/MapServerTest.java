@@ -140,7 +140,7 @@ public class MapServerTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException  {
-        mapServer = new MapServer(mapService, true, true, notifyHandler, notificationService);
+        mapServer = new MapServer(mapService, true, notifyHandler, notificationService);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_1);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_2);
         subscriberSetMock_2.add(SUBSCRIBER_RLOC_3);

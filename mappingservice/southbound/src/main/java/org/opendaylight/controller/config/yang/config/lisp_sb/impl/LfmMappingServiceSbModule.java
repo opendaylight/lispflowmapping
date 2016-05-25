@@ -36,6 +36,7 @@ public class LfmMappingServiceSbModule extends org.opendaylight.controller.confi
         sbPlugin = new LispSouthboundPlugin();
         sbPlugin.setNotificationPublishService(getNotificationPublishServiceDependency());
         sbPlugin.setRpcRegistryDependency(getRpcRegistryDependency());
+        sbPlugin.setDataBroker(getDataBrokerDependency());
         sbPlugin.init();
 
         return sbPlugin;
