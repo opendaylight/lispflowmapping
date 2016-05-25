@@ -115,7 +115,7 @@ final class MapRegisterCacheTestUtil {
         final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, nonce, keyId, newAuthenticationData,
                 data2, eidPrefixAfi, eidPrefix, data3, xTRId, siteId));
 
-        verify(mockLispSouthboundPlugin).handleSerializedLispBuffer(
+        verify(mockLispSouthboundPlugin, Mockito.times(2)).handleSerializedLispBuffer(
                 Mockito.eq(Inet4Address.getByAddress("0.0.0.0", new byte[]{0, 0, 0, 0}))
                 , Mockito.eq(byteBuffer)
                 , Mockito.eq(MessageType.MapNotify)
