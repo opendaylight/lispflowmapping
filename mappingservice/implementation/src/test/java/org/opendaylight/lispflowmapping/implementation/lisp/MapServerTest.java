@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -151,10 +150,8 @@ public class MapServerTest {
         setConfigIniMappingMergeField(false);
     }
 
-    @Ignore  /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
-        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_RECORD_1);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_1);
@@ -170,7 +167,6 @@ public class MapServerTest {
         assertEquals(1, subscriberSetMock_1.size());
     }
 
-    @Ignore  /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_MappingMergeTrue() throws NoSuchFieldException, IllegalAccessException {
         setConfigIniMappingMergeField(true);
@@ -181,7 +177,6 @@ public class MapServerTest {
                 .setMappingRecordItem(new ArrayList<>());
         mapNotifyBuilder.getMappingRecordItem().add(mappingRecordItemBuilder.build());
 
-        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         // no mapping changes
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
                 .thenReturn(OLD_MAPPING_RECORD_1);
@@ -192,7 +187,6 @@ public class MapServerTest {
         Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), null);
     }
 
-    @Ignore /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_verifyTransportAddresses() throws NoSuchFieldException, IllegalAccessException {
         setConfigIniMappingMergeField(true);
@@ -482,8 +476,7 @@ public class MapServerTest {
                 .setNonce(mapRegister.getNonce())
                 .setKeyId(mapRegister.getKeyId())
                 .setMergeEnabled(mapRegister.isMergeEnabled())
-                .setMappingRecordItem(new ArrayList<>())
-                .setAuthenticationData(new byte[]{});
+                .setMappingRecordItem(new ArrayList<>());
         mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
         return mapNotifyBuilder;
