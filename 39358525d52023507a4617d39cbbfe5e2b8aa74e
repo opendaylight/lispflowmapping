@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_6c8f0acd",
+        "filename": "features/src/main/features/features.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "Please move this up one line, we tend to put features first, bundles next, config files last.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_8c941ee3",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "Please move these up together with the rest of the mappingservice artifacts, in alphabetical order.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a79f7bb3",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "It looks like we don\u0027t use neither of the above two variables, so they can be removed.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_47b01f43",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "Since we don\u0027t keep a reference of the cache here, why not instantiate it inside the handler class, keep it isolated there, and simplify the constructor? Also, I would prefer to use a setter for the dataBroker, like we do with the notificationProvider.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e7a973e0",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "Since we don\u0027t need a reference for the mapcache here, why not instantiate it inside the handler class, and keep it isolated?",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_07a7470d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "This can be removed.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_876357db",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "We can change this to 2016...",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_675e0314",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "And we can remove this, since you rewrote most of it anyway :)",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_47de5f6e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "Why add LispAuthenticationUtil here?",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a7865b63",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "We should keep the alignment here.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_47977f90",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "It looks like the above variable is not used, since it was moved to MapRegisterCacheUtil. We should remove it from here then. Or remove it from the util class, if we need different versions of it.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_8791979b",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispXtrSouthboundHandlerTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T11:30:15Z",
+      "side": 1,
+      "message": "No longer needed.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
