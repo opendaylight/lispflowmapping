@@ -53,6 +53,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
@@ -151,6 +152,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
+        Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(Mockito.mock(LispSouthboundStats.class));
         testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
         mapRegisterCache = new MapRegisterCache();
         testedLispService.setMapRegisterCache(mapRegisterCache);

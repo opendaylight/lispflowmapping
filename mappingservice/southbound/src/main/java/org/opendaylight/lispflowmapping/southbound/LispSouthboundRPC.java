@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessageBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -165,6 +166,12 @@ public class LispSouthboundRPC implements OdlLispSbService {
         }
 
         cmsb.setControlMessage(messages);
-        return new GetStatsOutputBuilder().setControlMessageStats(cmsb.build()).build();
+
+        MapRegisterCacheStatsBuilder mrcsb = new MapRegisterCacheStatsBuilder();
+        mrcsb.setHits(stats.getCacheHits());
+        mrcsb.setMisses(stats.getCacheMisses());
+
+        return new GetStatsOutputBuilder().setControlMessageStats(cmsb.build())
+                .setMapRegisterCacheStats(mrcsb.build()).build();
     }
 }
