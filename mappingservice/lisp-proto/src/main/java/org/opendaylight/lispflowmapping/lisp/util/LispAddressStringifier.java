@@ -33,7 +33,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +126,9 @@ public class LispAddressStringifier {
         } else if (addr instanceof Ipv4Prefix) {
             prefix = "ipv4" + PREFIX_SEPARATOR;
             address = getStringFromIpv4Prefix(dst, (Ipv4Prefix) addr);
+        } else if (addr instanceof Ipv4PrefixBinary) {
+            prefix = "ipv4" + PREFIX_SEPARATOR;
+            address = getStringFromIpv4PrefixBinary(dst, (Ipv4PrefixBinary) addr);
         } else if (addr instanceof Ipv6) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
             address = getStringFromIpv6(dst, (Ipv6) addr);
@@ -133,6 +138,9 @@ public class LispAddressStringifier {
         } else if (addr instanceof Ipv6Prefix) {
             prefix = "ipv6" + PREFIX_SEPARATOR;
             address = getStringFromIpv6Prefix(dst, (Ipv6Prefix) addr);
+        } else if (addr instanceof Ipv6PrefixBinary) {
+            prefix = "ipv6" + PREFIX_SEPARATOR;
+            address = getStringFromIpv6PrefixBinary(dst, (Ipv6PrefixBinary) addr);
         } else if (addr instanceof Mac) {
             prefix = "mac" + PREFIX_SEPARATOR;
             address = getStringFromMac(dst, (Mac) addr);
@@ -218,6 +226,20 @@ public class LispAddressStringifier {
         return getPrefixString(dst, prefix);
     }
 
+    protected static String getStringFromIpv4PrefixBinary(Destination dst, Ipv4PrefixBinary addr) {
+        // AFI = 1; IPv4
+        try {
+            StringBuilder prefixBuilder = new StringBuilder(InetAddresses.toAddrString(
+                    Inet4Address.getByAddress(addr.getIpv4AddressBinary().getValue())));
+            prefixBuilder.append('/');
+            prefixBuilder.append(addr.getIpv4MaskLength().toString());
+            return getPrefixString(dst, prefixBuilder.toString());
+        } catch (UnknownHostException e) {
+            LOG.debug("Cannot convert binary IPv4 prefix to string", e);
+        }
+        return null;
+    }
+
     protected static String getStringFromIpv6(Destination dst, Ipv6 addr) {
         // AFI = 2; IPv6
         return addr.getIpv6().getValue();
@@ -236,6 +258,20 @@ public class LispAddressStringifier {
     protected static String getStringFromIpv6Prefix(Destination dst, Ipv6Prefix addr) {
         // AFI = 2; IPv6
         return addr.getIpv6Prefix().getValue();
+    }
+
+    protected static String getStringFromIpv6PrefixBinary(Destination dst, Ipv6PrefixBinary addr) {
+        // AFI = 2; IPv5
+        try {
+            StringBuilder prefixBuilder = new StringBuilder(InetAddresses.toAddrString(
+                    Inet6Address.getByAddress(addr.getIpv6AddressBinary().getValue())));
+            prefixBuilder.append('/');
+            prefixBuilder.append(addr.getIpv6MaskLength().toString());
+            return getPrefixString(dst, prefixBuilder.toString());
+        } catch (UnknownHostException e) {
+            LOG.debug("Cannot convert binary IPv6 prefix to string", e);
+        }
+        return null;
     }
 
     protected static String getStringFromDistinguishedName(Destination dst, DistinguishedName addr) {

@@ -29,7 +29,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,9 @@ public final class MaskUtil {
     }
 
     public static boolean isMaskable(Address address) {
-        if (address instanceof Ipv4Prefix || address instanceof Ipv6Prefix || address instanceof SourceDestKey) {
+        if (address instanceof Ipv4Prefix || address instanceof Ipv6Prefix
+                || address instanceof Ipv4PrefixBinary || address instanceof Ipv6PrefixBinary
+                || address instanceof SourceDestKey) {
             return true;
         } else if (address instanceof InstanceId) {
             return isMaskable(((InstanceId)address).getInstanceId().getAddress());
@@ -65,11 +69,11 @@ public final class MaskUtil {
         return slash;
     }
 
-    private static String getPrefixAddress(final String prefix) {
+    protected static String getPrefixAddress(final String prefix) {
         return prefix.substring(0, slashPosition(prefix));
     }
 
-    private static String getPrefixMask(final String prefix) {
+    protected static String getPrefixMask(final String prefix) {
         return prefix.substring(slashPosition(prefix) + 1);
     }
 
@@ -81,7 +85,13 @@ public final class MaskUtil {
     public static Eid normalize(Eid eid, short mask) {
         Address address = eid.getAddress();
         try {
-            if (address instanceof Ipv4Prefix) {
+            if (address instanceof Ipv4PrefixBinary) {
+                byte[] addr = ((Ipv4PrefixBinary) address).getIpv4AddressBinary().getValue();
+                return LispAddressUtil.asIpv4PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
+            } else if (address instanceof Ipv6PrefixBinary) {
+                byte[] addr = ((Ipv6PrefixBinary) address).getIpv6AddressBinary().getValue();
+                return LispAddressUtil.asIpv6PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
+            } else if (address instanceof Ipv4Prefix) {
                 final String addr = getPrefixAddress(((Ipv4Prefix)address).getIpv4Prefix().getValue());
                 InetAddress normalized = normalizeIP(InetAddresses.forString(addr), mask);
                 return LispAddressUtil.asIpv4PrefixEid(eid, (Inet4Address)normalized, mask);
@@ -102,7 +112,15 @@ public final class MaskUtil {
     public static Eid normalize(Eid eid) {
         Address address = eid.getAddress();
         try {
-            if (address instanceof Ipv4Prefix) {
+            if (address instanceof Ipv4PrefixBinary) {
+                byte[] addr = ((Ipv4PrefixBinary) address).getIpv4AddressBinary().getValue();
+                short mask = ((Ipv4PrefixBinary) address).getIpv4MaskLength();
+                return LispAddressUtil.asIpv4PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
+            } else if (address instanceof Ipv6PrefixBinary) {
+                byte[] addr = ((Ipv6PrefixBinary) address).getIpv6AddressBinary().getValue();
+                short mask = ((Ipv6PrefixBinary) address).getIpv6MaskLength();
+                return LispAddressUtil.asIpv6PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
+            } else if (address instanceof Ipv4Prefix) {
                 String[] v4prefix = splitPrefix(((Ipv4Prefix)address).getIpv4Prefix().getValue());
                 short mask = Short.parseShort(v4prefix[1]);
                 InetAddress normalized = normalizeIP(InetAddresses.forString(v4prefix[0]), mask);
@@ -158,7 +176,11 @@ public final class MaskUtil {
     }
 
     private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
-        ByteBuffer byteRepresentation = ByteBuffer.wrap(address.getAddress());
+        return InetAddress.getByAddress(normalizeByteArray(address.getAddress(), (short) maskLength));
+    }
+
+    private static byte[] normalizeByteArray(byte[] address, short maskLength) {
+        ByteBuffer byteRepresentation = ByteBuffer.wrap(address);
         byte b = (byte) 0xff;
         int mask = maskLength;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
@@ -172,13 +194,15 @@ public final class MaskUtil {
 
             mask -= 8;
         }
-        return InetAddress.getByAddress(byteRepresentation.array());
+        return byteRepresentation.array();
     }
 
     public static int getMaxMask(Address address) {
-        if (address instanceof Ipv4 || address instanceof Ipv4Prefix) {
+        if (address instanceof Ipv4 || address instanceof Ipv4Prefix || address instanceof Ipv4Binary
+                || address instanceof Ipv4PrefixBinary) {
             return IPV4_MAX_MASK;
-        } else if (address instanceof Ipv6 || address instanceof Ipv6Prefix) {
+        } else if (address instanceof Ipv6 || address instanceof Ipv6Prefix || address instanceof Ipv4Binary
+                || address instanceof Ipv6PrefixBinary) {
             return IPV6_MAX_MASK;
         } else {
             return -1;
@@ -221,18 +245,22 @@ public final class MaskUtil {
     public static short getMaskForAddress(Address address) {
         if (address instanceof Ipv4) {
             return IPV4_MAX_MASK;
-        } else if (address instanceof Ipv4Binary) {
-            return IPV4_MAX_MASK;
         } else if (address instanceof Ipv6) {
             return IPV6_MAX_MASK;
+        } else if (address instanceof Ipv4Binary) {
+            return IPV4_MAX_MASK;
         } else if (address instanceof Ipv6Binary) {
             return IPV6_MAX_MASK;
         } else if (address instanceof Ipv4Prefix) {
-            return Short.parseShort(getPrefixMask(((Ipv4Prefix)address).getIpv4Prefix().getValue()));
+            return Short.parseShort(getPrefixMask(((Ipv4Prefix) address).getIpv4Prefix().getValue()));
         } else if (address instanceof Ipv6Prefix) {
-            return Short.parseShort(getPrefixMask(((Ipv6Prefix)address).getIpv6Prefix().getValue()));
+            return Short.parseShort(getPrefixMask(((Ipv6Prefix) address).getIpv6Prefix().getValue()));
         } else if (address instanceof InstanceId) {
             return getMaskForAddress(((InstanceId)address).getInstanceId().getAddress());
+        } else if (address instanceof Ipv4PrefixBinary) {
+            return ((Ipv4PrefixBinary) address).getIpv4MaskLength();
+        } else if (address instanceof Ipv6PrefixBinary) {
+            return ((Ipv6PrefixBinary) address).getIpv6MaskLength();
         }
         return -1;
     }

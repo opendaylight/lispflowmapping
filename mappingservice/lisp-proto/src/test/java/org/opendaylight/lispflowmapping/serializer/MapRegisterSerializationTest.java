@@ -256,9 +256,9 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         ), null);
 
         assertEquals(4, mr.getMappingRecordItem().size());
-        assertEquals(LispAddressUtil.asIpv4PrefixEid("153.16.254.1/32"), mr.getMappingRecordItem().get(0)
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), mr.getMappingRecordItem().get(0)
                 .getMappingRecord().getEid());
-        assertEquals(LispAddressUtil.asIpv4PrefixEid("151.16.254.1/32"), mr.getMappingRecordItem().get(2)
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("151.16.254.1/32"), mr.getMappingRecordItem().get(2)
                 .getMappingRecord().getEid());
         assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.11"), mr.getMappingRecordItem().get(1)
                 .getMappingRecord().getLocatorRecord().get(0).getRloc());

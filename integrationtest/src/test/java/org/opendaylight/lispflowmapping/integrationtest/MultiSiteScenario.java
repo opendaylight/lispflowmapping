@@ -446,8 +446,8 @@ class MultiSiteScenario {
     private Set<Eid> prepareExpectedEid(final String ... hosts) {
         final Set<Eid> eids = new HashSet<>();
         for (String host : hosts) {
-            eids.add(LispAddressUtil.asIpv4PrefixEid(host + "/" + IP_MASK, new InstanceIdType(MultiSiteScenarioUtil
-                    .VNI2)));
+            eids.add(LispAddressUtil.asIpv4PrefixBinaryEid(host + "/" + IP_MASK,
+                    new InstanceIdType(MultiSiteScenarioUtil.VNI2)));
         }
         return eids;
     }
