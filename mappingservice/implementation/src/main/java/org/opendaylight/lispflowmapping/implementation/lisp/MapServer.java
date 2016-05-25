@@ -139,7 +139,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
-            notifyHandler.handleMapNotify(builder.build(), rlocs);
         }
     }
 

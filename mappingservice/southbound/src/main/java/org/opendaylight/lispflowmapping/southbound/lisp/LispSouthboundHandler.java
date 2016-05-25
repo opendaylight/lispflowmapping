@@ -199,19 +199,23 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 cacheKey = artificialEntry == null ? null : artificialEntry.getKey();
                 cacheValue = resolveCacheValue(artificialEntry);
             }
+            List<EidLispAddress> eidLispAddresses = null;
+            boolean wantMapNotifyBit = false;
             if (cacheValue != null) {
-                final MapRegisterCacheMetadata mapRegisterValue = cacheValue.getMapRegisterCacheMetadata();
-                LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterValue.getSiteId(),
-                        mapRegisterValue.getXtrId());
+                MapRegisterCacheMetadata mapRegisterValueMeta = cacheValue.getMapRegisterCacheMetadata();
+                LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterValueMeta.getSiteId(),
+                        mapRegisterValueMeta.getXtrId());
                 mapRegisterCache.refreshEntry(cacheKey);
                 sendNotificationIfPossible(createMappingKeepAlive(cacheValue));
-                if (mapRegisterValue.isWantMapNotify()) {
-                    sendMapNotifyMsg(inBuffer, sourceAddress, port, mapRegisterValue.getEidLispAddress());
-                }
                 lispSbStats.incrementCacheHits();
+                eidLispAddresses = mapRegisterValueMeta.getEidLispAddress();
+                wantMapNotifyBit = mapRegisterValueMeta.isWantMapNotify();
             } else {
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
                 if (isAuthenticationSuccessful(mapRegister, inBuffer)) {
+                    eidLispAddresses = provideEidPrefixesFromMessage(mapRegister);
+                    wantMapNotifyBit = mapRegister.isWantMapNotify();
+
                     AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
                     addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
                     TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
@@ -223,7 +227,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     if (artificialEntry != null) {
                         final MapRegisterCacheMetadataBuilder cacheMetadataBldNew = new
                                 MapRegisterCacheMetadataBuilder();
-                        cacheMetadataBldNew.setEidLispAddress(provideEidPrefixesFromMessage(mapRegister));
+                        cacheMetadataBldNew.setEidLispAddress(eidLispAddresses);
                         cacheMetadataBldNew.setXtrId(mapRegister.getXtrId());
                         cacheMetadataBldNew.setSiteId(mapRegister.getSiteId());
                         cacheMetadataBldNew.setWantMapNotify(mapRegister.isWantMapNotify());
@@ -238,6 +242,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     }
                 }
                 lispSbStats.incrementCacheMisses();
+            }
+            if (wantMapNotifyBit && eidLispAddresses != null) {
+                sendMapNotifyMsg(inBuffer, sourceAddress, port, eidLispAddresses);
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
@@ -280,9 +287,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private void sendMapNotifyMsg(final ByteBuffer inBuffer, final InetAddress inetAddress, int portNumber,
-                                  List<EidLispAddress> cacheValue) {
+                                  List<EidLispAddress> eidLispAddresses) {
 
-        final String authKey = provideAuthenticateKey(cacheValue);
+        final String authKey = provideAuthenticateKey(eidLispAddresses);
         if (authKey != null) {
             ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
             outBuffer = calculateAndSetNewMAC(outBuffer, authKey);
@@ -307,8 +314,11 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 }
             }
         }
-        return firstAuthKey.getKeyString();
-
+        if (firstAuthKey != null) {
+            final String keyString = firstAuthKey.getKeyString();
+            return keyString == null ? "" : keyString;
+        }
+        return null;
     }
 
     /**

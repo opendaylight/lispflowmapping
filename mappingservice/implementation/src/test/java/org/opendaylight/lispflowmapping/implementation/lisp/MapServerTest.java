@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -44,7 +43,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -151,10 +149,8 @@ public class MapServerTest {
         setConfigIniMappingMergeField(false);
     }
 
-    @Ignore  /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
-        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_RECORD_1);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_1);
@@ -164,24 +160,18 @@ public class MapServerTest {
                 mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), false);
         Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
                 subscriberSetMock_1);
-        Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister).build(), null);
 
         // only 1 subscriber has timed out.
         assertEquals(1, subscriberSetMock_1.size());
     }
 
-    @Ignore  /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_MappingMergeTrue() throws NoSuchFieldException, IllegalAccessException {
         setConfigIniMappingMergeField(true);
 
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
                 .setMappingRecord(OLD_MAPPING_RECORD_1);
-        final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister)
-                .setMappingRecordItem(new ArrayList<>());
-        mapNotifyBuilder.getMappingRecordItem().add(mappingRecordItemBuilder.build());
 
-        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         // no mapping changes
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
                 .thenReturn(OLD_MAPPING_RECORD_1);
@@ -189,10 +179,8 @@ public class MapServerTest {
         mapServer.handleMapRegister(mapRegister);
         Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
                 mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), true);
-        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), null);
     }
 
-    @Ignore /* commented due to difference at authentication data*/
     @Test
     public void handleMapRegisterTest_verifyTransportAddresses() throws NoSuchFieldException, IllegalAccessException {
         setConfigIniMappingMergeField(true);
@@ -216,7 +204,6 @@ public class MapServerTest {
                 .setMappingRecord(getDefaultMappingRecordBuilder().build()).build());
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), transportAddressList);
     }
 
     @Test
@@ -290,6 +277,9 @@ public class MapServerTest {
         assertEquals(IPV4_SOURCE_EID_6, resultEid_3);
     }
 
+
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void mappingChangedTest_withDifferentEid() throws NoSuchFieldException, IllegalAccessException {
@@ -311,10 +301,10 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
+
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
 
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -337,11 +327,10 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
 
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void mappingChangedTest_withDifferentAction() throws NoSuchFieldException, IllegalAccessException {
@@ -363,10 +352,10 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
+
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
 
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -389,11 +378,10 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
 
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void mappingChangedTest_withDifferentMapVersion() throws NoSuchFieldException, IllegalAccessException {
@@ -416,11 +404,10 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
 
+//    TODO: after removing code for testing mapNotify message there is nothing for checking. It would be suitable
+//    to think about possibility to test something else from method
     @Test
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void mappingChangedTest_withNullMap() throws NoSuchFieldException, IllegalAccessException {
@@ -439,9 +426,6 @@ public class MapServerTest {
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(notifyHandler).handleMapNotify(Mockito.any(MapNotify.class), captor.capture());
-        // verify that a list of transport addresses has 2 values - happens only if mappingUpdated == true
-        assertEquals(2, captor.getValue().size());
     }
 
     private static MapRegisterBuilder getDefaultMapRegisterBuilder() {
