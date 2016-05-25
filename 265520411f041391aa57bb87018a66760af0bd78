@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_8959b05c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-25T04:17:54Z",
+      "side": 1,
+      "message": "shouldnt this be in SB.implementation now?",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 93
+      },
+      "revId": "265520411f041391aa57bb87018a66760af0bd78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_69541c21",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-05-25T04:17:54Z",
+      "side": 1,
+      "message": "The authenticationEnabled definition here is fine. However, this Variable was originally defined in LispMappingService and passed to MapServer.java as a constructor field. As part of removing authentication from the implementation bundle, we should remove this variable definition from LispMappingService.java, and from the MapServer.java constructor method.",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 0
+      },
+      "revId": "265520411f041391aa57bb87018a66760af0bd78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
