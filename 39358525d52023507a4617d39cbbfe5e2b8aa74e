@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_872197fd",
+        "filename": "features/src/main/features/features.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_6c8f0acd",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_8c941ee3",
         "filename": "mappingservice/southbound/pom.xml",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "Please move these up together with the rest of the mappingservice artifacts, in alphabetical order.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c77a6ff0",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_8c941ee3",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_476e5f30",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_a79f7bb3",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_47b01f43",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
         "patchSetId": 11
@@ -64,6 +118,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "Since we don\u0027t keep a reference of the cache here, why not instantiate it inside the handler class, keep it isolated there, and simplify the constructor? Also, I would prefer to use a setter for the dataBroker, like we do with the notificationProvider.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_2769ab25",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "reason was only for testing (to inject MapRegisterCache instance)\n\nI tried to simplified as you suggested.",
+      "parentUuid": "fa57193c_47b01f43",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_47dc9fe4",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_e7a973e0",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_07a7470d",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
         "patchSetId": 11
@@ -98,6 +188,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "This can be removed.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a7f2db6c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_07a7470d",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_07eaa774",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_876357db",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_675e0314",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
         "patchSetId": 11
@@ -132,6 +258,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "And we can remove this, since you rewrote most of it anyway :)",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_4703ff41",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": ":)",
+      "parentUuid": "fa57193c_675e0314",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_c796efef",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "probably incorrect copy paste",
+      "parentUuid": "fa57193c_47de5f6e",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_a7865b63",
         "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
         "patchSetId": 11
@@ -166,6 +328,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "We should keep the alignment here.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_07a10747",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_a7865b63",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e7a3334d",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_47977f90",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_8791979b",
         "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispXtrSouthboundHandlerTest.java",
         "patchSetId": 11
@@ -200,6 +398,24 @@
       "writtenOn": "2016-05-25T11:30:15Z",
       "side": 1,
       "message": "No longer needed.",
+      "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c29c1dc3",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispXtrSouthboundHandlerTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-05-25T13:59:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_8791979b",
       "revId": "39358525d52023507a4617d39cbbfe5e2b8aa74e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
