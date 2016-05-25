@@ -27,7 +27,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
@@ -249,7 +248,7 @@ public class LispXtrSouthboundHandlerTest {
                 .build();
 
         final EidItem eidItem = new EidItemBuilder()
-                .setEid(LispAddressUtil.toEid(new Ipv4Prefix(IPV4_STRING_2 + IPV4_STRING_PREFIX), null)).build();
+                .setEid(LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_2 + IPV4_STRING_PREFIX)).build();
 
         return new MapRequestBuilder()
                 .setItrRloc(Lists.newArrayList(itrRloc))
