@@ -51,6 +51,7 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -217,7 +218,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return option;
     }
 
-    @Test
+    @Test@Ignore
     public void testLispFlowMappingFeatureLoad() {
         Assert.assertTrue(true);
     }
@@ -357,7 +358,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterWithoutMapNotify();
     }
 
-    @Test
+    @Test@Ignore
     public void testLCAFs() throws Exception {
         //registerAndQuery__SrcDestLCAF();
         //registerAndQuery__SrcDestLCAFOverlap();
@@ -368,7 +369,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //registerAndQuery__SegmentLCAF();
     }
 
-    @Test
+    @Test@Ignore
     public void testMask() throws Exception {
         //testPasswordExactMatch();                     TODO commented because it needs NB
         //testPasswordMaskMatch();                      TODO commented because it needs NB
@@ -376,7 +377,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         eidPrefixLookupIPv6();
     }
 /*
-    @Test
+    @Test@Ignore
     public void testNorthbound() throws Exception {
         northboundAddKey();
         northboundAddMapping();
@@ -387,7 +388,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         northboundRetrieveSourceDestMapping();
     }
 */
-    @Test
+    @Test@Ignore
     public void testOverWriting() throws Exception {
         //testMapRegisterDosntOverwritesOtherSubKeys(); TODO weird failure, needs debug
 
@@ -397,20 +398,20 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // testMapRegisterDoesntOverwritesNoSubkey();
     }
 
-    @Test
+    @Test@Ignore
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         //mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();   TODO commented because it needs NB
     }
 
-//    @Test
+//    @Test@Ignore
 //    public void testNonProxy() throws Throwable {
 //        testSimpleNonProxy();
 //        testNonProxyOtherPort();
 //        testRecievingNonProxyOnXtrPort();
 //    }
 
-    @Test
+    @Test@Ignore
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
     }
@@ -419,7 +420,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     /**
      * TEST SCENARIO A
      */
-    @Test
+    @Test@Ignore
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
 
@@ -544,7 +545,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     /**
      * TEST SCENARIO B
      */
-    @Test
+    @Test@Ignore
     public void testMultiSiteScenarioB() throws IOException {
         cleanUP();
 
@@ -1545,7 +1546,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     // ------------------------------- LCAF Tests ---------------------------
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipPrefix = "10.20.30.200/32";
@@ -1581,7 +1582,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(macString, receivedMAC.getValue());
     }
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__SrcDestLCAFOverlap() throws SocketTimeoutException {
         cleanUP();
         String ipString1 = "10.10.10.0";
@@ -1624,7 +1625,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
     }
 
-    @Test
+    @Test@Ignore
     public void registerAndQuery__KeyValueLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipString = "10.20.30.200";
