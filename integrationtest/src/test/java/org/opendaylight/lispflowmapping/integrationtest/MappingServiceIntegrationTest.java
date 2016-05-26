@@ -2179,7 +2179,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         try {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
         } catch (SocketException e) {
-            e.printStackTrace();
+            LOG.error("Can't initize socket for {}", ourAddress, e);
             fail();
         }
         return socket;
