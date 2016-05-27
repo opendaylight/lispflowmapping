@@ -197,7 +197,7 @@ public final class LispAddressUtil {
                     InetAddresses.forString(address.getIpv4Address().getValue()).getAddress())).build();
         } else if (address.getIpv6Address() != null) {
             return (Address) new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(
-                    InetAddresses.forString(address.getIpv4Address().getValue()).getAddress())).build();
+                    InetAddresses.forString(address.getIpv6Address().getValue()).getAddress())).build();
         }
         return null;
     }
