@@ -169,8 +169,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public static final String YANG = "org.opendaylight.yangtools";
     private static final int MAX_NOTIFICATION_RETRYS = 20;
     private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
-    private static final MappingAuthkey AUTH_KEY =
-            new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build();
 
     @Override
     public String getModuleName() {
@@ -359,9 +357,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Test
     public void testLCAFs() throws Exception {
-        //registerAndQuery__SrcDestLCAF();
-        //registerAndQuery__SrcDestLCAFOverlap();
-        //registerAndQuery__KeyValueLCAF();
+        registerAndQuery__SrcDestLCAF();
+        registerAndQuery__SrcDestLCAFOverlap();
+        registerAndQuery__KeyValueLCAF();
         //registerAndQuery__ListLCAF();
         //registerAndQuery__ApplicationData();
         //registerAndQuery__TrafficEngineering();
@@ -415,11 +413,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         registerQueryRegisterWithSmr();
     }
 
+    @Test
+    public void testMultiSite() throws Exception {
+        testMultiSiteScenarioA();
+        testMultiSiteScenarioB();
+    }
 
     /**
      * TEST SCENARIO A
      */
-    @Test
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
 
@@ -544,7 +546,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     /**
      * TEST SCENARIO B
      */
-    @Test
     public void testMultiSiteScenarioB() throws IOException {
         cleanUP();
 
@@ -1545,7 +1546,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     // ------------------------------- LCAF Tests ---------------------------
 
-    @Test
     public void registerAndQuery__SrcDestLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipPrefix = "10.20.30.200/32";
@@ -1581,7 +1581,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(macString, receivedMAC.getValue());
     }
 
-    @Test
     public void registerAndQuery__SrcDestLCAFOverlap() throws SocketTimeoutException {
         cleanUP();
         String ipString1 = "10.10.10.0";
@@ -1624,7 +1623,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
     }
 
-    @Test
     public void registerAndQuery__KeyValueLCAF() throws SocketTimeoutException {
         cleanUP();
         String ipString = "10.20.30.200";
