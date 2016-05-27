@@ -38,6 +38,7 @@ public class LfmMappingServiceSbModule extends org.opendaylight.controller.confi
         sbPlugin.setRpcRegistryDependency(getRpcRegistryDependency());
         sbPlugin.setDataBroker(getDataBrokerDependency());
         sbPlugin.setLispAddress(getBindAddress());
+        sbPlugin.setMapRegisterCacheEnabled(getMapRegisterCache());
         sbPlugin.init();
 
         return sbPlugin;
