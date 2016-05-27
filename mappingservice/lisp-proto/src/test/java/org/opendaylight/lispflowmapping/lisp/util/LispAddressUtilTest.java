@@ -67,9 +67,25 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv6BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -93,14 +109,27 @@ public class LispAddressUtilTest {
     private static final short MASK_OK_DEFAULT_IPV4_TEST = 32;
     private static final short MASK_OK_DEFAULT_IPV6_TEST = 128;
 
+    private static final Long AS_NUMBER_TEST = 100L;
+    private static final Long INSTANCE_ID_TYPE_VALUE_TEST = 121L;
+    private static final Short INSTANCE_ID_TYPE_VALUE_SHORT_TEST = 122;
+    private static final InstanceIdType INSTANCE_ID_TYPE_TEST = new InstanceIdType(INSTANCE_ID_TYPE_VALUE_TEST);
+    private static final String INCORRECT_IP_ADDRESS_TEST = "incorrect ip address";
+
     private static final String IPV4_ADDRESS_VALUE_TEST = "192.168.1.1";
     private static final String IPV4_ADDRESS_PREFIX_VALUE_TEST = IPV4_ADDRESS_VALUE_TEST + "/" + MASK_OK_TEST;
     private static final Ipv4Address IPV4_ADDRESS_TEST = new Ipv4Address(IPV4_ADDRESS_VALUE_TEST);
     private static final Ipv4AddressBinary IPV4_ADDRESS_BINARY_TEST = new Ipv4AddressBinary(IPV4_ADDRESS_BYTES_A_TEST);
+    private static final Ipv4Binary IPV4_BINARY = new Ipv4BinaryBuilder()
+            .setIpv4Binary(IPV4_ADDRESS_BINARY_TEST).build();
     private static final IpAddress IP_ADDRESS_OBJECT_WITH_IPV4_TEST = new IpAddress(IPV4_ADDRESS_TEST);
     private static final Ipv4Prefix IPV4_ADDRESS_PREFIX_TEST = new Ipv4Prefix(IPV4_ADDRESS_PREFIX_VALUE_TEST);
+    private static final Ipv4PrefixBinary IPV4_ADDRESS_PREFIX_BINARY = new Ipv4PrefixBinaryBuilder()
+            .setIpv4AddressBinary(new Ipv4AddressBinary(IPV4_ADDRESS_BYTES_A_TEST))
+            .setIpv4MaskLength(MASK_OK_TEST).build();
     private static final IpPrefix IP_ADDRESS_PREFIX_WITH_IPV4_TEST = new IpPrefix(IPV4_ADDRESS_PREFIX_TEST);
-
+    private static final Eid IPV4_ADDRESS_PREFIX_BINARY_EID = new EidBuilder()
+            .setAddress(IPV4_ADDRESS_PREFIX_BINARY)
+            .setVirtualNetworkId(INSTANCE_ID_TYPE_TEST).build();
 
     private static final byte[] IPV6_ADDRESS_BYTES_A_TEST = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
             15, 16};
@@ -111,8 +140,16 @@ public class LispAddressUtilTest {
     private static final Ipv6Prefix IPV6_ADDRESS_PREFIX_TEST = new Ipv6Prefix(IPV6_ADDRESS_PREFIX_VALUE_TEST);
     private static final Ipv6Address IPV6_ADDRESS_TEST = new Ipv6Address(IPV6_ADDRESS_VALUE_TEST);
     private static final Ipv6AddressBinary IPV6_ADDRESS_BINARY_TEST = new Ipv6AddressBinary(IPV6_ADDRESS_BYTES_A_TEST);
+    private static final Ipv6Binary IPV6_BINARY = new Ipv6BinaryBuilder()
+            .setIpv6Binary(IPV6_ADDRESS_BINARY_TEST).build();
     private static final IpPrefix IP_ADDRESS_PREFIX_WITH_IPV6_TEST = new IpPrefix(IPV6_ADDRESS_PREFIX_TEST);
     private static final IpAddress IP_ADDRESS_OBJECT_WITH_IPV6_TEST = new IpAddress(IPV6_ADDRESS_TEST);
+    private static final Ipv6PrefixBinary IPV6_ADDRESS_PREFIX_BINARY = new Ipv6PrefixBinaryBuilder()
+            .setIpv6AddressBinary(new Ipv6AddressBinary(IPV6_ADDRESS_BYTES_A_TEST))
+            .setIpv6MaskLength(MASK_OK_TEST).build();
+    private static final Eid IPV6_ADDRESS_PREFIX_BINARY_EID = new EidBuilder()
+            .setAddress(IPV6_ADDRESS_PREFIX_BINARY)
+            .setVirtualNetworkId(INSTANCE_ID_TYPE_TEST).build();
 
     private static final Short SERVICE_INDEX_TEST = 45;
     private static final Long DUMMY_SERVICE_PATH_ID_TYPE = 46L;
@@ -120,12 +157,6 @@ public class LispAddressUtilTest {
     private static final String DISTINGUISHED_NAME_TYPE_VALUE_WITH_MAC_TEST = MAC_ADDRESS_VALUE_TEST;
     private static final DistinguishedNameType DISTINGUISHED_NAME_TYPE_TEST = new DistinguishedNameType
             (DISTINGUISHED_NAME_TYPE_VALUE_TEST);
-
-    private static final Long AS_NUMBER_TEST = 100L;
-    private static final Long INSTANCE_ID_TYPE_VALUE_TEST = 121L;
-    private static final Short INSTANCE_ID_TYPE_VALUE_SHORT_TEST = 122;
-    private static final InstanceIdType INSTANCE_ID_TYPE_TEST = new InstanceIdType(INSTANCE_ID_TYPE_VALUE_TEST);
-    private static final String INCORRECT_IP_ADDRESS_TEST = "incorrect ip address";
 
     private static final SimpleAddress SIMPLE_ADDRESS_A_TEST = new SimpleAddress(IP_ADDRESS_OBJECT_WITH_IPV4_TEST);
     private static final SimpleAddress SIMPLE_ADDRESS_B_TEST = new SimpleAddress(MAC_ADDRESS_TEST);
@@ -299,6 +330,52 @@ public class LispAddressUtilTest {
         assertNull(addressClass);
 
         final Address address = LispAddressUtil.addressFromIpAddress(null);
+        assertNull(address);
+    }
+
+    /**
+     * Tests {@link LispAddressUtil#binaryAddressFromIpAddress(IpAddress)} and {@link
+     * LispAddressUtil#binaryAddressTypeFromIpAddress(IpAddress)}
+     * methods with Ipv4Binary address.
+     */
+    @Test
+    public void binaryAddressFromIpAddress_Ipv4Binary() {
+        final IpAddress ipv4Address = new IpAddress(new Ipv4Address(IPV4_ADDRESS_VALUE_TEST));
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil
+                .binaryAddressTypeFromIpAddress(ipv4Address);
+        assertEquals(Ipv4BinaryAfi.class, addressClass);
+
+        final Address address = LispAddressUtil.binaryAddressFromIpAddress(ipv4Address);
+        assertEquals(IPV4_BINARY, address);
+    }
+
+    /**
+     * Tests {@link LispAddressUtil#binaryAddressFromIpAddress(IpAddress)} and {@link
+     * LispAddressUtil#binaryAddressTypeFromIpAddress(IpAddress)}
+     * methods with Ipv6Binary address.
+     */
+    @Test(expected = NullPointerException.class)
+    public void binaryAddressFromIpAddress_Ipv6Binary() {
+        final IpAddress ipv6Address = new IpAddress(new Ipv6Address(IPV6_ADDRESS_VALUE_TEST));
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil
+                .binaryAddressTypeFromIpAddress(ipv6Address);
+        assertEquals(Ipv6BinaryAfi.class, addressClass);
+
+        final Address address = LispAddressUtil.binaryAddressFromIpAddress(ipv6Address);
+        assertEquals(IPV6_BINARY, address);
+    }
+
+    /**
+     * Tests {@link LispAddressUtil#binaryAddressFromIpAddress(IpAddress)} and {@link
+     * LispAddressUtil#binaryAddressTypeFromIpAddress(IpAddress)}
+     * methods with Ipv6Binary address.
+     */
+    @Test
+    public void binaryAddressFromIpAddress_null() {
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.binaryAddressTypeFromIpAddress(null);
+        assertNull(addressClass);
+
+        final Address address = LispAddressUtil.binaryAddressFromIpAddress(null);
         assertNull(address);
     }
 
@@ -573,6 +650,56 @@ public class LispAddressUtilTest {
         eidFromIpv4Prefix  = LispAddressUtil.asIpv4PrefixEid(IPV4_ADDRESS_TEST, INSTANCE_ID_TYPE_TEST);
     }
 
+    /**
+     * Test
+     * - {@link LispAddressUtil#toEid(Ipv4PrefixBinary, InstanceIdType)}
+     * - {@link LispAddressUtil#asIpv4PrefixBinaryEid(String)}
+     * - {@link LispAddressUtil#asIpv4PrefixBinaryEid(String, InstanceIdType)}
+     * - {@link LispAddressUtil#asIpv4PrefixBinaryEid(Eid, byte[], short)}
+     * methods.
+     */
+    @Test
+    public void toEid_ipv4PrefixBinary() {
+        Eid eidFromIpv4PrefixBinary = LispAddressUtil.toEid(IPV4_ADDRESS_PREFIX_BINARY, INSTANCE_ID_TYPE_TEST);
+        verifyToEidWithIpv4PrefixBinary(eidFromIpv4PrefixBinary, true, MASK_OK_TEST, Ipv4PrefixBinaryAfi.class);
+
+        eidFromIpv4PrefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_ADDRESS_PREFIX_VALUE_TEST);
+        verifyToEidWithIpv4PrefixBinary(eidFromIpv4PrefixBinary, false, MASK_OK_TEST, Ipv4PrefixBinaryAfi.class);
+
+        eidFromIpv4PrefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_ADDRESS_PREFIX_VALUE_TEST,
+                INSTANCE_ID_TYPE_TEST);
+        verifyToEidWithIpv4PrefixBinary(eidFromIpv4PrefixBinary, true, MASK_OK_TEST, Ipv4PrefixBinaryAfi.class);
+
+        eidFromIpv4PrefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_ADDRESS_PREFIX_BINARY_EID,
+                IPV4_ADDRESS_BYTES_A_TEST, MASK_OK_TEST);
+        verifyToEidWithIpv4PrefixBinary(eidFromIpv4PrefixBinary, true, MASK_OK_TEST, Ipv4PrefixBinaryAfi.class);
+    }
+
+    /**
+     * Test
+     * - {@link LispAddressUtil#toEid(Ipv6PrefixBinary, InstanceIdType)}
+     * - {@link LispAddressUtil#asIpv6PrefixBinaryEid(String)}
+     * - {@link LispAddressUtil#asIpv6PrefixBinaryEid(String, InstanceIdType)}
+     * - {@link LispAddressUtil#asIpv6PrefixBinaryEid(Eid, byte[], short)}
+     * method.
+     */
+    @Test
+    public void toEid_ipv6PrefixBinary() {
+        Eid eidFromIpv6PrefixBinary = LispAddressUtil.toEid(IPV6_ADDRESS_PREFIX_BINARY, INSTANCE_ID_TYPE_TEST);
+        verifyToEidWithIpv6PrefixBinary(eidFromIpv6PrefixBinary, true, MASK_OK_TEST, Ipv6PrefixBinaryAfi.class);
+
+        eidFromIpv6PrefixBinary = LispAddressUtil.asIpv6PrefixBinaryEid(IPV6_ADDRESS_PREFIX_VALUE_TEST);
+        verifyToEidWithIpv6PrefixBinary(eidFromIpv6PrefixBinary, false, MASK_OK_TEST, Ipv6PrefixBinaryAfi.class);
+
+        eidFromIpv6PrefixBinary = LispAddressUtil.asIpv6PrefixBinaryEid(IPV6_ADDRESS_PREFIX_VALUE_TEST,
+                INSTANCE_ID_TYPE_TEST);
+        verifyToEidWithIpv6PrefixBinary(eidFromIpv6PrefixBinary, true, MASK_OK_TEST, Ipv6PrefixBinaryAfi.class);
+
+        eidFromIpv6PrefixBinary = LispAddressUtil.asIpv6PrefixBinaryEid(IPV6_ADDRESS_PREFIX_BINARY_EID,
+                IPV6_ADDRESS_BYTES_A_TEST, MASK_OK_TEST);
+        verifyToEidWithIpv6PrefixBinary(eidFromIpv6PrefixBinary, true, MASK_OK_TEST, Ipv6PrefixBinaryAfi.class);
+    }
+
     public Eid provideDummyMacEid() {
         final EidBuilder eidBuilder = new EidBuilder();
         eidBuilder.setAddressType(MacAfi.class);
@@ -646,6 +773,19 @@ public class LispAddressUtilTest {
                 .getAddress()).getIpv6Prefix().getValue());
     }
 
+    private void verifyToEidWithIpv6PrefixBinary(final Eid eidFromIpv6PrefixBinary, final boolean isVniChecked, short
+            expectedMask, final Class<? extends org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp
+            .address.types.rev151105.LispAddressFamily> addressType) {
+        assertEquals(addressType, eidFromIpv6PrefixBinary.getAddressType());
+        if (isVniChecked) {
+            assertEquals(INSTANCE_ID_TYPE_TEST, eidFromIpv6PrefixBinary.getVirtualNetworkId());
+        }
+        assertArrayEquals(IPV6_ADDRESS_BYTES_A_TEST, ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary
+                .getAddress()).getIpv6AddressBinary().getValue());
+        assertEquals(expectedMask,
+                (short) ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary.getAddress()).getIpv6MaskLength());
+    }
+
     private void verifyToEidWithIpv4(final Eid eidFromIpv4, final boolean isVniChecked) {
         assertEquals(Ipv4Afi.class, eidFromIpv4.getAddressType());
         if (isVniChecked) {
@@ -682,6 +822,19 @@ public class LispAddressUtilTest {
                 .yang.ietf
                 .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) eidFromIpv4Prefix.getAddress())
                 .getIpv4Prefix().getValue());
+    }
+
+    private void verifyToEidWithIpv4PrefixBinary(final Eid eidFromIpv4PrefixBinary, final boolean isVniChecked, short
+            expectedMask, Class<? extends org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address
+            .types.rev151105.LispAddressFamily>  addressType) {
+        assertEquals(addressType, eidFromIpv4PrefixBinary.getAddressType());
+        if (isVniChecked) {
+            assertEquals(INSTANCE_ID_TYPE_TEST, eidFromIpv4PrefixBinary.getVirtualNetworkId());
+        }
+        assertArrayEquals(IPV4_ADDRESS_BYTES_A_TEST,
+                ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4AddressBinary().getValue());
+        assertEquals(expectedMask,
+                (short) ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4MaskLength());
     }
 
     private void verifyToEidWithIpv6Binary(final Eid eidFromIpv6, final boolean isVniChecked) {
@@ -963,6 +1116,26 @@ public class LispAddressUtilTest {
     }
 
     /**
+     * Tests {@link LispAddressUtil#ipAddressToByteArray(Address)} method with ipv4Binary value.
+     */
+    @Test
+    public void ipAddressToByteArray_ipv4Binary() {
+        final Ipv4Binary expectedIpv4 = new Ipv4BinaryBuilder().setIpv4Binary(IPV4_ADDRESS_BINARY_TEST).build();
+        final byte[] testedAddress = LispAddressUtil.ipAddressToByteArray(expectedIpv4);
+        assertArrayEquals(IPV4_ADDRESS_BYTES_A_TEST, testedAddress);
+    }
+
+    /**
+     * Tests {@link LispAddressUtil#ipAddressToByteArray(Address)} method with ipv6Binary value.
+     */
+    @Test
+    public void ipAddressToByteArray_ipv6Binary() {
+        final Ipv6Binary expectedIpv6 = new Ipv6BinaryBuilder().setIpv6Binary(IPV6_ADDRESS_BINARY_TEST).build();
+        final byte[] testedAddress = LispAddressUtil.ipAddressToByteArray(expectedIpv6);
+        assertArrayEquals(IPV6_ADDRESS_BYTES_A_TEST, testedAddress);
+    }
+
+    /**
      * Tests {@link LispAddressUtil#ipAddressToByteArray(Address)} method with mac value.
      */
     @Test
@@ -1007,6 +1180,10 @@ public class LispAddressUtilTest {
 
         comparisonResult = LispAddressUtil.compareIpAddressByteArrays(IPV6_ADDRESS_BYTES_B_TEST,
                 IPV6_ADDRESS_BYTES_B_TEST);
+        assertEquals(0, comparisonResult);
+
+        comparisonResult = LispAddressUtil.compareIpAddressByteArrays(new byte[]{1, 2, 3, 4, 5},
+                new byte[]{1, 2, 3, 4, 5});
         assertEquals(0, comparisonResult);
 
     }
