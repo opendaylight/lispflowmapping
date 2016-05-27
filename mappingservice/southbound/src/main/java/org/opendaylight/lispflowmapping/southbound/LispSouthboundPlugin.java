@@ -56,6 +56,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private volatile String bindingAddress = "0.0.0.0";
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
+    private boolean mapRegisterCacheEnabled = true;
     private RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private NioDatagramChannel xtrChannel;
     private LispSouthboundStats statistics = new LispSouthboundStats();
@@ -76,6 +77,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
+            lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
             lispSouthboundHandler.init();
 
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
@@ -257,6 +259,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     public void setDataBroker(final DataBroker dataBroker) {
         this.dataBroker = dataBroker;
+    }
+
+    public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
+        this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
+        if (mapRegisterCacheEnabled) {
+            LOG.debug("Enabling Map-Register cache");
+        } else {
+            LOG.debug("Disabling Map-Register cache");
+        }
     }
 
     @Override
