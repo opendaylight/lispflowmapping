@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+  ~
+  ~ This program and the accompanying materials are made available under the
+  ~ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+  ~ and is available at http://www.eclipse.org/legal/epl-v10.html
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -8,9 +16,9 @@
     <version>1.4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>mappingservice.implementation</artifactId>
+  <artifactId>mappingservice.dsbackend</artifactId>
   <packaging>bundle</packaging>
-  <name>Mapping Service Implementation</name>
+  <name>Mapping Service datastore backend</name>
 
   <dependencies>
     <dependency>
@@ -19,24 +27,30 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.dsbackend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.mapcache</artifactId>
     </dependency>
     <!--<dependency>-->
       <!--<groupId>${project.groupId}</groupId>-->
-      <!--<artifactId>mappingservice-parent</artifactId>-->
+      <!--<artifactId>mappingservice.mapcache</artifactId>-->
     <!--</dependency>-->
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>common.unittest.tools</artifactId>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>${project.groupId}</groupId>-->
+      <!--<artifactId>common.unittest.tools</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>junit-addons</groupId>-->
+      <!--<artifactId>junit-addons</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.opendaylight.lispflowmapping</groupId>-->
+      <!--<artifactId>mappingservice.inmemorydb</artifactId>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--&lt;!&ndash; needed for osgi console &ndash;&gt;-->
+    <!--<dependency>-->
+      <!--<groupId>org.eclipse.tycho</groupId>-->
+      <!--<artifactId>org.eclipse.osgi</artifactId>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>junit-addons</groupId>
       <artifactId>junit-addons</artifactId>
@@ -51,16 +65,7 @@
       <artifactId>powermock-module-junit4</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
-      <artifactId>mappingservice.inmemorydb</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- needed for osgi console -->
-    <dependency>
-      <groupId>org.eclipse.tycho</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
-    </dependency>
+
   </dependencies>
 
   <!--

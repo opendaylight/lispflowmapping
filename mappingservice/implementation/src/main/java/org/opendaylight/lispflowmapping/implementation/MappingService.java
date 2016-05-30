@@ -17,8 +17,8 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
-import org.opendaylight.lispflowmapping.implementation.mdsal.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
@@ -80,7 +80,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private static final String DATA_EXISTS_TAG = "data-exists";
 
     private MappingSystem mappingSystem;
-    private DataStoreBackEnd dsbe;
+    private IDataStoreBackEnd dsbe;
     private RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
@@ -137,7 +137,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         bindingAwareBroker.registerProvider(this);
 
         mappingServiceRpc = rpcRegistry.addRpcImplementation(OdlMappingserviceService.class, this);
-        dsbe = new DataStoreBackEnd(dataBroker);
 
         mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, overwritePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
@@ -453,5 +452,10 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public void cleanCachedMappings() {
         mappingSystem.cleanCaches();
         dsbe.removeAllDatastoreContent();
+    }
+
+    @Override
+    public void setDataStoreBackEnd(IDataStoreBackEnd dsbe) {
+        this.dsbe = dsbe;
     }
 }

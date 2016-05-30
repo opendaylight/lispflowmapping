@@ -19,6 +19,7 @@
     <module>lisp-proto</module>
     <module>api</module>
     <module>inmemorydb</module>
+    <module>dsbackend</module>
     <module>mapcache</module>
     <module>implementation</module>
     <module>southbound</module>

@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
+import org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -191,4 +192,10 @@ public interface IMappingService {
      * Cleans all cached mappings.Used for testing.
      */
     void cleanCachedMappings();
+
+    /**
+     * Sets Datastore Backend
+     * @param dsbe
+     */
+    void setDataStoreBackEnd(IDataStoreBackEnd dsbe);
 }
