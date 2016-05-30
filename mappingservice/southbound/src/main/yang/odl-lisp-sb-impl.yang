@@ -64,6 +64,11 @@ module odl-lisp-sb-impl {
                 mandatory true;
             }
 
+            leaf map-register-cache {
+                type boolean;
+                mandatory true;
+            }
+
         }
     }
 }
