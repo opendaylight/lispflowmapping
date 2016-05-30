@@ -94,8 +94,18 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6BinaryBuilder;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
+        .address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 
@@ -146,6 +156,18 @@ public class LispAddressStringifierTest {
             .lisp.address.address.Ipv6Prefix IPV6_PREFIX = new Ipv6PrefixBuilder()
             .setIpv6Prefix(new Ipv6Prefix(IPV6_STRING + PREFIX)).build();
     private static final LispAddress LISP_IPV6_PREFIX = new EidBuilder().setAddress(IPV6_PREFIX).build();
+
+    // Ipv4PrefixBinary
+    private static final Ipv4PrefixBinary IPV4_PREFIX_BINARY = new Ipv4PrefixBinaryBuilder()
+            .setIpv4AddressBinary(IPV4_ADDRESS_BINARY)
+            .setIpv4MaskLength((short) 24).build();
+    private static final LispAddress LISP_IPV4_PREFIX_BINARY = new EidBuilder().setAddress(IPV4_PREFIX_BINARY).build();
+
+    // Ipv6PrefixBinary
+    private static final Ipv6PrefixBinary IPV6_PREFIX_BINARY = new Ipv6PrefixBinaryBuilder()
+            .setIpv6AddressBinary(IPV6_ADDRESS_BINARY)
+            .setIpv6MaskLength((short) 24).build();
+    private static final LispAddress LISP_IPV6_PREFIX_BINARY = new EidBuilder().setAddress(IPV6_PREFIX_BINARY).build();
 
     // Mac
     private static final MacAddress MAC_ADDRESS = new MacAddress("01:23:45:67:89:ab");
@@ -312,6 +334,14 @@ public class LispAddressStringifierTest {
     }
 
     /**
+     * Tests {@link LispAddressStringifier#getString} with Ipv4PrefixBinary address type.
+     */
+    @Test
+    public void getStringTest_withIpv4PrefixBinary() {
+        assertEquals(IPV4_STRING + PREFIX, LispAddressStringifier.getString(LISP_IPV4_PREFIX_BINARY));
+    }
+
+    /**
      * Tests {@link LispAddressStringifier#getString} with Ipv6 address type.
      */
     @Test
@@ -333,6 +363,14 @@ public class LispAddressStringifierTest {
     @Test
     public void getStringTest_withIpv6Prefix() {
         assertEquals(IPV6_STRING + PREFIX, LispAddressStringifier.getString(LISP_IPV6_PREFIX));
+    }
+
+    /**
+     * Tests {@link LispAddressStringifier#getString} with Ipv6PrefixBinary address type.
+     */
+    @Test
+    public void getStringTest_withIpv6PrefixBinary() {
+        assertEquals(IPV6_STRING + PREFIX, LispAddressStringifier.getString(LISP_IPV6_PREFIX_BINARY));
     }
 
     /**
