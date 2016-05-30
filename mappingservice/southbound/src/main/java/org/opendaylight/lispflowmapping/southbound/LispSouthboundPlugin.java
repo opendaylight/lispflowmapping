@@ -79,6 +79,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
             lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
             lispSouthboundHandler.init();
+            lispSouthboundHandler.restoreDaoFromDatastore();
 
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispXtrSouthboundHandler.setNotificationProvider(this.notificationPublishService);
