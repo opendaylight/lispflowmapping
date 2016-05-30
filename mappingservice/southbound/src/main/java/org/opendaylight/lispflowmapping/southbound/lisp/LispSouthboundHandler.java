@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.southbound.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
@@ -65,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
@@ -94,6 +96,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private LispSouthboundStats lispSbStats = null;
     private SimpleMapCache smc;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
+    private DataStoreBackEnd dsbe;
 
     public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
@@ -492,9 +495,27 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
     }
 
+    /**
+    * Restore all keys from MDSAL datastore
+    */
+   public void restoreDaoFromDatastore() {
+       final List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
+       LOG.info("Restoring {} keys from datastore into southbound DAO", authKeys.size());
+
+       for (AuthenticationKey authKey : authKeys) {
+           final Eid key = authKey.getEid();
+           final MappingAuthkey mappingAuthkey = authKey.getMappingAuthkey();
+           LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
+                   mappingAuthkey.getKeyType(),
+                   LispAddressStringifier.getString(key));
+           smc.addAuthenticationKey(key, mappingAuthkey);
+       }
+    }
+
     public void init() {
         Preconditions.checkNotNull(dataBroker);
         Preconditions.checkNotNull(smc);
         this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, smc);
+        dsbe = new DataStoreBackEnd(dataBroker);
     }
 }
