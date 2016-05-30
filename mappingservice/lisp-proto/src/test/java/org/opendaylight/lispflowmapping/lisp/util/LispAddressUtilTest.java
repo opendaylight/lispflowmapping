@@ -354,7 +354,7 @@ public class LispAddressUtilTest {
      * LispAddressUtil#binaryAddressTypeFromIpAddress(IpAddress)}
      * methods with Ipv6Binary address.
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void binaryAddressFromIpAddress_Ipv6Binary() {
         final IpAddress ipv6Address = new IpAddress(new Ipv6Address(IPV6_ADDRESS_VALUE_TEST));
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil
