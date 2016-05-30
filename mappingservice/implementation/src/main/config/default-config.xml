@@ -4,6 +4,7 @@
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice:impl?module=odl-mappingservice-impl&amp;revision=2015-09-06</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-shell:impl?module=odl-mappingservice-shell-impl&amp;revision=2015-09-25</capability>
         <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=odl-mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
+        <capability>lfm:mappingservice:ds:backend?module=ds-backend-impl&amp;revision=2016-05-30</capability>
     </required-capabilities>
     <configuration>
         <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -15,6 +16,11 @@
                         <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-rpc-registry</type>
                         <name>binding-rpc-broker</name>
                     </rpc-registry>
+                    <dsbackend>
+                        <type xmlns:bck="lfm:mappingservice:ds:backend">bck:ds-backend-service</type>
+                        <!-- reference to default.config.xml instance/name in dsbackend bundle -->
+                        <name>ds-backend-service</name>
+                    </dsbackend>
                     <data-broker>
                         <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">binding:binding-async-data-broker</type>
                         <name>pingpong-binding-data-broker</name>

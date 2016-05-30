@@ -10,6 +10,7 @@ module odl-mappingservice-impl {
     import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
     import odl-mappingservice { prefix mappingservice; revision-date 2015-09-06; }
     import odl-mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
+    import ds-backend-impl { prefix dsbck; revision-date 2016-05-30; }
 
     description
         "This module contains the base YANG definitions for
@@ -44,6 +45,14 @@ module odl-mappingservice-impl {
                     refine type {
                         mandatory true;
                         config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }
+            container dsbackend {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity dsbck:ds-backend-service;
                     }
                 }
             }
