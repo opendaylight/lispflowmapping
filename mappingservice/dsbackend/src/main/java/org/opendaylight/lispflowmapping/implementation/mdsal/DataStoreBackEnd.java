@@ -18,8 +18,7 @@ import org.opendaylight.controller.md.sal.common.api.data.AsyncTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
-import org.opendaylight.lispflowmapping.implementation.util.InstanceIdentifierUtil;
+import org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
@@ -44,7 +43,7 @@ import com.google.common.util.concurrent.Futures;
  * @author Lorand Jakab
  *
  */
-public class DataStoreBackEnd implements TransactionChainListener {
+public class DataStoreBackEnd implements IDataStoreBackEnd {
     protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
     private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
             InstanceIdentifier.create(MappingDatabase.class);
@@ -54,6 +53,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         this.txChain = broker.createTransactionChain(this);
     }
 
+    @Override
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Adding authentication key '{}' for {}",
@@ -67,6 +67,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Adding authentication key to MD-SAL datastore failed");
     }
 
+    @Override
     public void addMapping(Mapping mapping) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Adding mapping for {}",
@@ -80,6 +81,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     // This method assumes that it is only called for southbound originated Map-Registers
+    @Override
     public void addXtrIdMapping(XtrIdMapping mapping) {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
         Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
@@ -95,6 +97,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Adding xTR-ID mapping to MD-SAL datastore failed");
     }
 
+    @Override
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Removing authentication key for {}",
@@ -107,6 +110,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Deleting authentication key from MD-SAL datastore failed");
     }
 
+    @Override
     public void removeMapping(Mapping mapping) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Removing mapping for {}",
@@ -118,6 +122,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from MD-SAL datastore failed");
     }
 
+    @Override
     public void removeXtrIdMapping(XtrIdMapping mapping) {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
         Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
@@ -133,22 +138,26 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Deleting xTR-ID mapping from MD-SAL datastore failed");
     }
 
+    @Override
     public void removeAllDatastoreContent() {
         LOG.debug("MD-SAL: Removing all mapping database datastore content (mappings and keys)");
         removeAllConfigDatastoreContent();
         removeAllOperationalDatastoreContent();
     }
 
+    @Override
     public void removeAllConfigDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION,
                 "Removal of all database content in config datastore failed");
     }
 
+    @Override
     public void removeAllOperationalDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.OPERATIONAL,
                 "Removal of all database content in operational datastore failed");
     }
 
+    @Override
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Updating authentication key for {} with '{}'",
@@ -162,6 +171,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Updating authentication key in MD-SAL datastore failed");
     }
 
+    @Override
     public void updateMapping(Mapping mapping) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Updating mapping for {}",
@@ -174,12 +184,14 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 "Updating mapping in MD-SAL datastore failed");
     }
 
+    @Override
     public List<Mapping> getAllMappings() {
         List<Mapping> mappings = getAllMappings(LogicalDatastoreType.CONFIGURATION);
         mappings.addAll(getAllMappings(LogicalDatastoreType.OPERATIONAL));
         return mappings;
     }
 
+    @Override
     public List<Mapping> getAllMappings(LogicalDatastoreType logicalDataStore) {
         LOG.debug("MD-SAL: Get all mappings from datastore");
         List<Mapping> mappings = new ArrayList<Mapping>();
@@ -197,6 +209,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         return mappings;
     }
 
+    @Override
     public List<AuthenticationKey> getAllAuthenticationKeys() {
         LOG.debug("MD-SAL: Get all authentication keys from datastore");
         List<AuthenticationKey> authKeys = new ArrayList<AuthenticationKey>();
@@ -278,5 +291,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     @Override
     public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
+    }
+
+    @Override
+    public void close() throws Exception {
+
     }
 }

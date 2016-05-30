@@ -1,0 +1,46 @@
+module ds-backend-impl {
+
+    yang-version 1;
+    namespace "lfm:mappingservice:ds:backend";
+    prefix "ds-backend";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+
+    description
+        "This module contains the base YANG definitions for DS backend";
+
+    revision "2016-05-30" {
+        description
+            "Initial revision.";
+    }
+
+    identity ds-backend-service {
+        base config:service-type;
+        config:java-class "org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd";
+    }
+
+    // This is the definition of the data store backend implementation as a module identity
+    identity ds-backend-impl {
+        base config:module-type;
+        config:java-name-prefix DataStoreBackend;
+        config:provided-service ds-backend-service;
+    }
+
+    // Augments the 'configuration' choice node under modules/module.
+    augment "/config:modules/config:module/config:configuration" {
+        case mappingservice-impl {
+            when "/config:modules/config:module/config:type = 'ds-backend-impl'";
+
+            //wires in the data-broker service
+            container data-broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }
+        }
+    }
+}
