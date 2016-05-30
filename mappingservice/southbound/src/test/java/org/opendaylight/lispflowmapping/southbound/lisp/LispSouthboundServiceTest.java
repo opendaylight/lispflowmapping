@@ -44,6 +44,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -158,6 +159,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         testedLispService.setMapRegisterCache(mapRegisterCache);
         testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
         testedLispService.setSimpleMapCache(smc);
+        testedLispService.setDataStoreBackend(Mockito.mock(IDataStoreBackEnd.class));
         testedLispService.init();
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);

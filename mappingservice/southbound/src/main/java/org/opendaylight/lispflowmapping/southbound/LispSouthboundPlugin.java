@@ -33,6 +33,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.lispflowmapping.interfaces.dao.IDataStoreBackEnd;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -65,6 +66,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
     private DataBroker dataBroker;
+    private IDataStoreBackEnd dsbe;
 
 
     public void init() {
@@ -76,6 +78,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         synchronized (startLock) {
             lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
+            lispSouthboundHandler.setDataStoreBackend(dsbe);
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
             lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
             lispSouthboundHandler.init();
@@ -276,5 +279,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         sbRpcRegistration.close();
         lispSouthboundHandler.close();
         unloadActions();
+    }
+
+    public void setDsbe(IDataStoreBackEnd dsbe) {
+        this.dsbe = dsbe;
     }
 }
