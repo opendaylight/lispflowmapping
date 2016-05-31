@@ -246,7 +246,7 @@ module ietf-lisp-address-types {
         "Various LISP address types, including IP, MAC, and LCAF.";
   
       leaf no-address {
-        when "../../address-type = 'laddr:no-addr-afi'" {
+        when "../address-type = 'laddr:no-addr-afi'" {
           description
             "When AFI is 0.";
         }
@@ -255,7 +255,7 @@ module ietf-lisp-address-types {
           "No address.";
       }
       leaf ipv4 {
-        when "../../address-type = 'laddr:ipv4-afi'" {
+        when "../address-type = 'laddr:ipv4-afi'" {
           description
             "When AFI is IPv4.";
         }
@@ -264,7 +264,7 @@ module ietf-lisp-address-types {
           "IPv4 address.";
       }
       leaf ipv4-prefix {
-        when "../../address-type = 'laddr:ipv4-prefix-afi'" {
+        when "../address-type = 'laddr:ipv4-prefix-afi'" {
           description
             "When AFI is IPv4.";
         }
@@ -273,7 +273,7 @@ module ietf-lisp-address-types {
           "IPv4 prefix.";
       }
       leaf ipv6 {
-        when "../../address-type = 'laddr:ipv6-afi'" {
+        when "../address-type = 'laddr:ipv6-afi'" {
           description
             "When AFI is IPv6.";
         }
@@ -282,7 +282,7 @@ module ietf-lisp-address-types {
           "IPv6 address.";
       }
       leaf ipv6-prefix {
-        when "../../address-type = 'laddr:ipv6-prefix-afi'" {
+        when "../address-type = 'laddr:ipv6-prefix-afi'" {
           description
             "When AFI is IPv6.";
         }
@@ -291,7 +291,7 @@ module ietf-lisp-address-types {
           "IPv6 address.";
       }
       leaf mac {
-        when "../../address-type = 'laddr:mac-afi'" {
+        when "../address-type = 'laddr:mac-afi'" {
           description
             "When AFI is MAC.";
         }
@@ -300,7 +300,7 @@ module ietf-lisp-address-types {
           "MAC address.";
       }
       leaf distinguished-name {
-        when "../../address-type = 'laddr:distinguished-name-afi'" {
+        when "../address-type = 'laddr:distinguished-name-afi'" {
           description
             "When AFI is distinguished-name.";
         }
@@ -309,7 +309,7 @@ module ietf-lisp-address-types {
           "Distinguished Name address.";
       }
       leaf as-number {
-        when "../../address-type = 'laddr:as-number-afi'" {
+        when "../address-type = 'laddr:as-number-afi'" {
           description
             "When AFI is as-number.";
         }
@@ -318,7 +318,7 @@ module ietf-lisp-address-types {
           "AS Number.";
       }
       container null-address {
-        when "../../address-type = 'null-address-lcaf'" {
+        when "../address-type = 'null-address-lcaf'" {
           description
             "When LCAF type is null.";
         }
@@ -331,7 +331,7 @@ module ietf-lisp-address-types {
         }
       }
       container afi-list {
-        when "../../address-type = 'afi-list-lcaf'" {
+        when "../address-type = 'afi-list-lcaf'" {
           description
             "When LCAF type is AFI-List.";
         }
@@ -347,7 +347,7 @@ module ietf-lisp-address-types {
         }
       }
       container instance-id {
-        when "../../address-type = 'instance-id-lcaf'" {
+        when "../address-type = 'instance-id-lcaf'" {
           description
             "When LCAF type is Instance-ID";
         }
@@ -373,7 +373,7 @@ module ietf-lisp-address-types {
         }
       }
       container as-number-lcaf {
-        when "../../address-type = 'as-number-lcaf'" {
+        when "../address-type = 'as-number-lcaf'" {
           description
             "When LCAF type is AS-Number.";
         }
@@ -394,7 +394,7 @@ module ietf-lisp-address-types {
         }
       }
       container application-data {
-        when "../../address-type = 'application-data-lcaf'" {
+        when "../address-type = 'application-data-lcaf'" {
           description
             "When LCAF type is Application Data.";
         }
@@ -440,7 +440,7 @@ module ietf-lisp-address-types {
         }
       }
       container geo-coordinates {
-        when "../../address-type = 'geo-coordinates-lcaf'" {
+        when "../address-type = 'geo-coordinates-lcaf'" {
           description
             "When LCAF type is Geo-coordinates.";
         }
@@ -523,7 +523,7 @@ module ietf-lisp-address-types {
         }
       }
       container nat-traversal {
-        when "../../address-type = 'nat-traversal-lcaf'" {
+        when "../address-type = 'nat-traversal-lcaf'" {
           description
             "When LCAF type is NAT-Traversal.";
         }
@@ -564,7 +564,7 @@ module ietf-lisp-address-types {
         }
       }
       container explicit-locator-path {
-        when "../../address-type = 'explicit-locator-path-lcaf'" {
+        when "../address-type = 'explicit-locator-path-lcaf'" {
           description
             "When LCAF type type is Explicit Locator Path.";
         }
@@ -609,7 +609,7 @@ module ietf-lisp-address-types {
         }
       }
       container source-dest-key {
-        when "../../address-type = 'source-dest-key-lcaf'" {
+        when "../address-type = 'source-dest-key-lcaf'" {
           description
             "When LCAF type type is Source/Dest.";
         }
@@ -630,7 +630,7 @@ module ietf-lisp-address-types {
         }
       }
       container key-value-address {
-        when "../../address-type = 'key-value-address-lcaf'" {
+        when "../address-type = 'key-value-address-lcaf'" {
           description
             "When LCAF type type is Key/Value Address.";
         }
@@ -651,7 +651,7 @@ module ietf-lisp-address-types {
         }
       }
       container service-path {
-        when "../../address-type = 'service-path-lcaf'" {
+        when "../address-type = 'service-path-lcaf'" {
         description
           "When LCAF type service path identifier.";
             }
