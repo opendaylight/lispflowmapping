@@ -156,7 +156,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.rpcRegistry = rpcRegistry;
     }
 
-    private void unloadActions() {
+    private void unloadActions() throws Exception {
+        lispSouthboundHandler.close();
         lispSouthboundHandler = null;
         lispXtrSouthboundHandler = null;
 
@@ -264,6 +265,5 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         unloadActions();
         eventLoopGroup.shutdownGracefully();
         sbRpcRegistration.close();
-        lispSouthboundHandler.close();
     }
 }
