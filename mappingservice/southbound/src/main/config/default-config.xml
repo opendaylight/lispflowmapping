@@ -14,6 +14,7 @@
             prefix:lisp-sb-impl
           </type>
           <name>lisp-sb-impl-default</name>
+          <bind-address>0.0.0.0</bind-address>
 
           <rpc-registry>
             <type xmlns:binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">

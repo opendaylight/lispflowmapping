@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.southbound;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 import com.google.common.base.Preconditions;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -21,11 +22,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
+
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
@@ -56,6 +59,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private NioDatagramChannel xtrChannel;
     private LispSouthboundStats statistics = new LispSouthboundStats();
+    private Bootstrap bootstrap = new Bootstrap();
+    private Bootstrap xtrBootstrap = new Bootstrap();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
     private DataBroker dataBroker;
@@ -76,6 +81,14 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispXtrSouthboundHandler.setNotificationProvider(this.notificationPublishService);
 
+            bootstrap.group(eventLoopGroup);
+            bootstrap.channel(NioDatagramChannel.class);
+            bootstrap.handler(lispSouthboundHandler);
+
+            xtrBootstrap.group(eventLoopGroup);
+            xtrBootstrap.channel(NioDatagramChannel.class);
+            xtrBootstrap.handler(lispXtrSouthboundHandler);
+
             start();
             startXtr();
 
@@ -85,11 +98,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     private void start() {
         try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(eventLoopGroup);
-            bootstrap.channel(NioDatagramChannel.class);
-            bootstrap.handler(lispSouthboundHandler);
             channel = (NioDatagramChannel) bootstrap.bind(bindingAddress, LispMessage.PORT_NUM).sync().channel();
+            LOG.debug("Binding LISP UDP listening socket to {}:{}", bindingAddress, LispMessage.PORT_NUM);
         } catch (Exception e) {
             LOG.error("Failed to open main socket ", e);
         }
@@ -98,11 +108,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private void startXtr() {
         if (listenOnXtrPort) {
             try {
-                Bootstrap xtrBootstrap = new Bootstrap();
-                xtrBootstrap.group(eventLoopGroup);
-                xtrBootstrap.channel(NioDatagramChannel.class);
-                xtrBootstrap.handler(lispXtrSouthboundHandler);
                 xtrChannel = (NioDatagramChannel) xtrBootstrap.bind(bindingAddress, xtrPort).sync().channel();
+                LOG.debug("Binding LISP xTR UDP listening socket to {}:{}", bindingAddress, xtrPort);
             } catch (Exception e) {
                 LOG.error("Failed to open xTR socket ", e);
             }
@@ -152,7 +159,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private void unloadActions() {
         lispSouthboundHandler = null;
         lispXtrSouthboundHandler = null;
-        bindingAddress = "0.0.0.0";
 
         stop();
         stopXtr();
@@ -218,11 +224,13 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             } else {
                 LOG.debug("Setting LISP binding address to {}", address);
                 bindingAddress = address;
-                try {
-                    restart();
-                    restartXtr();
-                } catch (Exception e) {
-                    LOG.error("Failed to set LISP binding address: ", e);
+                if (channel != null) {
+                    try {
+                        restart();
+                        restartXtr();
+                    } catch (Exception e) {
+                        LOG.error("Failed to set LISP binding address: ", e);
+                    }
                 }
             }
         }
