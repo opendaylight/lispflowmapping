@@ -272,9 +272,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     @Override
     public void close() throws Exception {
-        unloadActions();
         eventLoopGroup.shutdownGracefully();
         sbRpcRegistration.close();
         lispSouthboundHandler.close();
+        unloadActions();
     }
 }
