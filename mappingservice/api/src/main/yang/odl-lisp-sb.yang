@@ -42,6 +42,15 @@ module odl-lisp-sb {
         }
     }
 
+    grouping cache-stats {
+        leaf hits {
+            type int64;
+        }
+        leaf misses {
+            type int64;
+        }
+    }
+
     rpc send-map-request {
         input {
             uses lisp-proto:MapRequestMessage;
@@ -70,6 +79,9 @@ module odl-lisp-sb {
         output {
             container control-message-stats {
                 uses ctrl-msg-stats;
+            }
+            container map-register-cache-stats {
+                uses cache-stats;
             }
         }
     }

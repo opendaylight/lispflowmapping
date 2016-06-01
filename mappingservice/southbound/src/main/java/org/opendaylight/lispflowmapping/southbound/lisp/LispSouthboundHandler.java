@@ -204,6 +204,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 if (mapRegisterValue.isWantMapNotify()) {
                     sendMapNotifyMsg(inBuffer, sourceAddress, port, mapRegisterValue.getEidLispAddress());
                 }
+                lispSbStats.incrementCacheHits();
             } else {
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
                 if (isAuthenticationSuccessful(mapRegister, inBuffer)) {
@@ -232,6 +233,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                         mapRegisterCache.addEntry(cacheKey, cacheValueBldNew.build());
                     }
                 }
+                lispSbStats.incrementCacheMisses();
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
