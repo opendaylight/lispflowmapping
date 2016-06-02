@@ -40,6 +40,24 @@
       "revId": "e1fe3f9d1e16d14b99f8ce1fcddd141edae39a90",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_87462522",
+        "filename": "mappingservice/southbound/src/main/config/default-config.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-02T07:08:34Z",
+      "side": 1,
+      "message": "ok, great. I wanted to make sure that if we change the value here, it is reflected in the code. If you have tested this case, then all is good.",
+      "parentUuid": "da5c1566_a509a92e",
+      "revId": "e1fe3f9d1e16d14b99f8ce1fcddd141edae39a90",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
