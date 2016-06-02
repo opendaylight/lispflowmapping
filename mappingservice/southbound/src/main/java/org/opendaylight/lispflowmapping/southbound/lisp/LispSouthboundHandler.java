@@ -74,6 +74,7 @@ import org.slf4j.LoggerFactory;
 public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService, AutoCloseable {
     private MapRegisterCache mapRegisterCache;
+    private boolean mapRegisterCacheEnabled = true;
 
     /**
      * How long is record supposed to be relevant. After this time record isn't valid.
@@ -190,11 +191,14 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
-            final Map.Entry<MapRegisterCacheKey, byte[]> artificialEntry = MapRegisterPartialDeserializer
-                    .deserializePartially(inBuffer, sourceAddress);
-            final MapRegisterCacheKey cacheKey = artificialEntry == null ? null : artificialEntry.getKey();
-
-            final MapRegisterCacheValue cacheValue = resolveCacheValue(artificialEntry);
+            Map.Entry<MapRegisterCacheKey, byte[]> artificialEntry = null;
+            MapRegisterCacheKey cacheKey = null;
+            MapRegisterCacheValue cacheValue = null;
+            if (mapRegisterCacheEnabled) {
+                artificialEntry = MapRegisterPartialDeserializer.deserializePartially(inBuffer, sourceAddress);
+                cacheKey = artificialEntry == null ? null : artificialEntry.getKey();
+                cacheValue = resolveCacheValue(artificialEntry);
+            }
             if (cacheValue != null) {
                 final MapRegisterCacheMetadata mapRegisterValue = cacheValue.getMapRegisterCacheMetadata();
                 LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterValue.getSiteId(),
@@ -484,6 +488,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.mapRegisterCache = mapRegisterCache;
     }
 
+    public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
+        this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
+    }
 
     public void init() {
         Preconditions.checkNotNull(dataBroker);
