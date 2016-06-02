@@ -694,6 +694,57 @@ public final class LispAddressUtil {
         }
     }
 
+    private static Ipv4PrefixBinary convertToBinary(org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+            .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix prefix) {
+        Ipv4PrefixBinaryBuilder pb = new Ipv4PrefixBinaryBuilder();
+        byte[] address = InetAddresses.forString(MaskUtil.getAddressStringForIpv4Prefix(prefix)).getAddress();
+        pb.setIpv4AddressBinary(new Ipv4AddressBinary(address));
+        pb.setIpv4MaskLength(MaskUtil.getMaskForAddress(prefix));
+        return pb.build();
+    }
+
+    private static Ipv6PrefixBinary convertToBinary(org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+            .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix prefix) {
+        Ipv6PrefixBinaryBuilder pb = new Ipv6PrefixBinaryBuilder();
+        byte[] address = InetAddresses.forString(MaskUtil.getAddressStringForIpv6Prefix(prefix)).getAddress();
+        pb.setIpv6AddressBinary(new Ipv6AddressBinary(address));
+        pb.setIpv6MaskLength(MaskUtil.getMaskForAddress(prefix));
+        return pb.build();
+    }
+
+    private static Ipv4Binary convertToBinary(Ipv4 address) {
+        byte[] addr = InetAddresses.forString(address.getIpv4().getValue()).getAddress();
+        return new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(addr)).build();
+    }
+
+    private static Ipv6Binary convertToBinary(Ipv6 address) {
+        byte[] addr = InetAddresses.forString(address.getIpv6().getValue()).getAddress();
+        return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(addr)).build();
+    }
+
+    public static Eid convertToBinary(Eid eid) {
+        EidBuilder eb = new EidBuilder(eid);
+        Address addr = eid.getAddress();
+        Address convAddr = null;
+        if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) {
+            convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                    .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) addr);
+        } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) {
+            convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                    .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) addr);
+        } else if (addr instanceof Ipv4) {
+            convAddr = convertToBinary((Ipv4) addr);
+        } else if (addr instanceof Ipv6) {
+            convAddr = convertToBinary((Ipv6) addr);
+        } else {
+            return eid;
+        }
+        eb.setAddress(convAddr);
+        return eb.build();
+    }
+
     public static int compareIpAddressByteArrays(byte[] a, byte[] b) {
         int i;
         if (a.length < b.length) {

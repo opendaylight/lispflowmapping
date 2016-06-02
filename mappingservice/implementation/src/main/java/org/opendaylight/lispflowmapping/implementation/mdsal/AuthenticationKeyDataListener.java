@@ -8,12 +8,20 @@
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import java.util.Collection;
+
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -51,7 +59,9 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
                 LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
                 LOG.trace("Value: {}", authKey);
 
-                mapSystem.removeAuthenticationKey(authKey.getEid());
+                final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
+
+                mapSystem.removeAuthenticationKey(convertedAuthKey.getEid());
             } else if (ModificationType.WRITE == mod.getModificationType() || ModificationType.SUBTREE_MODIFIED == mod
                     .getModificationType()) {
                 if (ModificationType.WRITE == mod.getModificationType()) {
@@ -65,11 +75,24 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
                 LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
                 LOG.trace("Value: {}", authKey);
 
-                mapSystem.addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
+                final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
+
+                mapSystem.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
             } else {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
         }
+    }
+
+    private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
+        Eid originalEid = authKey.getEid();
+        if (originalEid.getAddress() instanceof Ipv4Prefix || originalEid.getAddress() instanceof Ipv6Prefix ||
+                originalEid.getAddress() instanceof Ipv4 || originalEid.getAddress() instanceof Ipv6) {
+            AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder(authKey);
+            akb.setEid(LispAddressUtil.convertToBinary(originalEid));
+            return akb.build();
+        }
+        return authKey;
     }
 
     void setMappingSystem(IMappingSystem msmr) {
