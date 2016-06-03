@@ -51,6 +51,11 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
+    public Eid getWidestNegativeMapping(Eid key) {
+        return null;
+    }
+
+    @Override
     public void removeMapping(Eid eid, boolean overwrite) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);

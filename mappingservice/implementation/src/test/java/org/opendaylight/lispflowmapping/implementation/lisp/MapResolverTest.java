@@ -125,6 +125,7 @@ public class MapResolverTest {
                 .thenReturn(null);
         Mockito.when(mapServiceMock.getAuthenticationKey(IPV4_PREFIX_EID_1))
                 .thenReturn(new MappingAuthkeyBuilder().build());
+        Mockito.when(mapServiceMock.getWidestNegativePrefix(IPV4_PREFIX_EID_1)).thenReturn(IPV4_PREFIX_EID_1);
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();

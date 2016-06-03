@@ -404,6 +404,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public Eid getWidestNegativePrefix(Eid key) {
+        return mappingSystem.getWidestNegativePrefix(key);
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
         dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }

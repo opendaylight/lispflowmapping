@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +20,8 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
  * Test for {@link HashMapDb} class
@@ -87,6 +90,93 @@ public class HashMapDbTest {
         Assert.assertEquals(mapValue1, map.getSpecific(dbEntryKey, mapKey1));
     }
 
+    /**
+     * Test {@link HashMapDb#getBest} with IP prefix
+     */
+    @Test
+    public void testGetBest_withIpPrefix() throws Exception {
+        final Eid ipv4PrefixEid1 = LispAddressUtil.asIpv4PrefixBinaryEid("192.168.0.0" + "/16");
+        final Eid ipv4PrefixEid2 = LispAddressUtil.asIpv4PrefixBinaryEid("192.169.0.0" + "/16");
+        final Eid ipv4PrefixEid3 = LispAddressUtil.asIpv4PrefixBinaryEid("192.168.1.1" + "/32");
+        final String mapSubKey1 = "mapSubKey1";
+        final String mapSubKey2 = "mapSubKey2";
+        final String mapValue1 = "mapValue1";
+        final String mapValue2 = "mapValue2";
+
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+
+        map.put(ipv4PrefixEid1, mapEntry1);
+        map.put(ipv4PrefixEid2, mapEntry2);
+
+        Map<String, ?> res = map.getBest(ipv4PrefixEid3);
+        Assert.assertEquals(Collections.<String, Object>singletonMap(mapSubKey1, mapValue1), res);
+    }
+
+    /**
+     * Test {@link HashMapDb#getBest} with non-IP prefix
+     */
+    @Test
+    public void testGetBest_withNonIpPrefix() throws Exception {
+        final Eid mac1 = LispAddressUtil.asMacEid("01:02:03:04:05:06");
+        final Eid mac2 = LispAddressUtil.asMacEid("01:02:03:04:05:07");
+        final String mapSubKey1 = "mapSubKey1";
+        final String mapSubKey2 = "mapSubKey2";
+        final String mapValue1 = "mapValue1";
+        final String mapValue2 = "mapValue2";
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+
+        map.put(mac1, mapEntry1);
+        map.put(mac2, mapEntry2);
+        Assert.assertEquals(Collections.<String, Object>singletonMap(mapSubKey1, mapValue1), map.getBest(mac1));
+    }
+
+    /**
+     * Test {@link HashMapDb#getBestPair} with IP prefix
+     */
+    @Test
+    public void testGetBestPair_withIpPrefix() throws Exception {
+        final Eid ipv4PrefixEid1 = LispAddressUtil.asIpv4PrefixBinaryEid("192.168.0.0" + "/16");
+        final Eid ipv4PrefixEid2 = LispAddressUtil.asIpv4PrefixBinaryEid("192.169.0.0" + "/16");
+        final Eid ipv4PrefixEid3 = LispAddressUtil.asIpv4PrefixBinaryEid("192.168.1.1" + "/32");
+        final String mapSubKey1 = "mapSubKey1";
+        final String mapSubKey2 = "mapSubKey2";
+        final String mapValue1 = "mapValue1";
+        final String mapValue2 = "mapValue2";
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+
+        map.put(ipv4PrefixEid1, mapEntry1);
+        map.put(ipv4PrefixEid2, mapEntry2);
+
+        SimpleImmutableEntry<Eid, Map<String, ?>> res =  map.getBestPair(ipv4PrefixEid3);
+        Assert.assertEquals(ipv4PrefixEid1, res.getKey());
+        Assert.assertEquals(Collections.<String, Object>singletonMap(mapSubKey1, mapValue1), res.getValue());
+    }
+
+    /**
+     * Test {@link HashMapDb#getBestPair} with non-IP prefix
+     */
+    @Test
+    public void testGetBestPair_withNonIpPrefix() throws Exception {
+        final Eid mac1 = LispAddressUtil.asMacEid("01:02:03:04:05:06");
+        final Eid mac2 = LispAddressUtil.asMacEid("01:02:03:04:05:07");
+        final String mapSubKey1 = "mapSubKey1";
+        final String mapSubKey2 = "mapSubKey2";
+        final String mapValue1 = "mapValue1";
+        final String mapValue2 = "mapValue2";
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+
+
+        map.put(mac1, mapEntry1);
+        map.put(mac2, mapEntry2);
+        SimpleImmutableEntry<Eid, Map<String, ?>> res =  map.getBestPair(mac1);
+        Assert.assertEquals(mac1, res.getKey());
+        Assert.assertEquals(Collections.<String, Object>singletonMap(mapSubKey1, mapValue1), res.getValue());
+    }
+
     @Test
     public void testGetAll() throws Exception {
         Object dbEntryKey = "dbEntryKey";
@@ -122,6 +212,24 @@ public class HashMapDbTest {
                 new MappingEntry<Object>(mapKey1, mapValue1));
         map.remove(dbEntryKey);
         Assert.assertNull("DB should be empty after entry removal", map.get(dbEntryKey));
+    }
+
+    /**
+     * Test {@link HashMapDb#remove} with IP-prefix
+     */
+    @Test
+    public void testRemove_withIpPrefix() throws Exception {
+        final Eid ipv4PrefixEid1 = LispAddressUtil.asIpv4PrefixBinaryEid("192.168.0.0" + "/16");
+        final String mapSubKey1 = "mapSubKey1";
+        final String mapValue1 = "mapValue1";
+
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+
+        map.put(ipv4PrefixEid1, mapEntry1);
+        map.remove(ipv4PrefixEid1);
+
+        Assert.assertNull(map.getBest(ipv4PrefixEid1));
+        Assert.assertNull(map.getBestPair(ipv4PrefixEid1));
     }
 
     @Test

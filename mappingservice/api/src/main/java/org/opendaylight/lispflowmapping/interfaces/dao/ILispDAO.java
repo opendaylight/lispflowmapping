@@ -9,6 +9,9 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 public interface ILispDAO {
 
@@ -37,10 +40,37 @@ public interface ILispDAO {
      * Get the entries from the DAO
      *
      * @param key
-     *            The key.
+     *            The key to be looked up as exact match.
      * @return The value from the DAO.
      */
     Map<String, Object> get(Object key);
+
+    /**
+     * Get value for longest prefix match from the DAO
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The value from the DAO.
+     */
+    Map<String, Object> getBest(Object key);
+
+    /**
+     * Get longest prefix match and value from the DAO
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized
+     * @return The best match and value pair from the DAO.
+     */
+    public SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key);
+
+    /**
+     * Get widest negative prefix
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The widest negative prefix found.
+     */
+    Eid getWidestNegativePrefix(Eid key);
 
     /**
      * Enumerate all the entries from the DAO
