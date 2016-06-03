@@ -9,6 +9,9 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
+
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 public interface ILispDAO {
 
@@ -34,6 +37,17 @@ public interface ILispDAO {
     Object getSpecific(Object key, String valueKey);
 
     /**
+     * Get a specific value from the DAO after longest prefix match.
+     *
+     * @param key
+     *            The key of the value to fetch
+     * @param valueKey
+     *            The subkey of the value to fetch
+     * @return The value from the DAO.
+     */
+    Object getSpecificBest(Object key, String valueKey);
+
+    /**
      * Get the entries from the DAO
      *
      * @param key
@@ -41,6 +55,24 @@ public interface ILispDAO {
      * @return The value from the DAO.
      */
     Map<String, Object> get(Object key);
+
+    /**
+     * Get value for longest prefix match from the DAO
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up.
+     * @return The value from the DAO.
+     */
+    Map<String, Object> getBest(Object key);
+
+    /**
+     * Get longest prefix match and value from the DAO
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up.
+     * @return The best match and value pair from the DAO.
+     */
+    public SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key);
 
     /**
      * Enumerate all the entries from the DAO

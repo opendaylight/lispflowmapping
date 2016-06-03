@@ -79,28 +79,6 @@ public class MultiTableMapCache implements IMapCache {
         }
     }
 
-    // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
-    // or the exact match otherwise. eid must be a 'simple' address
-    private Map<String, ?> getDaoEntryBest(Eid eid, ILispDAO dao) {
-        Eid key;
-        if (MaskUtil.isMaskable(eid.getAddress())) {
-            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
-            while (mask > 0) {
-                key = MaskUtil.normalize(eid, mask);
-                mask--;
-                Map<String, ?> entry = dao.get(key);
-                if (entry != null) {
-                    return entry;
-                }
-            }
-            return null;
-        } else {
-            key = MaskUtil.normalize(eid);
-            Map<String, ?> entry = dao.get(key);
-            return entry;
-        }
-    }
-
     private Object getMappingExactSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
         Map<String, ?> daoEntry = dao.get(dstEid);
         if (daoEntry != null) {
@@ -122,7 +100,7 @@ public class MultiTableMapCache implements IMapCache {
             return null;
         }
         Eid key = MaskUtil.normalize(eid);
-        Map<String, ?> daoEntry = getDaoEntryBest(key, dao);
+        Map<String, ?> daoEntry = dao.getBest(key);
         if (daoEntry != null) {
             return daoEntry.get(SubKeys.RECORD);
         } else {
@@ -133,7 +111,7 @@ public class MultiTableMapCache implements IMapCache {
     // Returns a mapping corresponding to either the longest prefix match for both dstEid and srcEid,
     // if a SourceDest mapping exists, or to dstEid
     private Object getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
-        Map<String, ?> daoEntry = getDaoEntryBest(dstEid, dao);
+        Map<String, ?> daoEntry = dao.getBest(MaskUtil.normalize(dstEid));
         if (daoEntry != null) {
             // try SrcDst eid lookup
             ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);

@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -221,51 +222,51 @@ public class SimpleMapCacheTest {
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoEntryBest} method with maskable address.
+     * Tests {@link SimpleMapCache#getAllXtrIdMappings} method with maskable address.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void getDaoEntryBestTest_withMaskableAddress() {
+    public void getAllXtrIdMappings_withMaskableAddress() {
         final Eid normalizedKey = MaskUtil.normalize(EID_IPV4_PREFIX_1_VNI, MASK);
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
 
-        Mockito.when(daoMock.get(normalizedKey)).thenReturn(entryMock);
+        Mockito.when(daoMock.getBest(normalizedKey)).thenReturn(entryMock);
         Mockito.when(entryMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
         Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4_PREFIX_1_VNI, SubKeys.XTRID_RECORDS))
                 .thenReturn(xtrIdDaoMock);
         simpleMapCache.getAllXtrIdMappings(EID_IPV4_PREFIX_1_VNI);
 
-        Mockito.verify(daoMock).get(Mockito.any(Eid.class));
+        Mockito.verify(daoMock).getBest(Mockito.any(Eid.class));
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoEntryBest} method with non maskable address.
+     * Tests {@link SimpleMapCache#getAllXtrIdMappings} method with non maskable address.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void getDaoEntryBestTest_withNonMaskableAddress() {
+    public void getAllXtrIdMappings_withNonMaskableAddress() {
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
 
-        Mockito.when(daoMock.get(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
+        Mockito.when(daoMock.getBest(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
         Mockito.when(entryMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
         Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4, SubKeys.XTRID_RECORDS))
                 .thenReturn(xtrIdDaoMock);
         simpleMapCache.getAllXtrIdMappings(EID_IPV4);
 
-        Mockito.verify(daoMock).get(Mockito.any(Eid.class));
+        Mockito.verify(daoMock).getBest(Mockito.any(Eid.class));
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoEntryBest} method with null daoEntry.
+     * Tests {@link SimpleMapCache#getAllXtrIdMappings} method with null daoEntry.
      */
     @Test
-    public void getDaoEntryBestTest_withNullEntry() {
-        Mockito.when(daoMock.get(Mockito.any(Eid.class))).thenReturn(null);
+    public void getAllXtrIdMappings_withNullEntry() {
+        Mockito.when(daoMock.getBest(Mockito.any(Eid.class))).thenReturn(null);
 
         assertNull(simpleMapCache.getAllXtrIdMappings(EID_IPV4_PREFIX_1_VNI));
-        Mockito.verify(daoMock, Mockito.times(24)).get(Mockito.any(Eid.class));
+        Mockito.verify(daoMock, Mockito.times(1)).getBest(Mockito.any(Eid.class));
     }
 
     /**
@@ -275,12 +276,14 @@ public class SimpleMapCacheTest {
     @SuppressWarnings("unchecked")
     public void getMappingLpmEidTest() throws Exception {
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
+        final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
+                NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
         final MappingRecord expiredMappingRecord = getDefaultMappingRecordBuilder().setTimestamp(1L).build(); // expired
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build(); // not expired
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.get(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapMock);
+        Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);
         Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
         Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4_PREFIX_DST, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD))
@@ -302,41 +305,43 @@ public class SimpleMapCacheTest {
     @SuppressWarnings("unchecked")
     public void getMappingLpmEidTest_withNullXtrId() throws Exception {
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
+        final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
+                NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.get(MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24))).thenReturn(mapMock);
+        Mockito.when(tableMock.getBestPair(MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24))).thenReturn(mapPair);
         Mockito.when(mapMock.get(SubKeys.REGDATE)).thenReturn(EXPIRED_DATE);
 
         simpleMapCache.getMapping(null, EID_IPV4_PREFIX_DST, null);
         Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_IPV4_PREFIX_DST, SubKeys.REGDATE);
         Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_IPV4_PREFIX_DST, SubKeys.RECORD);
         Mockito.verify(mapMock).get(SubKeys.RECORD);
-
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoPairEntryBest} method with maskable eid.
+     * Tests {@link SimpleMapCache#getMapping} method with maskable eid.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void getDaoPairEntryBestTest_withMaskableEid() {
+    public void getMappingTest_withMaskableEid() {
         final Eid ipv4PrefixEid = LispAddressUtil.asIpv4PrefixEid("192.168.0.225" + "/32");
-        final Eid normalizedKey = MaskUtil.normalize(EID_IPV4_PREFIX_DST, MASK);
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
+        final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
+                NORMALIZED_EID_IPV4_PREFIX_DST, entryMock);
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.get(Mockito.any(Eid.class))).thenReturn(null);
-        Mockito.when(tableMock.get(normalizedKey)).thenReturn(entryMock);
+        Mockito.when(tableMock.getBestPair(ipv4PrefixEid)).thenReturn(mapPair);
         Mockito.when(entryMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
+        Mockito.when(xtrIdDaoMock.getSpecific(NORMALIZED_EID_IPV4_PREFIX_DST, SubKeys.XTRID_RECORDS)).thenReturn(null);
 
         simpleMapCache.getMapping(null, ipv4PrefixEid, XTR_ID);
         Mockito.verify(entryMock).get(SubKeys.XTRID_RECORDS);
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoPairEntryBest} method with maskable eid and entry not found.
+     * Tests {@link SimpleMapCache#getMapping} method with maskable eid and entry not found.
      */
     @Test
-    public void getDaoPairEntryBestTest_withMaskableEid_noEntry() {
+    public void getMappingTest_withMaskableEid_noEntry() {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.get(Mockito.any(Eid.class))).thenReturn(null);
 
@@ -344,14 +349,17 @@ public class SimpleMapCacheTest {
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoPairEntryBest} method with non-maskable eid.
+     * Tests {@link SimpleMapCache#getMapping} method with non-maskable eid.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void getDaoPairEntryBestTest_withNonMaskableEid() {
+    public void getMappingTest_withNonMaskableEid() {
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
+        final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
+                NORMALIZED_EID_IPV4_PREFIX_DST, entryMock);
+
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.get(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
+        Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4)).thenReturn(mapPair);
         Mockito.when(entryMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
 
         simpleMapCache.getMapping(null, EID_IPV4, XTR_ID);
@@ -359,10 +367,10 @@ public class SimpleMapCacheTest {
     }
 
     /**
-     * Tests {@link SimpleMapCache#getDaoPairEntryBest} method with non-maskable eid and entry not found.
+     * Tests {@link SimpleMapCache#getMapping} method with non-maskable eid and entry not found.
      */
     @Test
-    public void getDaoPairEntryBestTest_withNonMaskableEid_noEntry() {
+    public void getMappingTest_withNonMaskableEid_noEntry() {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.get(NORMALIZED_EID_IPV4)).thenReturn(null);
 
@@ -399,7 +407,7 @@ public class SimpleMapCacheTest {
     public void updateMappingRegistrationTest() {
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.get(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
+        Mockito.when(tableMock.getBest(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
 
         simpleMapCache.updateMappingRegistration(EID_IPV4, null);
         Mockito.verify(entryMock).put(Mockito.eq(SubKeys.REGDATE), Mockito.any(Date.class));
