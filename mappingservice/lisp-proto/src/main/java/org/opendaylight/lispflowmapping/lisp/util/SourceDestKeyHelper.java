@@ -45,6 +45,22 @@ public final class SourceDestKeyHelper {
         }
     }
 
+    public static Eid getSrcBinary(Eid eid) {
+        if (eid.getAddress() instanceof SourceDestKey) {
+            return LispAddressUtil.asBinaryEid(((SourceDestKey) eid.getAddress()).getSourceDestKey().getSource(),
+                    eid.getVirtualNetworkId());
+        }
+        return eid;
+    }
+
+    public static Eid getDstBinary(Eid eid) {
+        if (eid.getAddress() instanceof SourceDestKey) {
+            return LispAddressUtil.asBinaryEid(((SourceDestKey) eid.getAddress()).getSourceDestKey().getDest(),
+                    eid.getVirtualNetworkId());
+        }
+        return eid;
+    }
+
     public static short getSrcMask(Eid eid) {
         Address addr = eid.getAddress();
         if (!isSrcDst(addr)) {

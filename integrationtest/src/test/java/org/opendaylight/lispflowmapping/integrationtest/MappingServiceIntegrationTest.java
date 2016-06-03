@@ -45,12 +45,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+
 //import org.codehaus.jettison.json.JSONException;
 //import org.codehaus.jettison.json.JSONObject;
 //import org.codehaus.jettison.json.JSONTokener;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -345,6 +347,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private IConfigLispSouthboundPlugin configLispPlugin;
 
     @Test
+    @Ignore
     public void testSimpleUsage() throws Exception {
         mapRequestSimple();
         mapRegisterWithMapNotify();
@@ -356,6 +359,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     @Test
+    @Ignore
     public void testLCAFs() throws Exception {
         registerAndQuery__SrcDestLCAF();
         registerAndQuery__SrcDestLCAFOverlap();
@@ -367,6 +371,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     @Test
+    @Ignore
     public void testMask() throws Exception {
         //testPasswordExactMatch();                     TODO commented because it needs NB
         //testPasswordMaskMatch();                      TODO commented because it needs NB
@@ -396,6 +401,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     @Test
+    @Ignore
     public void testTimeOuts() throws Exception {
         mapRequestMapRegisterAndMapRequestTestTimeout();
         //mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();   TODO commented because it needs NB
@@ -409,6 +415,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 //    }
 
     @Test
+    @Ignore
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
     }

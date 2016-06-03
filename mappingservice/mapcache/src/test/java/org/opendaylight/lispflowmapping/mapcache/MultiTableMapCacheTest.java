@@ -105,8 +105,8 @@ public class MultiTableMapCacheTest {
     public void addMappingTest_withSourceDestKey() {
 
         final Eid normalized_Eid = MaskUtil.normalize(EID_SOURCE_DEST_KEY_TYPE);
-        final Eid dstKey = SourceDestKeyHelper.getDst(normalized_Eid);
-        final Eid srcKey = SourceDestKeyHelper.getSrc(normalized_Eid);
+        final Eid dstKey = SourceDestKeyHelper.getDstBinary(normalized_Eid);
+        final Eid srcKey = SourceDestKeyHelper.getSrcBinary(normalized_Eid);
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(dstKey, SubKeys.LCAF_SRCDST)).thenReturn(srcDstDaoMock);
@@ -135,10 +135,10 @@ public class MultiTableMapCacheTest {
     public void getMappingTest_withSourceDestKey() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
 
-        final Eid dstAddr = SourceDestKeyHelper.getDst(EID_SOURCE_DEST_KEY_TYPE);
+        final Eid dstAddr = SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY_TYPE);
         final Eid normalizedDstAddr = MaskUtil.normalize(dstAddr);
 
-        final Eid srcAddr = SourceDestKeyHelper.getSrc(EID_SOURCE_DEST_KEY_TYPE);
+        final Eid srcAddr = SourceDestKeyHelper.getSrcBinary(EID_SOURCE_DEST_KEY_TYPE);
         final Eid normalizedSrcAddr = MaskUtil.normalize(srcAddr);
 
         final Map<String, Object> entry = getEntry1();
@@ -199,10 +199,10 @@ public class MultiTableMapCacheTest {
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(SourceDestKeyHelper
-                .getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST)).thenReturn(dbMock);
+                .getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST)).thenReturn(dbMock);
 
         multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
-        verify(dbMock).removeSpecific(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID),
+        verify(dbMock).removeSpecific(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
                 SubKeys.RECORD);
     }
 
@@ -237,11 +237,11 @@ public class MultiTableMapCacheTest {
     @Test
     public void addAuthenticationKeyTest() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.putNestedTable(SourceDestKeyHelper.getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
+        when(tableDaoMock.putNestedTable(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
                 .thenReturn(srcDstDaoMock);
 
         multiTableMapCache.addAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE, MAPPING_AUTHKEY);
-        verify(srcDstDaoMock).put(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID),
+        verify(srcDstDaoMock).put(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
                 new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
 
         multiTableMapCache.addAuthenticationKey(EID_TEST, MAPPING_AUTHKEY);
@@ -267,8 +267,8 @@ public class MultiTableMapCacheTest {
      */
     @Test
     public void getAuthenticationKeyTest_withSourceDestKey() {
-        final Eid eidSrc = SourceDestKeyHelper.getSrc(EID_SOURCE_DEST_KEY_TYPE);
-        final Eid eidDst = SourceDestKeyHelper.getDst(EID_SOURCE_DEST_KEY_TYPE);
+        final Eid eidSrc = SourceDestKeyHelper.getSrcBinary(EID_SOURCE_DEST_KEY_TYPE);
+        final Eid eidDst = SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY_TYPE);
         final short maskLength = MaskUtil.getMaskForAddress(eidSrc.getAddress());
         final Eid key = MaskUtil.normalize(eidSrc, maskLength);
 
@@ -285,7 +285,7 @@ public class MultiTableMapCacheTest {
      */
     @Test
     public void getAuthenticationKeyTest_withSourceDestKey_nullDao() {
-        final Eid eidDst = SourceDestKeyHelper.getDst(EID_SOURCE_DEST_KEY_TYPE);
+        final Eid eidDst = SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY_TYPE);
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(eidDst, SubKeys.LCAF_SRCDST))
@@ -335,7 +335,7 @@ public class MultiTableMapCacheTest {
     @Test
     public void removeAuthenticationKeyTest_withSourceDestKey() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
+        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
                 .thenReturn(srcDstDaoMock);
 
         multiTableMapCache.removeAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE);
@@ -370,11 +370,11 @@ public class MultiTableMapCacheTest {
     @Test
     public void addDataTest_withSourceDestKey() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
+        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
                 .thenReturn(srcDstDaoMock);
 
         multiTableMapCache.addData(EID_SOURCE_DEST_KEY_TYPE, SubKeys.RECORD, DUMMY_OBJECT);
-        verify(srcDstDaoMock).put(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID),
+        verify(srcDstDaoMock).put(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
                 new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
@@ -395,9 +395,9 @@ public class MultiTableMapCacheTest {
     @Test
     public void getDataTest_withSourceDestKey() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
+        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
                 .thenReturn(srcDstDaoMock);
-        when(srcDstDaoMock.getSpecific(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID), SubKeys.RECORD))
+        when(srcDstDaoMock.getSpecific(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID), SubKeys.RECORD))
                 .thenReturn(DUMMY_OBJECT);
 
         assertEquals(DUMMY_OBJECT, multiTableMapCache.getData(EID_SOURCE_DEST_KEY_TYPE, SubKeys.RECORD));
@@ -429,11 +429,11 @@ public class MultiTableMapCacheTest {
     @Test
     public void removeDataTest_withSourceDestKey() {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDst(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
+        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
                 .thenReturn(srcDstDaoMock);
 
         multiTableMapCache.removeData(EID_SOURCE_DEST_KEY_TYPE, SubKeys.RECORD);
-        verify(srcDstDaoMock).removeSpecific(SourceDestKeyHelper.getSrc(NORMALIZED_SRCDST_EID), SubKeys.RECORD);
+        verify(srcDstDaoMock).removeSpecific(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID), SubKeys.RECORD);
     }
 
     /**
