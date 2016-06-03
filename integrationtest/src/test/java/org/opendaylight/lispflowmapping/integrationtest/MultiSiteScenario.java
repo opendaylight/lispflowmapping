@@ -17,10 +17,12 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
@@ -28,11 +30,11 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -58,6 +60,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.net.InetAddresses;
 
 /**
  * Contains methods for:
@@ -94,13 +97,13 @@ class MultiSiteScenario {
         this.lms = lms;
     }
 
-    private Ipv4Address verifyIpv4Address(final LocatorRecord locatorRecord) {
+    private Ipv4AddressBinary verifyIpv4Address(final LocatorRecord locatorRecord) {
         assertNotNull(locatorRecord);
         final Rloc rloc = locatorRecord.getRloc();
         assertNotNull(rloc);
         final Address address = rloc.getAddress();
-        assertTrue(address instanceof Ipv4);
-        return ((Ipv4) address).getIpv4();
+        assertTrue(address instanceof Ipv4Binary);
+        return ((Ipv4Binary) address).getIpv4Binary();
     }
 
     private List<LocatorRecord> verifyLocatorRecordExists(final MappingRecord mappingRecord) {
@@ -144,7 +147,7 @@ class MultiSiteScenario {
     }
 
     private Eid toEid(final String destSiteEidPrefix, final InstanceIdType vniValue, final int mask) {
-        return LispAddressUtil.toEid(new Ipv4Prefix(destSiteEidPrefix + "/" + mask), vniValue);
+        return LispAddressUtil.asIpv4PrefixBinaryEid(destSiteEidPrefix + "/" + mask, vniValue);
 
     }
 
@@ -233,7 +236,7 @@ class MultiSiteScenario {
         if (!dstSites[0].isForDeletion) {
             for (Site dstSite : dstSites) {
                 if (dstSite.getRloc() != null) {
-                    locatorRecords.add(provideLocatorRecord(LispAddressUtil.toRloc(new Ipv4Address(dstSite.getRloc())),
+                    locatorRecords.add(provideLocatorRecord(LispAddressUtil.asIpv4Rloc(dstSite.getRloc()),
                             dstSite.getRloc(), dstSite.getWeight(), dstSite.getPriority()));
                 }
             }
@@ -338,10 +341,11 @@ class MultiSiteScenario {
             boolean expectedTargetFound = false;
             for (LocatorRecord locatorRecord : locatorRecords) {
                 if (expectedTargetSite.getRloc().equals(rlocToString(locatorRecord))) {
-                    final Ipv4Address ipv4AddressSrcDst = verifyIpv4Address(locatorRecord);
-                    final boolean isRlocSrcDstEqual = ipv4AddressSrcDst.getValue().equals(expectedTargetSite.getRloc());
+                    final byte[] ipv4AddressSrcDst = verifyIpv4Address(locatorRecord).getValue();
+                    final byte[] rloc = InetAddresses.forString((expectedTargetSite.getRloc())).getAddress();
+                    final boolean isRlocSrcDstEqual = Arrays.equals(ipv4AddressSrcDst, rloc);
                     if (isPossibleAssertPingResultImmediately(expectedPingWorks, isRlocSrcDstEqual, "Unexpected RLOC." +
-                            "Expected value " + dstSite.getRloc() + ". Real value " + ipv4AddressSrcDst.getValue() +
+                            "Expected value " + rloc + ". Real value " + ipv4AddressSrcDst +
                             ".")) {
                         return true;
                     }
