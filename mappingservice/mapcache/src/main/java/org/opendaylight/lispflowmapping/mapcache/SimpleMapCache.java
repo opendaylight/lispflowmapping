@@ -138,49 +138,31 @@ public class SimpleMapCache implements IMapCache {
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
     private  Map<String, Object> getDaoEntryBest(Eid eid, ILispDAO dao) {
-        Eid key;
+        Eid key = MaskUtil.normalize(eid);
         if (MaskUtil.isMaskable(eid.getAddress())) {
-            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
-            while (mask > 0) {
-                key = MaskUtil.normalize(eid, mask);
-                mask--;
-                Map<String, Object> entry = dao.get(key);
-                if (entry != null) {
-                    return entry;
-                }
-            }
-            return null;
+            return dao.getBest(key);
         } else {
-            key = MaskUtil.normalize(eid);
             return dao.get(key);
         }
     }
 
     // Method returns the DAO entry (hash) corresponding to either the longest prefix match of eid, if eid is maskable,
     // or the exact match otherwise. eid must be a 'simple' address
-    private SimpleImmutableEntry<Eid, Map<String, ?>> getDaoPairEntryBest(Eid eid, ILispDAO dao) {
-        Eid key;
-        if (MaskUtil.isMaskable(eid.getAddress())) {
-            short mask = MaskUtil.getMaskForAddress(eid.getAddress());
-            while (mask > 0) {
-                key = MaskUtil.normalize(eid, mask);
-                mask--;
-                Map<String, ?> entry = dao.get(key);
-                if (entry != null) {
-                    return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
-                }
-            }
-            return null;
-        } else {
-            key = MaskUtil.normalize(eid);
-            Map<String, ?> entry = dao.get(key);
-            if (entry != null) {
-                return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
-            } else {
-                return null;
-            }
-        }
-    }
+//    private SimpleImmutableEntry<Eid, Map<String, ?>> getDaoPairEntryBest(Eid eid, ILispDAO dao) {
+//        Eid key;
+//        if (MaskUtil.isMaskable(eid.getAddress())) {
+//            key = MaskUtil.normalize(eid);
+//            return dao.getBestPair(key);
+//        } else {
+//            key = MaskUtil.normalize(eid);
+//            Map<String, ?> entry = dao.get(key);
+//            if (entry != null) {
+//                return new SimpleImmutableEntry<Eid, Map<String, ?>>(key, entry);
+//            } else {
+//                return null;
+//            }
+//        }
+//    }
 
     // Returns the list of mappings stored in an xTR-ID DAO
     private List<Object> getXtrIdMappingList(ILispDAO dao) {
@@ -236,7 +218,7 @@ public class SimpleMapCache implements IMapCache {
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
     private Object getMappingLpmEid(Eid eid, byte[] xtrId, ILispDAO dao) {
-        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = getDaoPairEntryBest(eid, dao);
+        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = dao.getBestPair(MaskUtil.normalize(eid));
         if (daoEntry != null) {
             if (xtrId != null) {
                 ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS));
