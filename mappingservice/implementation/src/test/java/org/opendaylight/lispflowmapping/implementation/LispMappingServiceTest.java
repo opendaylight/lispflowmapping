@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 
 import com.google.common.collect.Lists;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,20 +26,37 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container
+        .MapRegisterCacheMetadata;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container
+        .MapRegisterCacheMetadataBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container
+        .map.register.cache.metadata.EidLispAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container
+        .map.register.cache.metadata.EidLispAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.
         MappingRecordBuilder;
@@ -56,26 +74,33 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
-    @Mock(name = "lispSB") private static OdlLispSbService lispSBMock;
-    @Mock(name = "mapResolver") private static IMapResolverAsync mapResolverMock;
-    @Mock(name = "mapServer") private static IMapServerAsync mapServerMock;
-    @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
-    @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
-    @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
     @Mock private static MapRegister mapRegisterMock;
+    @Mock(name = "lispSB") private static OdlLispSbService lispSBMock;
+    @Mock(name = "mapServer") private static IMapServerAsync mapServerMock;
+    @Mock(name = "mapService") private static IMappingService iMappingServiceMock;
+    @Mock(name = "mapResolver") private static IMapResolverAsync mapResolverMock;
+    @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
+    @Mock(name = "notificationService") private static NotificationService notificationServiceMock;
+    @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
+    @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
     @InjectMocks private static LispMappingService lispMappingService;
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
     private static final String IPV4_STRING_1 =      "1.2.3.0";
+    private static final String IPV4_STRING_2 =      "1.2.3.1";
     private static final String IPV4_SOURCE_STRING = "192.168.0.1";
     private static final String IPV4_PREFIX_STRING = "/24";
+    private static final long TIMESTAMP = 1L;
 
     private static final Eid IPV4_PREFIX_EID_1 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING);
     private static final Eid IPV4_SOURCE_EID = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING);
+    private static final Eid IPV4_EID_1 = LispAddressUtil.asIpv4Eid(IPV4_STRING_1);
+    private static final Eid IPV4_EID_2 = LispAddressUtil.asIpv4Eid(IPV4_STRING_2);
     private static final EidItemBuilder EID_ITEM_BUILDER = new EidItemBuilder()
             .setEidItemId("eid-item-id")
             .setEid(IPV4_PREFIX_EID_1);
@@ -222,6 +247,37 @@ public class LispMappingServiceTest {
     }
 
     /**
+     * Tests {@link LispMappingService#onRequestMapping} method with mapReply == null.
+     */
+    @Test
+    public void onRequestMappingTest_withNullMapReply() {
+        final RequestMapping requestMapping = Mockito.mock(RequestMapping.class);
+        final org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest
+                mapRequest = Mockito.mock(org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105
+                    .maprequestnotification.MapRequest.class);
+
+        Mockito.when(requestMapping.getMapRequest()).thenReturn(mapRequest);
+        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
+        Mockito.when(tlsMapReplyMock.get()).thenReturn(null);
+
+        lispMappingService.onRequestMapping(requestMapping);
+        Mockito.verifyZeroInteractions(lispSBMock);
+    }
+
+    /**
+     * Tests {@link LispMappingService#onMappingKeepAlive} method.
+     */
+    @Test
+    public void onMappingKeepAliveTest() {
+        final MappingKeepAlive mappingKeepAlive = Mockito.mock(MappingKeepAlive.class);
+        Mockito.when(mappingKeepAlive.getMapRegisterCacheMetadata()).thenReturn(getDefaultMapRegisterCacheMetadata());
+
+        lispMappingService.onMappingKeepAlive(mappingKeepAlive);
+        Mockito.verify(iMappingServiceMock).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_1, TIMESTAMP);
+        Mockito.verify(iMappingServiceMock).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_2, TIMESTAMP);
+    }
+
+    /**
      * Tests {@link LispMappingService#handleSMR} method.
      */
     @Test
@@ -291,14 +347,55 @@ public class LispMappingServiceTest {
     }
 
     /**
-     * Tests {@link LispMappingService#setShouldAuthenticate} method.
+     * Tests {@link LispMappingService#close} method.
      */
     @Test
-    public void setShouldAuthenticateTest() {
-        final boolean value = true;
+    public void closeTest() throws Exception {
+        lispMappingService.close();
 
-        lispMappingService.setShouldAuthenticate(value);
-        Mockito.verify(mapResolverMock).setShouldAuthenticate(value);
+        assertNull(getField("mapResolver"));
+        assertNull(getField("mapServer"));
+    }
+
+    /**
+     * Tests {@link LispMappingService} other setter and getter methods.
+     */
+    @Test
+    public void otherTest() throws Exception {
+        assertEquals(notificationServiceMock, lispMappingService.getNotificationService());
+        assertEquals(true, lispMappingService.shouldUseSmr());
+
+        BindingAwareBroker brokerMock = Mockito.mock(BindingAwareBroker.class);
+        lispMappingService.setBindingAwareBroker(brokerMock);
+        assertEquals(brokerMock, getField("broker"));
+
+        NotificationService otherNotificationServiceMock = Mockito.mock(NotificationService.class);
+        lispMappingService.setNotificationService(otherNotificationServiceMock);
+        assertEquals(otherNotificationServiceMock, getField("notificationService"));
+
+        ProviderContext sessionMock = Mockito.mock(ProviderContext.class);
+        lispMappingService.onSessionInitiated(sessionMock);
+        assertEquals(sessionMock, getField("session"));
+
+        lispMappingService.setShouldAuthenticate(true);
+        Mockito.verify(mapResolverMock).setShouldAuthenticate(true);
+
+        IMappingService mappingServiceMock = Mockito.mock(IMappingService.class);
+        lispMappingService.setMappingService(mappingServiceMock);
+        assertEquals(mappingServiceMock, getField("mapService"));
+
+        lispMappingService.onGotMapReply(Mockito.mock(GotMapReply.class));
+        lispMappingService.onGotMapNotify(Mockito.mock(GotMapNotify.class));
+        lispMappingService.onXtrRequestMapping(Mockito.mock(XtrRequestMapping.class));
+        lispMappingService.onXtrReplyMapping(Mockito.mock(XtrReplyMapping.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        final Field field = LispMappingService.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+
+        return (T) field.get(lispMappingService);
     }
 
     private static Pair<MapNotify, List<TransportAddress>> getDefaultMapNotifyPair() {
@@ -313,6 +410,19 @@ public class LispMappingServiceTest {
         return new ImmutablePair<>(mapRequestBuilder.build(), TRANSPORT_ADDRESS_1);
     }
 
+    private static MapRegisterCacheMetadata getDefaultMapRegisterCacheMetadata() {
+        final EidLispAddress eidLispAddress_1 = new EidLispAddressBuilder()
+                .setEidLispAddressId("id-1")
+                .setEid(IPV4_EID_1).build();
+        final EidLispAddress eidLispAddress_2 = new EidLispAddressBuilder()
+                .setEidLispAddressId("id-2")
+                .setEid(IPV4_EID_2).build();
+
+        return new MapRegisterCacheMetadataBuilder()
+                .setEidLispAddress(Lists.newArrayList(eidLispAddress_1, eidLispAddress_2))
+                .setTimestamp(TIMESTAMP).build();
+    }
+
     class TransportAddressMatch extends ArgumentMatcher<SendMapNotifyInput> {
         public boolean matches(Object sendMapNotify) {
             final SendMapNotifyInput sendMapNotifyInput = (SendMapNotifyInput) sendMapNotify;
@@ -320,6 +430,5 @@ public class LispMappingServiceTest {
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)
                     || TRANSPORT_ADDRESS_2.equals(notifyTransportAddress);
         }
-
     }
 }
