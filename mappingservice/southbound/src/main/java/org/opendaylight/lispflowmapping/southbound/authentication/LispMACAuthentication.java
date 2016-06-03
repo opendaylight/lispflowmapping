@@ -48,7 +48,14 @@ public class LispMACAuthentication implements ILispAuthentication {
         mapRegisterBuffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         mapRegisterBuffer.put(tempAuthenticationData);
         mapRegisterBuffer.position(0);
-        return Arrays.equals(getAuthenticationData(mapRegisterBuffer.array(), key), expectedAuthData);
+        byte[] mapRegisterArray;
+        if (mapRegisterBuffer.hasArray()) {
+            mapRegisterArray = mapRegisterBuffer.array();
+        } else {
+            mapRegisterArray = new byte[mapRegisterBuffer.remaining()];
+            mapRegisterBuffer.get(mapRegisterArray);
+        }
+        return Arrays.equals(getAuthenticationData(mapRegisterArray, key), expectedAuthData);
     }
 
     protected byte[] getAuthenticationData(byte[] data, String key) {
