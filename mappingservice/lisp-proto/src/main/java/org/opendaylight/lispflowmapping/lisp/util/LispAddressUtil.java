@@ -917,4 +917,14 @@ public final class LispAddressUtil {
         }
         return 0;
     }
+
+    public static short getIpPrefixMask(Eid eid) {
+        Address addr = eid.getAddress();
+        if (addr instanceof Ipv4PrefixBinary) {
+            return ((Ipv4PrefixBinary) addr).getIpv4MaskLength();
+        } else if (addr instanceof Ipv6PrefixBinary) {
+            return ((Ipv6PrefixBinary) addr).getIpv6MaskLength();
+        }
+        return 0;
+    }
 }

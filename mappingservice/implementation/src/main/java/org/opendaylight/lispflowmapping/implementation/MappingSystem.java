@@ -230,6 +230,27 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    public Eid getWidestNegativePrefix(Eid key) {
+        Eid nbPrefix, sbPrefix;
+        nbPrefix = pmc.getWidestNegativeMapping(key);
+        if (nbPrefix == null) {
+            return null;
+        }
+
+        sbPrefix = smc.getWidestNegativeMapping(key);
+        if (sbPrefix == null) {
+            return null;
+        }
+
+        // since prefixes overlap, just return the more specific (larger mask)
+        if (LispAddressUtil.getIpPrefixMask(nbPrefix) < LispAddressUtil.getIpPrefixMask(sbPrefix)) {
+            return sbPrefix;
+        } else{
+            return nbPrefix;
+        }
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
         tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
         if (notificationService) {
