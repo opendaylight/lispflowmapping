@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_21f9004e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-03T09:08:40Z",
+      "side": 1,
+      "message": "You should rename the moved package to org.opendaylight.lispflowmapping.dsbackend, to avoid confusion as to which bundle it belongs.",
+      "revId": "db3c153db47164d5cfd27441e0ff730156fb680f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
