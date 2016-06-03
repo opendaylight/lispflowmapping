@@ -158,6 +158,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             final MessageType packetType) {
         InetAddress ip = InetAddresses.forString(new String(address.getIpAddress().getValue()));
         InetSocketAddress recipient = new InetSocketAddress(ip, address.getPort().getValue());
+        outBuffer.position(0);
         // the wrappedBuffer() method doesn't copy data, so this conversion shouldn't hurt performance
         ByteBuf data = wrappedBuffer(outBuffer.array());
         DatagramPacket packet = new DatagramPacket(data, recipient);
