@@ -10,14 +10,20 @@ package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.opendaylight.lispflowmapping.inmemorydb.radixtrie.RadixTrie;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +37,30 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int recordTimeOut = DEFAULT_RECORD_TIMEOUT;
 
+    // IPv4 and IPv6 radix tries used for longest prefix matching
+    private RadixTrie<Object> ip4Trie = new RadixTrie<Object>(32, true);
+    private RadixTrie<Object> ip6Trie = new RadixTrie<Object>(128, true);
+
+    public void tryAddToIpTrie(Object key) {
+        if (key instanceof Eid) {
+            Eid eid = (Eid) key;
+            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+                ip4Trie.insert(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength(), key);
+            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+                ip6Trie.insert(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength(), key);
+            }
+        }
+    }
+
     @Override
     public void put(Object key, MappingEntry<?>... values) {
         if (!data.containsKey(key)) {
             data.put(key, new ConcurrentHashMap<String, Object>());
         }
         for (MappingEntry<?> entry : values) {
+            tryAddToIpTrie(key);
             data.get(key).put(entry.getKey(), entry.getValue());
         }
     }
@@ -56,6 +80,52 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     }
 
     @Override
+    public Map<String, Object> getBest(Object key) {
+        if (key instanceof Eid) {
+            Eid eid = (Eid) key;
+            RadixTrie<Object>.TrieNode node = null;
+
+            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+                node = ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+                node = ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            }
+            if (node == null) {
+                return get(key);
+            }
+            return get(node.data());
+        }
+        return null;
+    }
+
+    @Override
+    public SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key) {
+        Map<String, ?> data = null;
+
+        if (key instanceof Eid) {
+            Eid eid = (Eid) key;
+            RadixTrie<Object>.TrieNode node = null;
+
+            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+                node = ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+                node = ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            }
+            if (node == null) {
+                data = get(key);
+                return (data == null) ? null : new SimpleImmutableEntry<Eid, Map<String, ?>>((Eid)key, data);
+            }
+            data = get(node.data());
+            return (data == null) ? null : new SimpleImmutableEntry<Eid, Map<String, ?>>((Eid)node.data(), data);
+        }
+        return null;
+    }
+
+    @Override
     public void getAll(IRowVisitor visitor) {
         for (ConcurrentMap.Entry<Object, ConcurrentMap<String, Object>> keyEntry : data.entrySet()) {
             for (Map.Entry<String, Object> valueEntry : keyEntry.getValue().entrySet()) {
@@ -63,9 +133,42 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             }
         }
     }
+    @Override
+    public Eid getWidestNegativePrefix(Eid key) {
+        RadixTrie<Object>.TrieNode node = null;
+
+        if (key.getAddress() instanceof Ipv4PrefixBinary) {
+            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
+            node = ip4Trie.lookupWidestNegative(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            if (node != null) {
+                return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+            }
+        } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
+            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
+            node = ip6Trie.lookupWidestNegative(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            if (node != null) {
+                return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+            }
+        }
+        return null;
+    }
+
+    private void tryRemoveFromTrie(Object key) {
+        if (key instanceof Eid) {
+            Eid eid = (Eid) key;
+            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+                ip4Trie.remove(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+                ip6Trie.remove(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            }
+        }
+    }
 
     @Override
     public void remove(Object key) {
+        tryRemoveFromTrie(key);
         data.remove(key);
     }
 
@@ -78,6 +181,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
     @Override
     public void removeAll() {
+        ip4Trie.removeAll();
+        ip6Trie.removeAll();
         data.clear();
     }
 

@@ -103,7 +103,7 @@ public class MapResolver implements IMapResolverAsync {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
-        recordBuilder.setEid(eid);
+        recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
         recordBuilder.setAction(Action.NativelyForward);
         if (authenticate && mapService.getAuthenticationKey(eid) != null) {
             recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);

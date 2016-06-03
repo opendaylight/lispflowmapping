@@ -230,6 +230,11 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    public Eid getWidestNegativePrefix(Eid key) {
+        return (Eid) tableMap.get(MappingOrigin.Southbound).getWidestNegativeMapping(key);
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
         tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
         if (notificationService) {

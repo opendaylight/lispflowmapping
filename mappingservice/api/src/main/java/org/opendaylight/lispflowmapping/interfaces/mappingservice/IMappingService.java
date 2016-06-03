@@ -76,6 +76,15 @@ public interface IMappingService {
     Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
+     * Retrieves widest negative prefix found in the Mapping System for given key
+     *
+     * @param key
+     *            Key being looked up
+     * @return Returns the widest negative prefix or null if nothing is found.
+     */
+    Eid getWidestNegativePrefix(Eid key);
+
+    /**
      * Update mapping registration
      *
      * @param origin
