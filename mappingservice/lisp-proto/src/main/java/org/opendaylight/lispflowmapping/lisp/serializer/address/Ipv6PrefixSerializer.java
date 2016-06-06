@@ -16,7 +16,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6Serializer.L
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -92,7 +92,7 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
         return new SimpleAddress(new IpPrefix(deserializeData(buffer, ctx)));
     }
 
-    private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Prefix
+    private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6Prefix
     deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         byte[] ipBuffer = new byte[16];
         InetAddress address = null;
@@ -102,7 +102,7 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
         } catch (UnknownHostException e) {
             LOG.debug("Unknown host {}", ipBuffer, e);
         }
-        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv6Prefix(
+        return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6Prefix(
                 address.getHostAddress() + "/" + ctx.getMaskLen());
     }
 }
