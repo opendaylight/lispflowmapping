@@ -201,7 +201,7 @@ public class MapResolverTest {
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(mapServiceMock).getData(MappingOrigin.Southbound,
-                SourceDestKeyHelper.getDst(SOURCE_DEST_KEY_EID), SubKeys.SUBSCRIBERS);
+                SourceDestKeyHelper.getDstBinary(SOURCE_DEST_KEY_EID), SubKeys.SUBSCRIBERS);
     }
 
     /**

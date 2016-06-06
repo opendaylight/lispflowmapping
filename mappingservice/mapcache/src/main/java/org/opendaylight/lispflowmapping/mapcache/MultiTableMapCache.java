@@ -69,7 +69,7 @@ public class MultiTableMapCache implements IMapCache {
         ILispDAO table = getOrInstantiateVniTable(key);
 
         if (eid.getAddress() instanceof SourceDestKey) {
-            Eid srcKey = SourceDestKeyHelper.getSrc(eid);
+            Eid srcKey = SourceDestKeyHelper.getSrcBinary(eid);
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, value));
@@ -162,8 +162,8 @@ public class MultiTableMapCache implements IMapCache {
 
         // a map-request for an actual SrcDst LCAF, ignore src eid
         if (dstEid.getAddress() instanceof SourceDestKey) {
-            Eid srcAddr = SourceDestKeyHelper.getSrc(dstEid);
-            Eid dstAddr = SourceDestKeyHelper.getDst(dstEid);
+            Eid srcAddr = SourceDestKeyHelper.getSrcBinary(dstEid);
+            Eid dstAddr = SourceDestKeyHelper.getDstBinary(dstEid);
             return getMappingLpmSD(srcAddr, dstAddr, table);
         }
 
@@ -181,7 +181,7 @@ public class MultiTableMapCache implements IMapCache {
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
-                db.removeSpecific(SourceDestKeyHelper.getSrc(key),
+                db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key),
                         SubKeys.RECORD);
             }
         } else {
@@ -195,7 +195,7 @@ public class MultiTableMapCache implements IMapCache {
 
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
-            srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
+            srcDstDao.put(SourceDestKeyHelper.getSrcBinary(key), new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
         } else {
             table.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
         }
@@ -225,7 +225,7 @@ public class MultiTableMapCache implements IMapCache {
                 // NOTE: this is an exact match, not a longest prefix match
                 ILispDAO srcDstDao = getSDInnerDao(eid, table);
                 if (srcDstDao != null) {
-                    return getAuthKeyLpm(SourceDestKeyHelper.getSrc(eid), srcDstDao);
+                    return getAuthKeyLpm(SourceDestKeyHelper.getSrcBinary(eid), srcDstDao);
                 }
                 return null;
             } else {
@@ -263,7 +263,7 @@ public class MultiTableMapCache implements IMapCache {
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to a dst or creates it if it doesn't exist.
     private ILispDAO getOrInstantiateSDInnerDao(Eid address, ILispDAO dao) {
-        Eid dstKey = SourceDestKeyHelper.getDst(address);
+        Eid dstKey = SourceDestKeyHelper.getDstBinary(address);
         ILispDAO srcDstDao = (ILispDAO) dao.getSpecific(dstKey, SubKeys.LCAF_SRCDST);
         if (srcDstDao == null) {
             // inserts nested table for source
@@ -275,7 +275,7 @@ public class MultiTableMapCache implements IMapCache {
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to dst or null if it doesn't exist.
     private ILispDAO getSDInnerDao(Eid address, ILispDAO dao) {
-        return (ILispDAO) dao.getSpecific(SourceDestKeyHelper.getDst(address), SubKeys.LCAF_SRCDST);
+        return (ILispDAO) dao.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
     public String printMappings() {
@@ -345,7 +345,7 @@ public class MultiTableMapCache implements IMapCache {
 
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
-            srcDstDao.put(SourceDestKeyHelper.getSrc(key), new MappingEntry<Object>(subKey, data));
+            srcDstDao.put(SourceDestKeyHelper.getSrcBinary(key), new MappingEntry<Object>(subKey, data));
         } else {
             table.put(key, new MappingEntry<Object>(subKey, data));
         }
@@ -361,7 +361,7 @@ public class MultiTableMapCache implements IMapCache {
 
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO srcDstDao = getSDInnerDao(key, table);
-            return srcDstDao.getSpecific(SourceDestKeyHelper.getSrc(key), subKey);
+            return srcDstDao.getSpecific(SourceDestKeyHelper.getSrcBinary(key), subKey);
         } else {
             return table.getSpecific(key, subKey);
         }
@@ -377,7 +377,7 @@ public class MultiTableMapCache implements IMapCache {
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
-                db.removeSpecific(SourceDestKeyHelper.getSrc(key), subKey);
+                db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key), subKey);
             }
         } else {
             table.removeSpecific(key, subKey);

@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.IpPrefix;
@@ -153,6 +155,24 @@ public final class LispAddressUtil {
         return null;
     }
 
+    public static Class<? extends LispAddressFamily> binaryAddressTypeFromInet(InetAddress address) {
+        if (address instanceof Inet4Address) {
+            return Ipv4BinaryAfi.class;
+        } else if (address instanceof Inet6Address) {
+            return Ipv6BinaryAfi.class;
+        }
+        return null;
+    }
+
+    public static Address binaryAddressFromInet(InetAddress address) {
+        if (address instanceof Inet4Address) {
+            return (Address) new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(address.getAddress())).build();
+        } else if (address instanceof Inet6Address) {
+            return (Address) new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(address.getAddress())).build();
+        }
+        return null;
+    }
+
     public static Class<? extends LispAddressFamily> addressTypeFromIpAddress(IpAddress address) {
         if (address == null) {
             return null;
@@ -267,9 +287,9 @@ public final class LispAddressUtil {
 
     public static Rloc toRloc(InetAddress address) {
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(addressTypeFromInet(address));
+        builder.setAddressType(binaryAddressTypeFromInet(address));
         builder.setVirtualNetworkId(null);
-        builder.setAddress(addressFromInet(address));
+        builder.setAddress(binaryAddressFromInet(address));
         return builder.build();
     }
 
@@ -460,6 +480,25 @@ public final class LispAddressUtil {
 
     public static Eid asIpv4Eid(String address, long vni) {
         return toEid(new Ipv4AddressBinary(InetAddresses.forString(address).getAddress()), new InstanceIdType(vni));
+    }
+
+    public static Eid asBinaryEid(SimpleAddress address, InstanceIdType iid) {
+        if (address.getIpPrefix() != null) {
+            if (address.getIpPrefix().getIpv4Prefix() != null) {
+                return LispAddressUtil.asIpv4PrefixBinaryEid(address.getIpPrefix().getIpv4Prefix().getValue(), iid);
+            } else if (address.getIpPrefix().getIpv6Prefix() != null) {
+                return LispAddressUtil.asIpv6PrefixBinaryEid(address.getIpPrefix().getIpv6Prefix().getValue(), iid);
+            }
+        } else if (address.getIpAddress() != null) {
+            if (address.getIpAddress().getIpv4Address() != null) {
+                LispAddressUtil.toEid(new Ipv4AddressBinary(InetAddresses.forString(
+                        address.getIpPrefix().getIpv4Prefix().getValue()).getAddress()), iid);
+            } else if (address.getIpAddress().getIpv6Address() != null) {
+                LispAddressUtil.toEid(new Ipv6AddressBinary(InetAddresses.forString(
+                        address.getIpPrefix().getIpv6Prefix().getValue()).getAddress()), iid);
+            }
+        }
+        return LispAddressUtil.asEid(address, iid);
     }
 
     public static int ipVersionFromString(String ip) {
@@ -722,27 +761,60 @@ public final class LispAddressUtil {
         return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(addr)).build();
     }
 
-    public static Eid convertToBinary(Eid eid) {
-        EidBuilder eb = new EidBuilder(eid);
-        Address addr = eid.getAddress();
+    private static Pair<Class<? extends LispAddressFamily>, Address> convertToBinary(Address addr) {
         Address convAddr = null;
+        Class<? extends LispAddressFamily> convType = null;
         if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                 .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) {
             convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                     .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) addr);
+            convType = Ipv4PrefixBinaryAfi.class;
         } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                 .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) {
             convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                     .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) addr);
+            convType = Ipv6PrefixBinaryAfi.class;
         } else if (addr instanceof Ipv4) {
             convAddr = convertToBinary((Ipv4) addr);
+            convType = Ipv4BinaryAfi.class;
         } else if (addr instanceof Ipv6) {
             convAddr = convertToBinary((Ipv6) addr);
-        } else {
+            convType = Ipv6BinaryAfi.class;
+        }
+        return new ImmutablePair<Class<? extends LispAddressFamily>, Address>(convType, convAddr);
+    }
+
+    public static Eid convertToBinary(Eid eid) {
+        Pair<Class<? extends LispAddressFamily>, Address> converted = convertToBinary(eid.getAddress());
+        if (converted.getRight() == null) {
             return eid;
         }
-        eb.setAddress(convAddr);
+        EidBuilder eb = new EidBuilder(eid);
+        eb.setAddressType(converted.getLeft());
+        eb.setAddress(converted.getRight());
         return eb.build();
+    }
+
+    public static Rloc convertToBinary(Rloc rloc) {
+        Pair<Class<? extends LispAddressFamily>, Address> converted = convertToBinary(rloc.getAddress());
+        if (converted.getRight() == null) {
+            return rloc;
+        }
+        RlocBuilder rb = new RlocBuilder(rloc);
+        rb.setAddressType(converted.getLeft());
+        rb.setAddress(converted.getRight());
+        return rb.build();
+    }
+
+    public static boolean addressNeedsConversionToBinary(Address address) {
+        if (address instanceof Ipv4 || address instanceof Ipv6 ||
+                address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                        .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix ||
+                address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                        .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) {
+            return true;
+        }
+        return false;
     }
 
     public static int compareIpAddressByteArrays(byte[] a, byte[] b) {

@@ -245,7 +245,7 @@ public class MapServerTest {
                 .thenReturn(subscriberSetMock_1);
 
         // return a subscriberSet for SrcDestKeyEid destination MappingRecord
-        Mockito.when(mapService.getData(MappingOrigin.Southbound, SourceDestKeyHelper.getDst(SOURCE_DEST_KEY_EID),
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, SourceDestKeyHelper.getDstBinary(SOURCE_DEST_KEY_EID),
                 SubKeys.SUBSCRIBERS)).thenReturn(subscriberSetMock_2);
 
         // ----------------- Stubbing for Ipv4 type Eid mapping ------------------------
@@ -275,7 +275,8 @@ public class MapServerTest {
         // for SrcDst destination mapping
         final ArgumentCaptor<MapRequest> captor_2 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_2.capture(), Mockito.eq(RLOC_4));
-        Mockito.verify(mapService).addData(MappingOrigin.Southbound, SourceDestKeyHelper.getDst(SOURCE_DEST_KEY_EID),
+        Mockito.verify(mapService).addData(MappingOrigin.Southbound,
+                SourceDestKeyHelper.getDstBinary(SOURCE_DEST_KEY_EID),
                 SubKeys.SUBSCRIBERS, subscriberSetMock_2);
         final Eid resultEid_2 = captor_2.getValue().getEidItem().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_4, resultEid_2);
