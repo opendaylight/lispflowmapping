@@ -54,7 +54,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +89,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         boolean authFailed = false;
         boolean mappingUpdated = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
-        MappingAuthkey authkey = null;
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
 
@@ -202,7 +200,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
-            Eid dstAddr = SourceDestKeyHelper.getDst(eid);
+            Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
             Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
             MappingRecord newRecord = new MappingRecordBuilder(record).setEid(dstAddr).build();
             handleSmr(newRecord.getEid(), dstSubs, notifyHandler);

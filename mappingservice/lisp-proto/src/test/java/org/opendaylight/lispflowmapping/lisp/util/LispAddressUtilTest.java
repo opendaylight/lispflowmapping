@@ -536,8 +536,8 @@ public class LispAddressUtilTest {
     public void toRloc() throws UnknownHostException {
         InetAddress ipv4AddressInet = Inet4Address.getByAddress(IPV4_ADDRESS_BYTES_A_TEST);
         final Rloc rlocFromInetAddress = LispAddressUtil.toRloc(ipv4AddressInet);
-        assertEquals(Ipv4Afi.class, rlocFromInetAddress.getAddressType());
-        assertEquals(IPV4_ADDRESS_VALUE_TEST, ((Ipv4)rlocFromInetAddress.getAddress()).getIpv4().getValue());
+        assertEquals(Ipv4BinaryAfi.class, rlocFromInetAddress.getAddressType());
+        assertEquals(IPV4_ADDRESS_BINARY_TEST, ((Ipv4Binary) rlocFromInetAddress.getAddress()).getIpv4Binary());
 
         final Rloc rlocFromIpv4Address = LispAddressUtil.toRloc(IPV4_ADDRESS_TEST);
         assertEquals(Ipv4Afi.class, rlocFromIpv4Address.getAddressType());

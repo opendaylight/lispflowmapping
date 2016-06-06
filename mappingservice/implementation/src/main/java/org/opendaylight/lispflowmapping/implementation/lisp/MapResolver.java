@@ -122,7 +122,7 @@ public class MapResolver implements IMapResolverAsync {
         // mapping will be pushed to dst as well (see sendSMRs in MapServer)
         if (mapEid.getAddressType().equals(SourceDestKeyLcaf.class)
                 && !reqEid.getAddressType().equals(SourceDestKeyLcaf.class)) {
-            subscribedEid = SourceDestKeyHelper.getDst(mapEid);
+            subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
         }
 
         Set<SubscriberRLOC> subscribers = getSubscribers(subscribedEid);
@@ -145,7 +145,7 @@ public class MapResolver implements IMapResolverAsync {
         if (mapping.getEid().getAddress() instanceof SourceDestKey
                 && !(dstEid.getAddress() instanceof SourceDestKey)) {
             return new MappingRecordBuilder(mapping).setEid(
-                    SourceDestKeyHelper.getDst(mapping.getEid())).build();
+                    SourceDestKeyHelper.getDstBinary(mapping.getEid())).build();
         }
         return mapping;
     }

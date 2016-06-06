@@ -18,10 +18,6 @@ import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
@@ -99,8 +95,7 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
 
     private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
         Eid originalEid = authKey.getEid();
-        if (originalEid.getAddress() instanceof Ipv4Prefix || originalEid.getAddress() instanceof Ipv6Prefix ||
-                originalEid.getAddress() instanceof Ipv4 || originalEid.getAddress() instanceof Ipv6) {
+        if (LispAddressUtil.addressNeedsConversionToBinary(originalEid.getAddress())) {
             AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder(authKey);
             akb.setEid(LispAddressUtil.convertToBinary(originalEid));
             return akb.build();
