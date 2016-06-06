@@ -4,7 +4,7 @@ module odl-lisp-proto {
     namespace "urn:opendaylight:lfm:lisp-proto";
     prefix "lisp-proto";
 
-    import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
+    import ietf-inet-types { prefix inet; revision-date 2013-07-15; }
     import odl-inet-binary-types { prefix inet-bin; revision-date 2016-03-03; }
     import odl-lisp-address-types { prefix odl-lisp-address; revision-date 2016-05-04; }
 
