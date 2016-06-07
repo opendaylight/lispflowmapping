@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_ea9fe54e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-07T13:38:02Z",
+      "side": 1,
+      "message": "This subject is misleading, as it suggests only tests are changed, while in fact very important functionality is changing. I would say \u0027Generate Map-Notifies in southbound\u0027",
+      "revId": "511d54a4ac80d10e320fc4e6188c7026cf29b8f6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
