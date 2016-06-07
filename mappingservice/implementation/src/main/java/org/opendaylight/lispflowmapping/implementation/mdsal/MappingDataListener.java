@@ -156,9 +156,9 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         return mapping;
     }
 
-    private static List<LocatorRecord> convertToBinaryIfNecessary(List<LocatorRecord> locators) {
+    private static List<LocatorRecord> convertToBinaryIfNecessary(List<LocatorRecord> originalLocators) {
         List<LocatorRecord> convertedLocators = null;
-        for (LocatorRecord record : locators) {
+        for (LocatorRecord record : originalLocators) {
             if (LispAddressUtil.addressNeedsConversionToBinary(record.getRloc().getAddress())) {
                 LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
                 lrb.setRloc(LispAddressUtil.convertToBinary(record.getRloc()));
@@ -168,6 +168,9 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 convertedLocators.add(lrb.build());
             }
         }
-        return convertedLocators;
+        if (convertedLocators != null) {
+            return convertedLocators;
+        }
+        return originalLocators;
     }
 }
