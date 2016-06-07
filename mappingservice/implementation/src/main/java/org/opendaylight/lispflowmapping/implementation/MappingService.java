@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -24,9 +26,13 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
@@ -154,7 +160,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(convertToBinaryIfNecessary(input.getEid()));
 
         if (key != null) {
             String message = "Key already exists! Please use update-key if you want to change it.";
@@ -190,7 +196,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
 
-        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(convertToBinaryIfNecessary(input.getEid()));
 
         if (key == null) {
             String message = "Key was not found in the mapping database";
@@ -210,14 +216,15 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
-        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(input.getEid());
+        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(convertToBinaryIfNecessary(input.getEid()));
 
         if (reply == null) {
             String message = "No mapping was found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetMappingOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
         } else {
-            rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setMappingRecord(reply));
+            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply);
+            rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setMappingRecord(convertedReply));
         }
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -258,7 +265,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<Void> rpcResultBuilder;
 
-        MappingAuthkey key = mappingSystem.getAuthenticationKey(input.getEid());
+        MappingAuthkey key = mappingSystem.getAuthenticationKey(convertToBinaryIfNecessary(input.getEid()));
 
         if (key == null) {
             String message = "Key doesn't exist! Please use add-key if you want to create a new authentication key.";
@@ -453,5 +460,51 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public void cleanCachedMappings() {
         mappingSystem.cleanCaches();
         dsbe.removeAllDatastoreContent();
+    }
+
+    private static Eid convertToBinaryIfNecessary(Eid eid) {
+        if (LispAddressUtil.addressNeedsConversionToBinary(eid.getAddress())) {
+            return LispAddressUtil.convertToBinary(eid);
+        }
+        return eid;
+    }
+
+    private static MappingRecord convertFromBinaryIfNecessary(MappingRecord originalRecord) {
+        List<LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
+
+        List<LocatorRecord> convertedLocators = null;
+        if (originalLocators != null) {
+            // If convertedLocators is non-null, while originalLocators is also non-null, conversion has been made
+            convertedLocators = convertFromBinaryIfNecessary(originalLocators);
+        }
+
+        if (LispAddressUtil.addressNeedsConversionFromBinary(originalRecord.getEid().getAddress()) ||
+                (originalLocators != null && convertedLocators != null)) {
+            MappingRecordBuilder mrb = new MappingRecordBuilder(originalRecord);
+            mrb.setEid(LispAddressUtil.convertFromBinary(originalRecord.getEid()));
+            if (convertedLocators != null) {
+                mrb.setLocatorRecord(convertedLocators);
+            }
+            return mrb.build();
+        }
+        return originalRecord;
+    }
+
+    private static List<LocatorRecord> convertFromBinaryIfNecessary(List<LocatorRecord> originalLocators) {
+        List<LocatorRecord> convertedLocators = null;
+        for (LocatorRecord record : originalLocators) {
+            if (LispAddressUtil.addressNeedsConversionFromBinary(record.getRloc().getAddress())) {
+                LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
+                lrb.setRloc(LispAddressUtil.convertFromBinary(record.getRloc()));
+                if (convertedLocators == null) {
+                    convertedLocators = new ArrayList<LocatorRecord>();
+                }
+                convertedLocators.add(lrb.build());
+            }
+        }
+        if (convertedLocators != null) {
+            return convertedLocators;
+        }
+        return originalLocators;
     }
 }
