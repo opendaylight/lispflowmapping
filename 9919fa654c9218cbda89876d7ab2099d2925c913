@@ -22,6 +22,24 @@
       "revId": "9919fa654c9218cbda89876d7ab2099d2925c913",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_b4b6ddda",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/AuthenticationKeyDataListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-08T05:18:19Z",
+      "side": 1,
+      "message": "Absolutely, as we discussed we keep two copies of the keys, so that RPCs don\u0027t have to talk and depend on southbound service, and keep everything uniform.",
+      "parentUuid": "da5c1566_34f92dc9",
+      "revId": "9919fa654c9218cbda89876d7ab2099d2925c913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
