@@ -492,10 +492,10 @@ public final class LispAddressUtil {
         } else if (address.getIpAddress() != null) {
             if (address.getIpAddress().getIpv4Address() != null) {
                 LispAddressUtil.toEid(new Ipv4AddressBinary(InetAddresses.forString(
-                        address.getIpPrefix().getIpv4Prefix().getValue()).getAddress()), iid);
+                        address.getIpAddress().getIpv4Address().getValue()).getAddress()), iid);
             } else if (address.getIpAddress().getIpv6Address() != null) {
                 LispAddressUtil.toEid(new Ipv6AddressBinary(InetAddresses.forString(
-                        address.getIpPrefix().getIpv6Prefix().getValue()).getAddress()), iid);
+                        address.getIpAddress().getIpv6Address().getValue()).getAddress()), iid);
             }
         }
         return LispAddressUtil.asEid(address, iid);
