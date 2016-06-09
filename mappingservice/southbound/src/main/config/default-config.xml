@@ -4,7 +4,6 @@
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding?module=opendaylight-md-sal-binding&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding:impl?module=opendaylight-sal-binding-broker-impl&amp;revision=2013-10-28</capability>
     <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:impl?module=odl-lisp-sb-impl&amp;revision=2015-05-17</capability>
-    <capability>urn:opendaylight:params:xml:ns:yang:controller:config:lfm:mappingservice-dao:inmemorydb?module=odl-mappingservice-dao-inmemorydb&amp;revision=2015-10-07</capability>
   </required-capabilities>
   <configuration>
     <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
