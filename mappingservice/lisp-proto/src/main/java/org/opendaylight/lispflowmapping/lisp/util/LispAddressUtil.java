@@ -532,7 +532,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv4PrefixEid(Eid eid, Inet4Address address, short mask) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(eid.getAddressType());
+        builder.setAddressType(Ipv4PrefixAfi.class);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(
                 IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
@@ -541,7 +541,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv6PrefixEid(Eid eid, Inet6Address address, short mask) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(eid.getAddressType());
+        builder.setAddressType(Ipv6PrefixAfi.class);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(
                 IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
