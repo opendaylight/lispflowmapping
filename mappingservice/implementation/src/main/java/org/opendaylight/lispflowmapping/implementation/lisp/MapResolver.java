@@ -69,6 +69,15 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     public void handleMapRequest(MapRequest request) {
+        // SMRs and RLOC probes are directed towards xTRs and we're a Map-Resolver here, so ignore them
+        if (request.isSmr() != null && request.isSmr()) {
+            LOG.debug("Map-Resolver ignoring incoming SMR control message.");
+            return;
+        }
+        if (request.isProbe() != null && request.isProbe()) {
+            LOG.debug("Map-Resolver ignoring incoming RLOC probe control message.");
+            return;
+        }
         Eid srcEid = null;
         if (request.getSourceEid() != null) {
             srcEid = request.getSourceEid().getEid();
