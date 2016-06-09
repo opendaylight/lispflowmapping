@@ -22,6 +22,30 @@
       "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_26757a98",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-09T07:03:40Z",
+      "side": 0,
+      "message": "I passed through change in LispSouthboundHandler one more time and there are specified two variables: eidLispAddresses and wantMapNotifyBit.\nIf there is hit in cache map then this values are set by value from map cache. If there isn\u0027t hit in map cache this variables are set from deserialized map register message. This was reason why I thought that it isn\u0027t necessary to raise another one map notify message also from MapServer (from implementation bundle)\n\n\nBut if my assumption is incorrect please let me know and I will change this concrete modifacition back.",
+      "parentUuid": "da5c1566_01366952",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 144,
+        "endChar": 66
+      },
+      "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
