@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "da5c1566_3273f4ea",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-10T08:35:08Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "da5c1566_978912cd",
+      "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_7786feba",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
         "patchSetId": 7
@@ -102,6 +120,24 @@
       "writtenOn": "2016-06-09T22:55:00Z",
       "side": 0,
       "message": "These things should not be removed anymore, same below.",
+      "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_72744ccf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-10T08:35:08Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "da5c1566_7786feba",
       "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
