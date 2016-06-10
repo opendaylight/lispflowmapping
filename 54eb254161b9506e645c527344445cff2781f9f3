@@ -16,6 +16,29 @@
       "revId": "54eb254161b9506e645c527344445cff2781f9f3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_5da67911",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-10T07:30:13Z",
+      "side": 1,
+      "message": "As Lori mentioned, Map-Notify should only be sent from SB in case of a cache hit. When we have a cache miss (especially when merge bit is set), Map Notify building is more complex and should be done in the Map Server.",
+      "range": {
+        "startLine": 241,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 82
+      },
+      "revId": "54eb254161b9506e645c527344445cff2781f9f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }

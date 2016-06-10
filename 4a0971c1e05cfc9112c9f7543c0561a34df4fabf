@@ -67,6 +67,30 @@
     },
     {
       "key": {
+        "uuid": "da5c1566_3d5d8522",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-10T07:30:13Z",
+      "side": 0,
+      "message": "In case of a cache miss, Map Notify should be built and sent from the Map Server. The reason is that, especially in the case where merge bit is set, the Map Notify is not the same as Map Register and some data from the Map server is needed to build the Map Notify in that case.",
+      "parentUuid": "da5c1566_26757a98",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 144,
+        "endChar": 66
+      },
+      "revId": "4a0971c1e05cfc9112c9f7543c0561a34df4fabf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_7786feba",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
         "patchSetId": 7
