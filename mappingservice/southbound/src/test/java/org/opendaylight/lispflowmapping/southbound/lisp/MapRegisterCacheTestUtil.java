@@ -100,16 +100,16 @@ final class MapRegisterCacheTestUtil {
         verify(mockedNotificationProvider).putNotification(Mockito.any(MappingKeepAlive.class));
 
         final byte[] resetForMapNotify = new byte[]{
-                0x04, 0x00, 0x00, 0x01
+                0x4C, 0x00, 0x00, 0x01
         };
 
-        final byte[] newAuthenticationData = new byte []{
-                0x00, 0x14,
-                (byte)0xA6,(byte)0xF6,0x7F,(byte)0xC9
-                ,0x31,(byte)0x83,0x28,0x5F
-                ,(byte)0xDA,0x49,(byte)0xC7,0x3C
-                ,0x3E,0x46,0x13,0x27
-                ,(byte)0xA7,0x35,0x3D,0x3A
+        final byte[] newAuthenticationData = new byte [] {
+                (byte) 0x00, (byte) 0x14,                            // authentication data length
+                (byte) 0x7A, (byte) 0x53, (byte) 0x7F, (byte) 0xF6,
+                (byte) 0xB8, (byte) 0x91, (byte) 0x33, (byte) 0x7F,
+                (byte) 0xB1, (byte) 0x41, (byte) 0xC3, (byte) 0x51,
+                (byte) 0x2B, (byte) 0xF8, (byte) 0x9D, (byte) 0x87,
+                (byte) 0x30, (byte) 0x6E, (byte) 0xEE, (byte) 0x08
         };
 
         final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, nonce, keyId, newAuthenticationData,

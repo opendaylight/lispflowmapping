@@ -329,7 +329,14 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private ByteBuffer transformMapRegisterToMapNotify(final ByteBuffer buffer) {
         buffer.position(0);
-        byte[] byteReplacement = new byte[] {0x04, 0x00, 0x00};
+        byte typeAndFlags = buffer.get(0);
+        // Shift the xTR-ID present and built for an RTR bits to their correct position
+        byte flags = (byte) ((typeAndFlags << 2) & 0x0F);
+        // Set control message type to 4 (Map-Notify)
+        byte type = 0x40;
+        // Combine the nibbles
+        typeAndFlags = (byte) (type | flags);
+        byte[] byteReplacement = new byte[] {typeAndFlags, 0x00, 0x00};
         buffer.put(byteReplacement);
 
         return buffer;
