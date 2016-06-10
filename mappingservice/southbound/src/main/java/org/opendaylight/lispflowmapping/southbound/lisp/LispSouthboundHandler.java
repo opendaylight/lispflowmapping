@@ -283,12 +283,19 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private void sendMapNotifyMsg(final ByteBuffer inBuffer, final InetAddress inetAddress, int portNumber,
-                                  List<EidLispAddress> cacheValue) {
+                                  List<EidLispAddress> eids) {
 
-        final String authKey = provideAuthenticateKey(cacheValue);
+        if (eids == null) {
+            LOG.warn("Map-Register Cache: missing EID list when trying to send Map-Notify!");
+            return;
+        }
+
+        final MappingAuthkey authKey = provideAuthenticateKey(eids);
         if (authKey != null) {
             ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
-            outBuffer = calculateAndSetNewMAC(outBuffer, authKey);
+            if (authKey.getKeyType() != 0) {
+                outBuffer = calculateAndSetNewMAC(outBuffer, authKey.getKeyString());
+            }
             outBuffer.position(0);
             lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
         }
@@ -297,7 +304,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     /**
      * Returns null if not all of eids have the same value of authentication key
      */
-    private String provideAuthenticateKey(final List<EidLispAddress> eidLispAddresses) {
+    private MappingAuthkey provideAuthenticateKey(final List<EidLispAddress> eidLispAddresses) {
         MappingAuthkey firstAuthKey = null;
         for (int i = 0; i < eidLispAddresses.size(); i++) {
             final Eid eid = eidLispAddresses.get(i).getEid();
@@ -310,7 +317,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 }
             }
         }
-        return firstAuthKey.getKeyString();
+        return firstAuthKey;
 
     }
 
