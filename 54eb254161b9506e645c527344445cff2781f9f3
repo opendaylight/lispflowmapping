@@ -39,6 +39,30 @@
       "revId": "54eb254161b9506e645c527344445cff2781f9f3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_7dda5d79",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-10T08:11:52Z",
+      "side": 1,
+      "message": "The only complication is that Map Notify built in MapServer will not include the Authentication Data anymore, because we moved the Auth Key stuff to SB. So now in SB, when we serialize a Map Notify to send, we have to calculate the auth data and fill that part.",
+      "parentUuid": "da5c1566_5da67911",
+      "range": {
+        "startLine": 241,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 82
+      },
+      "revId": "54eb254161b9506e645c527344445cff2781f9f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
