@@ -22,6 +22,24 @@
       "revId": "d3ce08529c080eca15116de1ca7ce4750e49795d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_f84a3154",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-11T20:23:50Z",
+      "side": 1,
+      "message": "We should never be in such a situation, because if we\u0027re sending a Map-Notify, authentication should have succeeded. So indeed, that would be an abnormal situation. I agree that even an error level log is appropriate.",
+      "parentUuid": "da5c1566_0fbde268",
+      "revId": "d3ce08529c080eca15116de1ca7ce4750e49795d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
