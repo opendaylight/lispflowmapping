@@ -191,11 +191,13 @@
         <artifactId>mappingservice.inmemorydb</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
+      <!--
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.neutron</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
+      -->
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.northbound</artifactId>

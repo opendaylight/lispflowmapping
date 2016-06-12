@@ -23,7 +23,9 @@
     <module>mapcache</module>
     <module>implementation</module>
     <module>southbound</module>
+    <!--
     <module>neutron</module>
+    -->
     <module>shell</module>
   </modules>
 
@@ -69,11 +71,13 @@
         <scope>test</scope>
       </dependency>
       -->
+      <!--
       <dependency>
         <groupId>org.opendaylight.neutron</groupId>
         <artifactId>neutron-spi</artifactId>
         <version>0.7.0-SNAPSHOT</version>
       </dependency>
+      -->
     </dependencies>
   </dependencyManagement>
 
