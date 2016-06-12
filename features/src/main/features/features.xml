@@ -18,7 +18,6 @@
     <repository>mvn:org.opendaylight.netconf/features-restconf/{{VERSION}}/xml/features</repository>
     <!-- Needed for odl-config-api -->
     <repository>mvn:org.opendaylight.controller/features-config/{{VERSION}}/xml/features</repository>
-    <repository>mvn:org.opendaylight.neutron/features-neutron/{{VERSION}}/xml/features</repository>
     <repository>mvn:org.opendaylight.dlux/features-dlux/{{VERSION}}/xml/features</repository>
 
     <feature name="odl-lispflowmapping-msmr" description="OpenDaylight :: LISP Flow Mapping :: Map-Server/Map-Resolver" version='${project.version}'>
@@ -64,12 +63,6 @@
         <configfile finalname="${configfile.directory}/lfm-mappingservice-sb.xml">
             mvn:org.opendaylight.lispflowmapping/mappingservice.southbound/{{VERSION}}/xml/config
         </configfile>
-    </feature>
-
-    <feature name="odl-lispflowmapping-neutron" description="OpenDaylight :: LISP Flow Mapping :: Neutron Integration" version='${project.version}'>
-        <feature version="${neutron.version}">odl-neutron-service</feature>
-        <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.neutron/{{VERSION}}</bundle>
     </feature>
 
     <feature name="odl-lispflowmapping-ui" description="OpenDaylight :: LISP Flow Mapping :: User Interface" version='${project.version}'>
