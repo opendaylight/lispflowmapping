@@ -37,7 +37,6 @@
     <karaf.resources.version>1.7.0-SNAPSHOT</karaf.resources.version>
     <lispflowmapping.version>1.4.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.4.0-SNAPSHOT</mdsal.version>
-    <neutron.version>0.7.0-SNAPSHOT</neutron.version>
     <nsf.version>0.7.0-SNAPSHOT</nsf.version>
     <restconf.version>1.4.0-SNAPSHOT</restconf.version>
     <sal.version>0.11.0-SNAPSHOT</sal.version>
@@ -189,11 +188,6 @@
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>mappingservice.inmemorydb</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.neutron</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
       <dependency>

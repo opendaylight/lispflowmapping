@@ -68,7 +68,6 @@ frame odl-lisp-sb-impl.yang as odllispsbimpl {
 lispsb <... lispsbimpl : use
 
 
-'[neutron]
 '[shell]
 
 @enduml
