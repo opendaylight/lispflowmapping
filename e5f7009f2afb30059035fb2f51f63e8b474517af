@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_6e3770b1",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "We decided to change the API to get EID directly. But I guess we should do it in a separate patch?",
+      "range": {
+        "startLine": 44,
+        "startChar": 32,
+        "endLine": 44,
+        "endChar": 33
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_ae0fc8e0",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "I think there are too many places in the code that we check if IP/IpPrefix in the code, both when adding and when reading to/from map-cache. perhaps we should consolidate all these. lets discuss.",
+      "range": {
+        "startLine": 62,
+        "startChar": 30,
+        "endLine": 62,
+        "endChar": 32
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_cecafc6d",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "getBest will check again the EID. Perhaps we should consolidate the checks into one place.",
+      "range": {
+        "startLine": 103,
+        "startChar": 33,
+        "endLine": 103,
+        "endChar": 34
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_0ec5145b",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "shouldnt these be reversed? or maybe only one is needed..",
+      "range": {
+        "startLine": 141,
+        "startChar": 7,
+        "endLine": 142,
+        "endChar": 51
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_4ea6ecc2",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "Maybe the getDaoEntryBest() is not needed in this file anymore?",
+      "range": {
+        "startLine": 249,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 71
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_ee942046",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-14T18:05:09Z",
+      "side": 1,
+      "message": "same comment as above",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 371,
+        "endChar": 78
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
