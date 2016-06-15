@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -79,8 +80,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
-
     private MappingSystem mappingSystem;
+
     private DataStoreBackEnd dsbe;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
@@ -88,6 +89,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
+    private final EntityOwnershipService entityOwnershipService;
 
     private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
     private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
@@ -95,10 +97,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     public MappingService(final DataBroker broker,
             final NotificationPublishService notificationPublishService,
-            final ILispDAO lispDAO) {
+            final ILispDAO lispDAO, final EntityOwnershipService entityOwnershipService) {
         this.dataBroker = broker;
         this.notificationPublishService = notificationPublishService;
         this.dao = lispDAO;
+        this.entityOwnershipService = entityOwnershipService;
 
         LOG.debug("MappingService created!");
     }

@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
@@ -87,10 +88,11 @@ public class MappingServiceTest {
     private final NotificationPublishService notificationPublishService = Mockito
             .mock(NotificationPublishService.class);
     private final ILispDAO lispDAO = Mockito.mock(ILispDAO.class);
+    private final EntityOwnershipService entityOwnershipService = Mockito.mock(EntityOwnershipService.class);
 
     @InjectMocks
     MappingService mappingService = new MappingService(dataBroker,
-            notificationPublishService, lispDAO);
+            notificationPublishService, lispDAO, entityOwnershipService);
 
     private static final String IPV4_STRING = "1.2.3.0";
     private static final Eid IPV4_EID = LispAddressUtil.asIpv4Eid(IPV4_STRING);
