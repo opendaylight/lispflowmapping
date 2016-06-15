@@ -507,4 +507,25 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         }
         return originalLocators;
     }
+
+
+    public void stopModuleServices() {
+        if (mappingServiceRpc != null) {
+            mappingServiceRpc.close();
+        }
+        mappingServiceRpc = null;
+
+        //according to debug notification about data change arent sent to slave node
+//        keyListener.closeDataChangeListener();
+//        mappingListener.closeDataChangeListener();
+    }
+
+    public void startModuleServices() {
+        if (mappingServiceRpc == null ) {
+            mappingServiceRpc = rpcRegistry.addRpcImplementation(OdlMappingserviceService.class, this);
+        }
+
+//        keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
+//        mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
+    }
 }

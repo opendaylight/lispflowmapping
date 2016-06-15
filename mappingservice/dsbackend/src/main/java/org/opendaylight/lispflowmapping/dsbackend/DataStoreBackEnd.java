@@ -43,7 +43,7 @@ import com.google.common.util.concurrent.Futures;
  * @author Lorand Jakab
  *
  */
-public class DataStoreBackEnd implements TransactionChainListener {
+public class DataStoreBackEnd implements TransactionChainListener, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
     private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
             InstanceIdentifier.create(MappingDatabase.class);
@@ -276,5 +276,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
+    }
+
+    @Override
+    public void close() throws Exception {
+        txChain.close();
     }
 }
