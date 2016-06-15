@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_ce215cb6",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-15T00:33:42Z",
+      "side": 1,
+      "message": "Yep.",
+      "parentUuid": "ba51214e_6e3770b1",
+      "range": {
+        "startLine": 44,
+        "startChar": 32,
+        "endLine": 44,
+        "endChar": 33
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_ae0fc8e0",
         "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
         "patchSetId": 2
@@ -117,6 +141,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_2e773804",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-15T00:33:42Z",
+      "side": 1,
+      "message": "Yep, you\u0027re right. I somehow forgot to remove it. Thanks!",
+      "parentUuid": "ba51214e_4ea6ecc2",
+      "range": {
+        "startLine": 249,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 71
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_ee942046",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
         "patchSetId": 2
@@ -128,6 +176,30 @@
       "writtenOn": "2016-06-14T18:05:09Z",
       "side": 1,
       "message": "same comment as above",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 371,
+        "endChar": 78
+      },
+      "revId": "e5f7009f2afb30059035fb2f51f63e8b474517af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_8e5f6472",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-15T00:33:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_ee942046",
       "range": {
         "startLine": 371,
         "startChar": 0,
