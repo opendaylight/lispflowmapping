@@ -10,6 +10,7 @@ module odl-mappingservice-impl {
     import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
     import odl-mappingservice { prefix mappingservice; revision-date 2015-09-06; }
     import odl-mappingservice-dao { prefix ms-dao; revision-date 2015-10-07; }
+    import opendaylight-entity-ownership-service { prefix ownership-service; revision-date 2015-08-10;}
 
     description
         "This module contains the base YANG definitions for
@@ -79,6 +80,14 @@ module odl-mappingservice-impl {
                     }
                 }
             }
+            container entity-ownership-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity ownership-service:entity-ownership-service;
+                    }
+                }
+            }
         }
         case lisp-mappingservice-impl {
             when "/config:modules/config:module/config:type = 'lisp-mappingservice-impl'";
@@ -103,6 +112,14 @@ module odl-mappingservice-impl {
                     refine type {
                         mandatory true;
                         config:required-identity mappingservice:mappingservice;
+                    }
+                }
+            }
+            container entity-ownership-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity ownership-service:entity-ownership-service;
                     }
                 }
             }
