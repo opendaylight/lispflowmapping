@@ -8,6 +8,7 @@
 
 package org.opendaylight.controller.config.yang.config.lfm.mappingservice.impl;
 
+import org.opendaylight.lispflowmapping.clustering.impl.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,18 @@ public class MappingServiceModule extends org.opendaylight.controller.config.yan
     @Override
     public java.lang.AutoCloseable createInstance() {
         LOG.debug("MappingService module up!");
+        final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl
+                (getEntityOwnershipServiceDependency());
+
         mappingService = new MappingService();
+        clusterNodeModulSwitcher.setModule(mappingService);
         mappingService.setBindingAwareBroker(getBrokerDependency());
         mappingService.setDataBroker(getDataBrokerDependency());
         mappingService.setRpcProviderRegistry(getRpcRegistryDependency());
         mappingService.setNotificationPublishService(getNotificationPublishServiceDependency());
         mappingService.setDaoService(getDaoDependency());
         mappingService.initialize();
+        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
 
         return mappingService;
     }

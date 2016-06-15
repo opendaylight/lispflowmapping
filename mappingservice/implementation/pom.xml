@@ -49,6 +49,10 @@
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>mappingservice.clustering</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.inmemorydb</artifactId>
       <scope>test</scope>
     </dependency>
