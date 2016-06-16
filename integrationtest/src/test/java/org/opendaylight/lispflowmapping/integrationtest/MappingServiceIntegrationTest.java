@@ -30,7 +30,10 @@ import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -2143,7 +2146,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
         } catch (SocketException e) {
             LOG.error("Can't initize socket for {}", ourAddress, e);
-            fail();
+            OutputStream os = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(os);
+            e.printStackTrace(ps);
+            ps.flush();
+            fail(os.toString());
         }
         return socket;
     }
