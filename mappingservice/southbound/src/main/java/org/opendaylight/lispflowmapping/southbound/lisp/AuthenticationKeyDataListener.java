@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.util.Collection;
 
+import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * DataListener for all AuthenticationKey modification events.
  *
  */
-public class AuthenticationKeyDataListener implements DataTreeChangeListener<AuthenticationKey> {
+public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeListener<AuthenticationKey> {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
 
     private final SimpleMapCache smc;

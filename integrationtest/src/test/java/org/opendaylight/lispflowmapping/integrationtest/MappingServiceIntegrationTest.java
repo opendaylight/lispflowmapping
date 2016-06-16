@@ -30,7 +30,10 @@ import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -1945,7 +1948,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
-                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
+                        new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
         Rloc adLcaf = rb.build();
 
         LOG.info("testNonProxyOtherPort:" + LispAddressStringifier.getString(adLcaf));
@@ -2127,7 +2130,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void sleepForSeconds(int seconds) {
         try {
-            Thread.sleep(seconds*1000);
+            Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while sleeping", e);
         }
@@ -2139,13 +2142,22 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private DatagramSocket initSocket(DatagramSocket socket, int port) {
-        try {
-            socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
-        } catch (SocketException e) {
-            LOG.error("Can't initize socket for {}", ourAddress, e);
-            fail();
+        DatagramSocket newSocket = null;
+        for (int i=0; i<2; i++) {
+            try {
+                return new DatagramSocket(new InetSocketAddress(ourAddress, port));
+            } catch (SocketException e) {
+                LOG.error("Can't initize socket for {}", ourAddress, e);
+                if (i>0) {
+                    OutputStream os = new ByteArrayOutputStream();
+                    PrintStream ps = new PrintStream(os);
+                    e.printStackTrace(ps);
+                    ps.flush();
+                    fail(os.toString());
+                }
+            }
         }
-        return socket;
+        return newSocket;
     }
 
     private byte[] extractWSUdpByteArray(String wiresharkHex) {
