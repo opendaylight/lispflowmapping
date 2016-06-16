@@ -18,6 +18,7 @@
   <modules>
     <module>lisp-proto</module>
     <module>api</module>
+    <module>clustering</module>
     <module>inmemorydb</module>
     <module>dsbackend</module>
     <module>mapcache</module>
