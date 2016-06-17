@@ -42,6 +42,7 @@
     <argument ref="notificationService" />
     <argument ref="mappingService" />
     <argument ref="odlLispSbService" />
+    <argument ref="entityOwnershipService" />
   </bean>
   <service ref="lispMappingService"
     interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping"
