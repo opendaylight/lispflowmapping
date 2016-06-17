@@ -12,6 +12,8 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
+import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -51,12 +53,15 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
-        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable {
+        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
+    private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
@@ -73,14 +78,18 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     private final IMappingService mapService;
     private final NotificationService notificationService;
+    private ListenerRegistration<LispMappingService> lispMappingServiceListenerRegistration;
+
 
     public LispMappingService(final NotificationService notificationService,
             final IMappingService mappingService,
-            final OdlLispSbService odlLispService) {
+            final OdlLispSbService odlLispService, final EntityOwnershipService entityOnwershipService) {
 
         this.notificationService = notificationService;
         this.mapService = mappingService;
         this.lispSB = odlLispService;
+        clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl(entityOnwershipService);
+        clusterNodeModulSwitcher.setModule(this);
         LOG.debug("LispMappingService Module constructed!");
     }
 
@@ -106,7 +115,22 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public void initialize() {
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
+        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
         LOG.info("LISP (RFC6830) Mapping Service init finished");
+    }
+
+    @Override
+    public void stopModule() {
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).stopNotificationListening();
+        }
+    }
+
+    @Override
+    public void startModule() {
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).startNotificationListening();
+        }
     }
 
     public void basicInit() {
@@ -161,35 +185,40 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     @Override
     public void onAddMapping(AddMapping mapRegisterNotification) {
-        Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
-        if (result != null && result.getLeft() != null) {
-            MapNotify mapNotify = result.getLeft();
-            List <TransportAddress> rlocs = result.getRight();
-            if (rlocs == null) {
-                TransportAddressBuilder tab = new TransportAddressBuilder();
-                tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
-                sendMapNotify(mapNotify, tab.build());
-            } else {
-                for (TransportAddress ta : rlocs) {
-                    sendMapNotify(mapNotify, ta);
+        if (clusterNodeModulSwitcher.isMaster()) {
+            Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister
+                    ());
+            if (result != null && result.getLeft() != null) {
+                MapNotify mapNotify = result.getLeft();
+                List<TransportAddress> rlocs = result.getRight();
+                if (rlocs == null) {
+                    TransportAddressBuilder tab = new TransportAddressBuilder();
+                    tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
+                    tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                    sendMapNotify(mapNotify, tab.build());
+                } else {
+                    for (TransportAddress ta : rlocs) {
+                        sendMapNotify(mapNotify, ta);
+                    }
                 }
+            } else {
+                LOG.debug("Not sending Map-Notify");
             }
-        } else {
-            LOG.debug("Not sending Map-Notify");
         }
     }
 
     @Override
     public void onRequestMapping(RequestMapping mapRequestNotification) {
-        MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
-        if (mapReply != null) {
-            SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
-            smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
-            smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
-            getLispSB().sendMapReply(smrib.build());
-        } else {
-            LOG.warn("got null map reply");
+        if (clusterNodeModulSwitcher.isMaster()) {
+            MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
+            if (mapReply != null) {
+                SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
+                smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
+                smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
+                getLispSB().sendMapReply(smrib.build());
+            } else {
+                LOG.warn("got null map reply");
+            }
         }
     }
 
