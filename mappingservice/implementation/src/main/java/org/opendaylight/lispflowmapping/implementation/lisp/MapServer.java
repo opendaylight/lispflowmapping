@@ -54,6 +54,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     private boolean subscriptionService;
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
+    private ListenerRegistration<MapServer> mapServerListenerRegistration;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
             IMapNotifyHandler notifyHandler, NotificationService notificationService) {
@@ -75,7 +77,20 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
         if (notificationService != null) {
-            notificationService.registerNotificationListener(this);
+            mapServerListenerRegistration = notificationService.registerNotificationListener(this);
+        }
+    }
+
+    public void startNotificationListening() {
+        if (mapServerListenerRegistration == null) {
+            mapServerListenerRegistration = notificationService.registerNotificationListener(this);
+        }
+    }
+
+    public void stopNotificationListening() {
+        if (mapServerListenerRegistration != null) {
+            mapServerListenerRegistration.close();
+            mapServerListenerRegistration = null;
         }
     }
 
