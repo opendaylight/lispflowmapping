@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
+import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -54,6 +55,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,21 +64,25 @@ import com.google.common.base.Preconditions;
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
+    private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private IMappingService mapService;
     private boolean subscriptionService;
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
+    private ListenerRegistration<MapServer> mapServerListenerRegistration;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
-            IMapNotifyHandler notifyHandler, NotificationService notificationService) {
+                     IMapNotifyHandler notifyHandler, NotificationService notificationService,
+                     final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher) {
         Preconditions.checkNotNull(mapService);
         this.mapService = mapService;
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
         if (notificationService != null) {
-            notificationService.registerNotificationListener(this);
+            mapServerListenerRegistration = notificationService.registerNotificationListener(this);
         }
+        this.clusterNodeModulSwitcher = clusterNodeModulSwitcher;
     }
 
     @Override
@@ -160,7 +166,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     @Override
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
-            sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
+            if (clusterNodeModulSwitcher.isMaster()) {
+                sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
+            }
             if (notification.getChangeType().equals(MappingChange.Removed)) {
                 removeSubscribers(notification.getMappingRecord().getEid());
             }
