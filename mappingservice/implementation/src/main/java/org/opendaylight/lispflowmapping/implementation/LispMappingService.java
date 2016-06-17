@@ -55,6 +55,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private NotificationService notificationService;
     private BindingAwareBroker broker;
     private ProviderContext session;
+    private ListenerRegistration<LispMappingService> lispMappingServiceListenerRegistration;
 
     public LispMappingService() {
         LOG.debug("LispMappingService Module constructed!");
@@ -118,9 +121,29 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public void initialize() {
         broker.registerProvider(this);
-        notificationService.registerNotificationListener(this);
+        lispMappingServiceListenerRegistration = notificationService.registerNotificationListener(this);
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
+    }
+
+    public void stopModule() {
+        if (lispMappingServiceListenerRegistration != null) {
+            lispMappingServiceListenerRegistration.close();
+            lispMappingServiceListenerRegistration = null;
+        }
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).stopNotificationListening();
+        }
+    }
+
+    public void startModule() {
+        if (lispMappingServiceListenerRegistration == null) {
+            lispMappingServiceListenerRegistration = notificationService.registerNotificationListener(this);
+        }
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).startNotificationListening();
+        }
+
     }
 
     public void basicInit() {
@@ -292,5 +315,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     @Override
     public void close() throws Exception {
         destroy();
+        lispMappingServiceListenerRegistration.close();
     }
 }
