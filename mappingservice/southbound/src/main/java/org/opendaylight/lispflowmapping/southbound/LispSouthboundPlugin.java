@@ -32,7 +32,6 @@ import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -41,6 +40,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
-    private RpcProviderRegistry rpcRegistry;
     private NioDatagramChannel channel;
     private volatile String bindingAddress = "0.0.0.0";
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
@@ -66,13 +65,17 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
     private DataBroker dataBroker;
 
+    public LispSouthboundPlugin(final DataBroker dataBroker,
+            final NotificationPublishService notificationPublishService,
+            final LispSbConfig lispSbConfig) {
+        this.dataBroker = dataBroker;
+        this.notificationPublishService = notificationPublishService;
+        this.bindingAddress = lispSbConfig.getBindAddress();
+        this.mapRegisterCacheEnabled = lispSbConfig.isMapRegisterCache();
+    }
 
     public void init() {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
-        final LispSouthboundRPC sbRpcHandler = new LispSouthboundRPC(this);
-
-        sbRpcRegistration = rpcRegistry.addRpcImplementation(OdlLispSbService.class, sbRpcHandler);
-
         synchronized (startLock) {
             lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
@@ -149,14 +152,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         LOG.info("Reloading xTR");
         stopXtr();
         startXtr();
-    }
-
-    public void setNotificationPublishService(NotificationPublishService notificationService) {
-        this.notificationPublishService = notificationService;
-    }
-
-    public void setRpcRegistryDependency(RpcProviderRegistry rpcRegistry) {
-        this.rpcRegistry = rpcRegistry;
     }
 
     private void unloadActions() {
@@ -256,10 +251,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         if (listenOnXtrPort) {
             restartXtr();
         }
-    }
-
-    public void setDataBroker(final DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
     }
 
     public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
