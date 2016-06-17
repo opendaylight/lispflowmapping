@@ -87,6 +87,8 @@ public class LispMappingServiceTest {
     @Mock(name = "notificationService") private static NotificationService notificationServiceMock;
     @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
     @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
+//    @Mock(name = "lispMappingServiceListenerRegistration") private static ThreadLocal<Pair<MapRequest,
+//            TransportAddress>> lispMappingServiceListenerRegistrationMock;
     @InjectMocks private static LispMappingService lispMappingService;
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};

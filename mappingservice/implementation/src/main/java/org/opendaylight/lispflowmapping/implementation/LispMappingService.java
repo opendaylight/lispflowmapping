@@ -16,6 +16,7 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
+import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -55,11 +56,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements IFlowMapping, BindingAwareProvider, IMapRequestResultHandler,
-        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable {
+        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
@@ -79,6 +81,7 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private NotificationService notificationService;
     private BindingAwareBroker broker;
     private ProviderContext session;
+    private ListenerRegistration<LispMappingService> lispMappingServiceListenerRegistration;
 
     public LispMappingService() {
         LOG.debug("LispMappingService Module constructed!");
@@ -118,9 +121,31 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
 
     public void initialize() {
         broker.registerProvider(this);
-        notificationService.registerNotificationListener(this);
+        lispMappingServiceListenerRegistration = notificationService.registerNotificationListener(this);
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
+    }
+
+    @Override
+    public void stopModule() {
+        if (lispMappingServiceListenerRegistration != null) {
+            lispMappingServiceListenerRegistration.close();
+            lispMappingServiceListenerRegistration = null;
+        }
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).stopNotificationListening();
+        }
+    }
+
+    @Override
+    public void startModule() {
+        if (lispMappingServiceListenerRegistration == null) {
+            lispMappingServiceListenerRegistration = notificationService.registerNotificationListener(this);
+        }
+        if (mapServer instanceof MapServer) {
+            ((MapServer) mapServer).startNotificationListening();
+        }
+
     }
 
     public void basicInit() {

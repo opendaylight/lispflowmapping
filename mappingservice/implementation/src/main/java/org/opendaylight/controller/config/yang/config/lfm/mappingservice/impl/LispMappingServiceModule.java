@@ -8,14 +8,22 @@
 
 package org.opendaylight.controller.config.yang.config.lfm.mappingservice.impl;
 
+import org.opendaylight.controller.md.sal.common.api.clustering.Entity;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
+import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingServiceModule extends org.opendaylight.controller.config.yang.config.lfm.mappingservice.impl.AbstractLispMappingServiceModule {
+public class LispMappingServiceModule extends org.opendaylight.controller.config.yang.config.lfm.mappingservice.impl
+        .AbstractLispMappingServiceModule {
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingServiceModule.class);
 
     private LispMappingService lmsService;
+    private EntityOwnershipService entityOwnershipService;
+    private Entity entity;
+    private boolean moduleIsRunning;
+
 
     public LispMappingServiceModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
@@ -33,12 +41,16 @@ public class LispMappingServiceModule extends org.opendaylight.controller.config
     @Override
     public java.lang.AutoCloseable createInstance() {
         LOG.debug("LispMappingService Module up!");
+        final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl(
+                getEntityOwnershipServiceDependency());
 
         lmsService = new LispMappingService();
+        clusterNodeModulSwitcher.setModule(lmsService);
         lmsService.setBindingAwareBroker(getOsgiBrokerDependency());
         lmsService.setNotificationService(getNotificationServiceDependency());
         lmsService.setMappingService(getMappingserviceDependency());
         lmsService.initialize();
+        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
 
         return lmsService;
     }
