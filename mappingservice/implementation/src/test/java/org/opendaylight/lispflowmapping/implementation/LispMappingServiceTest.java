@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -86,12 +87,13 @@ public class LispMappingServiceTest {
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
     private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
+    private final EntityOwnershipService entityOwnershipSrvice = Mockito.mock(EntityOwnershipService.class);
 
     @InjectMocks
     private LispMappingService lispMappingService = new LispMappingService(
             notificationService,
             mappingService,
-            odlLispSbService);
+            odlLispSbService, entityOwnershipSrvice);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
