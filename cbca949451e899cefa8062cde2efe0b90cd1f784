@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_3b73e64e",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/ILispDAO.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-17T08:53:26Z",
+      "side": 1,
+      "message": "Reflex. Removed.",
+      "parentUuid": "ba51214e_bb5c1627",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 10
+      },
+      "revId": "cbca949451e899cefa8062cde2efe0b90cd1f784",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_db6e2ac9",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-17T06:44:58Z",
       "side": 1,
       "message": "why just for origin\u003dsb?",
+      "range": {
+        "startLine": 234,
+        "startChar": 34,
+        "endLine": 234,
+        "endChar": 59
+      },
+      "revId": "cbca949451e899cefa8062cde2efe0b90cd1f784",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_5bc4da3f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-17T08:53:26Z",
+      "side": 1,
+      "message": "It seem[s|ed] a bad (complicated) idea to ask for widest negative prefix for source/dests AND in NB we have explicit negative mappings. Ignoring the latter, having widest negative prefix matching for dests only makes all the sense in the world. However, what do we return for source/dests? Widest dest negative for a source? That\u0027s a heavy search given that source is under dest! Or, widest dest and null source? This could be done, modulo the comments lower, but do note that in this case the dest prefix is probably not as wide as in the previous scenario.\n\nComing back to the explicit negative mappings and ignoring the source/dests: the issue with them is that they appear from radix trie perspective as normal entries, so the address space they cover can\u0027t be returned as negative (uncovered by a trie node). So, aren\u0027t the LPM matches of negative mappings enough, do we want to find the widest negative prefix composed of explicit negative space and \"non-allocated\" space? If yes, then we do need to find a way to store NB explicit negative mappings such that the address space they cover can be aggregated with unallocated space.",
+      "parentUuid": "ba51214e_db6e2ac9",
       "range": {
         "startLine": 234,
         "startChar": 34,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_5bdb3a1b",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-17T08:53:26Z",
+      "side": 1,
+      "message": "Was this in anticipation to my comment concerning the NB widest negative prefix matching? :-)",
+      "parentUuid": "ba51214e_fb1cce15",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 32
+      },
+      "revId": "cbca949451e899cefa8062cde2efe0b90cd1f784",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_9b9b12c9",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_5b205af7",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-17T08:53:26Z",
+      "side": 1,
+      "message": "Good catch. Done.",
+      "parentUuid": "ba51214e_9b9b12c9",
+      "range": {
+        "startLine": 102,
+        "startChar": 7,
+        "endLine": 102,
+        "endChar": 15
+      },
+      "revId": "cbca949451e899cefa8062cde2efe0b90cd1f784",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_db7c6a75",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
         "patchSetId": 3
@@ -105,6 +201,30 @@
       "writtenOn": "2016-06-17T06:44:58Z",
       "side": 1,
       "message": "why? what happens when we add two EID prefixes in NB, then xTR asks for a prefix in between those?\nAlso for NB mappings,we need to figure out how to handle NB negative mappings that are added explicitly",
+      "range": {
+        "startLine": 154,
+        "startChar": 14,
+        "endLine": 154,
+        "endChar": 20
+      },
+      "revId": "cbca949451e899cefa8062cde2efe0b90cd1f784",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_3b1da6be",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-06-17T08:53:26Z",
+      "side": 1,
+      "message": "First thing: this is a bug, I should\u0027ve been returning the key. Now, as per one of my previous comments, I could return here the widest dest and a null source (if we ignore the explicit negative mappings). Would that be better?\n\nSecond, yes, we could try to return an aggregate widest negative prefix. But an alternative solution to the problem you pose, since everything NB is coming from an orchestrator, would be to just explicitly add the negative address space. If no negative address space is added, we return a negative /32 | /128",
+      "parentUuid": "ba51214e_db7c6a75",
       "range": {
         "startLine": 154,
         "startChar": 14,
