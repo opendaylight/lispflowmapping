@@ -18,6 +18,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfig;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,15 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object,
             ConcurrentMap<String, Object>>();
     private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private int recordTimeOut = DEFAULT_RECORD_TIMEOUT;
+    private final int recordTimeOut;
+
+    public HashMapDb(final InmemorydbConfig inmemoryConfig) {
+        if (inmemoryConfig.getRecordTimeout() <= 0) {
+            this.recordTimeOut = DEFAULT_RECORD_TIMEOUT;
+        } else {
+            this.recordTimeOut = inmemoryConfig.getRecordTimeout();
+        }
+    }
 
     @Override
     public void put(Object key, MappingEntry<?>... values) {
@@ -104,10 +114,6 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         return timeUnit;
     }
 
-    public void setRecordTimeOut(int recordTimeOut) {
-        this.recordTimeOut = recordTimeOut;
-    }
-
     public int getRecordTimeOut() {
         return recordTimeOut;
     }
@@ -127,7 +133,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             LOG.warn("Trying to add nested table that already exists. Aborting!");
             return nestedTable;
         }
-        nestedTable = new HashMapDb();
+        nestedTable = new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(DEFAULT_RECORD_TIMEOUT).build());
         put(key, new MappingEntry<>(valueKey, nestedTable));
         return nestedTable;
     }
@@ -139,7 +145,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             LOG.warn("Trying to add table that already exists. Aborting!");
             return table;
         }
-        table = new HashMapDb();
+        table = new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(DEFAULT_RECORD_TIMEOUT).build());
         put(TABLES, new MappingEntry<>(key, table));
         return table;
     }

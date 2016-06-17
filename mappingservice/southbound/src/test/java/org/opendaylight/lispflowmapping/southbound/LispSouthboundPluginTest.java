@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
@@ -39,6 +40,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -71,7 +73,15 @@ public class LispSouthboundPluginTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
-        lispSouthboundPlugin = new LispSouthboundPlugin();
+        LispSbConfig config = Mockito.mock(LispSbConfig.class);
+        Mockito.when(config.getBindAddress()).thenReturn(ADDRESS_1);
+        Mockito.when(config.isMapRegisterCache()).thenReturn(false);
+
+        lispSouthboundPlugin = new LispSouthboundPlugin(
+                Mockito.mock(DataBroker.class),
+                Mockito.mock(NotificationPublishService.class),
+                Mockito.mock(RpcProviderRegistry.class),
+                config);
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();
@@ -184,29 +194,6 @@ public class LispSouthboundPluginTest {
 
         Mockito.verify(xtrChannel, Mockito.times(2)).close();
         assertEquals(PORT, (int) LispSouthboundPluginTest.<Integer>getField("xtrPort"));
-    }
-
-    /**
-     * Tests {@link LispSouthboundPlugin#setNotificationPublishService} method.
-     */
-    @Test
-    public void setNotificationPublishServiceTest() throws NoSuchFieldException, IllegalAccessException {
-        final NotificationPublishService serviceMock = Mockito.mock(NotificationPublishService.class);
-        lispSouthboundPlugin.setNotificationPublishService(serviceMock);
-
-        assertEquals(serviceMock,
-                LispSouthboundPluginTest.<NotificationPublishService>getField("notificationPublishService"));
-    }
-
-    /**
-     * Tests {@link LispSouthboundPlugin#setRpcRegistryDependency} method.
-     */
-    @Test
-    public void setRpcRegistryDependencyTest() throws NoSuchFieldException, IllegalAccessException {
-        final RpcProviderRegistry registryMock = Mockito.mock(RpcProviderRegistry.class);
-        lispSouthboundPlugin.setRpcRegistryDependency(registryMock);
-
-        assertEquals(registryMock, LispSouthboundPluginTest.<RpcProviderRegistry>getField("rpcRegistry"));
     }
 
     /**

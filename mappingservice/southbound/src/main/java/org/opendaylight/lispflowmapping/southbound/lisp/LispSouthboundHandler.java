@@ -68,6 +68,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfigBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +105,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             this.lispSbStats = lispSbPlugin.getStats();
         }
         this.mapRegisterCache = new MapRegisterCache();
-        this.smc = new SimpleMapCache(new HashMapDb());
+        this.smc = new SimpleMapCache(new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(240).build()));
     }
 
     public void handlePacket(DatagramPacket msg) {
