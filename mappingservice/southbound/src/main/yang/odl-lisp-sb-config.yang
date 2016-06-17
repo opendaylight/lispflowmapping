@@ -1,0 +1,26 @@
+module odl-lisp-sb-config {
+
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:lisp-sb:config";
+    prefix "lisp-sb-config";
+
+    description
+        "This module contains the base YANG definitions for mappingservice
+        southbound plugin implementation.";
+
+    revision "2015-05-17" {
+        description "Initial revision.";
+    }
+
+    container lisp-sb-config {
+        leaf bind-address {
+            type string;
+            default "0.0.0.0";
+        }
+
+        leaf map-register-cache {
+            type boolean;
+            default true;
+        }
+    }
+}

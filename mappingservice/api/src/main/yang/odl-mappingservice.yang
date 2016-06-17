@@ -18,21 +18,6 @@ module odl-mappingservice {
         description "Renamed and moved module to mappingservice.api.";
     }
 
-    identity mappingservice {
-        base config:service-type;
-        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService";
-    }
-
-    identity mappingservice-shell {
-        base config:service-type;
-        config:java-class "org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell";
-    }
-
-    identity lisp-mappingservice {
-        base config:service-type;
-        config:java-class "org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping";
-    }
-
     typedef mapping-origin {
         description "The originating entity of an EID-to-RLOC mapping";
         type enumeration {

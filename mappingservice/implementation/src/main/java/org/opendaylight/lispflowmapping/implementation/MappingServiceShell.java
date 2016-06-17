@@ -7,9 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -24,22 +21,13 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public class MappingServiceShell implements IMappingServiceShell, BindingAwareProvider, AutoCloseable {
+public class MappingServiceShell implements IMappingServiceShell {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingServiceShell.class);
 
-    private BindingAwareBroker bindingAwareBroker;
-    private IMappingService mappingService;
+    private final IMappingService mappingService;
 
-    public void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-        this.bindingAwareBroker = bindingAwareBroker;
-    }
-
-    public void setMappingService(IMappingService mappingService) {
+    public MappingServiceShell(final IMappingService mappingService) {
         this.mappingService = mappingService;
-    }
-
-    public void initialize() {
-        bindingAwareBroker.registerProvider(this);
     }
 
     @Override
@@ -52,15 +40,5 @@ public class MappingServiceShell implements IMappingServiceShell, BindingAwarePr
         Eid eid = LispAddressUtil.toEid(new Ipv4Prefix("0.0.0.0/0"), null);
         MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build();
         mappingService.addAuthenticationKey(eid, key);
-    }
-
-    @Override
-    public void close() throws Exception {
-    }
-
-    @Override
-    public void onSessionInitiated(ProviderContext arg0) {
-        // TODO Auto-generated method stub
-
     }
 }

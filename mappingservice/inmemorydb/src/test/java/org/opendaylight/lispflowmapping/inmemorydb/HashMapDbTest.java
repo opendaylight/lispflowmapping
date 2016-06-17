@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
+
 /**
  * Test for {@link HashMapDb} class
  */
@@ -271,7 +272,6 @@ public class HashMapDbTest {
 
     @Test
     public void testCleanOld() throws Exception {
-        map.setRecordTimeOut(240);
         map.setTimeUnit(TimeUnit.SECONDS);
 
         Object entry1Key = "entry1Key";
@@ -307,13 +307,6 @@ public class HashMapDbTest {
         TimeUnit timeUnit = TimeUnit.DAYS;
         map.setTimeUnit(timeUnit);
         Assert.assertEquals(timeUnit, map.getTimeUnit());
-    }
-
-    @Test
-    public void testSetGetRecordTimeOut() throws Exception {
-        int recordTimeOut = 12345;
-        map.setRecordTimeOut(recordTimeOut);
-        Assert.assertEquals(recordTimeOut, map.getRecordTimeOut());
     }
 
     @Test
