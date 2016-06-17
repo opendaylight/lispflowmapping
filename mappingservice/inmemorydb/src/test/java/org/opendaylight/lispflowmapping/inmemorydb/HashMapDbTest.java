@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfigBuilder;
 
 /**
  * Test for {@link HashMapDb} class
@@ -29,7 +30,7 @@ public class HashMapDbTest {
 
     @Before
     public void setUp() throws Exception {
-        map = new HashMapDb();
+        map = new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(240).build());
     }
 
     /**
@@ -163,7 +164,6 @@ public class HashMapDbTest {
 
     @Test
     public void testCleanOld() throws Exception {
-        map.setRecordTimeOut(240);
         map.setTimeUnit(TimeUnit.SECONDS);
 
         Object entry1Key = "entry1Key";
@@ -202,13 +202,6 @@ public class HashMapDbTest {
     }
 
     @Test
-    public void testSetGetRecordTimeOut() throws Exception {
-        int recordTimeOut = 12345;
-        map.setRecordTimeOut(recordTimeOut);
-        Assert.assertEquals(recordTimeOut, map.getRecordTimeOut());
-    }
-
-    @Test
     public void testClose() throws Exception {
         Object dbEntryKey1 = "dbEntryKey";
         map.put(dbEntryKey1, new MappingEntry<>("mapKey1", "mapValue1"));
@@ -231,7 +224,7 @@ public class HashMapDbTest {
     public void testPutNestedTable_entryExists() throws Exception {
         Object dbEntryKey = "dbEntryKey";
         String mapKey1 = "mapKey1";
-        ILispDAO mapValue1 = new HashMapDb();
+        ILispDAO mapValue1 = new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(240).build());
         map.put(dbEntryKey, new MappingEntry<>(mapKey1, mapValue1));
         Assert.assertEquals(mapValue1, map.putNestedTable(dbEntryKey, mapKey1));
         Assert.assertEquals(mapValue1, map.getSpecific(dbEntryKey, mapKey1));
@@ -249,7 +242,7 @@ public class HashMapDbTest {
     public void testPutTable_entryExists() throws Exception {
         Object dbEntryKey = "tables";
         String mapKey1 = "mapKey1";
-        ILispDAO mapValue1 = new HashMapDb();
+        ILispDAO mapValue1 = new HashMapDb(new InmemorydbConfigBuilder().setRecordTimeout(240).build());
         map.put(dbEntryKey, new MappingEntry<>(mapKey1, mapValue1));
         Assert.assertEquals(mapValue1, map.putTable(mapKey1));
         Assert.assertEquals(mapValue1, map.getSpecific(dbEntryKey, mapKey1));

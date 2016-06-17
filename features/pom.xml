@@ -101,22 +101,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.implementation</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>xml</type>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.southbound</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.southbound</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>xml</type>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -127,13 +113,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.inmemorydb</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.inmemorydb</artifactId>
-      <version>${project.version}</version>
-      <classifier>config</classifier>
-      <type>xml</type>
     </dependency>
     <!--
     <dependency>

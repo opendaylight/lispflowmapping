@@ -20,7 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
@@ -28,6 +31,7 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
+import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address;
@@ -77,13 +81,22 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 @RunWith(MockitoJUnitRunner.class)
 public class MappingServiceTest {
 
-    @InjectMocks private static MappingService mappingService;
     @Mock(name = "mappingSystem") private static MappingSystem mappingSystem;
     @Mock(name = "dsbe") private static DataStoreBackEnd dsbe;
     @Mock(name = "mappingServiceRpc") private static BindingAwareBroker
             .RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
     @Mock(name = "keyListener") private static AuthenticationKeyDataListener keyListener;
     @Mock(name = "mappingListener") private static MappingDataListener mappingListener;
+
+    private final DataBroker dataBroker = Mockito.mock(DataBroker.class);
+    private final RpcProviderRegistry rpcProviderRegistry = Mockito.mock(RpcProviderRegistry.class);
+    private final NotificationPublishService notificationPublishService = Mockito
+            .mock(NotificationPublishService.class);
+    private final ILispDAO lispDAO = Mockito.mock(ILispDAO.class);
+
+    @InjectMocks
+    MappingService mappingService = new MappingService(dataBroker,
+            rpcProviderRegistry, notificationPublishService, lispDAO);
 
     private static final String IPV4_STRING = "1.2.3.0";
     private static final Eid IPV4_EID = LispAddressUtil.asIpv4Eid(IPV4_STRING);
@@ -245,7 +258,7 @@ public class MappingServiceTest {
                 .success(new GetMappingOutputBuilder().setMappingRecord(nonBinaryMappingRecord)).build();
 
         //result
-        final Future<RpcResult<GetMappingOutput>> result = (mappingService.getMapping(getMappingInput));
+        final Future<RpcResult<GetMappingOutput>> result = mappingService.getMapping(getMappingInput);
         final RpcResult<GetMappingOutput> rpcResult = result.get();
 
         assertEquals(rpc.getResult(), rpcResult.getResult());

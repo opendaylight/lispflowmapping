@@ -41,6 +41,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,16 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
     private DataBroker dataBroker;
 
+    public LispSouthboundPlugin(final DataBroker dataBroker,
+            final NotificationPublishService notificationPublishService,
+            final RpcProviderRegistry rpcProviderRegistry,
+            final LispSbConfig lispSbConfig) {
+        this.dataBroker = dataBroker;
+        this.notificationPublishService = notificationPublishService;
+        this.rpcRegistry = rpcProviderRegistry;
+        this.bindingAddress = lispSbConfig.getBindAddress();
+        this.mapRegisterCacheEnabled = lispSbConfig.isMapRegisterCache();
+    }
 
     public void init() {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
@@ -149,14 +160,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         LOG.info("Reloading xTR");
         stopXtr();
         startXtr();
-    }
-
-    public void setNotificationPublishService(NotificationPublishService notificationService) {
-        this.notificationPublishService = notificationService;
-    }
-
-    public void setRpcRegistryDependency(RpcProviderRegistry rpcRegistry) {
-        this.rpcRegistry = rpcRegistry;
     }
 
     private void unloadActions() {
@@ -256,10 +259,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         if (listenOnXtrPort) {
             restartXtr();
         }
-    }
-
-    public void setDataBroker(final DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
     }
 
     public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
