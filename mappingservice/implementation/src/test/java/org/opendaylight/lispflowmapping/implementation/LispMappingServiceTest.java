@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import java.lang.reflect.Field;
@@ -27,6 +28,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
+import org.opendaylight.controller.md.sal.common.api.clustering.Entity;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipState;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -86,12 +90,13 @@ public class LispMappingServiceTest {
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
     private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
+    private final EntityOwnershipService entityOwnershipSrvice = Mockito.mock(EntityOwnershipService.class);
 
     @InjectMocks
     private LispMappingService lispMappingService = new LispMappingService(
             notificationService,
             mappingService,
-            odlLispSbService);
+            odlLispSbService, entityOwnershipSrvice);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
@@ -193,6 +198,8 @@ public class LispMappingServiceTest {
         Mockito.when(mapRegister.getMappingRecordItem())
                 .thenReturn(Lists.newArrayList(MAPPING_RECORD_ITEM_BUILDER.build()));
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(getDefaultMapNotifyPair());
+        Mockito.when(entityOwnershipSrvice.getOwnershipState(Mockito.any(Entity.class))).thenReturn(Optional.of
+                (new EntityOwnershipState(true, true)));
 
         lispMappingService.onAddMapping(addMapping);
         Mockito.verify(odlLispSbService, Mockito.times(2)).sendMapNotify(Mockito.argThat(new TransportAddressMatch()));
@@ -220,6 +227,8 @@ public class LispMappingServiceTest {
                 .setMapNotify(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105
                         .mapnotifymessage.MapNotifyBuilder().setKeyId((short) 1).build())
                 .setTransportAddress(TRANSPORT_ADDRESS);
+        Mockito.when(entityOwnershipSrvice.getOwnershipState(Mockito.any(Entity.class))).thenReturn(Optional.of
+                (new EntityOwnershipState(true, true)));
 
         lispMappingService.onAddMapping(addMapping);
         Mockito.verify(odlLispSbService).sendMapNotify(smnib.build());
@@ -240,6 +249,8 @@ public class LispMappingServiceTest {
         Mockito.when(requestMapping.getTransportAddress()).thenReturn(TRANSPORT_ADDRESS_1);
         Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapReplyMock.get()).thenReturn(mapReply);
+        Mockito.when(entityOwnershipSrvice.getOwnershipState(Mockito.any(Entity.class))).thenReturn(Optional.of
+                (new EntityOwnershipState(true, true)));
 
         // result
         final SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder()
@@ -264,6 +275,8 @@ public class LispMappingServiceTest {
         Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapReplyMock.get()).thenReturn(null);
 
+        Mockito.when(entityOwnershipSrvice.getOwnershipState(Mockito.any(Entity.class))).thenReturn(Optional.of
+                (new EntityOwnershipState(true, true)));
         lispMappingService.onRequestMapping(requestMapping);
         Mockito.verifyZeroInteractions(odlLispSbService);
     }
