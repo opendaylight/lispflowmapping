@@ -14,6 +14,8 @@ import java.util.concurrent.Future;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
+import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
+import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -76,12 +78,14 @@ import com.google.common.util.concurrent.Futures;
  * @author Florin Coras
  *
  */
-public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
+public class MappingService implements OdlMappingserviceService, IMappingService,
+        AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
-    private MappingSystem mappingSystem;
+    private ClusterNodeModulSwitcherImpl clusterNodeModuleSwitcher;
 
+    private MappingSystem mappingSystem;
     private DataStoreBackEnd dsbe;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
@@ -89,7 +93,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
-    private final EntityOwnershipService entityOwnershipService;
 
     private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
     private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
@@ -101,7 +104,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         this.dataBroker = broker;
         this.notificationPublishService = notificationPublishService;
         this.dao = lispDAO;
-        this.entityOwnershipService = entityOwnershipService;
+        clusterNodeModuleSwitcher = new ClusterNodeModulSwitcherImpl(entityOwnershipService);
+        clusterNodeModuleSwitcher.setModule(this);
 
         LOG.debug("MappingService created!");
     }
@@ -132,6 +136,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
         mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
         LOG.info("Mapping Service loaded.");
+        clusterNodeModuleSwitcher.switchModuleByEntityOwnership();
     }
 
     @Override
@@ -486,5 +491,13 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             return convertedLocators;
         }
         return originalLocators;
+    }
+
+    @Override
+    public void stopModule() {
+    }
+
+    @Override
+    public void startModule() {
     }
 }
