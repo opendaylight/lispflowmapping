@@ -18,6 +18,7 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderCo
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
+import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -80,7 +81,8 @@ import com.google.common.util.concurrent.Futures;
  * @author Florin Coras
  *
  */
-public class MappingService implements OdlMappingserviceService, IMappingService, BindingAwareProvider, AutoCloseable {
+public class MappingService implements OdlMappingserviceService, IMappingService, BindingAwareProvider,
+        AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
@@ -511,5 +513,20 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             return convertedLocators;
         }
         return originalLocators;
+    }
+
+    @Override
+    public void stopModule() {
+        if (mappingServiceRpc != null) {
+            mappingServiceRpc.close();
+            mappingServiceRpc = null;
+        }
+    }
+
+    @Override
+    public void startModule() {
+        if (mappingServiceRpc == null ) {
+            mappingServiceRpc = rpcRegistry.addRpcImplementation(OdlMappingserviceService.class, this);
+        }
     }
 }
