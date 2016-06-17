@@ -158,16 +158,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final int MAX_NOTIFICATION_RETRYS = 20;
     private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
 
-    @Override
-    public String getModuleName() {
-        return "mappingservice-impl";
-    }
-
-    @Override
-    public String getInstanceName() {
-        return "mappingservice-default";
-    }
-
     // This is temporary, since the properties in the pom file are not picked up
     @Override
     public String getKarafDistro() {

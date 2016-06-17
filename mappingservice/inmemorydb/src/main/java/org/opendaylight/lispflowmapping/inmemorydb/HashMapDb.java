@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,19 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object,
             ConcurrentMap<String, Object>>();
     private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private int recordTimeOut = DEFAULT_RECORD_TIMEOUT;
+    private int recordTimeOut;
+
+    public HashMapDb() {
+        this.recordTimeOut = DEFAULT_RECORD_TIMEOUT;
+    }
+
+    public HashMapDb(final InmemorydbConfig inmemoryConfig) {
+        if (inmemoryConfig.getRecordTimeout() <= 0) {
+            this.recordTimeOut = DEFAULT_RECORD_TIMEOUT;
+        } else {
+            this.recordTimeOut = inmemoryConfig.getRecordTimeout();
+        }
+    }
 
     // IPv4 and IPv6 radix tries used for longest prefix matching
     private RadixTrie<Object> ip4Trie = new RadixTrie<Object>(32, true);

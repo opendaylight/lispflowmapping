@@ -9,13 +9,9 @@
 package org.opendaylight.lispflowmapping.implementation;
 
 import java.util.List;
-
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -58,7 +54,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispMappingService implements IFlowMapping, BindingAwareProvider, IMapRequestResultHandler,
+public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
         IMapNotifyHandler, OdlLispProtoListener, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
@@ -71,30 +67,21 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest =
             new ThreadLocal<Pair<MapRequest, TransportAddress>>();
 
-    private OdlLispSbService lispSB = null;
+    private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
 
-    private IMappingService mapService;
-    private NotificationService notificationService;
-    private BindingAwareBroker broker;
-    private ProviderContext session;
+    private final IMappingService mapService;
+    private final NotificationService notificationService;
 
-    public LispMappingService() {
+    public LispMappingService(final NotificationService notificationService,
+            final IMappingService mappingService,
+            final OdlLispSbService odlLispService) {
+
+        this.notificationService = notificationService;
+        this.mapService = mappingService;
+        this.lispSB = odlLispService;
         LOG.debug("LispMappingService Module constructed!");
-    }
-
-    public void setBindingAwareBroker(BindingAwareBroker broker) {
-        this.broker = broker;
-    }
-
-    public void setNotificationService(NotificationService ns) {
-        this.notificationService = ns;
-    }
-
-    public void setMappingService(IMappingService ms) {
-        LOG.trace("MappingService set in LispMappingService");
-        this.mapService = ms;
     }
 
     public boolean shouldUseSmr() {
@@ -117,22 +104,14 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     public void initialize() {
-        broker.registerProvider(this);
-        notificationService.registerNotificationListener(this);
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
+        LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
 
     public void basicInit() {
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
-    }
-
-    @Override
-    public void onSessionInitiated(ProviderContext session) {
-        LOG.info("Lisp Consumer session initialized!");
-        this.session = session;
-        LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
 
     public MapReply handleMapRequest(MapRequest request) {
@@ -247,9 +226,6 @@ public class LispMappingService implements IFlowMapping, BindingAwareProvider, I
     }
 
     private OdlLispSbService getLispSB() {
-        if (lispSB == null) {
-            lispSB = session.getRpcService(OdlLispSbService.class);
-        }
         return lispSB;
     }
 

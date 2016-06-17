@@ -27,8 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -79,15 +77,21 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
     @Mock private static MapRegister mapRegisterMock;
-    @Mock(name = "lispSB") private static OdlLispSbService lispSBMock;
     @Mock(name = "mapServer") private static IMapServerAsync mapServerMock;
-    @Mock(name = "mapService") private static IMappingService iMappingServiceMock;
     @Mock(name = "mapResolver") private static IMapResolverAsync mapResolverMock;
     @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
-    @Mock(name = "notificationService") private static NotificationService notificationServiceMock;
     @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
     @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
-    @InjectMocks private static LispMappingService lispMappingService;
+
+    private final NotificationService notificationService = Mockito.mock(NotificationService.class);
+    private final IMappingService mappingService = Mockito.mock(IMappingService.class);
+    private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
+
+    @InjectMocks
+    private LispMappingService lispMappingService = new LispMappingService(
+            notificationService,
+            mappingService,
+            odlLispSbService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
@@ -155,7 +159,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapRequestMock.get()).thenReturn(pair);
 
         assertNull(lispMappingService.handleMapRequest(mapRequest));
-        Mockito.verify(lispSBMock).sendMapRequest(smrib.build());
+        Mockito.verify(odlLispSbService).sendMapRequest(smrib.build());
     }
 
     /**
@@ -191,7 +195,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(getDefaultMapNotifyPair());
 
         lispMappingService.onAddMapping(addMapping);
-        Mockito.verify(lispSBMock, Mockito.times(2)).sendMapNotify(Mockito.argThat(new TransportAddressMatch()));
+        Mockito.verify(odlLispSbService, Mockito.times(2)).sendMapNotify(Mockito.argThat(new TransportAddressMatch()));
     }
 
     /**
@@ -218,7 +222,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS);
 
         lispMappingService.onAddMapping(addMapping);
-        Mockito.verify(lispSBMock).sendMapNotify(smnib.build());
+        Mockito.verify(odlLispSbService).sendMapNotify(smnib.build());
     }
 
     /**
@@ -243,7 +247,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS_1);
 
         lispMappingService.onRequestMapping(requestMapping);
-        Mockito.verify(lispSBMock).sendMapReply(smrib.build());
+        Mockito.verify(odlLispSbService).sendMapReply(smrib.build());
     }
 
     /**
@@ -261,7 +265,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapReplyMock.get()).thenReturn(null);
 
         lispMappingService.onRequestMapping(requestMapping);
-        Mockito.verifyZeroInteractions(lispSBMock);
+        Mockito.verifyZeroInteractions(odlLispSbService);
     }
 
     /**
@@ -273,8 +277,8 @@ public class LispMappingServiceTest {
         Mockito.when(mappingKeepAlive.getMapRegisterCacheMetadata()).thenReturn(getDefaultMapRegisterCacheMetadata());
 
         lispMappingService.onMappingKeepAlive(mappingKeepAlive);
-        Mockito.verify(iMappingServiceMock).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_1, TIMESTAMP);
-        Mockito.verify(iMappingServiceMock).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_2, TIMESTAMP);
+        Mockito.verify(mappingService).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_1, TIMESTAMP);
+        Mockito.verify(mappingService).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_2, TIMESTAMP);
     }
 
     /**
@@ -294,7 +298,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS);
 
         lispMappingService.handleSMR(mapRequest, subscriber);
-        Mockito.verify(lispSBMock).sendMapRequest(smrib.build());
+        Mockito.verify(odlLispSbService).sendMapRequest(smrib.build());
     }
 
     /**
@@ -362,27 +366,11 @@ public class LispMappingServiceTest {
      */
     @Test
     public void otherTest() throws Exception {
-        assertEquals(notificationServiceMock, lispMappingService.getNotificationService());
+        assertEquals(notificationService, lispMappingService.getNotificationService());
         assertEquals(true, lispMappingService.shouldUseSmr());
-
-        BindingAwareBroker brokerMock = Mockito.mock(BindingAwareBroker.class);
-        lispMappingService.setBindingAwareBroker(brokerMock);
-        assertEquals(brokerMock, getField("broker"));
-
-        NotificationService otherNotificationServiceMock = Mockito.mock(NotificationService.class);
-        lispMappingService.setNotificationService(otherNotificationServiceMock);
-        assertEquals(otherNotificationServiceMock, getField("notificationService"));
-
-        ProviderContext sessionMock = Mockito.mock(ProviderContext.class);
-        lispMappingService.onSessionInitiated(sessionMock);
-        assertEquals(sessionMock, getField("session"));
 
         lispMappingService.setShouldAuthenticate(true);
         Mockito.verify(mapResolverMock).setShouldAuthenticate(true);
-
-        IMappingService mappingServiceMock = Mockito.mock(IMappingService.class);
-        lispMappingService.setMappingService(mappingServiceMock);
-        assertEquals(mappingServiceMock, getField("mapService"));
 
         lispMappingService.onGotMapReply(Mockito.mock(GotMapReply.class));
         lispMappingService.onGotMapNotify(Mockito.mock(GotMapNotify.class));
@@ -391,7 +379,7 @@ public class LispMappingServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    private <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
         final Field field = LispMappingService.class.getDeclaredField(fieldName);
         field.setAccessible(true);
 
