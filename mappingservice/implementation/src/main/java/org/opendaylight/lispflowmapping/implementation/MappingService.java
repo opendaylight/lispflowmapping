@@ -13,11 +13,6 @@ import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -80,50 +75,34 @@ import com.google.common.util.concurrent.Futures;
  * @author Florin Coras
  *
  */
-public class MappingService implements OdlMappingserviceService, IMappingService, BindingAwareProvider, AutoCloseable {
+public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
 
     private MappingSystem mappingSystem;
     private DataStoreBackEnd dsbe;
-    private RpcRegistration<OdlMappingserviceService> mappingServiceRpc;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
-    private ILispDAO dao;
+    private final ILispDAO dao;
 
-    private DataBroker dataBroker;
-    private RpcProviderRegistry rpcRegistry;
-    private BindingAwareBroker bindingAwareBroker;
-    private NotificationPublishService notificationPublishService;
+    private final DataBroker dataBroker;
+    private final NotificationPublishService notificationPublishService;
 
     private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
     private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private boolean iterateMask = true;
 
-    public MappingService() {
+    public MappingService(final DataBroker broker,
+            final NotificationPublishService notificationPublishService,
+            final ILispDAO lispDAO) {
+        this.dataBroker = broker;
+        this.notificationPublishService = notificationPublishService;
+        this.dao = lispDAO;
+
         LOG.debug("MappingService created!");
     }
 
-    public void setDataBroker(DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
-    }
-
-    public void setRpcProviderRegistry(RpcProviderRegistry rpc) {
-        this.rpcRegistry = rpc;
-    }
-
-    public void setBindingAwareBroker(BindingAwareBroker broker) {
-        this.bindingAwareBroker = broker;
-    }
-
-    public void setNotificationPublishService(NotificationPublishService nps) {
-        this.notificationPublishService = nps;
-    }
-
-    public void setDaoService(ILispDAO dao) {
-        this.dao = dao;
-    }
 
     @Override
     public void setMappingOverwrite(boolean overwrite) {
@@ -140,9 +119,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     public void initialize() {
-        bindingAwareBroker.registerProvider(this);
-
-        mappingServiceRpc = rpcRegistry.addRpcImplementation(OdlMappingserviceService.class, this);
+        LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
 
         mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, overwritePolicy);
@@ -151,6 +128,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
         mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
+        LOG.info("Mapping Service loaded.");
     }
 
     @Override
@@ -449,14 +427,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void onSessionInitiated(ProviderContext session) {
-        LOG.info("Mapping Service provider session initializing!");
-    }
-
-    @Override
     public void close() throws Exception {
         LOG.info("Mapping Service is being destroyed!");
-        mappingServiceRpc.close();
         keyListener.closeDataChangeListener();
         mappingListener.closeDataChangeListener();
     }
