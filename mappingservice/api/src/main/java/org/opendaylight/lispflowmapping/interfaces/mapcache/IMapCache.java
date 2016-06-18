@@ -45,6 +45,15 @@ public interface IMapCache {
     Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
+     * Retrieves widest negative prefix
+     *
+     * @param key
+     *            Source Key to be looked up
+     * @return Returns the widest negative prefix or null if nothing is found.
+     */
+    Eid getWidestNegativeMapping(Eid key);
+
+    /**
      * Remove mapping
      *
      * @param key

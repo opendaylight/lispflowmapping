@@ -144,8 +144,8 @@ public class MultiTableMapCacheTest {
         final Map<String, Object> entry = getEntry1();
         final Map<String, Object> entry2 = getEntry2();
 
-        when(tableDaoMock.get(normalizedDstAddr)).thenReturn(entry);
-        when(srcDstDaoMock.get(normalizedSrcAddr)).thenReturn(entry2);
+        when(tableDaoMock.getBest(normalizedDstAddr)).thenReturn(entry);
+        when(srcDstDaoMock.getBest(normalizedSrcAddr)).thenReturn(entry2);
 
         assertEquals(DUMMY_OBJECT_2, multiTableMapCache.getMapping(null, EID_SOURCE_DEST_KEY_TYPE));
         assertNull(multiTableMapCache.getMapping(null, null));
@@ -184,8 +184,8 @@ public class MultiTableMapCacheTest {
         final Map<String, Object> entry2 = getEntry2();
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.get(key)).thenReturn(entry);
-        when(srcDstDaoMock.get(key2)).thenReturn(entry2);
+        when(tableDaoMock.getBest(key)).thenReturn(entry);
+        when(srcDstDaoMock.getBest(key2)).thenReturn(entry2);
 
         assertEquals(DUMMY_OBJECT_2, multiTableMapCache.getMapping(EID_IPV4_PREFIX_SRC, EID_IPV4_PREFIX_DST));
         assertEquals(DUMMY_OBJECT, multiTableMapCache.getMapping(null, EID_IPV4_PREFIX_DST));
