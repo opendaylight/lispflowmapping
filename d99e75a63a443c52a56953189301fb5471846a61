@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_aeb96f30",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-20T16:20:31Z",
+      "side": 1,
+      "message": "I agree :)",
+      "parentUuid": "ba51214e_3d6f5794",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_1d109300",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 2

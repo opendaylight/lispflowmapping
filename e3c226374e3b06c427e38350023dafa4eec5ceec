@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_ce878360",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-20T16:20:31Z",
+      "side": 0,
+      "message": "This should be moved to initialize() as\nLOG.info(\"Mapping Service initializing...\");\nand maybe adding another one at the end with\nLOG.info(\"Mapping Service loaded.\");",
+      "revId": "e3c226374e3b06c427e38350023dafa4eec5ceec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
