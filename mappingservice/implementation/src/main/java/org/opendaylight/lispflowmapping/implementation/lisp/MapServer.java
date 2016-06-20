@@ -86,7 +86,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
-        boolean authFailed = false;
         boolean mappingUpdated = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
         Set<SubscriberRLOC> subscribers = null;
@@ -113,7 +112,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             }
         }
-        if (!authFailed && BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
+        if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
             LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
