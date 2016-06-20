@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba51214e_3d6f5794",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "Do we need 2 info messages here? I would say keep the second one, as it\u0027s more meaningful, but move it to the end of this method - it\u0027s a lie say init is finished at the beginning of the method :)",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1d109300",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "This can be registered via BP, then you don\u0027t need the notificationService injected. Otherwise it should store the returned reg instance and close it.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_dd057bc3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "The RPC can be registered via BP.  Then we don\u0027t need the RpcProviderRegistry injected here nor store the mappingServiceRpc and close it.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_37dad678",
         "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
         "patchSetId": 2
@@ -19,6 +70,98 @@
         "endLine": 46,
         "endChar": 63
       },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_3df637d8",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "Do you mean the auto-export? You\u0027re right - I never use that. It\u0027s better to explicitly name the interfaces as these classes implement several interfaces, including AutoCloseable, for which we don\u0027t need/want registration.",
+      "parentUuid": "ba51214e_37dad678",
+      "range": {
+        "startLine": 46,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 63
+      },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_7d00afaa",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "This is odd  - why doesn\u0027t it propagate \"recordTimeout\" to new instances? This looks like an oversight...",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_dd2c5b4d",
+        "filename": "mappingservice/inmemorydb/src/main/resources/org/opendaylight/blueprint/mappingservice-inmemory-db.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "I don\u0027t think you should use auto-export.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_bd31a7a4",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "It looks like these could be wired via BP.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1d27f365",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-20T02:07:38Z",
+      "side": 1,
+      "message": "I guess I don\u0027t understand why there\u0027s a singleton instance of HashMapDb created via BP with a configurable recordTimeout but other instances of HashMapDb are created with the default recordTimeout. Be that as it may, you might as well keep the empty HashMapDb ctor and default the recordTimeout setting there.",
       "revId": "d99e75a63a443c52a56953189301fb5471846a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
