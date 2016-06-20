@@ -118,6 +118,29 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_ee37e7ae",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "I\u0027ll create a default constructor using the DEFAULT_RECORD_TIMEOUT",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 5
+      },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_7d00afaa",
         "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
         "patchSetId": 2
@@ -135,6 +158,29 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_2e427f10",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "I\u0027ll use empty constructor here and at line 148",
+      "range": {
+        "startLine": 136,
+        "startChar": 36,
+        "endLine": 136,
+        "endChar": 113
+      },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_dd2c5b4d",
         "filename": "mappingservice/inmemorydb/src/main/resources/org/opendaylight/blueprint/mappingservice-inmemory-db.xml",
         "patchSetId": 2
@@ -146,6 +192,75 @@
       "writtenOn": "2016-06-20T02:07:38Z",
       "side": 1,
       "message": "I don\u0027t think you should use auto-export.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_0e47bb20",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "I\u0027ll use the empty constructor",
+      "range": {
+        "startLine": 33,
+        "startChar": 28,
+        "endLine": 33,
+        "endChar": 87
+      },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_4e48932d",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "I\u0027ll use empty constructor",
+      "range": {
+        "startLine": 227,
+        "startChar": 43,
+        "endLine": 227,
+        "endChar": 102
+      },
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_ae55efc7",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "likewise",
+      "range": {
+        "startLine": 245,
+        "startChar": 43,
+        "endLine": 245,
+        "endChar": 102
+      },
       "revId": "d99e75a63a443c52a56953189301fb5471846a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -180,6 +295,24 @@
       "writtenOn": "2016-06-20T02:07:38Z",
       "side": 1,
       "message": "I guess I don\u0027t understand why there\u0027s a singleton instance of HashMapDb created via BP with a configurable recordTimeout but other instances of HashMapDb are created with the default recordTimeout. Be that as it may, you might as well keep the empty HashMapDb ctor and default the recordTimeout setting there.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_aebe8ffd",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 1,
+      "message": "\u003e Be that as it may, you might as well keep the empty HashMapDb ctor and default the recordTimeout setting there.\n\nYes, I\u0027ll do that",
+      "parentUuid": "ba51214e_1d27f365",
       "revId": "d99e75a63a443c52a56953189301fb5471846a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false

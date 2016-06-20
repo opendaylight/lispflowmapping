@@ -16,6 +16,52 @@
       "revId": "e3c226374e3b06c427e38350023dafa4eec5ceec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_ce3ca396",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 0,
+      "message": "I\u0027ll put back this method",
+      "range": {
+        "startLine": 107,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 5
+      },
+      "revId": "e3c226374e3b06c427e38350023dafa4eec5ceec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_6e4bd72b",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDbTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-20T16:30:12Z",
+      "side": 0,
+      "message": "I\u0027ll put back this test",
+      "range": {
+        "startLine": 203,
+        "startChar": 0,
+        "endLine": 209,
+        "endChar": 5
+      },
+      "revId": "e3c226374e3b06c427e38350023dafa4eec5ceec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
