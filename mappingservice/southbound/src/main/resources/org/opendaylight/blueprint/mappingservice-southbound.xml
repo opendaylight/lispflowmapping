@@ -8,6 +8,8 @@
     odl:type="pingpong" />
   <reference id="notificationPublishService"
     interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService" />
+  <reference id="entityOwnershipService"
+     interface="org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService" />
 
   <odl:clustered-app-config id="lispSbConfig"
     binding-class="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig">
@@ -19,6 +21,7 @@
     <argument ref="dataBroker" />
     <argument ref="notificationPublishService" />
     <argument ref="lispSbConfig" />
+    <argument ref="entityOwnershipService" />
   </bean>
   <service ref="lispSouthboundPlugin"
     interface="org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin"
