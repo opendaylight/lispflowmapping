@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_91ee4721",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-21T12:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_aeb96f30",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_1d109300",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 2
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_f1f34308",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-21T12:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_1d109300",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_dd057bc3",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
         "patchSetId": 2
@@ -65,6 +101,24 @@
       "writtenOn": "2016-06-20T02:07:38Z",
       "side": 1,
       "message": "The RPC can be registered via BP.  Then we don\u0027t need the RpcProviderRegistry injected here nor store the mappingServiceRpc and close it.",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b1d0ab54",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-21T12:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_dd057bc3",
       "revId": "d99e75a63a443c52a56953189301fb5471846a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -284,6 +338,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_314bfb2c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-21T12:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_bd31a7a4",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_1d27f365",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 2
@@ -313,6 +385,24 @@
       "side": 1,
       "message": "\u003e Be that as it may, you might as well keep the empty HashMapDb ctor and default the recordTimeout setting there.\n\nYes, I\u0027ll do that",
       "parentUuid": "ba51214e_1d27f365",
+      "revId": "d99e75a63a443c52a56953189301fb5471846a61",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1148772c",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-06-21T12:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_aebe8ffd",
       "revId": "d99e75a63a443c52a56953189301fb5471846a61",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
