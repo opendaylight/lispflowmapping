@@ -9,6 +9,7 @@ module odl-lisp-sb-impl {
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
     import opendaylight-sal-binding-broker-impl { prefix sal-broker; revision-date 2013-10-28; }
     import odl-lisp-sb { prefix lisp-sb; revision-date 2015-09-04; }
+    import opendaylight-entity-ownership-service { prefix ownership-service; revision-date 2015-08-10;}
 
     description
         "This module contains the base YANG definitions for
@@ -57,7 +58,14 @@ module odl-lisp-sb-impl {
                     }
                 }
             }
-
+            container entity-ownership-service {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity ownership-service:entity-ownership-service;
+                    }
+                }
+            }
             leaf bind-address {
                 type string;
                 mandatory true;
