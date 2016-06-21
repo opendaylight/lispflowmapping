@@ -8,6 +8,7 @@
 
 package org.opendaylight.controller.config.yang.config.lisp_sb.impl;
 
+import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +33,18 @@ public class LfmMappingServiceSbModule extends org.opendaylight.controller.confi
     @Override
     public java.lang.AutoCloseable createInstance() {
         LOG.debug("LfmMappingServiceSb Module up!");
+        final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl
+                (getEntityOwnershipServiceDependency());
 
         sbPlugin = new LispSouthboundPlugin();
+        clusterNodeModulSwitcher.setModule(sbPlugin);
         sbPlugin.setNotificationPublishService(getNotificationPublishServiceDependency());
         sbPlugin.setRpcRegistryDependency(getRpcRegistryDependency());
         sbPlugin.setDataBroker(getDataBrokerDependency());
         sbPlugin.setLispAddress(getBindAddress());
         sbPlugin.setMapRegisterCacheEnabled(getMapRegisterCache());
         sbPlugin.init();
+        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
 
         return sbPlugin;
     }
