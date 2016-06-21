@@ -100,6 +100,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private SimpleMapCache smc;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
+    private boolean isReadFromChannelEnabled = true;
 
     public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
@@ -506,11 +507,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
-                    msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+        if (isReadFromChannelEnabled) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
+                        msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+            }
+            handlePacket(msg);
         }
-        handlePacket(msg);
     }
 
     @Override
@@ -570,5 +573,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         Preconditions.checkNotNull(smc);
         this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, smc);
         dsbe = new DataStoreBackEnd(dataBroker);
+    }
+
+    public void setIsReadFromChannelEnabled(boolean isReadFromChannelEnabled) {
+        this.isReadFromChannelEnabled = isReadFromChannelEnabled;
     }
 }
