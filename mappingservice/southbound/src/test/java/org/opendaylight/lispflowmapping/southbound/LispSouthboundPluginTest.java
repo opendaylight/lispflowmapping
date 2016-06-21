@@ -28,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
@@ -79,7 +80,8 @@ public class LispSouthboundPluginTest {
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
                 Mockito.mock(NotificationPublishService.class),
-                config);
+                config,
+                Mockito.mock(EntityOwnershipService.class));
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();
