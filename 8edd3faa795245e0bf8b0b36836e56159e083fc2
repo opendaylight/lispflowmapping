@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_9b2b0882",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-21T05:09:23Z",
+      "side": 1,
+      "message": "good catch. Changes in this file are ok. If you remove the changes made on simpleMapCache, we can merge this one. Thanks",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 8
+      },
+      "revId": "8edd3faa795245e0bf8b0b36836e56159e083fc2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_bb26ccb8",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-21T05:09:23Z",
+      "side": 1,
+      "message": "These changes are not need and should be removed from patch.",
+      "range": {
+        "startLine": 278,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 25
+      },
+      "revId": "8edd3faa795245e0bf8b0b36836e56159e083fc2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
