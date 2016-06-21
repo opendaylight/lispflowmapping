@@ -32,6 +32,7 @@ import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
+import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -44,7 +45,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controll
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private static Object startLock = new Object();
@@ -268,5 +269,20 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         sbRpcRegistration.close();
         lispSouthboundHandler.close();
         unloadActions();
+    }
+
+    @Override
+    public void stopModule() {
+//        lispSouthboundHandler.setNotificationProvider(null);
+//        lispXtrSouthboundHandler.setNotificationProvider(null);
+        lispSouthboundHandler.setIsReadFromChannelEnabled(false);
+    }
+
+    @Override
+    public void startModule() {
+//        lispSouthboundHandler.setNotificationProvider(notificationPublishService);
+//        lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
+        lispSouthboundHandler.restoreDaoFromDatastore();
+        lispSouthboundHandler.setIsReadFromChannelEnabled(true);
     }
 }
