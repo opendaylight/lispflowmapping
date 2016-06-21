@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_511dcfbc",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-06-21T13:47:21Z",
+      "side": 1,
+      "message": "You can actually simplify this with one \u003cservice\u003e element:\n\n  \u003cservice ref\u003d\"lispMappingService\" odl:type\u003d\"default\"\u003e\n    \u003cinterfaces\u003e\n       \u003cvalue\u003eorg.opendaylight.lispflowmapping.interfaces...\u003c/value\u003e\n       \u003cvalue\u003eorg.opendaylight.lispflowmapping.interfaces...\u003c/value\u003e\n       ...\n    \u003c/interfaces\u003e\n  \u003c/service\u003e",
+      "revId": "b5613107d772f77143cb331fe89f88c0199573b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
