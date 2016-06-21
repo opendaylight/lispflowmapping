@@ -31,6 +31,7 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -48,6 +49,7 @@ import javax.inject.Inject;
 //import org.codehaus.jettison.json.JSONException;
 //import org.codehaus.jettison.json.JSONObject;
 //import org.codehaus.jettison.json.JSONTokener;
+import org.codehaus.plexus.util.StringOutputStream;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -2143,7 +2145,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
         } catch (SocketException e) {
             LOG.error("Can't initize socket for {}", ourAddress, e);
-            fail();
+            StringOutputStream sos = new StringOutputStream();
+            PrintStream ps = new PrintStream(sos);
+            e.printStackTrace(ps);
+            ps.flush();
+            fail(sos.toString());
         }
         return socket;
     }
