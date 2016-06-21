@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_347c8920",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-21T17:36:31Z",
+      "side": 1,
+      "message": "I think you meant odlLispService. Not a big deal , just readability.",
+      "range": {
+        "startLine": 79,
+        "startChar": 37,
+        "endLine": 79,
+        "endChar": 43
+      },
+      "revId": "82dac2053ca1be609c1c72c4206d7bc777515a11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1479852f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-21T17:36:31Z",
+      "side": 1,
+      "message": "Lisp?",
+      "range": {
+        "startLine": 83,
+        "startChar": 25,
+        "endLine": 83,
+        "endChar": 29
+      },
+      "revId": "82dac2053ca1be609c1c72c4206d7bc777515a11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_54aadd70",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-21T17:36:31Z",
+      "side": 1,
+      "message": "This should be moved to the end of this method.",
+      "range": {
+        "startLine": 107,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 65
+      },
+      "revId": "82dac2053ca1be609c1c72c4206d7bc777515a11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
