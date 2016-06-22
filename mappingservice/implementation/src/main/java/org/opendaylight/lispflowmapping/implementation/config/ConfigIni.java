@@ -23,6 +23,7 @@ public final class ConfigIni {
     private String elpPolicy;
     private IMappingService.LookupPolicy lookupPolicy;
     private long registrationValiditySb;
+    private boolean subscribeEmptyRlocs;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
@@ -35,6 +36,7 @@ public final class ConfigIni {
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
+    private static final String LISP_SUBSCRIBE_EMPTY_RLOCS = "lisp.subscribeEmptyRlocs";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
@@ -55,6 +57,7 @@ public final class ConfigIni {
         initElpPolicy(context);
         initLookupPolicy(context);
         initRegisterValiditySb(context);
+        initSubscribeEmptyRlocs(context);
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -243,6 +246,32 @@ public final class ConfigIni {
         }
     }
 
+    private void initSubscribeEmptyRlocs(BundleContext context) {
+        this.subscribeEmptyRlocs = false;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_SUBSCRIBE_EMPTY_RLOCS);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_SUBSCRIBE_EMPTY_RLOCS);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'false'",
+                        LISP_SUBSCRIBE_EMPTY_RLOCS);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("true")) {
+            this.subscribeEmptyRlocs = true;
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_SUBSCRIBE_EMPTY_RLOCS);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_SUBSCRIBE_EMPTY_RLOCS);
+        }
+    }
+
     public boolean mappingMergeIsSet() {
         return mappingMerge;
     }
@@ -281,6 +310,10 @@ public final class ConfigIni {
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
             this.lookupPolicy = lookupPolicy;
+    }
+
+    public boolean subscribeEmptyRlocsIsSet() {
+        return subscribeEmptyRlocs;
     }
 
     public static ConfigIni getInstance() {
