@@ -75,6 +75,24 @@
       "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_ac4b2d2a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-22T18:04:52Z",
+      "side": 1,
+      "message": "IIRC, the protocol specifies the ITR-RLOCs for use of sending Map-Replies. The way we handle SMRs is not in the spec anyway, so I don\u0027t think sending back to the source-rloc would be a protocol violation. If we received a datagram from a certain source address, the probability is quite high we can send something back there. And if we hit asymmetric routing issues, I would say it\u0027s not the MS/MRs job to deal with that. That said, I don\u0027t mind using the source-rloc as a subscriber only if it\u0027s part of the ITR-RLOC list, if it exists.",
+      "parentUuid": "ba51214e_ac3a0dcb",
+      "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
