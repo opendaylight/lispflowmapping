@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_26a29cae",
+        "filename": "mappingservice/clustering/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-22T14:13:04Z",
+      "side": 1,
+      "message": "Why is this a dependency? This is only used for unit tests based on JMock, when the BaseExpectations class is needed.",
+      "revId": "a1fe6c0d408848e9f9b4e9a1208897da1eb342ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
