@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba51214e_4c2c1148",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-22T18:55:19Z",
+      "side": 1,
+      "message": "The itrRloc is used as the identifier of the subscriber. Basically we are subscribing the itrRloc to the EID mapping. So it does not make sense to  do any subscription if there are no itrRlocs. \nMaybe what you intended to do is to do a subscription if the EID didnt exist (i.e. there were no mappings for it) and so there was a negative map reply? In that case also, because of the radix tree which has to find the longest prefix match, doing so for maskable EIDs is more complicated than this. For non-maskable I suppose it should be fine, although in general it does introduce a security risk by allowing unknown entities to consume unbounded memory in our service.",
+      "range": {
+        "startLine": 96,
+        "startChar": 14,
+        "endLine": 96,
+        "endChar": 42
+      },
+      "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_a5306557",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
         "patchSetId": 1
@@ -90,6 +113,42 @@
       "side": 1,
       "message": "IIRC, the protocol specifies the ITR-RLOCs for use of sending Map-Replies. The way we handle SMRs is not in the spec anyway, so I don\u0027t think sending back to the source-rloc would be a protocol violation. If we received a datagram from a certain source address, the probability is quite high we can send something back there. And if we hit asymmetric routing issues, I would say it\u0027s not the MS/MRs job to deal with that. That said, I don\u0027t mind using the source-rloc as a subscriber only if it\u0027s part of the ITR-RLOC list, if it exists.",
       "parentUuid": "ba51214e_ac3a0dcb",
+      "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_acce8d81",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-22T18:55:19Z",
+      "side": 1,
+      "message": "So this issue came up a couple of weeks ago I think with Florin. Currently we are sending the MapReply to the Source RLOC of the Map Request I think. So for subscription, it makes sense to also choose the Map-Request Source RLOC if it exists within the ITR-RLOCs list. If it doesnt, we should still choose an ITR RLOC with the same AFI as the source of the Map Request. If no such IP exists in the ITR RLOCs list, then we can be opportunistic and pick the first one. I\u0027ll add a card to do so. But this is all somewhat independent of the goal of this patch, and should be done in a separate patch.",
+      "parentUuid": "ba51214e_ac4b2d2a",
+      "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_2cbb9de6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-22T18:55:19Z",
+      "side": 1,
+      "message": "itrRloc is used to do the subscription, as the identifier of the device which is subscribing(subscriber). So without an itrRloc, the updateSubscribers() does not work and should not be called.\nRegarding the two option, I think you are referring to the EID that an itr can subscribe to (subject/topic of subscription). So assuming that, I agree that for maskable EIDs, only EIDs with existing mappings can be topic/subject of a subscription, which is what the code does without this patch. \n\nRegarding the non-maskable EIDs without RLOCs, the security caveat mentioned above is the main issue I see with it.",
+      "parentUuid": "ba51214e_a5306557",
       "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
