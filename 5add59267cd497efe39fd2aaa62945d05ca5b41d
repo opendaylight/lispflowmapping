@@ -22,6 +22,30 @@
       "revId": "5add59267cd497efe39fd2aaa62945d05ca5b41d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c60000ad",
+        "filename": "mappingservice/implementation/src/main/config/default-config.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-22T14:02:00Z",
+      "side": 1,
+      "message": "I thought that it is necessary because I am using entity-ownership-service so the coresponding yang should be also knows. But I am not config subsystem guru so maybe I am wrong.\nAnyway it is unimportant now due to bluprint migration which was merged yesterday.",
+      "parentUuid": "ba51214e_9b878861",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 189
+      },
+      "revId": "5add59267cd497efe39fd2aaa62945d05ca5b41d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
