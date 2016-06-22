@@ -39,6 +39,24 @@
       "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_6945876f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-22T16:29:22Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking about this a bit, and here are my thoughts. The way the code is right now (before this patch) is actually buggy. We could have the situation where ODL is running on an IPv6-only node, receives the Map-Request over IPv6, but chooses the first ITR-RLOC as a subscriber RLOC, which is IPv4, supposing the xTR sending it is dual-homed. So SMRs will not reach the xTR.\n\nITR-RLOC was added to Map-Requests for deployments where the mapping system is not proxy-replying, but instead is forwarding encapsulated requests to an ETR, which is the device sending the reply, and may have different connectivity.\n\nI think we should instead save the actual source RLOC here, since we\u0027re proxy-replying. We already added the source-rloc to the metadata in Map-Registers, we could do the same with Map-Requests.\n\nAlternatively, we can use source-rloc, when ITR-RLOC is not available, and use ITR-RLOC, when it is, but choose an ITR-RLOC that\u0027s the same AFI than the original source RLOC. This last, most complicated processing mode would be necessary for the unlikely case when a router uses a different source address for sending the Encapsulated Map-Request, than it can listen on.",
+      "parentUuid": "ba51214e_e0736baf",
+      "revId": "9bdd9110d47fc5dbb5b5b8e2997d92e6cfc68b5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
