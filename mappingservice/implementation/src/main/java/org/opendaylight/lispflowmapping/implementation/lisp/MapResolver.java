@@ -20,6 +20,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
@@ -91,8 +92,8 @@ public class MapResolver implements IMapResolverAsync {
         for (EidItem eidRecord : request.getEidItem()) {
             MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
                     eidRecord.getEid());
+            List<ItrRloc> itrRlocs = request.getItrRloc();
             if (mapping != null) {
-                List<ItrRloc> itrRlocs = request.getItrRloc();
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
                         updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
@@ -102,6 +103,10 @@ public class MapResolver implements IMapResolverAsync {
                 mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
             } else {
                 mapping = getNegativeMapping(eidRecord.getEid());
+                if (itrRlocs != null && itrRlocs.size() != 0 &&
+                        subscriptionService && !MaskUtil.isMaskable(srcEid.getAddress())) {
+                    updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
+                }
             }
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
