@@ -93,10 +93,10 @@ public class MapResolver implements IMapResolverAsync {
                     eidRecord.getEid());
             if (mapping != null) {
                 List<ItrRloc> itrRlocs = request.getItrRloc();
+                if (subscriptionService) {
+                    updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
+                }
                 if (itrRlocs != null && itrRlocs.size() != 0) {
-                    if (subscriptionService) {
-                        updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
-                    }
                     mapping = updateLocators(mapping, itrRlocs);
                 }
                 mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
