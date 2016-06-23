@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.util.Collection;
 
+import java.util.Date;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
@@ -39,6 +40,8 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
     private final DataBroker broker;
     private final InstanceIdentifier<AuthenticationKey> path;
     private ListenerRegistration<DataTreeChangeListener<AuthenticationKey>> registration;
+    private boolean authKeyRefreshing = false;
+    private long authKeyRefreshingDate;
 
 
     public AuthenticationKeyDataListener(final DataBroker broker, final SimpleMapCache smc) {
@@ -56,8 +59,22 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
         registration.close();
     }
 
+    public boolean isAuthKeyRefreshing() {
+        return authKeyRefreshing;
+    }
+
+    public void setAuthKeyRefreshing(boolean authKeyRefreshing) {
+        this.authKeyRefreshing = authKeyRefreshing;
+    }
+
+    public long getAuthKeyRefreshingDate() {
+        return authKeyRefreshingDate;
+    }
+
     @Override
     public void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
+        authKeyRefreshing = true;
+        authKeyRefreshingDate = System.currentTimeMillis();
         for (DataTreeModification<AuthenticationKey> change : changes) {
             final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 

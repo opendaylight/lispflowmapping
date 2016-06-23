@@ -343,6 +343,14 @@ module odl-lisp-proto {
                 type boolean;
                 description "Value of 22th bit in map register message.";
             }
+            leaf auth-key-value {
+                type string;
+                description "Value of authentication key.";
+            }
+            leaf auth-key-type {
+                type uint16;
+                description "Type of authentication key.";
+            }
             description
                 "The Map-Register cache metadata is information for a mapping
                 database about mapping update event, without the full Map-Register
