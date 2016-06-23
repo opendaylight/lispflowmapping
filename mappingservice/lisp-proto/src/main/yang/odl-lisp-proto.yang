@@ -354,6 +354,14 @@ module odl-lisp-proto {
     grouping map-register-cache-value-grouping {
         container map-register-cache-value {
             uses map-register-cache-metadata-container;
+            leaf auth-key-value {
+                type string;
+                description "Value of authentication key.";
+            }
+            leaf auth-key-type {
+                type uint16;
+                description "Type of authentication key.";
+            }
             leaf packet-data {
                 type binary;
                 description
