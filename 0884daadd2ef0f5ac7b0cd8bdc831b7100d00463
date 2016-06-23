@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_6f5bc787",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-23T06:57:11Z",
+      "side": 1,
+      "message": "Did you mean eidRecord.getEid().getAddress() hear? This is the subject/topic of subscription.",
+      "range": {
+        "startLine": 107,
+        "startChar": 68,
+        "endLine": 107,
+        "endChar": 87
+      },
+      "revId": "0884daadd2ef0f5ac7b0cd8bdc831b7100d00463",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
