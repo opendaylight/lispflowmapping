@@ -46,8 +46,8 @@ public class MapRegisterCache {
         }
     }
 
-    public void refreshEntry(final MapRegisterCacheKey mapRegisterCacheKey) {
-        final MapRegisterCacheValue mapRegisterCacheValueOld = cache.get(mapRegisterCacheKey);
+    public MapRegisterCacheValue refreshEntry(final MapRegisterCacheKey mapRegisterCacheKey) {
+        final MapRegisterCacheValue mapRegisterCacheValueOld = getEntry(mapRegisterCacheKey);
         final MapRegisterCacheMetadata mapRegisterCacheMetadataOld = mapRegisterCacheValueOld
                 .getMapRegisterCacheMetadata();
 
@@ -59,7 +59,7 @@ public class MapRegisterCache {
         mapRegisterCacheValueBuilderNew.setPacketData(mapRegisterCacheValueOld.getPacketData());
         mapRegisterCacheValueBuilderNew.setMapRegisterCacheMetadata(mapRegisterCacheMetadataBuilderNew.build());
 
-        cache.put(mapRegisterCacheKey, mapRegisterCacheValueBuilderNew.build());
+        return mapRegisterCacheValueBuilderNew.build();
     }
 
     public int cacheSize() {

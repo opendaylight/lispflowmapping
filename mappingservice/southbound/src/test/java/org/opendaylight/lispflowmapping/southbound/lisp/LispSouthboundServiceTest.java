@@ -624,6 +624,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
         Mockito.when(mapRegisterCache.getEntry(Mockito.eq(cacheKey))).thenReturn(cacheRecordTimeouted ? null :
                 cacheValue);
+        Mockito.when(mapRegisterCache.refreshEntry(Mockito.eq(cacheKey))).thenReturn(cacheValue);
 
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
 
