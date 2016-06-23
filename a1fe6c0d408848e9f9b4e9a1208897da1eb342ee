@@ -16,6 +16,24 @@
       "revId": "a1fe6c0d408848e9f9b4e9a1208897da1eb342ee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_8f23bb04",
+        "filename": "mappingservice/clustering/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-23T06:36:27Z",
+      "side": 1,
+      "message": "if I remember correctly the reason was to include slf4j dependency which is transitively imported through common.unittest.tools.\nThis is how it is done in other bundles (probably incorrectly).",
+      "parentUuid": "ba51214e_26a29cae",
+      "revId": "a1fe6c0d408848e9f9b4e9a1208897da1eb342ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
