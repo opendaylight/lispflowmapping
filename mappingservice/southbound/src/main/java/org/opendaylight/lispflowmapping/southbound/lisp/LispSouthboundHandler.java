@@ -214,7 +214,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 lispSbStats.incrementCacheHits();
             } else {
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
-                if (isAuthenticationSuccessful(mapRegister, inBuffer)) {
+                final MappingAuthkey mappingAuthkey = tryToAuthenticateMessage(mapRegister, inBuffer);
+                if (mappingAuthkey != null) {
                     AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
                     addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
                     TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
@@ -232,6 +233,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                         cacheMetadataBldNew.setWantMapNotify(mapRegister.isWantMapNotify());
                         cacheMetadataBldNew.setMergeEnabled(mapRegister.isMergeEnabled());
                         cacheMetadataBldNew.setTimestamp(System.currentTimeMillis());
+                        cacheMetadataBldNew.setAuthKeyValue(mappingAuthkey.getKeyString());
+                        cacheMetadataBldNew.setAuthKeyType(mappingAuthkey.getKeyType());
 
                         final MapRegisterCacheValueBuilder cacheValueBldNew = new MapRegisterCacheValueBuilder();
                         cacheValueBldNew.setPacketData(artificialEntry.getValue());
@@ -373,16 +376,16 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
      *
      * @param mapRegister
      * @param byteBuffer
-     * @return
+     * @return Returns authentication key if all of EIDs have the same authentication key or null otherwise
      */
-    private boolean isAuthenticationSuccessful(final MapRegister mapRegister, final ByteBuffer byteBuffer) {
+    private MappingAuthkey tryToAuthenticateMessage(final MapRegister mapRegister, final ByteBuffer byteBuffer) {
         if (!authenticationEnabled) {
-            return true;
+            return null;
         }
 
         if (smc == null) {
             LOG.debug("Simple map cache wasn't instantieted and set.");
-            return false;
+            return null;
         }
 
         MappingAuthkey firstAuthKey = null;
@@ -393,7 +396,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             if (i == 0) {
                 firstAuthKey = smc.getAuthenticationKey(mappingRecord.getEid());
                 if (!LispAuthenticationUtil.validate(mapRegister, byteBuffer, mappingRecord.getEid(), firstAuthKey)) {
-                    return false;
+                    return null;
                 }
             } else {
                 final Eid eid = mappingRecord.getEid();
@@ -401,11 +404,11 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 if (!firstAuthKey.equals(authKey)) {
                     LOG.debug("Map register packet contained several eids. Authentication keys for first one and for " +
                             "{} are different.",LispAddressStringifier.getString(eid));
-                    return false;
+                    return null;
                 }
             }
         }
-        return true;
+        return firstAuthKey;
     }
 
     private void handleMapNotify(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
