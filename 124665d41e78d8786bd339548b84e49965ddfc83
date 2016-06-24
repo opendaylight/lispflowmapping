@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_8d958042",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-24T02:05:00Z",
+      "side": 1,
+      "message": "This part looks good now, however as discussed in the comments on patch set 1, because of the security risk this will introduce, at least I think it should be configurable, so it can be turned off. You can take a look at ConfigIni.java under the implementation bundle for examples of making a feature configurable. I think we can move forward with this once the config option is added.",
+      "range": {
+        "startLine": 106,
+        "startChar": 20,
+        "endLine": 107,
+        "endChar": 102
+      },
+      "revId": "124665d41e78d8786bd339548b84e49965ddfc83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
