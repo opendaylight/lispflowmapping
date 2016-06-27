@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_860f54e1",
+        "filename": "mappingservice/clustering/src/main/java/org/opendaylight/lispflowmapping/clustering/ClusterNodeModulSwitcherImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-27T21:39:11Z",
+      "side": 1,
+      "message": "Since we\u0027re at a debug level, it\u0027s ok to include the whole stack trace:\n\nLOG.debug(\"Candidate already registered.\", e);",
+      "revId": "685eb45db9902e3eb97f7eb60af451d754ab3d33",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
