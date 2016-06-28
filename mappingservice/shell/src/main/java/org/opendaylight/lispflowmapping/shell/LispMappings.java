@@ -13,16 +13,17 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
- * This class implements the "lisp:mappings" Karaf shell command
+ * This class implements the "lisp:mappings" Karaf shell command.
  *
  * @author Lorand Jakab
  *
  */
-@Command(scope = "mappingservice", name = "mappings", description="Print LISP mapping database")
+@Command(scope = "mappingservice", name = "mappings", description = "Print LISP mapping database")
 public class LispMappings  extends OsgiCommandSupport {
     private IMappingServiceShell mappingServiceShell;
 
     @Override
+    @SuppressWarnings("checkstyle:RegexpMultiline")
     protected Object doExecute() throws Exception {
         System.out.print(mappingServiceShell.printMappings());
         return null;
