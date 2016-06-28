@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_392b0284",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2154,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-28T14:11:05Z",
+      "side": 1,
+      "message": "The log already has the stack trace printed. ODL guidelines are against using printStrackTrace(). Jenkins saves the log of the jobs, so that can be inspected on failure, see https://jenkins.opendaylight.org/releng/view/lispflowmapping/job/lispflowmapping-verify-boron/jdk\u003dopenjdk8,nodes\u003ddynamic_verify/lastSuccessfulBuild/artifact/integrationtest/target/surefire-reports/org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest-output.txt for an example. Please remove this.",
+      "revId": "1a3caf1f5140286bd4e4531ff33c1c92b9c7c557",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
