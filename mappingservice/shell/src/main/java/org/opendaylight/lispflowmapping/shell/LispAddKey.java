@@ -13,12 +13,12 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
- * This class implements the "lisp:addkey" Karaf shell command
+ * This class implements the "lisp:addkey" Karaf shell command.
  *
  * @author Lorand Jakab
  *
  */
-@Command(scope = "mappingservice", name = "addkey", description="Add an authentication key")
+@Command(scope = "mappingservice", name = "addkey", description = "Add an authentication key")
 public class LispAddKey  extends OsgiCommandSupport {
     private IMappingServiceShell mappingServiceShell;
 
