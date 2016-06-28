@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_062fc4a2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-28T03:06:38Z",
+      "side": 1,
+      "message": "This variable doesn\u0027t seem to be used.",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_6617a052",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-28T03:06:38Z",
+      "side": 1,
+      "message": "If we stop listening for notifications in MapServer, we won\u0027t call onMappingChange() in slaves. That means we\u0027re not sending SMRs, which is good, but we\u0027re also not removing subscribers, when MappinChange.Removed, which is somewhat bad. Maybe instead of manipulating the notifications in MapServer, we could just set a variable like \u0027instanceIsMaster\u0027, and modify things in the onMappingChanged() method to send SMRs only when master, but remove subscribers either way.\n\nVina?",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
