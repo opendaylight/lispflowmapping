@@ -17,11 +17,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 
 /**
- * The LISP Mapping Service interface
+ * The LISP Mapping Service interface.
  */
 public interface IFlowMapping {
     /**
-     * Handle southbound map-request
+     * Handle southbound map-request.
      *
      * @param mapRegister
      *            The map-register message
@@ -30,7 +30,7 @@ public interface IFlowMapping {
     Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister);
 
     /**
-     * Handle southbound map-request
+     * Handle southbound map-request.
      *
      * @param mr
      *            The map-request messages
@@ -39,10 +39,10 @@ public interface IFlowMapping {
     MapReply handleMapRequest(MapRequest mr);
 
     /**
-     * Configure LISP mapping service to track and notify of changes mapping requesters
+     * Configure LISP mapping service to track and notify of changes mapping requesters.
      *
      * @param smr
      *            Configure state of service
      */
-     void setShouldUseSmr(boolean smr);
+    void setShouldUseSmr(boolean smr);
 }

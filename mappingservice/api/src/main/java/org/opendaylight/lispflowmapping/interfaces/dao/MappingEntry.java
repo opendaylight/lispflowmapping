@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 /**
- * A mapping service entry in the DAO
+ * A mapping service entry in the DAO.
  *
  * @param <V>
  *            The type of the mapping key.

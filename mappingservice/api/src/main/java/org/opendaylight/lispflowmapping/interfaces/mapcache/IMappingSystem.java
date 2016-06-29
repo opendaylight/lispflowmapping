@@ -13,7 +13,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
- * Mapping System interface
+ * Mapping System interface.
  *
  * @author Florin Coras
  *
@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public interface IMappingSystem {
     /**
-     * Add mapping
+     * Add mapping.
      *
      * @param origin
      *            Table where mapping should be added
@@ -55,7 +55,7 @@ public interface IMappingSystem {
     Object getMapping(Eid dst);
 
     /**
-     * Retrieves mapping from table for provided key
+     * Retrieves mapping from table for provided key.
      *
      * @param origin
      *            Table where mapping should be looked up
@@ -66,7 +66,7 @@ public interface IMappingSystem {
     Object getMapping(MappingOrigin origin, Eid key);
 
     /**
-     * Retrieves widest negative prefix from table for provided key
+     * Retrieves widest negative prefix from table for provided key.
      *
      * @param key
      *            Key to be looked up
@@ -75,7 +75,7 @@ public interface IMappingSystem {
     Object getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration
+     * Update mapping registration.
      *
      * @param origin
      *            Table for mapping that should be updated
@@ -87,7 +87,7 @@ public interface IMappingSystem {
     void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
 
     /**
-     * Remove mapping
+     * Remove mapping.
      *
      * @param origin
      *            Table for mapping that should be removed
@@ -98,7 +98,7 @@ public interface IMappingSystem {
     void removeMapping(MappingOrigin origin, Eid key);
 
     /**
-     * Add authentication key
+     * Add authentication key.
      *
      * @param key
      *            The key for which the authentication key is added
@@ -108,7 +108,7 @@ public interface IMappingSystem {
     void addAuthenticationKey(Eid key, MappingAuthkey authKey);
 
     /**
-     * Retrieve authentication key
+     * Retrieve authentication key.
      *
      * @param key
      *            The key for which the authentication key is being looked up.
@@ -117,7 +117,7 @@ public interface IMappingSystem {
     MappingAuthkey getAuthenticationKey(Eid key);
 
     /**
-     * Remove authentication key
+     * Remove authentication key.
      *
      * @param key
      *            Key for which the authentication key should be removed.
@@ -126,7 +126,7 @@ public interface IMappingSystem {
 
 
     /**
-     * Add data for key
+     * Add data for key.
      *
      * @param origin
      *            Table for data that should be added
@@ -140,7 +140,7 @@ public interface IMappingSystem {
     void addData(MappingOrigin origin, Eid key, String subKey, Object data);
 
     /**
-     * Generic retrieval of data
+     * Generic retrieval of data.
      *
      * @param origin
      *            Table from where data should be retrieved
@@ -154,7 +154,7 @@ public interface IMappingSystem {
 
 
     /**
-     * Generic removal of data
+     * Generic removal of data.
      *
      * @param origin
      *            Table from where data should be removed
@@ -183,7 +183,7 @@ public interface IMappingSystem {
     void setOverwritePolicy(boolean overwrite);
 
     /**
-     * Print all mappings. Used for testing, debugging and the karaf shell
+     * Print all mappings. Used for testing, debugging and the karaf shell.
      *
      * @return String consisting of all mappings
      */

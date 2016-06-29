@@ -14,7 +14,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
  */
 public interface IMapServerAsync extends IGenericMapServer {
     /**
-     * Handle map-register message
+     * Handle map-register message.
      *
      * @param register
      *            The map-register message

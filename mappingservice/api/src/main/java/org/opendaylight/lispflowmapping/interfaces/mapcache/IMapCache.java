@@ -12,7 +12,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
- * Map-cache interface
+ * Map-cache interface.
  *
  * @author Florin Coras
  *
@@ -20,7 +20,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public interface IMapCache {
     /**
-     * Add mapping
+     * Add mapping.
      *
      * @param key
      *            Key of the mapping
@@ -45,7 +45,7 @@ public interface IMapCache {
     Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
-     * Retrieves widest negative prefix
+     * Retrieves widest negative prefix.
      *
      * @param key
      *            Source Key to be looked up
@@ -54,7 +54,7 @@ public interface IMapCache {
     Eid getWidestNegativeMapping(Eid key);
 
     /**
-     * Remove mapping
+     * Remove mapping.
      *
      * @param key
      *            Key to be removed
@@ -65,7 +65,7 @@ public interface IMapCache {
     void removeMapping(Eid key, boolean overwrite);
 
     /**
-     * Add authentication key
+     * Add authentication key.
      *
      * @param key
      *            The key for which the authentication key is added
@@ -75,7 +75,7 @@ public interface IMapCache {
     void addAuthenticationKey(Eid key, MappingAuthkey authKey);
 
     /**
-     * Retrieve authentication key
+     * Retrieve authentication key.
      *
      * @param key
      *            The key for which the authentication key is being looked up.
@@ -84,7 +84,7 @@ public interface IMapCache {
     MappingAuthkey getAuthenticationKey(Eid key);
 
     /**
-     * Remove authentication key
+     * Remove authentication key.
      *
      * @param key
      *            Key for which the authentication key should be removed.
@@ -92,7 +92,7 @@ public interface IMapCache {
     void removeAuthenticationKey(Eid key);
 
     /**
-     * Update mapping registration
+     * Update mapping registration.
      *
      * @param key
      *            The EID whose registration must be updated
@@ -102,7 +102,7 @@ public interface IMapCache {
     void updateMappingRegistration(Eid key, Long timestamp);
 
     /**
-     * Add data for key
+     * Add data for key.
      *
      * @param key
      *            The key for which data is inserted
@@ -114,7 +114,7 @@ public interface IMapCache {
     void addData(Eid key, String subKey, Object data);
 
     /**
-     * Generic retrieval of data
+     * Generic retrieval of data.
      *
      * @param key
      *            The key where the data is stored
@@ -125,7 +125,7 @@ public interface IMapCache {
     Object getData(Eid key, String subKey);
 
     /**
-     * Generic removal of data
+     * Generic removal of data.
      *
      * @param key
      *            The key of the data to be removed
@@ -135,7 +135,7 @@ public interface IMapCache {
     void removeData(Eid key, String subKey);
 
     /**
-     * Print mappings in cache. Used for testing, debugging and the karaf shell
+     * Print mappings in cache. Used for testing, debugging and the karaf shell.
      *
      * @return a String consisting of all the mappings in the cache
      */

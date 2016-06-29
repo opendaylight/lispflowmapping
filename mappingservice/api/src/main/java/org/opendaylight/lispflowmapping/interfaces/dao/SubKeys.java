@@ -9,7 +9,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 /**
- * Defines DAO Subkeys
+ * Defines DAO Subkeys.
  *
  * @author Florin Coras
  *

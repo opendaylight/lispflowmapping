@@ -12,6 +12,8 @@ package org.opendaylight.lispflowmapping.type.sbplugin;
  */
 public interface IConfigLispSouthboundPlugin {
     void setLispAddress(String address);
+
     void shouldListenOnXtrPort(boolean shouldListenOnXtrPort);
+
     void setXtrPort(int port);
 }
