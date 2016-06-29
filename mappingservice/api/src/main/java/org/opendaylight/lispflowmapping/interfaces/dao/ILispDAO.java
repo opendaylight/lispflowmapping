@@ -8,8 +8,8 @@
 
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
-import java.util.Map;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
@@ -37,7 +37,7 @@ public interface ILispDAO {
     Object getSpecific(Object key, String valueKey);
 
     /**
-     * Get the entries from the DAO
+     * Get the entries from the DAO.
      *
      * @param key
      *            The key to be looked up as exact match.
@@ -46,7 +46,7 @@ public interface ILispDAO {
     Map<String, Object> get(Object key);
 
     /**
-     * Get value for longest prefix match from the DAO
+     * Get value for longest prefix match from the DAO.
      *
      * @param key
      *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
@@ -55,7 +55,7 @@ public interface ILispDAO {
     Map<String, Object> getBest(Object key);
 
     /**
-     * Get longest prefix match and value from the DAO
+     * Get longest prefix match and value from the DAO.
      *
      * @param key
      *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized
@@ -64,7 +64,7 @@ public interface ILispDAO {
     SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key);
 
     /**
-     * Get widest negative prefix
+     * Get widest negative prefix.
      *
      * @param key
      *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
@@ -73,7 +73,7 @@ public interface ILispDAO {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
-     * Enumerate all the entries from the DAO
+     * Enumerate all the entries from the DAO.
      *
      * @param visitor
      *            The visitor object.
@@ -81,7 +81,7 @@ public interface ILispDAO {
     void getAll(IRowVisitor visitor);
 
     /**
-     * Remove an entry from the DAO
+     * Remove an entry from the DAO.
      *
      * @param key
      *            The key of the entry to delete
@@ -89,7 +89,7 @@ public interface ILispDAO {
     void remove(Object key);
 
     /**
-     * Remove an entry from the DAO
+     * Remove an entry from the DAO.
      *
      * @param key
      *            The key of the entry

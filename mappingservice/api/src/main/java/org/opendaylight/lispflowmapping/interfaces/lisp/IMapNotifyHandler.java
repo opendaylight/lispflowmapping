@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
  */
 public interface IMapNotifyHandler {
     /**
-     * Handle map-notify message
+     * Handle map-notify message.
      *
      * @param mapNotify
      *            The map-notify message
@@ -30,7 +30,7 @@ public interface IMapNotifyHandler {
     void handleMapNotify(MapNotify mapNotify, List<TransportAddress> rlocs);
 
     /**
-     * Handle Solicit Map Request message
+     * Handle Solicit Map Request message.
      *
      * @param mapRequest
      *            the SMR message

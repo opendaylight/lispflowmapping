@@ -8,12 +8,12 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 /**
- * Methods to be implemented by a generic Map Server
+ * Methods to be implemented by a generic Map Server.
  */
 public interface IGenericMapServer {
 
     /**
-     * Configure Map Server to notify mapping subscribers on mapping updates
+     * Configure Map Server to notify mapping subscribers on mapping updates.
      *
      * @param subscriptionService
      *            Set subscription service

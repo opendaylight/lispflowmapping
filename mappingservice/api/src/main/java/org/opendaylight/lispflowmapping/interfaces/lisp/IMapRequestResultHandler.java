@@ -16,7 +16,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
  */
 public interface IMapRequestResultHandler {
     /**
-     * Handle return map-reply message
+     * Handle return map-reply message.
      *
      * @param mapReply
      *            The map-reply message
@@ -24,7 +24,7 @@ public interface IMapRequestResultHandler {
     void handleMapReply(MapReply mapReply);
 
     /**
-     * Handle map-request to be forwarded to authoritative ETR
+     * Handle map-request to be forwarded to authoritative ETR.
      *
      * @param mapRequest
      *            The map-request message

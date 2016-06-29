@@ -14,7 +14,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
  */
 public interface IMapResolverAsync extends IGenericMapResolver {
     /**
-     * Handle Map-Request
+     * Handle Map-Request.
      *
      * @param request
      *            The map-request message

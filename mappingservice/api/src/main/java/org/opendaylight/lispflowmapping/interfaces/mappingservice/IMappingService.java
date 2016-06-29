@@ -14,8 +14,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.authkey.container.MappingAuthkey;
 
 /**
- *
- * Mapping Service Java API
+ * Mapping Service Java API.
  *
  * @author Florin Coras
  *
@@ -23,10 +22,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public interface IMappingService {
 
-    public enum LookupPolicy {NB_FIRST, NB_AND_SB}
+    public enum LookupPolicy { NB_FIRST, NB_AND_SB }
 
     /**
-     * Add mapping
+     * Add mapping.
      *
      * @param origin
      *            Table where mapping should be added
@@ -43,7 +42,7 @@ public interface IMappingService {
 
     /**
      * Retrieves mapping with given origin for the provided key. The lookup policy for the key is defined in the Mapping
-     * System
+     * System.
      *
      * @param origin
      *            Table where the mapping should be looked up.
@@ -55,7 +54,7 @@ public interface IMappingService {
 
     /**
      * Retrieves mapping for given key.The lookup policy for the key is defined in the Mapping
-     * System
+     * System.
      *
      * @param key
      *            Key to be looked up
@@ -76,7 +75,7 @@ public interface IMappingService {
     Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
-     * Retrieves widest negative prefix found in the Mapping System for given key
+     * Retrieves widest negative prefix found in the Mapping System for given key.
      *
      * @param key
      *            Key being looked up
@@ -85,7 +84,7 @@ public interface IMappingService {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration
+     * Update mapping registration.
      *
      * @param origin
      *            Table for mapping that should be updated
@@ -97,7 +96,7 @@ public interface IMappingService {
     void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
 
     /**
-     * Remove mapping
+     * Remove mapping.
      *
      * @param origin
      *            Table from where the mapping should be removed
@@ -107,7 +106,7 @@ public interface IMappingService {
     void removeMapping(MappingOrigin origin, Eid key);
 
     /**
-     * Add authentication key
+     * Add authentication key.
      *
      * @param key
      *            The key for which the authentication key is added
@@ -117,7 +116,7 @@ public interface IMappingService {
     void addAuthenticationKey(Eid key, MappingAuthkey authKey);
 
     /**
-     * Retrieve authentication key
+     * Retrieve authentication key.
      *
      * @param key
      *            The key for which the authentication key is being looked up.
@@ -126,7 +125,7 @@ public interface IMappingService {
     MappingAuthkey getAuthenticationKey(Eid key);
 
     /**
-     * Remove authentication key
+     * Remove authentication key.
      *
      * @param key
      *            Key for which the authentication key should be removed.
@@ -148,7 +147,7 @@ public interface IMappingService {
     void addData(MappingOrigin origin, Eid key, String subKey, Object data);
 
     /**
-     * Generic retrieval of data
+     * Generic retrieval of data.
      *
      * @param origin
      *            Table from where the data should be read
@@ -161,7 +160,7 @@ public interface IMappingService {
     Object getData(MappingOrigin origin, Eid key, String subKey);
 
     /**
-     * Generic removal of data
+     * Generic removal of data.
      *
      * @param origin
      *            The table from where the data should be removed
@@ -174,7 +173,7 @@ public interface IMappingService {
 
     /**
      * Configures Mapping Service mapping overwrite option. If set to true, mappings with the same key are overwritten,
-     * otherwise, mappings with the same key but from different xTR-IDs are all stored
+     * otherwise, mappings with the same key but from different xTR-IDs are all stored.
      *
      * @param overwrite
      *            enables or disables mapping overwrite
@@ -190,7 +189,7 @@ public interface IMappingService {
     void setLookupPolicy(LookupPolicy policy);
 
     /**
-     * Print all mappings. Used for testing, debugging and the karaf shell
+     * Print all mappings. Used for testing, debugging and the karaf shell.
      *
      * @return String consisting of all mappings
      */

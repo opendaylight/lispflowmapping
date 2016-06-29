@@ -9,7 +9,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 /**
- *
+ * Class to iterate through objects.
  */
 public interface IRowVisitor {
     void visitRow(Object keyId, String valueKey, Object value);

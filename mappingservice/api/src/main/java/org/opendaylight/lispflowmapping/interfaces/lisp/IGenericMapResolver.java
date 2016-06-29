@@ -8,11 +8,11 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 /**
- * Methods to be implemented by a generic Map Resolver
+ * Methods to be implemented by a generic Map Resolver.
  */
 public interface IGenericMapResolver {
     /**
-     * Configure MapResolver to use authentication
+     * Configure MapResolver to use authentication.
      *
      * @param shouldAuthenticate
      *            Authentication state
@@ -20,7 +20,7 @@ public interface IGenericMapResolver {
     void setShouldAuthenticate(boolean shouldAuthenticate);
 
     /**
-     * Configure MapResolver to track mappings requesters
+     * Configure MapResolver to track mappings requesters.
      *
      * @param smr
      *            Subscription service state
@@ -29,7 +29,7 @@ public interface IGenericMapResolver {
     void setSubscriptionService(boolean smr);
 
     /**
-     * Configure how ELPs should be returned in Map-Replies
+     * Configure how ELPs should be returned in Map-Replies.
      *
      * @param elpPolicy
      *            ELP policy
