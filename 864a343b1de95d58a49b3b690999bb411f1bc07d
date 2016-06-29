@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_6f792cfc",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-29T05:40:25Z",
+      "side": 1,
+      "message": "Are these mandatory? If not, we should remove them.",
+      "range": {
+        "startLine": 495,
+        "startChar": 0,
+        "endLine": 503,
+        "endChar": 1
+      },
+      "revId": "864a343b1de95d58a49b3b690999bb411f1bc07d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
