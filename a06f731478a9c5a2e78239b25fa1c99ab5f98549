@@ -33,6 +33,24 @@
       "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ef253c0b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-06-29T05:37:29Z",
+      "side": 1,
+      "message": "Agreed. So I think these two methods (startModule and stopModuel can be removed then. And as for SMRs, those are updated in the handleMapRequest () method in MapResolver, so we need to either check the isMaster() there, or pass a variable to that effect there. I think checking isMaster() directly there is better.",
+      "parentUuid": "9a561d44_6617a052",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
