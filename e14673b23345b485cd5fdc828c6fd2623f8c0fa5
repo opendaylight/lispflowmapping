@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_2348e85a",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-29T23:19:39Z",
+      "side": 1,
+      "message": "This is a security risk, since we\u0027re sending the metadata grouping in the mappingKeepAlive notification, which anyone can listen to, so a rogue ODL app would be able to register for this notification and create a database of passwords. I recommend moving \u0027grouping mapping-authkey-container\u0027 from odl-mappingservice.yang to odl-lisp-proto.yang, and adding \u0027uses mapping-authkey-container\u0027 in \u0027container map-register-cache-value\u0027 under \u0027uses map-register-cache-metadata-container;\u0027. However, we passed API freeze, so maybe just move the two leaves above \u0027leaf packet-data\u0027",
+      "revId": "e14673b23345b485cd5fdc828c6fd2623f8c0fa5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
