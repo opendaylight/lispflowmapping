@@ -144,6 +144,11 @@ import org.slf4j.LoggerFactory;
 public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
 
+    /**
+     * Defines how many attempt to create instance of DatagramSocket will be done before giving up.
+     */
+    private static final int NUM_OF_ATTEMPTS_TO_CREATE_SOCKET = 2;
+
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
     private byte[] mapRegisterPacketWithoutNotify;
@@ -2139,13 +2144,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private DatagramSocket initSocket(DatagramSocket socket, int port) {
-        try {
-            socket = new DatagramSocket(new InetSocketAddress(ourAddress, port));
-        } catch (SocketException e) {
-            LOG.error("Can't initize socket for {}", ourAddress, e);
-            fail();
+        for (int i=0; i < NUM_OF_ATTEMPTS_TO_CREATE_SOCKET; i++) {
+            try {
+                return new DatagramSocket(new InetSocketAddress(ourAddress, port));
+            } catch (SocketException e) {
+                LOG.error("Can't initize socket for {}", ourAddress, e);
+            }
         }
-        return socket;
+        fail();
+        return null;
     }
 
     private byte[] extractWSUdpByteArray(String wiresharkHex) {
