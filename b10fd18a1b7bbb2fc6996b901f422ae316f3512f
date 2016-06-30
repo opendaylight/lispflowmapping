@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_32c4af91",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2151,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-30T11:44:10Z",
+      "side": 1,
+      "message": "While we\u0027re at it, we can fix this typo: s/initize/initialize/ :)",
+      "revId": "b10fd18a1b7bbb2fc6996b901f422ae316f3512f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
