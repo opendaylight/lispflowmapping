@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_3eb91b2f",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-30T07:10:47Z",
+      "side": 1,
+      "message": "because of API freeze, second possibility was picked up.",
+      "parentUuid": "9a561d44_2348e85a",
+      "revId": "e14673b23345b485cd5fdc828c6fd2623f8c0fa5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_23aaa870",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2016-06-30T01:33:35Z",
       "side": 1,
       "message": "Shouldn\u0027t we return instantly if .isAuthKeyRefreshing() is false?",
+      "revId": "e14673b23345b485cd5fdc828c6fd2623f8c0fa5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_dec0df7e",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-06-30T07:10:47Z",
+      "side": 1,
+      "message": "Good reminder. We will save some time.",
+      "parentUuid": "9a561d44_23aaa870",
       "revId": "e14673b23345b485cd5fdc828c6fd2623f8c0fa5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
