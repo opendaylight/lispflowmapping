@@ -1,8 +1,7 @@
-# UUID                                  	Group Name
+# UUID                                                                   	Group Name
 #
-2373512464abcee3eaf50f265c4a4e428dab634e	Administrators
-85e497cbfcd519cee5d64c7bb6d86b68c2dd460a	Non-interactive lispflowmapping users
-c9025ab9ddc1e3171919e085449f22c54f8f7b54	GitHub Replication
-global:Anonymous-Users                  	Anonymous Users
-global:Registered-Users                 	Registered Users
+85e497cbfcd519cee5d64c7bb6d86b68c2dd460a                                 	Non-interactive lispflowmapping users
+c9025ab9ddc1e3171919e085449f22c54f8f7b54                                 	GitHub Replication
+global:Registered-Users                                                  	Registered Users
+ldap:cn=ci-lispflowmapping,ou=Groups,dc=opendaylight,dc=org              	ldap/ci-lispflowmapping
 ldap:cn=gerrit-lispflowmapping-commiters,ou=Groups,dc=opendaylight,dc=org	ldap/gerrit-lispflowmapping-commiters
