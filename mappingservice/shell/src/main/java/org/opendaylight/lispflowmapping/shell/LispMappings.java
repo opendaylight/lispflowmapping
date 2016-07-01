@@ -23,7 +23,7 @@ public class LispMappings  extends OsgiCommandSupport {
     private IMappingServiceShell mappingServiceShell;
 
     @Override
-    @SuppressWarnings("checkstyle:RegexpMultiline")
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
         System.out.print(mappingServiceShell.printMappings());
         return null;
