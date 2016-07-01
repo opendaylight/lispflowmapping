@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_7c30b656",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T04:24:24Z",
+      "side": 1,
+      "message": "Technically this should never be true, because in SB we are disabling listening to the channel,  so a slave node will never get MapRequest or a MapRegister.",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 50
+      },
+      "revId": "408388a21fa2695d7cf2db63659d1069b14a2145",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_dc358247",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T04:24:24Z",
+      "side": 1,
+      "message": "Same as above?",
+      "range": {
+        "startLine": 192,
+        "startChar": 0,
+        "endLine": 192,
+        "endChar": 50
+      },
+      "revId": "408388a21fa2695d7cf2db63659d1069b14a2145",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_3c463ec0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T04:24:24Z",
+      "side": 1,
+      "message": "This does not seem to be used. So it should be removed.",
+      "range": {
+        "startLine": 72,
+        "startChar": 3,
+        "endLine": 72,
+        "endChar": 74
+      },
+      "revId": "408388a21fa2695d7cf2db63659d1069b14a2145",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_9c12eab2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T04:24:24Z",
+      "side": 1,
+      "message": "What is the purpose of these? They are not called in this patch. Please remove if not used.",
+      "range": {
+        "startLine": 88,
+        "startChar": 2,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "408388a21fa2695d7cf2db63659d1069b14a2145",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
