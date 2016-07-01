@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_83dd7417",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 2157,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-01T02:32:52Z",
+      "side": 1,
+      "message": "Please remove the part enclosed in the if {}, and create a separate commit with the remaining changes in this file.",
+      "revId": "2b8146243e274992ca8b867ddfe5bf8556a1ed1b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
