@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_1c953a40",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T02:56:02Z",
+      "side": 1,
+      "message": "This should be mapRegisterMeta, which has just been refreshed and has a valid Auth key. cacheValue has the meta data before refreshing which may have a stale AuthKey. I will file a bug for this. Please submit a patch to fix this.",
+      "range": {
+        "startLine": 213,
+        "startChar": 67,
+        "endLine": 213,
+        "endChar": 79
+      },
+      "revId": "3c089df87a054d30e9c9b2f3d17ef495e87350bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
