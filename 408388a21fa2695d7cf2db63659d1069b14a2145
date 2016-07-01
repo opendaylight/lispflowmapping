@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_9c4945d3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-01T19:06:07Z",
+      "side": 1,
+      "message": "We did discuss this indeed, but that is pending synchronizing the subscribers list which we dont have yet. So for now we\u0027ll do the simple case of disabling any message processing on slaves to get the clustering patches in. Then we can look at optimizations.",
+      "parentUuid": "9a561d44_96f126d0",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 50
+      },
+      "revId": "408388a21fa2695d7cf2db63659d1069b14a2145",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_dc358247",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 12
