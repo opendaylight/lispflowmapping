@@ -16,6 +16,24 @@
       "revId": "f8fe6346519c727cad968f7211a1a3150e489b51",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_7ebc336d",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-01T11:18:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a561d44_63e2e0d6",
+      "revId": "f8fe6346519c727cad968f7211a1a3150e489b51",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
