@@ -206,11 +206,12 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 MapRegisterCacheMetadata mapRegisterMeta = cacheValue.getMapRegisterCacheMetadata();
                 LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterMeta.getSiteId(),
                         mapRegisterMeta.getXtrId());
-                mapRegisterMeta = refreshEntry(cacheKey);
-                sendNotificationIfPossible(createMappingKeepAlive(cacheValue));
-
-                if (mapRegisterMeta.isWantMapNotify()) {
-                    sendMapNotifyMsg(inBuffer, sourceAddress, port, cacheValue);
+                cacheValue = refreshEntry(cacheKey);
+                if (cacheValue != null) {
+                    sendNotificationIfPossible(createMappingKeepAlive(cacheValue));
+                    if (cacheValue.getMapRegisterCacheMetadata().isWantMapNotify()) {
+                        sendMapNotifyMsg(inBuffer, sourceAddress, port, cacheValue);
+                    }
                 }
                 lispSbStats.incrementCacheHits();
             } else {
@@ -254,12 +255,12 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
-    private MapRegisterCacheMetadata refreshEntry(final MapRegisterCacheKey cacheKey) {
+    private MapRegisterCacheValue refreshEntry(final MapRegisterCacheKey cacheKey) {
         MapRegisterCacheValue mapRegisterCacheValue = mapRegisterCache.refreshEntry(cacheKey);
         if (mapRegisterCacheValue != null) {
             mapRegisterCacheValue = refreshAuthKeyIfNecessary(mapRegisterCacheValue);
             mapRegisterCache.addEntry(cacheKey, mapRegisterCacheValue);
-            return mapRegisterCacheValue.getMapRegisterCacheMetadata();
+            return mapRegisterCacheValue;
         }
         return null;
     }
