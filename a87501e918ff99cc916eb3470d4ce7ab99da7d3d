@@ -16,6 +16,24 @@
       "revId": "a87501e918ff99cc916eb3470d4ce7ab99da7d3d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_d69b9ec7",
+        "filename": "mappingservice/clustering/pom.xml",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-01T11:17:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a561d44_dcdd8244",
+      "revId": "a87501e918ff99cc916eb3470d4ce7ab99da7d3d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
