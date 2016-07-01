@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_dcdd8244",
+        "filename": "mappingservice/clustering/pom.xml",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-01T02:32:52Z",
+      "side": 1,
+      "message": "Please copy from the mappingservice/api/pom.xml file the whole content after the \u003c/dependencies\u003e tag.",
+      "revId": "a87501e918ff99cc916eb3470d4ce7ab99da7d3d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
