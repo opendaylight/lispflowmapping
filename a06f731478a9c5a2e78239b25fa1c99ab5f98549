@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_20558bc6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-01T12:55:32Z",
+      "side": 1,
+      "message": "Doneu",
+      "parentUuid": "9a561d44_062fc4a2",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_6617a052",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 6
@@ -47,6 +65,42 @@
       "writtenOn": "2016-06-29T05:37:29Z",
       "side": 1,
       "message": "Agreed. So I think these two methods (startModule and stopModuel can be removed then. And as for SMRs, those are updated in the handleMapRequest () method in MapResolver, so we need to either check the isMaster() there, or pass a variable to that effect there. I think checking isMaster() directly there is better.",
+      "parentUuid": "9a561d44_6617a052",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_aab69288",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-01T12:55:32Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "9a561d44_ef253c0b",
+      "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_206c6b9c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-01T12:55:32Z",
+      "side": 1,
+      "message": "I will wait also for Vina\u0027s opinion.",
       "parentUuid": "9a561d44_6617a052",
       "revId": "a06f731478a9c5a2e78239b25fa1c99ab5f98549",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
