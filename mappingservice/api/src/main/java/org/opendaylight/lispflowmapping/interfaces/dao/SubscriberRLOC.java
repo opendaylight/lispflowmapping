@@ -16,10 +16,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
  * Request source RLOC in the mapping service with it's properties.
  */
 public class SubscriberRLOC {
+
     private Rloc rloc;
     private Eid eid;
     private Date lastRequestDate;
-    private static final long SUBSCRIBER_TIMEOUT = 86400000L; /* 1 day (default Cisco IOS mapping TTL) */
+
+    // 86400000L = 1 day (default Cisco IOS mapping TTL)
+    private static final long SUBSCRIBER_TIMEOUT = 86400000L;
 
     public SubscriberRLOC(Rloc srcRloc, Eid srcEid) {
         this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
