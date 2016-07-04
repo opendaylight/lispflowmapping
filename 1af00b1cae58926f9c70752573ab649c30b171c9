@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_921769a3",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 15
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-04T13:13:22Z",
+      "side": 0,
+      "message": "You need a reference defined for the entityOwnershipService at line 15, that\u0027s why the last two patches consistently fail verify:\n\n  \u003creference id\u003d\"entityOwnershipService\"\n    interface\u003d\"org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService\" /\u003e\n\nOnce you add this, verify will pass, and the patches are ready for performance testing.",
+      "revId": "1af00b1cae58926f9c70752573ab649c30b171c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
