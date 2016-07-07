@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 
 public interface IMappingService {
 
-    public enum LookupPolicy { NB_FIRST, NB_AND_SB }
+    enum LookupPolicy { NB_FIRST, NB_AND_SB }
 
     /**
      * Add mapping.
