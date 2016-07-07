@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.southbound.authentication;
+package org.opendaylight.lispflowmapping.lisp.authentication;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 
 public class LispMACAuthenticationTest {
 

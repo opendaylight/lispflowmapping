@@ -62,24 +62,13 @@ module odl-mappingservice {
         description "A classifier for xtr-id elements which allows direct access to a particular element in the data tree.";
     }
 
-    grouping mapping-authkey-container {
-        container mapping-authkey {
-            leaf key-string {
-                type string;
-            }
-            leaf key-type {
-                type uint16;
-            }
-        }
-    }
-
     grouping mapping-authkey-list {
         list mapping-authkey-item {
             key "mapping-authkey-item-id";
             leaf mapping-authkey-item-id {
                 type string;
             }
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
@@ -90,7 +79,7 @@ module odl-mappingservice {
                 type string;
             }
             uses lisp-proto:eid-container;
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
@@ -135,7 +124,7 @@ module odl-mappingservice {
                 type eid-uri;
             }
             uses lisp-proto:eid-container;
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
@@ -152,7 +141,7 @@ module odl-mappingservice {
     rpc add-key {
         input {
             uses lisp-proto:eid-container;
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
@@ -161,14 +150,14 @@ module odl-mappingservice {
             uses lisp-proto:eid-container;
         }
         output {
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
     rpc update-key {
         input {
             uses lisp-proto:eid-container;
-            uses mapping-authkey-container;
+            uses lisp-proto:mapping-authkey-container;
         }
     }
 
