@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.southbound.authentication;
+package org.opendaylight.lispflowmapping.lisp.authentication;
 
 import java.nio.ByteBuffer;
-import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 
 public final class LispNoAuthentication implements ILispAuthentication {
 

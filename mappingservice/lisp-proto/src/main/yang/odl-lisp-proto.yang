@@ -50,6 +50,17 @@ module odl-lisp-proto {
         }
     }
 
+    grouping mapping-authkey-container {
+        container mapping-authkey {
+            leaf key-string {
+                type string;
+            }
+            leaf key-type {
+                type uint16;
+            }
+        }
+    }
+
     grouping eid-container {
         container eid {
             uses odl-lisp-address:augmented-lisp-address;

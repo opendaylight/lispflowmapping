@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.southbound.authentication;
+package org.opendaylight.lispflowmapping.lisp.authentication;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
@@ -13,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import org.opendaylight.lispflowmapping.interfaces.lisp.ILispAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
