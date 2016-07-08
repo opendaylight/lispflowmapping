@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_07382b9f",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MultiSiteScenario.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "move to below, after the proto package imports?",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 90
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_e73c1796",
+        "filename": "mappingservice/dsbackend/src/test/java/org/opendaylight/lispflowmapping/dsbackend/DataStoreBackEndTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "move to above next to other proto package imports",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 79
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_47422311",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "move to above, next to proto imports",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 119
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_27472f21",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "same comment as others",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 119
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_874b9b2a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DSBEInputUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 119
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_6748072e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/RPCInputConvertorUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-08T05:43:14Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 119
+      },
+      "revId": "28e2b9d917650083a2a7321526b2b64d98bb2b27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
