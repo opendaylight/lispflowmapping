@@ -89,19 +89,19 @@ public class DataStoreBackEndTest {
 
     @Before
     public void init() {
-        DataBroker brokerMock = Mockito.mock(DataBroker.class);
-        Logger logMock = Mockito.mock(Logger.class, "LOG");
+        final DataBroker brokerMock = Mockito.mock(DataBroker.class);
+        final Logger logMock = Mockito.mock(Logger.class, "LOG");
 
         PowerMockito.mockStatic(LoggerFactory.class);
-        PowerMockito.when(LoggerFactory.getLogger(DataStoreBackEnd.class)).
-                thenReturn(logMock);
+        PowerMockito.when(LoggerFactory.getLogger(DataStoreBackEnd.class))
+                .thenReturn(logMock);
         Mockito.when(logMock.isDebugEnabled()).thenReturn(true);
         Mockito.when(brokerMock.createTransactionChain(Mockito.any(DataStoreBackEnd.class))).thenReturn(txChainMock);
         dataStoreBackEnd = PowerMockito.spy(new DataStoreBackEnd(brokerMock));
 
         Mockito.when(txChainMock.newWriteOnlyTransaction()).thenReturn(wTxMock);
-        Mockito.when(wTxMock.submit()).
-                thenReturn(Futures.<Void, TransactionCommitFailedException>immediateCheckedFuture(null));
+        Mockito.when(wTxMock.submit())
+                .thenReturn(Futures.<Void, TransactionCommitFailedException>immediateCheckedFuture(null));
     }
 
     /**
