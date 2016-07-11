@@ -7,9 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.dsbackend;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
@@ -30,12 +34,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 
 /**
  * Stores data coming from the mapping database RPCs into the MD-SAL datastore.
@@ -228,8 +226,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
             public void onSuccess(Void result) {
             }
 
-            public void onFailure(Throwable t) {
-                LOG.error("Transaction failed:", t);
+            public void onFailure(Throwable throwable) {
+                LOG.error("Transaction failed:", throwable);
             }
         });
     }
@@ -262,8 +260,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
             public void onSuccess(Void result) {
             }
 
-            public void onFailure(Throwable t) {
-                LOG.error("Transaction failed:", t);
+            public void onFailure(Throwable throwable) {
+                LOG.error("Transaction failed:", throwable);
             }
         });
     }
