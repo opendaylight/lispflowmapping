@@ -9,7 +9,6 @@
 package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Date;
-
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;

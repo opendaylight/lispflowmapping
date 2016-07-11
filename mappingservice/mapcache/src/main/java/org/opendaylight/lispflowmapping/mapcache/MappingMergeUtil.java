@@ -7,13 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.mapcache;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -24,10 +24,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
 /**
- * Utility class to implement merging of locator sets
+ * Utility class to implement merging of locator sets.
  *
  * @author Lorand Jakab
  *
@@ -67,10 +65,10 @@ public final class MappingMergeUtil {
         return newLocator;
     }
 
-    private static int compareLocators(LocatorRecord a, LocatorRecord b) {
-        byte[] aIp = LispAddressUtil.ipAddressToByteArray(a.getRloc().getAddress());
-        byte[] bIp = LispAddressUtil.ipAddressToByteArray(b.getRloc().getAddress());
-        return LispAddressUtil.compareIpAddressByteArrays(aIp, bIp);
+    private static int compareLocators(LocatorRecord one, LocatorRecord two) {
+        byte[] oneIp = LispAddressUtil.ipAddressToByteArray(one.getRloc().getAddress());
+        byte[] twoIp = LispAddressUtil.ipAddressToByteArray(two.getRloc().getAddress());
+        return LispAddressUtil.compareIpAddressByteArrays(oneIp, twoIp);
     }
 
     private static void mergeLocatorRecords(MappingRecordBuilder mrb, MappingRecord newRecord) {
@@ -107,29 +105,30 @@ public final class MappingMergeUtil {
         if (newLocatorList.size() != 0) {
             List<LocatorRecord> mergedLocators = new ArrayList<LocatorRecord>();
 
-            int mlIt = 0, lIt = 0;
-            while (mlIt < newLocatorList.size() && lIt < locators.size()) {
-                int cmp = compareLocators(locators.get(lIt), newLocatorList.get(mlIt));
+            int mlocIt = 0;
+            int locIt = 0;
+            while (mlocIt < newLocatorList.size() && locIt < locators.size()) {
+                int cmp = compareLocators(locators.get(locIt), newLocatorList.get(mlocIt));
                 if (cmp < 0) {
-                    mergedLocators.add(locators.get(lIt));
-                    lIt++;
+                    mergedLocators.add(locators.get(locIt));
+                    locIt++;
                 } else if (cmp > 0) {
-                    mergedLocators.add(newLocatorList.get(mlIt));
-                    mlIt++;
+                    mergedLocators.add(newLocatorList.get(mlocIt));
+                    mlocIt++;
                 } else {
                     // when a locator appears in both lists, keep the new (merged) one and skip the old
-                    mergedLocators.add(newLocatorList.get(mlIt));
-                    mlIt++;
-                    lIt++;
+                    mergedLocators.add(newLocatorList.get(mlocIt));
+                    mlocIt++;
+                    locIt++;
                 }
             }
-            while (lIt < locators.size()) {
-                mergedLocators.add(locators.get(lIt));
-                lIt++;
+            while (locIt < locators.size()) {
+                mergedLocators.add(locators.get(locIt));
+                locIt++;
             }
-            while (mlIt < newLocatorList.size()) {
-                mergedLocators.add(newLocatorList.get(mlIt));
-                mlIt++;
+            while (mlocIt < newLocatorList.size()) {
+                mergedLocators.add(newLocatorList.get(mlocIt));
+                mlocIt++;
             }
             mrb.setLocatorRecord(mergedLocators);
         }

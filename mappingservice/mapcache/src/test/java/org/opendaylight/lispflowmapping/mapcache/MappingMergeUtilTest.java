@@ -15,12 +15,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -32,8 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
-        .MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
 public class MappingMergeUtilTest {
@@ -103,8 +100,8 @@ public class MappingMergeUtilTest {
                 .setRecordTtl(1)
                 .setSiteId(SITE_ID_2);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
         assertEquals(mrb.build(),result);
     }
 
@@ -143,8 +140,8 @@ public class MappingMergeUtilTest {
                 .setSiteId(SITE_ID_2);
         mrb.getLocatorRecord().add(currentLocatorRecord_1);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
         assertEquals(mrb.build(),result);
     }
 
@@ -184,8 +181,8 @@ public class MappingMergeUtilTest {
                 .setSiteId(SITE_ID_2).setTimestamp(timestamp);
         mrb.getLocatorRecord().add(newLocatorRecord_1);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
         assertEquals(mrb.build(),result);
     }
 
@@ -223,8 +220,8 @@ public class MappingMergeUtilTest {
         mrb.getLocatorRecord().add(currentLocatorRecord_1);
         mrb.getLocatorRecord().add(newLocatorRecord_1);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), null, null);
         assertEquals(mrb.build(),result);
     }
 
@@ -276,8 +273,8 @@ public class MappingMergeUtilTest {
         mrb.getLocatorRecord().add(currentLocatorRecord_3);
         mrb.getLocatorRecord().add(newLocatorRecord_4);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, timestamp);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, timestamp);
         assertEquals(mrb.build(),result);
     }
 
@@ -341,8 +338,8 @@ public class MappingMergeUtilTest {
         mrb.getLocatorRecord().add(newLocatorRecord_3);
         mrb.getLocatorRecord().add(currentLocatorRecord_3);
 
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, timestamp);
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, timestamp);
         assertNotEquals(mrb.build(),result);
     }
 
@@ -372,8 +369,8 @@ public class MappingMergeUtilTest {
         newMappingRecordBuilder.getLocatorRecord().add(newLocatorRecord_1);
 
         // result
-        MappingRecord result = MappingMergeUtil.mergeMappings
-                (currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, new Date(100L));
+        MappingRecord result = MappingMergeUtil.mergeMappings(
+                currentMergedMappingBuilder.build(), newMappingRecordBuilder.build(), XTR_ID_3, new Date(100L));
         assertEquals(XTR_ID_3, result.getXtrId());
         assertEquals((Long) 100L, result.getTimestamp());
     }
@@ -409,13 +406,13 @@ public class MappingMergeUtilTest {
      */
     @Test
     public void mergeXtrIdMappingsTest_verifyExpiredMappings() {
-        MappingRecord expiredMappingRecord_1 = getDefaultMappingRecordBuilder().setTimestamp(1L).build();
-        MappingRecord expiredMappingRecord_2 = getDefaultMappingRecordBuilder()
+        MappingRecord expiredMappingRecord1 = getDefaultMappingRecordBuilder().setTimestamp(1L).build();
+        MappingRecord expiredMappingRecord2 = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID_2)
                 .setTimestamp(1L).build();
         List<XtrId> expiredMappings = Lists.newArrayList();
         List<Object> mappingRecords =
-                Lists.newArrayList(expiredMappingRecord_1, expiredMappingRecord_2);
+                Lists.newArrayList(expiredMappingRecord1, expiredMappingRecord2);
 
         assertNull(MappingMergeUtil.mergeXtrIdMappings(mappingRecords, expiredMappings, null));
         assertEquals(2, expiredMappings.size());

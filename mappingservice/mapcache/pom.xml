@@ -37,31 +37,13 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <!-- Temporarily override the odlparent checkstyle configuration.
-               We want to enforce some simple rules and add more as we clean up code -->
+          <!-- Enforce odlparent checkstyle -->
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <configuration>
-            <configLocation>checkstyle/java_rules.xml</configLocation>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
-            <excludes>org/opendaylight/yang/gen/**,**/config/yang/**</excludes>
-            <failsOnError>true</failsOnError>
-            <consoleOutput>true</consoleOutput>
+            <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.opendaylight.lispflowmapping</groupId>
-              <artifactId>common.build.tools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <phase>process-sources</phase>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
