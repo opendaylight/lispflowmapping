@@ -10,31 +10,122 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import java.net.HttpURLConnection;
 
+import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.neutron.spi.INeutronSubnetAware;
-import org.opendaylight.neutron.spi.NeutronSubnet;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.Subnets;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.subnets.Subnet;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
- * Lisp Service implementation of NeutronSubnetAware API Creation of a new
- * Subnet results in defining the subnet as an EID prefix in the LISP Mapping
- * System with subnet's network UUID as the key to use for registering mappings
- * for the subnet.
+ * Lisp Service implementation of creation and deletion of a Subnet results
+ * in defining the subnet as an EID prefix in the LISP Mapping System with
+ * subnet's network UUID as the key to use for registering mappings for the subnet.
  *
  * @author Vina Ermagan
  *
  */
 public class LispNeutronSubnetHandler extends LispNeutronService implements
-        INeutronSubnetAware {
+        ClusteredDataTreeChangeListener<Subnet> {
     private static final Integer SIX = Integer.valueOf(6);
 
     // The implementation for each of these services is resolved by the OSGi
     // Service Manager
     private volatile ILispNeutronService lispNeutronService;
+    private static final InstanceIdentifier<Subnet> iid = InstanceIdentifier.create(Subnets.class).child(Subnet.class);
+
+    public LispNeutronSubnetHandler() {
+        broker.registerDataTreeChangeListener(new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, iid),
+                this);
+    }
 
     @Override
-    public int canCreateSubnet(NeutronSubnet subnet) {
+    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<Subnet>> changes) {
+        for (DataTreeModification<Subnet> change : changes) {
+            DataObjectModification<Subnet> mod = change.getRootNode();
+            final Subnet subnet = mod.getDataAfter();
+
+            if (mod.getModificationType() == ModificationType.WRITE) {
+                neutronSubnetCreated(subnet);
+            } else if (mod.getModificationType() == ModificationType.DELETE) {
+                neutronSubnetDeleted(subnet);
+            } else {
+                neutronSubnetUpdated(subnet);
+            }
+        }
+    }
+
+    /**
+     * Method adds the newly created subnet as an EID prefix to the
+     * MappingService. The subnet's network UUID is used as the key for this EID
+     * prefix.
+     *
+     */
+    private void neutronSubnetCreated(final Subnet subnet) {
+        // TODO update for multi-tenancy
+        LOG.info("Neutron Subnet Created request : Subnet name: "
+                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
+
+        // Determine the IANA code for the subnet IP version
+        // Default is set to IPv4 for neutron subnets
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+
+        try {
+            lispNeutronService.getMappingDbService()
+                    .addKey(LispUtil.buildAddKeyInput(eid, subnet.getUuid().getValue()));
+
+            LOG.debug("Neutron Subnet Added to MapServer : Subnet name: "
+                    + subnet.getName() + " EID Prefix: "
+                    + subnet.getCidr() + " Key: "
+                    + subnet.getUuid());
+        } catch (Exception e) {
+            LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
+                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
+        }
+        LOG.info("Neutron Subnet Created request : Subnet name: "
+                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
+    }
+
+    private void neutronSubnetUpdated(final Subnet subnet) {
+        // Nothing to do here.
+    }
+
+    /**
+     * Method removes the EID prefix and key associated with the deleted subnet
+     * from Lisp mapping service.
+     */
+    private void neutronSubnetDeleted(final Subnet subnet) {
+        LOG.info("Neutron Subnet Deleted Request : Subnet name: "
+                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr()
+                + "Key: " + subnet.getUuid());
+        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
+
+        // Determine the IANA code for the subnet IP version
+        // Default is set to IPv4 for neutron subnets
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+        try {
+            lispNeutronService.getMappingDbService().removeKey(LispUtil.buildRemoveKeyInput(eid));
+
+            LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: "
+                    + subnet.getName() + " Eid Prefix: "
+                    + subnet.getCidr() + " Key: "
+                    + subnet.getUuid());
+        } catch (Exception e) {
+            LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: "
+                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
+        }
+    }
+
+    public int canCreateSubnet(Subnet subnet) {
         LOG.info("Neutron canCreateSubnet : Subnet name: " + subnet.getName()
                 + " Subnet Cidr: " + subnet.getCidr());
         LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
@@ -45,49 +136,12 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
     }
 
     /**
-     * Method adds the newly created subnet as an EID prefix to the
-     * MappingService. The subnet's network UUID is used as the key for this EID
-     * prefix.
-     *
-     */
-    @Override
-    public void neutronSubnetCreated(NeutronSubnet subnet) {
-        // TODO update for multi-tenancy
-
-        LOG.info("Neutron Subnet Created request : Subnet name: "
-                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
-        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
-
-        // Determine the IANA code for the subnet IP version
-        // Default is set to IPv4 for neutron subnets
-
-        Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr());
-
-        try {
-
-            lispNeutronService.getMappingDbService().addKey(LispUtil.buildAddKeyInput(eid, subnet.getNetworkUUID()));
-
-            LOG.debug("Neutron Subnet Added to MapServer : Subnet name: "
-                    + subnet.getName() + " EID Prefix: "
-                    + subnet.getCidr() + " Key: "
-                    + subnet.getNetworkUUID());
-        } catch (Exception e) {
-            LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
-                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
-        }
-        LOG.info("Neutron Subnet Created request : Subnet name: "
-                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
-
-    }
-
-    /**
      * Method to check whether new Subnet can be created by LISP implementation
      * of Neutron service API. Since we store the Cidr part of the subnet as the
      * main key to the Lisp mapping service, we do not support updates to
      * subnets that change it's cidr.
      */
-    @Override
-    public int canUpdateSubnet(NeutronSubnet delta, NeutronSubnet original) {
+    public int canUpdateSubnet(Subnet delta, Subnet original) {
         if (delta == null || original == null) {
             LOG.error("Neutron canUpdateSubnet rejected: subnet objects were null");
             return HttpURLConnection.HTTP_BAD_REQUEST;
@@ -108,54 +162,17 @@ public class LispNeutronSubnetHandler extends LispNeutronService implements
         return HttpURLConnection.HTTP_OK;
     }
 
-    @Override
-    public void neutronSubnetUpdated(NeutronSubnet subnet) {
-        // Nothing to do here.
-    }
-
     /**
      * Method to check if subnet can be deleted. Returns error only if subnet
      * does not exist in the lisp mapping service.
      */
-    @Override
-    public int canDeleteSubnet(NeutronSubnet subnet) {
+    public int canDeleteSubnet(Subnet subnet) {
         LOG.info("Neutron canDeleteSubnet : Subnet name: " + subnet.getName()
                 + " Subnet Cidr: " + subnet.getCidr() + "Key: "
-                + subnet.getNetworkUUID());
+                + subnet.getUuid());
         LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
 
 
-            return HttpURLConnection.HTTP_OK;
+        return HttpURLConnection.HTTP_OK;
     }
-
-    /**
-     * Method removes the EID prefix and key associated with the deleted subnet
-     * from Lisp mapping service.
-     */
-    @Override
-    public void neutronSubnetDeleted(NeutronSubnet subnet) {
-        LOG.info("Neutron Subnet Deleted Request : Subnet name: "
-                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr()
-                + "Key: " + subnet.getNetworkUUID());
-        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
-
-        // Determine the IANA code for the subnet IP version
-        // Default is set to IPv4 for neutron subnets
-
-        Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr());
-
-        try {
-
-            lispNeutronService.getMappingDbService().removeKey(LispUtil.buildRemoveKeyInput(eid));
-
-            LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: "
-                    + subnet.getName() + " Eid Prefix: "
-                    + subnet.getCidr() + " Key: "
-                    + subnet.getNetworkUUID());
-        } catch (Exception e) {
-            LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: "
-                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
-        }
-    }
-
 }

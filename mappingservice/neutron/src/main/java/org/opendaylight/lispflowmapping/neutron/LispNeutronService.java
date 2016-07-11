@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -25,7 +26,7 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
     private IFlowMapping mappingService;
     private OdlMappingserviceService lfmDbService;
     private static ILispNeutronService neutronService;
-
+    protected DataBroker broker;
 
     void setBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
         LOG.debug("LISP NEUTRON BindingAwareBroker set!");
@@ -34,13 +35,11 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
     }
 
     void unsetBindingAwareBroker(BindingAwareBroker bindingAwareBroker) {
-
     }
 
     public static ILispNeutronService getLispNeutronService() {
         return neutronService;
     }
-
 
     public IFlowMapping getMappingService() {
         return this.mappingService;
@@ -65,8 +64,8 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
         LOG.debug("LFMDBSERVICE IS BEING FILLED! SESSION INITIATED");
         RpcProviderRegistry rpcRegistry = session.getSALService(RpcProviderRegistry.class);
         lfmDbService = rpcRegistry.getRpcService(OdlMappingserviceService.class);
+        broker = session.getSALService(DataBroker.class);
         LOG.debug("LFMDBSERVICE was FILLED! SESSION INITIATED");
-
     }
 
     public void stop() {

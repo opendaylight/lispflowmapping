@@ -21,9 +21,13 @@
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
     </dependency>
-    <dependency>
+<!-- <dependency>
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>neutron-spi</artifactId>
+    </dependency>-->
+    <dependency>
+      <groupId>org.opendaylight.neutron</groupId>
+      <artifactId>model</artifactId>
     </dependency>
     <!-- needed for activator -->
     <dependency>
