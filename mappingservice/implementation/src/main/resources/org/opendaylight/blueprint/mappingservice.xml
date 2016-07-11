@@ -26,6 +26,9 @@
   <service ref="mappingService"
     interface="org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService"
     odl:type="default" />
+  <service ref="mappingService"
+    interface="org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService"
+    odl:type="default" />
   <odl:rpc-implementation ref="mappingService" />
 
   <bean id="mappingServiceShell"
@@ -53,4 +56,14 @@
     interface="org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler"
     odl:type="default" />
   <odl:notification-listener ref="lispMappingService" />
+
+  <bean id="lispNeutronService"
+    class="org.opendaylight.lispflowmapping.neutron.LispNeutronService"
+    init-method="initialize" destroy-method="close">
+    <argument ref="mappingService" />
+    <argument ref="lispMappingService" />
+  </bean>
+  <service ref="lispNeutronService"
+    interface="org.opendaylight.lispflowmapping.neutron.ILispNeutronService"
+    odl:type="default" />
 </blueprint>
