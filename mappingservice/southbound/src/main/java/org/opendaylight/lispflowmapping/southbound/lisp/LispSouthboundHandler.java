@@ -241,8 +241,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
                         final MapRegisterCacheValueBuilder cacheValueBldNew = new MapRegisterCacheValueBuilder();
                         cacheValueBldNew.setPacketData(artificialEntry.getValue());
-                        cacheValueBldNew.setAuthKeyValue(mappingAuthkey.getKeyString());
-                        cacheValueBldNew.setAuthKeyType(mappingAuthkey.getKeyType());
+                        cacheValueBldNew.setMappingAuthkey(mappingAuthkey);
                         cacheValueBldNew.setMapRegisterCacheMetadata(cacheMetadataBldNew.build());
 
                         mapRegisterCache.addEntry(cacheKey, cacheValueBldNew.build());
@@ -283,8 +282,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 final MapRegisterCacheMetadataBuilder newMapRegisterCacheMetadataBuilder =
                         new MapRegisterCacheMetadataBuilder(mapRegisterCacheValue.getMapRegisterCacheMetadata());
 
-                newMapRegisterCacheValueBuilder.setAuthKeyValue(mappingAuthkey.getKeyString());
-                newMapRegisterCacheValueBuilder.setAuthKeyType(mappingAuthkey.getKeyType());
+                newMapRegisterCacheValueBuilder.setMappingAuthkey(mappingAuthkey);
                 newMapRegisterCacheValueBuilder.setMapRegisterCacheMetadata(newMapRegisterCacheMetadataBuilder.build());
                 return newMapRegisterCacheValueBuilder.build();
             }
@@ -348,10 +346,10 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private void sendMapNotifyMsg(final ByteBuffer inBuffer, final InetAddress inetAddress, int portNumber,
                                   MapRegisterCacheValue mapRegisterValue) {
-        if (mapRegisterValue.getAuthKeyType() != null) {
+        if (mapRegisterValue.getMappingAuthkey().getKeyType() != null) {
             ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
-            if (mapRegisterValue.getAuthKeyType() != 0) {
-                outBuffer = calculateAndSetNewMAC(outBuffer, mapRegisterValue.getAuthKeyValue());
+            if (mapRegisterValue.getMappingAuthkey().getKeyType() != 0) {
+                outBuffer = calculateAndSetNewMAC(outBuffer, mapRegisterValue.getMappingAuthkey().getKeyString());
             }
             outBuffer.position(0);
             lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
