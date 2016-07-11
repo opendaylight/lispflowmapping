@@ -57,8 +57,7 @@ public class MapRegisterCache {
 
         final MapRegisterCacheValueBuilder mapRegisterCacheValueBuilderNew = new MapRegisterCacheValueBuilder();
         mapRegisterCacheValueBuilderNew.setPacketData(mapRegisterCacheValueOld.getPacketData());
-        mapRegisterCacheValueBuilderNew.setAuthKeyValue(mapRegisterCacheValueOld.getAuthKeyValue());
-        mapRegisterCacheValueBuilderNew.setAuthKeyType(mapRegisterCacheValueOld.getAuthKeyType());
+        mapRegisterCacheValueBuilderNew.setMappingAuthkey(mapRegisterCacheValueOld.getMappingAuthkey());
         mapRegisterCacheValueBuilderNew.setMapRegisterCacheMetadata(mapRegisterCacheMetadataBuilderNew.build());
 
         return mapRegisterCacheValueBuilderNew.build();
