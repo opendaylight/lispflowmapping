@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -53,7 +52,8 @@ public final class MapNotifySerializer {
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-        replyBuffer.put((byte) (MessageType.MapNotify.getIntValue() << 4));
+        replyBuffer.put((byte) ((byte) (MessageType.MapNotify.getIntValue() << 4) |
+                ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isXtrSiteIdPresent()), Flags.XTRSITEID)));
         replyBuffer.position(replyBuffer.position() + Length.RES);
         replyBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isMergeEnabled()), Flags.MERGE_ENABLED));
         if (mapNotify.getMappingRecordItem() != null) {
