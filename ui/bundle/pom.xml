@@ -22,6 +22,7 @@
             <groupId>org.opendaylight.lispflowmapping</groupId>
             <artifactId>lispflowmapping-ui-module</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
