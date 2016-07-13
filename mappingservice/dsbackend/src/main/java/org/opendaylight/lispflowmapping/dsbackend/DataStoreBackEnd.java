@@ -14,6 +14,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
@@ -47,10 +49,19 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier.create(MappingDatabase.class);
     private BindingTransactionChain txChain;
 
+//    private boolean addAuthenticationKeyMethodFirstCall = true;
+//    private boolean addXtrIdMappingMethodFirstCall = true;
+//    private boolean updateAuthenticationKeyMethodFirstCall = true;
+//    private boolean updateMappingMethodFirstCallOper = true;
+//    private boolean updateMappingMethodFirstCallConf = true;
+//    private boolean addMappingMethodFirstCallOper = true;
+//    private boolean addMappingMethodFirstCallConf = true;
+
+    private final Set<InstanceIdentifier<?>> map = ConcurrentHashMap.newKeySet();
+
     public DataStoreBackEnd(DataBroker broker) {
         this.txChain = broker.createTransactionChain(this);
     }
-
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
@@ -61,8 +72,11 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
+        boolean createParent = map.contains(path) ? false : true;
+
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Adding authentication key to MD-SAL datastore failed");
+                "Adding authentication key to MD-SAL datastore failed", createParent);
+        map.add(path);
     }
 
     public void addMapping(Mapping mapping) {
@@ -73,8 +87,16 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
+        final LogicalDatastoreType destinationDatastore = getDestinationDatastore(mapping);
+        final boolean createMissingParrent = LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)
+                ? addMappingMethodFirstCallOper : addMappingMethodFirstCallConf;
         writePutTransaction(path, mapping, getDestinationDatastore(mapping),
-                "Adding mapping to MD-SAL datastore failed");
+                "Adding mapping to MD-SAL datastore failed", createMissingParrent);
+        if (LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)) {
+            addMappingMethodFirstCallOper = false;
+        } else {
+            addMappingMethodFirstCallConf = false;
+        }
     }
 
     // This method assumes that it is only called for southbound originated Map-Registers
@@ -90,7 +112,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
         writePutTransaction(path, mapping, LogicalDatastoreType.OPERATIONAL,
-                "Adding xTR-ID mapping to MD-SAL datastore failed");
+                "Adding xTR-ID mapping to MD-SAL datastore failed", addXtrIdMappingMethodFirstCall);
+        addXtrIdMappingMethodFirstCall = false;
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -140,11 +163,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
     public void removeAllConfigDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION,
                 "Removal of all database content in config datastore failed");
+        resetFirstCallFieldsConfig();
     }
 
     public void removeAllOperationalDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.OPERATIONAL,
                 "Removal of all database content in operational datastore failed");
+        resetFirstCallFieldsOper();
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -157,7 +182,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Updating authentication key in MD-SAL datastore failed");
+                "Updating authentication key in MD-SAL datastore failed", updateAuthenticationKeyMethodFirstCall);
+        updateAuthenticationKeyMethodFirstCall = false;
     }
 
     public void updateMapping(Mapping mapping) {
@@ -168,8 +194,16 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        writePutTransaction(path, mapping, getDestinationDatastore(mapping),
-                "Updating mapping in MD-SAL datastore failed");
+        final LogicalDatastoreType destinationDatastore = getDestinationDatastore(mapping);
+        final boolean createMissingParrent = LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)
+                ? updateMappingMethodFirstCallOper : updateMappingMethodFirstCallConf;
+        writePutTransaction(path, mapping, destinationDatastore,
+                "Updating mapping in MD-SAL datastore failed", createMissingParrent);
+        if (LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)) {
+            updateMappingMethodFirstCallOper = false;
+        } else {
+            updateMappingMethodFirstCallConf = false;
+        }
     }
 
     public List<Mapping> getAllMappings() {
@@ -218,9 +252,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
-            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg,
+            final boolean createMissingParrents) {
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
-        writeTx.put(logicalDatastoreType, addIID, data, true);
+        writeTx.put(logicalDatastoreType, addIID, data, createMissingParrents);
         Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
 
             public void onSuccess(Void result) {
@@ -274,5 +309,18 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
+    }
+
+    private void resetFirstCallFieldsOper() {
+        addMappingMethodFirstCallOper = true;
+        updateMappingMethodFirstCallOper = true;
+    }
+
+    private void resetFirstCallFieldsConfig() {
+        addMappingMethodFirstCallConf = true;
+        addXtrIdMappingMethodFirstCall = true;
+        updateAuthenticationKeyMethodFirstCall = true;
+        updateMappingMethodFirstCallConf = true;
+        map.clear();
     }
 }
