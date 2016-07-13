@@ -1,0 +1,161 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Neutron",
+		"_postman_id": "72aedd41-4190-3ce4-0bc5-a150f0f6550f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET all",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/neutron:neutron/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<network xmlns=\"urn:opendaylight:neutron\">\n    <shared>true</shared>\n    <uuid>a87cc70a-3e15-4acf-8205-9b711a3531b7</uuid>\n</network>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST add-mapping disting",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/odl-mappingservice:add-mapping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"mapVersion\": 1,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                \"address-type\": \"ietf-lisp-address-types:distinguished-name-afi\",\n                \"distinguished-name\": \"host1\"\n            },\n            \"LocatorRecord\": {\n                \"locator-id\": \"locator-id\",\n                \"priority\": 1,\n                \"weight\": 1,\n                \"multicastPriority\": 1,\n                \"localLocator\": true,\n                \"rlocProbed\": true,\n                \"routed\": true,\n                \"multicastWeight\": 1,\n                \"rloc\": {\n                    \"ipv4-binary\": \"wKgAAg==\"\n                }\n            }\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST get-mapping disting",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/operations/odl-mappingservice:get-mapping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"eid\": {\n            \"address-type\": \"ietf-lisp-address-types:distinguished-name-afi\",\n            \"distinguished-name\": \"host1\"\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST new network",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/neutron:neutron/networks/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<network xmlns=\"urn:opendaylight:neutron\">\n    <uuid>11111111-1111-1111-1111-111111111111</uuid>\n    <shared>true</shared>\n    <name>Network 1</name>\n    <tenant-id>a1111111-1111-1111-1111-111111111111</tenant-id>\n    <admin-state-up>true</admin-state-up>\n    <status>Status</status>\n</network>\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST new port",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/neutron:neutron/ports/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<port xmlns=\"urn:opendaylight:neutron\">\n    <uuid>a87cc70a-3e15-aaaa-1111-9b711a3531b8</uuid>\n    <name>Port 1</name>\n    <tenant-id>a1111111-1111-1111-1111-111111111111</tenant-id>\n    <admin-state-up>true</admin-state-up>\n    <status>port-status</status>\n    <allowed-address-pairs>\n        <mac-address>aa:bb:cc:dd:ee:ff</mac-address>\n        <ip-address>192.168.0.2</ip-address>\n    </allowed-address-pairs>\n    <network-id>11111111-1111-1111-1111-111111111111</network-id>\n    <device-owner>Device owner</device-owner>\n    <mac-address>11:22:33:44:55:66</mac-address>\n    <fixed-ips>\n        <subnet-id>b1111111-1111-1111-1111-111111111111</subnet-id>\n        <ip-address>192.168.0.2</ip-address>\n    </fixed-ips>\n    <security-groups>b1111111-1111-1111-1111-aaaaaaaaaaaa</security-groups>\n    <device-id>Device ID</device-id>\n    <host-id xmlns=\"urn:opendaylight:neutron-binding\">host1</host-id>\n</port>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST new subnet",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/neutron:neutron/subnets",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<subnet xmlns=\"urn:opendaylight:neutron\">\n    <uuid>99999999-7777-9999-9999-999999999999</uuid>\n    <name>Network 1</name>\n    <tenant-id>c1111111-1111-1111-1111-111111111111</tenant-id>\n    <network-id>11111111-1111-1111-1111-111111111111</network-id>\n    <ip-version xmlns:prefix=\"urn:opendaylight:neutron-constants\">prefix:ip-version-v4</ip-version>\n    <cidr>192.168.198.0/24</cidr>\n    <gateway-ip>192.168.0.0</gateway-ip>\n    <dns-nameservers>1.1.1.1</dns-nameservers>\n    <ipv6-address-mode xmlns:prefix=\"urn:opendaylight:neutron-constants\">prefix:dhcpv6-off</ipv6-address-mode>\n    <ipv6-ra-mode xmlns:prefix=\"urn:opendaylight:neutron-constants\">prefix:dhcpv6-off</ipv6-ra-mode>\n    <allocation-pools>\n        <start>192.168.0.1</start>\n        <end>192.168.0.2</end>\n    </allocation-pools>\n    <host-routes>\n        <destination>141.59.64.7/24</destination>\n    </host-routes>\n</subnet>\n"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
