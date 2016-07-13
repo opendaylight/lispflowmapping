@@ -14,6 +14,8 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
@@ -47,10 +49,12 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier.create(MappingDatabase.class);
     private BindingTransactionChain txChain;
 
+    private final Set<InstanceIdentifier<?>> identifiersConfig = ConcurrentHashMap.newKeySet();
+    private final Set<InstanceIdentifier<?>> identifiersOper = ConcurrentHashMap.newKeySet();
+
     public DataStoreBackEnd(DataBroker broker) {
         this.txChain = broker.createTransactionChain(this);
     }
-
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
@@ -61,8 +65,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
+        InstanceIdentifier<VirtualNetworkIdentifier> iiToParent = path.firstIdentifierOf(VirtualNetworkIdentifier
+                .class);
+
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Adding authentication key to MD-SAL datastore failed");
+                "Adding authentication key to MD-SAL datastore failed", isCreationOfParentNecessary(identifiersConfig,
+                        iiToParent));
+
     }
 
     public void addMapping(Mapping mapping) {
@@ -73,8 +82,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
+        final LogicalDatastoreType destinationDatastore = getDestinationDatastore(mapping);
+        Set<InstanceIdentifier<?>> identifiers = LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)
+                ? identifiersOper : identifiersConfig;
+        InstanceIdentifier<VirtualNetworkIdentifier> iiToParent = path.firstIdentifierOf(VirtualNetworkIdentifier
+                .class);
         writePutTransaction(path, mapping, getDestinationDatastore(mapping),
-                "Adding mapping to MD-SAL datastore failed");
+                "Adding mapping to MD-SAL datastore failed", isCreationOfParentNecessary(identifiers, iiToParent));
     }
 
     // This method assumes that it is only called for southbound originated Map-Registers
@@ -89,8 +103,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
+        InstanceIdentifier<Mapping> iiToParent = path.firstIdentifierOf(Mapping.class);
         writePutTransaction(path, mapping, LogicalDatastoreType.OPERATIONAL,
-                "Adding xTR-ID mapping to MD-SAL datastore failed");
+                "Adding xTR-ID mapping to MD-SAL datastore failed", isCreationOfParentNecessary(identifiersOper,
+                        iiToParent));
     }
 
     public void removeAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -140,11 +156,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
     public void removeAllConfigDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION,
                 "Removal of all database content in config datastore failed");
+        identifiersConfig.clear();
     }
 
     public void removeAllOperationalDatastoreContent() {
         deleteTransaction(DATABASE_ROOT, LogicalDatastoreType.OPERATIONAL,
                 "Removal of all database content in operational datastore failed");
+        identifiersOper.clear();
     }
 
     public void updateAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -156,8 +174,12 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
                 .createAuthenticationKeyIid(authenticationKey.getEid());
+        InstanceIdentifier<VirtualNetworkIdentifier> iiToParent = path.firstIdentifierOf(VirtualNetworkIdentifier
+                .class);
+
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
-                "Updating authentication key in MD-SAL datastore failed");
+                "Updating authentication key in MD-SAL datastore failed", isCreationOfParentNecessary(identifiersConfig,
+                        iiToParent));
     }
 
     public void updateMapping(Mapping mapping) {
@@ -168,8 +190,16 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
-        writePutTransaction(path, mapping, getDestinationDatastore(mapping),
-                "Updating mapping in MD-SAL datastore failed");
+        InstanceIdentifier<VirtualNetworkIdentifier> iiToParent = path.firstIdentifierOf(VirtualNetworkIdentifier
+                .class);
+
+        final LogicalDatastoreType destinationDatastore = getDestinationDatastore(mapping);
+        Set<InstanceIdentifier<?>> identifiers =  LogicalDatastoreType.OPERATIONAL.equals(destinationDatastore)
+                ? identifiersOper : identifiersConfig;
+
+        writePutTransaction(path, mapping, destinationDatastore,
+                "Updating mapping in MD-SAL datastore failed", isCreationOfParentNecessary(identifiers, iiToParent));
+
     }
 
     public List<Mapping> getAllMappings() {
@@ -218,9 +248,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
-            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg,
+            final boolean createMissingParrents) {
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
-        writeTx.put(logicalDatastoreType, addIID, data, true);
+        writeTx.put(logicalDatastoreType, addIID, data, createMissingParrents);
         Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
 
             public void onSuccess(Void result) {
@@ -275,4 +306,14 @@ public class DataStoreBackEnd implements TransactionChainListener {
     public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
     }
+
+    private boolean isCreationOfParentNecessary(Set<InstanceIdentifier<?>> identifiers, InstanceIdentifier<?> parent) {
+        if (identifiers.contains(parent)) {
+            return false;
+        } else {
+            identifiers.add(parent);
+        }
+        return true;
+    }
+
 }
