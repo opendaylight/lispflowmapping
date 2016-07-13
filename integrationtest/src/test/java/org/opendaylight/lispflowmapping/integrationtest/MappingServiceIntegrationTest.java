@@ -2106,7 +2106,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private DatagramPacket receivePacket() throws SocketTimeoutException {
-        return receivePacket(6000);
+        return receivePacket(20000);
     }
 
     private DatagramPacket receivePacket(int timeout) throws SocketTimeoutException {
