@@ -60,6 +60,23 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <!-- DO NOT install or deploy the karaf artifact -->
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.karaf.tooling</groupId>
+          <artifactId>karaf-maven-plugin</artifactId>
+          <version>${karaf.maven.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <bootFeatures>
+              <feature>odl-lispflowmapping-neutron</feature>
+              <feature>odl-lispflowmapping-msmr</feature>
+            </bootFeatures>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
