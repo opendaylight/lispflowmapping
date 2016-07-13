@@ -161,7 +161,8 @@ public class MapServerTest {
                 mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), false);
         Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
                 subscriberSetMock_1);
-        Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister).build(), null);
+        Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister)
+                .setAuthenticationData(null).build(), null);
 
         // only 1 subscriber has timed out.
         assertEquals(1, subscriberSetMock_1.size());
@@ -184,7 +185,7 @@ public class MapServerTest {
         mapServer.handleMapRegister(mapRegister);
         Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
                 mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), true);
-        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.build(), null);
+        Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.setAuthenticationData(null).build(), null);
     }
 
     @Test
@@ -479,7 +480,8 @@ public class MapServerTest {
                 .setNonce(mapRegister.getNonce())
                 .setKeyId(mapRegister.getKeyId())
                 .setMergeEnabled(mapRegister.isMergeEnabled())
-                .setMappingRecordItem(new ArrayList<>());
+                .setMappingRecordItem(new ArrayList<>())
+                .setAuthenticationData(new byte[]{});
         mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
         return mapNotifyBuilder;

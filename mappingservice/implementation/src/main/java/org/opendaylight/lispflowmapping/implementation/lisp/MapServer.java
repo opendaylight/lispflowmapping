@@ -28,6 +28,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -43,6 +44,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
@@ -137,6 +139,15 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
+            }
+            List<MappingRecordItem> mappings = builder.getMappingRecordItem();
+            if (mappings != null && mappings.get(0) != null && mappings.get(0).getMappingRecord() != null &&
+                    mappings.get(0).getMappingRecord().getEid() != null) {
+                MappingAuthkey authkey = mapService.getAuthenticationKey(mappings.get(0).getMappingRecord().getEid());
+                if (authkey != null) {
+                    builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
+                            authkey.getKeyString()));
+                }
             }
             notifyHandler.handleMapNotify(builder.build(), rlocs);
         }

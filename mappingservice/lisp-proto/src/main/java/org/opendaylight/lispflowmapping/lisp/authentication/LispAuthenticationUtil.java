@@ -8,7 +8,10 @@
 package org.opendaylight.lispflowmapping.lisp.authentication;
 
 import java.nio.ByteBuffer;
+
+import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
@@ -47,6 +50,10 @@ public final class LispAuthenticationUtil {
         final ILispAuthentication authentication = resolveAuthentication(mapRegister, eid, key);
         return authentication == null ? false : authentication.validate(byteBuffer, mapRegister.getAuthenticationData(),
                 key.getKeyString());
+    }
+
+    public static byte[] createAuthenticationData(final MapNotify mapNotify, String authKey) {
+        return createAuthenticationData(MapNotifySerializer.getInstance().serialize(mapNotify), authKey);
     }
 
     public static byte[] createAuthenticationData(final ByteBuffer buffer, String authKey) {
