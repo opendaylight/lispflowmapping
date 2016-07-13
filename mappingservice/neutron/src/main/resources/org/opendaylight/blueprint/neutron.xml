@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+  xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+  odl:use-default-for-reference-types="true">
+
+  <reference id="mappingService"
+    interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping" />
+  <reference id="bindingAwareBroker"
+    interface="org.opendaylight.controller.sal.binding.api.BindingAwareBroker" />
+
+  <bean id="lispNeutronPlugin"
+    class="org.opendaylight.lispflowmapping.neutron.LispNeutronService"
+    destroy-method="close">
+    <argument ref="mappingService" />
+    <argument ref="bindingAwareBroker"/>
+  </bean>
+  <service ref="lispNeutronPlugin"
+    interface="org.opendaylight.lispflowmapping.neutron.ILispNeutronService"
+    odl:type="default" />
+  <service ref="lispNeutronPlugin"
+    interface="org.opendaylight.controller.sal.binding.api.BindingAwareProvider"
+    odl:type="default" />
+</blueprint>
