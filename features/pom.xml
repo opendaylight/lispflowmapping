@@ -114,13 +114,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>mappingservice.inmemorydb</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.neutron</artifactId>
       <version>${project.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.shell</artifactId>
@@ -136,7 +134,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <artifactId>lispflowmapping-ui-bundle</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>features-neutron</artifactId>
@@ -144,7 +141,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
-    -->
   </dependencies>
 
   <!--
