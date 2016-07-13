@@ -473,6 +473,9 @@ public class MapServerTest {
 
     private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
         final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
+                .setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent())
+                .setSiteId(mapRegister.getSiteId())
+                .setXtrId(mapRegister.getXtrId())
                 .setNonce(mapRegister.getNonce())
                 .setKeyId(mapRegister.getKeyId())
                 .setMergeEnabled(mapRegister.isMergeEnabled())

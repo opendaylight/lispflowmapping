@@ -42,6 +42,11 @@ public final class MapNotifyBuilderHelper {
         builder.setNonce(mapRegister.getNonce());
         builder.setKeyId(mapRegister.getKeyId());
         builder.setMergeEnabled(mapRegister.isMergeEnabled());
+        builder.setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent());
+        if (mapRegister.isXtrSiteIdPresent()) {
+            builder.setXtrId(mapRegister.getXtrId());
+            builder.setSiteId(mapRegister.getSiteId());
+        }
 
         byte[] authenticationData = mapRegister.getAuthenticationData();
         if (authenticationData != null) {
