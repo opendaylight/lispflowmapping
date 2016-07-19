@@ -189,7 +189,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
             getLispSB().sendMapReply(smrib.build());
         } else {
-            LOG.warn("got null map reply");
+            LOG.debug("handleMapRequest: Got null MapReply");
         }
     }
 
