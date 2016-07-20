@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_b0fd003d",
+        "filename": "mappingservice/dsbackend/src/main/java/org/opendaylight/lispflowmapping/dsbackend/DataStoreBackEnd.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-20T00:24:02Z",
+      "side": 1,
+      "message": "I am not familiar with the model, does iiToParent contain any keys?",
+      "range": {
+        "startLine": 68,
+        "startChar": 66,
+        "endLine": 69,
+        "endChar": 24
+      },
+      "revId": "9782372cdf4f9412adce9f4265e57b058c7ebc5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
