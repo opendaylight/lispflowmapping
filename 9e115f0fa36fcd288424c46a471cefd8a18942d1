@@ -22,6 +22,24 @@
       "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_c589cb27",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-21T14:35:33Z",
+      "side": 1,
+      "message": "If it is all zeroes, it is likely a bug somewhere (initialized to 0, but not set to a value). If you prefer, we can print the warning, but leave merge on.",
+      "parentUuid": "9a561d44_8a308002",
+      "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
