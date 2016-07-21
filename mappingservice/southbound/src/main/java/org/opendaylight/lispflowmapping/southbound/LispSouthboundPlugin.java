@@ -49,6 +49,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     private static Object startLock = new Object();
     private LispSouthboundHandler lispSouthboundHandler;
+
+    /**
+     * this value is injected from blueprint
+     */
+    private long mapRegisterCacheTimeout;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
     private NioDatagramChannel channel;
@@ -81,6 +86,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispSouthboundHandler.setDataBroker(dataBroker);
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
             lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
+            lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
             lispSouthboundHandler.init();
             lispSouthboundHandler.restoreDaoFromDatastore();
 
@@ -260,6 +266,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         } else {
             LOG.info("Disabling Map-Register cache");
         }
+    }
+
+
+    public void setMapRegisterCacheTimeout(long mapRegisterCacheTimeout) {
+        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
     }
 
     @Override
