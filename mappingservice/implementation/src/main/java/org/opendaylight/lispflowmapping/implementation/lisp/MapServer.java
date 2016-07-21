@@ -12,13 +12,13 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
@@ -60,12 +60,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
+    private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
     private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private IMappingService mapService;
     private boolean subscriptionService;
@@ -98,6 +98,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
         Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
+
+        if (merge) {
+            if (!mapRegister.isXtrSiteIdPresent() || mapRegister.getXtrId() == null) {
+                LOG.warn("Merge bit is set in Map-Register, but xTR-ID is not present. Will not merge.");
+                merge = false;
+            } else if (Arrays.equals(mapRegister.getXtrId().getValue(), ALL_ZEROES_XTR_ID)) {
+                LOG.warn("Merge bit is set in Map-Register, but xTR-ID is all zeroes. Will not merge.");
+                merge = false;
+            }
+        }
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
