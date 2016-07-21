@@ -80,21 +80,15 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         implements ILispSouthboundService, AutoCloseable {
     private MapRegisterCache mapRegisterCache;
     private boolean mapRegisterCacheEnabled = true;
+    private long mapRegisterCacheTimeout;
 
-    /**
-     * How long is record supposed to be relevant. After this time record isn't valid.
-     *
-     * If you modify this value, please update the LispSouthboundServiceTest class too.
-     */
-    private static final long CACHE_RECORD_TIMEOUT = 90000;
     private DataBroker dataBroker;
-
     private NotificationPublishService notificationPublishService;
+
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
     private boolean authenticationEnabled = true;
-
     private final LispSouthboundPlugin lispSbPlugin;
     private LispSouthboundStats lispSbStats = null;
     private SimpleMapCache smc;
@@ -271,7 +265,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private MapRegisterCacheValue refreshAuthKeyIfNecessary(MapRegisterCacheValue mapRegisterCacheValue) {
         if (authenticationKeyDataListener.isAuthKeyRefreshing()) {
             final boolean shouldAuthKeyRefreshingStop = System.currentTimeMillis() - authenticationKeyDataListener
-                    .getAuthKeyRefreshingDate() > CACHE_RECORD_TIMEOUT;
+                    .getAuthKeyRefreshingDate() > mapRegisterCacheTimeout;
             if (shouldAuthKeyRefreshingStop) {
                 authenticationKeyDataListener.setAuthKeyRefreshing(false);
             } else {
@@ -299,7 +293,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             if (mapRegisterCacheValue != null) {
                 final long creationTime = mapRegisterCacheValue.getMapRegisterCacheMetadata().getTimestamp();
                 final long currentTime = System.currentTimeMillis();
-                if (currentTime - creationTime > CACHE_RECORD_TIMEOUT) {
+                if (currentTime - creationTime > mapRegisterCacheTimeout) {
                     mapRegisterCache.removeEntry(entry.getKey());
                     return null;
                 } else if (Arrays.equals(mapRegisterCacheValue.getPacketData(), entry.getValue())) {
@@ -575,5 +569,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     public void setIsReadFromChannelEnabled(boolean isReadFromChannelEnabled) {
         this.isReadFromChannelEnabled = isReadFromChannelEnabled;
+    }
+
+    public void setMapRegisterCacheTimeout(long mapRegisterCacheTimeout) {
+        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
     }
 }

@@ -18,6 +18,7 @@
     <cm:default-properties>
       <cm:property name="bindingAddressProperty" value="0.0.0.0" />
       <cm:property name="mapRegisterCacheEnabledProperty" value="true" />
+      <cm:property name="mapRegisterCacheTimeoutProperty" value="90000"/>
     </cm:default-properties>
   </cm:property-placeholder>
 
@@ -29,6 +30,7 @@
     <argument ref="entityOwnershipService" />
     <property name="bindingAddress" value="${bindingAddressProperty}"/>
     <property name="mapRegisterCacheEnabled" value="${mapRegisterCacheEnabledProperty}"/>
+    <property name="mapRegisterCacheTimeout" value="${mapRegisterCacheTimeoutProperty}"/>
   </bean>
   <service ref="lispSouthboundPlugin"
     interface="org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin"

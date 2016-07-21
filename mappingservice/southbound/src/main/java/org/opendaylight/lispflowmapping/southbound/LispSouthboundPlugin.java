@@ -51,6 +51,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     private volatile String bindingAddress;
     private boolean mapRegisterCacheEnabled;
+    private long mapRegisterCacheTimeout;
+
     private static Object startLock = new Object();
     private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private LispSouthboundHandler lispSouthboundHandler;
@@ -84,6 +86,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispSouthboundHandler.setDataBroker(dataBroker);
             lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
             lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
+            lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
             lispSouthboundHandler.init();
             lispSouthboundHandler.restoreDaoFromDatastore();
 
@@ -264,6 +267,10 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         } else {
             LOG.info("Disabling Map-Register cache");
         }
+    }
+
+    public void setMapRegisterCacheTimeout(long mapRegisterCacheTimeout) {
+        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
     }
 
     public void setBindingAddress(String bindingAddress) {

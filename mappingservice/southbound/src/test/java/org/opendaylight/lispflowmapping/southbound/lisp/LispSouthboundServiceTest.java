@@ -154,6 +154,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
         Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(Mockito.mock(LispSouthboundStats.class));
         testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
+        testedLispService.setMapRegisterCacheTimeout(90000);
         mapRegisterCache = new MapRegisterCache();
         testedLispService.setMapRegisterCache(mapRegisterCache);
         testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
