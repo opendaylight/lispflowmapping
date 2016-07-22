@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Date;
@@ -29,10 +28,10 @@ import org.slf4j.LoggerFactory;
  * another for source, queried and populated in this exact order.
  *
  * @author Florin Coras
- *
  */
 public class MultiTableMapCache implements IMapCache {
     private static final Logger LOG = LoggerFactory.getLogger(MultiTableMapCache.class);
+
     private ILispDAO dao;
 
     public MultiTableMapCache(ILispDAO dao) {
@@ -78,8 +77,8 @@ public class MultiTableMapCache implements IMapCache {
         }
     }
 
-    private Object getMappingExactSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
-        Map<String, ?> daoEntry = dao.get(dstEid);
+    private Object getMappingExactSD(Eid srcEid, Eid dstEid, ILispDAO anotherDAO) {
+        Map<String, ?> daoEntry = anotherDAO.get(dstEid);
         if (daoEntry != null) {
             // try SrcDst eid lookup
             ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);
@@ -94,11 +93,11 @@ public class MultiTableMapCache implements IMapCache {
 
     // Returns the mapping corresponding to the longest prefix match for eid.
     // eid must be a simple (maskable or not) address
-    private Object getMappingLpmEid(Eid eid, ILispDAO dao) {
+    private Object getMappingLpmEid(Eid eid, ILispDAO anotherDAO) {
         if (eid == null) {
             return null;
         }
-        Map<String, ?> daoEntry = dao.getBest(MaskUtil.normalize(eid));
+        Map<String, ?> daoEntry = anotherDAO.getBest(MaskUtil.normalize(eid));
         if (daoEntry != null) {
             return daoEntry.get(SubKeys.RECORD);
         } else {
@@ -108,8 +107,8 @@ public class MultiTableMapCache implements IMapCache {
 
     // Returns a mapping corresponding to either the longest prefix match for both dstEid and srcEid,
     // if a SourceDest mapping exists, or to dstEid
-    private Object getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO dao) {
-        Map<String, ?> daoEntry = dao.getBest(MaskUtil.normalize(dstEid));
+    private Object getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO anotherDAO) {
+        Map<String, ?> daoEntry = anotherDAO.getBest(MaskUtil.normalize(dstEid));
         if (daoEntry != null) {
             // try SrcDst eid lookup
             ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);
@@ -243,20 +242,20 @@ public class MultiTableMapCache implements IMapCache {
 
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to a dst or creates it if it doesn't exist.
-    private ILispDAO getOrInstantiateSDInnerDao(Eid address, ILispDAO dao) {
+    private ILispDAO getOrInstantiateSDInnerDao(Eid address, ILispDAO anotherDAO) {
         Eid dstKey = SourceDestKeyHelper.getDstBinary(address);
-        ILispDAO srcDstDao = (ILispDAO) dao.getSpecific(dstKey, SubKeys.LCAF_SRCDST);
+        ILispDAO srcDstDao = (ILispDAO) anotherDAO.getSpecific(dstKey, SubKeys.LCAF_SRCDST);
         if (srcDstDao == null) {
             // inserts nested table for source
-            srcDstDao = dao.putNestedTable(dstKey, SubKeys.LCAF_SRCDST);
+            srcDstDao = anotherDAO.putNestedTable(dstKey, SubKeys.LCAF_SRCDST);
         }
         return srcDstDao;
     }
 
     // SrcDst LCAFs are stored in a 2-tier DAO with dst having priority over src.
     // This method returns the DAO associated to dst or null if it doesn't exist.
-    private ILispDAO getSDInnerDao(Eid address, ILispDAO dao) {
-        return (ILispDAO) dao.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
+    private ILispDAO getSDInnerDao(Eid address, ILispDAO anotherDAO) {
+        return (ILispDAO) anotherDAO.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
     public String printMappings() {
@@ -326,9 +325,9 @@ public class MultiTableMapCache implements IMapCache {
 
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
-            srcDstDao.put(SourceDestKeyHelper.getSrcBinary(key), new MappingEntry<Object>(subKey, data));
+            srcDstDao.put(SourceDestKeyHelper.getSrcBinary(key), new MappingEntry<>(subKey, data));
         } else {
-            table.put(key, new MappingEntry<Object>(subKey, data));
+            table.put(key, new MappingEntry<>(subKey, data));
         }
     }
 
