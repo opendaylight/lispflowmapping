@@ -40,7 +40,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -73,15 +72,12 @@ public class LispSouthboundPluginTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
-        LispSbConfig config = Mockito.mock(LispSbConfig.class);
-        Mockito.when(config.getBindAddress()).thenReturn(ADDRESS_1);
-        Mockito.when(config.isMapRegisterCache()).thenReturn(false);
-
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
                 Mockito.mock(NotificationPublishService.class),
-                config,
                 Mockito.mock(EntityOwnershipService.class));
+        lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
+        lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();

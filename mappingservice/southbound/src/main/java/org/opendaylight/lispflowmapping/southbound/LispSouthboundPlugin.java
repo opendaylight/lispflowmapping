@@ -43,23 +43,22 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lisp.sb.config.rev150517.LispSbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterNodeModuleSwitcher {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
+    private volatile String bindingAddress;
+    private boolean mapRegisterCacheEnabled;
     private static Object startLock = new Object();
     private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
     private NioDatagramChannel channel;
-    private volatile String bindingAddress = "0.0.0.0";
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private boolean mapRegisterCacheEnabled = true;
     private RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private NioDatagramChannel xtrChannel;
     private LispSouthboundStats statistics = new LispSouthboundStats();
@@ -71,11 +70,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
-            final LispSbConfig lispSbConfig, final EntityOwnershipService entityOwnershipService) {
+            final EntityOwnershipService entityOwnershipService) {
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
-        this.bindingAddress = lispSbConfig.getBindAddress();
-        this.mapRegisterCacheEnabled = lispSbConfig.isMapRegisterCache();
         clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl(entityOwnershipService);
         clusterNodeModulSwitcher.setModule(this);
     }
@@ -267,6 +264,10 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         } else {
             LOG.info("Disabling Map-Register cache");
         }
+    }
+
+    public void setBindingAddress(String bindingAddress) {
+        this.bindingAddress = bindingAddress;
     }
 
     @Override
