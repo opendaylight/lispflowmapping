@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_6ac24735",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-22T11:29:09Z",
+      "side": 1,
+      "message": "but I think that it at least should be somehow specified that this field is configured from outside",
+      "parentUuid": "9a561d44_05df433c",
+      "revId": "0f31d49baad7c1365b4f48edc5a73825abe7116e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_c7238ea5",
         "filename": "mappingservice/southbound/src/main/resources/org/opendaylight/blueprint/mappingservice-southbound.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-07-21T22:33:23Z",
       "side": 1,
       "message": "Can you remove the YANG file and lispSbConfig, so that we don\u0027t have two different ways of configuring values in the same bundle?",
+      "revId": "0f31d49baad7c1365b4f48edc5a73825abe7116e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_2ad32f05",
+        "filename": "mappingservice/southbound/src/main/resources/org/opendaylight/blueprint/mappingservice-southbound.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-22T11:29:09Z",
+      "side": 1,
+      "message": "sure. I will prepare preceeding commit.",
+      "parentUuid": "9a561d44_c7238ea5",
       "revId": "0f31d49baad7c1365b4f48edc5a73825abe7116e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
