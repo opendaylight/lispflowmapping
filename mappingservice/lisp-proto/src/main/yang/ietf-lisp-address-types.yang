@@ -449,7 +449,7 @@ module ietf-lisp-address-types {
         reference
           "http://tools.ietf.org/html/draft-ietf-lisp-lcaf-10
            #section-4.5";
-        leaf latitude {
+        /*leaf latitude {
           type bits {
             bit N {
               description
@@ -458,7 +458,7 @@ module ietf-lisp-address-types {
           }
           description
             "Bit that selects between North and South latitude.";
-        }
+        }*/
         leaf latitude-degrees {
           type uint8 {
             range "0 .. 90";
@@ -480,7 +480,7 @@ module ietf-lisp-address-types {
           description
             "Seconds of latitude.";
         }
-        leaf longitude {
+        /*leaf longitude {
           type bits {
             bit E {
               description
@@ -489,7 +489,7 @@ module ietf-lisp-address-types {
           }
           description
             "Bit that selects between East and West longitude.";
-        }
+        }*/
         leaf longitude-degrees {
           type uint16 {
             range "0 .. 180";
@@ -588,7 +588,7 @@ module ietf-lisp-address-types {
             description
               "AFI address.";
           }
-          leaf lrs-bits {
+          /*leaf lrs-bits {
             type bits{
               bit lookup {
                 description
@@ -605,7 +605,7 @@ module ietf-lisp-address-types {
             }
             description
               "Flag bits per hop.";
-          }
+          }*/
         }
       }
       container source-dest-key {
