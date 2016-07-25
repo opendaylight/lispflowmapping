@@ -31,6 +31,7 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -73,9 +74,11 @@ public class LispSouthboundPluginTest {
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
-                Mockito.mock(NotificationPublishService.class));
+                Mockito.mock(NotificationPublishService.class),
+                Mockito.mock(ClusterSingletonServiceProvider.class));
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
+
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();
