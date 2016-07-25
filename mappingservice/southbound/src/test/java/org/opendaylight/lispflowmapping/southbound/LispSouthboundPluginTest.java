@@ -28,9 +28,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -38,7 +38,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -73,9 +72,11 @@ public class LispSouthboundPluginTest {
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
-                Mockito.mock(NotificationPublishService.class));
+                Mockito.mock(NotificationPublishService.class),
+                Mockito.mock(ClusterSingletonServiceProvider.class));
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
+
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();
@@ -199,10 +200,6 @@ public class LispSouthboundPluginTest {
         EventLoopGroup elgMock = Mockito.mock(EventLoopGroup.class);
         LispSouthboundPluginTest.injectField("eventLoopGroup", elgMock);
 
-        BindingAwareBroker.RpcRegistration<OdlLispSbService> registrationMock =
-                Mockito.mock(BindingAwareBroker.RpcRegistration.class);
-        LispSouthboundPluginTest.injectField("sbRpcRegistration", registrationMock);
-
         LispSouthboundHandler handlerMock = Mockito.mock(LispSouthboundHandler.class);
         LispSouthboundPluginTest.injectField("lispSouthboundHandler", handlerMock);
         Mockito.when(channel.close()).thenReturn(Mockito.mock(ChannelFuture.class));
@@ -211,7 +208,6 @@ public class LispSouthboundPluginTest {
 
         Mockito.verify(channel).close();
         Mockito.verify(elgMock).shutdownGracefully();
-        Mockito.verify(registrationMock).close();
         Mockito.verify(handlerMock).close();
         assertNull(getField("lispSouthboundHandler"));
         assertNull(getField("lispXtrSouthboundHandler"));

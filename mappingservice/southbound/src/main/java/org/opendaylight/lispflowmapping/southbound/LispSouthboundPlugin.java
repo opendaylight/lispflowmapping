@@ -12,6 +12,8 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 import com.google.common.base.Preconditions;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -31,33 +33,37 @@ import java.util.concurrent.ThreadFactory;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
+    public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
+    public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
+            LISPFLOWMAPPING_ENTITY_NAME);
 
     private volatile String bindingAddress;
     private boolean mapRegisterCacheEnabled;
     private long mapRegisterCacheTimeout;
 
     private static Object startLock = new Object();
+    private final ClusterSingletonServiceProvider clusterSingletonService;
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
     private NioDatagramChannel channel;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private RpcRegistration<OdlLispSbService> sbRpcRegistration;
     private NioDatagramChannel xtrChannel;
     private LispSouthboundStats statistics = new LispSouthboundStats();
     private Bootstrap bootstrap = new Bootstrap();
@@ -67,9 +73,12 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private DataBroker dataBroker;
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
-            final NotificationPublishService notificationPublishService) {
+            final NotificationPublishService notificationPublishService,
+            final ClusterSingletonServiceProvider clusterSingletonService) {
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
+        this.clusterSingletonService = clusterSingletonService;
+        this.clusterSingletonService.registerClusterSingletonService(this);
     }
 
     public void init() {
@@ -164,7 +173,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     }
 
     public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
-            final MessageType packetType) {
+                                           final MessageType packetType) {
         InetAddress ip = getInetAddress(address);
         handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue());
     }
@@ -272,8 +281,38 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     @Override
     public void close() throws Exception {
         eventLoopGroup.shutdownGracefully();
-        sbRpcRegistration.close();
         lispSouthboundHandler.close();
         unloadActions();
+        clusterSingletonService.close();
     }
+
+    @Override
+    public void instantiateServiceInstance() {
+        if (lispSouthboundHandler != null) {
+            lispSouthboundHandler.setNotificationProvider(notificationPublishService);
+            lispSouthboundHandler.restoreDaoFromDatastore();
+            lispSouthboundHandler.setIsMaster(true);
+        }
+        if (lispXtrSouthboundHandler != null) {
+            lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
+        }
+    }
+
+    @Override
+    public ListenableFuture<Void> closeServiceInstance() {
+        if (lispSouthboundHandler != null) {
+            lispSouthboundHandler.setNotificationProvider(null);
+            lispSouthboundHandler.setIsMaster(false);
+        }
+        if (lispXtrSouthboundHandler != null) {
+            lispXtrSouthboundHandler.setNotificationProvider(null);
+        }
+        return Futures.<Void>immediateFuture(null);
+    }
+
+    @Override
+    public ServiceGroupIdentifier getIdentifier() {
+        return SERVICE_GROUP_IDENTIFIER;
+    }
+
 }
