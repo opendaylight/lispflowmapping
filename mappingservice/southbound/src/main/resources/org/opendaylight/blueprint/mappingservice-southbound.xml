@@ -10,6 +10,8 @@
     odl:type="pingpong" />
   <reference id="notificationPublishService"
     interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService" />
+  <reference id="clusterSingletonService"
+     interface="org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider" />
 
 
   <cm:property-placeholder persistent-id="org.opendaylight.lispflowmapping" update-strategy="none">
@@ -25,6 +27,7 @@
     init-method="init" destroy-method="close">
     <argument ref="dataBroker" />
     <argument ref="notificationPublishService" />
+    <argument ref="clusterSingletonService" />
     <property name="bindingAddress" value="${bindingAddressProperty}"/>
     <property name="mapRegisterCacheEnabled" value="${mapRegisterCacheEnabledProperty}"/>
     <property name="mapRegisterCacheTimeout" value="${mapRegisterCacheTimeoutProperty}"/>
