@@ -110,7 +110,7 @@ public class SimpleMapCache implements IMapCache {
         ILispDAO table = getOrInstantiateVniTable(key);
 
         ILispDAO xtrIdDao = null;
-        if (!shouldOverwrite) {
+        if (!shouldOverwrite && record.getXtrId() != null) {
             xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
             xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.RECORD, value));
         }
