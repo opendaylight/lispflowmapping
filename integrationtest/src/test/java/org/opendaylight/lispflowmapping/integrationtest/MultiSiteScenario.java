@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
@@ -36,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -58,7 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.net.InetAddresses;
 
 /**
@@ -80,6 +79,8 @@ class MultiSiteScenario {
     private final Boolean DEFAULT_LOCAL_LOCATOR = true;
     private final Boolean DEFAULT_RLOC_PROBED = false;
     private final Boolean DEFAULT_ROUTED = true;
+    private final byte[] DEFAULT_XTR_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    private final byte[] DEFAULT_SITE_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7};
 
     private final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
     private final IMappingService mapService;
@@ -125,6 +126,9 @@ class MultiSiteScenario {
 
     private void emitMapRegisterMessage(final Site dstSite, final boolean merge) {
         final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
+        mapRegisterBuilder.setXtrSiteIdPresent(true);
+        mapRegisterBuilder.setXtrId(new XtrId(DEFAULT_XTR_ID));
+        mapRegisterBuilder.setSiteId(new SiteId(DEFAULT_SITE_ID));
         mapRegisterBuilder.setMergeEnabled(merge);
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
         mappingRecordItemBuilder.setMappingRecordItemId(MAP_RECORD_A);
