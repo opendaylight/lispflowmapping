@@ -65,6 +65,7 @@ public class MapServerTest {
     @Mock private static IMappingService mapService;
     @Mock private static IMapNotifyHandler notifyHandler;
     @Mock private static NotificationService notificationService;
+
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_1 = new HashSet<>();
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_2 = new HashSet<>();
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_3 = new HashSet<>();
