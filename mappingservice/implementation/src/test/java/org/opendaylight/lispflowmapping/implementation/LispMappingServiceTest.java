@@ -36,6 +36,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -91,12 +92,12 @@ public class LispMappingServiceTest {
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
     private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
     private final EntityOwnershipService entityOwnershipSrvice = Mockito.mock(EntityOwnershipService.class);
+    private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
+            ClusterSingletonServiceProvider.class);
 
     @InjectMocks
     private LispMappingService lispMappingService = new LispMappingService(
-            notificationService,
-            mappingService,
-            odlLispSbService, entityOwnershipSrvice);
+            notificationService, mappingService, odlLispSbService, clusterSingletonService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
