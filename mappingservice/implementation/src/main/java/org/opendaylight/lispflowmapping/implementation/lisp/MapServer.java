@@ -22,7 +22,6 @@ import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -66,16 +65,15 @@ import com.google.common.base.Preconditions;
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
-    private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private IMappingService mapService;
     private boolean subscriptionService;
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
     private ListenerRegistration<MapServer> mapServerListenerRegistration;
+    private boolean isMaster = false;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
-                     IMapNotifyHandler notifyHandler, NotificationService notificationService,
-                     final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher) {
+                     IMapNotifyHandler notifyHandler, NotificationService notificationService) {
         Preconditions.checkNotNull(mapService);
         this.mapService = mapService;
         this.subscriptionService = subscriptionService;
@@ -84,7 +82,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         if (notificationService != null) {
             mapServerListenerRegistration = notificationService.registerNotificationListener(this);
         }
-        this.clusterNodeModulSwitcher = clusterNodeModulSwitcher;
     }
 
     @Override
@@ -159,6 +156,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         }
     }
 
+    @Override
+    public void setIsMaster(boolean isMaster) {
+        this.isMaster = isMaster;
+    }
+
     private static List<TransportAddress> getTransportAddresses(Set<IpAddressBinary> addresses) {
         List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
         for (IpAddressBinary address : addresses) {
@@ -177,7 +179,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     @Override
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
-            if (clusterNodeModulSwitcher.isMaster()) {
+            if (isMaster) {
                 sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
             }
             if (notification.getChangeType().equals(MappingChange.Removed)) {

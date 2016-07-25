@@ -9,9 +9,12 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+import static org.opendaylight.lispflowmapping.clustering.util.ClusteringUtil.SERVICE_GROUP_IDENTIFIER;
 
 import com.google.common.base.Preconditions;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -31,14 +34,14 @@ import java.util.concurrent.ThreadFactory;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
-import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
-import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
@@ -46,7 +49,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterNodeModuleSwitcher {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private volatile String bindingAddress;
@@ -54,7 +57,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private long mapRegisterCacheTimeout;
 
     private static Object startLock = new Object();
-    private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
+    private final ClusterSingletonServiceProvider clusterSingletonService;
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
@@ -72,11 +75,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
-            final EntityOwnershipService entityOwnershipService) {
+            final ClusterSingletonServiceProvider clusterSingletonService) {
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
-        clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl(entityOwnershipService);
-        clusterNodeModulSwitcher.setModule(this);
+        this.clusterSingletonService = clusterSingletonService;
+        this.clusterSingletonService.registerClusterSingletonService(this);
     }
 
     public void init() {
@@ -106,7 +109,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
             LOG.info("LISP (RFC6830) Southbound Plugin is up!");
         }
-        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
     }
 
     private void start() {
@@ -283,28 +285,36 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         sbRpcRegistration.close();
         lispSouthboundHandler.close();
         unloadActions();
+        clusterSingletonService.close();
     }
 
     @Override
-    public void stopModule() {
-        if (lispSouthboundHandler != null) {
-            lispSouthboundHandler.setNotificationProvider(null);
-            lispSouthboundHandler.setIsReadFromChannelEnabled(false);
-        }
-        if (lispXtrSouthboundHandler != null) {
-            lispXtrSouthboundHandler.setNotificationProvider(null);
-        }
-    }
-
-    @Override
-    public void startModule() {
+    public void instantiateServiceInstance() {
         if (lispSouthboundHandler != null) {
             lispSouthboundHandler.setNotificationProvider(notificationPublishService);
             lispSouthboundHandler.restoreDaoFromDatastore();
-            lispSouthboundHandler.setIsReadFromChannelEnabled(true);
+            lispSouthboundHandler.setIsMaster(true);
         }
         if (lispXtrSouthboundHandler != null) {
             lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
         }
     }
+
+    @Override
+    public ListenableFuture<Void> closeServiceInstance() {
+        if (lispSouthboundHandler != null) {
+            lispSouthboundHandler.setNotificationProvider(null);
+            lispSouthboundHandler.setIsMaster(false);
+        }
+        if (lispXtrSouthboundHandler != null) {
+            lispXtrSouthboundHandler.setNotificationProvider(null);
+        }
+        return Futures.<Void>immediateFuture(null);
+    }
+
+    @Override
+    public ServiceGroupIdentifier getIdentifier() {
+        return SERVICE_GROUP_IDENTIFIER;
+    }
+
 }

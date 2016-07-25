@@ -567,7 +567,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         dsbe = new DataStoreBackEnd(dataBroker);
     }
 
-    public void setIsReadFromChannelEnabled(boolean isReadFromChannelEnabled) {
+    public void setIsMaster(boolean isReadFromChannelEnabled) {
         this.isReadFromChannelEnabled = isReadFromChannelEnabled;
     }
 

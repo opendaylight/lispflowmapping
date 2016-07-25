@@ -8,10 +8,13 @@
 
 package org.opendaylight.lispflowmapping.clustering.util;
 
+import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
+
 public final class ClusteringUtil {
 
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
-    public static final String LISPFLOWMAPPING_ENTITY_TYPE = "application";
+    public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
+            LISPFLOWMAPPING_ENTITY_NAME);
 
     private ClusteringUtil() {
         throw new UnsupportedOperationException();
