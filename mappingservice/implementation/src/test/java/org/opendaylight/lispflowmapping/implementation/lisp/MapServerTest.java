@@ -26,7 +26,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -66,7 +65,6 @@ public class MapServerTest {
     @Mock private static IMappingService mapService;
     @Mock private static IMapNotifyHandler notifyHandler;
     @Mock private static NotificationService notificationService;
-    @Mock private static ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
 
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_1 = new HashSet<>();
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_2 = new HashSet<>();
@@ -142,7 +140,7 @@ public class MapServerTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException  {
-        mapServer = new MapServer(mapService, true, notifyHandler, notificationService, clusterNodeModulSwitcher);
+        mapServer = new MapServer(mapService, true, notifyHandler, notificationService);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_1);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_2);
         subscriberSetMock_2.add(SUBSCRIBER_RLOC_3);

@@ -28,10 +28,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -81,7 +81,7 @@ public class LispSouthboundPluginTest {
                 Mockito.mock(DataBroker.class),
                 Mockito.mock(NotificationPublishService.class),
                 config,
-                Mockito.mock(EntityOwnershipService.class));
+                Mockito.mock(ClusterSingletonServiceProvider.class));
         channel = PowerMockito.mock(NioDatagramChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
         injectChannel();
