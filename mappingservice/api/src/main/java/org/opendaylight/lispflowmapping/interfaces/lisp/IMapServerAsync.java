@@ -20,4 +20,11 @@ public interface IMapServerAsync extends IGenericMapServer {
      *            The map-register message
      */
     void handleMapRegister(MapRegister register);
+
+    /**
+     * Setter method.
+     * @param isMaster
+     *            is|isn't master
+     */
+    void setIsMaster(final boolean isMaster);
 }
