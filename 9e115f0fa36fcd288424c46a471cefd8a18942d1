@@ -76,6 +76,24 @@
       "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_240b5b7e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-25T12:58:29Z",
+      "side": 1,
+      "message": "OK, in this case I will remove the merge\u003dfalse here, but I prefer warn. I will change the first LOG to error though. Sounds good?",
+      "parentUuid": "9a561d44_c4c1bf55",
+      "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
