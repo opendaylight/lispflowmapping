@@ -58,6 +58,24 @@
       "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_c4c1bf55",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-07-25T12:43:47Z",
+      "side": 1,
+      "message": "Ack, thanks for the pointer. I am leaning towards logging an \"error\" but still leaving merge on. If logging just a warn, then I think merge should be left on (just a warn shouldn\u0027t change behavior I think, and merge \u003d false will overwrite).",
+      "parentUuid": "9a561d44_45f93b7f",
+      "revId": "9e115f0fa36fcd288424c46a471cefd8a18942d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
