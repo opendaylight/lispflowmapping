@@ -16,6 +16,24 @@
       "revId": "4ed95f27080248af34fae99b23393b08f6fe930c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_8d8b6367",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-07-26T14:09:33Z",
+      "side": 1,
+      "message": "yes, but currently clustering bundle is only one util class. So I doubled required code and put it to required classes.",
+      "parentUuid": "9a561d44_7a7cc8b5",
+      "revId": "4ed95f27080248af34fae99b23393b08f6fe930c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
