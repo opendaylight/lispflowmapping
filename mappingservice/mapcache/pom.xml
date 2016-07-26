@@ -12,6 +12,10 @@
   <packaging>bundle</packaging>
   <name>Mapping Service Map Cache</name>
 
+  <properties>
+    <pmd.cpd.fail>false</pmd.cpd.fail>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

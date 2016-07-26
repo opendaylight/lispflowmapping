@@ -14,6 +14,10 @@
   <packaging>bundle</packaging>
   <name>Mapping Service Public APIs</name>
 
+  <properties>
+    <pmd.cpd.fail>true</pmd.cpd.fail>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>

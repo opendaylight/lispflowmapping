@@ -15,6 +15,10 @@
   <packaging>pom</packaging>
   <name>Mapping Service Parent POM</name>
 
+  <properties>
+    <pmd.cpd.fail>true</pmd.cpd.fail>
+  </properties>
+
   <modules>
     <module>lisp-proto</module>
     <module>api</module>
