@@ -34,6 +34,24 @@
       "revId": "4ed95f27080248af34fae99b23393b08f6fe930c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_4d94ab42",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-26T14:11:26Z",
+      "side": 1,
+      "message": "yes, actually this is a better solution, the clustering bundle didn\u0027t have sense anymore",
+      "parentUuid": "9a561d44_8d8b6367",
+      "revId": "4ed95f27080248af34fae99b23393b08f6fe930c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
