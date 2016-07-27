@@ -22,6 +22,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <packaging>bundle</packaging>
   <name>Mapping Service LISP Protocol</name>
 
+  <properties>
+    <pmd.cpd.fail>true</pmd.cpd.fail>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.mdsal.model</groupId>
