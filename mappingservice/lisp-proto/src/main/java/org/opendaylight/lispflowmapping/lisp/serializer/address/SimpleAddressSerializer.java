@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.factory.LispAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.AddressTypeMap;
@@ -16,6 +15,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 
 /**
+ * Class to (de)serialize addresses that can be used in an LCAF.
+ *
  * @author Lorand Jakab
  *
  */
@@ -44,14 +45,15 @@ public class SimpleAddressSerializer {
         serializer.serializeData(buffer, address);
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public SimpleAddress deserialize(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         short afi = buffer.getShort();
         // AddressTypeMap indexes IPv4 and IPv6 prefixes (vs simple addresses) with the negative AFI values -1 and -2
-        if ((afi == 1 || afi == 2) && ctx != null &&
-                ctx.getMaskLen() != LispAddressSerializerContext.MASK_LEN_MISSING) {
+        if ((afi == 1 || afi == 2) && ctx != null
+                && ctx.getMaskLen() != LispAddressSerializerContext.MASK_LEN_MISSING) {
             afi *= -1;
         }
-        Class <? extends LispAddressFamily> addressType = AddressTypeMap.getAddressType(afi);
+        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getAddressType(afi);
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(addressType);
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI: " + afi);

@@ -50,8 +50,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
         byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88,
-                (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
-                (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
+            (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
+            (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
         mnBuilder.setAuthenticationData(authenticationData);
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
@@ -91,8 +91,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
         byte[] authenticationData = new byte[] { (byte) 0x16, (byte) 0x98, (byte) 0x96, (byte) 0xeb, (byte) 0x88,
-                (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
-                (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
+            (byte) 0x2d, (byte) 0x4d, (byte) 0x22, (byte) 0xe5, (byte) 0x8f, (byte) 0xe6, (byte) 0x89, (byte) 0x64,
+            (byte) 0xb9, (byte) 0x17, (byte) 0xa4, (byte) 0xba, (byte) 0x4e, (byte) 0x8c, (byte) 0x41 };
         mnBuilder.setAuthenticationData(authenticationData);
 
         MapNotify mn = mnBuilder.build();
@@ -168,8 +168,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().build()).build());
-        mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord
-                (new MappingRecordBuilder().setEid(null).build()).build());
+        mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+                new MappingRecordBuilder().setEid(null).build()).build());
         mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build()).build());
 
@@ -312,10 +312,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         assertEquals(4, mn.getMappingRecordItem().size());
 
-        MappingRecord record0 = mn.getMappingRecordItem().get(0).getMappingRecord();
-        MappingRecord record1 = mn.getMappingRecordItem().get(1).getMappingRecord();
-        MappingRecord record2 = mn.getMappingRecordItem().get(2).getMappingRecord();
-        MappingRecord record3 = mn.getMappingRecordItem().get(3).getMappingRecord();
+        final MappingRecord record0 = mn.getMappingRecordItem().get(0).getMappingRecord();
+        final MappingRecord record1 = mn.getMappingRecordItem().get(1).getMappingRecord();
+        final MappingRecord record2 = mn.getMappingRecordItem().get(2).getMappingRecord();
+        final MappingRecord record3 = mn.getMappingRecordItem().get(3).getMappingRecord();
 
         assertEquals(10, record0.getRecordTtl().intValue());
         assertEquals(13, record3.getRecordTtl().intValue());
@@ -396,8 +396,8 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0001, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a,
-                (byte) 0x20, (byte) 0xba, (byte) 0xd8, (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f,
-                (byte) 0x5f, (byte) 0x6e, (byte) 0x5a, (byte) 0xb2, (byte) 0x0a, (byte) 0xbf, (byte) 0xb5 };
+            (byte) 0x20, (byte) 0xba, (byte) 0xd8, (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f,
+            (byte) 0x5f, (byte) 0x6e, (byte) 0x5a, (byte) 0xb2, (byte) 0x0a, (byte) 0xbf, (byte) 0xb5 };
         ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 
@@ -427,10 +427,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0002, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x70, (byte) 0x30, (byte) 0xd4, (byte) 0xc6, (byte) 0x10,
-                (byte) 0x44, (byte) 0x0d, (byte) 0x83, (byte) 0xbe, (byte) 0x4d, (byte) 0xbf, (byte) 0xfd, (byte) 0xa9,
-                (byte) 0x8c, (byte) 0x57, (byte) 0x6d, (byte) 0x68, (byte) 0xa5, (byte) 0xbf, (byte) 0x32, (byte) 0x11,
-                (byte) 0xc9, (byte) 0x7b, (byte) 0x58, (byte) 0xc4, (byte) 0xb9, (byte) 0x9f, (byte) 0x06, (byte) 0x11,
-                (byte) 0x23, (byte) 0xb9, (byte) 0x38 };
+            (byte) 0x44, (byte) 0x0d, (byte) 0x83, (byte) 0xbe, (byte) 0x4d, (byte) 0xbf, (byte) 0xfd, (byte) 0xa9,
+            (byte) 0x8c, (byte) 0x57, (byte) 0x6d, (byte) 0x68, (byte) 0xa5, (byte) 0xbf, (byte) 0x32, (byte) 0x11,
+            (byte) 0xc9, (byte) 0x7b, (byte) 0x58, (byte) 0xc4, (byte) 0xb9, (byte) 0x9f, (byte) 0x06, (byte) 0x11,
+            (byte) 0x23, (byte) 0xb9, (byte) 0x38 };
         ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 }

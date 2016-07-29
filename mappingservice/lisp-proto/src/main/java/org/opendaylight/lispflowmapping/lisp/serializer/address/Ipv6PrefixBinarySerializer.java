@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
+import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6Serializer.Length;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
@@ -28,9 +28,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.net.InetAddresses;
-
 /**
+ * Class to (de)serialize IPv6 prefixes from/to byte[] representation.
+ *
  * @author Lorand Jakab
  *
  */

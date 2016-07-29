@@ -89,10 +89,10 @@ public final class DistinguishedNameSerializer extends LispAddressSerializer {
 
     private DistinguishedNameType deserializeData(ByteBuffer buffer) {
         StringBuilder sb = new StringBuilder();
-        byte b = buffer.get();
-        while (b != 0) {
-            sb.append((char) b);
-            b = buffer.get();
+        byte character = buffer.get();
+        while (character != 0) {
+            sb.append((char) character);
+            character = buffer.get();
         }
         return new DistinguishedNameType(sb.toString());
     }

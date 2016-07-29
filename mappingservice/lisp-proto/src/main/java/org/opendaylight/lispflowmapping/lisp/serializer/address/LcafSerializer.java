@@ -64,8 +64,8 @@ public class LcafSerializer extends LispAddressSerializer {
         LispAddressSerializer lcafSerializer = InstanceIdSerializer.getInstance();
         serializeLCAFAddressHeader(buffer, lispAddress, lcafSerializer);
         buffer.put(buffer.position() - 1, DEFAULT_IID_MASK_LENGTH);
-        buffer.putShort((short) (lcafSerializer.getLcafLength(lispAddress) -
-                LispAddressSerializer.getInstance().getInstanceIdExtraSize()));
+        buffer.putShort((short) (lcafSerializer.getLcafLength(lispAddress)
+                - LispAddressSerializer.getInstance().getInstanceIdExtraSize()));
     }
 
     private void serializeLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress,
@@ -79,7 +79,7 @@ public class LcafSerializer extends LispAddressSerializer {
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lcafType = (byte) ByteUtil.getUnsignedByte(buffer);
-        Class <? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
+        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
         // TODO move these to ctx to shorten the list of arguments
         byte res2 = buffer.get();
         short length = buffer.getShort();
@@ -100,7 +100,7 @@ public class LcafSerializer extends LispAddressSerializer {
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lcafType = (byte) ByteUtil.getUnsignedByte(buffer);
-        Class <? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
+        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
         byte res2 = buffer.get();
         short length = buffer.getShort();
 

@@ -23,9 +23,9 @@ public class LispMACAuthenticationTest {
     private static final String KEY = "pass";
     private static final String ALGORITHM = LispKeyIDEnum.SHA1.getAuthenticationName();
     private static final String MAP_REQUEST_PACKET =
-            "10 00 00 01 3d 8d 2a cd 39 c8 d6 " +
-            "08 00 01 01 02 03 04 00 01 7f 00 " +
-            "00 02 00 20 00 01 7f 00 00 01";
+            "10 00 00 01 3d 8d 2a cd 39 c8 d6 "
+          + "08 00 01 01 02 03 04 00 01 7f 00 "
+          + "00 02 00 20 00 01 7f 00 00 01";
 
     private static int macLength;
     private static byte[] expectedAuthData;

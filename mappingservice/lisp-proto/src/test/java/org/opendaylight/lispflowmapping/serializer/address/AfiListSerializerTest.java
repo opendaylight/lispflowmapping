@@ -122,21 +122,21 @@ public class AfiListSerializerTest extends BaseTestCase {
 
     @Test
     public void equals__Simple() throws Exception {
-        SimpleAddress ip1 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:1");
-        SimpleAddress ip2 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:2");
+        final SimpleAddress ip1 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:1");
+        final SimpleAddress ip2 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:2");
 
         AfiListBuilder listBuilder = new AfiListBuilder().setAddressList(new ArrayList<SimpleAddress>());
 
         listBuilder.getAddressList().add(ip1);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address1 = listBuilder.build();
         listBuilder.setAddressList(new ArrayList<SimpleAddress>());
         listBuilder.getAddressList().add(ip1);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address2 = listBuilder.build();
         listBuilder.setAddressList(new ArrayList<SimpleAddress>());
         listBuilder.getAddressList().add(ip2);
-        org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+        final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
 
         assertEquals(address1, address2);

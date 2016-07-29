@@ -13,7 +13,6 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -58,13 +57,13 @@ public final class MapRegisterSerializer {
         }
 
         ByteBuffer registerBuffer = ByteBuffer.allocate(size);
-        registerBuffer.put((byte) ((byte) (MessageType.MapRegister.getIntValue() << 4) |
-                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY) |
-                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isXtrSiteIdPresent()), Flags.XTRSITEID)));
+        registerBuffer.put((byte) ((byte) (MessageType.MapRegister.getIntValue() << 4)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isXtrSiteIdPresent()), Flags.XTRSITEID)));
         registerBuffer.position(registerBuffer.position() + Length.RES);
         registerBuffer.put((byte)
-                (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isMergeEnabled()), Flags.MERGE_ENABLED) |
-                ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_NOTIFY)));
+                (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isMergeEnabled()), Flags.MERGE_ENABLED)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_NOTIFY)));
         registerBuffer.put((byte) mapRegister.getMappingRecordItem().size());
         registerBuffer.putLong(NumberUtil.asLong(mapRegister.getNonce()));
         registerBuffer.putShort(NumberUtil.asShort(mapRegister.getKeyId()));
@@ -87,6 +86,7 @@ public final class MapRegisterSerializer {
         return registerBuffer;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public MapRegister deserialize(ByteBuffer registerBuffer, InetAddress sourceRloc) {
         try {
             MapRegisterBuilder builder = new MapRegisterBuilder();

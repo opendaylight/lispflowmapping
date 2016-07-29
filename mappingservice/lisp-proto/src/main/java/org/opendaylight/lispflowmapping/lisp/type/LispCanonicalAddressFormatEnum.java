@@ -23,7 +23,7 @@ public enum LispCanonicalAddressFormatEnum {
 
     private byte lispCode;
 
-    private LispCanonicalAddressFormatEnum(int lispCode) {
+    LispCanonicalAddressFormatEnum(int lispCode) {
         this.lispCode = (byte) lispCode;
     }
 

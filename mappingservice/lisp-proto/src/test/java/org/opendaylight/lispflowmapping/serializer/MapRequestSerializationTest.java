@@ -321,15 +321,16 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
         mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
                 .build());
-        MapReplyBuilder mapreplyBuilder = new MapReplyBuilder();
-        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
 
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/0"));
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
 
         LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
         locatorBuilder.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
+
+        MapReplyBuilder mapreplyBuilder = new MapReplyBuilder();
         mapreplyBuilder.setMappingRecord(recordBuilder.build());
         mapRequestBuilder.setMapReply(mapreplyBuilder.build());
 

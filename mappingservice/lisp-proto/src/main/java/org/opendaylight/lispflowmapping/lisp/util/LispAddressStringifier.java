@@ -7,11 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding;
+import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.util.List;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
@@ -28,10 +30,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop.LrsBits;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
@@ -39,10 +41,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.io.BaseEncoding;
-import com.google.common.net.InetAddresses;
 
 /**
  * Utility class with static methods returning string representations of
@@ -56,11 +54,13 @@ public class LispAddressStringifier {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAddressStringifier.class);
 
     private static final String PREFIX_SEPARATOR = ":";
+
     /*
      * In the unlikely event that a AFI 0 address is used a key, we use a
      * sequence number to ensure uniqueness
      */
     protected static int noAddrSeq = 0;
+
     /*
      * There are three possible destinations for rendering an address as a
      * string:
@@ -82,20 +82,20 @@ public class LispAddressStringifier {
         return getAddrString(Destination.USER, lispAddress);
     }
 
-    public static String getURIString(LispAddress lispAddress) {
-        return getAddrString(Destination.URI, lispAddress);
-    }
-
-    public static String getURLString(LispAddress lispAddress) {
-        return getAddrString(Destination.URL, lispAddress);
-    }
-
     public static String getString(XtrId xtrId) {
         return getXtrIdString(xtrId);
     }
 
+    public static String getURIString(LispAddress lispAddress) {
+        return getAddrString(Destination.URI, lispAddress);
+    }
+
     public static String getURIString(XtrId xtrId) {
         return getXtrIdString(xtrId);
+    }
+
+    public static String getURLString(LispAddress lispAddress) {
+        return getAddrString(Destination.URL, lispAddress);
     }
 
     public static String getURLString(XtrId xtrId) {
@@ -283,6 +283,7 @@ public class LispAddressStringifier {
         // AFI = 18; Autonomous System Number
         return "AS" + addr.getAsNumber().getValue();
     }
+
     protected static String getStringFromAfiList(Destination dst, AfiList addr) {
         // AFI 16387, LCAF Type 1; Address List
         // Example rendering:

@@ -15,13 +15,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -33,8 +33,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AsNumberAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameType;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-        .ExplicitLocatorPathLcaf;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
@@ -50,40 +49,22 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .DistinguishedName;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .ExplicitLocatorPath;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .Ipv4;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .Ipv4Builder;
-
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
-        .address.Ipv4PrefixBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .Ipv6;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .Ipv6Builder;
-
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
-        .address.Ipv6PrefixBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .KeyValueAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .Mac;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .MacBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .NoAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .explicit.locator.path.explicit.locator.path.Hop;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .service.path.ServicePath;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .source.dest.key.SourceDestKey;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
-        .source.dest.key.SourceDestKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedName;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6PrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.MacBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKey;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
@@ -91,30 +72,18 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv4Binary;
-
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv4BinaryBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv4PrefixBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv4PrefixBinaryBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv6Binary;
-
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv6BinaryBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv6PrefixBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv6PrefixBinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
-
-import com.google.common.net.InetAddresses;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 public class LispAddressUtilTest {
@@ -175,9 +144,9 @@ public class LispAddressUtilTest {
             .setAddressType(Ipv4BinaryAfi.class).build();
 
     private static final byte[] IPV6_ADDRESS_BYTES_A_TEST = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-            15, 16};
+        15, 16};
     private static final byte[] IPV6_ADDRESS_BYTES_B_TEST = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-            15, 17};
+        15, 17};
     private static final String IPV6_ADDRESS_VALUE_TEST = "102:304:506:708:90a:b0c:d0e:f10";
     private static final String IPV6_ADDRESS_PREFIX_VALUE_TEST = IPV6_ADDRESS_VALUE_TEST + "/" + MASK_OK_TEST;
     private static final Ipv6Prefix IPV6_ADDRESS_PREFIX_TEST = new Ipv6Prefix(IPV6_ADDRESS_PREFIX_VALUE_TEST);
@@ -207,29 +176,29 @@ public class LispAddressUtilTest {
     private static final Long DUMMY_SERVICE_PATH_ID_TYPE = 46L;
     private static final String DISTINGUISHED_NAME_TYPE_VALUE_TEST = "dummy distinguished name type";
     private static final String DISTINGUISHED_NAME_TYPE_VALUE_WITH_MAC_TEST = MAC_ADDRESS_VALUE_TEST;
-    private static final DistinguishedNameType DISTINGUISHED_NAME_TYPE_TEST = new DistinguishedNameType
-            (DISTINGUISHED_NAME_TYPE_VALUE_TEST);
+    private static final DistinguishedNameType DISTINGUISHED_NAME_TYPE_TEST = new DistinguishedNameType(
+            DISTINGUISHED_NAME_TYPE_VALUE_TEST);
 
     private static final SimpleAddress SIMPLE_ADDRESS_IPV4_TEST = new SimpleAddress(IP_ADDRESS_IPV4_TEST);
     private static final SimpleAddress SIMPLE_ADDRESS_IPV6_TEST = new SimpleAddress(IP_ADDRESS_IPV6_TEST);
     private static final SimpleAddress SIMPLE_ADDRESS_MAC_TEST = new SimpleAddress(MAC_ADDRESS_TEST);
     private static final SimpleAddress SIMPLE_ADDRESS_DISTINGUISHED_TEST =
             new SimpleAddress(DISTINGUISHED_NAME_TYPE_TEST);
-    private static final SimpleAddress SIMPLE_ADDRESS_IPV4_PREFIX_TEST = new SimpleAddress
-            (IP_ADDRESS_PREFIX_WITH_IPV4_TEST);
-    private static final SimpleAddress SIMPLE_ADDRESS_IPV6_PREFIX_TEST = new SimpleAddress
-            (IP_ADDRESS_PREFIX_WITH_IPV6_TEST);
+    private static final SimpleAddress SIMPLE_ADDRESS_IPV4_PREFIX_TEST = new SimpleAddress(
+            IP_ADDRESS_PREFIX_WITH_IPV4_TEST);
+    private static final SimpleAddress SIMPLE_ADDRESS_IPV6_PREFIX_TEST = new SimpleAddress(
+            IP_ADDRESS_PREFIX_WITH_IPV6_TEST);
     private static final Long SERVICE_PATH_ID_TEST = 2121L;
 
     /**
      * Tests {@link LispAddressUtil#addressTypeFromSimpleAddress} and {@link
      * LispAddressUtil#addressFromSimpleAddress} methods
-     * with ipAddress
+     * with ipAddress.
      */
     @Test
     public void addressFromSimpleAddressTest_asAnyIpAddress() {
-        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (SIMPLE_ADDRESS_IPV4_TEST);
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
+                SIMPLE_ADDRESS_IPV4_TEST);
         assertEquals(Ipv4BinaryAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromSimpleAddress(SIMPLE_ADDRESS_IPV4_TEST);
@@ -239,14 +208,14 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressTypeFromSimpleAddress} and {@link
      * LispAddressUtil#addressFromSimpleAddress} methods
-     * with ipPrefix
+     * with ipPrefix.
      */
     @Test
     public void addressFromSimpleAddressTest_asIpPrefix() {
         final SimpleAddress simpleAddress = new SimpleAddress(new IpPrefix(new Ipv4Prefix(
                 IPV4_ADDRESS_PREFIX_VALUE_TEST)));
-        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (simpleAddress);
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
+                simpleAddress);
         assertEquals(Ipv4PrefixAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromSimpleAddress(simpleAddress);
@@ -257,13 +226,13 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressTypeFromSimpleAddress} and {@link
      * LispAddressUtil#addressFromSimpleAddress} methods
-     * with mac address
+     * with mac address.
      */
     @Test
     public void addressFromSimpleAddressTest_asMacAddress() {
         final SimpleAddress simpleAddress = new SimpleAddress(new MacAddress(MAC_ADDRESS_VALUE_TEST));
-        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (simpleAddress);
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
+                simpleAddress);
         assertEquals(MacAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromSimpleAddress(simpleAddress);
@@ -273,13 +242,13 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressTypeFromSimpleAddress} and {@link
      * LispAddressUtil#addressFromSimpleAddress} methods
-     * with general address
+     * with general address.
      */
     @Test
     public void addressFromSimpleAddressTest_asAddress() {
         final SimpleAddress simpleAddress = new SimpleAddress(DUMMY_CHARACTER_ARRAY_TEST);
-        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (simpleAddress);
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
+                simpleAddress);
         assertEquals(DistinguishedNameAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromSimpleAddress(simpleAddress);
@@ -289,13 +258,13 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressTypeFromSimpleAddress} and {@link
      * LispAddressUtil#addressFromSimpleAddress} methods
-     * with address as number
+     * with address as number.
      */
     @Test
     public void addressFromSimpleAddressTest_asNumber() {
         final SimpleAddress simpleAddress = new SimpleAddress(new AsNumber(NUMBER_TEST));
-        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress
-                (simpleAddress);
+        final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
+                simpleAddress);
         assertEquals(AsNumberAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromSimpleAddress(simpleAddress);
@@ -306,9 +275,7 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressFromInet(InetAddress)} and {@link LispAddressUtil#addressTypeFromInet
      * (InetAddress)}
-     * methods with ipv4 address
-     *
-     * @throws UnknownHostException
+     * methods with ipv4 address.
      */
     @Test
     public void addressFromInet_ipv4() throws UnknownHostException {
@@ -324,9 +291,7 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressFromInet(InetAddress)} and {@link LispAddressUtil#addressTypeFromInet
      * (InetAddress)}
-     * methods with ipv6 address
-     *
-     * @throws UnknownHostException
+     * methods with ipv6 address.
      */
     @Test
     public void addressFromInet_ipv6() throws UnknownHostException {
@@ -341,9 +306,7 @@ public class LispAddressUtilTest {
 
     /**
      * Tests {@link LispAddressUtil#binaryAddressFromInet(InetAddress)} and
-     * {@link LispAddressUtil#binaryAddressTypeFromInet(InetAddress)} methods with ipv4 address
-     *
-     * @throws UnknownHostException
+     * {@link LispAddressUtil#binaryAddressTypeFromInet(InetAddress)} methods with ipv4 address.
      */
     @Test
     public void binaryAddressFromInet_ipv4() throws UnknownHostException {
@@ -358,9 +321,7 @@ public class LispAddressUtilTest {
 
     /**
      * Tests {@link LispAddressUtil#binaryAddressFromInet(InetAddress)} and
-     * {@link LispAddressUtil#binaryAddressTypeFromInet(InetAddress)} methods with ipv6 address
-     *
-     * @throws UnknownHostException
+     * {@link LispAddressUtil#binaryAddressTypeFromInet(InetAddress)} methods with ipv6 address.
      */
     @Test
     public void binaryAddressFromInet_ipv6() throws UnknownHostException {
@@ -376,7 +337,7 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressFromIpAddress(IpAddress)} and {@link
      * LispAddressUtil#addressTypeFromIpAddress(IpAddress)}
-     * methods with ipv4 address
+     * methods with ipv4 address.
      */
     @Test
     public void addressFromIpAddress_ipv4() {
@@ -392,7 +353,7 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressFromIpAddress(IpAddress)} and {@link
      * LispAddressUtil#addressTypeFromIpAddress(IpAddress)}
-     * methods with ipv6 address
+     * methods with ipv6 address.
      */
     @Test
     public void addressFromIpAddress_ipv6() {
@@ -468,7 +429,7 @@ public class LispAddressUtilTest {
     /**
      * Tests {@link LispAddressUtil#addressFromIpPrefix(IpPrefix)} and {@link
      * LispAddressUtil#addressTypeFromIpPrefix(IpPrefix)}
-     * methods with ipv4 address
+     * methods with ipv4 address.
      */
     @Test
     public void addressFromIpPrefix_ipv4() {
@@ -477,16 +438,16 @@ public class LispAddressUtilTest {
         assertEquals(Ipv4PrefixAfi.class, addressClass);
 
         final Address address = LispAddressUtil.addressFromIpPrefix(ipv4Prefix);
-        assertTrue(address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.
-                types.rev151105.lisp.address.address.Ipv4Prefix);
-        assertEquals(IPV4_ADDRESS_PREFIX_VALUE_TEST, ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.
-                lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) address).getIpv4Prefix().getValue());
+        assertTrue(address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address
+                .types.rev151105.lisp.address.address.Ipv4Prefix);
+        assertEquals(IPV4_ADDRESS_PREFIX_VALUE_TEST, ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
+                .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) address).getIpv4Prefix().getValue());
     }
 
     /**
      * Tests {@link LispAddressUtil#addressFromIpPrefix(IpPrefix)} and {@link
      * LispAddressUtil#addressTypeFromIpPrefix(IpPrefix)}
-     * methods with ipv6 address
+     * methods with ipv6 address.
      */
     @Test
     public void addressFromIpPrefix_ipv6() {
@@ -537,7 +498,7 @@ public class LispAddressUtilTest {
 
 
     /**
-     * Test {@link LispAddressUtil#addressFromServicePath(ServicePath)} method with concrete servicePath
+     * Test {@link LispAddressUtil#addressFromServicePath(ServicePath)} method with concrete servicePath.
      */
     @Test
     public void addressFromServicePathTest_withServicePath() {
@@ -557,7 +518,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Test {@link LispAddressUtil#addressFromServicePath(ServicePath)} method with null value
+     * Test {@link LispAddressUtil#addressFromServicePath(ServicePath)} method with null value.
      */
     @Test
     public void addressFromServicePathTest_withNull() {
@@ -566,7 +527,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Test {@link LispAddressUtil#addressFromDistinguishedName(DistinguishedNameType)} method with distinguished name }
+     * Test {@link LispAddressUtil#addressFromDistinguishedName(DistinguishedNameType)} method with distinguished name.
      */
     @Test
     public void addressFromDistinguishedNameTest_withDistinguishedName() {
@@ -579,7 +540,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Test {@link LispAddressUtil#addressFromDistinguishedName(DistinguishedNameType)} method with null value }
+     * Test {@link LispAddressUtil#addressFromDistinguishedName(DistinguishedNameType)} method with null value.
      */
     @Test
     public void addressFromDistinguishedNameTest_withNull() {
@@ -588,7 +549,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Test {@link LispAddressUtil#addressFromAsNumber(AsNumber)} method with as number value }
+     * Test {@link LispAddressUtil#addressFromAsNumber(AsNumber)} method with as number value.
      */
     @Test
     public void addressFromAsNumberTest_withAdNumber() {
@@ -601,7 +562,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Test {@link LispAddressUtil#addressFromAsNumber(AsNumber)} method with null instead of value }
+     * Test {@link LispAddressUtil#addressFromAsNumber(AsNumber)} method with null instead of value.
      */
     @Test
     public void addressFromAsNumberTest_withNull() {
@@ -847,8 +808,8 @@ public class LispAddressUtilTest {
         eidFromDistinguishedName = LispAddressUtil.asDistinguishedNameEid(DISTINGUISHED_NAME_TYPE_VALUE_TEST);
         verifyToEidWithDistinguishedName(eidFromDistinguishedName, false);
 
-        eidFromDistinguishedName = LispAddressUtil.asDistinguishedNameEid
-                (DISTINGUISHED_NAME_TYPE_VALUE_WITH_MAC_TEST, INSTANCE_ID_TYPE_VALUE_TEST);
+        eidFromDistinguishedName = LispAddressUtil.asDistinguishedNameEid(
+                DISTINGUISHED_NAME_TYPE_VALUE_WITH_MAC_TEST, INSTANCE_ID_TYPE_VALUE_TEST);
         verifyToEidWithMacAddress(eidFromDistinguishedName, true);
     }
 
@@ -972,7 +933,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with ipv4 address and correct mask
+     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with ipv4 address and correct mask.
      */
     @Test
     public void asIpPrefix_ipv4() {
@@ -984,7 +945,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with ipv6 address and correct mask
+     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with ipv6 address and correct mask.
      */
     @Test
     public void asIpPrefix_ipv6() {
@@ -996,7 +957,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with incorrect ip address and correct mask
+     * Tests {@link LispAddressUtil#asIpPrefix(String, int)} with incorrect ip address and correct mask.
      */
     @Test
     public void asIpPrefix_other() {
@@ -1050,7 +1011,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with ipv4
+     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with ipv4.
      */
     @Test
     public void ipVersionFromString_ipv4() {
@@ -1059,7 +1020,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with ipv6
+     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with ipv6.
      */
     @Test
     public void ipVersionFromString_ipv6() {
@@ -1068,7 +1029,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with incorrect ip address format
+     * Tests {@link LispAddressUtil#ipVersionFromString(String)} with incorrect ip address format.
      */
     @Test
     public void ipVersionFromString_other() {
@@ -1150,8 +1111,8 @@ public class LispAddressUtilTest {
      */
     @Test
     public void asSrcDstEid_addressesAsSrcDstKey() {
-        final SourceDestKey expectedSourceDestKey = new SourceDestKeyBuilder().setSource
-                (SIMPLE_ADDRESS_IPV4_PREFIX_TEST).setDest(SIMPLE_ADDRESS_IPV6_PREFIX_TEST).build();
+        final SourceDestKey expectedSourceDestKey = new SourceDestKeyBuilder().setSource(
+                SIMPLE_ADDRESS_IPV4_PREFIX_TEST).setDest(SIMPLE_ADDRESS_IPV6_PREFIX_TEST).build();
         final Eid srcDstEid = LispAddressUtil.asSrcDstEid(expectedSourceDestKey, INSTANCE_ID_TYPE_TEST);
         assertNotNull(srcDstEid);
         assertEquals(SourceDestKeyLcaf.class, srcDstEid.getAddressType());
@@ -1176,11 +1137,11 @@ public class LispAddressUtilTest {
         final List<Hop> hops = ((ExplicitLocatorPath) rloc.getAddress()).getExplicitLocatorPath().getHop();
         assertEquals(hops.size(), ipAddresses.size());
 
-        for(IpAddress ipAddress : ipAddresses) {
-            assertTrue("Ip address "+ipAddress+"should be part of hops list.",isIpAddressInHops(ipAddress, hops));
+        for (IpAddress ipAddress : ipAddresses) {
+            assertTrue("Ip address " + ipAddress + "should be part of hops list.", isIpAddressInHops(ipAddress, hops));
         }
 
-        for(Hop hop : hops) {
+        for (Hop hop : hops) {
             final Hop.LrsBits lrsBits = hop.getLrsBits();
             assertFalse(lrsBits.isLookup());
             assertFalse(lrsBits.isRlocProbe());
@@ -1205,15 +1166,15 @@ public class LispAddressUtilTest {
      */
     @Test
     public void asLocatorRecords() {
-        final List<Rloc> expectedRlocs = Arrays.asList(LispAddressUtil.toRloc(IPV4_ADDRESS_TEST), LispAddressUtil.toRloc
-                (IPV6_ADDRESS_TEST));
+        final List<Rloc> expectedRlocs = Arrays.asList(LispAddressUtil.toRloc(IPV4_ADDRESS_TEST),
+                LispAddressUtil.toRloc(IPV6_ADDRESS_TEST));
         final List<LocatorRecord> locatorRecords = LispAddressUtil.asLocatorRecords(expectedRlocs);
 
         assertEquals(expectedRlocs.size(), locatorRecords.size());
 
         for (Rloc rloc : expectedRlocs) {
-            assertTrue("Rloc " + rloc + " should be part of " +
-                    "locator records list list", isRlocInLocatorRecords(locatorRecords, rloc));
+            assertTrue("Rloc " + rloc + " should be part of "
+                    + "locator records list list", isRlocInLocatorRecords(locatorRecords, rloc));
         }
 
         for (LocatorRecord locatorRecord : locatorRecords) {
@@ -1438,8 +1399,8 @@ public class LispAddressUtilTest {
         assertNotNull(eid);
         assertEquals(ServicePathLcaf.class, eid.getAddressType());
         assertEquals(INSTANCE_ID_TYPE_TEST, eid.getVirtualNetworkId());
-        ServicePath servicePath = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.
-                address.types.rev151105.lisp.address.address.ServicePath) eid.getAddress()).getServicePath();
+        ServicePath servicePath = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp
+                .address.types.rev151105.lisp.address.address.ServicePath) eid.getAddress()).getServicePath();
         assertNotNull(servicePath);
         assertEquals(SERVICE_INDEX_TEST, servicePath.getServiceIndex());
         assertEquals(SERVICE_PATH_ID_TEST, servicePath.getServicePathId().getValue());

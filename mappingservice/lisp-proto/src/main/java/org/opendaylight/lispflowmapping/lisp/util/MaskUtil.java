@@ -63,7 +63,7 @@ public final class MaskUtil {
         return false;
     }
 
-    private static final int slashPosition(final String prefix) {
+    private static int slashPosition(final String prefix) {
         final int slash = prefix.lastIndexOf('/');
         Preconditions.checkArgument(slash >= 0, "Argument %s does not contain a slash", prefix);
         return slash;
@@ -181,13 +181,13 @@ public final class MaskUtil {
 
     private static byte[] normalizeByteArray(byte[] address, short maskLength) {
         ByteBuffer byteRepresentation = ByteBuffer.wrap(address);
-        byte b = (byte) 0xff;
+        byte byteMask = (byte) 0xff;
         int mask = maskLength;
         for (int i = 0; i < byteRepresentation.array().length; i++) {
             if (mask >= 8) {
-                byteRepresentation.put(i, (byte) (b & byteRepresentation.get(i)));
+                byteRepresentation.put(i, (byte) (byteMask & byteRepresentation.get(i)));
             } else if (mask > 0) {
-                byteRepresentation.put(i, (byte) ((byte) (b << (8 - mask)) & byteRepresentation.get(i)));
+                byteRepresentation.put(i, (byte) ((byte) (byteMask << (8 - mask)) & byteRepresentation.get(i)));
             } else {
                 byteRepresentation.put(i, (byte) (0 & byteRepresentation.get(i)));
             }
@@ -207,13 +207,6 @@ public final class MaskUtil {
         } else {
             return -1;
         }
-    }
-
-    public static short getMaskForAddress(SimpleAddress address) {
-        if (address.getIpPrefix() == null) {
-            return -1;
-        }
-        return getMaskForIpPrefix(address.getIpPrefix());
     }
 
     private static String getIpPrefixString(IpPrefix prefix) {
@@ -240,6 +233,13 @@ public final class MaskUtil {
 
     public static String getAddressStringForIpv6Prefix(Ipv6Prefix prefix) {
         return getPrefixAddress(prefix.getIpv6Prefix().getValue());
+    }
+
+    public static short getMaskForAddress(SimpleAddress address) {
+        if (address.getIpPrefix() == null) {
+            return -1;
+        }
+        return getMaskForIpPrefix(address.getIpPrefix());
     }
 
     public static short getMaskForAddress(Address address) {

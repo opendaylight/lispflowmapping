@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Class to (de)serialize IPv4 addresses from/to byte[] representation.
+ *
  * @author Lorand Jakab
  *
  */

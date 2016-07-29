@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Class to (de)serialize IPv6 addresses from/to String representation.
+ *
  * @author Lorand Jakab
  *
  */

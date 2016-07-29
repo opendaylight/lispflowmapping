@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -70,11 +69,11 @@ public final class MapRequestSerializer {
         requestBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isPitr()), Flags.PITR)
                 | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isSmrInvoked()), Flags.SMR_INVOKED)));
         if (mapRequest.getItrRloc() != null) {
-            int IRC = mapRequest.getItrRloc().size();
-            if (IRC > 0) {
-                IRC--;
+            int irc = mapRequest.getItrRloc().size();
+            if (irc > 0) {
+                irc--;
             }
-            requestBuffer.put((byte) (IRC));
+            requestBuffer.put((byte) (irc));
         } else {
             requestBuffer.put((byte) 0);
 
@@ -115,22 +114,23 @@ public final class MapRequestSerializer {
         return requestBuffer;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public MapRequest deserialize(ByteBuffer requestBuffer) {
         try {
             MapRequestBuilder builder = new MapRequestBuilder();
 
-            byte typeAndFlags = requestBuffer.get();
+            final byte typeAndFlags = requestBuffer.get();
             builder.setAuthoritative(ByteUtil.extractBit(typeAndFlags, Flags.AUTHORITATIVE));
             builder.setMapDataPresent(ByteUtil.extractBit(typeAndFlags, Flags.MAP_DATA_PRESENT));
             builder.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
             builder.setSmr(ByteUtil.extractBit(typeAndFlags, Flags.SMR));
 
-            byte moreFlags = requestBuffer.get();
+            final byte moreFlags = requestBuffer.get();
             builder.setPitr(ByteUtil.extractBit(moreFlags, Flags.PITR));
             builder.setSmrInvoked(ByteUtil.extractBit(moreFlags, Flags.SMR_INVOKED));
 
-            int itrCount = ByteUtil.getUnsignedByte(requestBuffer) + 1;
-            int recordCount = ByteUtil.getUnsignedByte(requestBuffer);
+            final int itrCount = ByteUtil.getUnsignedByte(requestBuffer) + 1;
+            final int recordCount = ByteUtil.getUnsignedByte(requestBuffer);
             builder.setNonce(requestBuffer.getLong());
             LispAddressSerializerContext ctx = new LispAddressSerializerContext(
                     LispAddressSerializerContext.MASK_LEN_MISSING);

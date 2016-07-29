@@ -24,6 +24,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
+ * Test class for Service Path Serializer.
+ *
  * @author Lorand Jakab
  *
  */
@@ -31,9 +33,9 @@ public class ServicePathTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " +
-                "11 00 00 04 " +
-                "AA BB CC FF"),
+        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "11 00 00 04 "
+                + "AA BB CC FF"),
                 new LispAddressSerializerContext(null));
         assertEquals(ServicePathLcaf.class, address.getAddressType());
         ServicePath sp = (ServicePath) address.getAddress();
@@ -49,9 +51,9 @@ public class ServicePathTest extends BaseTestCase {
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eid));
         LispAddressSerializer.getInstance().serialize(buf, eid);
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " +
-                "11 00 00 04 " +
-                "00 00 01 FF");
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "11 00 00 04 "
+                + "00 00 01 FF");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 }

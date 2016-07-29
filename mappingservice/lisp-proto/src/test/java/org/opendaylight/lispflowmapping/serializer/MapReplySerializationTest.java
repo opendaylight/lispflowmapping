@@ -158,7 +158,7 @@ public class MapReplySerializationTest extends BaseTestCase {
 
         packet.position(24); // EID in first record
         byte[] expected = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x08 };
+            0x08 };
         byte[] actual = new byte[16];
         packet.get(actual);
         ArrayAssert.assertEquals(expected, actual);

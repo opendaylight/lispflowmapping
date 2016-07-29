@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Class to (de)serialize IPv4 prefixes from/to String representation.
+ *
  * @author Lorand Jakab
  *
  */
@@ -93,7 +95,7 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
     }
 
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Prefix
-    deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
+            deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         byte[] ipBuffer = new byte[4];
         InetAddress address = null;
         buffer.get(ipBuffer);

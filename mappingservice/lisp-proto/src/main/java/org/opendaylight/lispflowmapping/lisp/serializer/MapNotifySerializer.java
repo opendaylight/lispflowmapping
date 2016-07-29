@@ -44,16 +44,16 @@ public final class MapNotifySerializer {
             size += mapNotify.getAuthenticationData().length;
         }
         if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
-            size += org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE +
-                    org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
+            size += org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE
+                  + org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
         }
         for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem()) {
             size += MappingRecordSerializer.getInstance().getSerializationSize(mappingRecord.getMappingRecord());
         }
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
-        replyBuffer.put((byte) ((byte) (MessageType.MapNotify.getIntValue() << 4) |
-                ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isXtrSiteIdPresent()), Flags.XTRSITEID)));
+        replyBuffer.put((byte) ((byte) (MessageType.MapNotify.getIntValue() << 4)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isXtrSiteIdPresent()), Flags.XTRSITEID)));
         replyBuffer.position(replyBuffer.position() + Length.RES);
         replyBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isMergeEnabled()), Flags.MERGE_ENABLED));
         if (mapNotify.getMappingRecordItem() != null) {
@@ -84,6 +84,7 @@ public final class MapNotifySerializer {
         return replyBuffer;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public MapNotify deserialize(ByteBuffer notifyBuffer) {
         try {
             MapNotifyBuilder builder = new MapNotifyBuilder();

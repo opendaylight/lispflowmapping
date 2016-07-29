@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address.factory;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.AfiListSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.ApplicationDataSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.DistinguishedNameSerializer;
@@ -18,6 +17,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.InstanceIdSerial
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4BinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4PrefixBinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4PrefixSerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4Serializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6BinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6PrefixBinarySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6PrefixSerializer;
@@ -25,7 +25,6 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6Serializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.KeyValueAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LcafSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4Serializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.MacSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.NoAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.ServicePathSerializer;
@@ -52,7 +51,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 
 /**
- * Factory for LispAddress (de)serializers
+ * Factory for LispAddress (de)serializers.
  *
  * @author Lorand Jakab
  *

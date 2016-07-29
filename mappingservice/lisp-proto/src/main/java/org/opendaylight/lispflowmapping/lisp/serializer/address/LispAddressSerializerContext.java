@@ -10,6 +10,8 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 
 /**
+ * Class to pass around (de)serialization context information.
+ *
  * @author Lorand Jakab
  *
  */

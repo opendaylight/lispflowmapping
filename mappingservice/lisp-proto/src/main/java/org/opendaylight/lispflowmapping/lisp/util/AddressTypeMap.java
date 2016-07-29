@@ -36,7 +36,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 
 /**
- * This class contains static HashMaps of AFIs and LCAF types to LispAddressFamily identities
+ * This class contains static HashMaps of AFIs and LCAF types to LispAddressFamily identities.
  *
  * @author Lorand Jakab
  *
@@ -93,7 +93,7 @@ public final class AddressTypeMap {
         return lcafToAddressTypeMap.get(lcafType);
     }
 
-    public static Class <? extends LispAddressFamily> getSimpleAddressInnerType(SimpleAddress address) {
+    public static Class<? extends LispAddressFamily> getSimpleAddressInnerType(SimpleAddress address) {
         if (address == null) {
             return null;
         } else if (address.getIpAddress() != null) {

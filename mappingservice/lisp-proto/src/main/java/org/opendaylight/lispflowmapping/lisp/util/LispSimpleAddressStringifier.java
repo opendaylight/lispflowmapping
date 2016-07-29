@@ -7,14 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier.Destination;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Utility class with static methods returning string representations of
- * supported LISP simple address types
+ * supported LISP simple address types.
  *
  * @author Lorand Jakab
  *

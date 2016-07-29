@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Helper methods for Source/Dest Key type LCAF addresses.
+ *
  * @author Lorand Jakab
  *
  */
@@ -24,7 +26,8 @@ public final class SourceDestKeyHelper {
     private SourceDestKeyHelper() {
     }
 
-    private final static Logger LOG = LoggerFactory.getLogger(SourceDestKeyHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SourceDestKeyHelper.class);
+
     public static Eid getSrc(Eid eid) {
         Address addr = eid.getAddress();
         if (addr instanceof SourceDestKey) {

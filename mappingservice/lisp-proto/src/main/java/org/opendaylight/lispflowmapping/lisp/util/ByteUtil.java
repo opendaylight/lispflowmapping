@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 
 public final class ByteUtil {
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     // Utility class, should not be instantiated
     private ByteUtil() {
@@ -54,16 +54,16 @@ public final class ByteUtil {
         return buffer.getInt();
     }
 
-    public static short asUnsignedByte(byte b) {
-        return (short) ((short) b & 0xFF);
+    public static short asUnsignedByte(byte byteArg) {
+        return (short) ((short) byteArg & 0xFF);
     }
 
-    public static int asUnsignedShort(short s) {
-        return s & 0xFFFF;
+    public static int asUnsignedShort(short shortArg) {
+        return shortArg & 0xFFFF;
     }
 
-    public static long asUnsignedInteger(int i) {
-        return i & 0xFFFFFFFF;
+    public static long asUnsignedInteger(int intArg) {
+        return intArg & 0xFFFFFFFF;
     }
 
     public static byte[] partialIntToByteArray(int number, int length) {
@@ -89,10 +89,10 @@ public final class ByteUtil {
 
     public static String bytesToHex(byte[] bytes, int length) {
         char[] hexChars = new char[length * 2];
-        for ( int j = 0; j < length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        for (int j = 0; j < length; j++) {
+            int vv = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[vv >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[vv & 0x0F];
         }
         return new String(hexChars);
     }

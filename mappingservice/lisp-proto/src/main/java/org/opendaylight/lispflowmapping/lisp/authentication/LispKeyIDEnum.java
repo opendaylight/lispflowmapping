@@ -16,7 +16,7 @@ public enum LispKeyIDEnum {
     private short keyID;
     private String authenticationName;
 
-    private LispKeyIDEnum(int keyID, String authenticationName) {
+    LispKeyIDEnum(int keyID, String authenticationName) {
         this.keyID = (short) keyID;
         this.authenticationName = authenticationName;
     }

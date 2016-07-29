@@ -23,6 +23,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 
 /**
+ * Class to (de)serialize Service Path data type.
+ *
  * @author Lorand Jakab
  *
  */

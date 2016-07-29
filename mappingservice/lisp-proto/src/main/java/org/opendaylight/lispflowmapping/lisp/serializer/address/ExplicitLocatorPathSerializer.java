@@ -71,9 +71,9 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
                 buffer.put((byte) 0);
                 if (hop.getLrsBits() != null) {
                     buffer.put((byte) (
-                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isLookup()), Flags.LOOKUP) |
-                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isRlocProbe()), Flags.RLOC_PROBE) |
-                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isStrict()), Flags.STRICT)));
+                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isLookup()), Flags.LOOKUP)
+                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isRlocProbe()), Flags.RLOC_PROBE)
+                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isStrict()), Flags.STRICT)));
                 } else {
                     buffer.put((byte) 0);
                 }
@@ -113,7 +113,7 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
             HopBuilder builder = new HopBuilder();
             builder.setLrsBits(new LrsBits(lookup, rlocProbe, strict));
             builder.setAddress(address);
-            builder.setHopId("Hop " + (hops.size()+1));
+            builder.setHopId("Hop " + (hops.size() + 1));
             length -= SimpleAddressSerializer.getInstance().getAddressSize(address) + 2;
             hops.add(builder.build());
         }

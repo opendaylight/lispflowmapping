@@ -40,9 +40,9 @@ public final class MappingRecordSerializer {
     public MappingRecordBuilder deserializeToBuilder(ByteBuffer buffer) {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
-        byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
-        short maskLength = ((short) ByteUtil.getUnsignedByte(buffer));
-        byte actionAndAuthoritative = buffer.get();
+        final byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
+        final short maskLength = ((short) ByteUtil.getUnsignedByte(buffer));
+        final byte actionAndAuthoritative = buffer.get();
         Action act = Action.forValue(actionAndAuthoritative >> 5);
         if (act == null) {
             act = Action.NoAction;

@@ -73,18 +73,6 @@ public class LispMACAuthentication implements ILispAuthentication {
         return null;
     }
 
-    public int getAuthenticationLength() {
-        return authenticationLength;
-    }
-
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
-    public void setAlgorithm(String algorithm) {
-        this.algorithm = algorithm;
-    }
-
     public byte[] getAuthenticationData(final ByteBuffer buffer, final String key) {
         byte[] bufferAsArray;
         if (buffer.hasArray()) {
@@ -96,4 +84,15 @@ public class LispMACAuthentication implements ILispAuthentication {
         return getAuthenticationData(bufferAsArray, key);
     }
 
+    public int getAuthenticationLength() {
+        return authenticationLength;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
 }
