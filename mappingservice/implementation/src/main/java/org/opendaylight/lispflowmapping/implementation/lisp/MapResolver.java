@@ -27,6 +27,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -112,7 +114,11 @@ public class MapResolver implements IMapResolverAsync {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
-        recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
+        if (eid.getAddressType().equals(Ipv4BinaryAfi.class) || eid.getAddressType().equals(Ipv6BinaryAfi.class)) {
+            recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
+        } else {
+            recordBuilder.setEid(eid);
+        }
         recordBuilder.setAction(Action.NativelyForward);
         if (authenticate && mapService.getAuthenticationKey(eid) != null) {
             recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
