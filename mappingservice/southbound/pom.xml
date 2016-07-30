@@ -46,6 +46,10 @@
       <artifactId>junit-addons</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>common.unittest.tools</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito</artifactId>
       <scope>test</scope>

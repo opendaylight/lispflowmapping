@@ -31,6 +31,10 @@
       <artifactId>model</artifactId>
       <version>0.7.0-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.opendaylight.lispflowmapping</groupId>
+      <artifactId>common.unittest.tools</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
