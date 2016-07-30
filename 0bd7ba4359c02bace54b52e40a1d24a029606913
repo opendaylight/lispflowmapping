@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_9b526265",
+        "filename": "mappingservice/neutron/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-30T13:15:34Z",
+      "side": 1,
+      "message": "Do we need version here? DependencyManagement in mappingservice-parent should take care of that.",
+      "revId": "0bd7ba4359c02bace54b52e40a1d24a029606913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_bb55a651",
+        "filename": "mappingservice/southbound/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-30T13:15:34Z",
+      "side": 1,
+      "message": "Do we need version here? DependencyManagement in mappingservice-parent should take care of that.",
+      "revId": "0bd7ba4359c02bace54b52e40a1d24a029606913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
