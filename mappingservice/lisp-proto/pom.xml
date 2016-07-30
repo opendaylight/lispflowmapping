@@ -47,6 +47,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit-addons</groupId>
