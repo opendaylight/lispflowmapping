@@ -8,11 +8,11 @@
 
 package org.opendaylight.lispflowmapping.inmemorydb;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +24,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
- * Test for {@link HashMapDb} class
+ * Test for {@link HashMapDb} class.
  */
 public class HashMapDbTest {
 
@@ -36,7 +36,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test insertion of one entry to the {@link HashMapDb}
+     * Test insertion of one entry to the {@link HashMapDb}.
      */
     @Test
     public void testPutGet_oneEntry() throws Exception {
@@ -51,7 +51,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test insertion of three entries to the {@link HashMapDb}
+     * Test insertion of three entries to the {@link HashMapDb}.
      */
     @Test
     public void testPutGet_threeEntries() throws Exception {
@@ -76,7 +76,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test retrieving a specific value
+     * Test retrieving a specific value.
      */
     @Test
     public void testGetSpecific() throws Exception {
@@ -91,7 +91,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test {@link HashMapDb#getBest} with IP prefix
+     * Test {@link HashMapDb#getBest} with IP prefix.
      */
     @Test
     public void testGetBest_withIpPrefix() throws Exception {
@@ -103,8 +103,8 @@ public class HashMapDbTest {
         final String mapValue1 = "mapValue1";
         final String mapValue2 = "mapValue2";
 
-        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
-        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<>(mapSubKey2, mapValue2);
 
         map.put(ipv4PrefixEid1, mapEntry1);
         map.put(ipv4PrefixEid2, mapEntry2);
@@ -114,7 +114,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test {@link HashMapDb#getBest} with non-IP prefix
+     * Test {@link HashMapDb#getBest} with non-IP prefix.
      */
     @Test
     public void testGetBest_withNonIpPrefix() throws Exception {
@@ -124,8 +124,8 @@ public class HashMapDbTest {
         final String mapSubKey2 = "mapSubKey2";
         final String mapValue1 = "mapValue1";
         final String mapValue2 = "mapValue2";
-        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
-        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<>(mapSubKey2, mapValue2);
 
         map.put(mac1, mapEntry1);
         map.put(mac2, mapEntry2);
@@ -133,7 +133,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test {@link HashMapDb#getBestPair} with IP prefix
+     * Test {@link HashMapDb#getBestPair} with IP prefix.
      */
     @Test
     public void testGetBestPair_withIpPrefix() throws Exception {
@@ -144,8 +144,8 @@ public class HashMapDbTest {
         final String mapSubKey2 = "mapSubKey2";
         final String mapValue1 = "mapValue1";
         final String mapValue2 = "mapValue2";
-        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
-        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<>(mapSubKey2, mapValue2);
 
         map.put(ipv4PrefixEid1, mapEntry1);
         map.put(ipv4PrefixEid2, mapEntry2);
@@ -156,7 +156,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test {@link HashMapDb#getBestPair} with non-IP prefix
+     * Test {@link HashMapDb#getBestPair} with non-IP prefix.
      */
     @Test
     public void testGetBestPair_withNonIpPrefix() throws Exception {
@@ -166,8 +166,8 @@ public class HashMapDbTest {
         final String mapSubKey2 = "mapSubKey2";
         final String mapValue1 = "mapValue1";
         final String mapValue2 = "mapValue2";
-        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
-        final MappingEntry<Object> mapEntry2 = new MappingEntry<Object>(mapSubKey2, mapValue2);
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry2 = new MappingEntry<>(mapSubKey2, mapValue2);
 
 
         map.put(mac1, mapEntry1);
@@ -215,7 +215,7 @@ public class HashMapDbTest {
     }
 
     /**
-     * Test {@link HashMapDb#remove} with IP-prefix
+     * Test {@link HashMapDb#remove} with IP-prefix.
      */
     @Test
     public void testRemove_withIpPrefix() throws Exception {
@@ -223,7 +223,7 @@ public class HashMapDbTest {
         final String mapSubKey1 = "mapSubKey1";
         final String mapValue1 = "mapValue1";
 
-        final MappingEntry<Object> mapEntry1 = new MappingEntry<Object>(mapSubKey1, mapValue1);
+        final MappingEntry<Object> mapEntry1 = new MappingEntry<>(mapSubKey1, mapValue1);
 
         map.put(ipv4PrefixEid1, mapEntry1);
         map.remove(ipv4PrefixEid1);

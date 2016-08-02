@@ -18,7 +18,7 @@ import java.util.ListIterator;
 
 /**
  * Radix trie/tree (also known as Patricia tree) implementation. Supports CRD operations for
- * generic, big endian (network byte order) prefixes. It can do exact and longest prefix matchin,
+ * generic, big endian (network byte order) prefixes. It can do exact and longest prefix matching,
  * post order iteration over the entries in the tree and can lookup widest negative prefixes (i.e.,
  * shortest overlapping prefix not registered in the tree).
  *
@@ -27,44 +27,45 @@ import java.util.ListIterator;
  * @param <T> Data type stored in each tree node
  */
 public class RadixTrie<T> {
-    private int MAXBITS;
-    private TrieNode ROOT;
+    private int maxBits;
+    private TrieNode root;
     private long nbActiveNodes;
     private boolean rootZero;
 
     /**
-     * RadixTrie constructor
+     * RadixTrie constructor.
      *
      * @param bits Maximum prefix length supported.
      */
     public RadixTrie(int bits) {
-        MAXBITS = bits;
-        ROOT = null;
+        maxBits = bits;
+        root = null;
         nbActiveNodes = 0;
     }
 
     /**
-     * Radix trie constructors
+     * Radix trie constructors.
+     *
      * @param bits Maximum prefix length supported
      * @param rootZero Flag that decides if 0/0 should be inserted as a non-prefix root node or not
      */
     public RadixTrie(int bits, boolean rootZero) {
-        MAXBITS = bits;
-        ROOT = rootZero ? new TrieNode(null, 0, null) : null;
+        maxBits = bits;
+        root = rootZero ? new TrieNode(null, 0, null) : null;
         nbActiveNodes = 0;
         this.rootZero = rootZero;
     }
 
     public TrieNode getRoot() {
-        return ROOT;
+        return root;
     }
 
     private void setRoot(TrieNode root) {
-        ROOT = root;
+        this.root = root;
     }
 
     public int getMaxbits() {
-        return MAXBITS;
+        return maxBits;
     }
 
     public long getSize() {
@@ -73,12 +74,12 @@ public class RadixTrie<T> {
 
     /**
      * Test bit in byte. Assumes bits are numbered from 0 to 7
-     * @param b byte
+     * @param byteArg byte
      * @param bitPosition the position to be tested
      * @return 1 if bit at position is 1, 0 otherwise.
      */
-    private boolean testBitInByte(byte b, int bitPosition) {
-        return (b & (0x80 >> bitPosition)) != 0;
+    private boolean testBitInByte(byte byteArg, int bitPosition) {
+        return (byteArg & (0x80 >> bitPosition)) != 0;
     }
 
     private boolean testBitInPrefixByte(byte[] prefix, int bitPosition) {
@@ -86,47 +87,45 @@ public class RadixTrie<T> {
     }
 
     /**
-     * Mask prefix
+     * Mask prefix.
+     *
      * @param prefix Prefix to be masked
      * @param prefLen Prefix length
      * @return Prefix after masking
      */
     private byte [] maskPrefix(byte[] prefix, int prefLen) {
-        int i;
         byte[] res = prefix.clone();
-        res[prefLen/8] = (byte) (res[prefLen/8] & (0xFF << (7 - (prefLen & 0x07))));
-        for (i = prefLen/8 + 1; i < MAXBITS/8; i++) {
+        res[prefLen / 8] = (byte) (res[prefLen / 8] & (0xFF << (7 - (prefLen & 0x07))));
+        for (int i = prefLen / 8 + 1; i < maxBits / 8; i++) {
             res[i] = 0;
         }
         return res;
     }
 
     /**
-     * Insert prefix-data tuple into radix trie
+     * Insert prefix-data tuple into radix trie.
+     *
      * @param prefix Big endian (network order) byte array representation of the prefix
      * @param preflen Prefix length
      * @param data Data to be stored in the tree
      * @return Newly inserted TrieNode
      */
     public TrieNode insert(byte[] prefix, int preflen, T data) {
-        TrieNode node;
-        int diffbit;
-
-        if (preflen > MAXBITS) {
+        if (preflen > maxBits) {
             return null;
         }
 
         // trie is empty
-        if (ROOT == null) {
-            ROOT = new TrieNode(prefix, preflen, data);
-            return ROOT;
+        if (root == null) {
+            root = new TrieNode(prefix, preflen, data);
+            return root;
         }
 
         // find closest prefix starting at ROOT
-        node = ROOT.findClosest(prefix, preflen);
+        TrieNode node = root.findClosest(prefix, preflen);
 
         // find first different bit
-        diffbit = node.firstDifferentBit(prefix, preflen);
+        int diffbit = node.firstDifferentBit(prefix, preflen);
 
         // find the first node with bit less than diffbit
         node = node.parentWithBitLessThan(diffbit);
@@ -136,22 +135,19 @@ public class RadixTrie<T> {
     }
 
     /**
-     * Longest prefix match of prefix/preflen
+     * Longest prefix match of prefix/preflen.
+     *
      * @param prefix Big endian byte array representation of the prefix to be looked up.
      * @param preflen Prefix length
      * @return Node with longest prefix match or null if nothing is found.
      */
     public TrieNode lookupBest(byte[] prefix, int preflen) {
-        TrieNode node;
-        ArrayList<TrieNode> candidates;
-        ListIterator<TrieNode> it;
-
-        if (ROOT == null || preflen > MAXBITS) {
+        if (root == null || preflen > maxBits) {
             return null;
         }
 
-        node = ROOT;
-        candidates = new ArrayList<TrieNode>();
+        TrieNode node = root;
+        ArrayList<TrieNode> candidates = new ArrayList<>();
 
         while (node != null && node.bit < preflen) {
             if (node.prefix != null) {
@@ -169,7 +165,7 @@ public class RadixTrie<T> {
             candidates.add(node);
         }
 
-        it = candidates.listIterator(candidates.size());
+        ListIterator<TrieNode> it = candidates.listIterator(candidates.size());
         while (it.hasPrevious()) {
             node = it.previous();
             if (node.comparePrefix(prefix)) {
@@ -181,43 +177,40 @@ public class RadixTrie<T> {
     }
 
     /**
-     * Lookup widest negative (i.e., overlapping but not present in trie) prefix for given prefix and prefix length
+     * Lookup widest negative (i.e., overlapping but not present in trie) prefix for given prefix and prefix length.
+     *
      * @param prefix Prefix looked up.
      * @param preflen Prefix length.
      * @return Node containing the widest negative prefix.
      */
     public TrieNode lookupWidestNegative(byte [] prefix, int preflen) {
-        TrieNode node;
-        int diffbit;
-
-        if (ROOT == null || preflen > MAXBITS) {
+        if (root == null || preflen > maxBits) {
             return null;
         }
 
-        node = ROOT.findClosest(prefix, preflen);
+        TrieNode node = root.findClosest(prefix, preflen);
 
         // not a negative match
         if (node.prefix != null && node.prefixLength() <= preflen && node.comparePrefix(prefix)) {
             return null;
         }
-        diffbit = node.firstDifferentBit(prefix, preflen);
+        int diffbit = node.firstDifferentBit(prefix, preflen);
         return new TrieNode(maskPrefix(prefix, diffbit), diffbit + 1, null);
     }
 
     /**
-     * Exact prefix match of prefix/preflen
+     * Exact prefix match of prefix/preflen.
+     *
      * @param prefix Big endian byte array representation of the prefix to be looked up.
      * @param preflen Prefix length
      * @return Node with exact prefix match or null
      */
     public TrieNode lookupExact(byte[] prefix, int preflen) {
-        TrieNode node;
-
-        if (ROOT == null || preflen > MAXBITS) {
+        if (root == null || preflen > maxBits) {
             return null;
         }
 
-        node = ROOT.findClosest(prefix, preflen);
+        TrieNode node = root.findClosest(prefix, preflen);
 
         // if no node is found or if node not a prefix or if mask is too long
         if (node == null || node.prefix == null || node.bit > preflen) {
@@ -234,26 +227,26 @@ public class RadixTrie<T> {
 
 
     /**
-     * Remove prefix from radix trie
+     * Remove prefix from radix trie.
+     *
      * @param prefix Big endian byte array representation of the prefix to be removed.
      * @param preflen Prefix length.
      */
     public void remove(byte[] prefix, int preflen) {
-        TrieNode node;
-        node = lookupExact(prefix, preflen);
+        TrieNode node = lookupExact(prefix, preflen);
         if (node != null) {
             node.erase();
         }
     }
 
     /**
-     * Remove node's subtree
+     * Remove node's subtree.
+     *
      * @param node Node who's subtree is to be removed
      */
     public void removeSubtree(TrieNode node) {
         TrieNode itNode;
-        Iterator<TrieNode> it;
-        it = node.iterator();
+        Iterator<TrieNode> it = node.iterator();
 
         while (it.hasNext()) {
             itNode = it.next();
@@ -262,21 +255,19 @@ public class RadixTrie<T> {
     }
 
     /**
-     * Remove subtree for longest match
+     * Remove subtree for longest match.
+     *
      * @param prefix Prefix to be looked up
      * @param preflen Prefix length
      */
     public void removeSubtree(byte[] prefix, int preflen) {
-        TrieNode itNode;
-        Iterator<TrieNode> it;
-
-        itNode = lookupBest(prefix, preflen);
+        TrieNode itNode = lookupBest(prefix, preflen);
 
         if (itNode == null) {
             return;
         }
 
-        it = itNode.iterator();
+        Iterator<TrieNode> it = itNode.iterator();
 
         while (it.hasNext()) {
             itNode = it.next();
@@ -288,25 +279,22 @@ public class RadixTrie<T> {
      * Remove all entries in the trie.
      */
     public void removeAll() {
-        TrieNode node;
-        Iterator<TrieNode> it;
-
-        it = ROOT.iterator();
+        Iterator<TrieNode> it = root.iterator();
         while (it.hasNext()) {
-            node = it.next();
+            TrieNode node = it.next();
             node.erase();
         }
     }
 
     /**
      * Trie node definition.
-     *
      */
-    public class TrieNode implements Iterable<TrieNode>{
+    public class TrieNode implements Iterable<TrieNode> {
         // since bits are counted from 0, bit and prefix length are equal
         int bit;
         byte[] prefix;
-        TrieNode left, right;
+        TrieNode left;
+        TrieNode right;
         TrieNode up;
         T data;
 
@@ -330,7 +318,8 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Finds closest prefix NOT the longest prefix match
+         * Finds closest prefix NOT the longest prefix match.
+         *
          * @param prefix Searched prefix
          * @param preflen Searched prefix length
          * @return The node found
@@ -355,21 +344,21 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Compares prefix to node's prefix and returns position of first different bit
+         * Compares prefix to node's prefix and returns position of first different bit.
+         *
          * @param prefix Prefix to be compared.
          * @param preflen Prefix length.
          * @return Position of first different bit.
          */
         public int firstDifferentBit(byte[] prefix, int preflen) {
-            int maxbit, diffbit, i;
             byte bitxor;
 
-            maxbit = (bit < preflen) ? bit : preflen;
-            diffbit = 0;
-            for (i = 0; i * 8 < maxbit; i++) {
+            int maxbit = (bit < preflen) ? bit : preflen;
+            int diffbit = 0;
+            for (int i = 0; i * 8 < maxbit; i++) {
                 // if match, move to next byte
                 if ((bitxor = (byte) (this.prefix[i] ^ prefix[i])) == 0) {
-                    diffbit = (i+1) * 8;
+                    diffbit = (i + 1) * 8;
                     continue;
                 }
                 // if not matched, find first diff bit (0 to 7)
@@ -382,14 +371,14 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Find parent with bit less than given value
+         * Find parent with bit less than given value.
+         *
          * @param bitlen Bit value
          * @return Parent with bit less than given value
          */
         public TrieNode parentWithBitLessThan(int bitlen) {
-            TrieNode node, parent;
-            node = this;
-            parent = node.up;
+            TrieNode node = this;
+            TrieNode parent = node.up;
             while (parent != null && parent.bit >= bitlen) {
                 node = parent;
                 parent = node.up;
@@ -398,7 +387,8 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Inserts node in trie near this node with prefix that has the first bit difference at diffbit
+         * Inserts node in trie near this node with prefix that has the first bit difference at diffbit.
+         *
          * @param pref Prefix to be inserted.
          * @param preflen Prefix length of the prefix to be inserted.
          * @param diffbit Bit index of the first different bit between prefix and current node
@@ -406,7 +396,7 @@ public class RadixTrie<T> {
          * @return The trie node created or current node if it's an overwrite.
          */
         public TrieNode insert(byte[] pref, int preflen, int diffbit, T data) {
-            TrieNode parent, newNode;
+            TrieNode parent;
 
             // same node, check if prefix needs saving
             if (diffbit == preflen && bit == preflen) {
@@ -419,7 +409,7 @@ public class RadixTrie<T> {
                 return this;
             }
 
-            newNode = new TrieNode(pref, preflen, data);
+            TrieNode newNode = new TrieNode(pref, preflen, data);
 
             // node is more specific, add new prefix as parent
             if (preflen == diffbit) {
@@ -473,13 +463,13 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Erase node
+         * Erase node.
          */
-        public void erase () {
-            TrieNode cur = this, child, parent;
+        public void erase() {
+            TrieNode cur = this;
             boolean isRoot = false;
 
-            if (this.equals(ROOT)) {
+            if (this.equals(root)) {
                 isRoot = true;
             }
 
@@ -490,8 +480,8 @@ public class RadixTrie<T> {
             // as long as one of the children is null and this is an intermediary node
             // link parent to child. If parent null, child becomes the root.
             while (cur != null && cur.prefix == null && (cur.left == null || cur.right == null)) {
-                parent = cur.up;
-                child = cur.left != null ? cur.left : cur.right;
+                TrieNode parent = cur.up;
+                TrieNode child = cur.left != null ? cur.left : cur.right;
 
                 if (parent == null) {
                     setRoot(child);
@@ -518,42 +508,45 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Clear node data
+         * Clear node data.
          */
-        public void resetData () {
+        public void resetData() {
             prefix = null;
             data = null;
         }
 
         /**
-         * Compare node prefix with prefix
+         * Compare node prefix with prefix.
+         *
          * @param pref Prefix to be compared
          * @return True if prefixes are equal, false otherwise
          */
         public boolean comparePrefix(byte[] pref) {
-            int i, mask, r;
+            int iterator;
+            int remainder;
 
-            for (i = 0; i < bit/8; i++) {
-               if (prefix[i] != pref[i]) {
-                   return false;
-               }
+            for (iterator = 0; iterator < bit / 8; iterator++) {
+                if (prefix[iterator] != pref[iterator]) {
+                    return false;
+                }
             }
-            if ((r = bit % 8) != 0) {
-                mask = (0xFF << r) & 0xFF;
-                return ((prefix[i] & mask) == (pref[i] & mask));
+            if ((remainder = bit % 8) != 0) {
+                int mask = (0xFF << remainder) & 0xFF;
+                return ((prefix[iterator] & mask) == (pref[iterator] & mask));
             }
             return true;
         }
 
         /**
          * Helper method that converts prefix and prefix length to dotted decimal, string, representation.
+         *
          * @return String representation of prefix.
          */
         public String asIpPrefix() {
             try {
                 return InetAddress.getByAddress(prefix).getHostAddress() + "/" + bit;
             } catch (UnknownHostException e) {
-                return "NaA/"+bit;
+                return "NaA/" + bit;
             }
         }
 
@@ -566,22 +559,23 @@ public class RadixTrie<T> {
         }
 
         /**
-         * Post order iterator implementation for prefix trie. It's safe to use it to remove nodes
-         *
+         * Post order iterator implementation for prefix trie. It's safe to use it to remove nodes.
          */
         private class TriePostOrderIterator implements Iterator<RadixTrie<T>.TrieNode> {
-            private TrieNode current, lastNodeVisited;
+            private TrieNode current;
+            private TrieNode lastNodeVisited;
             private Deque<RadixTrie<T>.TrieNode> stack;
 
             TriePostOrderIterator(TrieNode node) {
-                stack = new ArrayDeque<RadixTrie<T>.TrieNode>();
+                stack = new ArrayDeque<>();
                 current = node;
                 lastNodeVisited = null;
             }
 
             @Override
             public boolean hasNext() {
-                TrieNode peekNode, last = lastNodeVisited;
+                TrieNode peekNode;
+                TrieNode last = lastNodeVisited;
                 if (current != null && (current.left != null || current.right != null)) {
                     return true;
                 } else {

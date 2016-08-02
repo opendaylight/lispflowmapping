@@ -8,19 +8,22 @@
 
 package org.opendaylight.lispflowmapping.inmemorydb.radixtrie;
 
+import static org.junit.Assert.assertTrue;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RadixTrieTest {
+    protected static final Logger LOG = LoggerFactory.getLogger(RadixTrieTest.class);
+
     private static RadixTrie<Integer> radixTrie4;
     private static RadixTrie<Integer> radixTrie6;
 
@@ -74,7 +77,7 @@ public class RadixTrieTest {
             IP6_BYTES6 = InetAddress.getByName("192:168::1:0").getAddress();
             IP6_BYTES7 = InetAddress.getByName("192:168::1:1").getAddress();
 
-            itPrefixList4 = new ArrayList<byte []>();
+            itPrefixList4 = new ArrayList<>();
             itPrefixList4.add(IP4_BYTES2);
             itPrefixList4.add(IP4_BYTES7);
             itPrefixList4.add(IP4_BYTES4);
@@ -83,7 +86,7 @@ public class RadixTrieTest {
             itPrefixList4.add(IP4_BYTES1);
             itPrefixList4.add(IP4_BYTES3);
 
-            itPreflenList4 = new ArrayList<Integer>();
+            itPreflenList4 = new ArrayList<>();
             itPreflenList4.add(16);
             itPreflenList4.add(32);
             itPreflenList4.add(25);
@@ -93,17 +96,17 @@ public class RadixTrieTest {
             itPreflenList4.add(16);
 
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            LOG.error("Caught exception: ", e);
         }
     }
 
     /**
-     * Tests v4 CRD operations
+     * Tests v4 CRD operations.
      */
     @Test
     public void testIp4() {
         RadixTrie<Integer>.TrieNode res;
-        radixTrie4 = new RadixTrie<Integer>(32);
+        radixTrie4 = new RadixTrie<>(32);
         addIp4Addresses(radixTrie4);
 
         res = radixTrie4.lookupBest(IP4_BYTES7, 32);
@@ -134,12 +137,11 @@ public class RadixTrieTest {
     }
 
     /**
-     * Tests iterator
+     * Tests iterator.
      */
     @Test
     public void testIterator() {
         RadixTrie<Integer>.TrieNode res;
-        int i = 0;
 
         addIp4Addresses(radixTrie4);
 
@@ -150,27 +152,28 @@ public class RadixTrieTest {
 
         Iterator<RadixTrie<Integer>.TrieNode> it = radixTrie4.getRoot().iterator();
 
+        int iterator = 0;
         while (it.hasNext()) {
             res = it.next();
-            assertTrue(Arrays.equals(res.prefix(), itPrefixList4.get(i)));
-            assertTrue(res.prefixLength() == itPreflenList4.get(i));
-            i++;
+            assertTrue(Arrays.equals(res.prefix(), itPrefixList4.get(iterator)));
+            assertTrue(res.prefixLength() == itPreflenList4.get(iterator));
+            iterator++;
         }
     }
 
     /**
-     * Tests v4 CRD operations with 0/0 as root
+     * Tests v4 CRD operations with 0/0 as root.
      */
     @Test
     public void testIp4ZeroRoot() {
-        radixTrie4 = new RadixTrie<Integer>(32, true);
+        radixTrie4 = new RadixTrie<>(32, true);
 
         RadixTrie<Integer>.TrieNode res;
 
         addIp4Addresses(radixTrie4);
 
         res = radixTrie4.lookupBest(IP4_BYTES7, 32);
-        System.out.println(res.asIpPrefix());
+        LOG.info(res.asIpPrefix());
         assertTrue(Arrays.equals(res.prefix(), IP4_BYTES7));
         assertTrue(res.prefixLength() == 32);
 
@@ -202,20 +205,18 @@ public class RadixTrieTest {
     }
 
     /**
-     * Tests v4 widest negative prefix
+     * Tests v4 widest negative prefix.
      */
     @Test
     public void testIp4WidestNegativePrefix() {
-        radixTrie4 = new RadixTrie<Integer>(32, true);
-
-        RadixTrie<Integer>.TrieNode res;
+        radixTrie4 = new RadixTrie<>(32, true);
 
         addIp4Addresses(radixTrie4);
 
         radixTrie4.remove(IP4_BYTES5, 24);
         radixTrie4.remove(IP4_BYTES4, 24);
 
-        res = radixTrie4.lookupWidestNegative(IP4_BYTES9, 24);
+        RadixTrie<Integer>.TrieNode res = radixTrie4.lookupWidestNegative(IP4_BYTES9, 24);
         assertTrue(Arrays.equals(res.prefix(), IP4_BYTES11));
         assertTrue(res.prefixLength() == 23);
         res = radixTrie4.lookupWidestNegative(IP4_BYTES10, 16);
@@ -224,13 +225,13 @@ public class RadixTrieTest {
     }
 
     /**
-     * Tests v6 CRD operations
+     * Tests v6 CRD operations.
      * It just makes sure v6 prefix lengths don't generate problems. Therefore it's not as thorough as v4.
      */
     @Test
     public void testIp6() {
         RadixTrie<Integer>.TrieNode res;
-        radixTrie6 = new RadixTrie<Integer>(128);
+        radixTrie6 = new RadixTrie<>(128);
 
         addIp6Addresses(radixTrie6);
 
@@ -257,11 +258,11 @@ public class RadixTrieTest {
     }
 
     /**
-     * Test {@link RadixTrie#removeAll}
+     * Test {@link RadixTrie#removeAll}.
      */
     @Test
     public void testRemoveAll() {
-        radixTrie4 = new RadixTrie<Integer>(32, true);
+        radixTrie4 = new RadixTrie<>(32, true);
         addIp4Addresses(radixTrie4);
 
         radixTrie4.removeAll();

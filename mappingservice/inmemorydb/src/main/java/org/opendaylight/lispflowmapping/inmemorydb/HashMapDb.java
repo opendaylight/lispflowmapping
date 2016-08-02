@@ -8,13 +8,12 @@
 
 package org.opendaylight.lispflowmapping.inmemorydb;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Date;
 import java.util.Map;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-
 import org.opendaylight.lispflowmapping.inmemorydb.radixtrie.RadixTrie;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -33,8 +32,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
     private static final Object TABLES = (Object) "tables";
     private static final int DEFAULT_RECORD_TIMEOUT = 240;   // SB registered mapping entries time out after 4 min
-    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<Object,
-            ConcurrentMap<String, Object>>();
+    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<>();
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private int recordTimeOut;
 
@@ -51,8 +49,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     }
 
     // IPv4 and IPv6 radix tries used for longest prefix matching
-    private RadixTrie<Object> ip4Trie = new RadixTrie<Object>(32, true);
-    private RadixTrie<Object> ip6Trie = new RadixTrie<Object>(128, true);
+    private RadixTrie<Object> ip4Trie = new RadixTrie<>(32, true);
+    private RadixTrie<Object> ip6Trie = new RadixTrie<>(128, true);
 
     public void tryAddToIpTrie(Object key) {
         if (key instanceof Eid) {
@@ -130,10 +128,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             }
             if (node == null) {
                 data = get(key);
-                return (data == null) ? null : new SimpleImmutableEntry<Eid, Map<String, ?>>((Eid)key, data);
+                return (data == null) ? null : new SimpleImmutableEntry<>((Eid)key, data);
             }
             data = get(node.data());
-            return (data == null) ? null : new SimpleImmutableEntry<Eid, Map<String, ?>>((Eid)node.data(), data);
+            return (data == null) ? null : new SimpleImmutableEntry<>((Eid)node.data(), data);
         }
         return null;
     }
@@ -146,6 +144,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             }
         }
     }
+
     @Override
     public Eid getWidestNegativePrefix(Eid key) {
         RadixTrie<Object>.TrieNode node = null;
