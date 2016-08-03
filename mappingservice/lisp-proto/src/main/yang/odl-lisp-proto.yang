@@ -241,6 +241,16 @@ module odl-lisp-proto {
         uses xtrSiteId;
     }
 
+    grouping map-request-metadata {
+        container source-rloc {
+            uses rloc-container;
+        }
+        description
+            "This is a collection of fields which are not present in the actual
+            mapping record defined in RFC 6830, but are used internally in
+            OpenDaylight";
+    }
+
     grouping MapRequest {
         reference "http://tools.ietf.org/html/rfc6830#section-6.1.2";
         leaf authoritative {
@@ -278,6 +288,7 @@ module odl-lisp-proto {
         container MapReply {
             uses mapping-record-container;
         }
+        uses map-request-metadata;
     }
 
     grouping MapReply {

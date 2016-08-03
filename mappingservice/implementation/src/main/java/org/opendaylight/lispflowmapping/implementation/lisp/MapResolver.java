@@ -8,10 +8,11 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -37,7 +38,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
@@ -45,9 +45,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 public class MapResolver implements IMapResolverAsync {
     protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
@@ -89,15 +86,18 @@ public class MapResolver implements IMapResolverAsync {
         replyBuilder.setProbe(false);
         replyBuilder.setSecurityEnabled(false);
         replyBuilder.setNonce(request.getNonce());
-        replyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        replyBuilder.setMappingRecordItem(new ArrayList<>());
+        List<ItrRloc> itrRlocs = request.getItrRloc();
+        final Rloc sourceRloc = request.getSourceRloc().getRloc();
+
         for (EidItem eidRecord : request.getEidItem()) {
             MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
                     eidRecord.getEid());
             if (mapping != null) {
-                List<ItrRloc> itrRlocs = request.getItrRloc();
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
-                        updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
+                        final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
+                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(), srcEid);
                     }
                     mapping = updateLocators(mapping, itrRlocs);
                 }
@@ -108,6 +108,29 @@ public class MapResolver implements IMapResolverAsync {
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
         requestHandler.handleMapReply(replyBuilder.build());
+    }
+
+    private Rloc resolveRloc(List<ItrRloc> itrRlocList, Rloc srcRloc) {
+        if (srcRloc == null) {
+            return itrRlocList.get(0).getRloc();
+        }
+        Rloc equalAfiRloc = null;
+
+        for (ItrRloc itrRloc : itrRlocList) {
+            final Rloc rloc = itrRloc.getRloc();
+            // return an Rloc equal to the source Rloc
+            if (rloc.equals(srcRloc)) return rloc;
+            // else return the first Rloc with identical AFI
+            if (equalAfiRloc == null && rloc.getAddressType().equals(srcRloc.getAddressType())) {
+                equalAfiRloc = rloc;
+            }
+        }
+        if (equalAfiRloc != null) {
+            return equalAfiRloc;
+        } else {
+            // if none of the above, return the first Rloc
+            return itrRlocList.get(0).getRloc();
+        }
     }
 
     private MappingRecord getNegativeMapping(Eid eid) {
