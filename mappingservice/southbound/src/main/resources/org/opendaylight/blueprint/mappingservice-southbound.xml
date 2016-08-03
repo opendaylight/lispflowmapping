@@ -10,8 +10,6 @@
     odl:type="pingpong" />
   <reference id="notificationPublishService"
     interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService" />
-  <reference id="entityOwnershipService"
-     interface="org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService" />
 
 
   <cm:property-placeholder persistent-id="org.opendaylight.lispflowmapping" update-strategy="none">
@@ -27,7 +25,6 @@
     init-method="init" destroy-method="close">
     <argument ref="dataBroker" />
     <argument ref="notificationPublishService" />
-    <argument ref="entityOwnershipService" />
     <property name="bindingAddress" value="${bindingAddressProperty}"/>
     <property name="mapRegisterCacheEnabled" value="${mapRegisterCacheEnabledProperty}"/>
     <property name="mapRegisterCacheTimeout" value="${mapRegisterCacheTimeoutProperty}"/>

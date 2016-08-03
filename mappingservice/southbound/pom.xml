@@ -19,10 +19,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mappingservice.clustering</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.inmemorydb</artifactId>
     </dependency>
     <dependency>
