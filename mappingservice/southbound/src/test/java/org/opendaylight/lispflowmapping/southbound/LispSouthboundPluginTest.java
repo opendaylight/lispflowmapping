@@ -28,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
@@ -74,8 +73,7 @@ public class LispSouthboundPluginTest {
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
-                Mockito.mock(NotificationPublishService.class),
-                Mockito.mock(EntityOwnershipService.class));
+                Mockito.mock(NotificationPublishService.class));
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
         channel = PowerMockito.mock(NioDatagramChannel.class);

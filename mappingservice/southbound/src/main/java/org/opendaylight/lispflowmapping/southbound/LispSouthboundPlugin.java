@@ -31,10 +31,7 @@ import java.util.concurrent.ThreadFactory;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
-import org.opendaylight.lispflowmapping.clustering.ClusterNodeModulSwitcherImpl;
-import org.opendaylight.lispflowmapping.clustering.api.ClusterNodeModuleSwitcher;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -46,7 +43,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterNodeModuleSwitcher {
+public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
 
     private volatile String bindingAddress;
@@ -54,7 +51,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private long mapRegisterCacheTimeout;
 
     private static Object startLock = new Object();
-    private final ClusterNodeModulSwitcherImpl clusterNodeModulSwitcher;
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
     private NotificationPublishService notificationPublishService;
@@ -71,12 +67,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private DataBroker dataBroker;
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
-            final NotificationPublishService notificationPublishService,
-            final EntityOwnershipService entityOwnershipService) {
+            final NotificationPublishService notificationPublishService) {
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
-        clusterNodeModulSwitcher = new ClusterNodeModulSwitcherImpl(entityOwnershipService);
-        clusterNodeModulSwitcher.setModule(this);
     }
 
     public void init() {
@@ -106,7 +99,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
             LOG.info("LISP (RFC6830) Southbound Plugin is up!");
         }
-        clusterNodeModulSwitcher.switchModuleByEntityOwnership();
     }
 
     private void start() {
@@ -283,28 +275,5 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         sbRpcRegistration.close();
         lispSouthboundHandler.close();
         unloadActions();
-    }
-
-    @Override
-    public void stopModule() {
-        if (lispSouthboundHandler != null) {
-            lispSouthboundHandler.setNotificationProvider(null);
-            lispSouthboundHandler.setIsReadFromChannelEnabled(false);
-        }
-        if (lispXtrSouthboundHandler != null) {
-            lispXtrSouthboundHandler.setNotificationProvider(null);
-        }
-    }
-
-    @Override
-    public void startModule() {
-        if (lispSouthboundHandler != null) {
-            lispSouthboundHandler.setNotificationProvider(notificationPublishService);
-            lispSouthboundHandler.restoreDaoFromDatastore();
-            lispSouthboundHandler.setIsReadFromChannelEnabled(true);
-        }
-        if (lispXtrSouthboundHandler != null) {
-            lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
-        }
     }
 }

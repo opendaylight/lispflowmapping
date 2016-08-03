@@ -110,7 +110,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
+            LOG.trace("Received xTR UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
                     msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
         }
         handlePacket(msg);
