@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import org.apache.commons.lang3.BooleanUtils;
@@ -14,6 +15,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
@@ -115,7 +117,7 @@ public final class MapRequestSerializer {
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    public MapRequest deserialize(ByteBuffer requestBuffer) {
+    public MapRequest deserialize(ByteBuffer requestBuffer, InetAddress sourceRloc) {
         try {
             MapRequestBuilder builder = new MapRequestBuilder();
 
@@ -161,6 +163,7 @@ public final class MapRequestSerializer {
                     LOG.warn("Couldn't deserialize Map-Reply encapsulated in Map-Request", re);
                 }
             }
+            builder.setSourceRloc(LispAddressUtil.addressBinaryFromInet(sourceRloc));
             return builder.build();
         } catch (RuntimeException re) {
             throw new LispSerializationException("Couldn't deserialize Map-Request (len="

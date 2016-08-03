@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -234,8 +235,10 @@ public class LispXtrSouthboundHandlerTest {
 
         byte[] result = Arrays.copyOfRange(buffer.array(),
                 headerLength, headerLength + lispPacketLength);
-        final InetSocketAddress address = new InetSocketAddress(PORT);
-        return new DatagramPacket(Unpooled.copiedBuffer(result), address);
+        final InetAddress inetAddress = null;
+        final InetSocketAddress recipient = new InetSocketAddress(PORT);
+        final InetSocketAddress sender = new InetSocketAddress(inetAddress, PORT);
+        return new DatagramPacket(Unpooled.copiedBuffer(result), recipient, sender);
     }
 
     private static MapRequestBuilder getDefaultMapRequestBuilder() {
