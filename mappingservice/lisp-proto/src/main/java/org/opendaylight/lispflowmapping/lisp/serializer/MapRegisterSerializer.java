@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -16,10 +14,8 @@ import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -125,7 +121,7 @@ public final class MapRegisterSerializer {
                 for (MappingRecordBuilder mrb : mrbs) {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
-                    mrb.setSourceRloc(getSourceRloc(sourceRloc));
+                    mrb.setSourceRloc(LispAddressUtil.addressBinaryFromInet(sourceRloc));
                     builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                             mrb.build()).build());
                 }
@@ -145,21 +141,6 @@ public final class MapRegisterSerializer {
             throw new LispSerializationException("Couldn't deserialize Map-Register (len="
                     + registerBuffer.capacity() + ")", re);
         }
-
-    }
-
-    private static IpAddressBinary getSourceRloc(InetAddress sourceRloc) {
-        if (sourceRloc == null) {
-            sourceRloc = Inet4Address.getLoopbackAddress();
-        }
-
-        if (sourceRloc instanceof Inet4Address) {
-            return new IpAddressBinary(new Ipv4AddressBinary(sourceRloc.getAddress()));
-        } else if (sourceRloc instanceof Inet6Address) {
-            return new IpAddressBinary(new Ipv6AddressBinary(sourceRloc.getAddress()));
-        }
-
-        return null;
     }
 
     private interface Flags {
