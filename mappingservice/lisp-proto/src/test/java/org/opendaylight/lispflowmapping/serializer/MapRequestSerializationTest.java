@@ -54,7 +54,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void deserialize__FlagsInFirstByte() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
-                + "00 01 01 02 03 04"));
+                + "00 01 01 02 03 04"), null);
         assertFalse(mr.isAuthoritative());
         assertTrue(mr.isMapDataPresent());
         assertTrue(mr.isProbe());
@@ -62,7 +62,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
-                + "00 01 01 02 03 04"));
+                + "00 01 01 02 03 04"), null);
         assertTrue(mr.isAuthoritative());
         assertFalse(mr.isMapDataPresent());
         assertFalse(mr.isProbe());
@@ -70,7 +70,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("1C 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
-                + "00 01 01 02 03 04"));
+                + "00 01 01 02 03 04"), null);
         assertTrue(mr.isAuthoritative());
         assertTrue(mr.isMapDataPresent());
         assertFalse(mr.isProbe());
@@ -83,7 +83,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "7f 5b 41 7c 77 3c 00 01 01 01 01 01 00 01 c0 a8 "
                 + "38 66 00 20 00 01 01 02 03 04 00 00 00 0a 01 20 "
                 + "10 00 00 00 00 01 01 01 01 01 01 64 ff 00 00 05 "
-                + "00 01 c0 a8 38 66"));
+                + "00 01 c0 a8 38 66"), null);
         assertArrayEquals(new byte[] {1, 1, 1, 1},
                 ((Ipv4Binary) mr.getSourceEid().getEid().getAddress()).getIpv4Binary().getValue());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
@@ -140,13 +140,13 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void deserialize__FlagsInSecondByte() throws Exception {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
-                + "00 01 01 02 03 04"));
+                + "00 01 01 02 03 04"), null);
         assertTrue(mr.isPitr());
         assertFalse(mr.isSmrInvoked());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 40 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
-                + "00 01 01 02 03 04"));
+                + "00 01 01 02 03 04"), null);
         assertFalse(mr.isPitr());
         assertTrue(mr.isSmrInvoked());
     }
@@ -156,7 +156,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 "
                 + "01 " // single record
                 + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a "
-                + "00 20 00 01 01 02 03 04"));
+                + "00 20 00 01 01 02 03 04"), null);
 
         assertEquals(1, mr.getEidItem().size());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
@@ -174,7 +174,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "03 04 00 06 00 01 0a 0a "
                 + "0a 0a"
 
-        ));
+        ), null);
 
         assertEquals(1, mr.getEidItem().size());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
@@ -213,7 +213,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "02 " // 2 records
                 + "3d 8d 2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a " //
                 + "00 20 00 01 01 02 03 04 " //
-                + "00 80 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05"));
+                + "00 80 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05"), null);
 
         assertEquals(2, mr.getEidItem().size());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
@@ -238,7 +238,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 " // This means 1 ITR-RLOC
                 + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
                 + "00 01 c0 a8 88 0a " // IPv4 (ITR-RLOC #1 of 1)
-                + "00 20 00 01 01 02 03 04"));
+                + "00 20 00 01 01 02 03 04"), null);
 
         assertEquals(1, mr.getItrRloc().size());
         assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
@@ -275,7 +275,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 // IPv6 (ITR-RLOC #2 of 3)
                 + "00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 " //
                 + "00 01 11 22 34 56 " // IPv4 (ITR-RLOC #3 of 3)
-                + "00 20 00 01 01 02 03 04"));
+                + "00 20 00 01 01 02 03 04"), null);
 
         assertEquals(3, mr.getItrRloc().size());
         assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
