@@ -48,7 +48,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
-            handleMapRequest(inBuffer);
+            handleMapRequest(inBuffer, packet.sender().getAddress());
         } else if (lispType ==  MessageType.MapReply){
             LOG.trace("Received packet of type MapReply for xTR");
             handleMapReply(inBuffer);
@@ -57,9 +57,9 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         }
     }
 
-    private void handleMapRequest(ByteBuffer inBuffer) {
+    private void handleMapRequest(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
-            MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
+            MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer, sourceAddress);
             InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");
