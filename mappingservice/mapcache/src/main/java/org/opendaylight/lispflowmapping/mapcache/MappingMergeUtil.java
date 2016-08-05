@@ -152,28 +152,29 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
-    public static MappingRecord mergeXtrIdMappings(List<Object> records, List<XtrId> expiredMappings,
+    public static ExtendedMappingRecord mergeXtrIdMappings(List<Object> extendedRecords, List<XtrId> expiredMappings,
             Set<IpAddressBinary> sourceRlocs) {
         MappingRecordBuilder mrb = null;
         XtrId xtrId = null;
         Long timestamp = Long.MAX_VALUE;
 
-        for (int i = 0; i < records.size(); i++) {
-            MappingRecord record = (MappingRecord) records.get(i);
+        for (int i = 0; i < extendedRecords.size(); i++) {
+            ExtendedMappingRecord extendedRecord = (ExtendedMappingRecord) extendedRecords.get(i);
+            MappingRecord record = extendedRecord.getRecord();
 
             // Skip expired mappings and add them to a list to be returned to the caller
-            if (timestampIsExpired(record.getTimestamp())) {
+            if (timestampIsExpired(extendedRecord.getTimestamp())) {
                 expiredMappings.add(record.getXtrId());
                 continue;
             }
 
             if (mrb == null) {
-                mrb = new MappingRecordBuilder((MappingRecord) records.get(i));
+                mrb = new MappingRecordBuilder(record);
             }
 
             // Save the oldest valid timestamp
-            if (record.getTimestamp() < timestamp) {
-                timestamp = record.getTimestamp();
+            if (extendedRecord.getTimestamp().getTime() < timestamp) {
+                timestamp = extendedRecord.getTimestamp().getTime();
                 xtrId = record.getXtrId();
             }
 
@@ -190,12 +191,11 @@ public final class MappingMergeUtil {
             return null;
         }
         mrb.setXtrId(xtrId);
-        mrb.setTimestamp(timestamp);
 
-        return mrb.build();
+        return new ExtendedMappingRecord(mrb.build(), new Date(timestamp));
     }
 
-    public static boolean mappingIsExpired(MappingRecord mapping) {
+    public static boolean mappingIsExpired(ExtendedMappingRecord mapping) {
         Preconditions.checkNotNull(mapping, "mapping should not be null!");
         if (mapping.getTimestamp() != null) {
             return timestampIsExpired(mapping.getTimestamp());
