@@ -12,8 +12,6 @@
     interface="org.opendaylight.controller.md.sal.binding.api.NotificationService" />
   <reference id="lispDAO"
     interface="org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO" />
-  <reference id="entityOwnershipService"
-     interface="org.opendaylight.controller.md.sal.common.api.clustering.EntityOwnershipService" />
 
   <odl:rpc-service id="odlLispSbService"
     interface="org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService" />
@@ -44,7 +42,6 @@
     <argument ref="notificationService" />
     <argument ref="mappingService" />
     <argument ref="odlLispSbService" />
-    <argument ref="entityOwnershipService" />
   </bean>
   <service ref="lispMappingService"
     interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping"
