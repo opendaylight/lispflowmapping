@@ -406,15 +406,16 @@ public class MappingMergeUtilTest {
      */
     @Test
     public void mergeXtrIdMappingsTest_verifyExpiredMappings() {
-        MappingRecord expiredMappingRecord1 = getDefaultMappingRecordBuilder().setTimestamp(1L).build();
-        MappingRecord expiredMappingRecord2 = getDefaultMappingRecordBuilder()
-                .setXtrId(XTR_ID_2)
-                .setTimestamp(1L).build();
+        ExtendedMappingRecord expiredRecord1 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        expiredRecord1.setTimestamp(new Date(1L));
+        ExtendedMappingRecord expiredRecord2 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+                .setXtrId(XTR_ID_2).build());
+        expiredRecord2.setTimestamp(new Date(1L));
         List<XtrId> expiredMappings = Lists.newArrayList();
-        List<Object> mappingRecords =
-                Lists.newArrayList(expiredMappingRecord1, expiredMappingRecord2);
+        List<Object> records =
+                Lists.newArrayList(expiredRecord1, expiredRecord2);
 
-        assertNull(MappingMergeUtil.mergeXtrIdMappings(mappingRecords, expiredMappings, null));
+        assertNull(MappingMergeUtil.mergeXtrIdMappings(records, expiredMappings, null));
         assertEquals(2, expiredMappings.size());
         assertTrue(expiredMappings.contains(XTR_ID_1));
         assertTrue(expiredMappings.contains(XTR_ID_2));
@@ -430,26 +431,27 @@ public class MappingMergeUtilTest {
         final long timestamp_2 = timestamp - 300L; // oldest mapping
         final long timestamp_3 = timestamp - 100L;
 
-        final MappingRecord expiredMappingRecord_1 = getDefaultMappingRecordBuilder()
-                .setTimestamp(timestamp_1).build();
-        final MappingRecord expiredMappingRecord_2 = getDefaultMappingRecordBuilder()
+        ExtendedMappingRecord expiredRecord1 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        expiredRecord1.setTimestamp(new Date(timestamp_1));
+        ExtendedMappingRecord expiredRecord2 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
                 .setSourceRloc(IPV4_SOURCE_RLOC_2)
-                .setXtrId(XTR_ID_2)
-                .setTimestamp(timestamp_2).build();
-        final MappingRecord expiredMappingRecord_3 = getDefaultMappingRecordBuilder()
+                .setXtrId(XTR_ID_2).build());
+        expiredRecord2.setTimestamp(new Date(timestamp_2));
+        ExtendedMappingRecord expiredRecord3 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
                 .setSourceRloc(IPV4_SOURCE_RLOC_3)
-                .setXtrId(XTR_ID_3)
-                .setTimestamp(timestamp_3).build();
+                .setXtrId(XTR_ID_3).build());
+        expiredRecord3.setTimestamp(new Date(timestamp_3));
 
         Set<IpAddressBinary> sourceRlocs = Sets.newHashSet();
         final List<XtrId> expiredMappings = Lists.newArrayList();
         final List<Object> mappingRecords =
-                Lists.newArrayList(expiredMappingRecord_1, expiredMappingRecord_2, expiredMappingRecord_3);
+                Lists.newArrayList(expiredRecord1, expiredRecord2, expiredRecord3);
 
         // result
-        MappingRecord result = MappingMergeUtil.mergeXtrIdMappings(mappingRecords, expiredMappings, sourceRlocs);
-        assertEquals(timestamp_2, (long) result.getTimestamp());
-        assertEquals(XTR_ID_2, result.getXtrId());
+        ExtendedMappingRecord result = MappingMergeUtil.mergeXtrIdMappings(
+                mappingRecords, expiredMappings, sourceRlocs);
+        assertEquals(timestamp_2, (long) result.getTimestamp().getTime());
+        assertEquals(XTR_ID_2, result.getRecord().getXtrId());
 
         assertTrue(sourceRlocs.size() == 3);
         assertTrue(sourceRlocs.contains(IPV4_SOURCE_RLOC_1));
@@ -465,11 +467,13 @@ public class MappingMergeUtilTest {
     @Test
     public void mappingIsExpiredTest() {
         long timestamp = new Date().getTime();
-        MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        assertTrue(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder
-                .setTimestamp(timestamp - (REGISTRATION_VALIDITY + 1L)).build()));
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder.setTimestamp(timestamp).build()));
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder.setTimestamp(null).build()));
+        ExtendedMappingRecord emr = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        emr.setTimestamp(new Date(timestamp - (REGISTRATION_VALIDITY + 1L)));
+        assertTrue(MappingMergeUtil.mappingIsExpired(emr));
+        emr.setTimestamp(new Date(timestamp));
+        assertFalse(MappingMergeUtil.mappingIsExpired(emr));
+        emr.setTimestamp(null);
+        assertFalse(MappingMergeUtil.mappingIsExpired(emr));
     }
 
     /**

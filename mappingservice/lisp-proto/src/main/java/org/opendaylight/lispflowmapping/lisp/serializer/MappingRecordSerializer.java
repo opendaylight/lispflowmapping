@@ -60,8 +60,6 @@ public final class MappingRecordSerializer {
             builder.getLocatorRecord().add(LocatorRecordSerializer.getInstance().deserialize(buffer));
         }
 
-        builder.setTimestamp(System.currentTimeMillis());
-
         return builder;
     }
 
