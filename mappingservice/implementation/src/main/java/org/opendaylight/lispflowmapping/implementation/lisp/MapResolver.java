@@ -8,10 +8,11 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -21,14 +22,21 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6Afi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6BinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -37,7 +45,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
@@ -45,9 +52,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 public class MapResolver implements IMapResolverAsync {
     protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
@@ -89,15 +93,18 @@ public class MapResolver implements IMapResolverAsync {
         replyBuilder.setProbe(false);
         replyBuilder.setSecurityEnabled(false);
         replyBuilder.setNonce(request.getNonce());
-        replyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        replyBuilder.setMappingRecordItem(new ArrayList<>());
+        List<ItrRloc> itrRlocs = request.getItrRloc();
+        final IpAddressBinary sourceRloc = request.getSourceRloc();
+
         for (EidItem eidRecord : request.getEidItem()) {
             MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
                     eidRecord.getEid());
             if (mapping != null) {
-                List<ItrRloc> itrRlocs = request.getItrRloc();
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
-                        updateSubscribers(itrRlocs.get(0).getRloc(), eidRecord.getEid(), mapping.getEid(), srcEid);
+                        final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
+                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(), srcEid);
                     }
                     mapping = updateLocators(mapping, itrRlocs);
                 }
@@ -108,6 +115,56 @@ public class MapResolver implements IMapResolverAsync {
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
         requestHandler.handleMapReply(replyBuilder.build());
+    }
+
+    private static boolean isEqualIpVersion(IpAddressBinary srcRloc, Rloc rloc) {
+        if (srcRloc.getIpv4AddressBinary() != null) {
+            if (rloc.getAddressType() == Ipv4Afi.class ||
+                    rloc.getAddressType() == Ipv4BinaryAfi.class ||
+                    rloc.getAddressType() == Ipv4PrefixAfi.class ||
+                    rloc.getAddressType() == Ipv4PrefixBinaryAfi.class) {
+                return true;
+            }
+        } else if (rloc.getAddressType() == Ipv6Afi.class ||
+                rloc.getAddressType() == Ipv6BinaryAfi.class ||
+                rloc.getAddressType() == Ipv6PrefixAfi.class ||
+                rloc.getAddressType() == Ipv6PrefixBinaryAfi.class) {
+            return true;
+        }
+        return false;
+    }
+
+    private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
+        if (srcRloc == null) {
+            return itrRlocList.get(0).getRloc();
+        }
+        byte[] srcRlocByte;
+        if (srcRloc.getIpv4AddressBinary() != null) {
+            srcRlocByte = srcRloc.getIpv4AddressBinary().getValue();
+        } else {
+            srcRlocByte = srcRloc.getIpv6AddressBinary().getValue();
+        }
+
+        Rloc equalIpvRloc = null;
+        for (ItrRloc itrRloc : itrRlocList) {
+            final Rloc rloc = itrRloc.getRloc();
+            final byte[] itrRlocByte = LispAddressUtil.ipAddressToByteArray(rloc.getAddress());
+
+            // return an Rloc equal to the source Rloc
+            if (itrRlocByte != null && LispAddressUtil.compareIpAddressByteArrays(srcRlocByte, itrRlocByte) == 0) {
+                return rloc;
+            }
+            // else lookup the first Rloc with identical Ip version
+            if (equalIpvRloc == null && isEqualIpVersion(srcRloc, rloc)) {
+                equalIpvRloc = rloc;
+            }
+        }
+        if (equalIpvRloc != null) {
+            return equalIpvRloc;
+        } else {
+            // if none of the above, return the first Rloc
+            return itrRlocList.get(0).getRloc();
+        }
     }
 
     private MappingRecord getNegativeMapping(Eid eid) {

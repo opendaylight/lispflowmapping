@@ -114,7 +114,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             handleEncapsulatedControlMessage(inBuffer, msg.sender().getAddress());
         } else if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type Map-Request");
-            handleMapRequest(inBuffer, msg.sender().getPort());
+            handleMapRequest(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else if (lispType == MessageType.MapRegister) {
             LOG.trace("Received packet of type Map-Register");
             handleMapRegister(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
@@ -131,16 +131,16 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
-            handleMapRequest(inBuffer, extractEncapsulatedSourcePort(inBuffer));
+            handleMapRequest(inBuffer, sourceAddress, extractEncapsulatedSourcePort(inBuffer));
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Request (len="
                     + inBuffer.capacity() + ")", re);
         }
     }
 
-    private void handleMapRequest(ByteBuffer inBuffer, int port) {
+    private void handleMapRequest(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
-            MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer);
+            MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer, sourceAddress);
             InetAddress finalSourceAddress = MapRequestUtil.selectItrRloc(request);
             if (finalSourceAddress == null) {
                 throw new LispMalformedPacketException("Couldn't deserialize Map-Request, no ITR Rloc found!");

@@ -64,6 +64,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
@@ -804,6 +805,26 @@ public final class LispAddressUtil {
         rb.setAddressType(converted.getLeft());
         rb.setAddress(converted.getRight());
         return rb.build();
+    }
+
+    /**
+     * Converts the {@link InetAddress} into Ipv4 or Ipv6 {@link IpAddressBinary}. If null parameter is passed, method
+     * returns the Ipv4 loopback address (127.0.0.1).
+     *
+     * @param inetAddress Any Ipv4 or Ipv6 InetAddress.
+     * @return The converted Ipv4 or Ipv6 IpAddressBinary, or Ipv4 loopback address (127.0.0.1) if null is passed.
+     */
+    public static IpAddressBinary addressBinaryFromInet(InetAddress inetAddress) {
+        if (inetAddress == null) {
+            inetAddress = Inet4Address.getLoopbackAddress();
+        }
+
+        if (inetAddress instanceof Inet4Address) {
+            return new IpAddressBinary(new Ipv4AddressBinary(inetAddress.getAddress()));
+        } else if (inetAddress instanceof Inet6Address) {
+            return new IpAddressBinary(new Ipv6AddressBinary(inetAddress.getAddress()));
+        }
+        return null;
     }
 
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105

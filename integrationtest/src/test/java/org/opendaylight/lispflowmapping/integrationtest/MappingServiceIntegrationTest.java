@@ -826,7 +826,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendPacket(mapRegisterPacketWithoutNotify);
 
         ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
-        MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf);
+        MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf, null);
         assertTrue(smr.isSmr());
         Eid sourceEid = smr.getSourceEid().getEid();
         assertTrue(LispAddressUtil.asIpv4Eid("153.16.254.1").equals(sourceEid));
@@ -2071,7 +2071,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
         return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(
-                datagramSocket, 30000).getData()));
+                datagramSocket, 30000).getData()), null);
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {

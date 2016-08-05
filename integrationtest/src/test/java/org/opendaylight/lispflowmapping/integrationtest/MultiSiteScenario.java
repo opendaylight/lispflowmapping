@@ -442,7 +442,7 @@ class MultiSiteScenario {
     private List<MapRequest> translateBuffersToMapRequest(byte[][] buffers) {
         final List<MapRequest> mapRequests = new ArrayList<>();
         for (byte[] buffer : buffers) {
-            final MapRequest mapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buffer));
+            final MapRequest mapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buffer), null);
             assertNotNull(mapRequest);
             mapRequests.add(mapRequest);
         }
