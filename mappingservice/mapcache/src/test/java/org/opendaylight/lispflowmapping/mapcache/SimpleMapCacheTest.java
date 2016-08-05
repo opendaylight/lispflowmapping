@@ -17,6 +17,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -42,7 +43,9 @@ public class SimpleMapCacheTest {
 
     private static ILispDAO tableMock;
     private static ILispDAO xtrIdDaoMock;
+    private static ILispDAO xtrIdTableDaoMock;
     private static MappingRecord mappingRecordMock;
+    private static ExtendedMappingRecord extendedMappingRecordMock;
     private static ILispDAO daoMock;
     private static SimpleMapCache simpleMapCache;
 
@@ -80,7 +83,9 @@ public class SimpleMapCacheTest {
         daoMock = Mockito.mock(ILispDAO.class, "dao");
         tableMock = Mockito.mock(ILispDAO.class);
         xtrIdDaoMock = Mockito.mock(ILispDAO.class);
+        xtrIdTableDaoMock = Mockito.mock(ILispDAO.class);
         mappingRecordMock = Mockito.mock(MappingRecord.class);
+        extendedMappingRecordMock = Mockito.mock(ExtendedMappingRecord.class);
         simpleMapCache = new SimpleMapCache(daoMock);
     }
 
@@ -274,23 +279,25 @@ public class SimpleMapCacheTest {
         final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
                 NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
-        final MappingRecord expiredMappingRecord = getDefaultMappingRecordBuilder().setTimestamp(1L).build(); // expired
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build(); // not expired
+        final ExtendedMappingRecord expiredMappingRecord = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+                .build());
+        expiredMappingRecord.setTimestamp(new Date(1L)); //expired
+        final ExtendedMappingRecord mappingRecord = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);
         Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
         Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4_PREFIX_DST, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
-        Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD))
+        Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.EXT_RECORD))
                 .thenReturn(expiredMappingRecord) // first invocation
                 .thenReturn(mappingRecord);       // second invocation
 
         // with expired mapping record
         assertNull(simpleMapCache.getMapping(null, EID_IPV4_PREFIX_DST, XTR_ID));
-        Mockito.verify(xtrIdDaoMock, Mockito.atMost(1)).removeSpecific(XTR_ID, SubKeys.RECORD);
+        Mockito.verify(xtrIdDaoMock, Mockito.atMost(1)).removeSpecific(XTR_ID, SubKeys.EXT_RECORD);
 
         // with non-expired mapping record
-        assertEquals(mappingRecord, simpleMapCache.getMapping(null, EID_IPV4_PREFIX_DST, XTR_ID));
+        assertEquals(mappingRecord.getRecord(), simpleMapCache.getMapping(null, EID_IPV4_PREFIX_DST, XTR_ID));
     }
 
     /**
@@ -403,6 +410,12 @@ public class SimpleMapCacheTest {
         final Map<String, Object> entryMock = Mockito.mock(Map.class);
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBest(NORMALIZED_EID_IPV4)).thenReturn(entryMock);
+        Mockito.when(entryMock.get(SubKeys.RECORD)).thenReturn(mappingRecordMock);
+        Mockito.when(entryMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
+        Mockito.when(xtrIdDaoMock.getSpecific(EID_IPV4, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdTableDaoMock);
+        Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
+        Mockito.when(xtrIdTableDaoMock.getSpecific(new XtrId(XTR_ID), SubKeys.EXT_RECORD))
+            .thenReturn(extendedMappingRecordMock);
 
         simpleMapCache.updateMappingRegistration(EID_IPV4, null);
         Mockito.verify(entryMock).put(Mockito.eq(SubKeys.REGDATE), Mockito.any(Date.class));
@@ -481,19 +494,21 @@ public class SimpleMapCacheTest {
     @Test
     @SuppressWarnings("unchecked")
     public void addMappingTest_mappingMergeTrue() throws Exception {
-        Mockito.when(mappingRecordMock.getTimestamp()).thenReturn(System.currentTimeMillis());
+        final Date timestamp = new Date(System.currentTimeMillis());
         Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
 
         PowerMockito.mockStatic(MappingMergeUtil.class);
         PowerMockito.when(MappingMergeUtil.mergeXtrIdMappings(Mockito.anyList(), Mockito.anyList(), Mockito.anySet()))
-                .thenReturn(getDefaultMappingRecordBuilder().build());
+                .thenReturn(new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build(), timestamp));
 
+        final ArgumentCaptor<MappingEntry> captor = ArgumentCaptor.forClass(MappingEntry.class);
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, true);
-        Mockito.verify(xtrIdDaoMock).put(new XtrId(XTR_ID), new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
+        Mockito.verify(xtrIdDaoMock).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
+        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
         Mockito.verify(tableMock)
-                .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, new Date(Long.MAX_VALUE)));
+                .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, timestamp));
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, getDefaultMappingRecordBuilder().build()));
     }
@@ -503,16 +518,17 @@ public class SimpleMapCacheTest {
      */
     @Test
     public void addMappingTest_mappingMergeFalse() throws Exception {
-        Mockito.when(mappingRecordMock.getTimestamp()).thenReturn(Long.MAX_VALUE);
+        Date timestamp = new Date(System.currentTimeMillis());
+        Mockito.when(mappingRecordMock.getTimestamp()).thenReturn(timestamp.getTime());
         Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(mappingRecordMock.getXtrId()).thenReturn(new XtrId(XTR_ID));
 
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, false);
-        Mockito.verify(xtrIdDaoMock).put(new XtrId(XTR_ID), new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
+        final ArgumentCaptor<MappingEntry> captor = ArgumentCaptor.forClass(MappingEntry.class);
+        Mockito.verify(xtrIdDaoMock).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
+        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
 
-        Mockito.verify(tableMock)
-                .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, new Date(Long.MAX_VALUE)));
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
     }
