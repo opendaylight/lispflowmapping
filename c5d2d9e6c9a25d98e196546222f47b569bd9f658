@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_0145cd6f",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-08-08T15:34:58Z",
+      "side": 1,
+      "message": "Guess this can be safely removed.",
+      "range": {
+        "startLine": 176,
+        "startChar": 0,
+        "endLine": 176,
+        "endChar": 35
+      },
+      "revId": "c5d2d9e6c9a25d98e196546222f47b569bd9f658",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
