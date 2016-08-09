@@ -24,9 +24,6 @@ public class LispSouthboundStatsTest {
 
     /**
      * Tests {@link LispSouthboundStats#resetStats} method.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
      */
 
     @Test
@@ -58,9 +55,6 @@ public class LispSouthboundStatsTest {
 
     /**
      * Tests {@link LispSouthboundStats#incrementRx} method.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
      */
     @Test
     public void incrementRxTest_withMaxValue() throws NoSuchFieldException, IllegalAccessException {

@@ -25,11 +25,9 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
-        .MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list
-        .MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregistermessage.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregistermessage.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReply;
@@ -61,9 +59,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapNotify} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapNotifyTest_inputNotNull() throws ExecutionException, InterruptedException {
@@ -83,9 +78,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapNotify} method with null input.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapNotifyTest_nullInput() throws ExecutionException, InterruptedException {
@@ -97,9 +89,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapReply} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapReplyTest_inputNotNull() throws ExecutionException, InterruptedException {
@@ -119,9 +108,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapReply} method with null input.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapReplyTest_nullInput() throws ExecutionException, InterruptedException {
@@ -133,9 +119,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapRequest} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapRequestTest_inputNotNull() throws ExecutionException, InterruptedException {
@@ -155,9 +138,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapRequest} method with null input.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapRequestTest_nullInput() throws ExecutionException, InterruptedException {
@@ -169,9 +149,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapRegister} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapRegisterTest_inputNotNull() throws ExecutionException, InterruptedException {
@@ -191,9 +168,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapRegister} method with null input.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void sendMapRegisterTest_nullInput() throws ExecutionException, InterruptedException {
@@ -205,9 +179,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#getStats} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getStatsTest() throws ExecutionException, InterruptedException {
@@ -230,9 +201,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#getStats} method with null stats.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getStatsTest_withNullStats() throws ExecutionException, InterruptedException {
@@ -249,9 +217,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#resetStats} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void resetStatsTest() throws ExecutionException, InterruptedException {
@@ -268,9 +233,6 @@ public class LispSouthboundRpcTest {
 
     /**
      * Tests {@link LispSouthboundRPC#resetStats} method with null stats.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void resetStatsTest_withNullStats() throws ExecutionException, InterruptedException {

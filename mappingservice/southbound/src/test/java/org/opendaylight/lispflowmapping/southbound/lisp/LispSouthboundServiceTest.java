@@ -13,25 +13,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data1;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data2;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.data3;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA1;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA2;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA3;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.KEY_ID;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.NONCE;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.SITE_ID;
+import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.XTR_ID;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.joinArrays;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.keyId;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.nonce;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.siteId;
-import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.xTRId;
-import io.netty.channel.socket.DatagramPacket;
 
+import io.netty.channel.socket.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import junitx.framework.ArrayAssert;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.jmock.api.Invocation;
 import org.junit.Before;
@@ -77,13 +75,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValueBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
 public class LispSouthboundServiceTest extends BaseTestCase {
@@ -128,8 +126,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         smc = Mockito.mock(SimpleMapCache.class);
         Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("10.10.10.10/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid
-                ("2610:d0:ffff:192:0:0:0:1/128"))))
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+                "2610:d0:ffff:192:0:0:0:1/128"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
         Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
@@ -138,8 +136,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
         Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asMacEid("0a:0b:0c:0d:0e:0f"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid
-                ("f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
+        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+                "f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
         Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
@@ -415,21 +413,21 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     /**
-     * Tests whether handling of map-register message will generate mapping-keep-alive notification
+     * Tests whether handling of map-register message will generate mapping-keep-alive notification.
      */
     @Test
     public void mapRegister_isMappingKeepAliveAndMapNotifyGenerated() throws InterruptedException,
             UnknownHostException {
         byte[] eidPrefixAfi = new byte[] {
-                0x00, 0x01                  //eid-prefix-afi
+            0x00, 0x01                  //eid-prefix-afi
         };
 
         byte[] eidPrefix = new byte[] {
-                0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
+            0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
         };
 
-        NotificationPublishService notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider
-                (testedLispService);
+        NotificationPublishService notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider(
+                testedLispService);
 
         //send stream of byte -> map register message
         final MapRegisterCacheKey cacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
@@ -448,90 +446,90 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     void mapRegisterInvocationForCacheTest(byte[] eidPrefixAfi, byte[] eidPrefix) {
-        mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.authenticationData);
+        mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.AUTH_DATA);
     }
 
     void mapRegisterInvocationForCacheTest(byte[] eidPrefixAfi, byte[] eidPrefix, byte[] authenticationData) {
-        final byte[] mapRegisterMessage = MapRegisterCacheTestUtil.joinArrays(data1, nonce, keyId,
-                authenticationData, data2, eidPrefixAfi, eidPrefix, data3, xTRId, siteId);
+        final byte[] mapRegisterMessage = MapRegisterCacheTestUtil.joinArrays(DATA1, NONCE, KEY_ID,
+                authenticationData, DATA2, eidPrefixAfi, eidPrefix, DATA3, XTR_ID, SITE_ID);
         handlePacket(mapRegisterMessage);
     }
 
     /**
-     * It tests whether map register message is stored to local cache with Ipv4 EidPrefix
+     * It tests whether map register message is stored to local cache with Ipv4 EidPrefix.
      */
     @Test
     public void mapRegister_cacheWithEidPrefixIpv4Test() throws InterruptedException {
         byte[] eidPrefixAfi = new byte[] {
-                0x00, 0x01                  //eid-prefix-afi
+            0x00, 0x01                  //eid-prefix-afi
         };
 
         byte[] eidPrefix = new byte[] {
-                0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
+            0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
         };
 
-        cacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.authenticationData);
+        cacheTest(eidPrefixAfi, eidPrefix, MapRegisterCacheTestUtil.AUTH_DATA);
     }
 
     /**
-     * It tests whether map register message is stored to local cache with Ipv6 EidPrefix
+     * It tests whether map register message is stored to local cache with Ipv6 EidPrefix.
      */
     @Test
     public void mapRegister_cacheWithEidPrefixIpv6Test() throws InterruptedException {
         byte[] eidPrefixAfi = new byte[] {
-                0x00, 0x02                  //eid-prefix-afi
+            0x00, 0x02                  //eid-prefix-afi
         };
 
         byte[] eidPrefix = new byte[] {
-                0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
-                ,0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
-                ,0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
-                ,0x0f, 0x0f, 0x0f, 0x0f     //ipv6 address
+            0x0f, 0x0f, 0x0f, 0x0f,     //ipv6 address
+            0x0f, 0x0f, 0x0f, 0x0f,     //ipv6 address
+            0x0f, 0x0f, 0x0f, 0x0f,     //ipv6 address
+            0x0f, 0x0f, 0x0f, 0x0f      //ipv6 address
         };
 
         byte[] authenticationData = new byte[]{
-                0x00, 0x14
-                ,0x41,(byte)0x83,0x13,0x7C
-                ,0x48,(byte)0xEE,0x75,(byte)0x9A
-                ,0x4,(byte)0x8C,0x46,(byte)0xA6
-                ,0x1B,0x13,(byte)0xC8,0x4D
-                ,(byte)0xA1,0x17,0x53,(byte)0xC3
+            0x00, 0x14,
+            0x41,(byte)0x83,0x13,0x7C,
+            0x48,(byte)0xEE,0x75,(byte)0x9A,
+            0x4,(byte)0x8C,0x46,(byte)0xA6,
+            0x1B,0x13,(byte)0xC8,0x4D,
+            (byte)0xA1,0x17,0x53,(byte)0xC3
         };
 
         cacheTest(eidPrefixAfi, eidPrefix, authenticationData);
     }
 
     /**
-     * It tests whether map register message is stored to local cache with Mac 48bits EidPrefix
+     * It tests whether map register message is stored to local cache with Mac 48bits EidPrefix.
      */
     @Test
     public void mapRegister_cacheWithEidPrefixMac48Test() throws InterruptedException {
         byte[] eidPrefixAfi = new byte[] {
-                0x40, 0x05                  //eid-prefix-afi
+            0x40, 0x05                  //eid-prefix-afi
         };
 
         byte[] eidPrefix = new byte[] {
-                0x0a, 0x0b, 0x0c, 0x0d     //mac address
-                ,0x0e, 0x0f                 //mac address
+            0x0a, 0x0b, 0x0c, 0x0d,     //mac address
+            0x0e, 0x0f                 //mac address
         };
         byte[] authenticationData = new byte[]{
-                0x00, 0x14
-                ,(byte)0xB2,(byte)0x8E,0x6,(byte)0x9D
-                ,0x61,(byte)0xD8,0xC,0x24
-                ,(byte)0x80,0x61,0x5A,0x20
-                ,0xD,0x50,0x5E,(byte)0xAE
-                ,0x47,(byte)0xF7,(byte)0x86,0x36
+            0x00, 0x14,
+            (byte)0xB2,(byte)0x8E,0x6,(byte)0x9D,
+            0x61,(byte)0xD8,0xC,0x24,
+            (byte)0x80,0x61,0x5A,0x20,
+            0xD,0x50,0x5E,(byte)0xAE,
+            0x47,(byte)0xF7,(byte)0x86,0x36
         };
         cacheTest(eidPrefixAfi, eidPrefix, authenticationData);
     }
 
     /**
-     * It tests whether map register message is stored to local cache with Lcaf EidPrefix (inside Ipv4)
+     * It tests whether map register message is stored to local cache with Lcaf EidPrefix (inside Ipv4).
      */
     @Test
     public void mapRegister_cacheWithEidPrefixLcafTest() throws InterruptedException {
         byte[] eidPrefixAfi = new byte[] {
-                0x40, 0x03                  //eid-prefix-afi
+            0x40, 0x03                  //eid-prefix-afi
         };
 
         //following lcaf prefixed variables are defined according to https://tools.ietf
@@ -549,12 +547,12 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 lcafAfi, lcafAddress);
 
         byte[] authenticationData = new byte[]{
-                0x00, 0x14                 //authentication data length
-                ,0x68, 0x1d, (byte) 0x9e, 0x6e    //auth data
-                ,0x5e, 0x32, (byte) 0x88, 0x1a    //auth data
-                ,(byte) 0xae, 0x6b, (byte) 0xe3, 0x40    //auth data
-                ,0x30, (byte) 0x0b, (byte) 0xb6, (byte) 0xa0    //auth data
-                ,0x71, (byte) 0xf4, (byte) 0x8c, 0x5f    //auth data
+            0x00, 0x14,                 //authentication data length
+            0x68, 0x1d, (byte) 0x9e, 0x6e,    //auth data
+            0x5e, 0x32, (byte) 0x88, 0x1a,    //auth data
+            (byte) 0xae, 0x6b, (byte) 0xe3, 0x40,    //auth data
+            0x30, (byte) 0x0b, (byte) 0xb6, (byte) 0xa0,    //auth data
+            0x71, (byte) 0xf4, (byte) 0x8c, 0x5f    //auth data
         };
 
 
@@ -562,9 +560,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     /**
-     * It tests whether map register message is stored to local cache
-     * @param eidPrefixAfi
-     * @param eidPrefix
+     * It tests whether map register message is stored to local cache.
      */
     public void cacheTest(byte[] eidPrefixAfi, byte[] eidPrefix, byte[] authenticationData) throws
             InterruptedException {
@@ -603,21 +599,22 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         testedLispService.setMapRegisterCache(mapRegisterCache);
         testedLispService.setNotificationProvider(Mockito.mock(NotificationPublishService.class));
 
-        byte[] eidPrefixAfi = new byte[] {0x00, 0x01};
-        byte[] eidPrefix = new byte[] {0x0a, 0x0a, 0x0a, 0x0a};
+        final byte[] eidPrefixAfi = new byte[] {0x00, 0x01};
+        final byte[] eidPrefix = new byte[] {0x0a, 0x0a, 0x0a, 0x0a};
 
         MapRegisterCacheKeyBuilder cacheKeyBld = new MapRegisterCacheKeyBuilder();
-        MapRegisterCacheValueBuilder cacheValueBld = new MapRegisterCacheValueBuilder();
-        cacheKeyBld.setXtrId(xTRId);
+        cacheKeyBld.setXtrId(XTR_ID);
         cacheKeyBld.setEidPrefix(eidPrefix);
-        cacheKeyBld.setSiteId(siteId);
+        cacheKeyBld.setSiteId(SITE_ID);
 
         MapRegisterCacheMetadataBuilder cacheMetadataBld = new MapRegisterCacheMetadataBuilder();
         cacheMetadataBld.setTimestamp(System.currentTimeMillis() - (cacheRecordTimeouted ? CACHE_RECORD_TIMEOUT : 0L));
         cacheMetadataBld.setWantMapNotify(false);
+
+        MapRegisterCacheValueBuilder cacheValueBld = new MapRegisterCacheValueBuilder();
         cacheValueBld.setMapRegisterCacheMetadata(cacheMetadataBld.build());
-        cacheValueBld.setPacketData(MapRegisterCacheTestUtil.joinArrays(data1, keyId, data2, eidPrefixAfi,
-                eidPrefix, data3, xTRId, siteId));
+        cacheValueBld.setPacketData(MapRegisterCacheTestUtil.joinArrays(DATA1, KEY_ID, DATA2, eidPrefixAfi,
+                eidPrefix, DATA3, XTR_ID, SITE_ID));
 
 
         final MapRegisterCacheKey cacheKey = cacheKeyBld.build();
@@ -630,11 +627,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
 
         InOrder inOrder = Mockito.inOrder(mapRegisterCache);
-            inOrder.verify(mapRegisterCache).getEntry(Mockito.eq(cacheKey));
+        inOrder.verify(mapRegisterCache).getEntry(Mockito.eq(cacheKey));
 
         if (cacheRecordTimeouted) {
-            inOrder.verify(mapRegisterCache).addEntry(Mockito.eq(cacheKey), AdditionalMatchers.not(Mockito.eq
-                    (cacheValue)));
+            inOrder.verify(mapRegisterCache).addEntry(Mockito.eq(cacheKey), AdditionalMatchers.not(Mockito.eq(
+                    cacheValue)));
         } else {
             inOrder.verify(mapRegisterCache).refreshEntry(Mockito.eq(cacheKey));
         }
@@ -992,6 +989,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         try {
             allowing(nps).putNotification(with(lispNotificationSaver));
         } catch (InterruptedException e) {
+            LOG.debug("Interrupted", e);
         }
         will(new SimpleAction() {
 
@@ -1009,6 +1007,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         try {
             allowing(nps).putNotification(wany(Notification.class));
         } catch (InterruptedException e) {
+            LOG.debug("Interrupted", e);
         }
     }
 
@@ -1054,7 +1053,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     }
 
     private byte[] extractWSUdpByteArray(String wiresharkHex) {
-        final int HEADER_LEN = 42;
+        final int headerLen = 42;
         byte[] res = new byte[1000];
         String[] split = wiresharkHex.split(" ");
         int counter = 0;
@@ -1062,17 +1061,17 @@ public class LispSouthboundServiceTest extends BaseTestCase {
             cur = cur.trim();
             if (cur.length() == 2) {
                 ++counter;
-                if (counter > HEADER_LEN) {
-                    res[counter - HEADER_LEN - 1] = (byte) Integer.parseInt(cur, 16);
+                if (counter > headerLen) {
+                    res[counter - headerLen - 1] = (byte) Integer.parseInt(cur, 16);
                 }
 
             }
         }
-        return Arrays.copyOf(res, counter - HEADER_LEN);
+        return Arrays.copyOf(res, counter - headerLen);
     }
 
     @Test(expected = LispMalformedPacketException.class)
-    public void mapRequest__NoIPITRRLOC() throws Exception {
+    public void mapRequest__NoIpItrRloc() throws Exception {
         mapRequestPacket = hexToByteBuffer("10 00 " //
                 + "02 " // This means 3 ITR - RLOCs
                 + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
