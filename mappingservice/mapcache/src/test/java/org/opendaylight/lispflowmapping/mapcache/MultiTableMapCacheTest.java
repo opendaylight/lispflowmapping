@@ -18,8 +18,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Maps;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
 import org.junit.Before;
@@ -448,58 +446,6 @@ public class MultiTableMapCacheTest {
         multiTableMapCache.removeData(EID_TEST, SubKeys.RECORD);
 
         Mockito.verifyZeroInteractions(tableDaoMock);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getMappingExactSD} method.
-     */
-    @Test
-    public void getMappingExactSDTest() throws NoSuchMethodException, InvocationTargetException,
-            IllegalAccessException {
-        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
-                ILispDAO.class);
-        getMappingExactSD.setAccessible(true);
-
-        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(getEntry1());
-        when(srcDstDaoMock.getSpecific(EID_IPV4_PREFIX_SRC, SubKeys.RECORD)).thenReturn(DUMMY_OBJECT);
-
-        Object result = getMappingExactSD.invoke(
-                multiTableMapCache, EID_IPV4_PREFIX_SRC, EID_IPV4_PREFIX_DST, tableDaoMock);
-        assertEquals(DUMMY_OBJECT, result);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getMappingExactSD} method with null src eid.
-     */
-    @Test
-    public void getMappingExactSDTest_withNullSrcEid() throws NoSuchMethodException, InvocationTargetException,
-            IllegalAccessException {
-        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
-                ILispDAO.class);
-        getMappingExactSD.setAccessible(true);
-
-        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(getEntry1());
-
-        Object result = getMappingExactSD.invoke(
-                multiTableMapCache, null, EID_IPV4_PREFIX_DST, tableDaoMock);
-        assertEquals(DUMMY_OBJECT, result);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getMappingExactSD} method with null entry.
-     */
-    @Test
-    public void getMappingExactSDTest_withNullEntry() throws NoSuchMethodException, InvocationTargetException,
-            IllegalAccessException {
-        Method getMappingExactSD = MultiTableMapCache.class.getDeclaredMethod("getMappingExactSD", Eid.class, Eid.class,
-                ILispDAO.class);
-        getMappingExactSD.setAccessible(true);
-
-        when(tableDaoMock.get(EID_IPV4_PREFIX_DST)).thenReturn(null);
-
-        Object result = getMappingExactSD.invoke(
-                multiTableMapCache, null, EID_IPV4_PREFIX_DST, tableDaoMock);
-        assertNull(result);
     }
 
     /**
