@@ -27,50 +27,50 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValue;
 
 final class MapRegisterCacheTestUtil {
-    final static byte[] data1 = new byte[] {
-            0x33, 0x00, 0x01, 0x01     //Type, P, I, R, Reserved, M, Record Count
+    static final byte[] DATA1 = new byte[] {
+        0x33, 0x00, 0x01, 0x01     //Type, P, I, R, Reserved, M, Record Count
     };
 
-    final static byte[] nonce = new byte[] {
-            0x00, 0x00, 0x00, 0x00     //nonce
-            ,0x00, 0x00, 0x00, 0x00    //nonce
+    static final byte[] NONCE = new byte[] {
+        0x00, 0x00, 0x00, 0x00,    //nonce
+        0x00, 0x00, 0x00, 0x00     //nonce
     };
 
-    final static byte[] keyId = new byte[] {
-            0x00, 0x01                 //key ID
+    static final byte[] KEY_ID = new byte[] {
+        0x00, 0x01                 //key ID
     };
 
-    final static byte[] authenticationData = new byte[]{
-            0x00, 0x14                 //authentication data length
-            ,(byte)0xfa, 0x50, 0x1d, (byte)0xd6    //auth data
-            ,0x63, 0x53, 0x67, 0x6c    //auth data
-            ,0x00, 0x3c, 0x61, 0x67    //auth data
-            ,0x35, (byte) 0xb8, (byte) 0xcf, 0x16    //auth data
-            ,(byte) 0x91, (byte) 0xcd, 0x6b, (byte) 0x95    //auth data
+    static final byte[] AUTH_DATA = new byte[]{
+        0x00, 0x14,                //authentication data length
+        (byte)0xfa, 0x50, 0x1d, (byte)0xd6,    //auth data
+        0x63, 0x53, 0x67, 0x6c,    //auth data
+        0x00, 0x3c, 0x61, 0x67,    //auth data
+        0x35, (byte) 0xb8, (byte) 0xcf, 0x16,    //auth data
+        (byte) 0x91, (byte) 0xcd, 0x6b, (byte) 0x95    //auth data
     };
 
-    final static byte[] data2 = new byte[]{
-            0x00, 0x00, 0x00, 0x6f    //TTL
-            ,0x01, 0x08, 0x00, 0x00
-            ,0x00, 0x01                //Rsvd, Map-Version Number
+    static final byte[] DATA2 = new byte[]{
+        0x00, 0x00, 0x00, 0x6f,    //TTL
+        0x01, 0x08, 0x00, 0x00,
+        0x00, 0x01                //Rsvd, Map-Version Number
     };
 
-    final static byte[] data3 = new byte[] {
-            0x01, 0x0c, 0x0d, 0x0b     //Priority, Weight, M Priority, M Weight
-            ,0x00, 0x00, 0x00, 0x01    //Unused Flags, L, p, R, Loc-Afi
-            ,0x0c, 0x0c, 0x0c, 0x0c    //Locator
+    static final byte[] DATA3 = new byte[] {
+        0x01, 0x0c, 0x0d, 0x0b,    //Priority, Weight, M Priority, M Weight
+        0x00, 0x00, 0x00, 0x01,    //Unused Flags, L, p, R, Loc-Afi
+        0x0c, 0x0c, 0x0c, 0x0c     //Locator
     };
 
-    final static byte[] xTRId = new byte[]{
-            0x53, 0x61, 0x6e, 0x20     //xTR id
-            ,0x4a, 0x6f, 0x73, 0x65    //xTR id
-            ,0x2c, 0x20, 0x32, 0x66    //xTR id
-            ,0x33, 0x72, 0x32, 0x64    //xTR id
+    static final byte[] XTR_ID = new byte[]{
+        0x53, 0x61, 0x6e, 0x20,    //xTR id
+        0x4a, 0x6f, 0x73, 0x65,    //xTR id
+        0x2c, 0x20, 0x32, 0x66,    //xTR id
+        0x33, 0x72, 0x32, 0x64     //xTR id
     };
 
-    final static byte[] siteId = new byte[]{
-            0x33, 0x2c, 0x31, 0x34     //site id
-            ,0x31, 0x35, 0x39, 0x32    //site id
+    static final byte[] SITE_ID = new byte[]{
+        0x33, 0x2c, 0x31, 0x34,    //site id
+        0x31, 0x35, 0x39, 0x32     //site id
     };
 
 
@@ -80,7 +80,7 @@ final class MapRegisterCacheTestUtil {
 
     static byte[] joinArrays(byte[] firstArray, byte[] ... arrays) {
         byte[] result = firstArray;
-        for(byte[] array : arrays) {
+        for (byte[] array : arrays) {
             result = ArrayUtils.addAll(result, array);
         }
         return result;
@@ -100,30 +100,30 @@ final class MapRegisterCacheTestUtil {
         verify(mockedNotificationProvider).putNotification(Mockito.any(MappingKeepAlive.class));
 
         final byte[] resetForMapNotify = new byte[]{
-                0x4C, 0x00, 0x00, 0x01
+            0x4C, 0x00, 0x00, 0x01
         };
 
         final byte[] newAuthenticationData = new byte [] {
-                (byte) 0x00, (byte) 0x14,                            // authentication data length
-                (byte) 0x7A, (byte) 0x53, (byte) 0x7F, (byte) 0xF6,
-                (byte) 0xB8, (byte) 0x91, (byte) 0x33, (byte) 0x7F,
-                (byte) 0xB1, (byte) 0x41, (byte) 0xC3, (byte) 0x51,
-                (byte) 0x2B, (byte) 0xF8, (byte) 0x9D, (byte) 0x87,
-                (byte) 0x30, (byte) 0x6E, (byte) 0xEE, (byte) 0x08
+            (byte) 0x00, (byte) 0x14,                            // authentication data length
+            (byte) 0x7A, (byte) 0x53, (byte) 0x7F, (byte) 0xF6,
+            (byte) 0xB8, (byte) 0x91, (byte) 0x33, (byte) 0x7F,
+            (byte) 0xB1, (byte) 0x41, (byte) 0xC3, (byte) 0x51,
+            (byte) 0x2B, (byte) 0xF8, (byte) 0x9D, (byte) 0x87,
+            (byte) 0x30, (byte) 0x6E, (byte) 0xEE, (byte) 0x08
         };
 
-        final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, nonce, keyId, newAuthenticationData,
-                data2, eidPrefixAfi, eidPrefix, data3, xTRId, siteId));
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(joinArrays(resetForMapNotify, NONCE, KEY_ID,
+                newAuthenticationData, DATA2, eidPrefixAfi, eidPrefix, DATA3, XTR_ID, SITE_ID));
 
         verify(mockLispSouthboundPlugin).handleSerializedLispBuffer(
-                Mockito.eq(Inet4Address.getByAddress("0.0.0.0", new byte[]{0, 0, 0, 0}))
-                , Mockito.eq(byteBuffer)
-                , Mockito.eq(MessageType.MapNotify)
-                , Mockito.eq(0));
+                Mockito.eq(Inet4Address.getByAddress("0.0.0.0", new byte[]{0, 0, 0, 0})),
+                Mockito.eq(byteBuffer),
+                Mockito.eq(MessageType.MapNotify),
+                Mockito.eq(0));
     }
 
     static void afterMapRegisterInvocationValidation(final NotificationPublishService mockedNotificationProvider, final
-    MapRegisterCacheKey mapRegisterCacheKey, final MapRegisterCache mapRegisterCache, final byte[] eidPrefixAfi,
+        MapRegisterCacheKey mapRegisterCacheKey, final MapRegisterCache mapRegisterCache, final byte[] eidPrefixAfi,
                                                      byte[] eidPrefix) throws InterruptedException {
         Mockito.verify(mockedNotificationProvider).putNotification(Mockito.any(AddMapping.class));
 
@@ -131,15 +131,15 @@ final class MapRegisterCacheTestUtil {
         final MapRegisterCacheValue currentMapRegisterCacheValue = mapRegisterCache.getEntry(mapRegisterCacheKey);
         Assert.assertNotNull(currentMapRegisterCacheValue);
         final byte[] currentMapRegisterMsg = currentMapRegisterCacheValue.getPacketData();
-        final byte[] expectedMapRegisterMsg = joinArrays(data1, keyId, data2, eidPrefixAfi, eidPrefix, data3, xTRId,
-                siteId);
+        final byte[] expectedMapRegisterMsg = joinArrays(DATA1, KEY_ID, DATA2, eidPrefixAfi, eidPrefix, DATA3, XTR_ID,
+                SITE_ID);
         Assert.assertArrayEquals(expectedMapRegisterMsg, currentMapRegisterMsg);
     }
 
     static MapRegisterCacheKey createMapRegisterCacheKey(final byte[] eidPrefix) {
         final MapRegisterCacheKeyBuilder mapRegisterCacheKeyBuilder = new MapRegisterCacheKeyBuilder();
-        mapRegisterCacheKeyBuilder.setXtrId(xTRId);
-        mapRegisterCacheKeyBuilder.setSiteId(siteId);
+        mapRegisterCacheKeyBuilder.setXtrId(XTR_ID);
+        mapRegisterCacheKeyBuilder.setSiteId(SITE_ID);
         mapRegisterCacheKeyBuilder.setEidPrefix(eidPrefix);
         return mapRegisterCacheKeyBuilder.build();
     }
@@ -149,8 +149,4 @@ final class MapRegisterCacheTestUtil {
         Assert.assertEquals(0, mapRegisterCache.cacheSize());
         Assert.assertNull(mapRegisterCache.getEntry(mapRegisterCacheKey));
     }
-
-
-
-
 }

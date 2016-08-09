@@ -30,8 +30,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address
-        .address.Ipv4BinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
@@ -59,7 +58,7 @@ public class LispXtrSouthboundHandlerTest {
     private static final int LISP_MAP_REPLY_PACKET_LENGTH = 40;
     private static final int PORT = 9999;
 
-    /**
+    /*
      * SRC: 127.0.0.1:58560 to 127.0.0.1:4342
      * LISP(Type = 8 - Encapsulated)
      * IP: 192.168.136.10 -> 153.16.254.1
@@ -74,24 +73,24 @@ public class LispXtrSouthboundHandlerTest {
      * Record 1: 127.0.0.1/32
      */
     private static final String MAP_REQUEST_PACKET_STRING =
-            "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " +
-            "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 " +
-            "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 " +
-            "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 " +
-            "0040   fe 01 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d " +
-            "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 " +
-            "0060   00 02 00 20 00 01 7f 00 00 01 ac 4a 06 7d";
+              "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
+            + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
+            + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
+            + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
+            + "0040   fe 01 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
+            + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 "
+            + "0060   00 02 00 20 00 01 7f 00 00 01 ac 4a 06 7d";
 
     private static final String MAP_REQUEST_PACKET_STRING_MALFORMED =
-            "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " +
-            "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 " +
-            "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 " +
-            "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 " +
-            "0040   fe 01 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d " +
-            "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 00 00 00 " +
-            "0060   00 00 00 20 00 01 7f 00 00 01 ac 4a 06 7d";
+              "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
+            + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
+            + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
+            + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
+            + "0040   fe 01 dd b4 10 f6 00 24 ef 3a 10 00 00 01 3d 8d "
+            + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 00 00 00 "
+            + "0060   00 00 00 20 00 01 7f 00 00 01 ac 4a 06 7d";
 
-    /**
+    /*
      * SRC: 127.0.0.1:58560 to 127.0.0.1:4342
      * LISP(Type = 8 - Encapsulated)
      * IP: 192.168.136.10 -> 153.16.254.1
@@ -107,19 +106,17 @@ public class LispXtrSouthboundHandlerTest {
      * Locator Record 1: 127.0.0.1/32
      */
     private static final String MAP_REPLY_PACKET_STRING =
-            "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " +
-            "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 " +
-            "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 " +
-            "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 " +
-            "0040   fe 01 dd b4 10 f6 00 24 ef 3a 28 00 00 01 3d 8d " +
-            "0050   2a cd 39 c8 d6 08 ff ff ff ff 01 20 10 00 00 00 " +
-            "0060   00 01 01 02 03 04 00 00 00 00 00 00 00 01 fe fe " +
-            "0070   fe fe 0d e3 70 40";
+              "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
+            + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
+            + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
+            + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
+            + "0040   fe 01 dd b4 10 f6 00 24 ef 3a 28 00 00 01 3d 8d "
+            + "0050   2a cd 39 c8 d6 08 ff ff ff ff 01 20 10 00 00 00 "
+            + "0060   00 01 01 02 03 04 00 00 00 00 00 00 00 01 fe fe "
+            + "0070   fe fe 0d e3 70 40";
 
     /**
      * Tests {@link LispXtrSouthboundHandler#handlePacket} method with Map-Request.
-     *
-     * @throws InterruptedException
      */
     @Test
     public void handlePacketTest_withMapRequest() throws InterruptedException {
@@ -137,8 +134,6 @@ public class LispXtrSouthboundHandlerTest {
 
     /**
      * Tests {@link LispXtrSouthboundHandler#handlePacket} method with Map-Request, null NotificationPublishService.
-     *
-     * @throws InterruptedException
      */
     @Test
     public void handlePacketTest_withMapRequest_withNullNotifPublishService() throws InterruptedException {
@@ -150,8 +145,6 @@ public class LispXtrSouthboundHandlerTest {
 
     /**
      * Tests {@link LispXtrSouthboundHandler#handlePacket} method with Map-Request, no Itr Rlocs.
-     *
-     * @throws InterruptedException
      */
     @Test(expected = LispMalformedPacketException.class)
     public void handlePacketTest__withMapRequest_withNoItrRloc() throws InterruptedException {
@@ -161,8 +154,6 @@ public class LispXtrSouthboundHandlerTest {
 
     /**
      * Tests {@link LispXtrSouthboundHandler#handlePacket} method with Map-Reply.
-     *
-     * @throws InterruptedException
      */
     @Test
     public void handlePacketTest_withMapReply() throws InterruptedException {
@@ -176,8 +167,6 @@ public class LispXtrSouthboundHandlerTest {
 
     /**
      * Tests {@link LispXtrSouthboundHandler#handlePacket} method with Map-Reply over channelRead0 method.
-     *
-     * @throws Exception
      */
     @Test
     public void handlePacketTest_withMapReply_withNullNotifPublishService() throws Exception {
@@ -190,8 +179,6 @@ public class LispXtrSouthboundHandlerTest {
 
     /**
      * Tests {@link LispXtrSouthboundHandler#channelReadComplete} method.
-     *
-     * @throws Exception
      */
     @Test
     public void channelReadCompleteTest() throws Exception {
@@ -209,14 +196,14 @@ public class LispXtrSouthboundHandlerTest {
 
         // This map-notification packet is not valid! Don't use it anywhere else.
         String mapNotificationPacket =
-                "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " +
-                "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 " +
-                "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 " +
-                "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 " +
-                "0040   fe 01 dd b4 10 f6 00 24 ef 3a 40 00 00 01 3d 8d " +
-                "0050   2a cd 39 c8 d6 08 ff ff ff ff 01 20 10 00 00 00 " +
-                "0060   00 01 01 02 03 04 00 00 00 00 00 00 00 01 fe fe " +
-                "0070   fe fe 0d e3 70 40";
+                  "0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
+                + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
+                + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
+                + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
+                + "0040   fe 01 dd b4 10 f6 00 24 ef 3a 40 00 00 01 3d 8d "
+                + "0050   2a cd 39 c8 d6 08 ff ff ff ff 01 20 10 00 00 00 "
+                + "0060   00 01 01 02 03 04 00 00 00 00 00 00 00 01 fe fe "
+                + "0070   fe fe 0d e3 70 40";
 
         handler.exceptionCaught(Mockito.mock(ChannelHandlerContext.class), Mockito.mock(Throwable.class));
         handler.setNotificationProvider(notificationPublishServiceMock);

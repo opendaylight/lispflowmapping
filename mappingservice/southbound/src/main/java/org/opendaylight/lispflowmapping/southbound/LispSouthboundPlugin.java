@@ -101,6 +101,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void start() {
         try {
             channel = (NioDatagramChannel) bootstrap.bind(bindingAddress, LispMessage.PORT_NUM).sync().channel();
@@ -110,6 +111,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void startXtr() {
         if (listenOnXtrPort) {
             try {
@@ -121,6 +123,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void stop() {
         try {
             channel.close().sync();
@@ -130,6 +133,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void stopXtr() {
         if (listenOnXtrPort) {
             try {
@@ -214,6 +218,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     }
 
     @Override
+    @SuppressWarnings("checkstyle:IllegalCatch")
     public void setLispAddress(String address) {
         synchronized (startLock) {
             if (bindingAddress.equals(address)) {

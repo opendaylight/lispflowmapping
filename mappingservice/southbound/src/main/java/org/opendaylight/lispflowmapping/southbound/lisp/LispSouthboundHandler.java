@@ -9,13 +9,11 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import com.google.common.base.Preconditions;
-
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -23,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -66,11 +63,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValueBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +126,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleEncapsulatedControlMessage(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             handleMapRequest(inBuffer, sourceAddress, extractEncapsulatedSourcePort(inBuffer));
@@ -138,6 +136,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapRequest(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer, sourceAddress);
@@ -167,6 +166,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private int extractEncapsulatedSourcePort(ByteBuffer inBuffer) {
         try {
             inBuffer.position(PacketHeader.Length.LISP_ENCAPSULATION);
@@ -189,6 +189,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapRegister(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             Map.Entry<MapRegisterCacheKey, byte[]> artificialEntry = null;
@@ -271,8 +272,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 final MappingAuthkey mappingAuthkey = provideAuthenticateKey(mapRegisterCacheValue
                         .getMapRegisterCacheMetadata().getEidLispAddress());
 
-                final MapRegisterCacheValueBuilder newMapRegisterCacheValueBuilder = new MapRegisterCacheValueBuilder
-                        (mapRegisterCacheValue);
+                final MapRegisterCacheValueBuilder newMapRegisterCacheValueBuilder = new MapRegisterCacheValueBuilder(
+                        mapRegisterCacheValue);
                 final MapRegisterCacheMetadataBuilder newMapRegisterCacheMetadataBuilder =
                         new MapRegisterCacheMetadataBuilder(mapRegisterCacheValue.getMapRegisterCacheMetadata());
 
@@ -319,7 +320,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     /**
-     * Returns null if not all of eids have the same value of authentication key
+     * Returns null if not all of eids have the same value of authentication key.
      */
     private MappingAuthkey provideAuthenticateKey(final List<EidLispAddress> eidLispAddresses) {
         MappingAuthkey firstAuthKey = null;
@@ -354,9 +355,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     /**
      * Calculates new message authentication code (MAC) for notify message.
-     *
-     * @param buffer
-     * @return
      */
     private ByteBuffer calculateAndSetNewMAC(final ByteBuffer buffer, final String authKey) {
         final byte[] authenticationData = LispAuthenticationUtil.createAuthenticationData(buffer, authKey);
@@ -395,13 +393,11 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     /**
      * Checks whether authentication data is valid.
      *
-     * Methods pass through all records from map register message. For the EID of the first record it gets
+     * <p>Methods pass through all records from map register message. For the EID of the first record it gets
      * authentication key and does validation of authentication data again this authentication key. If it pass
      * it just checks for remaining records (and its EID) whether they have the same authenticatin key stored in
      * simple map cache (smc).
      *
-     * @param mapRegister
-     * @param byteBuffer
      * @return Returns authentication key if all of EIDs have the same authentication key or null otherwise
      */
     private MappingAuthkey tryToAuthenticateMessage(final MapRegister mapRegister, final ByteBuffer byteBuffer) {
@@ -428,8 +424,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 final Eid eid = mappingRecord.getEid();
                 final MappingAuthkey authKey = smc.getAuthenticationKey(eid);
                 if (!firstAuthKey.equals(authKey)) {
-                    LOG.debug("Map register packet contained several eids. Authentication keys for first one and for " +
-                            "{} are different.",LispAddressStringifier.getString(eid));
+                    LOG.debug("Map register packet contained several eids. Authentication keys for first one and for "
+                            + "{} are different.",LispAddressStringifier.getString(eid));
                     return null;
                 }
             }
@@ -437,6 +433,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         return firstAuthKey;
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapNotify(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapNotify mapNotify = MapNotifySerializer.getInstance().deserialize(inBuffer);
@@ -461,7 +458,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         }
     }
 
-
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapReply(ByteBuffer inBuffer, InetAddress sourceAddress, int port) {
         try {
             MapReply mapReply = MapReplySerializer.getInstance().deserialize(inBuffer);
@@ -541,20 +538,20 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     /**
-    * Restore all keys from MDSAL datastore
-    */
-   public void restoreDaoFromDatastore() {
-       final List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
-       LOG.info("Restoring {} keys from datastore into southbound DAO", authKeys.size());
+     * Restore all keys from MDSAL datastore.
+     */
+    public void restoreDaoFromDatastore() {
+        final List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
+        LOG.info("Restoring {} keys from datastore into southbound DAO", authKeys.size());
 
-       for (AuthenticationKey authKey : authKeys) {
-           final Eid key = authKey.getEid();
-           final MappingAuthkey mappingAuthkey = authKey.getMappingAuthkey();
-           LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
-                   mappingAuthkey.getKeyType(),
-                   LispAddressStringifier.getString(key));
-           smc.addAuthenticationKey(key, mappingAuthkey);
-       }
+        for (AuthenticationKey authKey : authKeys) {
+            final Eid key = authKey.getEid();
+            final MappingAuthkey mappingAuthkey = authKey.getMappingAuthkey();
+            LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
+                    mappingAuthkey.getKeyType(),
+                    LispAddressStringifier.getString(key));
+            smc.addAuthenticationKey(key, mappingAuthkey);
+        }
     }
 
     public void init() {

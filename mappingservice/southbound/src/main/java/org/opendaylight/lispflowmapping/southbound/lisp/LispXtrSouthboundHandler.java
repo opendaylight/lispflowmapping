@@ -12,25 +12,23 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
+import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
+import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +47,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer, packet.sender().getAddress());
-        } else if (lispType ==  MessageType.MapReply){
+        } else if (lispType ==  MessageType.MapReply) {
             LOG.trace("Received packet of type MapReply for xTR");
             handleMapReply(inBuffer);
         } else {
@@ -57,6 +55,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapRequest(ByteBuffer inBuffer, InetAddress sourceAddress) {
         try {
             MapRequest request = MapRequestSerializer.getInstance().deserialize(inBuffer, sourceAddress);
@@ -86,6 +85,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleMapReply(ByteBuffer buffer) {
         try {
             MapReply reply = MapReplySerializer.getInstance().deserialize(buffer);

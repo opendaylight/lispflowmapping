@@ -51,8 +51,8 @@ public class MapRegisterCache {
         final MapRegisterCacheMetadata mapRegisterCacheMetadataOld = mapRegisterCacheValueOld
                 .getMapRegisterCacheMetadata();
 
-        final MapRegisterCacheMetadataBuilder mapRegisterCacheMetadataBuilderNew = new MapRegisterCacheMetadataBuilder
-                (mapRegisterCacheMetadataOld);
+        final MapRegisterCacheMetadataBuilder mapRegisterCacheMetadataBuilderNew = new MapRegisterCacheMetadataBuilder(
+                mapRegisterCacheMetadataOld);
         mapRegisterCacheMetadataBuilderNew.setTimestamp(System.currentTimeMillis());
 
         final MapRegisterCacheValueBuilder mapRegisterCacheValueBuilderNew = new MapRegisterCacheValueBuilder();
