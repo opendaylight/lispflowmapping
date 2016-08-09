@@ -116,8 +116,8 @@ public class SimpleMapCache implements IMapCache {
         }
 
         if (shouldMerge) {
-            List<XtrId> expiredMappings = new ArrayList<XtrId>();
-            Set<IpAddressBinary> sourceRlocs = new HashSet<IpAddressBinary>();
+            List<XtrId> expiredMappings = new ArrayList<>();
+            Set<IpAddressBinary> sourceRlocs = new HashSet<>();
             MappingRecord mergedEntry = MappingMergeUtil.mergeXtrIdMappings(getXtrIdMappingList(xtrIdDao),
                     expiredMappings, sourceRlocs);
             removeExpiredXtrIdTableEntries(xtrIdDao, expiredMappings);
@@ -137,7 +137,7 @@ public class SimpleMapCache implements IMapCache {
     // Returns the list of mappings stored in an xTR-ID DAO
     private List<Object> getXtrIdMappingList(ILispDAO dao) {
         if (dao != null) {
-            final List<Object> records = new ArrayList<Object>();
+            final List<Object> records = new ArrayList<>();
             dao.getAll(new IRowVisitor() {
                 public void visitRow(Object keyId, String valueKey, Object value) {
                     if (valueKey.equals(SubKeys.RECORD)) {
@@ -149,42 +149,7 @@ public class SimpleMapCache implements IMapCache {
         }
         return null;
     }
-/*
-    private SimpleImmutableEntry<byte[], Long> getXtrIdMinTimeStamp(ILispDAO dao) {
-        if (dao != null) {
-            // We don't actually need a list here, but the external variable we modify inside the IRowVisitor
-            // implementation has to be final. So we use a List, and it's methods, to modify contents
-            final List<SimpleImmutableEntry<byte[], Long>> entries =
-                    new ArrayList<SimpleImmutableEntry<byte[], Long>>();
-            entries.set(0, new SimpleImmutableEntry<byte[], Long>(null, System.currentTimeMillis()));
 
-            dao.getAll(new IRowVisitor() {
-                public void visitRow(Object keyId, String valueKey, Object value) {
-                    if (valueKey.equals(SubKeys.RECORD)) {
-                        byte[] currentXtrId = ((MappingRecord) value).getXtrId();
-                        long currentTimestamp = ((MappingRecord) value).getTimestamp();
-                        // If one of the timestamps is expired, we signal it to the caller by setting the returned
-                        // timestamp to null. The caller will then have to remove that xTR-ID, and do a full merge
-                        // (or decrement)
-                        if (MappingMergeUtil.timestampIsExpired(currentTimestamp)) {
-                            SimpleImmutableEntry<byte[], Long> entry =
-                                    new SimpleImmutableEntry<byte[], Long>(currentXtrId, null);
-                            entries.set(0, entry);
-                            return;
-                        }
-                        if (entries.get(0).getValue() > currentTimestamp) {
-                            SimpleImmutableEntry<byte[], Long> entry =
-                                    new SimpleImmutableEntry<byte[], Long>(currentXtrId, currentTimestamp);
-                            entries.set(0, entry);
-                        }
-                    }
-                }
-            });
-            return entries.get(0);
-        }
-        return null;
-    }
-*/
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
     private Object getMappingLpmEid(Eid eid, byte[] xtrId, ILispDAO dao) {
