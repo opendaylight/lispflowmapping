@@ -49,8 +49,8 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
         this.path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
                 .child(AuthenticationKey.class);
         LOG.trace("Registering AuthenticationKey listener.");
-        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = new DataTreeIdentifier<>
-                (LogicalDatastoreType.CONFIGURATION, path);
+        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = new DataTreeIdentifier<>(
+                LogicalDatastoreType.CONFIGURATION, path);
         registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
     }
 

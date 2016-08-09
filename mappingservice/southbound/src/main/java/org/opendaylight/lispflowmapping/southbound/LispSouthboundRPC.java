@@ -8,11 +8,11 @@
 
 package org.opendaylight.lispflowmapping.southbound;
 
+import com.google.common.util.concurrent.Futures;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -34,8 +34,6 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.util.concurrent.Futures;
 
 /**
  * This class holds all RPCs methods for LispSouthbound Plugin.
@@ -65,9 +63,9 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapNotify);
         } else {
             LOG.warn("MapNotify was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
     }
 
     @Override
@@ -79,9 +77,9 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapReply);
         } else {
             LOG.warn("MapReply was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
     }
 
     @Override
@@ -93,9 +91,9 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapRequest);
         } else {
             LOG.debug("MapRequest was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
     }
 
     @Override
@@ -107,9 +105,9 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapRegister);
         } else {
             LOG.debug("MapRegister was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void> failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
     }
 
     @Override
@@ -136,18 +134,18 @@ public class LispSouthboundRPC implements OdlLispSbService {
         LispSouthboundStats stats = lispSbPlugin.getStats();
 
         if (stats == null) {
-            return Futures.immediateFuture(RpcResultBuilder.<Void> failed()
+            return Futures.immediateFuture(RpcResultBuilder.<Void>failed()
                     .withError(RpcError.ErrorType.APPLICATION, "data-missing", "No stats found")
                     .build());
         } else {
             stats.resetStats();
-            return Futures.immediateFuture(RpcResultBuilder.<Void> success().build());
+            return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
         }
     }
 
     private static GetStatsOutput createGetStatsOutput(LispSouthboundStats stats) {
-        long rxStats[] = stats.getRx();
-        long txStats[] = stats.getTx();
+        long[] rxStats = stats.getRx();
+        long[] txStats = stats.getTx();
 
         ControlMessageStatsBuilder cmsb = new ControlMessageStatsBuilder();
         cmsb.setRxUnknown(stats.getRxUnknown());

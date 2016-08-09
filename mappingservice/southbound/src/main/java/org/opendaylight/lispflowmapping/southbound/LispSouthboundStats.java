@@ -10,16 +10,16 @@ package org.opendaylight.lispflowmapping.southbound;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 
 /**
- * Object to hold statistics about LISP southbound events
+ * Object to hold statistics about LISP southbound events.
  *
  * @author Lorand Jakab
  *
  */
 public class LispSouthboundStats {
-    public final static int MAX_LISP_TYPES = getMaxMessageTypeValue();
+    public static final int MAX_LISP_TYPES = getMaxMessageTypeValue();
 
-    private long rx[] = new long[MAX_LISP_TYPES + 1];
-    private long tx[] = new long[MAX_LISP_TYPES + 1];
+    private long[] rx = new long[MAX_LISP_TYPES + 1];
+    private long[] tx = new long[MAX_LISP_TYPES + 1];
     private long rxUnknown = 0;
     private long txErrors = 0;
     private long cacheHits = 0;

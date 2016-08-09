@@ -20,7 +20,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 
 public final class MapRegisterPartialDeserializer {
 
-    /**
+    /*
      * Consists of:
      * - 4bits Type,
      * - 1bit  P,
@@ -33,13 +33,13 @@ public final class MapRegisterPartialDeserializer {
      */
     private static final int PAYLOAD1_LEN = 4;
 
-    /**
+    /*
      * Consists of:
      * - 64bits  Nonce
      */
     private static final int SKIP1_LEN = 8;
 
-    /**
+    /*
      * Consists of:
      * - 16bits - Key ID
      */
@@ -48,7 +48,7 @@ public final class MapRegisterPartialDeserializer {
     private static final int NUM_OF_BYTES_FROM_START_TO_AUTH_DATA_LENGTH_POS = PAYLOAD1_LEN + SKIP1_LEN + PAYLOAD2_LEN;
     private static final int NUM_OF_BYTES_AUTHENTICATION_DATA_LENGTH = 2;
 
-    /**
+    /*
      * Consists of:
      * - 32bits  Record TTL
      * -  8bits  Locator Count
@@ -96,7 +96,7 @@ public final class MapRegisterPartialDeserializer {
         return new HashMap.SimpleEntry<>(mapRegisterCacheKey, relevantPayloadData);
     }
 
-    /**
+    /*
      * Extract from buffer the data which doesn't change.
      *
      * It means that nonce and authentication items are ommited (skipped).
@@ -161,8 +161,8 @@ public final class MapRegisterPartialDeserializer {
 
     private static byte[] extractEidPrefix(final ByteBuffer buffer, int authDataLength) {
         final int startPositionOfEidPrefixAFI = NUM_OF_BYTES_FROM_START_TO_AUTH_DATA_LENGTH_POS
-                + NUM_OF_BYTES_AUTHENTICATION_DATA_LENGTH + authDataLength +
-                NUM_OF_BYTES_FROM_AUTH_DATA_TO_EID_PREFIX_AFI;
+                + NUM_OF_BYTES_AUTHENTICATION_DATA_LENGTH + authDataLength
+                + NUM_OF_BYTES_FROM_AUTH_DATA_TO_EID_PREFIX_AFI;
         buffer.position(startPositionOfEidPrefixAFI);
         final int eidPrefixAfi = ByteUtil.getUnsignedShort(buffer, startPositionOfEidPrefixAFI);
         Optional<Integer> eidPrefixLengthOpt = resolveEidPrefixAfi(eidPrefixAfi, buffer);

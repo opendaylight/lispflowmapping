@@ -84,10 +84,6 @@ public class LispSouthboundPluginTest {
 
     /**
      * Tests {@link LispSouthboundPlugin#handleSerializedLispBuffer} method with ipv4.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws UnknownHostException
      */
     @Test
     public void handleSerializedLispBufferTest_withIpv4() throws
@@ -110,10 +106,6 @@ public class LispSouthboundPluginTest {
 
     /**
      * Tests {@link LispSouthboundPlugin#handleSerializedLispBuffer} method with ipv6.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws UnknownHostException
      */
     @Test
     public void handleSerializedLispBufferTest_withIpv6() throws
@@ -234,7 +226,7 @@ public class LispSouthboundPluginTest {
         final String[] tokens = packet.split("\\s+");
         final ByteBuffer buffer = ByteBuffer.allocate(tokens.length);
         for (String token : tokens) {
-             buffer.put((byte) Integer.parseInt(token, 16));
+            buffer.put((byte) Integer.parseInt(token, 16));
         }
 
         return buffer;
