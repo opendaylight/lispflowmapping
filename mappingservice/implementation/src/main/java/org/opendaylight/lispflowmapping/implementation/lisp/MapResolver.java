@@ -171,7 +171,8 @@ public class MapResolver implements IMapResolverAsync {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
-        if (eid.getAddressType().equals(Ipv4BinaryAfi.class) || eid.getAddressType().equals(Ipv6BinaryAfi.class)) {
+        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class) ||
+                eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
             recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
         } else {
             recordBuilder.setEid(eid);
