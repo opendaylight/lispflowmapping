@@ -25,19 +25,6 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- Enforce odlparent checkstyle -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <configuration>
-            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-            <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>

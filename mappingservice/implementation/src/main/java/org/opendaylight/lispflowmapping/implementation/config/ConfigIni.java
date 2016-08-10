@@ -7,12 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.implementation.config;
 
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 
 public final class ConfigIni {
 
@@ -42,10 +42,10 @@ public final class ConfigIni {
     private static final ConfigIni INSTANCE = new ConfigIni();
 
     private ConfigIni() {
-        Bundle b = FrameworkUtil.getBundle(this.getClass());
+        Bundle bundle = FrameworkUtil.getBundle(this.getClass());
         BundleContext context = null;
-        if (b != null) {
-            context = b.getBundleContext();
+        if (bundle != null) {
+            context = bundle.getBundleContext();
         }
 
         // Initialize mappingMerge first, since mappingOverwrite depends on it
@@ -70,8 +70,8 @@ public final class ConfigIni {
         if (str == null) {
             str = System.getProperty(LISP_REGISTER_VALIDITY_SB);
             if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '3.33 minutes' "
-                        , LISP_REGISTER_VALIDITY_SB);
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '3.33 minutes' ",
+                        LISP_REGISTER_VALIDITY_SB);
                 return;
             }
         }
@@ -81,8 +81,7 @@ public final class ConfigIni {
             if (regValidity >= MIN_REGISTRATION_VALIDITY_SB) {
                 this.registrationValiditySb = regValidity;
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
             LOG.debug("Configuration variable 'registerValiditySb' was not set correctly. Registration validity for"
                     + "South Bound Map Registers is set to default value of 3.3 minutes");
@@ -280,7 +279,7 @@ public final class ConfigIni {
     }
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
-            this.lookupPolicy = lookupPolicy;
+        this.lookupPolicy = lookupPolicy;
     }
 
     public static ConfigIni getInstance() {

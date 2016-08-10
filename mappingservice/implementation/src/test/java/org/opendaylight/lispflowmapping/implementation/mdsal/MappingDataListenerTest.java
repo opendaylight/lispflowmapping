@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import static org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
-
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Before;
@@ -16,6 +14,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
@@ -25,8 +24,7 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
-        .MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -95,15 +93,13 @@ public class MappingDataListenerTest {
 
     /**
      * Tests {@link MappingDataListener#onDataTreeChanged} method with DELETE modification type from northbound.
-     *
-     * @throws InterruptedException
      */
     @Test
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_del);
-        final MappingChanged mapChanged = MSNotificationInputUtil.
-                toMappingChanged(MAPPING_EID_1_NB, MappingChange.Removed);
+        final MappingChanged mapChanged = MSNotificationInputUtil
+                .toMappingChanged(MAPPING_EID_1_NB, MappingChange.Removed);
         Mockito.when(mod_del.getDataBefore()).thenReturn(MAPPING_EID_1_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
@@ -128,15 +124,13 @@ public class MappingDataListenerTest {
     /**
      * Tests {@link MappingDataListener#onDataTreeChanged} method with SUBTREE_MODIFIED modification type from
      * northbound.
-     *
-     * @throws InterruptedException
      */
     @Test
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_subtreeModified);
-        final MappingChanged mapChanged = MSNotificationInputUtil.
-                toMappingChanged(MAPPING_EID_2_NB, MappingChange.Updated);
+        final MappingChanged mapChanged = MSNotificationInputUtil
+                .toMappingChanged(MAPPING_EID_2_NB, MappingChange.Updated);
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(MAPPING_EID_2_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
@@ -162,8 +156,6 @@ public class MappingDataListenerTest {
 
     /**
      * Tests {@link MappingDataListener#onDataTreeChanged} method with WRITE modification type from northbound.
-     *
-     * @throws InterruptedException
      */
     @Test
     @SuppressWarnings("unchecked")
@@ -195,8 +187,6 @@ public class MappingDataListenerTest {
 
     /**
      * Tests {@link MappingDataListener#onDataTreeChanged} method with multiple changes.
-     *
-     * @throws InterruptedException
      */
     @Test
     @SuppressWarnings("unchecked")

@@ -11,12 +11,8 @@ package org.opendaylight.lispflowmapping.implementation;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
-import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
-import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -25,6 +21,9 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
+import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
+import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
@@ -47,13 +46,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Mapping System coordinates caching of md-sal stored mappings and if so configured enables longest prefix match
- * mapping lookups
+ * mapping lookups.
  *
  * @author Florin Coras
  *
  */
 public class MappingSystem implements IMappingSystem {
-    private final static Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private boolean iterateMask;
     private boolean notificationService;
     private boolean overwrite;
@@ -167,6 +166,19 @@ public class MappingSystem implements IMappingSystem {
         }
     }
 
+    @Override
+    public Object getMapping(Eid dst) {
+        return getMapping((Eid)null, dst);
+    }
+
+    @Override
+    public Object getMapping(MappingOrigin origin, Eid key) {
+        if (origin.equals(MappingOrigin.Southbound)) {
+            return getSbMappingWithExpiration(null, key);
+        }
+        return tableMap.get(origin).getMapping(null, key);
+    }
+
     private Object getMappingNbFirst(Eid src, Eid dst) {
 
         // Default lookup policy is northboundFirst
@@ -217,27 +229,13 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public Object getMapping(Eid dst) {
-        return getMapping((Eid)null, dst);
-    }
-
-    @Override
-    public Object getMapping(MappingOrigin origin, Eid key) {
-        if (origin.equals(MappingOrigin.Southbound)) {
-            return getSbMappingWithExpiration(null, key);
-        }
-        return tableMap.get(origin).getMapping(null, key);
-    }
-
-    @Override
     public Eid getWidestNegativePrefix(Eid key) {
-        Eid nbPrefix, sbPrefix;
-        nbPrefix = pmc.getWidestNegativeMapping(key);
+        Eid nbPrefix = pmc.getWidestNegativeMapping(key);
         if (nbPrefix == null) {
             return null;
         }
 
-        sbPrefix = smc.getWidestNegativeMapping(key);
+        Eid sbPrefix = smc.getWidestNegativeMapping(key);
         if (sbPrefix == null) {
             return null;
         }
@@ -245,7 +243,7 @@ public class MappingSystem implements IMappingSystem {
         // since prefixes overlap, just return the more specific (larger mask)
         if (LispAddressUtil.getIpPrefixMask(nbPrefix) < LispAddressUtil.getIpPrefixMask(sbPrefix)) {
             return sbPrefix;
-        } else{
+        } else {
             return nbPrefix;
         }
     }
@@ -308,7 +306,7 @@ public class MappingSystem implements IMappingSystem {
 
 
     /**
-     * Restore all mappings and keys from mdsal datastore
+     * Restore all mappings and keys from mdsal datastore.
      */
     private void restoreDaoFromDatastore() {
         List<Mapping> mappings = dsbe.getAllMappings();

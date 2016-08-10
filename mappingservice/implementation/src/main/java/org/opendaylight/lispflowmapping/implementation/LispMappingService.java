@@ -16,14 +16,15 @@ import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
-import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
@@ -49,7 +50,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,7 +164,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
         if (result != null && result.getLeft() != null) {
             MapNotify mapNotify = result.getLeft();
-            List <TransportAddress> rlocs = result.getRight();
+            List<TransportAddress> rlocs = result.getRight();
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());

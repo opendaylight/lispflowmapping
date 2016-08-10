@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import static org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
-
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Before;
@@ -16,16 +14,16 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container
-        .MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class AuthenticationKeyDataListenerTest {

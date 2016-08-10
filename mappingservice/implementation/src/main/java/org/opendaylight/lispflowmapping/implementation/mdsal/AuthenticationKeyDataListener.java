@@ -8,9 +8,9 @@
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import java.util.Collection;
-
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -22,7 +22,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 
 /**
  * DataListener for all AuthenticationKey modification events.
