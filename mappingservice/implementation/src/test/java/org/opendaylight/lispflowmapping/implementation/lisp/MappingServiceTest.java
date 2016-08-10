@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,10 +21,10 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
-import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
@@ -36,9 +35,10 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container
-        .MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
@@ -67,10 +67,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container
-        .MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container
-        .MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -105,9 +101,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#addKey} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void addKeyTest() throws ExecutionException, InterruptedException {
@@ -142,9 +135,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#addKey} method with null MappingAuthkey.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void addKeyTest_withNullMapAuthkey() throws ExecutionException, InterruptedException {
@@ -161,9 +151,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#addMapping} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void addMappingTest() throws ExecutionException, InterruptedException {
@@ -181,9 +168,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#getKey} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getKeyTest() throws ExecutionException, InterruptedException {
@@ -201,9 +185,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#getKey} method with null MappingAuthkey.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getKeyTest_withNullMappingAuthkey() throws ExecutionException, InterruptedException {
@@ -234,9 +215,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#getMapping} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getMappingTest() throws ExecutionException, InterruptedException {
@@ -262,9 +240,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#getMapping} method with null MappingRecord.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void getMappingTest_withNullMapRecord() throws ExecutionException, InterruptedException {
@@ -294,9 +269,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#removeKey} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void removeKeyTest() throws ExecutionException, InterruptedException {
@@ -312,9 +284,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#removeMapping} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void removeMappingTest() throws ExecutionException, InterruptedException {
@@ -330,9 +299,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#updateKey} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void updateKeyTest() throws ExecutionException, InterruptedException {
@@ -349,9 +315,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#updateKey} method with null MappingAuthkey.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void updateKeyTest_withNullMapAuthkey() throws ExecutionException, InterruptedException {
@@ -381,9 +344,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#updateMapping} method.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void updateMappingTest() throws ExecutionException, InterruptedException {
@@ -401,9 +361,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#addMapping} method from southbound.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void addMappingTest_fromSouthbound() throws ExecutionException, InterruptedException {
@@ -420,9 +377,6 @@ public class MappingServiceTest {
 
     /**
      * Tests {@link MappingService#addMapping} method from northbound.
-     *
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Test
     public void addMappingTest_fromNorthbound() throws ExecutionException, InterruptedException {

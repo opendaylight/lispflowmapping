@@ -119,16 +119,16 @@ public class MapResolver implements IMapResolverAsync {
 
     private static boolean isEqualIpVersion(IpAddressBinary srcRloc, Rloc rloc) {
         if (srcRloc.getIpv4AddressBinary() != null) {
-            if (rloc.getAddressType() == Ipv4Afi.class ||
-                    rloc.getAddressType() == Ipv4BinaryAfi.class ||
-                    rloc.getAddressType() == Ipv4PrefixAfi.class ||
-                    rloc.getAddressType() == Ipv4PrefixBinaryAfi.class) {
+            if (rloc.getAddressType() == Ipv4Afi.class
+                    || rloc.getAddressType() == Ipv4BinaryAfi.class
+                    || rloc.getAddressType() == Ipv4PrefixAfi.class
+                    || rloc.getAddressType() == Ipv4PrefixBinaryAfi.class) {
                 return true;
             }
-        } else if (rloc.getAddressType() == Ipv6Afi.class ||
-                rloc.getAddressType() == Ipv6BinaryAfi.class ||
-                rloc.getAddressType() == Ipv6PrefixAfi.class ||
-                rloc.getAddressType() == Ipv6PrefixBinaryAfi.class) {
+        } else if (rloc.getAddressType() == Ipv6Afi.class
+                || rloc.getAddressType() == Ipv6BinaryAfi.class
+                || rloc.getAddressType() == Ipv6PrefixAfi.class
+                || rloc.getAddressType() == Ipv6PrefixBinaryAfi.class) {
             return true;
         }
         return false;
@@ -171,8 +171,8 @@ public class MapResolver implements IMapResolverAsync {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
-        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class) ||
-                eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
+        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class)
+                || eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
             recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
         } else {
             recordBuilder.setEid(eid);
@@ -313,9 +313,9 @@ public class MapResolver implements IMapResolverAsync {
                 Address hopAddress = LispAddressUtil.addressFromSimpleAddress(hop.getAddress());
                 for (ItrRloc itrRloc : itrRlocs) {
                     if (itrRloc.getRloc().getAddress().equals(hopAddress)) {
-                        int i = hops.indexOf(hop);
-                        if (i < hops.size() - 1) {
-                            nextHop = hops.get(i + 1).getAddress();
+                        int iterator = hops.indexOf(hop);
+                        if (iterator < hops.size() - 1) {
+                            nextHop = hops.get(iterator + 1).getAddress();
                             return nextHop;
                         }
                     }

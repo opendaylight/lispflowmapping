@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import com.google.common.base.Preconditions;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -58,7 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Preconditions;
 
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
@@ -109,8 +108,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
 
             if (subscriptionService) {
-                MappingRecord newMapping = merge ?
-                        (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                MappingRecord newMapping = merge
+                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
@@ -150,8 +149,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
             List<MappingRecordItem> mappings = builder.getMappingRecordItem();
-            if (mappings != null && mappings.get(0) != null && mappings.get(0).getMappingRecord() != null &&
-                    mappings.get(0).getMappingRecord().getEid() != null) {
+            if (mappings != null && mappings.get(0) != null && mappings.get(0).getMappingRecord() != null
+                    && mappings.get(0).getMappingRecord().getEid() != null) {
                 MappingAuthkey authkey = mapService.getAuthenticationKey(mappings.get(0).getMappingRecord().getEid());
                 if (authkey != null) {
                     builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
@@ -226,6 +225,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void handleSmr(Eid eid, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
         if (subscribers == null) {
             return;
@@ -248,7 +248,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                     callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
                 } catch (Exception e) {
-                    LOG.error("Errors encountered while handling SMR:" + ExceptionUtils.getStackTrace(e));
+                    LOG.error("Errors encountered while handling SMR:", e);
                 }
             }
         }
@@ -279,13 +279,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 }
                 Enumeration<InetAddress> addresses = current.getInetAddresses();
                 while (addresses.hasMoreElements()) {
-                    InetAddress current_addr = addresses.nextElement();
+                    InetAddress currentAddr = addresses.nextElement();
                     // Skip loopback and link local addresses
-                    if (current_addr.isLoopbackAddress() || current_addr.isLinkLocalAddress()) {
+                    if (currentAddr.isLoopbackAddress() || currentAddr.isLinkLocalAddress()) {
                         continue;
                     }
-                    LOG.debug(current_addr.getHostAddress());
-                    return current_addr;
+                    LOG.debug(currentAddr.getHostAddress());
+                    return currentAddr;
                 }
             }
         } catch (SocketException se) {

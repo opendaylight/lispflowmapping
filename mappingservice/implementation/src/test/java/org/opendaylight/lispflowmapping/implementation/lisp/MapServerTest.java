@@ -45,6 +45,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
@@ -56,8 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MapServerTest {
@@ -501,17 +501,17 @@ public class MapServerTest {
     }
 
     private static List<TransportAddress> getTransportAddressList() {
-        TransportAddressBuilder transportAddressBuilder_1 = new TransportAddressBuilder()
+        TransportAddressBuilder transportAddressBuilder1 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_1)
                 .setPort(new PortNumber(LispMessage.PORT_NUM));
 
-        TransportAddressBuilder transportAddressBuilder_2 = new TransportAddressBuilder()
+        TransportAddressBuilder transportAddressBuilder2 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_2)
                 .setPort(new PortNumber(LispMessage.PORT_NUM));
 
         final List<TransportAddress> transportAddressList = Lists.newArrayList(
-                transportAddressBuilder_1.build(),
-                transportAddressBuilder_2.build());
+                transportAddressBuilder1.build(),
+                transportAddressBuilder2.build());
 
         return transportAddressList;
     }

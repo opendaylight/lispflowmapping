@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 
 /**
- * Converts RPC *Input object to other object types
+ * Converts RPC *Input object to other object types.
  *
  * @author Lorand Jakab
  *
@@ -48,6 +48,16 @@ public final class RPCInputConvertorUtil {
         return toAuthenticationKey(input.getEid(), null);
     }
 
+    private static AuthenticationKey toAuthenticationKey(Eid address, MappingAuthkey key) {
+        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
+        akb.setEidUri(new EidUri(LispAddressStringifier.getURIString(address)));
+        akb.setEid(address);
+        if (key != null) {
+            akb.setMappingAuthkey(key);
+        }
+        return akb.build();
+    }
+
     public static Mapping toMapping(AddMappingInput input) {
         return toMapping(input.getMappingRecord());
     }
@@ -58,16 +68,6 @@ public final class RPCInputConvertorUtil {
 
     public static Mapping toMapping(RemoveMappingInput input) {
         return toMapping(input.getEid());
-    }
-
-    private static AuthenticationKey toAuthenticationKey(Eid address, MappingAuthkey key) {
-        AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder();
-        akb.setEidUri(new EidUri(LispAddressStringifier.getURIString(address)));
-        akb.setEid(address);
-        if (key != null) {
-            akb.setMappingAuthkey(key);
-        }
-        return akb.build();
     }
 
     private static Mapping toMapping(MappingRecord mapping) {

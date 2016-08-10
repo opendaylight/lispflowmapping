@@ -14,6 +14,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 
 /**
+ * Utility class to convert a mapping change into a notification.
+ *
  * @author Florin Coras
  *
  */

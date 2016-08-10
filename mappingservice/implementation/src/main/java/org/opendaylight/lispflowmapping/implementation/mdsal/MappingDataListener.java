@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
@@ -144,8 +143,8 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
             convertedLocators = convertToBinaryIfNecessary(originalLocators);
         }
 
-        if (LispAddressUtil.addressNeedsConversionToBinary(originalRecord.getEid().getAddress()) ||
-                (originalLocators != null && convertedLocators != null)) {
+        if (LispAddressUtil.addressNeedsConversionToBinary(originalRecord.getEid().getAddress())
+                || (originalLocators != null && convertedLocators != null)) {
             MappingRecordBuilder mrb = new MappingRecordBuilder(originalRecord);
             mrb.setEid(LispAddressUtil.convertToBinary(originalRecord.getEid()));
             if (convertedLocators != null) {

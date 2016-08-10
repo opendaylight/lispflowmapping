@@ -7,15 +7,16 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
-
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
-import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
@@ -60,9 +61,6 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.Futures;
 
 /**
  * Dispatcher of API calls that implements the RPC and Java APIs in mappingservice.yang and IMappingService
@@ -168,6 +166,27 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge) {
+        // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
+        if (origin.equals(MappingOrigin.Southbound)) {
+            // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
+            // registrations
+            mappingSystem.addMapping(origin, key, data, merge);
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+            if (((MappingRecord) data).getXtrId() != null) {
+                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
+            }
+        } else {
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+        }
+    }
+
+    @Override
+    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
+        mappingSystem.updateMappingRegistration(origin, key, timestamp);
+    }
+
+    @Override
     public Future<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
         Preconditions.checkNotNull(input, "get-key RPC input must be not null!");
         LOG.trace("RPC received to get the following key: " + input.toString());
@@ -209,6 +228,21 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public Object getMapping(MappingOrigin origin, Eid key) {
+        return mappingSystem.getMapping(origin, key);
+    }
+
+    @Override
+    public Object getMapping(Eid key) {
+        return mappingSystem.getMapping(key);
+    }
+
+    @Override
+    public Object getMapping(Eid srcKey, Eid dstKey) {
+        return mappingSystem.getMapping(srcKey, dstKey);
+    }
+
+    @Override
     public Future<RpcResult<Void>> removeKey(RemoveKeyInput input) {
         Preconditions.checkNotNull(input, "remove-key RPC input must be not null!");
         LOG.trace("RPC received to remove the following key: " + input.toString());
@@ -234,6 +268,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         rpcResultBuilder = RpcResultBuilder.success();
 
         return Futures.immediateFuture(rpcResultBuilder.build());
+    }
+
+    @Override
+    public void removeMapping(MappingOrigin origin, Eid key) {
+        dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }
 
     @Override
@@ -346,49 +385,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge) {
-        // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
-        if (origin.equals(MappingOrigin.Southbound)) {
-            // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
-            // registrations
-            mappingSystem.addMapping(origin, key, data, merge);
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
-            if (((MappingRecord) data).getXtrId() != null) {
-                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
-            }
-        } else {
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
-        }
-    }
-
-    @Override
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        mappingSystem.updateMappingRegistration(origin, key, timestamp);
-    }
-
-    @Override
-    public Object getMapping(MappingOrigin origin, Eid key) {
-        return mappingSystem.getMapping(origin, key);
-    }
-
-    @Override
-    public Object getMapping(Eid key) {
-        return mappingSystem.getMapping(key);
-    }
-
-    @Override
-    public Object getMapping(Eid srcKey, Eid dstKey) {
-        return mappingSystem.getMapping(srcKey, dstKey);
-    }
-
-    @Override
     public Eid getWidestNegativePrefix(Eid key) {
         return mappingSystem.getWidestNegativePrefix(key);
-    }
-
-    @Override
-    public void removeMapping(MappingOrigin origin, Eid key) {
-        dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }
 
     @Override
@@ -455,8 +453,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             convertedLocators = convertFromBinaryIfNecessary(originalLocators);
         }
 
-        if (LispAddressUtil.addressNeedsConversionFromBinary(originalRecord.getEid().getAddress()) ||
-                (originalLocators != null && convertedLocators != null)) {
+        if (LispAddressUtil.addressNeedsConversionFromBinary(originalRecord.getEid().getAddress())
+                || (originalLocators != null && convertedLocators != null)) {
             MappingRecordBuilder mrb = new MappingRecordBuilder(originalRecord);
             mrb.setEid(LispAddressUtil.convertFromBinary(originalRecord.getEid()));
             if (convertedLocators != null) {
