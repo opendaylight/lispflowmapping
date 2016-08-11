@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_fe12dcb2",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-11T05:57:27Z",
+      "side": 0,
+      "message": "hm,  not sure if Florin will need this for MAC src/dst. I\u0027ll add him to reveiew.",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 0
+      },
+      "revId": "3dd1ec73751d128303c1e8910dd1402bda9bdd00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
