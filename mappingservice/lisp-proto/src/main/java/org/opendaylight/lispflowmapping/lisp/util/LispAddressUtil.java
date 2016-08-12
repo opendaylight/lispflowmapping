@@ -565,6 +565,28 @@ public final class LispAddressUtil {
         return LispAddressUtil.asEid(address, iid);
     }
 
+    public static Eid asIpPrefixBinaryEid(Eid eid) {
+        Address address = eid.getAddress();
+        if (address instanceof Ipv4Binary) {
+            return LispAddressUtil.asIpv4PrefixBinaryEid(eid, ((Ipv4Binary) address).getIpv4Binary().getValue(),
+                    (short) 32);
+        } else if (address instanceof Ipv6Binary) {
+            return LispAddressUtil.asIpv6PrefixBinaryEid(eid, ((Ipv6Binary) address).getIpv6Binary().getValue(),
+                    (short) 128);
+        } else if (address instanceof Ipv4PrefixBinary || address instanceof Ipv6PrefixBinary) {
+            return eid;
+        } else if (address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address
+                .types.rev151105.lisp.address.address.Ipv4) {
+            return LispAddressUtil.asIpv4PrefixBinaryEid(((Ipv4) address).getIpv4().getValue() + "/32",
+                    eid.getVirtualNetworkId());
+        } else if (address instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address
+                .types.rev151105.lisp.address.address.Ipv6) {
+            return LispAddressUtil.asIpv6PrefixBinaryEid(((Ipv6) address).getIpv6().getValue() + "/128",
+                    eid.getVirtualNetworkId());
+        }
+        return convertToBinary(eid);
+    }
+
     public static int ipVersionFromString(String ip) {
         if (IP4_PATTERN.matcher(ip).matches()) {
             return 4;
