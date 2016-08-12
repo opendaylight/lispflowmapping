@@ -175,7 +175,7 @@ public class MultiTableMapCacheTest {
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getBest(key)).thenReturn(entry);
-        when(srcDstDaoMock.getBest(key2)).thenReturn(entry2);
+        when(srcDstDaoMock.getBest(LispAddressUtil.asIpPrefixBinaryEid(key2))).thenReturn(entry2);
 
         assertEquals(DUMMY_OBJECT_2, multiTableMapCache.getMapping(EID_IPV4_PREFIX_SRC, EID_IPV4_PREFIX_DST));
         assertEquals(DUMMY_OBJECT, multiTableMapCache.getMapping(null, EID_IPV4_PREFIX_DST));
