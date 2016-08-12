@@ -77,20 +77,6 @@ public class MultiTableMapCache implements IMapCache {
         }
     }
 
-    private Object getMappingExactSD(Eid srcEid, Eid dstEid, ILispDAO mappingsDb) {
-        Map<String, ?> daoEntry = mappingsDb.get(dstEid);
-        if (daoEntry != null) {
-            // try SrcDst eid lookup
-            ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);
-            if (srcEid != null && srcDstDao != null) {
-                return srcDstDao.getSpecific(srcEid, SubKeys.RECORD);
-            }
-            // if lookup fails, return whatever is found for dst eid
-            return daoEntry.get(SubKeys.RECORD);
-        }
-        return null;
-    }
-
     // Returns the mapping corresponding to the longest prefix match for eid.
     // eid must be a simple (maskable or not) address
     private Object getMappingLpmEid(Eid eid, ILispDAO mappingsDb) {
