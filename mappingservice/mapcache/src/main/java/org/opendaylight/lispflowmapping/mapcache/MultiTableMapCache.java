@@ -14,6 +14,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -99,7 +100,8 @@ public class MultiTableMapCache implements IMapCache {
             // try SrcDst eid lookup
             ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);
             if (srcDstDao != null) {
-                Object mapping = getMappingLpmEid(srcEid, srcDstDao);
+                // make sure that srcEid is a prefix, not an IP
+                Object mapping = getMappingLpmEid(LispAddressUtil.asIpPrefixBinaryEid(srcEid), srcDstDao);
                 if (mapping !=  null) {
                     return mapping;
                 }

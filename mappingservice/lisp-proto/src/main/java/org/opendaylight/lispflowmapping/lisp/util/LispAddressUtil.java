@@ -565,6 +565,21 @@ public final class LispAddressUtil {
         return LispAddressUtil.asEid(address, iid);
     }
 
+    public static Eid asIpPrefixBinaryEid(Eid eid) {
+        Address address = eid.getAddress();
+        if (address instanceof Ipv4Binary) {
+            return LispAddressUtil.asIpv4PrefixBinaryEid(eid, ((Ipv4Binary) address).getIpv4Binary().getValue(),
+                    (short) 32);
+        } else if (address instanceof Ipv6Binary) {
+            return LispAddressUtil.asIpv6PrefixBinaryEid(eid, ((Ipv6Binary) address).getIpv6Binary().getValue(),
+                    (short) 128);
+        } else if (address instanceof Ipv4PrefixBinary || address instanceof Ipv6PrefixBinary) {
+            return eid;
+        }
+
+        return null;
+    }
+
     public static int ipVersionFromString(String ip) {
         if (IP4_PATTERN.matcher(ip).matches()) {
             return 4;
