@@ -343,6 +343,11 @@ public class RadixTrie<T> {
             return node;
         }
 
+
+        private int toUnsignedInt(byte byteToConvert) {
+            return 0xFF & byteToConvert;
+        }
+
         /**
          * Compares prefix to node's prefix and returns position of first different bit.
          *
@@ -351,17 +356,19 @@ public class RadixTrie<T> {
          * @return Position of first different bit.
          */
         public int firstDifferentBit(byte[] prefix, int preflen) {
-            byte bitxor;
+            int bitxor;
 
             int maxbit = (bit < preflen) ? bit : preflen;
             int diffbit = 0;
             for (int i = 0; i * 8 < maxbit; i++) {
                 // if match, move to next byte
-                if ((bitxor = (byte) (this.prefix[i] ^ prefix[i])) == 0) {
+                if ((bitxor = ((toUnsignedInt(this.prefix[i])) ^ toUnsignedInt(prefix[i]))) == 0) {
                     diffbit = (i + 1) * 8;
                     continue;
                 }
                 // if not matched, find first diff bit (0 to 7)
+                int a1 = Integer.numberOfLeadingZeros(0xFF & bitxor);
+                diffbit = a1;
                 diffbit = i * 8 + Integer.numberOfLeadingZeros(bitxor) - 24;
                 diffbit = (diffbit > maxbit) ? maxbit : diffbit;
                 break;
