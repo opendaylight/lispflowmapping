@@ -134,7 +134,11 @@ public class MultiTableMapCache implements IMapCache {
 
     @Override
     public Eid getWidestNegativeMapping(Eid key) {
-        return dao.getWidestNegativePrefix(key);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        return table.getWidestNegativePrefix(key);
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
