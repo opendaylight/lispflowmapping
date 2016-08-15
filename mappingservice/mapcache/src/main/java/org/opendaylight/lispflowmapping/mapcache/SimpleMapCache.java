@@ -210,7 +210,11 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public Eid getWidestNegativeMapping(Eid key) {
-        return dao.getWidestNegativePrefix(MaskUtil.normalize(key));
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        return table.getWidestNegativePrefix(MaskUtil.normalize(key));
     }
 
     public void removeMapping(Eid eid, boolean overwrite) {
