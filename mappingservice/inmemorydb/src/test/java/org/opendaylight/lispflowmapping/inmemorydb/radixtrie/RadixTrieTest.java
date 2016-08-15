@@ -40,6 +40,10 @@ public class RadixTrieTest {
     private static byte[] IP4_BYTES10;
     private static byte[] IP4_BYTES11;
     private static byte[] IP4_BYTES12;
+    private static byte[] IP4_BYTES13;
+    private static byte[] IP4_BYTES14;
+    private static byte[] IP4_BYTES15;
+    private static byte[] IP4_BYTES16;
 
     ArrayList<byte []> itPrefixList4;
     ArrayList<Integer> itPreflenList4;
@@ -68,6 +72,10 @@ public class RadixTrieTest {
             IP4_BYTES10 = InetAddress.getByName("129.214.0.0").getAddress();
             IP4_BYTES11 = InetAddress.getByName("192.168.2.0").getAddress();
             IP4_BYTES12 = InetAddress.getByName("128.0.0.0").getAddress();
+            IP4_BYTES13 = InetAddress.getByName("1.1.128.0").getAddress();
+            IP4_BYTES14 = InetAddress.getByName("1.1.32.0").getAddress();
+            IP4_BYTES15 = InetAddress.getByName("1.1.127.10").getAddress();
+            IP4_BYTES16 = InetAddress.getByName("1.1.64.0").getAddress();
 
             IP6_BYTES1 = InetAddress.getByName("192:168::0:0").getAddress();
             IP6_BYTES2 = InetAddress.getByName("192:167::0:0").getAddress();
@@ -134,6 +142,23 @@ public class RadixTrieTest {
 
         radixTrie4.removeAll();
         assertTrue(radixTrie4.getRoot() == null);
+    }
+
+    /**
+     * Tests v4 inserts that overlap on byte edge.
+     */
+    @Test
+    public void testIp4ByteBoundary() {
+        radixTrie4 = new RadixTrie<>(32);
+
+        radixTrie4.insert(IP4_BYTES13, 17, 1);
+        radixTrie4.insert(IP4_BYTES14, 19, 1);
+
+        RadixTrie<Integer>.TrieNode res = radixTrie4.lookupWidestNegative(IP4_BYTES15, 32);
+        assertTrue(Arrays.equals(res.prefix, IP4_BYTES16));
+        assertTrue(res.prefixLength() == 18);
+
+        radixTrie4.removeAll();
     }
 
     /**
