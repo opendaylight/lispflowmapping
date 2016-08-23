@@ -161,6 +161,8 @@ module odl-lisp-proto {
         container mapping-record {
             leaf recordTtl {
                 type int32;
+                description
+                    "A mapping record's time to live in Minute(s)";
             }
             leaf mapVersion {
                 type int16;

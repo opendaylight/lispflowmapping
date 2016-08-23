@@ -111,17 +111,20 @@ public class MapServerTest {
     private static final long TWO_DAYS = 86400000L * 2;
 
     private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,         // timedOut() == true
-            IPV4_SOURCE_EID_1, new Date(System.currentTimeMillis() - TWO_DAYS));
+            IPV4_SOURCE_EID_1, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+            new Date(System.currentTimeMillis() - TWO_DAYS));
     private static final SubscriberRLOC SUBSCRIBER_RLOC_2 = new SubscriberRLOC(RLOC_2,         // timedOut() == false
-            IPV4_SOURCE_EID_2);
+            IPV4_SOURCE_EID_2, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
     private static final SubscriberRLOC SUBSCRIBER_RLOC_3 = new SubscriberRLOC(RLOC_3,         // timedOut() == true
-            IPV4_SOURCE_EID_3, new Date(System.currentTimeMillis() - TWO_DAYS));
+            IPV4_SOURCE_EID_3, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+            new Date(System.currentTimeMillis() - TWO_DAYS));
     private static final SubscriberRLOC SUBSCRIBER_RLOC_4 = new SubscriberRLOC(RLOC_4,         // timedOut() == false
-            IPV4_SOURCE_EID_4);
+            IPV4_SOURCE_EID_4, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
     private static final SubscriberRLOC SUBSCRIBER_RLOC_5 = new SubscriberRLOC(RLOC_5,         // timedOut() == true
-            IPV4_SOURCE_EID_5, new Date(System.currentTimeMillis() - TWO_DAYS));
+            IPV4_SOURCE_EID_5, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+            new Date(System.currentTimeMillis() - TWO_DAYS));
     private static final SubscriberRLOC SUBSCRIBER_RLOC_6 = new SubscriberRLOC(RLOC_6,         // timedOut() == false
-            IPV4_SOURCE_EID_6);
+            IPV4_SOURCE_EID_6, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
             .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);

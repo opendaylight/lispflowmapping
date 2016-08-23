@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -107,7 +108,7 @@ public class MapResolverTest {
     private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1);
     private static MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
     private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,
-            LispAddressUtil.asIpv4Eid(IPV4_SOURCE));
+            LispAddressUtil.asIpv4Eid(IPV4_SOURCE), SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     @Before
     @SuppressWarnings("unchecked")
@@ -301,9 +302,12 @@ public class MapResolverTest {
                 .thenReturn(mappingRecordBuilder.build());
         Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock);
-        Mockito.when(subscriberSetMock.contains(new SubscriberRLOC(
+        SubscriberRLOC subscriberRLOCMock = new SubscriberRLOC(
                 mapRequestBuilder.getItrRloc().get(0).getRloc(),
-                mapRequestBuilder.getSourceEid().getEid())))
+                mapRequestBuilder.getSourceEid().getEid(), SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
+        subscriberRLOCMock.setSubscriberTimeoutByRecordTtl(
+                mappingRecordBuilder.getRecordTtl());
+        Mockito.when(subscriberSetMock.contains(subscriberRLOCMock))
                 .thenReturn(true);
 
         // result

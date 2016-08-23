@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
@@ -66,7 +67,7 @@ public class MapResolver implements IMapResolverAsync {
     private boolean authenticate = true;
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
-            IMapRequestResultHandler requestHandler) {
+                       IMapRequestResultHandler requestHandler) {
         Preconditions.checkNotNull(mapService);
         this.subscriptionService = smr;
         this.mapService = mapService;
@@ -104,7 +105,8 @@ public class MapResolver implements IMapResolverAsync {
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
                         final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
-                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(), srcEid);
+                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
+                                srcEid, mapping.getRecordTtl());
                     }
                     mapping = updateLocators(mapping, itrRlocs);
                 }
@@ -188,8 +190,9 @@ public class MapResolver implements IMapResolverAsync {
         return recordBuilder.build();
     }
 
-    private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid) {
-        SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid);
+    private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
+        SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid,
+                SubscriberRLOC.recordTtlToSubscriberTime(recordTtl));
         Eid subscribedEid = mapEid;
 
         // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe itrRloc only
