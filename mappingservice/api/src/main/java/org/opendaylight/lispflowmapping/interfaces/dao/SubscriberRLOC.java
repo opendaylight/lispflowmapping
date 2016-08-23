@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -20,20 +21,39 @@ public class SubscriberRLOC {
     private Rloc rloc;
     private Eid eid;
     private Date lastRequestDate;
+    private int subscriberTimeout = DEFAULT_SUBSCRIBER_TIMEOUT;
 
-    // 86400000L = 1 day (default Cisco IOS mapping TTL)
-    private static final long SUBSCRIBER_TIMEOUT = 86400000L;
+    private static final int SUBSCRIBER_TIMEOUT_CONSTANT = 10;
 
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid) {
-        this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
+    //1 day is default Cisco IOS mapping TTL
+    public static final int DEFAULT_SUBSCRIBER_TIMEOUT = (int) TimeUnit.DAYS.toMinutes(1);
+
+    /**
+     * Constructor.
+     *
+     * @param srcRloc A source RLOC.
+     * @param srcEid  A source EID.
+     * @param subscriberTimeout Subscriber timeout in min(s).
+     */
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, int subscriberTimeout) {
+        this(srcRloc, srcEid, subscriberTimeout, new Date(System.currentTimeMillis()));
     }
 
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid,
-            Date lastRequestDate) {
+    /**
+     * Constructor.
+     *
+     * @param srcRloc A source RLOC.
+     * @param srcEid  A source EID.
+     * @param subscriberTimeout Subscriber timeout in min(s).
+     * @param lastRequestDate Last request date for this subscriber.
+     */
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, int subscriberTimeout,
+                          Date lastRequestDate) {
         super();
         this.rloc = srcRloc;
         this.eid = srcEid;
         this.lastRequestDate = lastRequestDate;
+        this.subscriberTimeout = subscriberTimeout;
     }
 
     public Rloc getSrcRloc() {
@@ -60,8 +80,34 @@ public class SubscriberRLOC {
         this.lastRequestDate = lastRequestDate;
     }
 
+    public int getSubscriberTimeout() {
+        return subscriberTimeout;
+    }
+
+    public void setSubscriberTimeout(int subscriberTimeout) {
+        this.subscriberTimeout = subscriberTimeout;
+    }
+
+    /**
+     * Set Subscriber Timeout from a record's ttl.
+     *
+     * @param recordTtl A mapping record's ttl in Minutes. If null, the value is
+     *                  set to default value of 1440 mins (1 days).
+     */
+    public void setSubscriberTimeoutByRecordTtl(Integer recordTtl) {
+        this.subscriberTimeout = recordTtlToSubscriberTime(recordTtl);
+    }
+
+    public static int recordTtlToSubscriberTime(Integer recordTtl) {
+        if (recordTtl != null) {
+            return ( recordTtl + SUBSCRIBER_TIMEOUT_CONSTANT );
+        }
+        return DEFAULT_SUBSCRIBER_TIMEOUT;
+    }
+
     public boolean timedOut() {
-        return System.currentTimeMillis() - lastRequestDate.getTime() > SUBSCRIBER_TIMEOUT;
+        return TimeUnit.MILLISECONDS
+                .toMinutes(System.currentTimeMillis() - lastRequestDate.getTime()) > subscriberTimeout;
     }
 
     @Override
