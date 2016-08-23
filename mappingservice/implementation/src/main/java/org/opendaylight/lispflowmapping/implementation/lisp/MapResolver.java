@@ -171,11 +171,13 @@ public class MapResolver implements IMapResolverAsync {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
+        recordBuilder.setEid(eid);
         if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class)
                 || eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
-            recordBuilder.setEid(mapService.getWidestNegativePrefix(eid));
-        } else {
-            recordBuilder.setEid(eid);
+            Eid widestNegativePrefix = mapService.getWidestNegativePrefix(eid);
+            if (widestNegativePrefix != null) {
+                recordBuilder.setEid(widestNegativePrefix);
+            }
         }
         recordBuilder.setAction(Action.NativelyForward);
         if (authenticate && mapService.getAuthenticationKey(eid) != null) {
