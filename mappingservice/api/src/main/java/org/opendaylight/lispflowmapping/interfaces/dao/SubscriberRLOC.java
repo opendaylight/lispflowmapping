@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -20,20 +21,22 @@ public class SubscriberRLOC {
     private Rloc rloc;
     private Eid eid;
     private Date lastRequestDate;
+    private long subscriberTimeout = 86400000L;
 
-    // 86400000L = 1 day (default Cisco IOS mapping TTL)
-    private static final long SUBSCRIBER_TIMEOUT = 86400000L;
+//  // 86400000L = 1 day (default Cisco IOS mapping TTL)
+//    private static final long SUBSCRIBER_TIMEOUT = 86400000L;
 
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid) {
-        this(srcRloc, srcEid, new Date(System.currentTimeMillis()));
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, long subscriberTimeout) {
+        this(srcRloc, srcEid, subscriberTimeout, new Date(System.currentTimeMillis()));
     }
 
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid,
-            Date lastRequestDate) {
+    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, long subscriberTimeout,
+                          Date lastRequestDate) {
         super();
         this.rloc = srcRloc;
         this.eid = srcEid;
         this.lastRequestDate = lastRequestDate;
+        this.subscriberTimeout = subscriberTimeout;
     }
 
     public Rloc getSrcRloc() {
@@ -60,8 +63,20 @@ public class SubscriberRLOC {
         this.lastRequestDate = lastRequestDate;
     }
 
+    public long getSubscriberTimeout() {
+        return subscriberTimeout;
+    }
+
+    public void setSubscriberTimeout(long subscriberTimeout) {
+        this.subscriberTimeout = subscriberTimeout;
+    }
+
+    public void setSubscriberTimeoutByRecordTtl(long recordTtl) {
+        this.subscriberTimeout = (long) Math.ceil( 1.50 * TimeUnit.MINUTES.toMillis(recordTtl) );
+    }
+
     public boolean timedOut() {
-        return System.currentTimeMillis() - lastRequestDate.getTime() > SUBSCRIBER_TIMEOUT;
+        return System.currentTimeMillis() - lastRequestDate.getTime() > subscriberTimeout;
     }
 
     @Override
