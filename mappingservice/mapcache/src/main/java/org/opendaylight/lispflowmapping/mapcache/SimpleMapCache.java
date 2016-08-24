@@ -227,6 +227,7 @@ public class SimpleMapCache implements IMapCache {
         }
 
         table.removeSpecific(key, SubKeys.RECORD);
+        table.removeSpecific(key, SubKeys.REGDATE);
 
         if (!overwrite) {
             ILispDAO xtrIdTable = getXtrIdTable(key, table);

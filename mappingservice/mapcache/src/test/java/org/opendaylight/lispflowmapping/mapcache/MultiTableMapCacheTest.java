@@ -194,6 +194,8 @@ public class MultiTableMapCacheTest {
         multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
         verify(dbMock).removeSpecific(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
                 SubKeys.RECORD);
+        verify(dbMock).removeSpecific(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
+                SubKeys.REGDATE);
     }
 
     /**
@@ -206,6 +208,7 @@ public class MultiTableMapCacheTest {
 
         multiTableMapCache.removeMapping(EID_TEST, true);
         verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+        verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.REGDATE);
     }
 
     /**

@@ -155,9 +155,12 @@ public class MultiTableMapCache implements IMapCache {
             if (db != null) {
                 db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key),
                         SubKeys.RECORD);
+                db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key),
+                        SubKeys.REGDATE);
             }
         } else {
             table.removeSpecific(key, SubKeys.RECORD);
+            table.removeSpecific(key, SubKeys.REGDATE);
         }
     }
 
