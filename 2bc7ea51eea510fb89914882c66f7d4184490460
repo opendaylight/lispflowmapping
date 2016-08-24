@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a6b29fe_218513ad",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "comment description should go before the variable definition.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 56
+      },
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_81ab471c",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "Looking at the code, I think its better to actually switch the subscriber timeout to minutes as well, to avoid the conversion, and inconsistency. Can you please update the patch with this change?",
+      "range": {
+        "startLine": 24,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 56
+      },
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_c196dfef",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
         "patchSetId": 2
@@ -13,6 +59,29 @@
       "writtenOn": "2016-08-24T21:53:26Z",
       "side": 1,
       "message": "I\u0027d prefer not to leave commented out code in the tree, so I think we should just remove this.",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_418acfbf",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "Please remove this line instead of commenting it out for clean code.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 63
+      },
       "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -36,6 +105,29 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_c1641f24",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "Once subscriber timeout is changed to minutes, we should only need one basic setter method here.\n\nAs for the formula, record ttl may be null, in which case we should check for null, and have a default of 1 day set. which you can do in the basic setter. so the number 1.5 wouldnt show up in this file.",
+      "range": {
+        "startLine": 70,
+        "startChar": 2,
+        "endLine": 81,
+        "endChar": 5
+      },
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_01b8d774",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
         "patchSetId": 2
@@ -47,6 +139,70 @@
       "writtenOn": "2016-08-24T21:53:26Z",
       "side": 1,
       "message": "Since we\u0027re using this small function in two places, maybe it\u0027s worth defining it as a static util function? That way we also have the 1.50 constant defined in a single place.",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_a14e4394",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "it definitely should be used directly only in one place. With the change that I suggested on subscriber timeout scale (change from millisec to minutes) the formula should be used here in MR only. And as Lori suggested, the 1.5 constant should be defined as constant variable to avoid static numbers scattered in the code.",
+      "parentUuid": "7a6b29fe_01b8d774",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0114574c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "with the changes suggested earlier this should not be needed anymore.",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 68
+      },
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_e1167b54",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-24T22:33:32Z",
+      "side": 1,
+      "message": "If you change the variable to minutes, all these need to be updated accordingly.",
+      "range": {
+        "startLine": 114,
+        "startChar": 10,
+        "endLine": 124,
+        "endChar": 42
+      },
       "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
