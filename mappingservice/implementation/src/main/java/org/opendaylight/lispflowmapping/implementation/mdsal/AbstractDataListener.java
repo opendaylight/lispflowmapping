@@ -7,8 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
+import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * The superclass for the different MD-SAL data change event listeners.
  *
  */
-public abstract class AbstractDataListener<T extends DataObject> implements DataTreeChangeListener<T> {
+public abstract class AbstractDataListener<T extends DataObject> implements ClusteredDataTreeChangeListener<T> {
     private DataBroker broker;
     private InstanceIdentifier<T> path;
-    private ListenerRegistration<DataTreeChangeListener<T>> registration;
+    private ListenerRegistration<ClusteredDataTreeChangeListener<T>> registration;
 
     public void registerDataChangeListener() {
         final DataTreeIdentifier<T> dataTreeIdentifier = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION,
