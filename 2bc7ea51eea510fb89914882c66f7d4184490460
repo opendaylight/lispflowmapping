@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_c196dfef",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-24T21:53:26Z",
+      "side": 1,
+      "message": "I\u0027d prefer not to leave commented out code in the tree, so I think we should just remove this.",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8194e7e2",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-24T21:53:26Z",
+      "side": 1,
+      "message": "One thing that the Sonar static analysis tool [0] complains about is \u0027magic numbers\u0027, so we prefer to add them as constants.\n\n[0] https://sonar.opendaylight.org/overview?id\u003d31299",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_01b8d774",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-24T21:53:26Z",
+      "side": 1,
+      "message": "Since we\u0027re using this small function in two places, maybe it\u0027s worth defining it as a static util function? That way we also have the 1.50 constant defined in a single place.",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_61f8ab49",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-24T21:53:26Z",
+      "side": 1,
+      "message": "Very useful to document these things, thanks!",
+      "revId": "2bc7ea51eea510fb89914882c66f7d4184490460",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
