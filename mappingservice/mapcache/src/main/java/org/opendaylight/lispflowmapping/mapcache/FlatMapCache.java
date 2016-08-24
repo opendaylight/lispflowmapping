@@ -58,6 +58,7 @@ public class FlatMapCache implements IMapCache {
     public void removeMapping(Eid eid, boolean overwrite) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
+        dao.removeSpecific(key, SubKeys.REGDATE);
     }
 
     @Override

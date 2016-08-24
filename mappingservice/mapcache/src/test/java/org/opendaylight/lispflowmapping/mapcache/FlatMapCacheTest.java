@@ -75,6 +75,7 @@ public class FlatMapCacheTest {
     public void removeMappingTest() {
         flatMapCache.removeMapping(EID_TEST, true);
         verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
+        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.REGDATE);
     }
 
     /**
