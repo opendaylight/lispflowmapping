@@ -16,6 +16,24 @@
       "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8f3ecd8a",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-25T23:01:39Z",
+      "side": 1,
+      "message": "Shakib pointed out on IM that the default is already set, so no need, I missed it.",
+      "parentUuid": "7a6b29fe_4fb4b534",
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
