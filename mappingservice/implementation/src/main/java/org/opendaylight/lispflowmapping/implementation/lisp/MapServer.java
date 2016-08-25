@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrNonce;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -70,6 +71,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     private NotificationService notificationService;
     private ListenerRegistration<MapServer> mapServerListenerRegistration;
     private boolean isMaster = false;
+    private SmrNonce smrNonce;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
@@ -81,6 +83,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         if (notificationService != null) {
             notificationService.registerNotificationListener(this);
         }
+        smrNonce = notifyHandler.getSmrNonce();
     }
 
     @Override
@@ -256,13 +259,32 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                     // To ensure consistent behavior it is set to the value used to originally request a given mapping
                     mrb.setEidItem(new ArrayList<EidItem>());
                     mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
-                    callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
+
+                    for (int i = 1; i <= ConfigIni.LISP_SMR_REPETITION; i++) {
+                        waitForRequest();
+                        if (smrNonce.getNonce() == 0L && smrNonce.getNonce() != mrb.getNonce()) {
+                            callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
+                            LOG.trace("{}. attempt to send SMR.", i);
+                        } else {
+                            smrNonce.clear();
+                            LOG.trace("SMR received after {}. attempt.");
+                            break;
+                        }
+                    }
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:", e);
                 }
             }
         }
         addSubscribers(eid, subscribers);
+    }
+
+    private static void waitForRequest() {
+        try {
+            Thread.sleep(ConfigIni.LISP_SMR_TIMEOUT);
+        } catch (InterruptedException e) {
+            LOG.error("SMR timeout interrupted.");
+        }
     }
 
     @SuppressWarnings("unchecked")
