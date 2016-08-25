@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_4fb4b534",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-25T22:26:31Z",
+      "side": 1,
+      "message": "We should follow what the Javadoc says (which I think is good) and set the subscriberTimeout to the default value when it\u0027s null. I know this doesn\u0027t affect the code in MapResolver, since it\u0027s using the conversion function, it\u0027s just for completeness.",
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
