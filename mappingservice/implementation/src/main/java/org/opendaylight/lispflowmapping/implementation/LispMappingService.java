@@ -17,6 +17,7 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrNonce;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -65,7 +66,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
             LISPFLOWMAPPING_ENTITY_NAME);
 
-
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService;
 
@@ -77,6 +77,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             new ThreadLocal<Pair<MapNotify, List<TransportAddress>>>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest =
             new ThreadLocal<Pair<MapRequest, TransportAddress>>();
+
+    private final SmrNonce smrNonce = new SmrNonce();
 
     private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
@@ -116,14 +118,14 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     public void initialize() {
-        mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
+        mapResolver = new MapResolver(mapService, smr, elpPolicy, this, smrNonce);
         mapServer = new MapServer(mapService, smr, this, notificationService);
         this.clusterSingletonService.registerClusterSingletonService(this);
         LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
 
     public void basicInit() {
-        mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
+        mapResolver = new MapResolver(mapService, smr, elpPolicy, this, smrNonce);
         mapServer = new MapServer(mapService, smr, this, notificationService);
     }
 
@@ -264,7 +266,11 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         smrib.setMapRequest(new MapRequestBuilder(smr).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromRloc(subscriber));
         getLispSB().sendMapRequest(smrib.build());
+    }
 
+    @Override
+    public SmrNonce getSmrNonce() {
+        return this.smrNonce;
     }
 
     @Override

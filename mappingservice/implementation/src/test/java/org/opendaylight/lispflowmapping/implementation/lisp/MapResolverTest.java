@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrNonce;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -69,6 +70,7 @@ public class MapResolverTest {
     private static MappingService mapServiceMock;
     private static Set<SubscriberRLOC> subscriberSetMock;
     private static LispMappingService lispMappingServiceMock;
+    private static SmrNonce smrNonceMock;
 
     private static final String ITR_RLOC_KEY_STRING =   "itr_rloc_key";
     private static final String ITR_RLOC_ID_STRING =    "itr_rloc_id";
@@ -116,8 +118,9 @@ public class MapResolverTest {
         mapServiceMock = Mockito.mock(MappingService.class, "mapService");
         subscriberSetMock = Mockito.mock(Set.class);
         lispMappingServiceMock = Mockito.mock(LispMappingService.class, "requestHandler");
+        smrNonceMock = Mockito.mock(SmrNonce.class);
         mapResolver = new MapResolver(mapServiceMock, true, ConfigIni.getInstance().getElpPolicy(),
-                lispMappingServiceMock);
+                lispMappingServiceMock, smrNonceMock);
         mapRequestBuilder = getDefaultMapRequestBuilder();
     }
 
@@ -339,7 +342,7 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withBothPolicy() {
-        mapResolver = new MapResolver(mapServiceMock, true, "both", lispMappingServiceMock);
+        mapResolver = new MapResolver(mapServiceMock, true, "both", lispMappingServiceMock, smrNonceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
         ipAddressList.add(IPV4_ADDRESS_1); // hop 1
@@ -386,7 +389,7 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withReplacePolicy() {
-        mapResolver = new MapResolver(mapServiceMock, true, "replace", lispMappingServiceMock);
+        mapResolver = new MapResolver(mapServiceMock, true, "replace", lispMappingServiceMock, smrNonceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
         ipAddressList.add(IPV4_ADDRESS_1); // hop 1

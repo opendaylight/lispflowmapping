@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrNonce;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
@@ -65,14 +66,16 @@ public class MapResolver implements IMapResolverAsync {
     private String elpPolicy;
     private IMapRequestResultHandler requestHandler;
     private boolean authenticate = true;
+    private SmrNonce smrNonce;
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
-                       IMapRequestResultHandler requestHandler) {
+            IMapRequestResultHandler requestHandler, SmrNonce smrNonce) {
         Preconditions.checkNotNull(mapService);
         this.subscriptionService = smr;
         this.mapService = mapService;
         this.elpPolicy = elpPolicy;
         this.requestHandler = requestHandler;
+        this.smrNonce = smrNonce;
     }
 
     public void handleMapRequest(MapRequest request) {
@@ -84,6 +87,10 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isProbe() != null && request.isProbe()) {
             LOG.debug("Map-Resolver ignoring incoming RLOC probe control message.");
             return;
+        }
+        if (request.isSmrInvoked()) {
+            LOG.debug("SMR-invoked message received.");
+            smrNonce.setNonce(request.getNonce());
         }
         Eid srcEid = null;
         if (request.getSourceEid() != null) {

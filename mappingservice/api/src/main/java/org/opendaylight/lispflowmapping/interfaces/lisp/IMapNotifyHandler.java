@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import java.util.List;
 
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrNonce;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -39,4 +40,6 @@ public interface IMapNotifyHandler {
      *            The address of the subscriber that should be SMRed
      */
     void handleSMR(MapRequest mapRequest, Rloc subscriber);
+
+    SmrNonce getSmrNonce();
 }
