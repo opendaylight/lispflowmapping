@@ -171,6 +171,16 @@ public class MappingSystem implements IMappingSystem {
         return getMapping((Eid)null, dst);
     }
 
+    public Object getMapping(Eid src, Eid dst, byte[] xtrId) {
+        // Note: Policy doesn't apply for this one
+        return smc.getMapping(src, dst, xtrId);
+    }
+
+    @Override
+    public Object getMapping(Eid dst, byte[] xtrId) {
+        return getMapping((Eid)null, dst, xtrId);
+    }
+
     @Override
     public Object getMapping(MappingOrigin origin, Eid key) {
         if (origin.equals(MappingOrigin.Southbound)) {

@@ -55,6 +55,16 @@ public interface IMappingSystem {
     Object getMapping(Eid dst);
 
     /**
+     * Retrieves mapping for the provided dst key for a particular xtr id.
+     * @param dst
+     *            Destination Key to be looked up.
+     * @param xtrId
+     *            xtr id for which this look to be done.
+     * @return Returns the object found in the cache or null if nothing is found.
+     */
+    Object getMapping(Eid dst, byte[] xtrId);
+
+    /**
      * Retrieves mapping from table for provided key.
      *
      * @param origin
