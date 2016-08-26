@@ -182,6 +182,18 @@ module odl-mappingservice {
         }
     }
 
+    rpc get-mapping-with-xtr-id {
+        input {
+            uses lisp-proto:eid-container;
+            leaf xtr-id {
+                type lisp-proto:xtr-id;
+            }
+        }
+        output {
+            uses lisp-proto:mapping-record-container;
+        }
+    }
+
     rpc update-mapping {
         input {
             uses lisp-proto:mapping-record-container;

@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -53,6 +54,19 @@ public interface IMappingSystem {
      * @return Returns the object found in the Mapping System or null if nothing is found.
      */
     Object getMapping(Eid dst);
+
+    /**
+     * Retrieves mapping for the provided dst key for a particular xtr id.
+     * @param src
+     *            Source Key to be looked up.
+     * @param dst
+     *            Destination Key to be looked up.
+     * @param xtrId
+     *            Xtr Id for which this look to be done. If null, this method works like
+     *            regular getMapping(src, dst)
+     * @return Returns the object found in the simple map cache or null if nothing is found.
+     */
+    Object getMapping(Eid src, Eid dst, XtrId xtrId);
 
     /**
      * Retrieves mapping from table for provided key.

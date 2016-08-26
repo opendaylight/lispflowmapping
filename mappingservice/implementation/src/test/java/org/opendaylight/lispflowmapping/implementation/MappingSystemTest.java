@@ -51,6 +51,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.HopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -114,6 +115,8 @@ public class MappingSystemTest {
     private static final Date EXPIRED_DATE = new Date(System.currentTimeMillis() - (REGISTRATION_VALIDITY + 1L));
     private static final Object DUMMY_OBJECT = "dummy-object";
     private static final SiteId SITE_ID = new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7});
+    private static final XtrId XTR_ID = new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7,
+                                                                8, 9, 10, 11, 12, 13, 14, 15});
 
     @Before
     public void init() throws Exception {
@@ -376,6 +379,20 @@ public class MappingSystemTest {
         Mockito.when(smcMock.getMapping(null, EID_IPV4_DST)).thenReturn(mappingRecord);
 
         assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_DST));
+    }
+
+    /**
+     * Tests {@link MappingSystem#getMapping(Eid src, Eid dst, XtrId xtrId)} method.
+     */
+    @Test
+    public void getMappingTest_withXtrId() {
+        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
+                .setXtrId(XTR_ID).build();
+
+        Mockito.when(smcMock.getMapping(null, EID_IPV4_DST, XTR_ID.getValue()))
+                .thenReturn(mappingRecord);
+
+        assertEquals(mappingRecord, mappingSystem.getMapping(null, EID_IPV4_DST, XTR_ID));
     }
 
     /**

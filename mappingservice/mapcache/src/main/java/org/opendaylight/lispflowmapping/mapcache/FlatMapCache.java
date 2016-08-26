@@ -50,6 +50,11 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
+    public Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId) {
+        return null;
+    }
+
+    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         return null;
     }
