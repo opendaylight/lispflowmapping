@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a6b29fe_afd5891d",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-26T00:28:54Z",
+      "side": 1,
+      "message": "Actually looking at this with the switch to int, I think the 1.5 factor is not appropriate anymore. The goal was to make sure the the timeout is slightly more than the TTL. With the change to minutes and the ceil() 1 day now will turn into 2 days, which is unnecessarily more. I think we can now just go with just a +10 min really.  Shakib, can you please make this change. Then I think it will be ready for merge. Thanks.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 67
+      },
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0fe63d15",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-26T00:28:54Z",
+      "side": 1,
+      "message": "No need to build an object here. int will have better performance, and we dont need nullability for subscriberTimeout. Also, you are already passing int to this. Please change to int.",
+      "range": {
+        "startLine": 39,
+        "startChar": 51,
+        "endLine": 39,
+        "endChar": 60
+      },
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_6feff1e9",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-26T00:28:54Z",
+      "side": 1,
+      "message": "change to int",
+      "range": {
+        "startLine": 52,
+        "startChar": 51,
+        "endLine": 52,
+        "endChar": 59
+      },
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_4fb4b534",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
         "patchSetId": 3
@@ -31,6 +100,52 @@
       "side": 1,
       "message": "Shakib pointed out on IM that the default is already set, so no need, I missed it.",
       "parentUuid": "7a6b29fe_4fb4b534",
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8fc1ad56",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SubscriberRLOC.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-26T00:28:54Z",
+      "side": 1,
+      "message": "this would change to +10 with the change suggested above.",
+      "range": {
+        "startLine": 107,
+        "startChar": 25,
+        "endLine": 107,
+        "endChar": 76
+      },
+      "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_2fe979e6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-08-26T00:28:54Z",
+      "side": 1,
+      "message": "you are passing an Integer to an int here. This will result in a null pointer exception if the Integer value is null, which is possible in our case (read the following for more info:https://docs.oracle.com/javase/8/docs/technotes/guides/language/autoboxing.html).\nSo this should be an Integer.",
+      "range": {
+        "startLine": 193,
+        "startChar": 84,
+        "endLine": 193,
+        "endChar": 98
+      },
       "revId": "88a817173362d20b22856ef51c7b00b40fe6487d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
