@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_7b3213f3",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/mapcache/IMappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T23:15:49Z",
+      "side": 1,
+      "message": "Why not add a method with src, dst, xtrId, so you don\u0027t need two methods in the implementation?",
+      "revId": "956e41b0d7f04549131fb9c8cbadc0adc9257204",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_db2367a5",
+        "filename": "mappingservice/api/src/main/yang/odl-mappingservice.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T23:15:49Z",
+      "side": 1,
+      "message": "One convention we have with newer YANG files is to use lower case names only. lisp-proto is one of the oldest files and doesn\u0027t follow it, but most of the rest does.",
+      "revId": "956e41b0d7f04549131fb9c8cbadc0adc9257204",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_5b2f5788",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T23:15:49Z",
+      "side": 1,
+      "message": "I\u0027d skip this method prototype and define the one above in the interface.",
+      "revId": "956e41b0d7f04549131fb9c8cbadc0adc9257204",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
