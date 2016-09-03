@@ -220,8 +220,10 @@ public class MappingSystem implements IMappingSystem {
         if (mappingObject instanceof MappingRecord) {
             MappingRecord mapping = (MappingRecord) mappingObject;
             if (MappingMergeUtil.mappingIsExpired(mapping)) {
-                dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
-                        new SiteId(mapping.getSiteId()), mapping));
+                Mapping mappingToDelete = DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
+                        new SiteId(mapping.getSiteId()), mapping);
+                dsbe.removeMapping(mappingToDelete);
+                removeMapping(MappingOrigin.Southbound, mapping.getEid());
                 return null;
             }
         }
