@@ -188,4 +188,20 @@ public interface IMappingSystem {
      * @return String consisting of all mappings
      */
     String printMappings();
+
+    /**
+     * Set cluster master status.
+     *
+     * @param isMaster
+     *            is|isn't master
+     */
+    void setIsMaster(final boolean isMaster);
+
+    /**
+     * Get cluster master status.
+     *
+     * @return isMaster
+     *            is|isn't master
+     */
+    boolean isMaster();
 }

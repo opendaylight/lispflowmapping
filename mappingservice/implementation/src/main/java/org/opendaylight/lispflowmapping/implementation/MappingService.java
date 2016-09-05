@@ -90,6 +90,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
     private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private boolean iterateMask = true;
+    private boolean isMaster = false;
 
     public MappingService(final DataBroker broker,
             final NotificationPublishService notificationPublishService,
@@ -481,5 +482,16 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             return convertedLocators;
         }
         return originalLocators;
+    }
+
+    @Override
+    public void setIsMaster(boolean isMaster) {
+        this.isMaster = isMaster;
+        mappingSystem.setIsMaster(isMaster);
+    }
+
+    @Override
+    public boolean isMaster() {
+        return isMaster;
     }
 }

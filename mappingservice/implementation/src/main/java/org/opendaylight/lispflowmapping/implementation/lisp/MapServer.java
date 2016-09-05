@@ -69,7 +69,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
     private ListenerRegistration<MapServer> mapServerListenerRegistration;
-    private boolean isMaster = false;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
@@ -164,11 +163,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         }
     }
 
-    @Override
-    public void setIsMaster(boolean isMaster) {
-        this.isMaster = isMaster;
-    }
-
     private static List<TransportAddress> getTransportAddresses(Set<IpAddressBinary> addresses) {
         List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
         for (IpAddressBinary address : addresses) {
@@ -187,7 +181,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     @Override
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
-            if (isMaster) {
+            if (mapService.isMaster()) {
                 sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
             }
             if (notification.getChangeType().equals(MappingChange.Removed)) {

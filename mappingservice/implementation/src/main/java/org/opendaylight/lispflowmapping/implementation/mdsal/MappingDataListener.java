@@ -43,6 +43,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
     private NotificationPublishService notificationPublishService;
+    private boolean isMaster = false;
 
     public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationPublishService nps) {
         setBroker(broker);
@@ -73,8 +74,8 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 final Mapping mapping = mod.getDataBefore();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted.
-                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                // before being persisted, except for cluster slaves
+                if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
                     continue;
                 }
 
@@ -97,8 +98,9 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 final Mapping mapping = mod.getDataAfter();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted. XXX separate NB and SB to avoid ignoring SB notifications
-                if (mapping.getOrigin() == MappingOrigin.Southbound) {
+                // before being persisted, except for cluster slaves XXX separate NB and SB to avoid ignoring
+                // SB notifications
+                if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
                     continue;
                 }
 

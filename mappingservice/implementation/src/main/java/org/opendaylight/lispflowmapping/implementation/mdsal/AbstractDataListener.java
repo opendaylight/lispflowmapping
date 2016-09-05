@@ -22,17 +22,22 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 public abstract class AbstractDataListener<T extends DataObject> implements ClusteredDataTreeChangeListener<T> {
     private DataBroker broker;
     private InstanceIdentifier<T> path;
-    private ListenerRegistration<ClusteredDataTreeChangeListener<T>> registration;
+    private ListenerRegistration<ClusteredDataTreeChangeListener<T>> configRegistration;
+    private ListenerRegistration<ClusteredDataTreeChangeListener<T>> operRegistration;
 
     public void registerDataChangeListener() {
-        final DataTreeIdentifier<T> dataTreeIdentifier = new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION,
-                path);
+        final DataTreeIdentifier<T> configDataTreeIdentifier = new DataTreeIdentifier<>(
+                LogicalDatastoreType.CONFIGURATION, path);
+        final DataTreeIdentifier<T> operDataTreeIdentifier = new DataTreeIdentifier<>(
+                LogicalDatastoreType.OPERATIONAL, path);
 
-        registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
+        configRegistration = broker.registerDataTreeChangeListener(configDataTreeIdentifier, this);
+        operRegistration = broker.registerDataTreeChangeListener(operDataTreeIdentifier, this);
     }
 
     public void closeDataChangeListener() {
-        registration.close();
+        configRegistration.close();
+        operRegistration.close();
     }
 
     public void setBroker(DataBroker broker) {

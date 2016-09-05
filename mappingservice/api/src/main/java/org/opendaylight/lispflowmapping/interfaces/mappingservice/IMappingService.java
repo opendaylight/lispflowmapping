@@ -199,4 +199,20 @@ public interface IMappingService {
      * Cleans all cached mappings.Used for testing.
      */
     void cleanCachedMappings();
+
+    /**
+     * Set cluster master status.
+     *
+     * @param isMaster
+     *            is|isn't master
+     */
+    void setIsMaster(final boolean isMaster);
+
+    /**
+     * Get cluster master status.
+     *
+     * @return isMaster
+     *            is|isn't master
+     */
+    boolean isMaster();
 }
