@@ -286,13 +286,13 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     @Override
     public void instantiateServiceInstance() {
-        mapServer.setIsMaster(true);
+        mapService.setIsMaster(true);
     }
 
     @Override
     public ListenableFuture<Void> closeServiceInstance() {
-        if (mapServer != null) {
-            mapServer.setIsMaster(false);
+        if (mapService != null) {
+            mapService.setIsMaster(false);
         }
         return Futures.<Void>immediateFuture(null);
     }

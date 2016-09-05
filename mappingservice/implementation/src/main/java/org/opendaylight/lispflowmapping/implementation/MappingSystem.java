@@ -61,6 +61,7 @@ public class MappingSystem implements IMappingSystem {
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
+    private boolean isMaster = false;
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
         this.dao = dao;
@@ -347,5 +348,15 @@ public class MappingSystem implements IMappingSystem {
     public void cleanCaches() {
         dao.removeAll();
         buildMapCaches();
+    }
+
+    @Override
+    public void setIsMaster(boolean isMaster) {
+        this.isMaster = isMaster;
+    }
+
+    @Override
+    public boolean isMaster() {
+        return isMaster;
     }
 }
