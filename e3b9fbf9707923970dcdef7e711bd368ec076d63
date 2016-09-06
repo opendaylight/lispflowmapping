@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_c7dfe5d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-06T16:51:07Z",
+      "side": 1,
+      "message": "\u0027Fix\u0027 is not really needed, we just put \u0027Bug xxxx: \u0027",
+      "revId": "e3b9fbf9707923970dcdef7e711bd368ec076d63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
