@@ -7,30 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_50_2_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_DELETE_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_100_1_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_50_2_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
-import static org.ops4j.pax.exam.CoreOptions.composite;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.net.InetAddresses;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -43,14 +22,19 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -93,6 +77,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
@@ -139,6 +124,29 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_50_2_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_DELETE_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_50_2_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
+import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
@@ -395,8 +403,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Test
     public void testSmr() throws Exception {
         registerQueryRegisterWithSmr();
+        testRepeatedSmr();
     }
 
+    @Ignore
     @Test
     public void testMultiSite() throws Exception {
         testMultiSiteScenarioA();
@@ -410,13 +420,125 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testMultipleMappings();
     }
 
+    private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
+        cleanUP();
+        long timeout = ConfigIni.getInstance().getSmrTimeout();
+
+        final InstanceIdType iid = new InstanceIdType(1L);
+        final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
+        final Eid eid2 = LispAddressUtil.asIpv4Eid("2.2.2.2", 1L);
+
+        /* set auth */
+        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iid);
+        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
+
+        /* add subscribers */
+        final String subscriberSrcRloc1 = "127.0.0.3";
+        final String subscriberSrcRloc2 = "127.0.0.4";
+        final Set<SubscriberRLOC> subscriberSet = Sets.newHashSet(
+                newSubscriber(eid1, subscriberSrcRloc1), newSubscriber(eid2, subscriberSrcRloc2));
+        mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet);
+
+        final int expectedSmrs1 = 2;
+        final int expectedSmrs2 = 3;
+
+        final SocketReader reader1 = startSocketReader(subscriberSrcRloc1, 15000);
+        final SocketReader reader2 = startSocketReader(subscriberSrcRloc2, 15000);
+        sleepForSeconds(1);
+
+        /* add mapping */
+        final MappingRecord mapping1 = new MappingRecordBuilder()
+                .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
+        mapService.addMapping(MappingOrigin.Northbound, mapping1.getEid(), null, mapping1, false);
+
+        sleepForMilliseconds((timeout * expectedSmrs1) - 1500);
+        final List<MapRequest> requests1 = processBuffers(reader1, subscriberSrcRloc1, expectedSmrs1);
+        final MapReply mapReply1 = lms.handleMapRequest(
+                new MapRequestBuilder(requests1.get(0))
+                        .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
+                                .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc1)).build()))
+                        .setSmrInvoked(true)
+                        .setSmr(false).build());
+
+        // sleep to get 1 extra smr request
+        sleepForMilliseconds(timeout * 1);
+        final List<MapRequest> requests2 = processBuffers(reader2, subscriberSrcRloc2, expectedSmrs2);
+        final MapReply mapReply2 = lms.handleMapRequest(
+                new MapRequestBuilder(requests2.get(0))
+                        .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
+                                .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc2)).build()))
+                        .setSmrInvoked(true)
+                        .setSmr(false).build());
+
+        sleepForSeconds(3);
+        assertEquals(expectedSmrs1, requests1.size());
+        assertEquals(expectedSmrs2, requests2.size());
+        assertEquals((long) mapReply1.getNonce(), (long) requests1.get(0).getNonce());
+        assertEquals((long) mapReply2.getNonce(), (long) requests1.get(0).getNonce());
+        assertNextBufferEmpty(reader1);
+        assertNextBufferEmpty(reader2);
+
+        reader1.stopReading();
+        reader2.stopReading();
+    }
+
+    private SocketReader startSocketReader(String address, int timeout) {
+        DatagramSocket receivingSocket = null;
+
+        try {
+            receivingSocket = new DatagramSocket(new InetSocketAddress(address, LispMessage.PORT_NUM));
+        } catch (SocketException e) {
+            LOG.error("Can't initialize socket for {}", address, e);
+        }
+        return SocketReader.startReadingInStandaloneThread(receivingSocket, timeout);
+    }
+
+    private List<MapRequest> processBuffers(SocketReader reader, String address, int expectedSmrs) {
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = InetAddress.getByName(address);
+        } catch (UnknownHostException e) {
+            LOG.error("Unknown address {}.", address, e);
+        }
+
+        final List<MapRequest> requests = Lists.newArrayList();
+        byte[][] buffers = reader.getBuffers(expectedSmrs);
+        for (byte[] buf : buffers) {
+            MapRequest request = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buf), inetAddress);
+            requests.add(request);
+        }
+        return requests;
+    }
+
+    private void assertNextBufferEmpty(SocketReader socketReader) {
+        assertTrue(isArrayEmpty(socketReader.getBuffers(1)[0]));
+    }
+
+    private boolean isArrayEmpty(byte[] byteArray) {
+        for (byte b : byteArray) {
+            if (b != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static SubscriberRLOC newSubscriber(Eid srcEid, String srcRlocIp) {
+        final byte[] addressBinary = InetAddresses.forString(srcRlocIp).getAddress();
+        final int timeout = 5;
+        final Rloc srcRloc = new RlocBuilder().setAddress(new Ipv4BinaryBuilder()
+                .setIpv4Binary(new Ipv4AddressBinary(addressBinary)).build()).build();
+
+        return new SubscriberRLOC(srcRloc, srcEid, timeout);
+    }
+
     private void testMultipleMappings() throws UnknownHostException {
         final InstanceIdType iid = new InstanceIdType(1L);
         final String prefix1 = "1.1.127.10/32"; // prefix from the intersection of NB and SB gaps
         final String prefix2 = "1.1.200.255/32"; // prefix with existing mapping in NB
         final String prefix3 = "1.3.255.255/32";
 
-        final MapRequest mapRequest = new MapRequestBuilder().setEidItem(Lists.newArrayList(
+        final MapRequest mapRequest = new MapRequestBuilder().setSmrInvoked(false).setEidItem(Lists.newArrayList(
                 new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix1, iid))
                         .build(),
                 new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix2, iid))
@@ -457,7 +579,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final InstanceIdType iid = new InstanceIdType(1L);
 
         // request an Eid from a gap between mappings
-        final MapRequest mapRequest = new MapRequestBuilder().setEidItem(Lists.newArrayList(
+        final MapRequest mapRequest = new MapRequestBuilder().setSmrInvoked(false).setEidItem(Lists.newArrayList(
                 new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid("1.1.127.10/32", iid))
                         .build()))
                 .build();
@@ -2246,6 +2368,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void sleepForSeconds(int seconds) {
         try {
             Thread.sleep(seconds*1000);
+        } catch (InterruptedException e) {
+            LOG.warn("Interrupted while sleeping", e);
+        }
+    }
+
+    private void sleepForMilliseconds(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while sleeping", e);
         }
