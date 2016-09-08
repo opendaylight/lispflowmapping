@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -119,12 +120,14 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
         this.clusterSingletonService.registerClusterSingletonService(this);
+        mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
         LOG.info("LISP (RFC6830) Mapping Service init finished");
     }
 
     public void basicInit() {
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
+        mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
     }
 
     public MapReply handleMapRequest(MapRequest request) {

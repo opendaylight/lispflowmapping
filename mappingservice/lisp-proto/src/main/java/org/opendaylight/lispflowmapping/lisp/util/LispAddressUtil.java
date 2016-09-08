@@ -849,6 +849,15 @@ public final class LispAddressUtil {
         return null;
     }
 
+    public static IpAddressBinary addressBinaryFromAddress(Address address) {
+        if (address instanceof Ipv4Binary) {
+            return new IpAddressBinary(((Ipv4Binary) address).getIpv4Binary());
+        } else if (address instanceof Ipv6Binary) {
+            return new IpAddressBinary(((Ipv6Binary) address).getIpv6Binary());
+        }
+        return null;
+    }
+
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.Ipv4Prefix convertFromBinary(Ipv4PrefixBinary prefix) {
         return new Ipv4PrefixBuilder().setIpv4Prefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(
