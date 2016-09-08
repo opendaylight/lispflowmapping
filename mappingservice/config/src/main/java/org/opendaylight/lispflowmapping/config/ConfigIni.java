@@ -23,6 +23,8 @@ public final class ConfigIni {
     private String elpPolicy;
     private IMappingService.LookupPolicy lookupPolicy;
     private long registrationValiditySb;
+    private long smrTimeout;
+    private int smrRetryCount;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
@@ -35,9 +37,13 @@ public final class ConfigIni {
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
+    private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
+    private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
+    private static final long DEFAULT_SMR_TIMEOUT = 3000L;
+    private static final int DEFAULT_SMR_RETRY_COUNT = 5;
 
     private static final ConfigIni INSTANCE = new ConfigIni();
 
@@ -55,6 +61,8 @@ public final class ConfigIni {
         initElpPolicy(context);
         initLookupPolicy(context);
         initRegisterValiditySb(context);
+        initSmrRetryCount(context);
+        initSmrTimeout(context);
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -242,6 +250,62 @@ public final class ConfigIni {
         }
     }
 
+    private void initSmrRetryCount(BundleContext context) {
+        // set the default value first
+        this.smrRetryCount = DEFAULT_SMR_RETRY_COUNT;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_SMR_RETRY_COUNT);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_SMR_RETRY_COUNT);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_RETRY_COUNT,
+                        smrRetryCount);
+                return;
+            }
+        }
+
+        try {
+            this.smrRetryCount = Integer.valueOf(str);
+            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
+        } catch (NumberFormatException e) {
+            LOG.debug("Configuration variable '{}' was not set correctly. SMR retry count "
+                    + "is set to default value ({})", LISP_SMR_RETRY_COUNT, smrRetryCount);
+        }
+    }
+
+    private void initSmrTimeout(BundleContext context) {
+        // set the default value first
+        this.smrTimeout = DEFAULT_SMR_TIMEOUT;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_SMR_TIMEOUT);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_SMR_TIMEOUT);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_TIMEOUT,
+                        smrTimeout);
+                return;
+            }
+        }
+
+        try {
+            this.smrTimeout = Long.valueOf(str);
+            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
+        } catch (NumberFormatException e) {
+            LOG.debug("Configuration variable '{}' was not set correctly. SMR timeout "
+                    + "is set to default value ({})", LISP_SMR_TIMEOUT, smrTimeout);
+        }
+    }
+
     public boolean mappingMergeIsSet() {
         return mappingMerge;
     }
@@ -280,6 +344,24 @@ public final class ConfigIni {
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
         this.lookupPolicy = lookupPolicy;
+    }
+
+    public void setSmrRetryCount(int smrRetryCount) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
+        this.smrRetryCount = smrRetryCount;
+    }
+
+    public int getSmrRetryCount() {
+        return smrRetryCount;
+    }
+
+    public void setSmrTimeout(long smrTimeout) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
+        this.smrTimeout = smrTimeout;
+    }
+
+    public long getSmrTimeout() {
+        return this.smrTimeout;
     }
 
     public static ConfigIni getInstance() {
