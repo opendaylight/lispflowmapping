@@ -8,12 +8,15 @@
 package org.opendaylight.lispflowmapping.lisp.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.net.InetAddresses;
+import com.sun.scenario.effect.SepiaTone;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -83,6 +86,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.slf4j.Logger;
@@ -847,6 +851,23 @@ public final class LispAddressUtil {
             return new IpAddressBinary(new Ipv6AddressBinary(inetAddress.getAddress()));
         }
         return null;
+    }
+
+    public static IpAddressBinary addressBinaryFromAddress(Address address) {
+        if (address instanceof Ipv4Binary) {
+            return new IpAddressBinary(((Ipv4Binary) address).getIpv4Binary());
+        } else if (address instanceof Ipv6Binary) {
+            return new IpAddressBinary(((Ipv6Binary) address).getIpv6Binary());
+        }
+        return null;
+    }
+
+    public static List<IpAddressBinary> addressBinariesFromItrRlocs(List<ItrRloc> itrRlocs) {
+        List<IpAddressBinary> ipAddressBinaryList = Lists.newArrayList();
+        for (ItrRloc itrRloc : itrRlocs) {
+            ipAddressBinaryList.add(addressBinaryFromAddress(itrRloc.getRloc().getAddress()));
+        }
+        return ipAddressBinaryList;
     }
 
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
