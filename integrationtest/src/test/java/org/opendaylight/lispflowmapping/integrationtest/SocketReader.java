@@ -7,15 +7,15 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketTimeoutException;
+import java.net.SocketException;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.fail;
 
 /**
  * Read data from specified socket in standalone thread. Packets are stored to array of buffer. In other words each
@@ -45,23 +45,28 @@ public class SocketReader implements Runnable {
      * Index to array of buffers from where current reading is done
      */
     private int currentBufferReaderIndex = 0;
-    private DatagramPacket receivePacket;
     private boolean readFromSocket = true;
 
     private SocketReader(DatagramSocket receivedSocket) {
         this.socket = receivedSocket;
     }
 
-    static SocketReader startReadingInStandaloneThread(final DatagramSocket socket) throws SocketTimeoutException {
+    private DatagramPacket receivePacket;
+
+    static SocketReader startReadingInStandaloneThread(final DatagramSocket socket) {
+        return SocketReader.startReadingInStandaloneThread(socket, 0);
+    }
+
+    static SocketReader startReadingInStandaloneThread(final DatagramSocket socket, int timeout) {
         try {
-            socket.setSoTimeout(0);
+            socket.setSoTimeout(timeout);
             final SocketReader socketReader = new SocketReader(socket);
             final Thread thread = new Thread(socketReader);
             thread.setName("Socket reader - multisite integration test - lispflowmapping");
             thread.start();
             return socketReader;
-        } catch (Throwable t) {
-            fail();
+        } catch (SocketException t) {
+            fail("Socket timed out after " + timeout + " miliseconds.");
             return null;
         }
     }
@@ -97,5 +102,4 @@ public class SocketReader implements Runnable {
         currentBufferReaderIndex = currentBufferReaderIndex + count;
         return subBuffer;
     }
-
 }
