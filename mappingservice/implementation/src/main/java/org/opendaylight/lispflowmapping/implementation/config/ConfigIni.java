@@ -23,6 +23,8 @@ public final class ConfigIni {
     private String elpPolicy;
     private IMappingService.LookupPolicy lookupPolicy;
     private long registrationValiditySb;
+    private long smrTimeout;
+    private int smrRepetition;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
@@ -35,6 +37,8 @@ public final class ConfigIni {
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
+    private static final String LISP_SMR_REPETITION = "lisp.smrRepetition";
+    private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
@@ -55,6 +59,8 @@ public final class ConfigIni {
         initElpPolicy(context);
         initLookupPolicy(context);
         initRegisterValiditySb(context);
+        initSmrRepetition(context);
+        initSmrTimeout(context);
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -242,6 +248,52 @@ public final class ConfigIni {
         }
     }
 
+    private void initSmrRepetition(BundleContext context) {
+        // set the default value first
+        this.smrRepetition = 5;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_SMR_REPETITION);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_SMR_REPETITION);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_REPETITION,
+                        smrRepetition);
+                return;
+            }
+        }
+
+        this.smrRepetition = Integer.valueOf(str);
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_REPETITION, smrRepetition);
+    }
+
+    private void initSmrTimeout(BundleContext context) {
+        // set the default value first
+        this.smrTimeout = 3000L;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_SMR_TIMEOUT);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_SMR_TIMEOUT);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_TIMEOUT,
+                        smrTimeout);
+                return;
+            }
+        }
+
+        this.smrTimeout = Long.valueOf(str);
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
+    }
+
     public boolean mappingMergeIsSet() {
         return mappingMerge;
     }
@@ -280,6 +332,24 @@ public final class ConfigIni {
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
         this.lookupPolicy = lookupPolicy;
+    }
+
+    public void setSmrRepetition(int smrRepetition) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_REPETITION, smrRepetition);
+        this.smrRepetition = smrRepetition;
+    }
+
+    public int getSmrRepetition() {
+        return smrRepetition;
+    }
+
+    public void setSmrTimeout(long smrTimeout) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
+        this.smrTimeout = smrTimeout;
+    }
+
+    public long getSmrTimeout() {
+        return this.smrTimeout;
     }
 
     public static ConfigIni getInstance() {
