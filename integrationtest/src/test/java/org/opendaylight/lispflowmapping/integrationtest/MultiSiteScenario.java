@@ -167,6 +167,7 @@ class MultiSiteScenario {
         mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(srcEid).build());
         mapRequestBuilder.setEidItem(eidItem);
         mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
+        mapRequestBuilder.setSmrInvoked(false);
         return lms.handleMapRequest(mapRequestBuilder.build());
     }
 
@@ -484,7 +485,7 @@ class MultiSiteScenario {
         for (EidItem eidItem : currentEidItems) {
             //if eid from map request is matched then it is removed from set of expected eids
             if (!eids.remove(eidItem.getEid())) {
-                fail("SMR contained " + eidItem.getEid() + " which wasn't expected.");
+                 fail("SMR contained " + eidItem.getEid() + " which wasn't expected.");
             }
         }
         return true;
