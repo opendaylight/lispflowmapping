@@ -39,6 +39,9 @@ public final class ConfigIni {
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
 
+    public static final int LISP_SMR_REPETITION = 5;
+    public static final long LISP_SMR_TIMEOUT = 3000L;
+
     private static final ConfigIni INSTANCE = new ConfigIni();
 
     private ConfigIni() {
