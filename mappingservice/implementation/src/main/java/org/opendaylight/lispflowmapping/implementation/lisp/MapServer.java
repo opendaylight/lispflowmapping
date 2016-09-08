@@ -15,18 +15,26 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotify;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -36,6 +44,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
@@ -60,7 +69,7 @@ import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
+public class MapServer implements IMapServerAsync, OdlMappingserviceListener, ISmrNotify {
 
     protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
@@ -69,6 +78,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
     private IMapNotifyHandler notifyHandler;
     private NotificationService notificationService;
     private ListenerRegistration<MapServer> mapServerListenerRegistration;
+    private SmrScheduler scheduler;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
@@ -218,19 +228,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
 
     private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
         Eid eid = record.getEid();
-        handleSmr(eid, subscribers, notifyHandler);
+        handleSmr(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
             Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
             MappingRecord newRecord = new MappingRecordBuilder(record).setEid(dstAddr).build();
-            handleSmr(newRecord.getEid(), dstSubs, notifyHandler);
+            handleSmr(newRecord.getEid(), dstSubs);
         }
     }
 
-    @SuppressWarnings("checkstyle:IllegalCatch")
-    private void handleSmr(Eid eid, Set<SubscriberRLOC> subscribers, IMapNotifyHandler callback) {
+    private void handleSmr(Eid eid, Set<SubscriberRLOC> subscribers) {
         if (subscribers == null) {
             return;
         }
@@ -244,17 +253,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             if (subscriber.timedOut()) {
                 LOG.trace("Lazy removing expired subscriber entry " + subscriber.toString());
                 iterator.remove();
-            } else {
-                try {
-                    // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked Map-Request.
-                    // To ensure consistent behavior it is set to the value used to originally request a given mapping
-                    mrb.setEidItem(new ArrayList<EidItem>());
-                    mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
-                    callback.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                } catch (Exception e) {
-                    LOG.error("Errors encountered while handling SMR:", e);
-                }
             }
+        }
+        scheduler = new SmrScheduler();
+        try {
+            scheduler.scheduleSmrs(mrb, subscribers);
+        } catch (InterruptedException e) {
+            LOG.error("SMR Scheduler interrupted.");
         }
         addSubscribers(eid, subscribers);
     }
@@ -296,5 +301,81 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
             LOG.debug("Caught socket exceptio", se);
         }
         return null;
+    }
+
+    @Override
+    public void onSmrInvokedReceived(SmrEvent event) {
+        scheduler.smrReceived(event.getSmrNonce(), event.getSubscriberAddress());
+    }
+
+    /**
+     * Task scheduler is responsible for resending SMR messages to a subscriber (xTR)
+     * {@value ConfigIni#LISP_SMR_REPETITION} times, or until {@link ISmrNotify#onSmrInvokedReceived} is fired.
+     */
+    private class SmrScheduler {
+        private ScheduledExecutorService executor;
+        private Map<Address, ScheduledFuture<?>> map = new HashMap<>();
+        private long smrNonce;
+
+        void scheduleSmrs(MapRequestBuilder mrb, Set<SubscriberRLOC> subscriberSet) throws InterruptedException {
+            executor = Executors.newSingleThreadScheduledExecutor();
+            smrNonce = mrb.getNonce();
+
+            for (SubscriberRLOC subscriber : subscriberSet) {
+                ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(mrb, subscriber), 0L,
+                        ConfigIni.LISP_SMR_TIMEOUT, TimeUnit.MILLISECONDS);
+                map.put(subscriber.getSrcRloc().getAddress(), future);
+            }
+        }
+
+        void smrReceived(long smrNonce, Address subscriberAddress) {
+            if (this.smrNonce == smrNonce) {
+                map.get(subscriberAddress).cancel(false);
+                LOG.trace("SMR-invoked request received, scheduled task has been canceled");
+            }
+        }
+
+        private final class CancellableRunnable implements Runnable {
+            private MapRequestBuilder mrb;
+            private SubscriberRLOC subscriber;
+            int executionCount = 0;
+
+            CancellableRunnable(MapRequestBuilder mrb, SubscriberRLOC subscriber) {
+                this.mrb = mrb;
+                this.subscriber = subscriber;
+            }
+
+            @SuppressWarnings("checkstyle:IllegalCatch")
+            @Override
+            public void run() {
+                if (executionCount < ConfigIni.LISP_SMR_REPETITION) {
+                    try {
+                        // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked
+                        // Map-Request. To ensure consistent behavior it is set to the value used to originally request
+                        // a given mapping.
+                        mrb.setEidItem(new ArrayList<EidItem>());
+                        mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
+                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
+                    } catch (Exception e) {
+                        LOG.error("Errors encountered while handling SMR:", e);
+                    }
+                } else {
+                    map.get(subscriber.getSrcRloc().getAddress()).cancel(false);
+                    if (areAllFuturesCanceled()) {
+                        executor.shutdown();
+                    }
+                }
+                executionCount++;
+            }
+
+            private boolean areAllFuturesCanceled() {
+                for (Map.Entry<Address, ScheduledFuture<?>> entry : map.entrySet()) {
+                    if (!entry.getValue().isCancelled()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
     }
 }
