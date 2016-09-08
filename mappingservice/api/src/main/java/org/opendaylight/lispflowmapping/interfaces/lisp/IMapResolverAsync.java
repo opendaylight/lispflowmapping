@@ -20,4 +20,11 @@ public interface IMapResolverAsync extends IGenericMapResolver {
      *            The map-request message
      */
     void handleMapRequest(MapRequest request);
+
+    /**
+     * Set SMR message notifier.
+     *
+     * @param smrNotify The SMR notification listener
+     */
+    void setSmrNotify(ISmrNotify smrNotify);
 }
