@@ -488,7 +488,7 @@ public class MapResolverTest {
                 .setPitr(false)
                 .setProbe(false)
                 .setSmr(false)
-                .setSmrInvoked(true)
+                .setSmrInvoked(false)
                 .setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(IPV4_SOURCE)).build())
                 .setItrRloc(getDefaultItrRlocList());
 
