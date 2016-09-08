@@ -13,12 +13,13 @@ import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.opendaylight.lispflowmapping.interfaces.dao.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotify;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -65,6 +66,7 @@ public class MapResolver implements IMapResolverAsync {
     private String elpPolicy;
     private IMapRequestResultHandler requestHandler;
     private boolean authenticate = true;
+    private ISmrNotify smrNotify;
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
                        IMapRequestResultHandler requestHandler) {
@@ -84,6 +86,11 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isProbe() != null && request.isProbe()) {
             LOG.debug("Map-Resolver ignoring incoming RLOC probe control message.");
             return;
+        }
+        if (request.isSmrInvoked()) {
+            LOG.debug("SMR-invoked request received.");
+            final SmrEvent event = new SmrEvent(request.getNonce(), request.getSourceRloc());
+            smrNotify.onSmrInvokedReceived(event);
         }
         Eid srcEid = null;
         if (request.getSourceEid() != null) {
@@ -353,5 +360,10 @@ public class MapResolver implements IMapResolverAsync {
     @Override
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
         this.authenticate = shouldAuthenticate;
+    }
+
+    @Override
+    public void setSmrNotify(ISmrNotify smrNotify) {
+        this.smrNotify = smrNotify;
     }
 }
