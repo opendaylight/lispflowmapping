@@ -12,13 +12,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>features-parent</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0-Boron</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>features-lispflowmapping</artifactId>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.4.0-Boron</version>
   <name>LISP Flow Mapping Project - Karaf Features</name>
 
   <prerequisites>
@@ -26,15 +26,15 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   </prerequisites>
 
   <properties>
-    <commons.opendaylight.version>1.7.0-SNAPSHOT</commons.opendaylight.version>
+    <commons.opendaylight.version>1.7.0-Boron</commons.opendaylight.version>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
-    <config.version>0.5.0-SNAPSHOT</config.version>
-    <dlux.core.version>0.4.0-SNAPSHOT</dlux.core.version>
+    <config.version>0.5.0-Boron</config.version>
+    <dlux.core.version>0.4.0-Boron</dlux.core.version>
     <features.file>features.xml</features.file>
-    <mdsal.version>1.4.0-SNAPSHOT</mdsal.version>
-    <mdsal.model.version>0.9.0-SNAPSHOT</mdsal.model.version>
-    <neutron.version>0.7.0-SNAPSHOT</neutron.version>
-    <restconf.version>1.4.0-SNAPSHOT</restconf.version>
+    <mdsal.version>1.4.0-Boron</mdsal.version>
+    <mdsal.model.version>0.9.0-Boron</mdsal.model.version>
+    <neutron.version>0.7.0-Boron</neutron.version>
+    <restconf.version>1.4.0-Boron</restconf.version>
   </properties>
 
   <dependencyManagement>
