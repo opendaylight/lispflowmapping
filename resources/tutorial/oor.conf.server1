@@ -1,0 +1,184 @@
+################################################
+#
+# General configuration
+#
+# debug: Debug levels [0..3]
+# map-request-retries: Additional Map-Requests to send per map cache miss
+# log-file: Specifies log file used in daemon mode. If it is not specified,
+#   messages are written in syslog file
+
+debug                  = 0
+map-request-retries    = 2
+log-file               = /var/log/oor.log
+
+# Define the type of LISP device LISPmob will operate as
+#
+# operating-mode can be any of:
+# xTR, RTR, MN, MS
+#
+operating-mode         = xTR
+
+# For the rest of this file you can delete the sections that does not apply to
+# the LISP device selected in operating-mode
+
+
+################################################
+#
+# MS configuration
+#
+
+# Control messages are received and generated through this interface
+# Only one interface is supported
+
+control-iface = eth1
+
+# Define an allowed lisp-site to be registered into the Map Server. Several
+# lisp-site can be defined.
+#
+#   eid-prefix: Accepted EID prefix (IPvX/mask)
+#   key-type: Only 1 supported (HMAC-SHA-1-96)
+#   key: Password to authenticate the received Map-Registers
+#   iid: Instance ID associated with the lisp site [0-16777215]
+#   accept-more-specifics [true/false]: Accept more specific prefixes
+#     with same authentication information
+
+lisp-site {
+    eid-prefix            = 192.168.16.11/32
+    key-type              = 1
+    key                   = password
+    iid                   = 0
+    accept-more-specifics = true
+}
+
+
+###############################################
+#
+# RTR configuration
+#
+
+# List of interfaces to be used as outgoing interfaces for the packets sent
+# by the RTR. Several rtr-ifaces can be defined.
+#   iface: interface containing the RLOCs to be used for outgoing traffic
+#   ip_version: 4 to use the IPv4 address of the interface and 6 to use the IPv6
+#     address of the interface
+#   priority [0-255]: Priority for the RLOC of the interface. Locators
+#     with lower values are more preferable. This is used for outgoing
+#     traffic policy management.
+#   weight [0-255]: When priorities are the same for multiple RLOCs, the weight
+#     indicates how to balance unicast traffic between them.
+
+rtr-ifaces {
+    rtr-iface {
+        iface           = eth1
+        ip_version      = 1
+        priority        = 1
+        weight          = 100
+    }
+}
+
+###############################################
+#
+# xTR & MN configuration
+#
+
+# NAT Traversl configuration.
+#   nat_traversal_support: check if the node is behind NAT.
+
+nat_traversal_support  = off
+
+# Map-Registers are sent to this Map-Server
+# You can define several Map-Servers. Map-Register messages will be sent to all
+# of them.
+#   address: IPv4 or IPv6 address of the map-server
+#   key-type: Only 1 supported (HMAC-SHA-1-96)
+#   key: password to authenticate with the map-server
+#   proxy-reply [on/off]: Configure map-server to Map-Reply on behalf of the xTR
+
+map-server {
+        address        = 192.168.16.11
+        key-type       = 1
+        key            = password
+        proxy-reply    = on
+}
+
+# Packets addressed to non-LISP sites will be encapsulated to this Proxy-ETR
+# You can define several Proxy-ETR. Traffic will be balanced according to the
+# priority and weight.
+#   address: IPv4 or IPv6 address of the Proxy-ETR
+#   priority [0-255]: Proxy-ETR with lower values are more preferable.
+#   weight [0-255]: When priorities are the same for multiple Proxy-ETRs,
+#     the weight indicates how to balance unicast traffic between them.
+
+proxy-etr {
+        address     = 192.168.16.11
+	priority    = 1
+	weight      = 100
+}
+
+# IPv4 / IPv6 EID of the node.
+#   eid-prefix: EID prefix (ip-prefix/mask) of the mapping
+#   iid: Instance ID associated to the EID. When using VXLAN-GPE, iid configures
+#     the VNI of the mapping. [0-16777215]
+# Two types of RLOCs can be defined:
+#   rloc-address: Specifies directly the RLOC of the interface
+#     address: It could be one of the following cases
+#       - IPv4 or IPv6 address of the RLOC. Address should exist and
+#        be assigned to an UP interface during startup process otherwise
+#        it is discarded.
+#       - ELP name
+#   rloc-iface: Specifies the interface associated with the RLOC
+#     interface: interface containing the RLOCs associated to this mapping
+#     ip_version: 4 to use the IPv4 address of the interface and 6 to use the IPv6
+#       address of the interface
+# Both types of RLOCs use priority and weight
+#   priority [0-255]: Priority for the RLOC of the interface. Locators
+#     with lower values are more preferable. This is used for both incoming
+#     policy announcements and outgoing traffic policy management.
+#   weight [0-255]: When priorities are the same for multiple RLOCs, the weight
+#     indicates how to balance unicast traffic between them.
+
+database-mapping {
+    eid-prefix          = 2.2.2.2/32
+    iid                 = 0
+    rloc-address {
+        address         = 192.168.16.31
+        priority        = 1
+        weight          = 100
+    }
+    rloc-iface{
+        interface       = eth1
+        ip_version      = 1
+        priority        = 1
+        weight          = 100
+    }
+}
+
+# Current LISP beta-network (lisp4.net/lisp6.net) PITR addresses
+# Uncomment the IPv4 or IPv6 list based on your current locators and
+# comment the previous 'proxy-itrs' section
+
+
+#proxy-itrs = {
+# LISP beta-network IPv4 PITRs
+#        69.31.31.98,                 # eqx-ash-pxtr
+#        149.20.48.60,                # isc-pxtr
+#        198.6.255.37,                # asp-pxtr
+#        173.36.193.25,               # sjc-pxtr
+#        129.250.1.63,                # ntt-amer-pxtr
+#        217.8.98.33,                 # intouch-pxtr-1
+#        217.8.98.35,                 # intouch-pxtr-2
+#        193.162.145.46,              # tdc-pxtr
+#        158.38.1.92,                 # uninett-pxtr
+#        203.181.249.172,             # apan-pxtr
+#        202.51.247.10                # sg-nus-pxtr
+# LISP beta-network IPv6 PITRs
+#        2001:590::451f:1f62,         # eqx-ash-pxtr
+#        2001:4f8:3:d::60,            # isc-pxtr
+#        2001:418:4:1:deaf:bebe::10d, # asp-pxtr
+#        2001:418:0:1000::613,        # ntt-amer-pxtr
+#        2001:200:e000:17::17,        # intouch-pxtr-1
+#        2001:67C:21B4:108::b,        # intouch-pxtr-2
+#        2001:6c8:41:100:0:2:1:c,     # tdc-pxtr
+#        2001:700:0:52E::4,           # uninett-pxtr
+#        2001:67C:21B4:107::b         # apan-pxtr
+#}
