@@ -31,7 +31,7 @@
 		{
 			"id": "0a415355-0f58-bebd-a76e-39bdab46cbf6",
 			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\nContent-Type: application/json\n",
-			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/instance-id/0/authentication-key/ipv4:192.0.2.1%2f32/",
+			"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/authentication-key/ipv4:192.0.2.1%2f32/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "DELETE",
