@@ -1,0 +1,7 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Vina Ermagan <vermagan@cisco.com>
+Submitted-by: Lori Jakab <lorand.jakab@gmail.com>
+Submitted-at: Fri, 16 Sep 2016 15:19:09 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/45711
+Project: lispflowmapping
+Branch: refs/heads/stable/boron
