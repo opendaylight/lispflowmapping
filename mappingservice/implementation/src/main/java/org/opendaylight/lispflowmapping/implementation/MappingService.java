@@ -44,6 +44,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -241,6 +244,29 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public Object getMapping(Eid srcKey, Eid dstKey) {
         return mappingSystem.getMapping(srcKey, dstKey);
+    }
+
+    @Override
+    public Future<RpcResult<GetMappingWithXtrIdOutput>> getMappingWithXtrId(GetMappingWithXtrIdInput input) {
+        Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
+        LOG.trace("RPC received to get the following mapping: " + input.toString());
+
+        RpcResultBuilder<GetMappingWithXtrIdOutput> rpcResultBuilder;
+
+        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(null, convertToBinaryIfNecessary(input.getEid()),
+                input.getXtrId());
+
+        if (reply == null) {
+            String message = "No mapping was found in the mapping database";
+            rpcResultBuilder = RpcResultBuilder.<GetMappingWithXtrIdOutput>failed()
+                    .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
+        } else {
+            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply);
+            rpcResultBuilder = RpcResultBuilder.success(new GetMappingWithXtrIdOutputBuilder()
+                    .setMappingRecord(convertedReply));
+        }
+
+        return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
     @Override

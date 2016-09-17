@@ -135,6 +135,11 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
+    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
+        return null;
+    }
+
+    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {

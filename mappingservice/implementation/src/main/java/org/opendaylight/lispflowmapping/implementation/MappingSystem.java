@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -170,6 +171,17 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public Object getMapping(Eid dst) {
         return getMapping((Eid)null, dst);
+    }
+
+    @Override
+    public Object getMapping(Eid src, Eid dst, XtrId xtrId) {
+        // Note: If xtrId is null, we need to go through regular policy checking else Policy doesn't matter
+
+        if (xtrId == null) {
+            return getMapping(src, dst);
+        }
+
+        return smc.getMapping(src, dst, xtrId.getValue());
     }
 
     @Override

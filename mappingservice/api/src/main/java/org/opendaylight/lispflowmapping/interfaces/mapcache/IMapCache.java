@@ -45,6 +45,21 @@ public interface IMapCache {
     Object getMapping(Eid srcKey, Eid dstKey);
 
     /**
+     * Retrieves mapping for the provided srcKey, dstKey and a XtrId. In case the IMapCache is not a
+     * Simple Map Cache i.e. Flat Map Cache or Multi Table Map Cache, this method returns null.
+     *
+     * @param srcKey
+     *            Source Key to be looked up
+     * @param dstKey
+     *            Destination Key to be looked up
+     * @param xtrId
+     *            xtr id for which look up to be done
+     * @return Returns the object found in the cache or null if nothing is found or IMapCache is not a Simple
+     *         Map Cache.
+     */
+    Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId);
+
+    /**
      * Retrieves widest negative prefix.
      *
      * @param key
