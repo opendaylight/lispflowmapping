@@ -41,7 +41,7 @@ public final class ConfigIni {
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
-    public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
+    private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
     private static final long DEFAULT_SMR_TIMEOUT = 3000L;
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
 
@@ -86,9 +86,7 @@ public final class ConfigIni {
 
         try {
             final long regValidity = Long.parseLong(str.trim());
-            if (regValidity >= MIN_REGISTRATION_VALIDITY_SB) {
-                this.registrationValiditySb = regValidity;
-            }
+            setRegistrationValiditySb(regValidity);
         } catch (NumberFormatException e) {
             this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
             LOG.debug("Configuration variable 'registerValiditySb' was not set correctly. Registration validity for"
@@ -340,6 +338,13 @@ public final class ConfigIni {
 
     public long getRegistrationValiditySb() {
         return registrationValiditySb;
+    }
+
+    public void setRegistrationValiditySb(long registrationValiditySb) {
+        this.registrationValiditySb = registrationValiditySb;
+        if (registrationValiditySb < MIN_REGISTRATION_VALIDITY_SB) {
+            LOG.warn("Registration validity is less than the default 3.33 minutes!!!");
+        }
     }
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
