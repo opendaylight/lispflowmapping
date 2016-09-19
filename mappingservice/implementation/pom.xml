@@ -31,6 +31,10 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>common.unittest.tools</artifactId>
     </dependency>
     <dependency>

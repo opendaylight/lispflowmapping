@@ -25,6 +25,7 @@
     <module>inmemorydb</module>
     <module>dsbackend</module>
     <module>mapcache</module>
+    <module>config</module>
     <module>implementation</module>
     <module>southbound</module>
     <module>neutron</module>
