@@ -37,7 +37,7 @@ public final class ConfigIni {
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
-    public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
+    private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
 
     private static final ConfigIni INSTANCE = new ConfigIni();
 
@@ -78,8 +78,10 @@ public final class ConfigIni {
 
         try {
             final long regValidity = Long.parseLong(str.trim());
-            if (regValidity >= MIN_REGISTRATION_VALIDITY_SB) {
-                this.registrationValiditySb = regValidity;
+            this.registrationValiditySb = regValidity;
+
+            if (regValidity < MIN_REGISTRATION_VALIDITY_SB) {
+                LOG.warn("Registration validity is less than the default 3.33 minutes!!!");
             }
         } catch (NumberFormatException e) {
             this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
@@ -276,6 +278,13 @@ public final class ConfigIni {
 
     public long getRegistrationValiditySb() {
         return registrationValiditySb;
+    }
+
+    public void setRegistrationValiditySb(long registrationValiditySb) {
+        this.registrationValiditySb = registrationValiditySb;
+        if (registrationValiditySb < MIN_REGISTRATION_VALIDITY_SB) {
+            LOG.warn("Registration validity is less than the default 3.33 minutes!!!");
+        }
     }
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {

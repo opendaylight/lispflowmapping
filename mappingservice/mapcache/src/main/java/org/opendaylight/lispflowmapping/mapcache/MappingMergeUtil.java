@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -32,10 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class MappingMergeUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingMergeUtil.class);
-
-    // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
-    // TODO Added temporarily, until we get a proper configuration infra
-    public static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
 
     // Utility class, should not be instantiated
     private MappingMergeUtil() {
@@ -210,7 +207,7 @@ public final class MappingMergeUtil {
 
     public static boolean timestampIsExpired(Long timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        if ((System.currentTimeMillis() - timestamp) > MIN_REGISTRATION_VALIDITY_SB ) {
+        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb()) {
             return true;
         }
         return false;
