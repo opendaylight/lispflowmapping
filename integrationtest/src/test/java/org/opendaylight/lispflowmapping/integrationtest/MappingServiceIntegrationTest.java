@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.integrationtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
@@ -111,6 +112,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -216,9 +219,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         if (socket != null) {
             socket.close();
         }
-//        if (connection != null) {
-//            connection.disconnect();
-//        }
+        // reset mapping record validity to default value
+        ConfigIni.getInstance().setRegistrationValiditySb(200000L);
     }
 
     @Before
@@ -388,6 +390,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Test
     public void testTimeOuts() throws Exception {
+        timedOutMappingRecord();
         mapRequestMapRegisterAndMapRequestTestTimeout();
         //mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse();   TODO commented because it needs NB
     }
@@ -2075,6 +2078,37 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //northboundAddKey();
         //testTTLAfterAutherize(mapRequest);
 
+    }
+
+    private void timedOutMappingRecord() {
+        cleanUP();
+        mapService.setMappingOverwrite(false);
+        // mapping expires after 1 second
+        ConfigIni.getInstance().setRegistrationValiditySb(1000L);
+
+        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32", new InstanceIdType(10L));
+        final XtrId xtrId = new XtrId(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+        final SiteId siteId = new SiteId(new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
+
+        final LocatorRecord locatorRecord = new LocatorRecordBuilder()
+                .setRloc(LispAddressUtil.asIpv4Rloc("1.1.1.1")).setLocatorId("locator-id").build();
+        final MappingRecord mappingRecord = new MappingRecordBuilder()
+                .setEid(eid)
+                .setTimestamp(System.currentTimeMillis())
+                .setSiteId(siteId)
+                .setRecordTtl(1000)
+                .setXtrId(xtrId)
+                .setAction(Action.NoAction)
+                .setAuthoritative(true)
+                .setLocatorRecord(Lists.newArrayList()).build();
+        mappingRecord.getLocatorRecord().add(locatorRecord);
+
+        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
+        mapService.addMapping(MappingOrigin.Southbound, eid, siteId, mappingRecord, true);
+        sleepForSeconds(2);
+
+        MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);
+        assertNull(resultRecord);
     }
 
     private void testTTLAfterClean(MapRequest mapRequest) throws SocketTimeoutException {
