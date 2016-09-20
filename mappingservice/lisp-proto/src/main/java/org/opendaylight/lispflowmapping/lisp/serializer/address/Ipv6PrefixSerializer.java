@@ -76,6 +76,11 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
     }
 
     @Override
+    protected void serializeData(ByteBuffer buffer, SimpleAddress address) {
+        buffer.put(InetAddresses.forString(MaskUtil.getAddressStringForIpPrefix(address.getIpPrefix())).getAddress());
+    }
+
+    @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(Ipv6PrefixAfi.class);
