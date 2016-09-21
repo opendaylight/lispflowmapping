@@ -36,6 +36,11 @@ module odl-mappingservice {
         type inet:uri;
     }
 
+    typedef rloc-uri {
+        description "RLOC as a string lookup key in a URI";
+        type inet:uri;
+    }
+
     typedef xtr-id-uri {
         description "xTR-ID as a string lookup key in a URI";
         type inet:uri;
@@ -58,8 +63,16 @@ module odl-mappingservice {
         description "A classifier for endpoint-id elements which allows direct access to a particular element in the data tree.";
     }
 
+    identity rloc-context {
+        description "A classifier for routing locator elements which allows direct access to a particular element in the data tree.";
+    }
+
     identity xtrid-context {
         description "A classifier for xtr-id elements which allows direct access to a particular element in the data tree.";
+    }
+
+    identity site-name-context {
+        description "A classifier for site elements which allows direct access to a particular element in the data tree.";
     }
 
     grouping mapping-authkey-list {
@@ -135,6 +148,36 @@ module odl-mappingservice {
             key "vni";
             ext:context-instance "vni-context";
             uses db-instance;
+        }
+    }
+
+    container site-database {
+        description "Database of sites, with their associated delegated prefixes and map servers.";
+        list site {
+            description "Site (either single node or cluster) responsible for the prefixes of a certain area.";
+            key "name";
+            ext:context-instance "site-name-context";
+            leaf name {
+                type string;
+            }
+            list prefixes {
+                description "Delegated prefix (IID/EID).";
+                key "eid-uri";
+                ext:context-instance "eid-context";
+                leaf eid-uri {
+                    type eid-uri;
+                }
+                uses lisp-proto:eid-container;
+            }
+            list map-server {
+                description "Map server instance, responsible for the site prefixes.";
+                key "rloc-uri";
+                ext:context-instance "rloc-context";
+                leaf rloc-uri {
+                    type rloc-uri;
+                }
+                uses lisp-proto:rloc-container;
+            }
         }
     }
 
