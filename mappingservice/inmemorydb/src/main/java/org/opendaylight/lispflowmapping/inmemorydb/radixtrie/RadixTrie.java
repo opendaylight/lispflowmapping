@@ -124,8 +124,8 @@ public class RadixTrie<T> {
         // find closest prefix starting at ROOT
         TrieNode node = root.findClosest(prefix, preflen);
 
-        // find first different bit
-        int diffbit = node.firstDifferentBit(prefix, preflen);
+        // find first different bit <= min(closestNode.preflen, preflen)
+        int diffbit = node.firstDifferentBit(prefix, preflen < node.prefixLength() ? preflen : node.prefixLength());
 
         // find the first node with bit less than diffbit
         node = node.parentWithBitLessThan(diffbit);
@@ -418,7 +418,7 @@ public class RadixTrie<T> {
 
             // node is more specific, add new prefix as parent
             if (preflen == diffbit) {
-                if (testBitInPrefixByte(pref, preflen)) {
+                if (prefix == null ? testBitInPrefixByte(pref, preflen) : testBitInPrefixByte(prefix, preflen)) {
                     newNode.right = this;
                 } else {
                     newNode.left = this;

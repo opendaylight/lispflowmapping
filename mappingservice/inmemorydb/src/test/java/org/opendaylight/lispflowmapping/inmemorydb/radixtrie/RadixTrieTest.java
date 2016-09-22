@@ -198,7 +198,6 @@ public class RadixTrieTest {
         addIp4Addresses(radixTrie4);
 
         res = radixTrie4.lookupBest(IP4_BYTES7, 32);
-        LOG.info(res.asIpPrefix());
         assertTrue(Arrays.equals(res.prefix(), IP4_BYTES7));
         assertTrue(res.prefixLength() == 32);
 
