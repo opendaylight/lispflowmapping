@@ -11,9 +11,10 @@ package org.opendaylight.lispflowmapping.implementation;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+
+import org.opendatlight.lispflowmapping.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
