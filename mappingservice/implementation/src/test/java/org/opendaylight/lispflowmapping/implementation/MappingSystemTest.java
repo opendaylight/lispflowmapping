@@ -476,7 +476,7 @@ public class MappingSystemTest {
 
         mappingSystem.initialize();
         Mockito.verify(dsbeMock, Mockito.times(1)).removeMapping(mapping_1);
-        Mockito.verify(pmcMock).addMapping(EID_IPV4_2, mapping_2.getMappingRecord(), true, false);
+        Mockito.verify(pmcMock).addMapping(EID_IPV4_2, mapping_2.getMappingRecord(), true, false, null);
         Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_1, mappingAuthkey_1);
         Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_2, mappingAuthkey_2);
     }

@@ -11,9 +11,9 @@ package org.opendaylight.lispflowmapping.implementation;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.config.ConfigIni;
-import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.util.DSBEInputUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
@@ -110,7 +111,8 @@ public class MappingSystem implements IMappingSystem {
     }
 
     public void addMapping(MappingOrigin origin, Eid key, Object value, boolean merge) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
+        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge,
+                origin == MappingOrigin.Southbound ? dsbe : null);
     }
 
     public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {

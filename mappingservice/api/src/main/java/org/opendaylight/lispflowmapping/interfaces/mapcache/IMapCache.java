@@ -30,6 +30,23 @@ public interface IMapCache {
      *            Select if mappings with the same key are overwritten
      * @param merge
      *            Select if mappings with the same key are merged
+     * @param dsbeObject
+     *            A object reference to datastore backend
+     */
+    void addMapping(Eid key, Object data, boolean shouldOverwrite, boolean merge, Object dsbeObject);
+
+
+    /**
+     * Add mapping.
+     *
+     * @param key
+     *            Key of the mapping
+     * @param data
+     *            Value to be stored
+     * @param shouldOverwrite
+     *            Select if mappings with the same key are overwritten
+     * @param merge
+     *            Select if mappings with the same key are merged
      */
     void addMapping(Eid key, Object data, boolean shouldOverwrite, boolean merge);
 

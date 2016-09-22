@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import com.google.common.collect.Lists;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -507,12 +508,15 @@ public class SimpleMapCacheTest {
         final ArgumentCaptor<MappingEntry> captor = ArgumentCaptor.forClass(MappingEntry.class);
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, true);
 
-        Mockito.verify(xtrIdDaoMock).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
+        Mockito.verify(xtrIdDaoMock, Mockito.times(2)).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, timestamp));
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, getDefaultMappingRecordBuilder().build()));
-        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
+
+        List<MappingEntry> mappingEntries = captor.getAllValues();
+
+        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) mappingEntries.get(0).getValue()).getRecord());
     }
 
     /**
@@ -529,10 +533,13 @@ public class SimpleMapCacheTest {
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, false);
         final ArgumentCaptor<MappingEntry> captor = ArgumentCaptor.forClass(MappingEntry.class);
 
-        Mockito.verify(xtrIdDaoMock).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
+        Mockito.verify(xtrIdDaoMock, Mockito.times(2)).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
-        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
+
+        List<MappingEntry> mappingEntries = captor.getAllValues();
+
+        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) mappingEntries.get(0).getValue()).getRecord());
     }
 
     /**

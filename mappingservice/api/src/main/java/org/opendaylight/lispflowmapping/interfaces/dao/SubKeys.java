@@ -25,6 +25,7 @@ public interface SubKeys {
     String REGDATE = "date";
     String VNI = "vni";
     String LCAF_SRCDST = "lcaf_srcdst";
+    String BUCKET_INDEX = "bucket_index";
 
     String UNKOWN = "-1";
 }
