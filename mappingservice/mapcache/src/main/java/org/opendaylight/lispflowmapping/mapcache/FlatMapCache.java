@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Date;
+
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -35,6 +36,12 @@ public class FlatMapCache implements IMapCache {
 
     @Override
     public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge) {
+        addMapping(eid, data, shouldOverwrite, shouldMerge, null);
+    }
+
+    @Override
+    public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge,
+                           Runnable dsbeDataRemovalCallback) {
         Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));

@@ -36,6 +36,22 @@ public interface IMappingSystem {
     void addMapping(MappingOrigin origin, Eid key, Object data, boolean merge);
 
     /**
+     * Add mapping.
+     *
+     * @param origin
+     *            Table where mapping should be added
+     * @param key
+     *            Key of the mapping
+     * @param data
+     *            Value to be stored
+     * @param merge
+     *            Select if mappings with the same key are merged
+     * @param dsbeRemovalCallback
+     *            Callback function for removing it form DSBE
+     */
+    void addMapping(MappingOrigin origin, Eid key, Object data, boolean merge, Runnable dsbeRemovalCallback);
+
+    /**
      * Retrieves mapping for the provided src and dst key.
      *
      * @param src

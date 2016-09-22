@@ -12,17 +12,18 @@ import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
-import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.util.DSBEInputUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -175,6 +176,19 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (origin.equals(MappingOrigin.Southbound)) {
             // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
             // registrations
+            Runnable removeFromDSBE = new Runnable() {
+                @Override
+                public void run() {
+                    if (!(data instanceof MappingRecord)) {
+                        return;
+                    }
+                    dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+
+                    if (((MappingRecord) data).getXtrId() != null) {
+                        dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
+                    }
+                }
+            };
             mappingSystem.addMapping(origin, key, data, merge);
             dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
             if (((MappingRecord) data).getXtrId() != null) {

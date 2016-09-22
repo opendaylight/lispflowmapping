@@ -15,12 +15,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.mapcache.timebucket.TimeBucketLFMKey;
+import org.opendaylight.lispflowmapping.mapcache.timebucket.manager.implementation.SouthBoundMappingTimeoutManager;
+import org.opendaylight.lispflowmapping.mapcache.timebucket.manager.interfaces.ISouthboundMappingTimeoutManager;
+import org.opendaylight.lispflowmapping.util.RemovalCallbackUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -42,8 +47,11 @@ public class SimpleMapCache implements IMapCache {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMapCache.class);
     private ILispDAO dao;
 
+    private ISouthboundMappingTimeoutManager southboundMappingTimeoutManager;
+
     public SimpleMapCache(ILispDAO dao) {
         this.dao = dao;
+        southboundMappingTimeoutManager = SouthBoundMappingTimeoutManager.getInstance();
     }
 
     private ILispDAO getVniTable(Eid eid) {
@@ -89,6 +97,11 @@ public class SimpleMapCache implements IMapCache {
     }
 
     public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
+        addMapping(key, value, shouldOverwrite, shouldMerge, null);
+    }
+
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge,
+                           Runnable dsbeDataRemovalCallback) {
         if (value == null) {
             LOG.warn("addMapping() called with null 'value', ignoring");
             return;
@@ -100,6 +113,7 @@ public class SimpleMapCache implements IMapCache {
         }
 
         MappingRecord record = (MappingRecord) value;
+
         if (record.getXtrId() == null && !shouldOverwrite && shouldMerge) {
             LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
             return;
@@ -112,8 +126,23 @@ public class SimpleMapCache implements IMapCache {
         ILispDAO xtrIdDao = null;
         if (!shouldOverwrite && record.getXtrId() != null) {
             xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
+
+            Integer oldBucketIndex = null;
+            try {
+                oldBucketIndex = (Integer) xtrIdDao.getSpecific(record.getXtrId(), SubKeys.BUCKET_INDEX);
+            } catch (ClassCastException e) {
+                LOG.warn("For some old data, BUCKET_INDEX is not Integer.");
+            }
+
             xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.EXT_RECORD,
                     new ExtendedMappingRecord(record, regdate)));
+            int newBucketIndex = southboundMappingTimeoutManager.addOrRefreshMapping(
+                    new TimeBucketLFMKey(record.getXtrId(), SubKeys.EXT_RECORD),
+                    RemovalCallbackUtil.soundBoundMapCacheRemovalCallback(xtrIdDao, record.getXtrId(),
+                            SubKeys.EXT_RECORD, dsbeDataRemovalCallback),
+                    oldBucketIndex);
+            xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.BUCKET_INDEX,
+                    newBucketIndex));
         }
 
         if (shouldMerge) {

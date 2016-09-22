@@ -31,6 +31,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
+        <artifactId>mappingservice.util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.dsbackend</artifactId>
         <version>${project.version}</version>
       </dependency>

@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Date;
 import java.util.Map;
+
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -64,6 +65,11 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
+        addMapping(key, value, shouldOverwrite, shouldMerge, null);
+    }
+
+    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge,
+                           Runnable dsbeDataRemovalCallback) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 

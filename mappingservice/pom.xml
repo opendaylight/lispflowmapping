@@ -22,6 +22,7 @@
   <modules>
     <module>lisp-proto</module>
     <module>api</module>
+    <module>util</module>
     <module>inmemorydb</module>
     <module>dsbackend</module>
     <module>mapcache</module>
