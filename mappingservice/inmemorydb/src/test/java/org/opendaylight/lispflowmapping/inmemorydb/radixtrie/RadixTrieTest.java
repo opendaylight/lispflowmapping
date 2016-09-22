@@ -44,6 +44,9 @@ public class RadixTrieTest {
     private static byte[] IP4_BYTES14;
     private static byte[] IP4_BYTES15;
     private static byte[] IP4_BYTES16;
+    private static byte[] IP4_BYTES17;
+    private static byte[] IP4_BYTES18;
+
 
     ArrayList<byte []> itPrefixList4;
     ArrayList<Integer> itPreflenList4;
@@ -76,6 +79,8 @@ public class RadixTrieTest {
             IP4_BYTES14 = InetAddress.getByName("1.1.32.0").getAddress();
             IP4_BYTES15 = InetAddress.getByName("1.1.127.10").getAddress();
             IP4_BYTES16 = InetAddress.getByName("1.1.64.0").getAddress();
+            IP4_BYTES17 = InetAddress.getByName("40.218.27.124").getAddress();
+            IP4_BYTES18 = InetAddress.getByName("40.192.0.0").getAddress();
 
             IP6_BYTES1 = InetAddress.getByName("192:168::0:0").getAddress();
             IP6_BYTES2 = InetAddress.getByName("192:167::0:0").getAddress();
@@ -279,6 +284,20 @@ public class RadixTrieTest {
 
         radixTrie6.removeAll();
         assertTrue(radixTrie6.getRoot() == null);
+    }
+
+    /**
+     * Tests that parent insertions are done correctly.
+     */
+    @Test
+    public void testParentInsertion() {
+        radixTrie4 = new RadixTrie<>(32);
+
+        radixTrie4.insert(IP4_BYTES17, 30, 1);
+        radixTrie4.insert(IP4_BYTES18, 11, 2);
+
+        RadixTrie<Integer>.TrieNode res = radixTrie4.lookupBest(IP4_BYTES17, 30);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES17));
     }
 
     /**
