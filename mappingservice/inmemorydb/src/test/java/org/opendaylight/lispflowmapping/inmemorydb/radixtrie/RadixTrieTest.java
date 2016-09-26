@@ -46,7 +46,9 @@ public class RadixTrieTest {
     private static byte[] IP4_BYTES16;
     private static byte[] IP4_BYTES17;
     private static byte[] IP4_BYTES18;
-
+    private static byte[] IP4_BYTES19;
+    private static byte[] IP4_BYTES20;
+    private static byte[] IP4_BYTES21;
 
     ArrayList<byte []> itPrefixList4;
     ArrayList<Integer> itPreflenList4;
@@ -81,6 +83,9 @@ public class RadixTrieTest {
             IP4_BYTES16 = InetAddress.getByName("1.1.64.0").getAddress();
             IP4_BYTES17 = InetAddress.getByName("40.218.27.124").getAddress();
             IP4_BYTES18 = InetAddress.getByName("40.192.0.0").getAddress();
+            IP4_BYTES19 = InetAddress.getByName("64.142.3.176").getAddress();
+            IP4_BYTES20 = InetAddress.getByName("64.228.0.0").getAddress();
+            IP4_BYTES21 = InetAddress.getByName("64.0.0.0").getAddress();
 
             IP6_BYTES1 = InetAddress.getByName("192:168::0:0").getAddress();
             IP6_BYTES2 = InetAddress.getByName("192:167::0:0").getAddress();
@@ -298,6 +303,13 @@ public class RadixTrieTest {
 
         RadixTrie<Integer>.TrieNode res = radixTrie4.lookupBest(IP4_BYTES17, 30);
         assertTrue(Arrays.equals(res.prefix(), IP4_BYTES17));
+
+        radixTrie4.insert(IP4_BYTES19, 28, 3);
+        radixTrie4.insert(IP4_BYTES20, 14, 3);
+        radixTrie4.insert(IP4_BYTES21, 8, 3);
+
+        res = radixTrie4.lookupBest(IP4_BYTES19, 28);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES19));
     }
 
     /**

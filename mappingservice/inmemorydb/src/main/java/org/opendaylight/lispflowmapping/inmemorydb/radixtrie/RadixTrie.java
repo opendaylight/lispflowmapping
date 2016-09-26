@@ -122,16 +122,16 @@ public class RadixTrie<T> {
         }
 
         // find closest prefix starting at ROOT
-        TrieNode node = root.findClosest(prefix, preflen);
+        TrieNode closest = root.findClosest(prefix, preflen);
 
         // find first different bit <= min(closestNode.preflen, preflen)
-        int diffbit = node.firstDifferentBit(prefix, preflen < node.prefixLength() ? preflen : node.prefixLength());
+        int diffbit = closest.firstDifferentBit(prefix, preflen);
 
         // find the first node with bit less than diffbit
-        node = node.parentWithBitLessThan(diffbit);
+        TrieNode node = closest.parentWithBitLessThan(diffbit);
 
         // insert new prefix
-        return node.insert(prefix, preflen, diffbit, data);
+        return node.insert(prefix, preflen, diffbit, data, closest.prefix());
     }
 
     /**
@@ -368,10 +368,10 @@ public class RadixTrie<T> {
                 }
                 // if not matched, find first diff bit (0 to 7)
                 diffbit = i * 8 + Integer.numberOfLeadingZeros(bitxor) - 24;
-                diffbit = (diffbit > maxbit) ? maxbit : diffbit;
                 break;
             }
 
+            diffbit = (diffbit > maxbit) ? maxbit : diffbit;
             return diffbit;
         }
 
@@ -400,7 +400,7 @@ public class RadixTrie<T> {
          * @param data Data to be stored together with the prefix
          * @return The trie node created or current node if it's an overwrite.
          */
-        public TrieNode insert(byte[] pref, int preflen, int diffbit, T data) {
+        public TrieNode insert(byte[] pref, int preflen, int diffbit, T data, byte[] closest) {
             TrieNode parent;
 
             // same node, check if prefix needs saving
@@ -418,7 +418,7 @@ public class RadixTrie<T> {
 
             // node is more specific, add new prefix as parent
             if (preflen == diffbit) {
-                if (prefix == null ? testBitInPrefixByte(pref, preflen) : testBitInPrefixByte(prefix, preflen)) {
+                if (prefix == null ? testBitInPrefixByte(closest, preflen) : testBitInPrefixByte(prefix, preflen)) {
                     newNode.right = this;
                 } else {
                     newNode.left = this;
