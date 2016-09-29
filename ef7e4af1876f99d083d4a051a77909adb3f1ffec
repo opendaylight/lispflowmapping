@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_2705ab10",
+        "filename": "mappingservice/util/src/main/java/org/opendatlight/lispflowmapping/util/DSBEInputUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-29T15:52:04Z",
+      "side": 1,
+      "message": "package name typo",
+      "revId": "ef7e4af1876f99d083d4a051a77909adb3f1ffec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
