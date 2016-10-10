@@ -64,6 +64,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
@@ -445,7 +446,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add mapping */
         final MappingRecord mapping1 = new MappingRecordBuilder()
                 .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
-        mapService.addMapping(MappingOrigin.Northbound, eid1, null, mapping1, false);
+        mapService.addMapping(MappingOrigin.Northbound, eid1, null, new MappingData(mapping1));
 
         sleepForMilliseconds((timeout * expectedSmrs1) - 1500);
         final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
@@ -610,10 +611,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iid);
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
 
-        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbLeft.getEid(), null, mapRecordNbLeft, false);
-        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbRight.getEid(), null, mapRecordNbRight, false);
-        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbLeft.getEid(), null, mapRecordSbLeft, false);
-        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbRight.getEid(), null, mapRecordSbRight, false);
+        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbLeft.getEid(), null,
+                new MappingData(mapRecordNbLeft));
+        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbRight.getEid(), null,
+                new MappingData(mapRecordNbRight));
+        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbLeft.getEid(), null,
+                new MappingData(mapRecordSbLeft, System.currentTimeMillis()));
+        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbRight.getEid(), null,
+                new MappingData(mapRecordSbRight, System.currentTimeMillis()));
 
         restartSocket();
         sleepForSeconds(2);

@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,8 +33,10 @@ import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
@@ -78,7 +81,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 public class MappingSystemTest {
 
     private static ILispDAO daoMock = Mockito.mock(ILispDAO.class);
-    @Mock private static IMapCache smcMock;
+    @Mock private static ILispMapCache smcMock;
     @Mock private static IMapCache pmcMock;
     @Mock private static DataStoreBackEnd dsbeMock;
     @Mock private static EnumMap<MappingOrigin, IMapCache> tableMapMock;
@@ -162,16 +165,16 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbFirst_withNullExpiredNbMapping() {
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setTimestamp(EXPIRED_DATE.getTime()).build();
+        final MappingData mappingData = getDefaultMappingData();
+        mappingData.setTimestamp(EXPIRED_DATE);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
-        Mockito.when(smcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingRecord);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:1.2.3.0"))
                 .setOrigin(MappingOrigin.Southbound)
                 .setSiteId(Lists.newArrayList(SITE_ID))
-                .setMappingRecord(mappingRecord).build();
+                .setMappingRecord(mappingData.getRecord()).build();
 
         assertNull(mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
         Mockito.verify(dsbeMock).removeMapping(mapping);
@@ -183,11 +186,11 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbFirst_withNullNbMapping() {
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build();
+        final MappingData mappingData = getDefaultMappingData();
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
-        Mockito.when(smcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingRecord);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
     }
 
     /**
@@ -200,9 +203,10 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build(), // set two locators
                         getDefaultLocatorRecordBuilder().build())).build();
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
     }
 
     /**
@@ -214,9 +218,10 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
     }
 
     /**
@@ -229,9 +234,10 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB));
     }
 
     /**
@@ -245,10 +251,11 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        final MappingRecord result = (MappingRecord) mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
-        final Ipv4Binary ipv4Result = (Ipv4Binary) result.getLocatorRecord().get(0).getRloc().getAddress();
+        final MappingData result = (MappingData) mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
+        final Ipv4Binary ipv4Result = (Ipv4Binary) result.getRecord().getLocatorRecord().get(0).getRloc().getAddress();
         assertTrue(Arrays
                 .equals(InetAddress.getByName(IPV4_STRING_3).getAddress(), ipv4Result.getIpv4Binary().getValue()));
     }
@@ -263,9 +270,10 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getIpPrefixTypeRloc()).build())).build();
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
     }
 
     /**
@@ -276,9 +284,10 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build();
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
     }
 
     /**
@@ -304,9 +313,10 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
     }
 
     /**
@@ -318,25 +328,23 @@ public class MappingSystemTest {
             IllegalAccessException {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
-        final MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder()
+        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
+        MappingData nbMappingData = getDefaultMappingData(mappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(mappingRecord);
+        sbMappingData.setTimestamp(EXPIRED_DATE);
 
-        final MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder()
-                .setTimestamp(EXPIRED_DATE.getTime())
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingRecord);
-        Mockito.when(smcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(sbMappingRecord);
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingData);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData);
 
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:1.2.3.0"))
                 .setOrigin(MappingOrigin.Southbound)
                 .setSiteId(Lists.newArrayList(SITE_ID))
-                .setMappingRecord(sbMappingRecord).build();
+                .setMappingRecord(mappingRecord).build();
 
-        assertEquals(nbMappingRecord, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
+        assertEquals(nbMappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
         Mockito.verify(dsbeMock).removeMapping(mapping);
     }
 
@@ -349,21 +357,19 @@ public class MappingSystemTest {
             IllegalAccessException {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
-        final MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder()
+        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build();
-
-        final MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build();
+        final MappingData nbMappingData = getDefaultMappingData(mappingRecord);
+        final MappingData sbMappingData = getDefaultMappingData(mappingRecord);
 
         // this mock will be ultimately returned when MappingMergeUtil.computeNbSbIntersection is called
-        final MappingRecord resultMock = Mockito.mock(MappingRecord.class);
+        final MappingData resultMock = Mockito.mock(MappingData.class);
 
         PowerMockito.mockStatic(MappingMergeUtil.class);
-        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingRecord);
-        Mockito.when(smcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(sbMappingRecord);
-        PowerMockito.when(MappingMergeUtil.computeNbSbIntersection(nbMappingRecord, sbMappingRecord))
+        Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingData);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData);
+        PowerMockito.when(MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData))
                 .thenReturn(resultMock);
 
         assertEquals(resultMock, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -374,11 +380,11 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withSrcNull() {
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build();
+        final MappingData mappingData = getDefaultMappingData();
         Mockito.when(pmcMock.getMapping(null, EID_IPV4_DST)).thenReturn(null);
-        Mockito.when(smcMock.getMapping(null, EID_IPV4_DST)).thenReturn(mappingRecord);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(EID_IPV4_DST));
+        assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_DST));
     }
 
     /**
@@ -386,13 +392,12 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withXtrId() {
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setXtrId(XTR_ID).build();
+        final MappingData mappingData = getDefaultMappingData();
+        mappingData.setXtrId(XTR_ID);
 
-        Mockito.when(smcMock.getMapping(null, EID_IPV4_DST, XTR_ID.getValue()))
-                .thenReturn(mappingRecord);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, XTR_ID)).thenReturn(mappingData);
 
-        assertEquals(mappingRecord, mappingSystem.getMapping(null, EID_IPV4_DST, XTR_ID));
+        assertEquals(mappingData, mappingSystem.getMapping(null, EID_IPV4_DST, XTR_ID));
     }
 
     /**
@@ -400,8 +405,11 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withMappingOrigin() {
+        final MappingData mappingData = getDefaultMappingData();
+        Mockito.when(smcMock.getMapping(EID_IPV4_SRC, (XtrId) null)).thenReturn(mappingData);
+
         mappingSystem.getMapping(MappingOrigin.Southbound, EID_IPV4_SRC);
-        Mockito.verify(smcMock).getMapping(null, EID_IPV4_SRC);
+        Mockito.verify(smcMock).getMapping(EID_IPV4_SRC, (XtrId) null);
 
         mappingSystem.getMapping(MappingOrigin.Northbound, EID_IPV4_SRC);
         Mockito.verify(pmcMock).getMapping(null, EID_IPV4_SRC);
@@ -415,7 +423,7 @@ public class MappingSystemTest {
         Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
 
         mappingSystem.removeMapping(MappingOrigin.Northbound, EID_IPV4_1);
-        Mockito.verify(pmcMock).removeMapping(EID_IPV4_1, true);
+        Mockito.verify(pmcMock).removeMapping(EID_IPV4_1);
     }
 
     /**
@@ -428,18 +436,7 @@ public class MappingSystemTest {
         Mockito.when(tableMapMock.get(MappingOrigin.Southbound)).thenReturn(smcMock);
 
         mappingSystem.removeMapping(MappingOrigin.Southbound, EID_IPV4_1);
-        Mockito.verify(smcMock).removeMapping(EID_IPV4_1, false);
-    }
-
-    /**
-     * Tests {@link MappingSystem#updateMappingRegistration} method.
-     */
-    @Test
-    public void updateMappingRegistrationTest() {
-        Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
-
-        mappingSystem.updateMappingRegistration(MappingOrigin.Northbound, EID_IPV4_1, 1L);
-        Mockito.verify(pmcMock).updateMappingRegistration(EID_IPV4_1, 1L);
+        Mockito.verify(smcMock).removeMapping(EID_IPV4_1);
     }
 
     /**
@@ -450,8 +447,7 @@ public class MappingSystemTest {
         final Mapping mapping_1 = new MappingBuilder()
                 .setOrigin(MappingOrigin.Northbound)
                 .setMappingRecord(getDefaultMappingRecordBuilder()
-                        .setEid(EID_IPV4_1)
-                        .setTimestamp(EXPIRED_DATE.getTime()).build()).build();
+                        .setEid(EID_IPV4_1).build()).build();
         final Mapping mapping_2 = new MappingBuilder()
                 .setOrigin(MappingOrigin.Northbound)
                 .setMappingRecord(getDefaultMappingRecordBuilder()
@@ -475,8 +471,12 @@ public class MappingSystemTest {
         Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
 
         mappingSystem.initialize();
-        Mockito.verify(dsbeMock, Mockito.times(1)).removeMapping(mapping_1);
-        Mockito.verify(pmcMock).addMapping(EID_IPV4_2, mapping_2.getMappingRecord(), true, false);
+
+        ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
+        Mockito.verify(pmcMock).addMapping(Mockito.eq(EID_IPV4_1), captor.capture());
+        assertEquals(captor.getValue().getRecord(), mapping_1.getMappingRecord());
+        Mockito.verify(pmcMock).addMapping(Mockito.eq(EID_IPV4_2), captor.capture());
+        assertEquals(captor.getValue().getRecord(), mapping_2.getMappingRecord());
         Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_1, mappingAuthkey_1);
         Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_2, mappingAuthkey_2);
     }
@@ -566,9 +566,19 @@ public class MappingSystemTest {
         mappingSystem.setIterateMask(true);
     }
 
+    private static MappingData getDefaultMappingData() {
+        return getDefaultMappingData(null);
+    }
+
+    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+        if (mappingRecord == null) {
+            mappingRecord = getDefaultMappingRecordBuilder().build();
+        }
+        return new MappingData(mappingRecord, System.currentTimeMillis());
+    }
+
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
         return new MappingRecordBuilder()
-                .setTimestamp(System.currentTimeMillis())
                 .setSiteId(SITE_ID)
                 .setEid(EID_IPV4_1);
     }

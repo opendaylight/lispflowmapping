@@ -54,7 +54,7 @@ public class FlatMapCacheTest {
      */
     @Test
     public void addMappingTest() {
-        flatMapCache.addMapping(EID_TEST, DUMMY_OBJECT, true, false);
+        flatMapCache.addMapping(EID_TEST, DUMMY_OBJECT);
         verify(daoMock, atMost(2)).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
         verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
@@ -73,9 +73,8 @@ public class FlatMapCacheTest {
      */
     @Test
     public void removeMappingTest() {
-        flatMapCache.removeMapping(EID_TEST, true);
+        flatMapCache.removeMapping(EID_TEST);
         verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
-        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.REGDATE);
     }
 
     /**
@@ -112,15 +111,6 @@ public class FlatMapCacheTest {
     public void removeAuthenticationKeyTest() {
         flatMapCache.removeAuthenticationKey(EID_TEST);
         verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
-    }
-
-    /**
-     * Tests {@link FlatMapCache#updateMappingRegistration}.
-     */
-    @Test
-    public void updateMappingRegistrationTest() {
-        flatMapCache.updateMappingRegistration(EID_TEST, null);
-        verify(daoMock).put(NORMALIZED_EID, new MappingEntry<>(anyString(), any(Date.class)));
     }
 
     /**
