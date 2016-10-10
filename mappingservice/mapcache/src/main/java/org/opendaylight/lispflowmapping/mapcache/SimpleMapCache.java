@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.mapcache;
 
+import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public class SimpleMapCache implements IMapCache {
+public class SimpleMapCache implements ILispMapCache {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMapCache.class);
     private ILispDAO dao;
 
@@ -88,19 +89,13 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
-        if (value == null) {
-            LOG.warn("addMapping() called with null 'value', ignoring");
+    public void addMapping(Eid key, MappingRecord mapping) {
+        if (mapping == null) {
+            LOG.warn("addMapping() called with null mapping, ignoring");
             return;
         }
 
-        if (!(value instanceof MappingRecord)) {
-            LOG.warn("addMapping() called with a 'value' that is not a 'MappingRecord', ignoring");
-            return;
-        }
-
-        MappingRecord record = (MappingRecord) value;
-        if (record.getXtrId() == null && !shouldOverwrite && shouldMerge) {
+        if (mapping.getXtrId() == null && !shouldOverwrite && shouldMerge) {
             LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
             return;
         }
@@ -110,10 +105,10 @@ public class SimpleMapCache implements IMapCache {
         ILispDAO table = getOrInstantiateVniTable(key);
 
         ILispDAO xtrIdDao = null;
-        if (!shouldOverwrite && record.getXtrId() != null) {
+        if (!shouldOverwrite && mapping.getXtrId() != null) {
             xtrIdDao = getOrInstantiateXtrIdTable(eid, table);
-            xtrIdDao.put(record.getXtrId(), new MappingEntry<>(SubKeys.EXT_RECORD,
-                    new ExtendedMappingRecord(record, regdate)));
+            xtrIdDao.put(mapping.getXtrId(), new MappingEntry<>(SubKeys.EXT_RECORD,
+                    new ExtendedMappingRecord(mapping, regdate)));
         }
 
         if (shouldMerge) {
@@ -131,24 +126,14 @@ public class SimpleMapCache implements IMapCache {
             table.put(eid, new MappingEntry<>(SubKeys.SRC_RLOCS, sourceRlocs));
         } else {
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, regdate));
-            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, mapping));
         }
     }
 
-    // Returns the list of mappings stored in an xTR-ID DAO
-    private List<Object> getXtrIdMappingList(ILispDAO dao) {
-        if (dao != null) {
-            final List<Object> records = new ArrayList<>();
-            dao.getAll(new IRowVisitor() {
-                public void visitRow(Object keyId, String valueKey, Object value) {
-                    if (valueKey.equals(SubKeys.EXT_RECORD)) {
-                        records.add(value);
-                    }
-                }
-            });
-            return records;
-        }
-        return null;
+    @Override
+    public void addMapping(Eid key, byte[] xtrId, MappingRecord mapping) {
+        // TODO Auto-generated method stub
+
     }
 
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
@@ -185,22 +170,42 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
-        if (dstEid == null) {
+    @Override
+    public Object getMapping(Eid srcEid, Eid dstEid) {
+        final byte[] xtrId = null;
+        return getMapping(dstEid, xtrId);
+    }
+
+    @Override
+    public Object getMapping(Eid key, byte[] xtrId) {
+        if (key == null) {
             return null;
         }
 
-        ILispDAO table = getVniTable(dstEid);
+        ILispDAO table = getVniTable(key);
         if (table == null) {
             return null;
         }
-        return getMappingLpmEid(dstEid, xtrId, table);
+        return getMappingLpmEid(key, xtrId, table);
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid) {
-        return getMapping(srcEid, dstEid, null);
+    // Returns the list of mappings stored in an xTR-ID DAO
+    private List<Object> getXtrIdMappingList(ILispDAO dao) {
+        if (dao != null) {
+            final List<Object> records = new ArrayList<>();
+            dao.getAll(new IRowVisitor() {
+                public void visitRow(Object keyId, String valueKey, Object value) {
+                    if (valueKey.equals(SubKeys.EXT_RECORD)) {
+                        records.add(value);
+                    }
+                }
+            });
+            return records;
+        }
+        return null;
     }
 
+    @Override
     public List<Object> getAllXtrIdMappings(Eid eid) {
         Map<String, ?> daoEntry = dao.getBest(MaskUtil.normalize(eid));
         if (daoEntry != null) {
@@ -220,7 +225,8 @@ public class SimpleMapCache implements IMapCache {
         return table.getWidestNegativePrefix(MaskUtil.normalize(key));
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    @Override
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -238,6 +244,43 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
+    @Override
+    public void removeMapping(Eid key, byte[] xtrId) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeXtrIdMappings(Eid key, List<XtrId> xtrIds) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void refreshMappingRegistration(Eid eid, XtrId xtrId, Long timestamp) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return;
+        }
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
+        }
+        Map<String, Object> daoEntry = table.getBest(MaskUtil.normalize(eid));
+        if (daoEntry != null) {
+            daoEntry.put(SubKeys.REGDATE, new Date(timestamp));
+        }
+
+        ILispDAO xtrIdTable = (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS);
+        if (xtrIdTable != null && xtrId != null) {
+            ExtendedMappingRecord extRecord = (ExtendedMappingRecord) xtrIdTable.getSpecific(xtrId,
+                    SubKeys.EXT_RECORD);
+            if (extRecord != null) {
+                extRecord.setTimestamp(new Date(timestamp));
+            }
+        }
+    }
+
+    @Override
     public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getOrInstantiateVniTable(key);
@@ -257,6 +300,7 @@ public class SimpleMapCache implements IMapCache {
         return null;
     }
 
+    @Override
     public MappingAuthkey getAuthenticationKey(Eid eid) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
@@ -276,6 +320,7 @@ public class SimpleMapCache implements IMapCache {
         }
     }
 
+    @Override
     public void removeAuthenticationKey(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
@@ -285,6 +330,34 @@ public class SimpleMapCache implements IMapCache {
         table.removeSpecific(key, SubKeys.AUTH_KEY);
     }
 
+    @Override
+    public void addData(Eid eid, String subKey, Object data) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getOrInstantiateVniTable(key);
+        table.put(key, new MappingEntry<>(subKey, data));
+    }
+
+    @Override
+    public Object getData(Eid eid, String subKey) {
+        ILispDAO table = getOrInstantiateVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+        Eid key = MaskUtil.normalize(eid);
+        return table.getSpecific(key, subKey);
+    }
+
+    @Override
+    public void removeData(Eid eid, String subKey) {
+        ILispDAO table = getOrInstantiateVniTable(eid);
+        if (table == null) {
+            return;
+        }
+        Eid key = MaskUtil.normalize(eid);
+        table.removeSpecific(key, subKey);
+    }
+
+    @Override
     public String printMappings() {
         final StringBuffer sb = new StringBuffer();
         sb.append("Keys\tValues\n");
@@ -322,57 +395,5 @@ public class SimpleMapCache implements IMapCache {
         });
         sb.append("\n");
         return sb.toString();
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid eid, Long timestamp) {
-        ILispDAO table = getVniTable(eid);
-        if (table == null) {
-            return;
-        }
-        if (timestamp == null) {
-            timestamp = System.currentTimeMillis();
-        }
-        Map<String, Object> daoEntry = table.getBest(MaskUtil.normalize(eid));
-        if (daoEntry != null) {
-            daoEntry.put(SubKeys.REGDATE, new Date(timestamp));
-        }
-
-        ILispDAO xtrIdTable = (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS);
-        XtrId xtrId = ((MappingRecord) daoEntry.get(SubKeys.RECORD)).getXtrId();
-        if (xtrIdTable != null && xtrId != null) {
-            ExtendedMappingRecord extRecord = (ExtendedMappingRecord) xtrIdTable.getSpecific(xtrId,
-                    SubKeys.EXT_RECORD);
-            if (extRecord != null) {
-                extRecord.setTimestamp(new Date(timestamp));
-            }
-        }
-    }
-
-    @Override
-    public void addData(Eid eid, String subKey, Object data) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getOrInstantiateVniTable(key);
-        table.put(key, new MappingEntry<>(subKey, data));
-    }
-
-    @Override
-    public Object getData(Eid eid, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(eid);
-        if (table == null) {
-            return null;
-        }
-        Eid key = MaskUtil.normalize(eid);
-        return table.getSpecific(key, subKey);
-    }
-
-    @Override
-    public void removeData(Eid eid, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(eid);
-        if (table == null) {
-            return;
-        }
-        Eid key = MaskUtil.normalize(eid);
-        table.removeSpecific(key, subKey);
     }
 }

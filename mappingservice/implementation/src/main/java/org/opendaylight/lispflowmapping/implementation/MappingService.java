@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -170,24 +171,24 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge) {
+    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingRecord mapping, boolean merge) {
         // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
         if (origin.equals(MappingOrigin.Southbound)) {
             // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
             // registrations
-            mappingSystem.addMapping(origin, key, data, merge);
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
-            if (((MappingRecord) data).getXtrId() != null) {
-                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
+            mappingSystem.addMapping(origin, key, mapping, merge);
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, mapping));
+            if (mapping.getXtrId() != null) {
+                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mapping));
             }
         } else {
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, mapping));
         }
     }
 
     @Override
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        mappingSystem.updateMappingRegistration(origin, key, timestamp);
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        mappingSystem.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
     @Override

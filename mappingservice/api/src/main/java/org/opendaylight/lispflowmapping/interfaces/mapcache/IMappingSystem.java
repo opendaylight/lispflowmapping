@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.interfaces.mapcache;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 /**
@@ -28,12 +29,12 @@ public interface IMappingSystem {
      *            Table where mapping should be added
      * @param key
      *            Key of the mapping
-     * @param data
-     *            Value to be stored
+     * @param mapping
+     *            Mapping to be stored
      * @param merge
      *            Select if mappings with the same key are merged
      */
-    void addMapping(MappingOrigin origin, Eid key, Object data, boolean merge);
+    void addMapping(MappingOrigin origin, Eid key, MappingRecord mapping, boolean merge);
 
     /**
      * Retrieves mapping for the provided src and dst key.
@@ -89,16 +90,16 @@ public interface IMappingSystem {
     Object getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration.
+     * Refresh southbound mapping registration timestamp.
      *
-     * @param origin
-     *            Table for mapping that should be updated
      * @param key
-     *            The EID whose registration must be updated
+     *            The EID whose registration must be refreshed
+     * @param xtrId
+     *            xTR-ID of the mapping to be refreshed
      * @param timestamp
      *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
+    void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
 
     /**
      * Remove mapping.

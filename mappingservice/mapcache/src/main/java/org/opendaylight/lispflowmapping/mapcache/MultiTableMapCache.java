@@ -63,7 +63,7 @@ public class MultiTableMapCache implements IMapCache {
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid key, Object value) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
@@ -135,11 +135,6 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
-        return null;
-    }
-
-    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -148,7 +143,7 @@ public class MultiTableMapCache implements IMapCache {
         return table.getWidestNegativePrefix(key);
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -311,11 +306,6 @@ public class MultiTableMapCache implements IMapCache {
         });
         sb.append("\n");
         return sb.toString();
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid key, Long timestamp) {
-
     }
 
     @Override
