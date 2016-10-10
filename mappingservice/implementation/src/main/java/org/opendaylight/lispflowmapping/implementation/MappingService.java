@@ -22,8 +22,10 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -170,24 +172,24 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge) {
+    public void addMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingData mappingData, boolean merge) {
         // SB registrations are first written to the MappingSystem and only afterwards are persisted to the datastore
         if (origin.equals(MappingOrigin.Southbound)) {
             // Store data first in MapCache and only afterwards persist to datastore. This should be used only for SB
             // registrations
-            mappingSystem.addMapping(origin, key, data, merge);
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
-            if (((MappingRecord) data).getXtrId() != null) {
-                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping((MappingRecord) data));
+            mappingSystem.addMapping(origin, key, mappingData, merge);
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, mappingData));
+            if (mappingData.getXtrId() != null) {
+                dsbe.addXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
             }
         } else {
-            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, (MappingRecord) data));
+            dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, mappingData));
         }
     }
 
     @Override
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        mappingSystem.updateMappingRegistration(origin, key, timestamp);
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        mappingSystem.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
     @Override
@@ -217,14 +219,14 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
-        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(convertToBinaryIfNecessary(input.getEid()));
+        MappingData reply = mappingSystem.getMapping(convertToBinaryIfNecessary(input.getEid()));
 
         if (reply == null) {
             String message = "No mapping was found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetMappingOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
         } else {
-            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply);
+            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply.getRecord());
             rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setMappingRecord(convertedReply));
         }
 
@@ -232,17 +234,17 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public Object getMapping(MappingOrigin origin, Eid key) {
+    public MappingData getMapping(MappingOrigin origin, Eid key) {
         return mappingSystem.getMapping(origin, key);
     }
 
     @Override
-    public Object getMapping(Eid key) {
+    public MappingData getMapping(Eid key) {
         return mappingSystem.getMapping(key);
     }
 
     @Override
-    public Object getMapping(Eid srcKey, Eid dstKey) {
+    public MappingData getMapping(Eid srcKey, Eid dstKey) {
         return mappingSystem.getMapping(srcKey, dstKey);
     }
 
@@ -253,7 +255,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         RpcResultBuilder<GetMappingWithXtrIdOutput> rpcResultBuilder;
 
-        MappingRecord reply = (MappingRecord) mappingSystem.getMapping(null, convertToBinaryIfNecessary(input.getEid()),
+        MappingData reply = mappingSystem.getMapping(null, convertToBinaryIfNecessary(input.getEid()),
                 input.getXtrId());
 
         if (reply == null) {
@@ -261,7 +263,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
             rpcResultBuilder = RpcResultBuilder.<GetMappingWithXtrIdOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
         } else {
-            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply);
+            final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply.getRecord());
             rpcResultBuilder = RpcResultBuilder.success(new GetMappingWithXtrIdOutputBuilder()
                     .setMappingRecord(convertedReply));
         }

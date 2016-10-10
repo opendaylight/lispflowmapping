@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
@@ -45,7 +46,7 @@ public class SimpleMapCacheTest {
     private static ILispDAO xtrIdDaoMock;
     private static ILispDAO xtrIdTableDaoMock;
     private static MappingRecord mappingRecordMock;
-    private static ExtendedMappingRecord extendedMappingRecordMock;
+    private static MappingData extendedMappingRecordMock;
     private static ILispDAO daoMock;
     private static SimpleMapCache simpleMapCache;
 
@@ -85,7 +86,7 @@ public class SimpleMapCacheTest {
         xtrIdDaoMock = Mockito.mock(ILispDAO.class);
         xtrIdTableDaoMock = Mockito.mock(ILispDAO.class);
         mappingRecordMock = Mockito.mock(MappingRecord.class);
-        extendedMappingRecordMock = Mockito.mock(ExtendedMappingRecord.class);
+        extendedMappingRecordMock = Mockito.mock(MappingData.class);
         simpleMapCache = new SimpleMapCache(daoMock);
     }
 
@@ -280,10 +281,10 @@ public class SimpleMapCacheTest {
         final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
                 NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
         final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
-        final ExtendedMappingRecord expiredMappingRecord = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+        final MappingData expiredMappingRecord = new MappingData(getDefaultMappingRecordBuilder()
                 .build());
         expiredMappingRecord.setTimestamp(new Date(1L)); //expired
-        final ExtendedMappingRecord mappingRecord = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        final MappingData mappingRecord = new MappingData(getDefaultMappingRecordBuilder().build());
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);
@@ -502,7 +503,7 @@ public class SimpleMapCacheTest {
 
         PowerMockito.mockStatic(MappingMergeUtil.class);
         PowerMockito.when(MappingMergeUtil.mergeXtrIdMappings(Mockito.anyList(), Mockito.anyList(), Mockito.anySet()))
-                .thenReturn(new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build(), timestamp));
+                .thenReturn(new MappingData(getDefaultMappingRecordBuilder().build(), timestamp));
 
         final ArgumentCaptor<MappingEntry> captor = ArgumentCaptor.forClass(MappingEntry.class);
         simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingRecordMock, false, true);
@@ -512,7 +513,7 @@ public class SimpleMapCacheTest {
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.REGDATE, timestamp));
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, getDefaultMappingRecordBuilder().build()));
-        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
+        assertEquals(mappingRecordMock, ((MappingData) captor.getValue().getValue()).getRecord());
     }
 
     /**
@@ -532,7 +533,7 @@ public class SimpleMapCacheTest {
         Mockito.verify(xtrIdDaoMock).put(Mockito.eq(new XtrId(XTR_ID)), captor.capture());
         Mockito.verify(tableMock)
                 .put(NORMALIZED_EID_1, new MappingEntry<>(SubKeys.RECORD, mappingRecordMock));
-        assertEquals(mappingRecordMock, ((ExtendedMappingRecord) captor.getValue().getValue()).getRecord());
+        assertEquals(mappingRecordMock, ((MappingData) captor.getValue().getValue()).getRecord());
     }
 
     /**
