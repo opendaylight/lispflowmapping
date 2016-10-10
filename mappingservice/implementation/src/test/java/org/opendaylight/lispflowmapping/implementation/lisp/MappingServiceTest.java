@@ -30,6 +30,7 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -97,7 +98,7 @@ public class MappingServiceTest {
             .setKeyType(1).build();
     private static final SiteId SITE_ID = new SiteId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7});
     private static final XtrId XTR_ID = new XtrId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-    private static final Object DUMMY_OBJECT = "dummy_object";
+    private static final MappingData DUMMY_MAPPING = new MappingData(null);
 
     /**
      * Tests {@link MappingService#addKey} method.
@@ -220,11 +221,11 @@ public class MappingServiceTest {
     public void getMappingTest() throws ExecutionException, InterruptedException {
         // input
         final GetMappingInput getMappingInput = new GetMappingInputBuilder().setEid(IPV4_EID).build();
-        final MappingRecord mappingRecord = getDefaultMappingRecordBuilder().build();
+        final MappingData mappingData = getDefaultMappingData();
         final MappingRecord nonBinaryMappingRecord = getDefaultMappingRecordBuilder()
                 .setEid(LispAddressUtil.toEid(new Ipv4Address(IPV4_STRING), null)).build();
 
-        Mockito.when(mappingSystem.getMapping(getMappingInput.getEid())).thenReturn(mappingRecord);
+        Mockito.when(mappingSystem.getMapping(getMappingInput.getEid())).thenReturn(mappingData);
 
         final RpcResult<GetMappingOutput> rpc = RpcResultBuilder
                 .success(new GetMappingOutputBuilder().setMappingRecord(nonBinaryMappingRecord)).build();
@@ -365,14 +366,14 @@ public class MappingServiceTest {
     @Test
     public void addMappingTest_fromSouthbound() throws ExecutionException, InterruptedException {
         // input
-        final MappingRecord data = getDefaultMappingRecordBuilder()
+        final MappingRecord record = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
+        final MappingData data = getDefaultMappingData(record);
 
-        mappingService.addMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data, false);
+        mappingService.addMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data);
 
-        Mockito.verify(mappingSystem).addMapping(MappingOrigin.Southbound, IPV4_EID, data, false);
+        Mockito.verify(mappingSystem).addMapping(MappingOrigin.Southbound, IPV4_EID, data);
         Mockito.verify(dsbe).addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data));
-        Mockito.verify(dsbe).addXtrIdMapping(DSBEInputUtil.toXtrIdMapping(data));
     }
 
     /**
@@ -382,10 +383,11 @@ public class MappingServiceTest {
     public void addMappingTest_fromNorthbound() throws ExecutionException, InterruptedException {
         // input
         final MappingOrigin origin = MappingOrigin.Northbound;
-        final MappingRecord data = getDefaultMappingRecordBuilder()
+        final MappingRecord record = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
+        final MappingData data = getDefaultMappingData(record);
 
-        mappingService.addMapping(origin, IPV4_EID, SITE_ID, data, false);
+        mappingService.addMapping(origin, IPV4_EID, SITE_ID, data);
         Mockito.verify(dsbe).addMapping(DSBEInputUtil.toMapping(origin, IPV4_EID, SITE_ID, data));
         Mockito.verifyZeroInteractions(mappingSystem);
         Mockito.verifyNoMoreInteractions(dsbe);
@@ -397,8 +399,8 @@ public class MappingServiceTest {
     @Test
     public void getMappingTest_withOriginAndEid() {
         Mockito.when(mappingSystem.getMapping(Mockito.any(MappingOrigin.class), Mockito.any(Eid.class)))
-                .thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, mappingService.getMapping(MappingOrigin.Northbound, IPV4_EID));
+                .thenReturn(DUMMY_MAPPING);
+        assertEquals(DUMMY_MAPPING, mappingService.getMapping(MappingOrigin.Northbound, IPV4_EID));
     }
 
     /**
@@ -406,8 +408,8 @@ public class MappingServiceTest {
      */
     @Test
     public void getMappingTest_withEid() {
-        Mockito.when(mappingSystem.getMapping(Mockito.any(Eid.class))).thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, mappingService.getMapping(IPV4_EID));
+        Mockito.when(mappingSystem.getMapping(Mockito.any(Eid.class))).thenReturn(DUMMY_MAPPING);
+        assertEquals(DUMMY_MAPPING, mappingService.getMapping(IPV4_EID));
     }
 
     /**
@@ -415,8 +417,9 @@ public class MappingServiceTest {
      */
     @Test
     public void getMappingTest_withSrcAndDstEid() {
-        Mockito.when(mappingSystem.getMapping(Mockito.any(Eid.class), Mockito.any(Eid.class))).thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, mappingService.getMapping(IPV4_EID, IPV4_EID));
+        Mockito.when(mappingSystem.getMapping(Mockito.any(Eid.class), Mockito.any(Eid.class)))
+            .thenReturn(DUMMY_MAPPING);
+        assertEquals(DUMMY_MAPPING, mappingService.getMapping(IPV4_EID, IPV4_EID));
     }
 
     /**
@@ -460,8 +463,8 @@ public class MappingServiceTest {
      */
     @Test
     public void addDataTest() {
-        mappingService.addData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD, DUMMY_OBJECT);
-        Mockito.verify(mappingSystem).addData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD, DUMMY_OBJECT);
+        mappingService.addData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD, DUMMY_MAPPING);
+        Mockito.verify(mappingSystem).addData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD, DUMMY_MAPPING);
     }
 
     /**
@@ -470,8 +473,8 @@ public class MappingServiceTest {
     @Test
     public void getDataTest() {
         Mockito.when(mappingSystem.getData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD))
-                .thenReturn(DUMMY_OBJECT);
-        assertEquals(DUMMY_OBJECT, mappingService.getData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD));
+                .thenReturn(DUMMY_MAPPING);
+        assertEquals(DUMMY_MAPPING, mappingService.getData(MappingOrigin.Northbound, IPV4_EID, SubKeys.RECORD));
     }
 
     /**
@@ -527,6 +530,17 @@ public class MappingServiceTest {
         assertNull(mappingService.updateMappings(Mockito.mock(UpdateMappingsInput.class)));
         assertNull(mappingService.addKeys(Mockito.mock(AddKeysInput.class)));
         assertNull(mappingService.getAllMappings());
+    }
+
+    private static MappingData getDefaultMappingData() {
+        return getDefaultMappingData(null);
+    }
+
+    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+        if (mappingRecord == null) {
+            mappingRecord = getDefaultMappingRecordBuilder().build();
+        }
+        return new MappingData(mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
