@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.mapcache;
 
-import java.util.Date;
 import java.util.Map;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -63,17 +62,15 @@ public class MultiTableMapCache implements IMapCache {
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid key, Object value) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid srcKey = SourceDestKeyHelper.getSrcBinary(eid);
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
-            srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, value));
         } else {
-            table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
             table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
         }
     }
@@ -135,11 +132,6 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
-        return null;
-    }
-
-    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -148,7 +140,7 @@ public class MultiTableMapCache implements IMapCache {
         return table.getWidestNegativePrefix(key);
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -307,11 +299,6 @@ public class MultiTableMapCache implements IMapCache {
         });
         sb.append("\n");
         return sb.toString();
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid key, Long timestamp) {
-
     }
 
     @Override

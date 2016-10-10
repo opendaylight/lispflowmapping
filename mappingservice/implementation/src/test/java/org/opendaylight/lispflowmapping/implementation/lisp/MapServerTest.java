@@ -32,6 +32,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
@@ -71,6 +72,7 @@ public class MapServerTest {
     @Spy private static Set<SubscriberRLOC> subscriberSetMock_3 = new HashSet<>();
     private static MapServer mapServer;
     private static MapRegister mapRegister;
+    private static MappingData mappingData;
 
     private static final String IPV4_STRING_1 =        "1.2.3.0";
     private static final String IPV4_STRING_2 =        "1.2.4.0";
@@ -138,6 +140,8 @@ public class MapServerTest {
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
     private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
+    private static final MappingData OLD_MAPPING_DATA_1 = new MappingData(OLD_MAPPING_RECORD_1);
+    private static final MappingData OLD_MAPPING_DATA_2 = new MappingData(OLD_MAPPING_RECORD_2);
 
     private static final Set<IpAddressBinary> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
 
@@ -151,18 +155,24 @@ public class MapServerTest {
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_5);
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_6);
         mapRegister = getDefaultMapRegisterBuilder().build();
+        mappingData = new MappingData(mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
+                System.currentTimeMillis());
         setConfigIniMappingMergeField(false);
     }
 
     @Test
     public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
-        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_RECORD_1);
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_DATA_1);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_1);
 
+        mappingData.setMergeEnabled(false);
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
-                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), false);
+
+        final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
+        Mockito.verify(mapService).addMapping(Mockito.eq(MappingOrigin.Southbound), Mockito.eq(IPV4_EID_1),
+                Mockito.eq(mapRegister.getSiteId()), captor.capture());
+        assertEquals(captor.getValue().getRecord(), mappingData.getRecord());
         Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
                 subscriberSetMock_1);
         Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister)
@@ -184,11 +194,15 @@ public class MapServerTest {
 
         // no mapping changes
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(OLD_MAPPING_RECORD_1);
+                .thenReturn(OLD_MAPPING_DATA_1);
 
+        mappingData.setMergeEnabled(true);
         mapServer.handleMapRegister(mapRegister);
-        Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
-                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), true);
+
+        final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
+        Mockito.verify(mapService).addMapping(Mockito.eq(MappingOrigin.Southbound), Mockito.eq(IPV4_EID_1),
+                Mockito.eq(mapRegister.getSiteId()), captor.capture());
+        assertEquals(captor.getValue().getRecord(), mappingData.getRecord());
         Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.setAuthenticationData(null).build(), null);
     }
 
@@ -199,9 +213,9 @@ public class MapServerTest {
         // input
         Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(OLD_MAPPING_RECORD_1)
-                .thenReturn(OLD_MAPPING_RECORD_2)
-                .thenReturn(getDefaultMappingRecordBuilder().build());
+                .thenReturn(OLD_MAPPING_DATA_1)
+                .thenReturn(OLD_MAPPING_DATA_2)
+                .thenReturn(getDefaultMappingData(getDefaultMappingRecordBuilder().build()));
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_1);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
@@ -236,9 +250,9 @@ public class MapServerTest {
         Mockito.when(mapService.getAuthenticationKey(SOURCE_DEST_KEY_EID)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID))
                 // ensure mappings are different
-                .thenReturn(OLD_MAPPING_RECORD_1)
-                .thenReturn(OLD_MAPPING_RECORD_2)
-                .thenReturn(OLD_MAPPING_RECORD_2);
+                .thenReturn(OLD_MAPPING_DATA_1)
+                .thenReturn(OLD_MAPPING_DATA_2)
+                .thenReturn(OLD_MAPPING_DATA_2);
         // return a subscriberSet for SrcDestKeyEid MappingRecord
         Mockito.when(mapService.getData(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_1);
@@ -252,8 +266,8 @@ public class MapServerTest {
         Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
                 // ensure mappings are different
-                .thenReturn(OLD_MAPPING_RECORD_1)
-                .thenReturn(OLD_MAPPING_RECORD_2);
+                .thenReturn(OLD_MAPPING_DATA_1)
+                .thenReturn(OLD_MAPPING_DATA_2);
         // return a subscriberSet for Ipv4Eid MappingRecord
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1,SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock_3);
@@ -305,8 +319,8 @@ public class MapServerTest {
                 .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(mappingRecordBuilder_1.build())
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -331,8 +345,8 @@ public class MapServerTest {
                 .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(mappingRecordBuilder_1.build())
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -357,8 +371,8 @@ public class MapServerTest {
                 .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(mappingRecordBuilder_1.build())
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -383,8 +397,8 @@ public class MapServerTest {
                 .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(mappingRecordBuilder_1.build())
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -410,8 +424,8 @@ public class MapServerTest {
 
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
-                .thenReturn(mappingRecordBuilder_1.build())
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -434,7 +448,7 @@ public class MapServerTest {
 
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
                 .thenReturn(null)
-                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
                 .thenReturn(null);
 
         mapServer.handleMapRegister(mapRegister);
@@ -457,6 +471,13 @@ public class MapServerTest {
         mapRegisterBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
         return mapRegisterBuilder;
+    }
+
+    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+        if (mappingRecord == null) {
+            mappingRecord = getDefaultMappingRecordBuilder().build();
+        }
+        return new MappingData(mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder() {
