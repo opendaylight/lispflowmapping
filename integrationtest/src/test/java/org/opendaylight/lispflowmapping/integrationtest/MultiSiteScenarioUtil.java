@@ -7,8 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
+
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 
 class MultiSiteScenarioUtil {
     private final static String COMMON_IPV4_PREFIX = "192.0.";
@@ -59,7 +60,7 @@ class MultiSiteScenarioUtil {
         protected final String eidPrefix;
         protected final String[] host;
         protected final String rloc;
-        protected final SiteId siteId;
+        protected final XtrId xtrId;
         protected final InstanceIdType vni;
         protected final short weight;
         protected final short priority;
@@ -76,8 +77,8 @@ class MultiSiteScenarioUtil {
             return rloc;
         }
 
-        SiteId getSiteId() {
-            return siteId;
+        XtrId getXtrId() {
+            return xtrId;
         }
 
         InstanceIdType getVNI() {
@@ -124,7 +125,7 @@ class MultiSiteScenarioUtil {
                     ,COMMON_IPV4_PREFIX + siteSpecificIpPart + HOST4
                     ,COMMON_IPV4_PREFIX + siteSpecificIpPart + HOST5
             };
-            this.siteId = new SiteId(new byte[]{(byte)siteId, ' ', ' ', ' ', ' ', ' ', ' ', ' '});
+            this.xtrId = new XtrId(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) siteId});
             this.vni = new InstanceIdType(vni);
             this.rloc = rloc + "." + rloc + "." + rloc + "." + rloc;
             this.weight = weight;

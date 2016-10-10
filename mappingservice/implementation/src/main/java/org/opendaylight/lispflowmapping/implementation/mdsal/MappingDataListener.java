@@ -17,6 +17,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -118,8 +119,8 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
 
-                mapSystem.addMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid(),
-                        convertedMapping.getMappingRecord(), false);
+                mapSystem.addMapping(convertedMapping.getOrigin(),convertedMapping.getMappingRecord().getEid(),
+                        new MappingData(convertedMapping.getMappingRecord()));
 
                 try {
                     // The notifications are used for sending SMR.

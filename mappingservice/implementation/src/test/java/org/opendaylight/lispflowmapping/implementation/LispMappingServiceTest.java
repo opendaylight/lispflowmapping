@@ -65,7 +65,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
@@ -270,8 +269,8 @@ public class LispMappingServiceTest {
         Mockito.when(mappingKeepAlive.getMapRegisterCacheMetadata()).thenReturn(getDefaultMapRegisterCacheMetadata());
 
         lispMappingService.onMappingKeepAlive(mappingKeepAlive);
-        Mockito.verify(mappingService).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_1, TIMESTAMP);
-        Mockito.verify(mappingService).updateMappingRegistration(MappingOrigin.Southbound, IPV4_EID_2, TIMESTAMP);
+        Mockito.verify(mappingService).refreshMappingRegistration(IPV4_EID_1, null, TIMESTAMP);
+        Mockito.verify(mappingService).refreshMappingRegistration(IPV4_EID_2, null, TIMESTAMP);
     }
 
     /**

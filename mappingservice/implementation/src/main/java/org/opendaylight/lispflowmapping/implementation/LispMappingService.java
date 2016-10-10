@@ -41,6 +41,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -56,7 +57,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,10 +234,11 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
         for (EidLispAddress eidLispAddress : cacheMetadata.getEidLispAddress()) {
             final Eid eid = eidLispAddress.getEid();
+            final XtrId xtrId = cacheMetadata.getXtrId();
             final Long timestamp = cacheMetadata.getTimestamp();
             LOG.debug("Update map registration for eid {} with timestamp {}", LispAddressStringifier.getString(eid),
                     timestamp);
-            mapService.updateMappingRegistration(MappingOrigin.Southbound, eid, timestamp);
+            mapService.refreshMappingRegistration(eid, xtrId, timestamp);
         }
     }
 

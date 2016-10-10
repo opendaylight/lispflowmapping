@@ -15,6 +15,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceInt
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 
+import com.google.common.net.InetAddresses;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +23,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.ArrayUtils;
 import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Site;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
@@ -36,7 +37,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
@@ -58,7 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.net.InetAddresses;
 
 /**
  * Contains methods for:
@@ -79,8 +78,7 @@ class MultiSiteScenario {
     private final Boolean DEFAULT_LOCAL_LOCATOR = true;
     private final Boolean DEFAULT_RLOC_PROBED = false;
     private final Boolean DEFAULT_ROUTED = true;
-    private final byte[] DEFAULT_XTR_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    private final byte[] DEFAULT_SITE_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7};
+    private final byte[] DEFAULT_SITE_ID = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
 
     private final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
     private final IMappingService mapService;
@@ -127,7 +125,7 @@ class MultiSiteScenario {
     private void emitMapRegisterMessage(final Site dstSite, final boolean merge) {
         final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
         mapRegisterBuilder.setXtrSiteIdPresent(true);
-        mapRegisterBuilder.setXtrId(new XtrId(DEFAULT_XTR_ID));
+        mapRegisterBuilder.setXtrId(dstSite.getXtrId());
         mapRegisterBuilder.setSiteId(new SiteId(DEFAULT_SITE_ID));
         mapRegisterBuilder.setMergeEnabled(merge);
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder();
@@ -188,8 +186,8 @@ class MultiSiteScenario {
         mrbNegative.setEid(eidAsIpv4Prefix);
         mrbNegative.setAction(action);
 
-        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(), mrbNegative.build(),
-                false);
+        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, new SiteId(DEFAULT_SITE_ID),
+                new MappingData(mrbNegative.build()));
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -202,12 +200,14 @@ class MultiSiteScenario {
     void storeNorthMappingSrcDst(final Site srcSite, final Site ... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
                 dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), new SiteId(DEFAULT_SITE_ID),
+                new MappingData(mrb.build()));
     }
 
     void storeNorthMappingIpPrefix(final Site... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(),  new SiteId(DEFAULT_SITE_ID),
+                new MappingData(mrb.build()));
     }
 
     private void storeDestinationSiteMappingViaSouthbound(final Site dstSite, final boolean merge) {
@@ -217,7 +217,7 @@ class MultiSiteScenario {
     private MappingRecordBuilder prepareMappingRecordGeneral(final EidType eidType,
                                                              final Site srcSite, final Site dstSite) {
         final MappingRecordBuilder mrb = provideCommonMapRecordBuilder();
-        mrb.setXtrId(new XtrId(ArrayUtils.addAll(dstSite.getSiteId().getValue(), dstSite.getSiteId().getValue())));
+        mrb.setXtrId(dstSite.getXtrId());
 
         Eid eid = null;
         if (EidType.EID_SRC_DST.equals(eidType)) {
