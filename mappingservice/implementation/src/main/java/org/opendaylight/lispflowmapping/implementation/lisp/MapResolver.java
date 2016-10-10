@@ -21,6 +21,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener;
 import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
@@ -109,9 +110,10 @@ public class MapResolver implements IMapResolverAsync {
         final IpAddressBinary sourceRloc = request.getSourceRloc();
 
         for (EidItem eidRecord : request.getEidItem()) {
-            MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
-                    eidRecord.getEid());
-            if (mapping != null) {
+            MappingData mappingData = mapService.getMapping(srcEid, eidRecord.getEid());
+            MappingRecord mapping;
+            if (mappingData != null) {
+                mapping = mappingData.getRecord();
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
                         final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);

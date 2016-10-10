@@ -9,16 +9,12 @@ package org.opendaylight.lispflowmapping.mapcache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Maps;
-import java.util.Date;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,8 +97,7 @@ public class MultiTableMapCacheTest {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
         when(tableDaoMock.getSpecific(dstKey, SubKeys.LCAF_SRCDST)).thenReturn(srcDstDaoMock);
 
-        multiTableMapCache.addMapping(EID_SOURCE_DEST_KEY_TYPE, DUMMY_OBJECT, true, false);
-        verify(srcDstDaoMock, times(2)).put(srcKey, new MappingEntry<>(anyString(), any(Date.class)));
+        multiTableMapCache.addMapping(EID_SOURCE_DEST_KEY_TYPE, DUMMY_OBJECT);
         verify(srcDstDaoMock).put(srcKey, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
@@ -113,8 +108,7 @@ public class MultiTableMapCacheTest {
     public void addMappingTest_withoutSourceDestKey() {
         when(daoMock.getSpecific(0L, SubKeys.VNI)).thenReturn(tableDaoMock);
 
-        multiTableMapCache.addMapping(EID_IPV4_PREFIX_SRC, DUMMY_OBJECT, true, false);
-        verify(tableDaoMock, times(2)).put(NORMALIZED_PREFIX_SRC_EID, new MappingEntry<>(anyString(), any(Date.class)));
+        multiTableMapCache.addMapping(EID_IPV4_PREFIX_SRC, DUMMY_OBJECT);
         verify(tableDaoMock).put(NORMALIZED_PREFIX_SRC_EID, new MappingEntry<>(SubKeys.RECORD, DUMMY_OBJECT));
     }
 
@@ -191,7 +185,7 @@ public class MultiTableMapCacheTest {
         when(tableDaoMock.getSpecific(SourceDestKeyHelper
                 .getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST)).thenReturn(dbMock);
 
-        multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
+        multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE);
         verify(dbMock).remove(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID));
     }
 
@@ -203,7 +197,7 @@ public class MultiTableMapCacheTest {
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
 
-        multiTableMapCache.removeMapping(EID_TEST, true);
+        multiTableMapCache.removeMapping(EID_TEST);
         verify(tableDaoMock).remove(NORMALIZED_EID);
     }
 
@@ -215,7 +209,7 @@ public class MultiTableMapCacheTest {
 
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
 
-        multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE, true);
+        multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE);
         verifyZeroInteractions(tableDaoMock);
         verifyZeroInteractions(dbMock);
     }
