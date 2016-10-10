@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.lispflowmapping.mapcache;
+package org.opendaylight.lispflowmapping.lisp.type;
 
 import java.util.Date;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -21,28 +21,33 @@ public class ExtendedMappingRecord {
     private MappingRecord record;
     private Date timestamp;
 
+    public ExtendedMappingRecord(MappingRecord record, Long timestamp) {
+        this(record, new Date(timestamp));
+    }
+
     public ExtendedMappingRecord(MappingRecord record, Date timestamp) {
         setRecord(record);
         setTimestamp(timestamp);
     }
 
     public ExtendedMappingRecord(MappingRecord record) {
-        this(record, null);
+        setRecord(record);
+        setTimestamp(null);
     }
 
-    public MappingRecord getRecord() {
+    public synchronized MappingRecord getRecord() {
         return record;
     }
 
-    public void setRecord(MappingRecord record) {
+    public synchronized void setRecord(MappingRecord record) {
         this.record = record;
     }
 
-    public Date getTimestamp() {
+    public synchronized Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public synchronized void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 }
