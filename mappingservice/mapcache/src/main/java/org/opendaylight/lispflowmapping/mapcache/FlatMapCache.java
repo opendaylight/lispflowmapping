@@ -17,6 +17,7 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 
 /**
  * Flat key implementation of a map-cache. As the name suggests, no longest prefix matching is done for IP addresses
@@ -34,24 +35,19 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid eid, MappingRecord mapping) {
         Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-        dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));
+        dao.put(key, new MappingEntry<>(SubKeys.RECORD, mapping));
     }
 
     @Override
-    public Object getMapping(Eid srcKey, Eid dstKey) {
+    public MappingRecord getMapping(Eid srcKey, Eid dstKey) {
         if (dstKey == null) {
             return null;
         }
         Eid key = MaskUtil.normalize(dstKey);
-        return dao.getSpecific(key, SubKeys.RECORD);
-    }
-
-    @Override
-    public Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId) {
-        return null;
+        return (MappingRecord) dao.getSpecific(key, SubKeys.RECORD);
     }
 
     @Override
@@ -60,7 +56,7 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
         dao.removeSpecific(key, SubKeys.REGDATE);
@@ -87,17 +83,6 @@ public class FlatMapCache implements IMapCache {
     public void removeAuthenticationKey(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.AUTH_KEY);
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid eid, Long timestamp) {
-        Eid key = MaskUtil.normalize(eid);
-        if (dao.get(key) != null) {
-            if (timestamp == null) {
-                timestamp = System.currentTimeMillis();
-            }
-            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(timestamp)));
-        }
     }
 
     @Override

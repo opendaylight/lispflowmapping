@@ -9,8 +9,10 @@
 package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 /**
@@ -33,12 +35,12 @@ public interface IMappingService {
      *            Key of the mapping
      * @param siteId
      *            Site that stores the mapping
-     * @param data
-     *            Value to be stored
+     * @param mapping
+     *            Mapping to be stored
      * @param merge
      *            Select if mappings with the same key are merged
      */
-    void addMapping(MappingOrigin origin, Eid key, SiteId siteId, Object data, boolean merge);
+    void addMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingRecord mapping, boolean merge);
 
     /**
      * Retrieves mapping with given origin for the provided key. The lookup policy for the key is defined in the Mapping
@@ -48,9 +50,9 @@ public interface IMappingService {
      *            Table where the mapping should be looked up.
      * @param key
      *            Key to be looked up
-     * @return Returns the object found in the Mapping System or null if nothing is found.
+     * @return Returns the mapping found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(MappingOrigin origin, Eid key);
+    MappingRecord getMapping(MappingOrigin origin, Eid key);
 
     /**
      * Retrieves mapping for given key.The lookup policy for the key is defined in the Mapping
@@ -58,9 +60,9 @@ public interface IMappingService {
      *
      * @param key
      *            Key to be looked up
-     * @return Returns the object found in the Mapping System or null if nothing is found.
+     * @return Returns the mapping found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(Eid key);
+    MappingRecord getMapping(Eid key);
 
     /**
      * Retrieves mapping with a Source/Dest policy. This method is meant to avoid the overhead of building
@@ -70,9 +72,9 @@ public interface IMappingService {
      *            Source key being looked up
      * @param dstKey
      *            Destination key being looked up
-     * @return Returns the object found in the Mapping System or null if nothing is found.
+     * @return Returns the mapping found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(Eid srcKey, Eid dstKey);
+    MappingRecord getMapping(Eid srcKey, Eid dstKey);
 
     /**
      * Retrieves widest negative prefix found in the Mapping System for given key.
@@ -84,16 +86,16 @@ public interface IMappingService {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration.
+     * Refresh southbound mapping registration timestamp.
      *
-     * @param origin
-     *            Table for mapping that should be updated
      * @param key
-     *            The EID whose registration must be updated
+     *            The EID whose registration must be refreshed
+     * @param xtrId
+     *            xTR-ID of the mapping to be refreshed
      * @param timestamp
      *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
+    void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
 
     /**
      * Remove mapping.
