@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.lisp.type.ExtendedMappingRecord;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;

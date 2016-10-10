@@ -14,6 +14,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
+import org.opendaylight.lispflowmapping.lisp.type.ExtendedMappingRecord;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
@@ -63,7 +64,7 @@ public class MultiTableMapCache implements IMapCache {
         return table;
     }
 
-    public void addMapping(Eid key, Object value, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid key, ExtendedMappingRecord mapping) {
         Eid eid = MaskUtil.normalize(key);
         ILispDAO table = getOrInstantiateVniTable(key);
 
@@ -71,22 +72,22 @@ public class MultiTableMapCache implements IMapCache {
             Eid srcKey = SourceDestKeyHelper.getSrcBinary(eid);
             ILispDAO srcDstDao = getOrInstantiateSDInnerDao(eid, table);
             srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-            srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, value));
+            srcDstDao.put(srcKey, new MappingEntry<>(SubKeys.RECORD, mapping));
         } else {
             table.put(eid, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-            table.put(eid, new MappingEntry<>(SubKeys.RECORD, value));
+            table.put(eid, new MappingEntry<>(SubKeys.RECORD, mapping));
         }
     }
 
     // Returns the mapping corresponding to the longest prefix match for eid.
     // eid must be a simple (maskable or not) address
-    private Object getMappingLpmEid(Eid eid, ILispDAO mappingsDb) {
+    private ExtendedMappingRecord getMappingLpmEid(Eid eid, ILispDAO mappingsDb) {
         if (eid == null) {
             return null;
         }
         Map<String, ?> daoEntry = mappingsDb.getBest(MaskUtil.normalize(eid));
         if (daoEntry != null) {
-            return daoEntry.get(SubKeys.RECORD);
+            return (ExtendedMappingRecord) daoEntry.get(SubKeys.RECORD);
         } else {
             return null;
         }
@@ -94,26 +95,27 @@ public class MultiTableMapCache implements IMapCache {
 
     // Returns a mapping corresponding to either the longest prefix match for both dstEid and srcEid,
     // if a SourceDest mapping exists, or to dstEid
-    private Object getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO mappingsDb) {
+    private ExtendedMappingRecord getMappingLpmSD(Eid srcEid, Eid dstEid, ILispDAO mappingsDb) {
         Map<String, ?> daoEntry = mappingsDb.getBest(MaskUtil.normalize(dstEid));
         if (daoEntry != null) {
             // try SrcDst eid lookup
             ILispDAO srcDstDao = (ILispDAO) daoEntry.get(SubKeys.LCAF_SRCDST);
             if (srcEid != null && srcDstDao != null) {
                 // make sure that srcEid is a prefix, not an IP and binary
-                Object mapping = getMappingLpmEid(LispAddressUtil.asIpPrefixBinaryEid(srcEid), srcDstDao);
+                ExtendedMappingRecord mapping = getMappingLpmEid(LispAddressUtil.asIpPrefixBinaryEid(srcEid),
+                        srcDstDao);
                 if (mapping !=  null) {
                     return mapping;
                 }
             }
 
             // if lookup fails, return whatever is found for dst eid
-            return daoEntry.get(SubKeys.RECORD);
+            return (ExtendedMappingRecord) daoEntry.get(SubKeys.RECORD);
         }
         return null;
     }
 
-    public Object getMapping(Eid srcEid, Eid dstEid) {
+    public ExtendedMappingRecord getMapping(Eid srcEid, Eid dstEid) {
         if (dstEid == null) {
             return null;
         }
@@ -135,11 +137,6 @@ public class MultiTableMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcEid, Eid dstEid, byte[] xtrId) {
-        return null;
-    }
-
-    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -148,7 +145,7 @@ public class MultiTableMapCache implements IMapCache {
         return table.getWidestNegativePrefix(key);
     }
 
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);
         if (table == null) {
@@ -311,11 +308,6 @@ public class MultiTableMapCache implements IMapCache {
         });
         sb.append("\n");
         return sb.toString();
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid key, Long timestamp) {
-
     }
 
     @Override

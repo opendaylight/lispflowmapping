@@ -37,6 +37,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener
 import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
+import org.opendaylight.lispflowmapping.lisp.type.ExtendedMappingRecord;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -114,13 +115,15 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
+            ExtendedMappingRecord extMapping = new ExtendedMappingRecord(mapping, System.currentTimeMillis());
 
-            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
+            oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()));
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), extMapping,
+                    merge);
 
             if (subscriptionService) {
                 MappingRecord newMapping = merge
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                        ? getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid())) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
@@ -142,8 +145,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
-                    MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
-                            mapping.getEid());
+                    MappingRecord currentRecord = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound,
+                            mapping.getEid()));
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddressBinary> sourceRlocs = (Set<IpAddressBinary>) mapService.getData(
                             MappingOrigin.Southbound, mapping.getEid(), SubKeys.SRC_RLOCS);
@@ -183,8 +186,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return rlocs;
     }
 
-    private SiteId getSiteId(MapRegister mapRegister) {
+    private static SiteId getSiteId(MapRegister mapRegister) {
         return (mapRegister.getSiteId() != null) ? new SiteId(mapRegister.getSiteId()) : null;
+    }
+
+    private static MappingRecord getMappingRecord(ExtendedMappingRecord record) {
+        return (record != null) ? record.getRecord() : null;
     }
 
     @Override

@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation.util;
 
 import java.util.Arrays;
 import java.util.List;
+import org.opendaylight.lispflowmapping.lisp.type.ExtendedMappingRecord;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -37,7 +38,8 @@ public final class DSBEInputUtil {
     private DSBEInputUtil() {
     }
 
-    public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingRecord record) {
+    public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, ExtendedMappingRecord extRecord) {
+        MappingRecord record = (extRecord != null) ? extRecord.getRecord() : null;
         List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
         return new MappingBuilder().setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
                 .setOrigin(origin).setSiteId(siteIds).setMappingRecord(record).build();
@@ -51,7 +53,8 @@ public final class DSBEInputUtil {
         return mb.build();
     }
 
-    public static XtrIdMapping toXtrIdMapping(MappingRecord record) {
+    public static XtrIdMapping toXtrIdMapping(ExtendedMappingRecord extRecord) {
+        MappingRecord record = (extRecord != null) ? extRecord.getRecord() : null;
         return new XtrIdMappingBuilder().setXtrIdUri(
                 new XtrIdUri(LispAddressStringifier.getURIString(record.getXtrId()))).setMappingRecord(record).build();
     }

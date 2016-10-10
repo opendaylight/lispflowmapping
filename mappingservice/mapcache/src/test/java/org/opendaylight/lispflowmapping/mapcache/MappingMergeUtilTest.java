@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opendaylight.lispflowmapping.lisp.type.ExtendedMappingRecord;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
