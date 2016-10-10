@@ -16,12 +16,12 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -58,7 +58,7 @@ public class MappingSystem implements IMappingSystem {
     private boolean notificationService;
     private boolean overwrite;
     private ILispDAO dao;
-    private IMapCache smc;
+    private ILispMapCache smc;
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
@@ -102,19 +102,20 @@ public class MappingSystem implements IMappingSystem {
             smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
             pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         } else {
-            smc = new FlatMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
-            pmc = new FlatMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
+            LOG.error("Non-longest prefix match lookups are not properly supported, not creating map caches");
+            smc = null;
+            pmc = null;
         }
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
     public void addMapping(MappingOrigin origin, Eid key, Object value, boolean merge) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
+        tableMap.get(origin).addMapping(key, value);
     }
 
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        tableMap.get(origin).updateMappingRegistration(key, timestamp);
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        smc.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
     private MappingRecord updateServicePathMappingRecord(MappingRecord mapping, Eid eid) {
@@ -181,7 +182,7 @@ public class MappingSystem implements IMappingSystem {
             return getMapping(src, dst);
         }
 
-        return smc.getMapping(src, dst, xtrId.getValue());
+        return smc.getMapping(dst, xtrId.getValue());
     }
 
     @Override
@@ -263,7 +264,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
+        tableMap.get(origin).removeMapping(key);
         if (notificationService) {
             // TODO
         }

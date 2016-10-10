@@ -89,16 +89,16 @@ public interface IMappingSystem {
     Object getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration.
+     * Refresh southbound mapping registration timestamp.
      *
-     * @param origin
-     *            Table for mapping that should be updated
      * @param key
-     *            The EID whose registration must be updated
+     *            The EID whose registration must be refreshed
+     * @param xtrId
+     *            xTR-ID of the mapping to be refreshed
      * @param timestamp
      *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
+    void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
 
     /**
      * Remove mapping.

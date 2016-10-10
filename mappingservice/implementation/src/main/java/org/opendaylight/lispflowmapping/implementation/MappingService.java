@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -186,8 +187,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        mappingSystem.updateMappingRegistration(origin, key, timestamp);
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        mappingSystem.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
     @Override

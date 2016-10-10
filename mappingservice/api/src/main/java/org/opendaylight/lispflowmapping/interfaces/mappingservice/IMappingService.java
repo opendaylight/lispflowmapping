@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -84,16 +85,16 @@ public interface IMappingService {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration.
+     * Refresh southbound mapping registration timestamp.
      *
-     * @param origin
-     *            Table for mapping that should be updated
      * @param key
-     *            The EID whose registration must be updated
+     *            The EID whose registration must be refreshed
+     * @param xtrId
+     *            xTR-ID of the mapping to be refreshed
      * @param timestamp
      *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
+    void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
 
     /**
      * Remove mapping.

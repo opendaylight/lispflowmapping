@@ -34,7 +34,7 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid eid, Object data) {
         Eid key = MaskUtil.normalize(eid);
         dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
         dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));
@@ -50,17 +50,12 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId) {
-        return null;
-    }
-
-    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         return null;
     }
 
     @Override
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
         dao.removeSpecific(key, SubKeys.REGDATE);
@@ -87,17 +82,6 @@ public class FlatMapCache implements IMapCache {
     public void removeAuthenticationKey(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.AUTH_KEY);
-    }
-
-    @Override
-    public void updateMappingRegistration(Eid eid, Long timestamp) {
-        Eid key = MaskUtil.normalize(eid);
-        if (dao.get(key) != null) {
-            if (timestamp == null) {
-                timestamp = System.currentTimeMillis();
-            }
-            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(timestamp)));
-        }
     }
 
     @Override
