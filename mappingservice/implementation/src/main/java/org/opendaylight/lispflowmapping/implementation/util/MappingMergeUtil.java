@@ -66,7 +66,7 @@ public final class MappingMergeUtil {
         return false;
     }
 
-    public static Object computeNbSbIntersection(MappingRecord nbMapping, MappingRecord sbMapping) {
+    public static MappingRecord computeNbSbIntersection(MappingRecord nbMapping, MappingRecord sbMapping) {
         // returns a MappingRecord which has the more specific EID, and intersection of locator records.
         // If locators intersection is empty, original NB mapping is returned.
         // The intersection is only computed for mappings with maskable EIDs.

@@ -106,12 +106,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
 
-            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
+            oldMapping = mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
 
             if (subscriptionService) {
                 MappingRecord newMapping = merge
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                        ? mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
@@ -133,8 +133,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener {
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
-                    MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
-                            mapping.getEid());
+                    MappingRecord currentRecord = mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddressBinary> sourceRlocs = (Set<IpAddressBinary>) mapService.getData(
                             MappingOrigin.Southbound, mapping.getEid(), SubKeys.SRC_RLOCS);

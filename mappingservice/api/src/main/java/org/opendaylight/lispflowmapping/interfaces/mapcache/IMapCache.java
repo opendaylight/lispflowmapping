@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 
 /**
  * Map-cache interface.
@@ -24,14 +25,10 @@ public interface IMapCache {
      *
      * @param key
      *            Key of the mapping
-     * @param data
-     *            Value to be stored
-     * @param shouldOverwrite
-     *            Select if mappings with the same key are overwritten
-     * @param merge
-     *            Select if mappings with the same key are merged
+     * @param mapping
+     *            Mapping to be stored
      */
-    void addMapping(Eid key, Object data, boolean shouldOverwrite, boolean merge);
+    void addMapping(Eid key, MappingRecord mapping);
 
     /**
      * Retrieves mapping for the provided srcKey and dstKey.
@@ -40,24 +37,9 @@ public interface IMapCache {
      *            Source Key to be looked up
      * @param dstKey
      *            Destination Key to be looked up
-     * @return Returns the object found in the cache or null if nothing is found.
+     * @return Returns the mapping found in the cache or null if nothing is found.
      */
-    Object getMapping(Eid srcKey, Eid dstKey);
-
-    /**
-     * Retrieves mapping for the provided srcKey, dstKey and a XtrId. In case the IMapCache is not a
-     * Simple Map Cache i.e. Flat Map Cache or Multi Table Map Cache, this method returns null.
-     *
-     * @param srcKey
-     *            Source Key to be looked up
-     * @param dstKey
-     *            Destination Key to be looked up
-     * @param xtrId
-     *            xtr id for which look up to be done
-     * @return Returns the object found in the cache or null if nothing is found or IMapCache is not a Simple
-     *         Map Cache.
-     */
-    Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId);
+    MappingRecord getMapping(Eid srcKey, Eid dstKey);
 
     /**
      * Retrieves widest negative prefix.
@@ -73,11 +55,8 @@ public interface IMapCache {
      *
      * @param key
      *            Key to be removed
-     * @param overwrite
-     *            Select if mappings with the same key were overwritten on store
-     *
      */
-    void removeMapping(Eid key, boolean overwrite);
+    void removeMapping(Eid key);
 
     /**
      * Add authentication key.
@@ -105,16 +84,6 @@ public interface IMapCache {
      *            Key for which the authentication key should be removed.
      */
     void removeAuthenticationKey(Eid key);
-
-    /**
-     * Update mapping registration.
-     *
-     * @param key
-     *            The EID whose registration must be updated
-     * @param timestamp
-     *            New timestamp for the mapping
-     */
-    void updateMappingRegistration(Eid key, Long timestamp);
 
     /**
      * Add data for key.

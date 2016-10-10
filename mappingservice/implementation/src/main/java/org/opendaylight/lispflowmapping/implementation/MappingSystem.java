@@ -16,12 +16,12 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -58,7 +58,7 @@ public class MappingSystem implements IMappingSystem {
     private boolean notificationService;
     private boolean overwrite;
     private ILispDAO dao;
-    private IMapCache smc;
+    private ILispMapCache smc;
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
@@ -83,10 +83,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void setIterateMask(boolean iterate) {
-        this.iterateMask = iterate;
-        if (smc != null || pmc != null) {
-            buildMapCaches();
-        }
+        LOG.error("Non-longest prefix match lookups are not properly supported, variable is set to true");
     }
 
     public void initialize() {
@@ -98,23 +95,18 @@ public class MappingSystem implements IMappingSystem {
          * There exists a direct relationship between MappingOrigins and the tables that are part of the MappingSystem.
          * Therefore, if a new origin is added, probably a new table should be instantiate here as well.
          */
-        if (iterateMask) {
-            smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
-            pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
-        } else {
-            smc = new FlatMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
-            pmc = new FlatMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
-        }
+        smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
+        pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
-    public void addMapping(MappingOrigin origin, Eid key, Object value, boolean merge) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
+    public void addMapping(MappingOrigin origin, Eid key, MappingRecord mapping, boolean merge) {
+        tableMap.get(origin).addMapping(key, mapping);
     }
 
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        tableMap.get(origin).updateMappingRegistration(key, timestamp);
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        smc.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
     private MappingRecord updateServicePathMappingRecord(MappingRecord mapping, Eid eid) {
@@ -158,7 +150,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public Object getMapping(Eid src, Eid dst) {
+    public MappingRecord getMapping(Eid src, Eid dst) {
         // NOTE: Currently we have two lookup algorithms implemented, which are configurable
 
         if (ConfigIni.getInstance().getLookupPolicy() == IMappingService.LookupPolicy.NB_AND_SB) {
@@ -169,76 +161,74 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public Object getMapping(Eid dst) {
+    public MappingRecord getMapping(Eid dst) {
         return getMapping((Eid)null, dst);
     }
 
     @Override
-    public Object getMapping(Eid src, Eid dst, XtrId xtrId) {
+    public MappingRecord getMapping(Eid src, Eid dst, XtrId xtrId) {
         // Note: If xtrId is null, we need to go through regular policy checking else Policy doesn't matter
 
         if (xtrId == null) {
             return getMapping(src, dst);
         }
 
-        return smc.getMapping(src, dst, xtrId.getValue());
+        return smc.getMapping(dst, xtrId.getValue());
     }
 
     @Override
-    public Object getMapping(MappingOrigin origin, Eid key) {
+    public MappingRecord getMapping(MappingOrigin origin, Eid key) {
         if (origin.equals(MappingOrigin.Southbound)) {
             return getSbMappingWithExpiration(null, key);
         }
         return tableMap.get(origin).getMapping(null, key);
     }
 
-    private Object getMappingNbFirst(Eid src, Eid dst) {
+    private MappingRecord getMappingNbFirst(Eid src, Eid dst) {
 
         // Default lookup policy is northboundFirst
         //lookupPolicy == NB_FIRST
 
-        Object nbMapping = pmc.getMapping(src, dst);
+        MappingRecord nbMapping = pmc.getMapping(src, dst);
 
         if (nbMapping == null) {
             return getSbMappingWithExpiration(src, dst);
         }
         if (dst.getAddress() instanceof ServicePath) {
-            return updateServicePathMappingRecord((MappingRecord) nbMapping, dst);
+            return updateServicePathMappingRecord(nbMapping, dst);
         }
         return nbMapping;
     }
 
-    private Object getMappingNbSbIntersection(Eid src, Eid dst) {
+    private MappingRecord getMappingNbSbIntersection(Eid src, Eid dst) {
         //lookupPolicy == NB_AND_SB, we return intersection
         //of NB and SB mappings, or NB mapping if intersection is empty.
 
-        Object nbMapping = pmc.getMapping(src, dst);
+        MappingRecord nbMapping = pmc.getMapping(src, dst);
         if (nbMapping == null) {
             return nbMapping;
         }
         // no intersection for Service Path mappings
         if (dst.getAddress() instanceof ServicePath) {
-            return updateServicePathMappingRecord((MappingRecord)nbMapping, dst);
+            return updateServicePathMappingRecord(nbMapping, dst);
         }
-        Object sbMapping = getSbMappingWithExpiration(src, dst);
+        MappingRecord sbMapping = getSbMappingWithExpiration(src, dst);
         if (sbMapping == null) {
             return nbMapping;
         }
         // both NB and SB mappings exist. Compute intersection of the mappings
-        return MappingMergeUtil.computeNbSbIntersection((MappingRecord)nbMapping, (MappingRecord)sbMapping);
+        return MappingMergeUtil.computeNbSbIntersection(nbMapping, sbMapping);
     }
 
-    private Object getSbMappingWithExpiration(Eid src, Eid dst) {
-        Object mappingObject = smc.getMapping(src, dst);
-        if (mappingObject instanceof MappingRecord) {
-            MappingRecord mapping = (MappingRecord) mappingObject;
-            if (MappingMergeUtil.mappingIsExpired(mapping)) {
-                dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
-                        new SiteId(mapping.getSiteId()), mapping));
-                return null;
-            }
+    private MappingRecord getSbMappingWithExpiration(Eid src, Eid dst) {
+        MappingRecord mapping = smc.getMapping(src, dst);
+        if (MappingMergeUtil.mappingIsExpired(mapping)) {
+            dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
+                    new SiteId(mapping.getSiteId()), mapping));
+            return null;
+        } else {
+            return mapping;
         }
-        return mappingObject;
     }
 
     @Override
@@ -263,7 +253,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
+        tableMap.get(origin).removeMapping(key);
         if (notificationService) {
             // TODO
         }

@@ -99,8 +99,7 @@ public class MapResolver implements IMapResolverAsync {
         final IpAddressBinary sourceRloc = request.getSourceRloc();
 
         for (EidItem eidRecord : request.getEidItem()) {
-            MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
-                    eidRecord.getEid());
+            MappingRecord mapping = mapService.getMapping(srcEid, eidRecord.getEid());
             if (mapping != null) {
                 if (itrRlocs != null && itrRlocs.size() != 0) {
                     if (subscriptionService) {
