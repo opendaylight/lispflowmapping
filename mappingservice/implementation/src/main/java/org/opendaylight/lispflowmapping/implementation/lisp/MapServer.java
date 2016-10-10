@@ -40,6 +40,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
@@ -117,13 +118,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
+            MappingData mappingData = new MappingData(mapping, System.currentTimeMillis());
+            mappingData.setMergeEnabled(merge);
+            mappingData.setXtrId(mapRegister.getXtrId());
 
-            oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
+            oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()));
+            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mappingData);
 
             if (subscriptionService) {
                 MappingRecord newMapping = merge
-                        ? (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()) : mapping;
+                        ? getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid())) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
@@ -145,8 +149,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
-                    MappingRecord currentRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound,
-                            mapping.getEid());
+                    MappingRecord currentRecord = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound,
+                            mapping.getEid()));
                     mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddressBinary> sourceRlocs = (Set<IpAddressBinary>) mapService.getData(
                             MappingOrigin.Southbound, mapping.getEid(), SubKeys.SRC_RLOCS);
@@ -186,8 +190,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return rlocs;
     }
 
-    private SiteId getSiteId(MapRegister mapRegister) {
+    private static SiteId getSiteId(MapRegister mapRegister) {
         return (mapRegister.getSiteId() != null) ? new SiteId(mapRegister.getSiteId()) : null;
+    }
+
+    private static MappingRecord getMappingRecord(MappingData mappingData) {
+        return (mappingData != null) ? mappingData.getRecord() : null;
     }
 
     @Override
@@ -204,7 +212,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     private static boolean mappingChanged(MappingRecord oldMapping, MappingRecord newMapping) {
         // We only check for fields we care about
-        // XXX: This code needs to be checked and updated when the YANG model is modified
+        // XXX: This code needs to be checked and updated when the YANG model for MappingRecord is modified
         Preconditions.checkNotNull(newMapping, "The new mapping should never be null");
         if (oldMapping == null) {
             LOG.trace("mappingChanged(): old mapping is null");
@@ -338,7 +346,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             for (IpAddressBinary subscriberAddress : subscriberAddressList) {
                 final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
                 if (eidFutureMap != null) {
-                    final ScheduledFuture future = eidFutureMap.get(event.getEid());
+                    final ScheduledFuture<?> future = eidFutureMap.get(event.getEid());
                     if (future != null && !future.isCancelled()) {
                         future.cancel(false);
                         LOG.trace("SMR-invoked MapRequest received, scheduled task for subscriber {} with nonce {} has "

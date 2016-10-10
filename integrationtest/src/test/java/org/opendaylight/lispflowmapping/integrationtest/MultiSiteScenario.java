@@ -15,6 +15,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceInt
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
 
+import com.google.common.net.InetAddresses;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Si
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
@@ -58,7 +60,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.net.InetAddresses;
 
 /**
  * Contains methods for:
@@ -188,8 +189,8 @@ class MultiSiteScenario {
         mrbNegative.setEid(eidAsIpv4Prefix);
         mrbNegative.setAction(action);
 
-        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(), mrbNegative.build(),
-                false);
+        mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, dstSite.getSiteId(),
+                new MappingData(mrbNegative.build()));
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -202,12 +203,14 @@ class MultiSiteScenario {
     void storeNorthMappingSrcDst(final Site srcSite, final Site ... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
                 dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(),
+                new MappingData(mrb.build()));
     }
 
     void storeNorthMappingIpPrefix(final Site... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
-        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(), mrb.build(), false);
+        mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), dstSite[0].getSiteId(),
+                new MappingData(mrb.build()));
     }
 
     private void storeDestinationSiteMappingViaSouthbound(final Site dstSite, final boolean merge) {
