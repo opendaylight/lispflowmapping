@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
@@ -28,12 +29,12 @@ public interface IMappingSystem {
      *            Table where mapping should be added
      * @param key
      *            Key of the mapping
-     * @param data
-     *            Value to be stored
+     * @param mapping
+     *            Mapping to be stored
      * @param merge
      *            Select if mappings with the same key are merged
      */
-    void addMapping(MappingOrigin origin, Eid key, Object data, boolean merge);
+    void addMapping(MappingOrigin origin, Eid key, MappingData mapping, boolean merge);
 
     /**
      * Retrieves mapping for the provided src and dst key.
@@ -42,18 +43,18 @@ public interface IMappingSystem {
      *            Source Key to be looked up
      * @param dst
      *            Destination Key to be looked up
-     * @return Returns the object found in the MappingSystem or null if nothing is found.
+     * @return Returns the mapping found in the MappingSystem or null if nothing is found.
      */
-    Object getMapping(Eid src, Eid dst);
+    MappingData getMapping(Eid src, Eid dst);
 
     /**
      * Retrieves mapping for the provided dst key.
      *
      * @param dst
      *            Destination Key to be looked up
-     * @return Returns the object found in the Mapping System or null if nothing is found.
+     * @return Returns the mapping found in the Mapping System or null if nothing is found.
      */
-    Object getMapping(Eid dst);
+    MappingData getMapping(Eid dst);
 
     /**
      * Retrieves mapping for the provided dst key for a particular xtr id.
@@ -64,9 +65,9 @@ public interface IMappingSystem {
      * @param xtrId
      *            Xtr Id for which this look to be done. If null, this method works like
      *            regular getMapping(src, dst)
-     * @return Returns the object found in the simple map cache or null if nothing is found.
+     * @return Returns the mapping found in the simple map cache or null if nothing is found.
      */
-    Object getMapping(Eid src, Eid dst, XtrId xtrId);
+    MappingData getMapping(Eid src, Eid dst, XtrId xtrId);
 
     /**
      * Retrieves mapping from table for provided key.
@@ -75,9 +76,9 @@ public interface IMappingSystem {
      *            Table where mapping should be looked up
      * @param key
      *            Key to be looked up
-     * @return Returns the object found in the cache or null if nothing is found.
+     * @return Returns the mapping found in the cache or null if nothing is found.
      */
-    Object getMapping(MappingOrigin origin, Eid key);
+    MappingData getMapping(MappingOrigin origin, Eid key);
 
     /**
      * Retrieves widest negative prefix from table for provided key.
@@ -86,19 +87,19 @@ public interface IMappingSystem {
      *            Key to be looked up
      * @return Returns the prefix found in the cache or null if nothing is found.
      */
-    Object getWidestNegativePrefix(Eid key);
+    Eid getWidestNegativePrefix(Eid key);
 
     /**
-     * Update mapping registration.
+     * Refresh southbound mapping registration timestamp.
      *
-     * @param origin
-     *            Table for mapping that should be updated
      * @param key
-     *            The EID whose registration must be updated
+     *            The EID whose registration must be refreshed
+     * @param xtrId
+     *            xTR-ID of the mapping to be refreshed
      * @param timestamp
      *            New timestamp for the mapping
      */
-    void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp);
+    void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
 
     /**
      * Remove mapping.

@@ -9,21 +9,17 @@
 package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.inmemorydb.radixtrie.RadixTrie;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.lfm.mappingservice.dao.inmemorydb.config.rev151007.InmemorydbConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,22 +27,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
     private static final Object TABLES = (Object) "tables";
-    private static final int DEFAULT_RECORD_TIMEOUT = 240;   // SB registered mapping entries time out after 4 min
     private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<>();
-    private TimeUnit timeUnit = TimeUnit.SECONDS;
-    private int recordTimeOut;
-
-    public HashMapDb() {
-        this.recordTimeOut = DEFAULT_RECORD_TIMEOUT;
-    }
-
-    public HashMapDb(final InmemorydbConfig inmemoryConfig) {
-        if (inmemoryConfig.getRecordTimeout() <= 0) {
-            this.recordTimeOut = DEFAULT_RECORD_TIMEOUT;
-        } else {
-            this.recordTimeOut = inmemoryConfig.getRecordTimeout();
-        }
-    }
 
     // IPv4 and IPv6 radix tries used for longest prefix matching
     private RadixTrie<Object> ip4Trie = new RadixTrie<>(32, true);
@@ -90,19 +71,22 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         return data.get(key);
     }
 
+    private RadixTrie<Object>.TrieNode getNode(Eid eid) {
+        if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+            return ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+        } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+            return ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+        }
+        return null;
+    }
+
     @Override
     public Map<String, Object> getBest(Object key) {
         if (key instanceof Eid) {
             Eid eid = (Eid) key;
-            RadixTrie<Object>.TrieNode node = null;
-
-            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
-                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-                node = ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
-            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
-                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-                node = ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
-            }
+            RadixTrie<Object>.TrieNode node = getNode(eid);
             if (node == null) {
                 return get(key);
             }
@@ -117,15 +101,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
         if (key instanceof Eid) {
             Eid eid = (Eid) key;
-            RadixTrie<Object>.TrieNode node = null;
-
-            if (eid.getAddress() instanceof Ipv4PrefixBinary) {
-                Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-                node = ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
-            } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
-                Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-                node = ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
-            }
+            RadixTrie<Object>.TrieNode node = getNode(eid);
             if (node == null) {
                 data = get(key);
                 return (data == null) ? null : new SimpleImmutableEntry<>((Eid)key, data);
@@ -196,41 +172,6 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         ip4Trie.removeAll();
         ip6Trie.removeAll();
         data.clear();
-    }
-
-    // TODO: this should be moved outside of DAO implementation
-    public void cleanOld() {
-        getAll(new IRowVisitor() {
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                if (value != null && valueKey instanceof String && ((String) valueKey).equals(SubKeys.REGDATE)) {
-                    Date date = (Date) value;
-                    if (isExpired(date)) {
-                        removeSpecific(keyId, SubKeys.RECORD);
-                    }
-                }
-            }
-
-            private boolean isExpired(Date date) {
-                return System.currentTimeMillis() - date.getTime()
-                        >= TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
-            }
-        });
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
-    public void setRecordTimeOut(int recordTimeOut) {
-        this.recordTimeOut = recordTimeOut;
-    }
-
-    public int getRecordTimeOut() {
-        return recordTimeOut;
-    }
-
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
     }
 
     public void close() throws Exception {

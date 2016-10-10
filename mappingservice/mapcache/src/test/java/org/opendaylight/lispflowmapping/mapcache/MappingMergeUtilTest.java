@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -406,9 +407,9 @@ public class MappingMergeUtilTest {
      */
     @Test
     public void mergeXtrIdMappingsTest_verifyExpiredMappings() {
-        ExtendedMappingRecord expiredRecord1 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        MappingData expiredRecord1 = new MappingData(getDefaultMappingRecordBuilder().build());
         expiredRecord1.setTimestamp(new Date(1L));
-        ExtendedMappingRecord expiredRecord2 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+        MappingData expiredRecord2 = new MappingData(getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID_2).build());
         expiredRecord2.setTimestamp(new Date(1L));
         List<XtrId> expiredMappings = Lists.newArrayList();
@@ -431,13 +432,13 @@ public class MappingMergeUtilTest {
         final long timestamp_2 = timestamp - 300L; // oldest mapping
         final long timestamp_3 = timestamp - 100L;
 
-        ExtendedMappingRecord expiredRecord1 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        MappingData expiredRecord1 = new MappingData(getDefaultMappingRecordBuilder().build());
         expiredRecord1.setTimestamp(new Date(timestamp_1));
-        ExtendedMappingRecord expiredRecord2 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+        MappingData expiredRecord2 = new MappingData(getDefaultMappingRecordBuilder()
                 .setSourceRloc(IPV4_SOURCE_RLOC_2)
                 .setXtrId(XTR_ID_2).build());
         expiredRecord2.setTimestamp(new Date(timestamp_2));
-        ExtendedMappingRecord expiredRecord3 = new ExtendedMappingRecord(getDefaultMappingRecordBuilder()
+        MappingData expiredRecord3 = new MappingData(getDefaultMappingRecordBuilder()
                 .setSourceRloc(IPV4_SOURCE_RLOC_3)
                 .setXtrId(XTR_ID_3).build());
         expiredRecord3.setTimestamp(new Date(timestamp_3));
@@ -448,7 +449,7 @@ public class MappingMergeUtilTest {
                 Lists.newArrayList(expiredRecord1, expiredRecord2, expiredRecord3);
 
         // result
-        ExtendedMappingRecord result = MappingMergeUtil.mergeXtrIdMappings(
+        MappingData result = MappingMergeUtil.mergeXtrIdMappings(
                 mappingRecords, expiredMappings, sourceRlocs);
         assertEquals(timestamp_2, (long) result.getTimestamp().getTime());
         assertEquals(XTR_ID_2, result.getRecord().getXtrId());
@@ -467,7 +468,7 @@ public class MappingMergeUtilTest {
     @Test
     public void mappingIsExpiredTest() {
         long timestamp = new Date().getTime();
-        ExtendedMappingRecord emr = new ExtendedMappingRecord(getDefaultMappingRecordBuilder().build());
+        MappingData emr = new MappingData(getDefaultMappingRecordBuilder().build());
         emr.setTimestamp(new Date(timestamp - (REGISTRATION_VALIDITY + 1L)));
         assertTrue(MappingMergeUtil.mappingIsExpired(emr));
         emr.setTimestamp(new Date(timestamp));
