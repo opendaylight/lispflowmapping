@@ -7,10 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
@@ -21,6 +24,7 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -135,8 +139,10 @@ public class MappingDataListenerTest {
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(MAPPING_EID_2_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
+        final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
         Mockito.verify(iMappingSystemMock)
-                .addMapping(MappingOrigin.Northbound, IPV4_EID_2, MAPPING_EID_2_NB.getMappingRecord(), false);
+                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_2), captor.capture());
+        assertEquals(captor.getValue().getRecord(), MAPPING_EID_2_NB.getMappingRecord());
         Mockito.verify(notificationPublishServiceMock).putNotification(mapChanged);
     }
 
@@ -167,8 +173,10 @@ public class MappingDataListenerTest {
         Mockito.when(mod_write.getDataAfter()).thenReturn(MAPPING_EID_3_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
+        final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
         Mockito.verify(iMappingSystemMock)
-                .addMapping(MappingOrigin.Northbound, IPV4_EID_3, MAPPING_EID_3_NB.getMappingRecord(), false);
+                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_3), captor.capture());
+        assertEquals(captor.getValue().getRecord(), MAPPING_EID_3_NB.getMappingRecord());
         Mockito.verify(notificationPublishServiceMock).putNotification(mapChanged);
     }
 
@@ -204,10 +212,12 @@ public class MappingDataListenerTest {
         Mockito.when(mod_write.getDataAfter()).thenReturn(MAPPING_EID_3_SB);
 
         mappingDataListener.onDataTreeChanged(changes);
+        final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
         Mockito.verify(iMappingSystemMock).removeMapping(MappingOrigin.Northbound, IPV4_EID_1);
         Mockito.verify(notificationPublishServiceMock).putNotification(mapChangedDel);
         Mockito.verify(iMappingSystemMock)
-                .addMapping(MappingOrigin.Northbound, IPV4_EID_2, MAPPING_EID_2_NB.getMappingRecord(), false);
+                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_2), captor.capture());
+        assertEquals(captor.getValue().getRecord(), MAPPING_EID_2_NB.getMappingRecord());
         Mockito.verify(notificationPublishServiceMock).putNotification(mapChangedSubtreeMod);
         //Mockito.verifyNoMoreInteractions(iMappingSystemMock);
         Mockito.verifyNoMoreInteractions(notificationPublishServiceMock);

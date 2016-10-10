@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -65,11 +66,13 @@ public class MappingMergeUtilTest {
     @Test
     public void mappingIsExpiredTest() {
         long timestamp = new Date().getTime();
-        MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        assertTrue(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder
-                .setTimestamp(timestamp - (REGISTRATION_VALIDITY + 1L)).build()));
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder.setTimestamp(timestamp).build()));
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingRecordBuilder.setTimestamp(null).build()));
+        MappingData mappingData = getDefaultMappingData();
+        mappingData.setTimestamp(new Date(timestamp - (REGISTRATION_VALIDITY + 1L)));
+        assertTrue(MappingMergeUtil.mappingIsExpired(mappingData));
+        mappingData.setTimestamp(new Date(timestamp));
+        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData));
+        mappingData.setTimestamp(null);
+        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData));
     }
 
     /**
@@ -106,12 +109,13 @@ public class MappingMergeUtilTest {
     public void computeNbSbIntersectionTest_withMaskableIpv4PrefixEIDs_() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_PREFIX_EID_1).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_PREFIX_EID_2).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
+        MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
 
-        assertEquals(IPV4_PREFIX_EID_1, result.getEid());
+        assertEquals(IPV4_PREFIX_EID_1, result.getRecord().getEid());
     }
 
     /**
@@ -121,12 +125,13 @@ public class MappingMergeUtilTest {
     public void computeNbSbIntersectionTest_withMaskableIpv4PrefixEIDs() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_PREFIX_EID_2).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_PREFIX_EID_1).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
+        MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
 
-        assertEquals(IPV4_PREFIX_EID_1, result.getEid());
+        assertEquals(IPV4_PREFIX_EID_1, result.getRecord().getEid());
     }
 
     /**
@@ -137,13 +142,14 @@ public class MappingMergeUtilTest {
     public void computeNbSbIntersectionTest_withMaskableSourceDestKeyEIDs_Ipv4SB() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setEid(SOURCE_DEST_KEY_EID_1).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_PREFIX_EID_1).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        final MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
+        final MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
         final Eid eid = LispAddressUtil.asSrcDstEid(IPV4_STRING_3 ,IPV4_STRING_1 ,24 , 24, 1);
 
-        assertEquals(eid, result.getEid());
+        assertEquals(eid, result.getRecord().getEid());
     }
 
     /**
@@ -154,13 +160,14 @@ public class MappingMergeUtilTest {
     public void computeNbSbIntersectionTest_withMaskableSourceDestKeyEIDs_Ipv6SB() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setEid(SOURCE_DEST_KEY_EID_1).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV6_PREFIX_EID).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        final MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
+        final MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
         final Eid eid = LispAddressUtil.asSrcDstEid(IPV4_STRING_3 ,IPV6_STRING ,24 , 96, 1);
 
-        assertEquals(eid, result.getEid());
+        assertEquals(eid, result.getRecord().getEid());
     }
 
     /**
@@ -170,11 +177,12 @@ public class MappingMergeUtilTest {
     public void getCommonLocatorRecords_withEmptyLocatorRecords() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_EID_2).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setEid(IPV4_EID_1).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
-        assertEquals(0, result.getLocatorRecord().size());
+        MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
+        assertEquals(0, result.getRecord().getLocatorRecord().size());
     }
 
     /**
@@ -184,11 +192,12 @@ public class MappingMergeUtilTest {
     public void getCommonLocatorRecords_withNullLocatorRecords() {
         MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(null).build();
         MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(null).build();
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
         // result
-        MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecord, sbMappingRecord);
-        assertNull(result.getLocatorRecord());
+        MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
+        assertNull(result.getRecord().getLocatorRecord());
     }
 
     /**
@@ -223,20 +232,33 @@ public class MappingMergeUtilTest {
         sbMappingRecordBuilder.getLocatorRecord().add(sbLocatorRecordBuilder1.build());
         sbMappingRecordBuilder.getLocatorRecord().add(sbLocatorRecordBuilder2.build());
 
+        MappingData nbMappingData = getDefaultMappingData(nbMappingRecordBuilder.build());
+        MappingData sbMappingData = getDefaultMappingData(sbMappingRecordBuilder.build());
+
         // result
-        final MappingRecord result = (MappingRecord) MappingMergeUtil
-                .computeNbSbIntersection(nbMappingRecordBuilder.build(), sbMappingRecordBuilder.build());
-        final Iterator<LocatorRecord> iterator = result.getLocatorRecord().iterator();
+        final MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
+        final Iterator<LocatorRecord> iterator = result.getRecord().getLocatorRecord().iterator();
         final LocatorRecord resultLocator_1 = iterator.next();
         final LocatorRecord resultLocator_2 = iterator.next();
 
-        assertEquals(2, result.getLocatorRecord().size());
+        assertEquals(2, result.getRecord().getLocatorRecord().size());
 
         assertEquals("NB-locator-id", resultLocator_1.getLocatorId());
         assertEquals(255, (short) resultLocator_1.getPriority()); // priority changed to 255
 
         assertEquals("NB-locator-id", resultLocator_2.getLocatorId());
         assertEquals(1, (short) resultLocator_2.getPriority());   // priority remains original
+    }
+
+    private static MappingData getDefaultMappingData() {
+        return getDefaultMappingData(null);
+    }
+
+    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+        if (mappingRecord == null) {
+            mappingRecord = getDefaultMappingRecordBuilder().build();
+        }
+        return new MappingData(mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {

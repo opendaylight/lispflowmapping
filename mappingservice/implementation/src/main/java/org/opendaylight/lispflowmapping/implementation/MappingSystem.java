@@ -9,19 +9,23 @@
 package org.opendaylight.lispflowmapping.implementation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.mapcache.FlatMapCache;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -30,13 +34,13 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -54,11 +58,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
-    private boolean iterateMask;
     private boolean notificationService;
     private boolean overwrite;
     private ILispDAO dao;
-    private IMapCache smc;
+    private ILispMapCache smc;
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
@@ -66,7 +69,6 @@ public class MappingSystem implements IMappingSystem {
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
         this.dao = dao;
-        this.iterateMask = iterateMask;
         this.notificationService = notifications;
         this.overwrite = overwrite;
         buildMapCaches();
@@ -83,10 +85,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void setIterateMask(boolean iterate) {
-        this.iterateMask = iterate;
-        if (smc != null || pmc != null) {
-            buildMapCaches();
-        }
+        LOG.error("Non-longest prefix match lookups are not properly supported, variable is set to true");
     }
 
     public void initialize() {
@@ -96,39 +95,86 @@ public class MappingSystem implements IMappingSystem {
     private void buildMapCaches() {
         /*
          * There exists a direct relationship between MappingOrigins and the tables that are part of the MappingSystem.
-         * Therefore, if a new origin is added, probably a new table should be instantiate here as well.
+         * Therefore, if a new origin is added, probably a new table should be instantiated here as well. Here we
+         * instantiate a SimpleMapCache for southbound originated LISP mappings and a MultiTableMapCache for northbound
+         * originated mappings. Use of FlatMapCache would be possible when no longest prefix match is needed at all,
+         * but that option is no longer supported in the code, since it was never tested and may lead to unexpected
+         * results.
          */
-        if (iterateMask) {
-            smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
-            pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
-        } else {
-            smc = new FlatMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
-            pmc = new FlatMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
-        }
+        smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
+        pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
-    public void addMapping(MappingOrigin origin, Eid key, Object value, boolean merge) {
-        tableMap.get(origin).addMapping(key, value, origin == MappingOrigin.Southbound ? overwrite : true, merge);
+    public void addMapping(MappingOrigin origin, Eid key, MappingData mappingData) {
+        if (mappingData == null) {
+            LOG.warn("addMapping() called with null mapping, ignoring");
+            return;
+        }
+
+        if (origin == MappingOrigin.Southbound) {
+            XtrId xtrId = mappingData.getXtrId();
+            if (xtrId == null && mappingData.isMergeEnabled()) {
+                LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
+                return;
+            }
+            if (xtrId != null && !overwrite) {
+                smc.addMapping(key, xtrId, mappingData);
+            }
+            if (xtrId != null && mappingData.isMergeEnabled()) {
+                List<XtrId> expiredMappings = new ArrayList<>();
+                Set<IpAddressBinary> sourceRlocs = new HashSet<>();
+                MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
+                        expiredMappings, sourceRlocs);
+                smc.removeXtrIdMappings(key, expiredMappings);
+                if (mergedMappingData != null) {
+                    smc.addMapping(key, mergedMappingData, sourceRlocs);
+                }
+                return;
+            }
+        }
+
+        tableMap.get(origin).addMapping(key, mappingData);
     }
 
-    public void updateMappingRegistration(MappingOrigin origin, Eid key, Long timestamp) {
-        tableMap.get(origin).updateMappingRegistration(key, timestamp);
+    /*
+     * Since this method is only called when there is a hit in the southbound Map-Register cache, and that cache is
+     * not used when merge is on, it's OK to ignore the effects of timestamp changes on merging for now.
+     */
+    public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
+        if (timestamp == null) {
+            timestamp = System.currentTimeMillis();
+        }
+        MappingData mappingData = (MappingData) smc.getMapping(null, key);
+        if (mappingData != null) {
+            mappingData.setTimestamp(new Date(timestamp));
+        } else {
+            LOG.warn("Could not update timestamp for EID {}, no mapping found", LispAddressStringifier.getString(key));
+        }
+        if (xtrId != null) {
+            MappingData xtrIdMappingData = (MappingData) smc.getMapping(key, xtrId);
+            if (xtrIdMappingData != null) {
+                xtrIdMappingData.setTimestamp(new Date(timestamp));
+            } else {
+                LOG.warn("Could not update timestamp for EID {} xTR-ID {}, no mapping found",
+                        LispAddressStringifier.getString(key), LispAddressStringifier.getString(xtrId));
+            }
+        }
     }
 
-    private MappingRecord updateServicePathMappingRecord(MappingRecord mapping, Eid eid) {
+    private MappingData updateServicePathMappingRecord(MappingData mappingData, Eid eid) {
         // keep properties of original record
-        MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mapping);
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mappingData.getRecord());
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
 
         // there should only be one locator record
-        if (mapping.getLocatorRecord().size() != 1) {
+        if (mappingData.getRecord().getLocatorRecord().size() != 1) {
             LOG.warn("MappingRecord associated to ServicePath EID has more than one locator!");
-            return mapping;
+            return mappingData;
         }
 
-        LocatorRecord locatorRecord = mapping.getLocatorRecord().get(0);
+        LocatorRecord locatorRecord = mappingData.getRecord().getLocatorRecord().get(0);
         long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex();
         int index = LispAddressUtil.STARTING_SERVICE_INDEX - (int) serviceIndex;
         Rloc rloc = locatorRecord.getRloc();
@@ -136,29 +182,29 @@ public class MappingSystem implements IMappingSystem {
             if (index != 0) {
                 LOG.warn("Service Index should be 255 for simple IP RLOCs!");
             }
-            return mapping;
+            return mappingData;
         } else if (rloc.getAddress() instanceof ExplicitLocatorPath) {
             ExplicitLocatorPath elp = (ExplicitLocatorPath) rloc.getAddress();
             List<Hop> hops = elp.getExplicitLocatorPath().getHop();
 
             if (index < 0 || index > hops.size())  {
                 LOG.warn("Service Index out of bounds!");
-                return mapping;
+                return mappingData;
             }
 
             SimpleAddress nextHop = hops.get(index).getAddress();
             LocatorRecordBuilder lrb = new LocatorRecordBuilder(locatorRecord);
             lrb.setRloc(LispAddressUtil.toRloc(nextHop));
             recordBuilder.getLocatorRecord().add(lrb.build());
-            return recordBuilder.build();
+            return new MappingData(recordBuilder.build());
         } else {
             LOG.warn("Nothing to do with ServicePath mapping record");
-            return mapping;
+            return mappingData;
         }
     }
 
     @Override
-    public Object getMapping(Eid src, Eid dst) {
+    public MappingData getMapping(Eid src, Eid dst) {
         // NOTE: Currently we have two lookup algorithms implemented, which are configurable
 
         if (ConfigIni.getInstance().getLookupPolicy() == IMappingService.LookupPolicy.NB_AND_SB) {
@@ -169,76 +215,88 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public Object getMapping(Eid dst) {
-        return getMapping((Eid)null, dst);
+    public MappingData getMapping(Eid dst) {
+        return getMapping((Eid) null, dst);
     }
 
     @Override
-    public Object getMapping(Eid src, Eid dst, XtrId xtrId) {
+    public MappingData getMapping(Eid src, Eid dst, XtrId xtrId) {
         // Note: If xtrId is null, we need to go through regular policy checking else Policy doesn't matter
 
         if (xtrId == null) {
             return getMapping(src, dst);
         }
 
-        return smc.getMapping(src, dst, xtrId.getValue());
+        return getSbMappingWithExpiration(src, dst, xtrId);
     }
 
     @Override
-    public Object getMapping(MappingOrigin origin, Eid key) {
+    public MappingData getMapping(MappingOrigin origin, Eid key) {
         if (origin.equals(MappingOrigin.Southbound)) {
-            return getSbMappingWithExpiration(null, key);
+            return getSbMappingWithExpiration(null, key, null);
         }
-        return tableMap.get(origin).getMapping(null, key);
+        return (MappingData) tableMap.get(origin).getMapping(null, key);
     }
 
-    private Object getMappingNbFirst(Eid src, Eid dst) {
+    private MappingData getMappingNbFirst(Eid src, Eid dst) {
 
         // Default lookup policy is northboundFirst
         //lookupPolicy == NB_FIRST
 
-        Object nbMapping = pmc.getMapping(src, dst);
+        MappingData nbMappingData = (MappingData) pmc.getMapping(src, dst);
 
-        if (nbMapping == null) {
-            return getSbMappingWithExpiration(src, dst);
+        if (nbMappingData == null) {
+            return getSbMappingWithExpiration(src, dst, null);
         }
         if (dst.getAddress() instanceof ServicePath) {
-            return updateServicePathMappingRecord((MappingRecord) nbMapping, dst);
+            return updateServicePathMappingRecord(nbMappingData, dst);
         }
-        return nbMapping;
+        return nbMappingData;
     }
 
-    private Object getMappingNbSbIntersection(Eid src, Eid dst) {
+    private MappingData getMappingNbSbIntersection(Eid src, Eid dst) {
         //lookupPolicy == NB_AND_SB, we return intersection
         //of NB and SB mappings, or NB mapping if intersection is empty.
 
-        Object nbMapping = pmc.getMapping(src, dst);
-        if (nbMapping == null) {
-            return nbMapping;
+        MappingData nbMappingData = (MappingData) pmc.getMapping(src, dst);
+        if (nbMappingData == null) {
+            return nbMappingData;
         }
         // no intersection for Service Path mappings
         if (dst.getAddress() instanceof ServicePath) {
-            return updateServicePathMappingRecord((MappingRecord)nbMapping, dst);
+            return updateServicePathMappingRecord(nbMappingData, dst);
         }
-        Object sbMapping = getSbMappingWithExpiration(src, dst);
-        if (sbMapping == null) {
-            return nbMapping;
+        MappingData sbMappingData = getSbMappingWithExpiration(src, dst, null);
+        if (sbMappingData == null) {
+            return nbMappingData;
         }
         // both NB and SB mappings exist. Compute intersection of the mappings
-        return MappingMergeUtil.computeNbSbIntersection((MappingRecord)nbMapping, (MappingRecord)sbMapping);
+        return MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
     }
 
-    private Object getSbMappingWithExpiration(Eid src, Eid dst) {
-        Object mappingObject = smc.getMapping(src, dst);
-        if (mappingObject instanceof MappingRecord) {
-            MappingRecord mapping = (MappingRecord) mappingObject;
-            if (MappingMergeUtil.mappingIsExpired(mapping)) {
-                dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(),
-                        new SiteId(mapping.getSiteId()), mapping));
-                return null;
-            }
+    private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
+        MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
+        if (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
+            removeExpiredMapping(dst, xtrId, mappingData);
+            return null;
+        } else {
+            return mappingData;
         }
-        return mappingObject;
+    }
+
+    /*
+     * This private method either removes the main mapping ONLY, or the xTR-ID mapping ONLY, based on xtrId being
+     * null or non-null. Caller functions should take care of removing both when necessary.
+     */
+    private void removeExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+        if (xtrId == null) {
+            smc.removeMapping(key);
+            dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mappingData.getRecord().getEid(),
+                    new SiteId(mappingData.getRecord().getSiteId()), mappingData));
+        } else {
+            smc.removeMapping(key, xtrId);
+            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
+        }
     }
 
     @Override
@@ -263,7 +321,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
-        tableMap.get(origin).removeMapping(key, origin == MappingOrigin.Southbound ? overwrite : true);
+        tableMap.get(origin).removeMapping(key);
         if (notificationService) {
             // TODO
         }
@@ -322,21 +380,22 @@ public class MappingSystem implements IMappingSystem {
      * Restore all mappings and keys from mdsal datastore.
      */
     private void restoreDaoFromDatastore() {
+        Long lastUpdateTimestamp = dsbe.getLastUpdateTimestamp();
+        if (lastUpdateTimestamp != null && System.currentTimeMillis() - lastUpdateTimestamp
+                > ConfigIni.getInstance().getRegistrationValiditySb()) {
+            LOG.warn("Restore threshold passed, not restoring datastore into DAO");
+            return;
+        }
+
         List<Mapping> mappings = dsbe.getAllMappings();
         List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
 
         LOG.info("Restoring {} mappings and {} keys from datastore into DAO", mappings.size(), authKeys.size());
 
-        int expiredMappings = 0;
         for (Mapping mapping : mappings) {
-            if (MappingMergeUtil.mappingIsExpired(mapping.getMappingRecord())) {
-                dsbe.removeMapping(mapping);
-                expiredMappings++;
-                continue;
-            }
-            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(), mapping.getMappingRecord(), false);
+            addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
+                    new MappingData(mapping.getMappingRecord()));
         }
-        LOG.info("{} mappings were expired and were not restored", expiredMappings);
 
         for (AuthenticationKey authKey : authKeys) {
             addAuthenticationKey(authKey.getEid(), authKey.getMappingAuthkey());
@@ -345,6 +404,7 @@ public class MappingSystem implements IMappingSystem {
 
     public void destroy() {
         LOG.info("Mapping System is being destroyed!");
+        dsbe.saveLastUpdateTimestamp();
     }
 
     @Override

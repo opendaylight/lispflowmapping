@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.mapcache;
 
-import java.util.Date;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
@@ -34,10 +33,9 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void addMapping(Eid eid, Object data, boolean shouldOverwrite, boolean shouldMerge) {
+    public void addMapping(Eid eid, Object value) {
         Eid key = MaskUtil.normalize(eid);
-        dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(System.currentTimeMillis())));
-        dao.put(key, new MappingEntry<>(SubKeys.RECORD, data));
+        dao.put(key, new MappingEntry<>(SubKeys.RECORD, value));
     }
 
     @Override
@@ -50,20 +48,14 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public Object getMapping(Eid srcKey, Eid dstKey, byte[] xtrId) {
-        return null;
-    }
-
-    @Override
     public Eid getWidestNegativeMapping(Eid key) {
         return null;
     }
 
     @Override
-    public void removeMapping(Eid eid, boolean overwrite) {
+    public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
-        dao.removeSpecific(key, SubKeys.REGDATE);
     }
 
     @Override
@@ -90,20 +82,9 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
-    public void updateMappingRegistration(Eid eid, Long timestamp) {
+    public void addData(Eid eid, String subKey, Object value) {
         Eid key = MaskUtil.normalize(eid);
-        if (dao.get(key) != null) {
-            if (timestamp == null) {
-                timestamp = System.currentTimeMillis();
-            }
-            dao.put(key, new MappingEntry<>(SubKeys.REGDATE, new Date(timestamp)));
-        }
-    }
-
-    @Override
-    public void addData(Eid eid, String subKey, Object data) {
-        Eid key = MaskUtil.normalize(eid);
-        dao.put(key, new MappingEntry<>(subKey, data));
+        dao.put(key, new MappingEntry<>(subKey, value));
     }
 
     @Override

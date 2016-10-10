@@ -136,6 +136,12 @@ module odl-mappingservice {
             ext:context-instance "vni-context";
             uses db-instance;
         }
+        container last-updated {
+            leaf last-updated {
+                description "Last database update timestamp (in milliseconds since January 1, 1970, 00:00:00 GMT)";
+                type int64;
+            }
+        }
     }
 
     rpc add-key {
