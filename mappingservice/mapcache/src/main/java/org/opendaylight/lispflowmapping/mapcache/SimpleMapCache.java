@@ -338,9 +338,9 @@ public class SimpleMapCache implements IMapCache {
             daoEntry.put(SubKeys.REGDATE, new Date(timestamp));
         }
 
+        ILispDAO xtrIdTable = (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS);
         XtrId xtrId = ((MappingRecord) daoEntry.get(SubKeys.RECORD)).getXtrId();
-        if (xtrId != null) {
-            ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS));
+        if (xtrIdTable != null && xtrId != null) {
             ExtendedMappingRecord extRecord = (ExtendedMappingRecord) xtrIdTable.getSpecific(xtrId,
                     SubKeys.EXT_RECORD);
             if (extRecord != null) {
