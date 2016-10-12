@@ -1,0 +1,40 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_1d41bb0b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-12T14:24:20Z",
+      "side": 1,
+      "message": "Indeed, I wanted to put a \u0027return\u0027 here, I\u0027m still trying to figure out the best way to handle this, for now I put it in to see how controversial it is :)",
+      "parentUuid": "7a6b29fe_3a211db5",
+      "revId": "a1cb5fc6b265a1d71eeb56ad1cd257fb95183adf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_fd45df17",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-12T14:24:20Z",
+      "side": 1,
+      "message": "Good catch, initially, ILispMapCache was independent, but I changed that and I missed this, thanks.",
+      "parentUuid": "7a6b29fe_fd803f48",
+      "revId": "a1cb5fc6b265a1d71eeb56ad1cd257fb95183adf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
