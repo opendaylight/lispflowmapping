@@ -406,7 +406,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testRepeatedSmr();
     }
 
-    @Ignore
     @Test
     public void testMultiSite() throws Exception {
         testMultiSiteScenarioA();
@@ -644,12 +643,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      */
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
+        ConfigIni.getInstance().setSmrRetryCount(1);
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
 
         restartSocket();
-        final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
+        SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
 
         //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(false, SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
