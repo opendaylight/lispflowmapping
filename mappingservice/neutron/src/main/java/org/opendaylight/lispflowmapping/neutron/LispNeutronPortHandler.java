@@ -79,6 +79,10 @@ public class LispNeutronPortHandler extends LispNeutronService implements
             }
             Future<RpcResult<GetMappingOutput>> result = lfmdb.getMapping(input);
             GetMappingOutput output = result.get().getResult();
+            if (output == null) {
+                LOG.debug("No mapping found to Host Id {}", port.getBindinghostID());
+                return;
+            }
 
             // TODO for now only selecting the first EidToLocatorRecord from the
             // Host_ID mapping
