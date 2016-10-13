@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
@@ -406,7 +405,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testRepeatedSmr();
     }
 
-    @Ignore
     @Test
     public void testMultiSite() throws Exception {
         testMultiSiteScenarioA();
@@ -644,6 +642,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      */
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
+        ConfigIni.getInstance().setSmrRetryCount(1);
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
