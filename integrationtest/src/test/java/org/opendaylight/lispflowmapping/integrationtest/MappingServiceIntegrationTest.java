@@ -457,6 +457,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 new MapRequestBuilder(requests1.get(0))
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc1)).build()))
+                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
@@ -467,6 +468,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 new MapRequestBuilder(requests2.get(0))
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc2)).build()))
+                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid2).build()))
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
@@ -474,7 +476,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(expectedSmrs1, requests1.size());
         assertEquals(expectedSmrs2, requests2.size());
         assertEquals((long) mapReply1.getNonce(), (long) requests1.get(0).getNonce());
-        assertEquals((long) mapReply2.getNonce(), (long) requests1.get(0).getNonce());
+        assertEquals((long) mapReply2.getNonce(), (long) requests2.get(0).getNonce());
         assertNextBufferEmpty(reader1);
         assertNextBufferEmpty(reader2);
 
