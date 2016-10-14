@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +23,6 @@ import java.util.Objects;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.authentication.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -76,7 +74,6 @@ import org.slf4j.LoggerFactory;
 public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService, AutoCloseable {
     private MapRegisterCache mapRegisterCache;
-    private boolean mapRegisterCacheEnabled = true;
     private long mapRegisterCacheTimeout;
 
     private DataBroker dataBroker;
@@ -95,11 +92,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
-        if (lispSbPlugin != null) {
-            this.lispSbStats = lispSbPlugin.getStats();
-        }
-        this.mapRegisterCache = new MapRegisterCache();
-        this.smc = new SimpleMapCache(new HashMapDb());
     }
 
     public void handlePacket(DatagramPacket msg) {
@@ -196,7 +188,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             Map.Entry<MapRegisterCacheKey, byte[]> artificialEntry = null;
             MapRegisterCacheKey cacheKey = null;
             MapRegisterCacheValue cacheValue = null;
-            if (mapRegisterCacheEnabled) {
+            if (lispSbPlugin.isMapRegisterCacheEnabled()) {
                 artificialEntry = MapRegisterPartialDeserializer.deserializePartially(inBuffer, sourceAddress);
                 cacheKey = artificialEntry == null ? null : artificialEntry.getKey();
                 cacheValue = resolveCacheValue(artificialEntry);
@@ -517,7 +509,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     @Override
     public void close() throws Exception {
-        authenticationKeyDataListener.closeDataChangeListener();
     }
 
     public void setSimpleMapCache(final SimpleMapCache smc) {
@@ -536,8 +527,16 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.mapRegisterCache = mapRegisterCache;
     }
 
-    public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
-        this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
+    public void setAuthenticationKeyDataListener(AuthenticationKeyDataListener authenticationKeyDataListener) {
+        this.authenticationKeyDataListener = authenticationKeyDataListener;
+    }
+
+    public void setDataStoreBackEnd(DataStoreBackEnd dsbe) {
+        this.dsbe = dsbe;
+    }
+
+    public void setStats(LispSouthboundStats lispSbStats) {
+        this.lispSbStats = lispSbStats;
     }
 
     /**
@@ -555,13 +554,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     LispAddressStringifier.getString(key));
             smc.addAuthenticationKey(key, mappingAuthkey);
         }
-    }
-
-    public void init() {
-        Preconditions.checkNotNull(dataBroker);
-        Preconditions.checkNotNull(smc);
-        this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, smc);
-        dsbe = new DataStoreBackEnd(dataBroker);
     }
 
     public void setIsMaster(boolean isReadFromChannelEnabled) {

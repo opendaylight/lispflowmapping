@@ -34,9 +34,14 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
+import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.southbound.lisp.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
+import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
@@ -54,6 +59,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             LISPFLOWMAPPING_ENTITY_NAME);
 
     private volatile String bindingAddress;
+    private SimpleMapCache smc;
+    private MapRegisterCache mapRegisterCache = new MapRegisterCache();
     private boolean mapRegisterCacheEnabled;
     private long mapRegisterCacheTimeout;
 
@@ -73,6 +80,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup;
     private DataBroker dataBroker;
+    private AuthenticationKeyDataListener authenticationKeyDataListener;
+    private DataStoreBackEnd dsbe;
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
@@ -86,16 +95,23 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public void init() {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         synchronized (startLock) {
+            this.smc = new SimpleMapCache(new HashMapDb());
+            this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, smc);
+            this.dsbe = new DataStoreBackEnd(dataBroker);
+
             lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
-            lispSouthboundHandler.setNotificationProvider(this.notificationPublishService);
-            lispSouthboundHandler.setMapRegisterCacheEnabled(mapRegisterCacheEnabled);
+            lispSouthboundHandler.setNotificationProvider(notificationPublishService);
+            lispSouthboundHandler.setSimpleMapCache(smc);
+            lispSouthboundHandler.setMapRegisterCache(mapRegisterCache);
             lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
-            lispSouthboundHandler.init();
+            lispSouthboundHandler.setAuthenticationKeyDataListener(authenticationKeyDataListener);
+            lispSouthboundHandler.setDataStoreBackEnd(dsbe);
+            lispSouthboundHandler.setStats(statistics);
             lispSouthboundHandler.restoreDaoFromDatastore();
 
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
-            lispXtrSouthboundHandler.setNotificationProvider(this.notificationPublishService);
+            lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
 
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(0, threadFactory);
@@ -332,4 +348,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         return SERVICE_GROUP_IDENTIFIER;
     }
 
+    public MapRegisterCache getMapRegisterCache() {
+        return mapRegisterCache;
+    }
+
+    public boolean isMapRegisterCacheEnabled() {
+        return mapRegisterCacheEnabled;
+    }
+
+    public long getMapRegisterCacheTimeout() {
+        return mapRegisterCacheTimeout;
+    }
 }
