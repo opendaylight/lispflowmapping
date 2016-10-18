@@ -246,11 +246,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         LOG.trace("Built SMR packet: " + mrb.build().toString());
 
         scheduler = new SmrScheduler();
-        try {
-            scheduler.scheduleSmrs(mrb, subscribers.iterator());
-        } catch (InterruptedException e) {
-            LOG.error("SMR Scheduler interrupted.", e);
-        }
+        scheduler.scheduleSmrs(mrb, subscribers.iterator());
         addSubscribers(eid, subscribers);
     }
 
@@ -313,7 +309,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private Map<IpAddressBinary, ScheduledFuture<?>> subscriberFutureMap = new HashMap<>();
         private long smrNonce;
 
-        void scheduleSmrs(MapRequestBuilder mrb, Iterator<SubscriberRLOC> subscribers) throws InterruptedException {
+        void scheduleSmrs(MapRequestBuilder mrb, Iterator<SubscriberRLOC> subscribers) {
             executor = Executors.newSingleThreadScheduledExecutor();
             smrNonce = mrb.getNonce();
 
@@ -341,7 +337,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     future.cancel(false);
                     LOG.trace("SMR-invoked MapRequest received, scheduled task for subscriber {} with nonce {} has "
                             + "been canceled", subscriberAddress.toString(), smrNonce);
-                    tryToShutDownExecutor();
                 }
             }
         }
@@ -374,7 +369,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
                         subscriberFutureMap.get(subscriberAddress).cancel(false);
-                        tryToShutDownExecutor();
                     }
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:", e);
