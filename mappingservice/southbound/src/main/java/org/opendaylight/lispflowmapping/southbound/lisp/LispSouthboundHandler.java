@@ -8,9 +8,11 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import java.net.InetAddress;
@@ -71,7 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
-public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
+public class LispSouthboundHandler extends ChannelInboundHandlerAdapter
         implements ILispSouthboundService, AutoCloseable {
     private MapRegisterCache mapRegisterCache;
     private long mapRegisterCacheTimeout;
@@ -92,6 +94,10 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
+    }
+    public void handlePacket(final ByteBuf msg) {
+        LOG.debug("Processing of packet which was received via TCP");
+
     }
 
     public void handlePacket(DatagramPacket msg) {
@@ -487,13 +493,20 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (isReadFromChannelEnabled) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
-                        msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+            if (msg instanceof DatagramPacket) {
+                DatagramPacket castedMsg = (DatagramPacket) msg;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Received UDP packet from {}:{} with content:\n{}", castedMsg.sender().getHostString(),
+                            castedMsg.sender().getPort(), ByteBufUtil.prettyHexDump(castedMsg.content()));
+                }
+                handlePacket(castedMsg);
+            //TODO else should be probably processed in standalone class (specify other handler in
+            // LispSouthboundPlugin - different from LispSouthboundHandler
+            } else if (msg instanceof ByteBuf) {
+                handlePacket((ByteBuf) msg);
             }
-            handlePacket(msg);
         }
     }
 

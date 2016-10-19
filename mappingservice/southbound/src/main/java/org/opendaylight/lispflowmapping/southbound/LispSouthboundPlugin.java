@@ -14,18 +14,25 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -34,6 +41,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -77,6 +85,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private LispSouthboundStats statistics = new LispSouthboundStats();
     private Bootstrap bootstrap = new Bootstrap();
     private Bootstrap xtrBootstrap = new Bootstrap();
+    private ServerBootstrap bootstrapTCP = new ServerBootstrap();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup;
     private DataBroker dataBroker;
@@ -113,19 +122,38 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
 
+            boolean isTcpEnabled = ConfigIni.getInstance().isTcpEnabled();
+            EventLoopGroup workerGroup = null;
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(0, threadFactory);
-                channelType = EpollDatagramChannel.class;
-                LOG.debug("Using Netty Epoll for UDP sockets");
+                channelType = isTcpEnabled ? EpollServerSocketChannel.class : EpollDatagramChannel.class;
+                if (isTcpEnabled) {
+                    workerGroup = new EpollEventLoopGroup();
+                }
+                LOG.debug("Using Netty Epoll for {} sockets.", isTcpEnabled ? "TCP" : "UDP");
             } else {
                 eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
-                channelType = NioDatagramChannel.class;
-                LOG.debug("Using Netty I/O (non-Epoll) for UDP sockets");
+                channelType = isTcpEnabled ? NioServerSocketChannel.class : NioDatagramChannel.class;
+                if (isTcpEnabled) {
+                    workerGroup = new NioEventLoopGroup();
+                }
+                LOG.debug("Using Netty I/O (non-Epoll) for {} sockets.",  isTcpEnabled ? "TCP" : "UDP");
             }
 
-            bootstrap.group(eventLoopGroup);
-            bootstrap.channel(channelType);
-            bootstrap.handler(lispSouthboundHandler);
+            if (isTcpEnabled) {
+                bootstrapTCP.group(eventLoopGroup, workerGroup);
+                bootstrapTCP.channel(channelType);
+                bootstrapTCP.childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(lispSouthboundHandler);
+                    }
+                });
+            } else {
+                bootstrap.group(eventLoopGroup);
+                bootstrap.channel(channelType);
+                bootstrap.handler(lispSouthboundHandler);
+            }
 
             xtrBootstrap.group(eventLoopGroup);
             xtrBootstrap.channel(channelType);
@@ -141,7 +169,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     @SuppressWarnings("checkstyle:IllegalCatch")
     private void start() {
         try {
-            channel = bootstrap.bind(bindingAddress, LispMessage.PORT_NUM).sync().channel();
+            if (ConfigIni.getInstance().isTcpEnabled()) {
+                channel = bootstrapTCP.bind(bindingAddress, LispMessage.PORT_NUM).sync().channel();
+            } else {
+                channel = bootstrap.bind(bindingAddress, LispMessage.PORT_NUM).sync().channel();
+            }
             LOG.debug("Binding LISP UDP listening socket to {}:{}", bindingAddress, LispMessage.PORT_NUM);
         } catch (Exception e) {
             LOG.error("Failed to open main socket ", e);
