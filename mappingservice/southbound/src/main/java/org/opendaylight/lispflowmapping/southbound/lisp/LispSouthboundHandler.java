@@ -8,13 +8,16 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +75,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
-public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
+public class LispSouthboundHandler extends ChannelInboundHandlerAdapter
         implements ILispSouthboundService, AutoCloseable {
     private MapRegisterCache mapRegisterCache;
     private long mapRegisterCacheTimeout;
@@ -97,29 +100,47 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.lispSbPlugin = lispSbPlugin;
     }
 
-    public void handlePacket(DatagramPacket msg) {
-        ByteBuffer inBuffer = msg.content().nioBuffer();
+    @Override
+    public void handlePacket(DatagramPacket packet) {
+        handlePacket(packet.sender(),packet.content().nioBuffer());
+    }
+
+    public void handlePacket(final InetSocketAddress sender, final ByteBuffer inBuffer) {
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
         handleStats(type);
         Object lispType = MessageType.forValue(type);
         if (lispType == MessageType.EncapsulatedControlMessage) {
             LOG.trace("Received packet of type Encapsulated Control Message");
-            handleEncapsulatedControlMessage(inBuffer, msg.sender().getAddress());
+            handleEncapsulatedControlMessage(inBuffer, sender.getAddress());
         } else if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type Map-Request");
-            handleMapRequest(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
+            handleMapRequest(inBuffer, sender.getAddress(), sender.getPort());
         } else if (lispType == MessageType.MapRegister) {
             LOG.trace("Received packet of type Map-Register");
-            handleMapRegister(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
+            handleMapRegister(inBuffer, sender.getAddress(), sender.getPort());
         } else if (lispType == MessageType.MapNotify) {
             LOG.trace("Received packet of type Map-Notify");
-            handleMapNotify(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
+            handleMapNotify(inBuffer, sender.getAddress(), sender.getPort());
         } else if (lispType == MessageType.MapReply) {
             LOG.trace("Received packet of type Map-Reply");
-            handleMapReply(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
+            handleMapReply(inBuffer, sender.getAddress(), sender.getPort());
         } else {
             LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
         }
+    }
+
+    public void handleUdpPacket(DatagramPacket msg) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
+                    msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+        }
+        handlePacket(msg.sender() ,msg.content().nioBuffer());
+    }
+
+
+    public void handleTcpPacket(final InetSocketAddress sender, final ByteBuf msg) {
+        LOG.debug("Processing of packet which was received via TCP");
+        handlePacket(sender,msg.nioBuffer());
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
@@ -491,14 +512,20 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (isReadFromChannelEnabled) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
-                        msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
-            }
             this.channel = ctx.channel();
-            handlePacket(msg);
+            if (msg instanceof DatagramPacket) {
+                DatagramPacket castedMsg = (DatagramPacket) msg;
+                handleUdpPacket(castedMsg);
+            } else if (msg instanceof ByteBuf) {
+                final SocketAddress socketAddress = ctx.channel().remoteAddress();
+                if (socketAddress instanceof InetSocketAddress) {
+                    handleTcpPacket((InetSocketAddress) socketAddress, (ByteBuf) msg);
+                } else {
+                    LOG.debug("{} isn't instance of InetSocketAddres but {}",socketAddress,socketAddress.getClass());
+                }
+            }
         }
     }
 
