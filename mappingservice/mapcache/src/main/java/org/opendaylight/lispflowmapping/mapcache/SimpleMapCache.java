@@ -375,4 +375,19 @@ public class SimpleMapCache implements IMapCache {
         Eid key = MaskUtil.normalize(eid);
         table.removeSpecific(key, subKey);
     }
+
+    @Override
+    public Eid getParentPrefix(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        Map<String, ?> daoEntry = table.getBest(key);
+        if (daoEntry != null) {
+            MappingRecord record = (MappingRecord) daoEntry.get(SubKeys.RECORD);
+            return record.getEid();
+        }
+        return null;
+    }
 }

@@ -48,6 +48,8 @@ import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -254,7 +256,30 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @SuppressWarnings("unchecked")
     private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+        Set<SubscriberRLOC> subscriberSet = (Set<SubscriberRLOC>) mapService
+                .getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+
+        if (address.getAddressType() == Ipv4PrefixBinaryAfi.class ||
+                address.getAddressType() == Ipv6PrefixBinaryAfi.class) {
+            if (subscriberSet == null) {
+                final Eid parentPrefix = findParentPrefix(address);
+                final MappingRecord mapping = (MappingRecord) mapService.getMapping(parentPrefix);
+
+                if (mapping == null) {
+                    return null;
+                }
+                // if mapping is negative, get subscribers for that mapping
+                if (mapping.getLocatorRecord() == null || mapping.getLocatorRecord().isEmpty()) {
+                    subscriberSet = (Set<SubscriberRLOC>) mapService
+                            .getData(MappingOrigin.Southbound, parentPrefix, SubKeys.SUBSCRIBERS);
+                }
+            }
+        }
+        return subscriberSet;
+    }
+
+    private Eid findParentPrefix(Eid eid) {
+       return mapService.getParentPrefix(eid);
     }
 
     private void removeSubscribers(Eid address) {
