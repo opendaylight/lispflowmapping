@@ -8,9 +8,14 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import io.netty.channel.socket.DatagramPacket;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
 public interface ILispSouthboundService {
 
     void handlePacket(DatagramPacket packet);
+
+    void handlePacket(final InetSocketAddress sender, final ByteBuffer inBuffer);
+
 
 }
