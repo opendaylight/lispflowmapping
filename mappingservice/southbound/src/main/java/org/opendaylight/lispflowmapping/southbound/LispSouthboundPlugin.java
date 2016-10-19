@@ -74,7 +74,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private Class channelType;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private LispSouthboundStats statistics = new LispSouthboundStats();
+    private ConcurrentLispSouthboundStats statistics = new ConcurrentLispSouthboundStats();
     private Bootstrap bootstrap = new Bootstrap();
     private Bootstrap xtrBootstrap = new Bootstrap();
     private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
@@ -250,7 +250,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         return null;
     }
 
-    public LispSouthboundStats getStats() {
+    public ConcurrentLispSouthboundStats getStats() {
         return statistics;
     }
 
