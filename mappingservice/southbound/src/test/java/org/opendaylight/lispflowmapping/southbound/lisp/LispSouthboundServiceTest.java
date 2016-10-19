@@ -51,8 +51,8 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
@@ -99,7 +99,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private MappingRecordBuilder mappingRecordBuilder;
     private MapRegisterCache mapRegisterCache;
     private LispSouthboundPlugin mockLispSouthboundPlugin;
-    private LispSouthboundStats lispSouthboundStats;
+    private ConcurrentLispSouthboundStats lispSouthboundStats;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
     private static SimpleMapCache smc;
@@ -152,7 +152,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapResolver = context.mock(IMapResolver.class);
         // mapServer = context.mock(IMapServer.class);
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
-        Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(Mockito.mock(LispSouthboundStats.class));
         Mockito.when(mockLispSouthboundPlugin.isMapRegisterCacheEnabled()).thenReturn(true);
         testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
         testedLispService.setMapRegisterCacheTimeout(90000);
@@ -164,7 +163,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         testedLispService.setDataStoreBackEnd(Mockito.mock(DataStoreBackEnd.class));
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
-        lispSouthboundStats = new LispSouthboundStats();
+        lispSouthboundStats = new ConcurrentLispSouthboundStats();
         testedLispService.setStats(lispSouthboundStats);
         lispNotificationSaver = new ValueSaverAction<Notification>();
         // mapRegisterSaver = new ValueSaverAction<MapRegister>();

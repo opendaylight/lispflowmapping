@@ -34,8 +34,8 @@ import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.LispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterPartialDeserializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
@@ -84,7 +84,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
     private boolean authenticationEnabled = true;
     private final LispSouthboundPlugin lispSbPlugin;
-    private LispSouthboundStats lispSbStats = null;
+    private ConcurrentLispSouthboundStats lispSbStats = null;
     private SimpleMapCache smc;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
@@ -478,7 +478,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private void handleStats(int type) {
         if (lispSbStats != null) {
-            if (type <= LispSouthboundStats.MAX_LISP_TYPES) {
+            if (type <= ConcurrentLispSouthboundStats.MAX_LISP_TYPES) {
                 lispSbStats.incrementRx(type);
             } else {
                 lispSbStats.incrementRxUnknown();
@@ -535,7 +535,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.dsbe = dsbe;
     }
 
-    public void setStats(LispSouthboundStats lispSbStats) {
+    public void setStats(ConcurrentLispSouthboundStats lispSbStats) {
         this.lispSbStats = lispSbStats;
     }
 
