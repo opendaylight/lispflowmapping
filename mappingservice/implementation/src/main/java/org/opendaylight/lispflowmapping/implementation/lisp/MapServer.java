@@ -49,6 +49,8 @@ import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -262,7 +264,28 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @SuppressWarnings("unchecked")
     private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+        Set<SubscriberRLOC> subscriberSet = (Set<SubscriberRLOC>) mapService
+                .getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+
+        if (address.getAddressType() == Ipv4PrefixBinaryAfi.class
+                || address.getAddressType() == Ipv6PrefixBinaryAfi.class) {
+            final Eid parentPrefix = findParentPrefix(address);
+            if (parentPrefix == null) {
+                return subscriberSet;
+            }
+            final Set<SubscriberRLOC> parentSubscribers = (Set<SubscriberRLOC>) mapService
+                    .getData(MappingOrigin.Southbound, parentPrefix, SubKeys.SUBSCRIBERS);
+            if (subscriberSet == null) {
+                return parentSubscribers;
+            } else {
+                subscriberSet.addAll(parentSubscribers);
+            }
+        }
+        return subscriberSet;
+    }
+
+    private Eid findParentPrefix(Eid eid) {
+        return mapService.getParentPrefix(eid);
     }
 
     private void removeSubscribers(Eid address) {
@@ -383,7 +406,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         mrb.setEidItem(new ArrayList<EidItem>());
                         mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                         notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                        LOG.trace("{}. attempt to send SMR for MapRequest " + subscriber.getSrcEid(), executionCount);
+                        LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
+                                + " to subscriber " + subscriber.getSrcRloc(), executionCount);
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
