@@ -9,9 +9,12 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -38,17 +41,20 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -252,7 +258,45 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @SuppressWarnings("unchecked")
     private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+        Set<SubscriberRLOC> subscriberSet = (Set<SubscriberRLOC>) mapService
+                .getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+
+        if (subscriberSet == null) {
+            subscriberSet = findNegativePrefixSubscriber(address);
+        }
+        return subscriberSet;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<SubscriberRLOC> findNegativePrefixSubscriber(Eid eid) {
+        final byte[] addressByte = LispAddressUtil.ipAddressToByteArray(eid.getAddress());
+        int addressInt = 0;
+        Set<SubscriberRLOC> subscriberSet = Sets.newHashSet();
+
+        // parse the byte[] into an integer
+        for (int i = 0; i < addressByte.length; i++) {
+            addressInt = addressInt << i * 8;
+            addressInt = addressInt | addressByte[i];
+        }
+
+        // iterate over the mask to find all possible subscribers
+        final int maskLength = addressByte.length * 8;
+        for (int i = 1; i < maskLength; i++) {
+            int maskedAddress = (Integer.MAX_VALUE << i) & addressInt;
+            final ByteBuffer buff = ByteBuffer.allocate(maskLength);
+            byte[] maskedByte = buff.putInt(addressByte.length).array();
+
+            try {
+                final Address address = LispAddressUtil.byteArrayToIpAddress(maskedByte, eid.getAddressType());
+                final Eid maskedEid = new EidBuilder().setAddress(address).setAddressType(eid.getAddressType()).build();
+
+                subscriberSet.addAll((Set<SubscriberRLOC>) mapService
+                        .getData(MappingOrigin.Southbound, maskedEid, SubKeys.SUBSCRIBERS));
+            } catch (UnknownHostException e) {
+                LOG.error("Unknown host: {}");
+            }
+        }
+        return subscriberSet;
     }
 
     private void removeSubscribers(Eid address) {
