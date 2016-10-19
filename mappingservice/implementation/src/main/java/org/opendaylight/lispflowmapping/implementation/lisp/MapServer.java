@@ -254,7 +254,24 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @SuppressWarnings("unchecked")
     private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+        Set<SubscriberRLOC> subscriberSet = (Set<SubscriberRLOC>) mapService
+                .getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+
+        if (subscriberSet == null) {
+            final Eid parentPrefix = findParentPrefix(address);
+            final MappingRecord mapping = (MappingRecord) mapService.getMapping(parentPrefix);
+            
+            // if mapping is negative, get subscribers for that mapping
+            if (mapping.getLocatorRecord() == null || mapping.getLocatorRecord().isEmpty()) {
+                subscriberSet = (Set<SubscriberRLOC>) mapService
+                        .getData(MappingOrigin.Southbound, parentPrefix, SubKeys.SUBSCRIBERS);
+            }
+        }
+        return subscriberSet;
+    }
+
+    private Eid findParentPrefix(Eid eid) {
+       return mapService.getParentPrefix(eid);
     }
 
     private void removeSubscribers(Eid address) {
