@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.lang.reflect.Field;
@@ -59,6 +57,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(MockitoJUnitRunner.class)
 public class MapServerTest {
 
@@ -90,6 +90,7 @@ public class MapServerTest {
 
     private static final Eid IPV4_EID_1 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX);
     private static final Eid IPV4_EID_2 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_2 + IPV4_PREFIX);
+    private static final Eid IPV4_EID_3 = LispAddressUtil.asIpv4Eid(IPV4_STRING_1);
     private static final Eid IPV4_SOURCE_EID_1 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_1);
     private static final Eid IPV4_SOURCE_EID_2 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_2);
     private static final Eid IPV4_SOURCE_EID_3 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_3);
@@ -190,6 +191,46 @@ public class MapServerTest {
         Mockito.verify(mapService).addMapping(MappingOrigin.Southbound, IPV4_EID_1, mapRegister.getSiteId(),
                 mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(), true);
         Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.setAuthenticationData(null).build(), null);
+    }
+
+    @Test
+    public void handleMapRegisterTest_findNegativeSubscribers() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
+
+        mapRegister.getMappingRecordItem().clear();
+        mapRegister.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(IPV4_EID_3).build());
+
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setEid(IPV4_EID_2);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final Eid maskedEid1 = LispAddressUtil.asIpv4Eid("1.2.0.0");
+        final Eid maskedEid2 = LispAddressUtil.asIpv4Eid("1.0.0.0");
+
+        final SubscriberRLOC subscriber1 = Mockito.mock(SubscriberRLOC.class);
+        final SubscriberRLOC subscriber2 = Mockito.mock(SubscriberRLOC.class);
+        Mockito.when(subscriber1.timedOut()).thenReturn(true);
+        Mockito.when(subscriber2.timedOut()).thenReturn(true);
+        Mockito.when(subscriber1.toString()).thenReturn("sub1");
+        Mockito.when(subscriber2.toString()).thenReturn("sub2");
+
+        final Set<SubscriberRLOC> set1 = Sets.newHashSet(subscriber1);
+        final Set<SubscriberRLOC> set2 = Sets.newHashSet(subscriber2);
+
+        Mockito.when(mapService.getAuthenticationKey(IPV4_EID_3)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_3, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
+
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_3, SubKeys.SUBSCRIBERS)).thenReturn(null);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, maskedEid1, SubKeys.SUBSCRIBERS)).thenReturn(set1);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, maskedEid2, SubKeys.SUBSCRIBERS)).thenReturn(set2);
+
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_3))
+                .thenReturn(mappingRecordBuilder_1.build())
+                .thenReturn(mappingRecordBuilder_2.build())
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
     }
 
     @Test
@@ -460,23 +501,31 @@ public class MapServerTest {
     }
 
     private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder() {
+        return getDefaultMappingRecordItemBuilder(IPV4_EID_1);
+    }
+
+    private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid) {
         return new MappingRecordItemBuilder()
                 .setMappingRecordItemId("mapping-record-item-id")
                 .setKey(new MappingRecordItemKey("mapping-record-item-key"))
-                .setMappingRecord(getDefaultMappingRecordBuilder().build());
+                .setMappingRecord(getDefaultMappingRecordBuilder(eid).build());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
+        return getDefaultMappingRecordBuilder(IPV4_EID_1);
+    }
+
+    private static MappingRecordBuilder getDefaultMappingRecordBuilder(Eid eid) {
         return new MappingRecordBuilder()
                 .setAction(MappingRecord.Action.NoAction)
                 .setAuthoritative(false)
                 .setLocatorRecord(new ArrayList<>())
                 .setMapVersion((short) 0)
                 .setRecordTtl(60)
-                .setEid(IPV4_EID_1);
+                .setEid(eid);
     }
 
-    private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
+        private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
         final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
                 .setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent())
                 .setSiteId(mapRegister.getSiteId())
