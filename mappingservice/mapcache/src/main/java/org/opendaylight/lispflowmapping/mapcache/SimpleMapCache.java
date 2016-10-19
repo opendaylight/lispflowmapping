@@ -170,6 +170,16 @@ public class SimpleMapCache implements ILispMapCache {
     }
 
     @Override
+    public Eid getParentPrefix(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        return table.getParentPrefix(key);
+    }
+
+    @Override
     public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         ILispDAO table = getVniTable(key);

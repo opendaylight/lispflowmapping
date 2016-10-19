@@ -57,7 +57,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
@@ -118,24 +117,28 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
+            Eid eid = mapping.getEid();
             MappingData mappingData = new MappingData(mapping, System.currentTimeMillis());
             mappingData.setMergeEnabled(merge);
             mappingData.setXtrId(mapRegister.getXtrId());
 
-            oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid()));
-            mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mappingData);
+            oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid));
+            mapService.addMapping(MappingOrigin.Southbound, eid, getSiteId(mapRegister), mappingData);
 
             if (subscriptionService) {
                 MappingRecord newMapping = merge
-                        ? getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, mapping.getEid())) : mapping;
+                        ? getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid)) : mapping;
 
                 if (mappingChanged(oldMapping, newMapping)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
                                 LispAddressStringifier.getString(mapping.getEid()));
                     }
-                    subscribers = getSubscribers(mapping.getEid());
-                    sendSmrs(mapping, subscribers);
+                    subscribers = getSubscribers(eid);
+                    if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
+                        subscribers = addParentSubscribers(eid, subscribers);
+                    }
+                    sendSmrs(eid, subscribers);
                     mappingUpdated = true;
                 }
             }
@@ -201,11 +204,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @Override
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
+            Eid eid = notification.getMappingRecord().getEid();
             if (mapService.isMaster()) {
-                sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
+                sendSmrs(eid, getSubscribers(eid));
             }
             if (notification.getChangeType().equals(MappingChange.Removed)) {
-                removeSubscribers(notification.getMappingRecord().getEid());
+                removeSubscribers(eid);
             }
         }
     }
@@ -236,16 +240,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return false;
     }
 
-    private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
-        Eid eid = record.getEid();
+    private void sendSmrs(Eid eid, Set<SubscriberRLOC> subscribers) {
         handleSmr(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
             Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
-            MappingRecord newRecord = new MappingRecordBuilder(record).setEid(dstAddr).build();
-            handleSmr(newRecord.getEid(), dstSubs);
+            handleSmr(dstAddr, dstSubs);
         }
     }
 
@@ -263,6 +265,23 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @SuppressWarnings("unchecked")
     private Set<SubscriberRLOC> getSubscribers(Eid address) {
         return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+    }
+
+    private Set<SubscriberRLOC> addParentSubscribers(Eid eid, Set<SubscriberRLOC> subscribers) {
+        Eid parentPrefix = mapService.getParentPrefix(eid);
+        if (parentPrefix == null) {
+            return subscribers;
+        }
+
+        Set<SubscriberRLOC> parentSubscribers = getSubscribers(parentPrefix);
+        if (parentSubscribers != null) {
+            if (subscribers != null) {
+                subscribers.addAll(parentSubscribers);
+            } else {
+                subscribers = parentSubscribers;
+            }
+        }
+        return subscribers;
     }
 
     private void removeSubscribers(Eid address) {
@@ -383,7 +402,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         mrb.setEidItem(new ArrayList<EidItem>());
                         mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                         notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                        LOG.trace("{}. attempt to send SMR for MapRequest " + subscriber.getSrcEid(), executionCount);
+                        LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
+                                + " to subscriber " + subscriber.getSrcRloc(), executionCount);
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
