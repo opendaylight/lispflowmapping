@@ -119,6 +119,11 @@ public class FlatMapCache implements IMapCache {
     }
 
     @Override
+    public Eid getParentPrefix(Eid key) {
+        return null;
+    }
+
+    @Override
     public String printMappings() {
         final StringBuffer sb = new StringBuffer();
         sb.append("Keys\tValues\n");
