@@ -86,12 +86,15 @@ public class MapServerTest {
     private static final String IPV4_SOURCE_STRING_4 = "127.0.0.4";
     private static final String IPV4_SOURCE_STRING_5 = "127.0.0.5";
     private static final String IPV4_SOURCE_STRING_6 = "127.0.0.6";
-    private static final String IPV4_PREFIX =          "/24";
+    private static final String IPV4_PREFIX_1 =        "/24";
+    private static final String IPV4_PREFIX_2 =        "/16";
     private static final int MASK = 24;
     private static final int VNI = 10;
 
-    private static final Eid IPV4_EID_1 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX);
-    private static final Eid IPV4_EID_2 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_2 + IPV4_PREFIX);
+    private static final Eid IPV4_EID_1 = LispAddressUtil.asIpv4Eid(IPV4_STRING_1);
+    private static final Eid IPV4_EID_2 = LispAddressUtil.asIpv4Eid(IPV4_STRING_2);
+    private static final Eid IPV4_PREFIX_EID_1 = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_1 + IPV4_PREFIX_1);
+    private static final Eid IPV4_PREFIX_EID_2 = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_1 + IPV4_PREFIX_2);
     private static final Eid IPV4_SOURCE_EID_1 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_1);
     private static final Eid IPV4_SOURCE_EID_2 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_2);
     private static final Eid IPV4_SOURCE_EID_3 = LispAddressUtil.asIpv4Eid(IPV4_SOURCE_STRING_3);
@@ -204,6 +207,43 @@ public class MapServerTest {
                 Mockito.eq(mapRegister.getSiteId()), captor.capture());
         assertEquals(captor.getValue().getRecord(), mappingData.getRecord());
         Mockito.verify(notifyHandler).handleMapNotify(mapNotifyBuilder.setAuthenticationData(null).build(), null);
+    }
+
+    @Test
+    public void handleMapRegisterTest_findNegativeSubscribers() throws NoSuchFieldException, IllegalAccessException {
+        setConfigIniMappingMergeField(true);
+
+        mapRegister.getMappingRecordItem().clear();
+        mapRegister.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(IPV4_PREFIX_EID_1).build());
+
+        final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
+                // apply the change
+                .setEid(IPV4_PREFIX_EID_2);
+        final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
+        final Eid maskedEid1 = LispAddressUtil.asIpv4Eid("1.2.0.0");
+
+        final SubscriberRLOC subscriber1 = Mockito.mock(SubscriberRLOC.class);
+        Mockito.when(subscriber1.timedOut()).thenReturn(true);
+        Mockito.when(subscriber1.toString()).thenReturn("sub1");
+
+        final Set<SubscriberRLOC> set1 = Sets.newHashSet(subscriber1);
+
+        Mockito.when(mapService.getAuthenticationKey(IPV4_PREFIX_EID_1)).thenReturn(MAPPING_AUTHKEY);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SRC_RLOCS))
+                .thenReturn(DEFAULT_IP_ADDRESS_SET);
+
+        Mockito.when(mapService.getParentPrefix(IPV4_PREFIX_EID_1)).thenReturn(maskedEid1);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
+                .thenReturn(null);
+        Mockito.when(mapService.getData(MappingOrigin.Southbound, maskedEid1, SubKeys.SUBSCRIBERS)).thenReturn(set1);
+
+        Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_PREFIX_EID_1))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_1.build()))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder_2.build()))
+                .thenReturn(null);
+
+        mapServer.handleMapRegister(mapRegister);
+        Mockito.verify(subscriber1).timedOut();
     }
 
     @Test
@@ -481,20 +521,28 @@ public class MapServerTest {
     }
 
     private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder() {
+        return getDefaultMappingRecordItemBuilder(IPV4_EID_1);
+    }
+
+    private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid) {
         return new MappingRecordItemBuilder()
                 .setMappingRecordItemId("mapping-record-item-id")
                 .setKey(new MappingRecordItemKey("mapping-record-item-key"))
-                .setMappingRecord(getDefaultMappingRecordBuilder().build());
+                .setMappingRecord(getDefaultMappingRecordBuilder(eid).build());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
+        return getDefaultMappingRecordBuilder(IPV4_EID_1);
+    }
+
+    private static MappingRecordBuilder getDefaultMappingRecordBuilder(Eid eid) {
         return new MappingRecordBuilder()
                 .setAction(MappingRecord.Action.NoAction)
                 .setAuthoritative(false)
                 .setLocatorRecord(new ArrayList<>())
                 .setMapVersion((short) 0)
                 .setRecordTtl(60)
-                .setEid(IPV4_EID_1);
+                .setEid(eid);
     }
 
     private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
