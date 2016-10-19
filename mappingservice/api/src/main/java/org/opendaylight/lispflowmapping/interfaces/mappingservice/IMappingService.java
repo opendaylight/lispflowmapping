@@ -172,6 +172,15 @@ public interface IMappingService {
     void removeData(MappingOrigin origin, Eid key, String subKey);
 
     /**
+     * Returns the parent prefix for given key.
+     *
+     * @param key
+     *            The key which parent is to be returned.
+     * @return The parent perfix of a specific key.
+     */
+    Eid getParentPrefix(Eid key);
+
+    /**
      * Configures Mapping Service mapping merge option. If set to false, mappings with the same key are overwritten,
      * otherwise, mappings with the same key but from different xTR-IDs are all stored.
      *

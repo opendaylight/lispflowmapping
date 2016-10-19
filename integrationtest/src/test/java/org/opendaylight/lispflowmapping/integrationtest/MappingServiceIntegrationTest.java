@@ -66,6 +66,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
@@ -111,6 +112,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -230,6 +232,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         areWeReady();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         mapService.setMappingMerge(false);
+        ConfigIni.getInstance().setSmrRetryCount(1);
 
         locatorEid = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         socket = initSocket(socket, LispMessage.PORT_NUM);
@@ -417,15 +420,19 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     @Test
-    public void testNegativePrefix() throws UnknownHostException {
+    public void testNegativePrefix_gapIntersection() throws UnknownHostException {
         insertMappings();
         testGapIntersection();
+
+        mapService.cleanCachedMappings();
+        insertMappings();
         testMultipleMappings();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
         cleanUP();
         long timeout = ConfigIni.getInstance().getSmrTimeout();
+        ConfigIni.getInstance().setSmrRetryCount(5);
 
         final InstanceIdType iid = new InstanceIdType(1L);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
@@ -452,7 +459,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
         mapService.addMapping(MappingOrigin.Northbound, eid1, null, new MappingData(mapping1));
 
-        sleepForMilliseconds((timeout * expectedSmrs1) - 1500);
+        sleepForMilliseconds((timeout * expectedSmrs1) - (timeout / 2));
         final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
         final MapReply mapReply1 = lms.handleMapRequest(
                 new MapRequestBuilder(requests1.get(0))
@@ -2017,6 +2024,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
         cleanUP();
+        ConfigIni.getInstance().setSmrRetryCount(0);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
@@ -2340,7 +2348,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapReply receiveMapReply() throws SocketTimeoutException {
-        return MapReplySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
+        return receiveMapReply(socket, 1000);
     }
 
     private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
@@ -2401,6 +2409,24 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         } catch (Throwable t) {
             fail();
             return null;
+        }
+    }
+
+    private MapReply receiveMapReply(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
+        DatagramPacket packet;
+        try {
+            while (true) {
+                packet = receivePacket(receivedSocket, timeout);
+                final ByteBuffer buff = ByteBuffer.wrap(packet.getData());
+                final int type = ByteUtil.getUnsignedByte(buff, LispMessage.Pos.TYPE) >> 4;
+                final Object lispType = MessageType.forValue(type);
+
+                if (lispType == MessageType.MapReply) {
+                    return MapReplySerializer.getInstance().deserialize(buff);
+                }
+            }
+        } catch (SocketTimeoutException ste) {
+            throw ste;
         }
     }
 

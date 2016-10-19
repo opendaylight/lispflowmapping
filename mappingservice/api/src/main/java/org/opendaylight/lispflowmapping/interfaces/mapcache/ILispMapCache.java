@@ -88,4 +88,13 @@ public interface ILispMapCache extends IMapCache {
      *            List of xTR-IDs that need to be removed
      */
     void removeXtrIdMappings(Eid key, List<XtrId> xtrIds);
+
+    /**
+     * Returns the parent prefix for given key.
+     *
+     * @param key
+     *            The key which parent is to be returned.
+     * @return The parent perfix of a specific key.
+     */
+    Eid getParentPrefix(Eid key);
 }
