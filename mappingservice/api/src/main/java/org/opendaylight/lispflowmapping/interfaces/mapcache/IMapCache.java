@@ -150,6 +150,15 @@ public interface IMapCache {
     void removeData(Eid key, String subKey);
 
     /**
+     * Returns the parent prefix for given key.
+     *
+     * @param key
+     *            The key which parent is to be returned.
+     * @return The parent perfix of a specific key.
+     */
+    Eid getParentPrefix(Eid key);
+
+    /**
      * Print mappings in cache. Used for testing, debugging and the karaf shell.
      *
      * @return a String consisting of all the mappings in the cache
