@@ -13,6 +13,7 @@ import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -753,6 +754,21 @@ public final class LispAddressUtil {
             return ((Ipv4Binary) addr).getIpv4Binary().getValue();
         } else if (addr instanceof Ipv6Binary) {
             return ((Ipv6Binary) addr).getIpv6Binary().getValue();
+        } else {
+            return null;
+        }
+    }
+
+    public static Address byteArrayToIpAddress(byte[] addr, Class<? extends LispAddressFamily> addrType)
+            throws UnknownHostException {
+        if (Ipv4Afi.class.isAssignableFrom(addrType)) {
+            return new Ipv4Builder().setIpv4(new Ipv4Address(InetAddress.getByAddress(addr).toString())).build();
+        } else if (Ipv6Afi.class.isAssignableFrom(addrType)) {
+            return new Ipv6Builder().setIpv6(new Ipv6Address(InetAddress.getByAddress(addr).toString())).build();
+        } else if (Ipv4BinaryAfi.class.isAssignableFrom(addrType)) {
+            return new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(addr)).build();
+        } else if (Ipv6BinaryAfi.class.isAssignableFrom(addrType)) {
+            return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(addr)).build();
         } else {
             return null;
         }
