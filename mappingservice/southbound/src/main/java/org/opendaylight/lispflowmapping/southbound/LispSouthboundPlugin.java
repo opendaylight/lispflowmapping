@@ -23,9 +23,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -34,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -113,14 +116,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
 
+            boolean isTcpEnabled = ConfigIni.getInstance().isTcpEnabled();
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(0, threadFactory);
-                channelType = EpollDatagramChannel.class;
-                LOG.debug("Using Netty Epoll for UDP sockets");
+                channelType = isTcpEnabled ? EpollSocketChannel.class : EpollDatagramChannel.class;
+                LOG.debug("Using Netty Epoll for {} sockets.", isTcpEnabled ? "TCP" : "UDP");
             } else {
                 eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
-                channelType = NioDatagramChannel.class;
-                LOG.debug("Using Netty I/O (non-Epoll) for UDP sockets");
+                channelType = isTcpEnabled ? NioSocketChannel.class : NioDatagramChannel.class;
+                LOG.debug("Using Netty I/O (non-Epoll) for {} sockets.",  isTcpEnabled ? "TCP" : "UDP");
             }
 
             bootstrap.group(eventLoopGroup);
