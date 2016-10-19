@@ -10,9 +10,11 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -32,7 +34,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
+public class LispXtrSouthboundHandler extends ChannelInboundHandlerAdapter
         implements ILispSouthboundService {
     private NotificationPublishService notificationPublishService;
     protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundHandler.class);
@@ -41,18 +43,24 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         this.notificationPublishService = nps;
     }
 
+    @Override
     public void handlePacket(DatagramPacket packet) {
-        ByteBuffer inBuffer = packet.content().nioBuffer();
+        throw new UnsupportedOperationException("replaced with method handleMapRequest(ByteBuffer, InetAddress)");
+    }
+
+    @Override
+    public void handlePacket(final InetSocketAddress sender, final ByteBuffer inBuffer) {
         Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
-            handleMapRequest(inBuffer, packet.sender().getAddress());
+            handleMapRequest(inBuffer, sender.getAddress());
         } else if (lispType ==  MessageType.MapReply) {
             LOG.trace("Received packet of type MapReply for xTR");
             handleMapReply(inBuffer);
         } else {
             LOG.warn("Received unknown packet type");
         }
+
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
@@ -108,12 +116,15 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received xTR UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
-                    msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof DatagramPacket) {
+            DatagramPacket castedMsg = (DatagramPacket) msg;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Received xTR UDP packet from {}:{} with content:\n{}", castedMsg.sender().getHostString(),
+                        castedMsg.sender().getPort(), ByteBufUtil.prettyHexDump(castedMsg.content()));
+            }
+            handlePacket(castedMsg.sender(),castedMsg.content().nioBuffer());
         }
-        handlePacket(msg);
     }
 
     @Override
@@ -125,4 +136,5 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LOG.error("Error on channel: " + cause, cause);
     }
+
 }
