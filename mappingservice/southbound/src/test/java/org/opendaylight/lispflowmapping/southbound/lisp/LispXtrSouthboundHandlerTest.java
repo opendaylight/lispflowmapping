@@ -171,7 +171,7 @@ public class LispXtrSouthboundHandlerTest {
     @Test
     public void handlePacketTest_withMapReply_withNullNotifPublishService() throws Exception {
         final LispXtrSouthboundHandler handler = new LispXtrSouthboundHandler();
-        handler.channelRead0(Mockito.mock(ChannelHandlerContext.class),
+        handler.channelRead(Mockito.mock(ChannelHandlerContext.class),
                 extractLispPacket(MAP_REPLY_PACKET_STRING, HEADER_LENGTH, LISP_MAP_REPLY_PACKET_LENGTH));
 
         Mockito.verifyZeroInteractions(notificationPublishServiceMock);

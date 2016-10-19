@@ -24,6 +24,8 @@ public final class ConfigIni {
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
+    private boolean tcpEnabled;
+
 
     /*
      * XXX  When configuration options are added or removed, they should also be added/removed in the karaf
@@ -42,6 +44,7 @@ public final class ConfigIni {
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
     private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
+    private static final String LISP_IS_TCP_ENABLED = "lisp.tcpEnabled";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
@@ -64,6 +67,33 @@ public final class ConfigIni {
         initRegisterValiditySb(context);
         initSmrRetryCount(context);
         initSmrTimeout(context);
+        initIsTcpEnabled(context);
+
+    }
+
+    //TODO: this method has the same structure as initMappingMerge. Think about how to reuse code.
+    private void initIsTcpEnabled(final BundleContext context) {
+        this.tcpEnabled = false;
+        String isTcpEnabledRawValue = null;
+        if (context != null) {
+            isTcpEnabledRawValue = context.getProperty(LISP_IS_TCP_ENABLED);
+        }
+        if (isTcpEnabledRawValue == null) {
+            isTcpEnabledRawValue = System.getProperty(LISP_IS_TCP_ENABLED);
+            if (isTcpEnabledRawValue == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'false'",
+                        LISP_IS_TCP_ENABLED);
+                return;
+            }
+        }
+
+        if (isTcpEnabledRawValue.trim().equalsIgnoreCase("true")) {
+            this.tcpEnabled = true;
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_IS_TCP_ENABLED);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_IS_TCP_ENABLED);
+        }
+
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -324,5 +354,13 @@ public final class ConfigIni {
 
     public static ConfigIni getInstance() {
         return INSTANCE;
+    }
+
+    public boolean isTcpEnabled() {
+        return tcpEnabled;
+    }
+
+    public void setIsTcpEnabled() {
+        tcpEnabled = true;
     }
 }
