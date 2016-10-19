@@ -116,7 +116,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
 
         RpcResultBuilder<GetStatsOutput> rpcResultBuilder;
 
-        LispSouthboundStats stats = lispSbPlugin.getStats();
+        ConcurrentLispSouthboundStats stats = lispSbPlugin.getStats();
 
         if (stats == null) {
             rpcResultBuilder = RpcResultBuilder.<GetStatsOutput>failed()
@@ -131,7 +131,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     public Future<RpcResult<Void>> resetStats() {
         LOG.trace("resetStats called!!");
 
-        LispSouthboundStats stats = lispSbPlugin.getStats();
+        ConcurrentLispSouthboundStats stats = lispSbPlugin.getStats();
 
         if (stats == null) {
             return Futures.immediateFuture(RpcResultBuilder.<Void>failed()
@@ -143,7 +143,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
         }
     }
 
-    private static GetStatsOutput createGetStatsOutput(LispSouthboundStats stats) {
+    private static GetStatsOutput createGetStatsOutput(ConcurrentLispSouthboundStats stats) {
         long[] rxStats = stats.getRx();
         long[] txStats = stats.getTx();
 
@@ -152,7 +152,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
         cmsb.setTxErrors(stats.getTxErrors());
 
         List<ControlMessage> messages = new ArrayList<ControlMessage>();
-        for (int i = 0; i <= LispSouthboundStats.MAX_LISP_TYPES; i++) {
+        for (int i = 0; i <= ConcurrentLispSouthboundStats.MAX_LISP_TYPES; i++) {
             if (MessageType.forValue(i) == null) {
                 continue;
             }

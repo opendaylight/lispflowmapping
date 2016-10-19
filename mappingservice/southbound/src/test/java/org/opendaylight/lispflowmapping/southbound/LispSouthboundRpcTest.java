@@ -182,7 +182,7 @@ public class LispSouthboundRpcTest {
      */
     @Test
     public void getStatsTest() throws ExecutionException, InterruptedException {
-        final LispSouthboundStats stats = new LispSouthboundStats();
+        final ConcurrentLispSouthboundStats stats = new ConcurrentLispSouthboundStats();
         incrementAll(stats);
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(stats);
 
@@ -220,7 +220,7 @@ public class LispSouthboundRpcTest {
      */
     @Test
     public void resetStatsTest() throws ExecutionException, InterruptedException {
-        final LispSouthboundStats stats = new LispSouthboundStats();
+        final ConcurrentLispSouthboundStats stats = new ConcurrentLispSouthboundStats();
         incrementAll(stats);
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(stats);
 
@@ -267,7 +267,7 @@ public class LispSouthboundRpcTest {
                 .setMappingRecordItem(Lists.newArrayList(getDefaultMappingRecordItem()));
     }
 
-    private static void incrementAll(LispSouthboundStats stats) {
+    private static void incrementAll(ConcurrentLispSouthboundStats stats) {
         for (MessageType type : MessageType.values()) {
             stats.incrementRx(type.getIntValue());
         }
