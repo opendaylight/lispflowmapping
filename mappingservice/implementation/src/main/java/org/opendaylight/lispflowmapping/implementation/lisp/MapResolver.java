@@ -111,19 +111,20 @@ public class MapResolver implements IMapResolverAsync {
         for (EidItem eidRecord : request.getEidItem()) {
             MappingRecord mapping = (MappingRecord) mapService.getMapping(srcEid,
                     eidRecord.getEid());
-            if (mapping != null) {
-                if (itrRlocs != null && itrRlocs.size() != 0) {
-                    if (subscriptionService) {
-                        final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
-                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
-                                srcEid, mapping.getRecordTtl());
-                    }
-                    mapping = updateLocators(mapping, itrRlocs);
-                }
-                mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
-            } else {
+            if (mapping == null) {
                 mapping = getNegativeMapping(eidRecord.getEid());
+                mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), null, mapping, false);
             }
+
+            if (itrRlocs != null && itrRlocs.size() != 0) {
+                if (subscriptionService) {
+                    final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
+                    updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
+                            srcEid, mapping.getRecordTtl());
+                }
+                mapping = updateLocators(mapping, itrRlocs);
+            }
+            mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
         requestHandler.handleMapReply(replyBuilder.build());

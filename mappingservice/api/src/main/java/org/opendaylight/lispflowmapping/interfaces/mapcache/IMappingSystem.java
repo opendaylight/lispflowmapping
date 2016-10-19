@@ -180,6 +180,15 @@ public interface IMappingSystem {
     void removeData(MappingOrigin origin, Eid key, String subKey);
 
     /**
+     * Returns the parent prefix for given key.
+     *
+     * @param key
+     *            The key which parent is to be returned.
+     * @return The parent perfix of a specific key.
+     */
+    Eid getParentPrefix(Eid key);
+
+    /**
      * Sets iterateMask. If set to true, longest prefix matching for IP keys is used.
      *
      * @param iterate
