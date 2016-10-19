@@ -12,10 +12,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -46,10 +48,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(NioDatagramChannel.class)
 public class LispSouthboundPluginTest {
 
-    private static NioDatagramChannel channel;
+    private static NioDatagramChannel channelUdp;
+    private static NioServerSocketChannel channelTcp;
     private static NioDatagramChannel xtrChannel;
     private static LispSouthboundPlugin lispSouthboundPlugin;
     private static final Bootstrap BOOTSTRAP_MOCK = Mockito.mock(Bootstrap.class);
+    private static final ServerBootstrap BOOTSTRAP_TCP_MOCK = Mockito.mock(ServerBootstrap.class);
 
     private static final String LISP_MAP_REQUEST_PACKET_STRING =
             "10 00 00 01 3d 8d 2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 00 02 00 20 00 01 7f 00 00 01";
@@ -77,9 +81,11 @@ public class LispSouthboundPluginTest {
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
 
-        channel = PowerMockito.mock(NioDatagramChannel.class);
+        channelUdp = PowerMockito.mock(NioDatagramChannel.class);
+        channelTcp = PowerMockito.mock(NioServerSocketChannel.class);
         xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
-        injectChannel();
+        injectChannelUdp();
+        injectChannelTcp();
         injectXtrChannel();
     }
 
@@ -94,11 +100,11 @@ public class LispSouthboundPluginTest {
         final InetSocketAddress inetSocketAddress = new InetSocketAddress(address, PORT);
 
         // Ensures that NPE is not thrown.
-        Mockito.when(channel.write(Mockito.any())).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelUdp.write(Mockito.any())).thenReturn(Mockito.mock(ChannelFuture.class));
 
         lispSouthboundPlugin.handleSerializedLispBuffer(TRANSPORT_ADDRESS_IPV4, PACKET, MessageType.MapRequest);
-        Mockito.verify(channel).write(captor.capture());
-        Mockito.verify(channel).flush();
+        Mockito.verify(channelUdp).write(captor.capture());
+        Mockito.verify(channelUdp).flush();
 
         final DatagramPacket result = captor.getValue();
         assertArrayEquals(PACKET.array(), result.content().array());
@@ -116,11 +122,11 @@ public class LispSouthboundPluginTest {
         final InetSocketAddress inetSocketAddress = new InetSocketAddress(address, PORT);
 
         // Ensures that NPE is not thrown.
-        Mockito.when(channel.write(Mockito.any())).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelUdp.write(Mockito.any())).thenReturn(Mockito.mock(ChannelFuture.class));
 
         lispSouthboundPlugin.handleSerializedLispBuffer(TRANSPORT_ADDRESS_IPV6, PACKET, MessageType.MapRequest);
-        Mockito.verify(channel).write(captor.capture());
-        Mockito.verify(channel).flush();
+        Mockito.verify(channelUdp).write(captor.capture());
+        Mockito.verify(channelUdp).flush();
 
         final DatagramPacket result = captor.getValue();
         assertArrayEquals(PACKET.array(), result.content().array());
@@ -133,10 +139,14 @@ public class LispSouthboundPluginTest {
     @Test
     public void setLispAddressTest_withEqualAddress() throws NoSuchFieldException, IllegalAccessException {
         injectField("bootstrap", BOOTSTRAP_MOCK);
+        injectField("bootstrapTcp", BOOTSTRAP_TCP_MOCK);
+        Mockito.when(channelUdp.close()).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelTcp.close()).thenReturn(Mockito.mock(ChannelFuture.class));
+
         lispSouthboundPlugin.setLispAddress(ADDRESS_2);
 
         Mockito.verify(BOOTSTRAP_MOCK).bind(ADDRESS_2, LispMessage.PORT_NUM);
-        Mockito.verify(channel).close();
+        Mockito.verify(channelUdp).close();
     }
 
     /**
@@ -148,7 +158,7 @@ public class LispSouthboundPluginTest {
         lispSouthboundPlugin.setLispAddress(ADDRESS_1);
 
         Mockito.verifyZeroInteractions(BOOTSTRAP_MOCK);
-        Mockito.verifyZeroInteractions(channel);
+        Mockito.verifyZeroInteractions(channelUdp);
     }
 
     /**
@@ -190,26 +200,35 @@ public class LispSouthboundPluginTest {
     @SuppressWarnings("unchecked")
     public void closeTest() throws Exception {
         EventLoopGroup elgMock = Mockito.mock(EventLoopGroup.class);
-        LispSouthboundPluginTest.injectField("eventLoopGroup", elgMock);
+        LispSouthboundPluginTest.injectField("eventLoopGroupUdp", elgMock);
+        LispSouthboundPluginTest.injectField("eventLoopGroupTcp", Mockito.mock(EventLoopGroup.class));
+        LispSouthboundPluginTest.injectField("workerGroupTcp", Mockito.mock(EventLoopGroup.class));
 
         LispSouthboundHandler handlerMock = Mockito.mock(LispSouthboundHandler.class);
         LispSouthboundPluginTest.injectField("lispSouthboundHandler", handlerMock);
-        Mockito.when(channel.close()).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelUdp.close()).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelTcp.close()).thenReturn(Mockito.mock(ChannelFuture.class));
 
         lispSouthboundPlugin.close();
 
-        Mockito.verify(channel).close();
+        Mockito.verify(channelUdp).close();
         Mockito.verify(elgMock).shutdownGracefully();
         Mockito.verify(handlerMock).close();
         assertNull(getField("lispSouthboundHandler"));
         assertNull(getField("lispXtrSouthboundHandler"));
-        assertNull(getField("channel"));
+        assertNull(getField("channelUdp"));
     }
 
-    private static void injectChannel() throws NoSuchFieldException, IllegalAccessException {
-        final Field channelField = LispSouthboundPlugin.class.getDeclaredField("channel");
+    private static void injectChannelUdp() throws NoSuchFieldException, IllegalAccessException {
+        final Field channelField = LispSouthboundPlugin.class.getDeclaredField("channelUdp");
         channelField.setAccessible(true);
-        channelField.set(lispSouthboundPlugin, channel);
+        channelField.set(lispSouthboundPlugin, channelUdp);
+    }
+
+    private static void injectChannelTcp() throws NoSuchFieldException, IllegalAccessException {
+        final Field channelField = LispSouthboundPlugin.class.getDeclaredField("channelTcp");
+        channelField.setAccessible(true);
+        channelField.set(lispSouthboundPlugin, channelTcp);
     }
 
     private static void injectXtrChannel() throws NoSuchFieldException, IllegalAccessException {
