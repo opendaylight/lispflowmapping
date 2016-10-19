@@ -20,6 +20,7 @@ import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,5 +363,22 @@ public class MultiTableMapCache implements IMapCache {
         } else {
             table.removeSpecific(key, subKey);
         }
+    }
+
+    @Override
+    public Eid getParentPrefix(Eid eid) {
+        Eid key = MaskUtil.normalize(eid);
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        Map<String, ?> daoEntry = table.getBest(key);
+        if (daoEntry != null) {
+            MappingRecord record = (MappingRecord) daoEntry.get(SubKeys.RECORD);
+            if (record != null) {
+                return record.getEid();
+            }
+        }
+        return null;
     }
 }
