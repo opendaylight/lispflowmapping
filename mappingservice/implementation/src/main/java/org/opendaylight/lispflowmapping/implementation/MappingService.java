@@ -460,6 +460,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public Eid getParentPrefix(Eid key) {
+        return mappingSystem.getParentPrefix(key);
+    }
+
+    @Override
     public String printMappings() {
         return mappingSystem.printMappings();
     }
