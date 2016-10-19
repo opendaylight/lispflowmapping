@@ -399,6 +399,11 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).removeData(key, subKey);
     }
 
+    @Override
+    public Eid getParentPrefix(Eid key) {
+        return smc.getParentPrefix(key);
+    }
+
 
     /**
      * Restore all mappings and keys from mdsal datastore.
