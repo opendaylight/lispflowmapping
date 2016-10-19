@@ -112,20 +112,22 @@ public class MapResolver implements IMapResolverAsync {
         for (EidItem eidRecord : request.getEidItem()) {
             MappingData mappingData = mapService.getMapping(srcEid, eidRecord.getEid());
             MappingRecord mapping;
-            if (mappingData != null) {
-                mapping = mappingData.getRecord();
-                if (itrRlocs != null && itrRlocs.size() != 0) {
-                    if (subscriptionService) {
-                        final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
-                        updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
-                                srcEid, mapping.getRecordTtl());
-                    }
-                    mapping = updateLocators(mapping, itrRlocs);
-                }
-                mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
-            } else {
+            if (mappingData == null) {
                 mapping = getNegativeMapping(eidRecord.getEid());
+                mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), null, new MappingData(mapping));
+            } else {
+                mapping = mappingData.getRecord();
             }
+
+            if (itrRlocs != null && itrRlocs.size() != 0) {
+                if (subscriptionService) {
+                    final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
+                    updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
+                            srcEid, mapping.getRecordTtl());
+                }
+                mapping = updateLocators(mapping, itrRlocs);
+            }
+            mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
         requestHandler.handleMapReply(replyBuilder.build());
