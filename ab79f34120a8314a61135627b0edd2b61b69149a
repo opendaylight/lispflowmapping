@@ -16,6 +16,24 @@
       "revId": "ab79f34120a8314a61135627b0edd2b61b69149a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_d9b72cf4",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2016-10-21T14:19:00Z",
+      "side": 0,
+      "message": "defenetely you are right. You know still WIP :).",
+      "parentUuid": "7a6b29fe_d929ec38",
+      "revId": "ab79f34120a8314a61135627b0edd2b61b69149a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
