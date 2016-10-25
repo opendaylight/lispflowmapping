@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a682502_213469dd",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundServiceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-25T08:56:44Z",
+      "side": 1,
+      "message": "You\u0027re right. I didn\u0027t look into that, I just updated existing code. Will remove.",
+      "parentUuid": "5a682502_fea69052",
+      "revId": "33171d9f37e294c993b6075c16b3e0d554da2156",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
