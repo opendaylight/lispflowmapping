@@ -229,6 +229,11 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     private boolean locatorsNeedFixing(List<LocatorRecord> locatorRecords) {
+        // no locators - no fixing needed ;)
+        if (locatorRecords == null) {
+            return false;
+        }
+
         for (LocatorRecord record : locatorRecords) {
             if (record.getRloc().getAddress() instanceof ExplicitLocatorPath) {
                 return true;
