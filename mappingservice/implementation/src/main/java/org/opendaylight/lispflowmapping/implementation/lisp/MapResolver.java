@@ -89,8 +89,10 @@ public class MapResolver implements IMapResolverAsync {
         }
         if (request.isSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
-            final SmrEvent event = new SmrEvent(LispAddressUtil.addressBinariesFromItrRlocs(request.getItrRloc()));
+            final SmrEvent event = new SmrEvent(LispAddressUtil.addressBinariesFromItrRlocs(request.getItrRloc()),
+                    request.getEidItem().get(0).getEid());
             smrNotificationListener.onSmrInvokedReceived(event);
+            // TODO implement for all EidItems
         }
         Eid srcEid = null;
         if (request.getSourceEid() != null) {
