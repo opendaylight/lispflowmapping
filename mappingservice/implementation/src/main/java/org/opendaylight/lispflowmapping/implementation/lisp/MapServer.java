@@ -9,13 +9,13 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -89,6 +89,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         if (notificationService != null) {
             notificationService.registerNotificationListener(this);
         }
+        scheduler = new SmrScheduler();
     }
 
     @Override
@@ -245,7 +246,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         final MapRequestBuilder mrb = MapRequestUtil.prepareSMR(eid, LispAddressUtil.toRloc(getLocalAddress()));
         LOG.trace("Built SMR packet: " + mrb.build().toString());
 
-        scheduler = new SmrScheduler();
         scheduler.scheduleSmrs(mrb, subscribers.iterator());
         addSubscribers(eid, subscribers);
     }
@@ -291,7 +291,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @Override
     public void onSmrInvokedReceived(SmrEvent event) {
-        scheduler.smrReceived(event.getSubscriberAddressList());
+        scheduler.smrReceived(event);
     }
 
     /**
@@ -300,17 +300,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
      * is triggered.
      */
     private class SmrScheduler {
-        private ScheduledExecutorService executor;
-
-        /**
-         * Scheduling SMRs is done in a single thread. If a use case demands better performance, this may be revisited
-         * and for multi-threading we will need ConcurrentHashMap here along with a multi-threaded executor.
-         */
-        private Map<IpAddressBinary, ScheduledFuture<?>> subscriberFutureMap = new HashMap<>();
+        final int cpuCores = Runtime.getRuntime().availableProcessors();
+        final private ScheduledExecutorService executor = Executors.newScheduledThreadPool(cpuCores * 2);;
+        final private Map<IpAddressBinary, Map<Eid, ScheduledFuture<?>>> subscriberFutureMap = Maps.newConcurrentMap();
         private long smrNonce;
 
         void scheduleSmrs(MapRequestBuilder mrb, Iterator<SubscriberRLOC> subscribers) {
-            executor = Executors.newSingleThreadScheduledExecutor();
             smrNonce = mrb.getNonce();
 
             // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a SubscriberRLOC
@@ -323,20 +318,35 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 } else {
                     final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
                             mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
-                    subscriberFutureMap.put(
-                            LispAddressUtil.addressBinaryFromAddress(subscriber.getSrcRloc().getAddress()), future);
+                    final IpAddressBinary subscriberAddress = LispAddressUtil
+                            .addressBinaryFromAddress(subscriber.getSrcRloc().getAddress());
+
+                    if (subscriberFutureMap.containsKey(subscriberAddress)) {
+                        subscriberFutureMap.get(subscriberAddress).put(mrb.getSourceEid().getEid(), future);
+                    } else {
+                        final Map<Eid, ScheduledFuture<?>> eidFutureMap = Maps.newConcurrentMap();
+                        eidFutureMap.put(mrb.getSourceEid().getEid(), future);
+                        subscriberFutureMap.put(subscriberAddress, eidFutureMap);
+                    }
                 }
             }
         }
 
-        void smrReceived(List<IpAddressBinary> subscriberAddressList) {
-            ScheduledFuture<?> future;
+        void smrReceived(SmrEvent event) {
+            final List<IpAddressBinary> subscriberAddressList = event.getSubscriberAddressList();
             for (IpAddressBinary subscriberAddress : subscriberAddressList) {
-                future = subscriberFutureMap.get(subscriberAddress);
-                if (future != null && !future.isCancelled()) {
-                    future.cancel(false);
-                    LOG.trace("SMR-invoked MapRequest received, scheduled task for subscriber {} with nonce {} has "
-                            + "been canceled", subscriberAddress.toString(), smrNonce);
+                final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
+                if (eidFutureMap != null) {
+                    final ScheduledFuture future = eidFutureMap.get(event.getEid());
+                    if (future != null && !future.isCancelled()) {
+                        future.cancel(false);
+                        LOG.trace("SMR-invoked MapRequest received, scheduled task for subscriber {} with nonce {} has "
+                                + "been canceled", subscriberAddress.toString(), smrNonce);
+                        eidFutureMap.remove(event.getEid());
+                    }
+                    if (eidFutureMap.isEmpty()) {
+                        subscriberFutureMap.remove(subscriberAddress);
+                    }
                 }
             }
         }
@@ -368,32 +378,26 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
-                        subscriberFutureMap.get(subscriberAddress).cancel(false);
+                        cancelAndRemove(subscriberAddress);
                     }
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:", e);
-                    subscriberFutureMap.get(subscriberAddress).cancel(false);
-                } finally {
-                    tryToShutDownExecutor();
+                    cancelAndRemove(subscriberAddress);
                 }
                 executionCount++;
             }
-        }
 
-        private void tryToShutDownExecutor() {
-            if (!executor.isShutdown() && areAllFuturesCanceled()) {
-                executor.shutdown();
-                LOG.trace("SMR scheduler executor shutdown.");
-            }
-        }
-
-        private boolean areAllFuturesCanceled() {
-            for (Map.Entry<IpAddressBinary, ScheduledFuture<?>> entry : subscriberFutureMap.entrySet()) {
-                if (!entry.getValue().isCancelled()) {
-                    return false;
+            private void cancelAndRemove(IpAddressBinary subscriberAddress) {
+                final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
+                final Eid eid = mrb.getSourceEid().getEid();
+                if (eidFutureMap.containsKey(eid)) {
+                    eidFutureMap.get(eid).cancel(false);
+                }
+                eidFutureMap.remove(eid);
+                if (eidFutureMap.isEmpty()) {
+                    subscriberFutureMap.remove(subscriberAddress);
                 }
             }
-            return true;
         }
     }
 }
