@@ -7,6 +7,29 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_50_2_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_DELETE_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_100_1_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_50_2_SB;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
+import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.net.InetAddresses;
@@ -27,6 +50,7 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
@@ -124,29 +148,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_50_2_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D4;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_DELETE_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_100_1_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D_WP_50_2_SB;
-import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
-import static org.ops4j.pax.exam.CoreOptions.composite;
-import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
@@ -201,7 +202,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public Option getLoggingOption() {
         Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
                 "log4j.logger.org.opendaylight.lispflowmapping",
-                LogLevel.DEBUG.name());
+                LogLevel.TRACE.name());
         option = composite(option, super.getLoggingOption());
         return option;
     }
@@ -224,6 +225,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     @Before
     public void before() throws Exception {
         areWeReady();
+        ConfigIni.getInstance().setSmrRetryCount(5);
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         mapService.setMappingOverwrite(true);
 
@@ -405,6 +407,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testRepeatedSmr();
     }
 
+    @Ignore
     @Test
     public void testMultiSite() throws Exception {
         testMultiSiteScenarioA();
@@ -424,7 +427,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         final InstanceIdType iid = new InstanceIdType(1L);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
-        final Eid eid2 = LispAddressUtil.asIpv4Eid("2.2.2.2", 1L);
+        final int expectedSmrs1 = 2;
+        final int expectedSmrs2 = 3;
 
         /* set auth */
         final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iid);
@@ -433,12 +437,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add subscribers */
         final String subscriberSrcRloc1 = "127.0.0.3";
         final String subscriberSrcRloc2 = "127.0.0.4";
-        final Set<SubscriberRLOC> subscriberSet = Sets.newHashSet(
-                newSubscriber(eid1, subscriberSrcRloc1), newSubscriber(eid2, subscriberSrcRloc2));
-        mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet);
-
-        final int expectedSmrs1 = 2;
-        final int expectedSmrs2 = 3;
+        final Set<SubscriberRLOC> subscriberSet1 = Sets.newHashSet(newSubscriber(eid1, subscriberSrcRloc1),
+                newSubscriber(eid1, subscriberSrcRloc2));
+        mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet1);
 
         final SocketReader reader1 = startSocketReader(subscriberSrcRloc1, 15000);
         final SocketReader reader2 = startSocketReader(subscriberSrcRloc2, 15000);
@@ -447,10 +448,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add mapping */
         final MappingRecord mapping1 = new MappingRecordBuilder()
                 .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
-        mapService.addMapping(MappingOrigin.Northbound, mapping1.getEid(), null, mapping1, false);
+        mapService.addMapping(MappingOrigin.Northbound, eid1, null, mapping1, false);
 
         sleepForMilliseconds((timeout * expectedSmrs1) - 1500);
-        final List<MapRequest> requests1 = processBuffers(reader1, subscriberSrcRloc1, expectedSmrs1);
+        final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
         final MapReply mapReply1 = lms.handleMapRequest(
                 new MapRequestBuilder(requests1.get(0))
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
@@ -461,12 +462,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         // sleep to get 1 extra smr request
         sleepForMilliseconds(timeout * 1);
-        final List<MapRequest> requests2 = processBuffers(reader2, subscriberSrcRloc2, expectedSmrs2);
+        final List<MapRequest> requests2 = processSmrPackets(reader2, subscriberSrcRloc2, expectedSmrs2);
         final MapReply mapReply2 = lms.handleMapRequest(
                 new MapRequestBuilder(requests2.get(0))
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc2)).build()))
-                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid2).build()))
+                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
@@ -493,7 +494,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return SocketReader.startReadingInStandaloneThread(receivingSocket, timeout);
     }
 
-    private List<MapRequest> processBuffers(SocketReader reader, String address, int expectedSmrs) {
+    private List<MapRequest> processSmrPackets(SocketReader reader, String address, int expectedSmrs) {
         InetAddress inetAddress = null;
         try {
             inetAddress = InetAddress.getByName(address);
@@ -759,7 +760,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
 
         socketReader.stopReading();
-
     }
 
     /**
