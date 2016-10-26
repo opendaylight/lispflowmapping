@@ -212,7 +212,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
             private boolean isExpired(Date date) {
                 return System.currentTimeMillis() - date.getTime()
-                        > TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
+                        >= TimeUnit.MILLISECONDS.convert(recordTimeOut, timeUnit);
             }
         });
     }
