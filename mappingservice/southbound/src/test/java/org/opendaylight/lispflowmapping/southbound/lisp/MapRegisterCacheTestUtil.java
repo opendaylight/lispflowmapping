@@ -119,7 +119,7 @@ final class MapRegisterCacheTestUtil {
                 Mockito.eq(Inet4Address.getByAddress("0.0.0.0", new byte[]{0, 0, 0, 0})),
                 Mockito.eq(byteBuffer),
                 Mockito.eq(MessageType.MapNotify),
-                Mockito.eq(0));
+                Mockito.eq(0), null);
     }
 
     static void afterMapRegisterInvocationValidation(final NotificationPublishService mockedNotificationProvider, final
