@@ -207,11 +207,14 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
                                            final MessageType packetType) {
         InetAddress ip = getInetAddress(address);
-        handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue());
+        handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue(), null);
     }
 
     public void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer,
-            final MessageType packetType, final int portNumber) {
+            final MessageType packetType, final int portNumber, Channel senderChannel) {
+        if (senderChannel == null) {
+            senderChannel = this.channel;
+        }
         InetSocketAddress recipient = new InetSocketAddress(address, portNumber);
         outBuffer.position(0);
         ByteBuf data = wrappedBuffer(outBuffer);
@@ -220,7 +223,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         if (LOG.isTraceEnabled()) {
             LOG.trace("Buffer:\n{}", ByteBufUtil.prettyHexDump(data));
         }
-        channel.write(packet).addListener(new ChannelFutureListener() {
+        senderChannel.write(packet).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (future.isSuccess()) {
@@ -232,7 +235,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
                 }
             }
         });
-        channel.flush();
+        senderChannel.flush();
     }
 
     private InetAddress getInetAddress(TransportAddress address) {

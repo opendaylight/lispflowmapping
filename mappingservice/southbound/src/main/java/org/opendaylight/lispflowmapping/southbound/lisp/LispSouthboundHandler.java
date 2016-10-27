@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -89,6 +90,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
     private boolean isReadFromChannelEnabled = true;
+
+    private Channel channel;
 
     public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
         this.lispSbPlugin = lispSbPlugin;
@@ -340,7 +343,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 outBuffer = calculateAndSetNewMAC(outBuffer, mapRegisterValue.getMappingAuthkey().getKeyString());
             }
             outBuffer.position(0);
-            lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber);
+            lispSbPlugin.handleSerializedLispBuffer(inetAddress, outBuffer, MessageType.MapNotify, portNumber,
+                    this.channel);
         } else {
             LOG.error("Map-Register Cache: authentication succeeded, but can't find auth key for sending Map-Notify");
         }
@@ -493,6 +497,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 LOG.trace("Received UDP packet from {}:{} with content:\n{}", msg.sender().getHostString(),
                         msg.sender().getPort(), ByteBufUtil.prettyHexDump(msg.content()));
             }
+            this.channel = ctx.channel();
             handlePacket(msg);
         }
     }
