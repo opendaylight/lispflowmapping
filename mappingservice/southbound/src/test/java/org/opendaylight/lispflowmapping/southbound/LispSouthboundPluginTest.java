@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
@@ -203,13 +204,14 @@ public class LispSouthboundPluginTest {
         Mockito.verify(handlerMock).close();
         assertNull(getField("lispSouthboundHandler"));
         assertNull(getField("lispXtrSouthboundHandler"));
-        assertNull(getField("channel"));
+        Channel[] channel = getField("channel");
+        assertNull(channel[0]);
     }
 
     private static void injectChannel() throws NoSuchFieldException, IllegalAccessException {
         final Field channelField = LispSouthboundPlugin.class.getDeclaredField("channel");
         channelField.setAccessible(true);
-        channelField.set(lispSouthboundPlugin, channel);
+        channelField.set(lispSouthboundPlugin, new Channel[] { channel });
     }
 
     private static void injectXtrChannel() throws NoSuchFieldException, IllegalAccessException {
