@@ -5,17 +5,17 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.1-Boron-SR1</version>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.netconf</artifactId>
-  <version>1.4.1-SNAPSHOT</version>
+  <version>1.4.1-Boron-SR1</version>
   <packaging>bundle</packaging>
   <name>Mapping Service NETCONF Connector</name>
 
   <properties>
-    <netconf.connector.version>1.4.1-SNAPSHOT</netconf.connector.version>
+    <netconf.connector.version>1.4.1-Boron-SR1</netconf.connector.version>
   </properties>
 
   <dependencies>
