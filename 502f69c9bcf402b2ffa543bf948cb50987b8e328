@@ -40,6 +40,24 @@
       "revId": "502f69c9bcf402b2ffa543bf948cb50987b8e328",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_9503ec72",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T06:18:45Z",
+      "side": 1,
+      "message": "ok, so I\u0027ll merge this. but lets ask around on this. thanks",
+      "parentUuid": "3a65312a_959e4c55",
+      "revId": "502f69c9bcf402b2ffa543bf948cb50987b8e328",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
