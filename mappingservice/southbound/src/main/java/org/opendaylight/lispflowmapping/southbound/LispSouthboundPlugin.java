@@ -95,7 +95,10 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.clusterSingletonService = clusterSingletonService;
         this.clusterSingletonService.registerClusterSingletonService(this);
         if (Epoll.isAvailable()) {
-            numChannels = 5;
+            // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
+            // utilization. In order to have some headroom, we reserve 3 cores for "other" tasks, and allow the
+            // rest to be used for southbound packet processing, which is the most CPU intensive work done in lfm
+            numChannels = Math.max(1, Runtime.getRuntime().availableProcessors() - 3);
         }
         channel = new Channel[numChannels];
     }
