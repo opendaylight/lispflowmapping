@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_557e74e5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "I think leaving a comment here about use of flat mapcache for non-maskable EID, and removal of it because of not test coverage would be good.",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 8
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_b58388cb",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MappingMergeUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "Probably the wrong name now that merge logic is out.",
+      "range": {
+        "startLine": 22,
+        "startChar": 19,
+        "endLine": 22,
+        "endChar": 35
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_1574fcfb",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "Not too sure about this change of Object to ExtendedMappingRecord for MapCache API in general. The goal was to make map cache more generic. I am contemplating moving the LISP specific stuff all the way to LispMappingService. Thoughts?",
+      "range": {
+        "startLine": 67,
+        "startChar": 36,
+        "endLine": 67,
+        "endChar": 57
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_154b5cb1",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "looking through the code, as expected ExtendedMappingRecord is not really used. Meaning it could have remained an Object, which would maintain the generic-ness of map cache. So I wonder what was the reason for replacing Object with ExtendedMappingRecord in MapCache API?",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 72
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_955f6c72",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "Do we still need a separate Regdate?",
+      "range": {
+        "startLine": 93,
+        "startChar": 1,
+        "endLine": 93,
+        "endChar": 84
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_95d64cc4",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "I think we decided to move expiration to outside MapCache as well, no?",
+      "range": {
+        "startLine": 118,
+        "startChar": 8,
+        "endLine": 120,
+        "endChar": 77
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_d5d724be",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T07:28:30Z",
+      "side": 1,
+      "message": "same here. Or maybe my memory is corrupted?! :)",
+      "range": {
+        "startLine": 131,
+        "startChar": 12,
+        "endLine": 133,
+        "endChar": 74
+      },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
