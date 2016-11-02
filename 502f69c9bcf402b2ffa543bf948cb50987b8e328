@@ -22,6 +22,24 @@
       "revId": "502f69c9bcf402b2ffa543bf948cb50987b8e328",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_959e4c55",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T05:38:12Z",
+      "side": 1,
+      "message": "Not that I know of. But I\u0027m not sure it actually matters. I think the blocking and performance reduction happens in the thread that calls handleSerializedLispBuffer() regardless of the channel used, so the previous patch (passing the channel from the context) was there just for being extra careful. We should ask around to figure out if it matters.",
+      "parentUuid": "3a65312a_b58268fe",
+      "revId": "502f69c9bcf402b2ffa543bf948cb50987b8e328",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
