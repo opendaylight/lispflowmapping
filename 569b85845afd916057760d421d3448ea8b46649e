@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_3b812990",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "OK, will add a descriptive comment about that.",
+      "parentUuid": "3a65312a_557e74e5",
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_b58388cb",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MappingMergeUtil.java",
         "patchSetId": 7
@@ -42,6 +60,24 @@
         "endLine": 22,
         "endChar": 35
       },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_1b7eedae",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MappingMergeUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "This file will be completely removed, just didn\u0027t get to it yet, hence I didn\u0027t rename it.",
+      "parentUuid": "3a65312a_b58388cb",
       "revId": "569b85845afd916057760d421d3448ea8b46649e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_db5ab54f",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "We need more offline discussion about that then, will continue on email and WebEx.",
+      "parentUuid": "3a65312a_1574fcfb",
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_154b5cb1",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
         "patchSetId": 7
@@ -88,6 +142,24 @@
         "endLine": 22,
         "endChar": 72
       },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_3b2f69a3",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "Well, if we want a truly generic map-cache, we should remove all add/get/removeMapping() methods and just use add/get/removeData().",
+      "parentUuid": "3a65312a_154b5cb1",
       "revId": "569b85845afd916057760d421d3448ea8b46649e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -117,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_1b554d1d",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "I\u0027m not sure. I didn\u0027t want to remove it right away, until the ExtendedMappingRecord part is discussed and \"approved\", but if we do that, I can definitely remove it.",
+      "parentUuid": "3a65312a_955f6c72",
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_95d64cc4",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
         "patchSetId": 7
@@ -140,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_7b31e10a",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "Yes, will do that.",
+      "parentUuid": "3a65312a_95d64cc4",
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_d5d724be",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
         "patchSetId": 7
@@ -157,6 +265,24 @@
         "endLine": 133,
         "endChar": 74
       },
+      "revId": "569b85845afd916057760d421d3448ea8b46649e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_5b36a504",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-02T14:50:11Z",
+      "side": 1,
+      "message": "It\u0027s not your memory, it\u0027s the WIP :P",
+      "parentUuid": "3a65312a_d5d724be",
       "revId": "569b85845afd916057760d421d3448ea8b46649e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
