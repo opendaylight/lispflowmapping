@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_b58268fe",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-02T04:12:01Z",
+      "side": 1,
+      "message": "This means for all outgoing messages, except the MapNorifies resulted from a cache hit we use channel[0], right? Is there a way to to poll an available channel instead?",
+      "range": {
+        "startLine": 230,
+        "startChar": 28,
+        "endLine": 230,
+        "endChar": 43
+      },
+      "revId": "502f69c9bcf402b2ffa543bf948cb50987b8e328",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
