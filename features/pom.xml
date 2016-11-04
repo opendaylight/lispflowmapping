@@ -12,13 +12,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>features-parent</artifactId>
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.7.2-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>features-lispflowmapping</artifactId>
-  <version>1.4.1-SNAPSHOT</version>
+  <version>1.4.2-SNAPSHOT</version>
   <name>LISP Flow Mapping Project - Karaf Features</name>
 
   <prerequisites>
@@ -26,15 +26,15 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   </prerequisites>
 
   <properties>
-    <commons.opendaylight.version>1.7.1-SNAPSHOT</commons.opendaylight.version>
+    <commons.opendaylight.version>1.7.2-SNAPSHOT</commons.opendaylight.version>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
-    <config.version>0.5.1-SNAPSHOT</config.version>
-    <dlux.core.version>0.4.1-SNAPSHOT</dlux.core.version>
+    <config.version>0.5.2-SNAPSHOT</config.version>
+    <dlux.core.version>0.4.2-SNAPSHOT</dlux.core.version>
     <features.file>features.xml</features.file>
-    <mdsal.version>1.4.1-SNAPSHOT</mdsal.version>
-    <mdsal.model.version>0.9.1-SNAPSHOT</mdsal.model.version>
-    <neutron.version>0.7.1-SNAPSHOT</neutron.version>
-    <restconf.version>1.4.1-SNAPSHOT</restconf.version>
+    <mdsal.version>1.4.2-SNAPSHOT</mdsal.version>
+    <mdsal.model.version>0.9.2-SNAPSHOT</mdsal.model.version>
+    <neutron.version>0.7.2-SNAPSHOT</neutron.version>
+    <restconf.version>1.4.2-SNAPSHOT</restconf.version>
   </properties>
 
   <dependencyManagement>
