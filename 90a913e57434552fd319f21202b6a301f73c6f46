@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_2def1789",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-11-08T23:35:06Z",
+      "side": 1,
+      "message": "hm, isnt this wrong now?! in case of an xTR-ID mapping we should be removing the xtrIdMapping not the regular mapping. So I would say, move the common part of this method to getMapping(..) above, and from there call separate remove functions (removeMapping(), and removeXtrIdMapping()). The mapcache and dsbe removal for each should happen in respective methods.",
+      "range": {
+        "startLine": 273,
+        "startChar": 5,
+        "endLine": 276,
+        "endChar": 24
+      },
+      "revId": "90a913e57434552fd319f21202b6a301f73c6f46",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
