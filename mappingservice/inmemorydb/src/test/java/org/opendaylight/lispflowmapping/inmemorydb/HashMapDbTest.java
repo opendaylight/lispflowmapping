@@ -10,16 +10,13 @@ package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
@@ -267,53 +264,6 @@ public class HashMapDbTest {
 
         map.removeAll();
         map.getAll((keyId, valueKey, value) -> Assert.fail("DB should be empty"));
-    }
-
-    @Test
-    public void testCleanOld() throws Exception {
-        map.setRecordTimeOut(240);
-        map.setTimeUnit(TimeUnit.SECONDS);
-
-        Object entry1Key = "entry1Key";
-        String entry1recordKey = SubKeys.RECORD;
-        String entry1recordValue = "record1";
-        String entry1regdateKey = SubKeys.REGDATE;
-        Date entry1regdateValue = new Date();
-
-        Object entry2Key = "entry2Key";
-        String entry2recordKey = SubKeys.RECORD;
-        String entry2recordValue = "record2";
-        String entry2regdateKey = SubKeys.REGDATE;
-        Date entry2regdateValue = new Date(
-                System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(map.getRecordTimeOut(), map.getTimeUnit()));
-
-        map.put(entry1Key,
-                new MappingEntry<>(entry1recordKey, entry1recordValue),
-                new MappingEntry<>(entry1regdateKey, entry1regdateValue));
-        map.put(entry2Key,
-                new MappingEntry<>(entry2recordKey, entry2recordValue),
-                new MappingEntry<>(entry2regdateKey, entry2regdateValue));
-        map.cleanOld();
-
-        Assert.assertEquals("Entry should be present in the DB due to its time didn't expired",
-                entry1recordValue, map.getSpecific(entry1Key, entry1recordKey));
-        Assert.assertNull("Entry should not be present in the DB due to its time expired",
-                map.getSpecific(entry2Key, entry2recordKey));
-
-    }
-
-    @Test
-    public void testSetGetTimeUnit() throws Exception {
-        TimeUnit timeUnit = TimeUnit.DAYS;
-        map.setTimeUnit(timeUnit);
-        Assert.assertEquals(timeUnit, map.getTimeUnit());
-    }
-
-    @Test
-    public void testSetGetRecordTimeOut() throws Exception {
-        int recordTimeOut = 12345;
-        map.setRecordTimeOut(recordTimeOut);
-        Assert.assertEquals(recordTimeOut, map.getRecordTimeOut());
     }
 
     @Test
