@@ -183,6 +183,24 @@
       "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_0e6e9801",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T08:33:04Z",
+      "side": 1,
+      "message": "Agree. Also, I moved out the inememorydb changes to a separate self-contained patch, since it\u0027s not strictly part of this one, it just happened that I discovered this unneeded expiration code while working on SimpleMapCache.",
+      "parentUuid": "3a65312a_d3ba87e0",
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
