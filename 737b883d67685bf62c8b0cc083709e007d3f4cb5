@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_8ae4510e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_3392db57",
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_ee0ebc33",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 8
@@ -42,6 +60,24 @@
         "endLine": 119,
         "endChar": 57
       },
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_eac4e541",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_ee0ebc33",
       "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_8a23b104",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "You\u0027re right, but we don\u0027t have enough information to know if merge is on for the particular Map-Register packet that triggered this method call. Should we add a \u0027boolean merge\u0027 to the parameters?",
+      "parentUuid": "3a65312a_b30a6bd0",
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_53e79712",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 8
@@ -88,6 +142,24 @@
         "endLine": 229,
         "endChar": 9
       },
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_8af57185",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Well, here we go through policy check, and if we would just remove getSbMappingWithExpiration() and use this instead, for null xtrIds we would enter an endless loop of function calls. But I factored out the common part, which, as you said, is almost all of this function.",
+      "parentUuid": "3a65312a_53e79712",
       "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -117,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_6ab575ed",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_33f65bd8",
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_73ee13ee",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 8
@@ -140,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_eac86576",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_73ee13ee",
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_8e1d8869",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 8
@@ -157,6 +265,24 @@
         "endLine": 176,
         "endChar": 53
       },
+      "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_0a95e132",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-08T16:32:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_8e1d8869",
       "revId": "737b883d67685bf62c8b0cc083709e007d3f4cb5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
