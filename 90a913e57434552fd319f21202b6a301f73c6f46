@@ -22,6 +22,24 @@
       "revId": "90a913e57434552fd319f21202b6a301f73c6f46",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_337ad4f1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-09T12:14:00Z",
+      "side": 1,
+      "message": "Indeed. I fixed that error, by creating a new method to handle expired mappings.",
+      "parentUuid": "3a65312a_2def1789",
+      "revId": "90a913e57434552fd319f21202b6a301f73c6f46",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
