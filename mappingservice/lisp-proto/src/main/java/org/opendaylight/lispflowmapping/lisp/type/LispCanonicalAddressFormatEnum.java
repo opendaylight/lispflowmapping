@@ -12,12 +12,12 @@ package org.opendaylight.lispflowmapping.lisp.type;
  * The LCAF enum. http://tools.ietf.org/html/draft-ietf-lisp-lcaf-03
  */
 public enum LispCanonicalAddressFormatEnum {
-    LIST(1), //
-    SEGMENT(2), //
-    APPLICATION_DATA(4), //
-    SOURCE_DEST(12), //
-    TRAFFIC_ENGINEERING(10), //
-    KEY_VALUE(15), //
+    LIST(1),
+    SEGMENT(2),
+    APPLICATION_DATA(4),
+    SOURCE_DEST(12),
+    TRAFFIC_ENGINEERING(10),
+    KEY_VALUE(15),
     SERVICE_PATH(17),
     UNKNOWN(-1);
 

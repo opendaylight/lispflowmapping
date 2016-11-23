@@ -47,8 +47,8 @@ public abstract class BaseExpectations extends Expectations {
         context = new Mockery() {
             {
                 setImposteriser(ClassImposteriser.INSTANCE);
-                setThreadingPolicy(synchroniser); // otherwise we get errors on
-                // the finalizer thread
+                // otherwise we get errors on the finalizer thread:
+                setThreadingPolicy(synchroniser);
             }
         };
         defaultAction = new ReturnDefaultValueAction(ClassImposteriser.INSTANCE);

@@ -50,12 +50,14 @@ public final class Ipv4PrefixSerializer extends LispAddressSerializer {
 
     @Override
     public int getAddressSize(LispAddress lispAddress) {
-        return Length.IPV4; // XXX does this need to worry about the mask too?
+        // XXX does this need to worry about the mask too?
+        return Length.IPV4;
     }
 
     @Override
     public int getAddressSize(SimpleAddress simpleAddress) {
-        return Length.IPV4; // XXX does this need to worry about the mask too?
+        // XXX does this need to worry about the mask too?
+        return Length.IPV4;
     }
 
     @Override

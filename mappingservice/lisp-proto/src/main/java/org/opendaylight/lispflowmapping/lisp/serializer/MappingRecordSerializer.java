@@ -79,7 +79,7 @@ public final class MappingRecordSerializer {
         if (record.getAction() != null) {
             act = record.getAction();
         }
-        replyBuffer.put((byte) ((act.getIntValue() << 5) | //
+        replyBuffer.put((byte) ((act.getIntValue() << 5) |
                 ByteUtil.boolToBit(BooleanUtils.isTrue(record.isAuthoritative()), Flags.AUTHORITATIVE)));
         replyBuffer.position(replyBuffer.position() + Length.RESERVED);
         replyBuffer.putShort(NumberUtil.asShort(record.getMapVersion()));
