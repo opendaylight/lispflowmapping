@@ -97,7 +97,9 @@ public final class SourceDestKeySerializer extends LcafSerializer {
     }
 
     private Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
-        buffer.getShort();  // reserved bytes
+        // reserved bytes
+        buffer.getShort();
+
         short srcMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
         short dstMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
         ctx.setMaskLen(srcMaskLength);

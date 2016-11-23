@@ -70,7 +70,8 @@ public class LcafSerializer extends LispAddressSerializer {
 
     private void serializeLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress,
             LispAddressSerializer serializer) {
-        buffer.putShort((short) 0); // RES + Flags.
+        // RES + Flags
+        buffer.putShort((short) 0);
         buffer.put(serializer.getLcafType());
         buffer.put((byte) 0);
     }

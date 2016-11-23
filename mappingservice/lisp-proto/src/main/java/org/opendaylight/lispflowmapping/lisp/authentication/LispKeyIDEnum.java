@@ -8,9 +8,9 @@
 package org.opendaylight.lispflowmapping.lisp.authentication;
 
 public enum LispKeyIDEnum {
-    NONE(0, null), //
-    SHA1(1, "HmacSHA1"), //
-    SHA256(2, "HmacSHA256"), //
+    NONE(0, null),
+    SHA1(1, "HmacSHA1"),
+    SHA256(2, "HmacSHA256"),
     UNKNOWN(-1, null);
 
     private short keyID;

@@ -50,12 +50,14 @@ public final class Ipv6PrefixBinarySerializer extends LispAddressSerializer {
 
     @Override
     public int getAddressSize(LispAddress lispAddress) {
-        return Length.IPV6; // XXX does this need to worry about the mask too?
+        // XXX does this need to worry about the mask too?
+        return Length.IPV6;
     }
 
     @Override
     public int getAddressSize(SimpleAddress simpleAddress) {
-        return Length.IPV6; // XXX does this need to worry about the mask too?
+        // XXX does this need to worry about the mask too?
+        return Length.IPV6;
     }
 
     @Override

@@ -42,9 +42,9 @@ public final class MapReplySerializer {
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
 
-        replyBuffer.put((byte) ((MessageType.MapReply.getIntValue() << 4) | //
-                (BooleanUtils.isTrue(mapReply.isProbe()) ? Flags.PROBE : 0x00) | //
-                (BooleanUtils.isTrue(mapReply.isEchoNonceEnabled()) ? Flags.ECHO_NONCE_ENABLED : 0x00)));
+        replyBuffer.put((byte) ((MessageType.MapReply.getIntValue() << 4)
+                | (BooleanUtils.isTrue(mapReply.isProbe()) ? Flags.PROBE : 0x00)
+                | (BooleanUtils.isTrue(mapReply.isEchoNonceEnabled()) ? Flags.ECHO_NONCE_ENABLED : 0x00)));
 
         replyBuffer.position(replyBuffer.position() + Length.RES);
         if (mapReply.getMappingRecordItem() != null) {
