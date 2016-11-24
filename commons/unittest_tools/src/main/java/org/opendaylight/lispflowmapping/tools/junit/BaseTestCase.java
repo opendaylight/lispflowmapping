@@ -121,8 +121,8 @@ public abstract class BaseTestCase extends BaseExpectations {
         return null;
     }
 
-    static protected final class FieldData {
-        final public Field field;
+    protected static final class FieldData {
+        public final Field field;
         public Object value;
 
         public FieldData(Field field, Object value) {

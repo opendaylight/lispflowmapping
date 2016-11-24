@@ -275,7 +275,7 @@ public abstract class BaseExpectations extends Expectations {
     }
 
     @SafeVarargs
-    protected final static <T> Matcher<T[]> contains(final T... expected) {
+    protected static final <T> Matcher<T[]> contains(final T... expected) {
         return new BaseMatcher<T[]>() {
             @SuppressWarnings("unchecked")
             public boolean matches(Object actual) {
@@ -301,7 +301,7 @@ public abstract class BaseExpectations extends Expectations {
     }
 
     @SafeVarargs
-    protected final static <T> Matcher<T[]> sameArbitraryArray(final T... expectedArr) {
+    protected static final <T> Matcher<T[]> sameArbitraryArray(final T... expectedArr) {
         return new TypeSafeMatcher<T[]>() {
             @Override
             public boolean matchesSafely(T[] actualArr) {
@@ -321,7 +321,7 @@ public abstract class BaseExpectations extends Expectations {
     }
 
     @SafeVarargs
-    protected final static <T> Matcher<T[]> doseNotContain(final T... forbiddenValues) {
+    protected static final <T> Matcher<T[]> doseNotContain(final T... forbiddenValues) {
         return new TypeSafeMatcher<T[]>() {
             @Override
             public boolean matchesSafely(T[] arr) {
