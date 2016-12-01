@@ -23,6 +23,7 @@ public interface SubKeys {
     String SRC_RLOCS = "src_rlocs";
     String VNI = "vni";
     String LCAF_SRCDST = "lcaf_srcdst";
+    String TIME_BUCKET_ID = "time_bucket_id";
 
     String UNKOWN = "-1";
 }

@@ -191,6 +191,7 @@ public class SimpleMapCache implements ILispMapCache {
         table.removeSpecific(key, SubKeys.RECORD);
         table.removeSpecific(key, SubKeys.SRC_RLOCS);
         table.removeSpecific(key, SubKeys.XTRID_RECORDS);
+        table.removeSpecific(key, SubKeys.TIME_BUCKET_ID);
     }
 
     @Override
