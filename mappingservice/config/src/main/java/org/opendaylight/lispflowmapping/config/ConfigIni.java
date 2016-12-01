@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.config;
 
+import java.util.concurrent.TimeUnit;
+
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -25,6 +27,7 @@ public final class ConfigIni {
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
+    private int numberOfBucketInTimeBucket;
 
     // 'lisp.mappingMerge' and 'lisp.mappingOverWrite' are not independent, and they can't be both 'true'
     // when there is a conflict, the setting in 'lisp.mappingMerge' takes precendence
@@ -44,6 +47,8 @@ public final class ConfigIni {
     private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
     private static final long DEFAULT_SMR_TIMEOUT = 3000L;
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
+    private static final int MIN_NUMBER_OF_BUCKET_IN_TIME_BUCKET = 2;
+    private static final int TIMEOUT_TOLERANCE_MULTIPLIER_IN_TIME_BUCKET = 2;
 
     private static final ConfigIni INSTANCE = new ConfigIni();
 
@@ -63,6 +68,7 @@ public final class ConfigIni {
         initRegisterValiditySb(context);
         initSmrRetryCount(context);
         initSmrTimeout(context);
+        initBucketNumber();
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -304,6 +310,13 @@ public final class ConfigIni {
         }
     }
 
+    //one bucket should contain mapping of approximate 1 min time frame
+    private void initBucketNumber() {
+        numberOfBucketInTimeBucket = (int) (TimeUnit.MILLISECONDS.toMinutes(getRegistrationValiditySb()) + 1);
+
+        numberOfBucketInTimeBucket = Math.max(numberOfBucketInTimeBucket, MIN_NUMBER_OF_BUCKET_IN_TIME_BUCKET);
+    }
+
     public boolean mappingMergeIsSet() {
         return mappingMerge;
     }
@@ -367,6 +380,14 @@ public final class ConfigIni {
 
     public long getSmrTimeout() {
         return this.smrTimeout;
+    }
+
+    public int getNumberOfBucketInTimeBucket() {
+        return numberOfBucketInTimeBucket;
+    }
+
+    public long  getMaximumTimeoutTolerance() {
+        return TIMEOUT_TOLERANCE_MULTIPLIER_IN_TIME_BUCKET * getRegistrationValiditySb();
     }
 
     public static ConfigIni getInstance() {
