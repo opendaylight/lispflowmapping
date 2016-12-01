@@ -26,6 +26,7 @@ import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
@@ -119,6 +120,18 @@ public class DataStoreBackEnd implements TransactionChainListener {
         InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from MD-SAL datastore failed");
+    }
+
+    public void removeMapping(Eid key, MappingOrigin mappingOrigin) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MD-SAL: Removing mapping for {}",
+                    LispAddressStringifier.getString(key));
+        }
+
+        InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
+                .createMappingIid(key, mappingOrigin);
+        deleteTransaction(path, getDestinationDatastore(mappingOrigin),
+                "Deleting mapping from MD-SAL datastore failed");
     }
 
     public void removeXtrIdMapping(XtrIdMapping mapping) {
@@ -245,7 +258,11 @@ public class DataStoreBackEnd implements TransactionChainListener {
     }
 
     private static LogicalDatastoreType getDestinationDatastore(Mapping mapping) {
-        return mapping.getOrigin().equals(MappingOrigin.Southbound) ? LogicalDatastoreType.OPERATIONAL
+        return getDestinationDatastore(mapping.getOrigin());
+    }
+
+    private static LogicalDatastoreType getDestinationDatastore(MappingOrigin mappingOrigin) {
+        return mappingOrigin.equals(MappingOrigin.Southbound) ? LogicalDatastoreType.OPERATIONAL
                 : LogicalDatastoreType.CONFIGURATION;
     }
 
