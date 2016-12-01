@@ -19,7 +19,10 @@ import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
+import org.opendaylight.lispflowmapping.implementation.util.timebucket.implementation.TimeBucketMappingTimeoutService;
+import org.opendaylight.lispflowmapping.implementation.util.timebucket.interfaces.ISouthBoundMappingTimeoutService;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
@@ -67,11 +70,15 @@ public class MappingSystem implements IMappingSystem {
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
+    private ISouthBoundMappingTimeoutService sbMappingTimeoutService;
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
         this.dao = dao;
         this.notificationService = notifications;
         this.overwrite = overwrite;
+        sbMappingTimeoutService = new TimeBucketMappingTimeoutService( ConfigIni.getInstance()
+                .getNumberOfBucketInTimeBucket(), ConfigIni.getInstance().getRegistrationValiditySb(),
+                this);
         buildMapCaches();
     }
 
@@ -109,6 +116,9 @@ public class MappingSystem implements IMappingSystem {
     }
 
     public void addMapping(MappingOrigin origin, Eid key, MappingData mappingData) {
+
+        sbMappingTimeoutService.removeExpiredMappings();
+
         if (mappingData == null) {
             LOG.warn("addMapping() called with null mapping, ignoring");
             return;
@@ -128,15 +138,28 @@ public class MappingSystem implements IMappingSystem {
                 Set<IpAddressBinary> sourceRlocs = new HashSet<>();
                 MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
                         expiredMappings, sourceRlocs);
-                smc.removeXtrIdMappings(key, expiredMappings);
+
                 if (mergedMappingData != null) {
+                    mergedMappingData.setMergeEnabled(true);
                     smc.addMapping(key, mergedMappingData, sourceRlocs);
+                    handleAddMappingInTimeBucket(key, mappingData);
                 }
                 return;
             }
         }
-
         tableMap.get(origin).addMapping(key, mappingData);
+        handleAddMappingInTimeBucket(key, mappingData);
+    }
+
+    private void handleAddMappingInTimeBucket(Eid key, MappingData mappingData) {
+        Integer presentBucketId = (Integer) smc.getData(key, SubKeys.TIME_BUCKET_ID);
+        Integer newBucketId;
+        if (presentBucketId != null) {
+            newBucketId = sbMappingTimeoutService.refreshMapping(key, mappingData, presentBucketId);
+        } else {
+            newBucketId = sbMappingTimeoutService.addMapping(key, mappingData);
+        }
+        smc.addData(key, SubKeys.TIME_BUCKET_ID, newBucketId);
     }
 
     /*
@@ -150,6 +173,7 @@ public class MappingSystem implements IMappingSystem {
         MappingData mappingData = (MappingData) smc.getMapping(null, key);
         if (mappingData != null) {
             mappingData.setTimestamp(new Date(timestamp));
+            handleAddMappingInTimeBucket(key, mappingData);
         } else {
             LOG.warn("Could not update timestamp for EID {}, no mapping found", LispAddressStringifier.getString(key));
         }
@@ -208,6 +232,10 @@ public class MappingSystem implements IMappingSystem {
     public MappingData getMapping(Eid src, Eid dst) {
         // NOTE: Currently we have two lookup algorithms implemented, which are configurable
 
+        if (sbMappingTimeoutService.mustRemoveExpiredMappings()) {
+            sbMappingTimeoutService.removeExpiredMappings();
+        }
+
         if (ConfigIni.getInstance().getLookupPolicy() == IMappingService.LookupPolicy.NB_AND_SB) {
             return getMappingNbSbIntersection(src, dst);
         } else {
@@ -224,6 +252,10 @@ public class MappingSystem implements IMappingSystem {
     public MappingData getMapping(Eid src, Eid dst, XtrId xtrId) {
         // Note: If xtrId is null, we need to go through regular policy checking else Policy doesn't matter
 
+        if (sbMappingTimeoutService.mustRemoveExpiredMappings()) {
+            sbMappingTimeoutService.removeExpiredMappings();
+        }
+
         if (xtrId == null) {
             return getMapping(src, dst);
         }
@@ -233,6 +265,10 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public MappingData getMapping(MappingOrigin origin, Eid key) {
+        if (sbMappingTimeoutService.mustRemoveExpiredMappings()) {
+            sbMappingTimeoutService.removeExpiredMappings();
+        }
+
         if (origin.equals(MappingOrigin.Southbound)) {
             return getSbMappingWithExpiration(null, key, null);
         }
@@ -278,10 +314,40 @@ public class MappingSystem implements IMappingSystem {
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
         if (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
-            removeExpiredMapping(dst, xtrId, mappingData);
+            removeSbExpiredMapping(dst, xtrId, mappingData);
             return null;
         } else {
             return mappingData;
+        }
+    }
+
+    public void handleExpiredMappingInTimeBucket(Eid key, MappingData mappingData) {
+
+        if (mappingData.isMergeEnabled()) {
+            List<XtrId> expiredXtrIds = new ArrayList<>();
+            Set<IpAddressBinary> sourceRlocs = new HashSet<>();
+
+            MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
+                    expiredXtrIds, sourceRlocs);
+
+            for (XtrId xtrId: expiredXtrIds) {
+                MappingData xtrSpecificMappingData = (MappingData) smc.getMapping(key, xtrId);
+                removeSbExpiredMapping(key, xtrId, xtrSpecificMappingData);
+            }
+
+            if (mergedMappingData != null) {
+                //handle time bucket
+                smc.addMapping(key, mergedMappingData, sourceRlocs);
+                handleAddMappingInTimeBucket(key, mergedMappingData);
+            } else {
+                dsbe.removeMapping(key, MappingOrigin.Southbound);
+            }
+        } else {
+            XtrId xtrId = mappingData.getXtrId();
+            if (xtrId != null) {
+                removeSbExpiredMapping(key, xtrId, mappingData);
+            }
+            removeSbExpiredMapping(key, null, mappingData);
         }
     }
 
@@ -289,7 +355,7 @@ public class MappingSystem implements IMappingSystem {
      * This private method either removes the main mapping ONLY, or the xTR-ID mapping ONLY, based on xtrId being
      * null or non-null. Caller functions should take care of removing both when necessary.
      */
-    private void removeExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+    private void removeSbExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
         if (xtrId == null) {
             smc.removeMapping(key);
             dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mappingData.getRecord().getEid(),

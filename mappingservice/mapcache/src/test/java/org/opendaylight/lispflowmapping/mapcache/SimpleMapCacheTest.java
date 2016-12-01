@@ -116,6 +116,7 @@ public class SimpleMapCacheTest {
         Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.RECORD);
         Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.SRC_RLOCS);
         Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.XTRID_RECORDS);
+        Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.TIME_BUCKET_ID);
         Mockito.verifyNoMoreInteractions(tableMock);
     }
 
