@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2015, 2017 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -33,6 +33,15 @@ public interface IMappingSystem {
      *            Mapping to be stored
      */
     void addMapping(MappingOrigin origin, Eid key, MappingData mapping);
+
+    /**
+     * Generate and add a negative mapping entry originated from the southbound, and return the generated mapping.
+     *
+     * @param key
+     *            Key of the mapping
+     * @return Returns the generated negative mapping (which is never null).
+     */
+    MappingData addNegativeMapping(Eid key);
 
     /**
      * Retrieves mapping for the provided src and dst key.
