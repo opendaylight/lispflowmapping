@@ -55,9 +55,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Si
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
@@ -104,8 +106,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
+        boolean oldMappingRemoved = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
-        Set<SubscriberRLOC> subscribers = null;
         MappingRecord oldMapping;
 
         if (merge) {
@@ -121,6 +123,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             MappingRecord mapping = record.getMappingRecord();
 
             oldMapping = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, mapping.getEid());
+            if (isNegativeMapping(oldMapping)) {
+                mapService.removeMapping(MappingOrigin.Southbound, oldMapping.getEid());
+                oldMappingRemoved = true;
+            }
             mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), getSiteId(mapRegister), mapping, merge);
 
             if (subscriptionService) {
@@ -132,8 +138,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
                                 LispAddressStringifier.getString(mapping.getEid()));
                     }
-                    subscribers = getSubscribers(mapping.getEid());
-                    sendSmrs(mapping, subscribers);
+                    sendSmrs(mapping);
+                    if (oldMappingRemoved && !oldMapping.getEid().equals(mapping.getEid())) {
+                        sendSmrs(oldMapping);
+                    }
                     mappingUpdated = true;
                 }
             }
@@ -196,7 +204,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     public void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
             if (mapService.isMaster()) {
-                sendSmrs(notification.getMappingRecord(), getSubscribers(notification.getMappingRecord().getEid()));
+                sendSmrs(notification.getMappingRecord());
             }
             if (notification.getChangeType().equals(MappingChange.Removed)) {
                 removeSubscribers(notification.getMappingRecord().getEid());
@@ -230,8 +238,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return false;
     }
 
-    private void sendSmrs(MappingRecord record, Set<SubscriberRLOC> subscribers) {
+    private void sendSmrs(MappingRecord record) {
         Eid eid = record.getEid();
+        Set<SubscriberRLOC> subscribers = getSubscribers(eid);
         handleSmr(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
@@ -286,6 +295,14 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     private void addSubscribers(Eid address, Set<SubscriberRLOC> subscribers) {
         mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
+    }
+
+    private boolean isNegativeMapping(MappingRecord mapping) {
+        List<LocatorRecord> rlocs = mapping.getLocatorRecord();
+        if (mapping.getAction() == Action.NativelyForward && (rlocs == null || rlocs.isEmpty())) {
+            return true;
+        }
+        return false;
     }
 
     private static InetAddress getLocalAddress() {
