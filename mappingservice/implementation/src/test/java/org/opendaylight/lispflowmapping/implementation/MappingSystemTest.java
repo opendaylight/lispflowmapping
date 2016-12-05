@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -87,8 +88,9 @@ public class MappingSystemTest {
     @Mock private static IMapCache pmcMock;
     @Mock private static IAuthKeyDb akdbMock;
     @Mock private static DataStoreBackEnd dsbeMock;
+    @Mock private static NotificationPublishService npsMock;
     @Mock private static EnumMap<MappingOrigin, IMapCache> tableMapMock;
-    @InjectMocks private static MappingSystem mappingSystem = new MappingSystem(daoMock, false, true, true);
+    @InjectMocks private static MappingSystem mappingSystem = new MappingSystem(daoMock, false, npsMock, true);
 
     private static final String IPV4_SRC =      "127.0.0.1";
     private static final String IPV4_DST =      "192.168.0.1";
@@ -434,7 +436,7 @@ public class MappingSystemTest {
      */
     @Test
     public void removeMappingTest_sb() throws NoSuchFieldException, IllegalAccessException {
-        mappingSystem = new MappingSystem(daoMock, false, true, false);
+        mappingSystem = new MappingSystem(daoMock, false, npsMock, false);
         injectMocks();
         Mockito.when(tableMapMock.get(MappingOrigin.Southbound)).thenReturn(smcMock);
 
@@ -564,7 +566,7 @@ public class MappingSystemTest {
         Mockito.verify(smcMock).printMappings();
 
         mappingSystem.destroy();
-        mappingSystem = new MappingSystem(daoMock, true, true, true);
+        mappingSystem = new MappingSystem(daoMock, true, npsMock, true);
         mappingSystem.setDataStoreBackEnd(dsbeMock);
         mappingSystem.setMappingMerge(false);
         mappingSystem.setIterateMask(true);
