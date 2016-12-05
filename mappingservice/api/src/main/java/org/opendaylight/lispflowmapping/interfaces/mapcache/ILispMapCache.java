@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2016, 2017 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -93,8 +93,26 @@ public interface ILispMapCache extends IMapCache {
      * Returns the parent prefix for given key.
      *
      * @param key
-     *            The key which parent is to be returned.
-     * @return The parent perfix of a specific key.
+     *            The key for which parent is to be returned.
+     * @return The parent prefix of a specific key.
      */
     Eid getParentPrefix(Eid key);
+
+    /**
+     * Returns the sibling prefix for given key.
+     *
+     * @param key
+     *            The key for which sibling is to be returned.
+     * @return The sibling prefix of a specific key.
+     */
+    Eid getSiblingPrefix(Eid key);
+
+    /**
+     * Returns the virtual parent sibling prefix for given key.
+     *
+     * @param key
+     *            The key for which virtual parent sibling is to be returned.
+     * @return The virtual parent sibling prefix of a specific key.
+     */
+    Eid getVirtualParentSiblingPrefix(Eid key);
 }
