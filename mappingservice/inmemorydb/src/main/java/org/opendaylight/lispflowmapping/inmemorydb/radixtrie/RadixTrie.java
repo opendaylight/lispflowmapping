@@ -490,6 +490,7 @@ public class RadixTrie<T> {
 
                 if (parent == null) {
                     setRoot(child);
+                    isRoot = true;
                 } else {
                     if (parent.left != null && parent.left.equals(cur)) {
                         parent.left = child;
