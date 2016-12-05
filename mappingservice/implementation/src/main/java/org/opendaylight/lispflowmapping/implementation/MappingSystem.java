@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2015, 2017 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
@@ -20,6 +21,8 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
@@ -28,6 +31,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
@@ -38,12 +42,18 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -62,6 +72,8 @@ import org.slf4j.LoggerFactory;
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private static final String AUTH_KEY_TABLE = "authentication";
+    private static final int TTL_RLOC_TIMED_OUT = 1;
+    private static final int TTL_NO_RLOC_KNOWN = 15;
     private boolean notificationService;
     private boolean mappingMerge;
     private ILispDAO dao;
@@ -137,6 +149,36 @@ public class MappingSystem implements IMappingSystem {
         }
 
         tableMap.get(origin).addMapping(key, mappingData);
+    }
+
+    @Override
+    public MappingData addNegativeMapping(Eid key) {
+        MappingRecord mapping = getNegativeMapping(key);
+        MappingData mappingData = new MappingData(mapping);
+        smc.addMapping(mapping.getEid(), mappingData);
+        dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(), null, mappingData));
+        return mappingData;
+    }
+
+    private MappingRecord getNegativeMapping(Eid eid) {
+        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
+        recordBuilder.setAuthoritative(false);
+        recordBuilder.setMapVersion((short) 0);
+        recordBuilder.setEid(eid);
+        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class)
+                || eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
+            Eid widestNegativePrefix = getWidestNegativePrefix(eid);
+            if (widestNegativePrefix != null) {
+                recordBuilder.setEid(widestNegativePrefix);
+            }
+        }
+        recordBuilder.setAction(Action.NativelyForward);
+        if (getAuthenticationKey(eid) != null) {
+            recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+        } else {
+            recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+        }
+        return recordBuilder.build();
     }
 
     /*
@@ -345,10 +387,71 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
+        Set<SubscriberRLOC> subscribers = null;
+        if (origin == MappingOrigin.Southbound) {
+            MappingData mapping = (MappingData) smc.getMapping(null, key);
+            if (mapping != null && mapping.isNegative()) {
+                SimpleImmutableEntry<Eid, Set<SubscriberRLOC>> mergedNegativePrefix = computeMergedNegativePrefix(key);
+                if (mergedNegativePrefix != null) {
+                    addNegativeMapping(mergedNegativePrefix.getKey());
+                    subscribers = mergedNegativePrefix.getValue();
+                }
+            }
+        }
         tableMap.get(origin).removeMapping(key);
         if (notificationService) {
             // TODO
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    /*
+     * Returns the "merged" prefix and the subscribers of the prefixes that were merged.
+     */
+    private SimpleImmutableEntry<Eid, Set<SubscriberRLOC>> computeMergedNegativePrefix(Eid eid) {
+        // Variable to hold subscribers we collect along the way
+        Set<SubscriberRLOC> subscribers = null;
+
+        // If prefix sibling has a negative mapping, save its subscribers
+        Eid sibling = smc.getSiblingPrefix(eid);
+        MappingData mapping = (MappingData) smc.getMapping(null, sibling);
+        if (mapping != null && mapping.isNegative()) {
+            subscribers = (Set<SubscriberRLOC>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
+        } else {
+            return null;
+        }
+
+        Eid currentNode = sibling;
+        Eid previousNode = sibling;
+        while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
+            mapping = (MappingData) smc.getMapping(null, currentNode);
+            if (mapping != null && mapping.isNegative()) {
+                subscribers.addAll((Set<SubscriberRLOC>)
+                        getData(MappingOrigin.Southbound, currentNode, SubKeys.SUBSCRIBERS));
+                smc.removeMapping(currentNode);
+            } else {
+                break;
+            }
+            previousNode = currentNode;
+        }
+        return new SimpleImmutableEntry<>(getVirtualParent(previousNode), subscribers);
+    }
+
+    private static Eid getVirtualParent(Eid eid) {
+        if (eid.getAddress() instanceof Ipv4PrefixBinary) {
+            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
+            short parentPrefixLength = (short) (prefix.getIpv4MaskLength() - 1);
+            byte[] parentPrefix = MaskUtil.normalizeByteArray(prefix.getIpv4AddressBinary().getValue(),
+                    parentPrefixLength);
+            return LispAddressUtil.asIpv4PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
+        } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
+            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
+            short parentPrefixLength = (short) (prefix.getIpv6MaskLength() - 1);
+            byte[] parentPrefix = MaskUtil.normalizeByteArray(prefix.getIpv6AddressBinary().getValue(),
+                    parentPrefixLength);
+            return LispAddressUtil.asIpv6PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
+        }
+        return null;
     }
 
     @Override
