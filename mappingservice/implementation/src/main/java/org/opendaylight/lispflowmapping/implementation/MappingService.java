@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2015, 2017 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -126,7 +126,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
 
-        mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, mappingMergePolicy);
+        mappingSystem = new MappingSystem(dao, iterateMask, notificationPublishService, mappingMergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
         mappingSystem.initialize();
 
@@ -185,6 +185,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         } else {
             dsbe.addMapping(DSBEInputUtil.toMapping(origin, key, siteId, mappingData));
         }
+    }
+
+    @Override
+    public MappingData addNegativeMapping(Eid key) {
+        return mappingSystem.addNegativeMapping(key);
     }
 
     @Override
