@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016, 2017 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -22,6 +22,7 @@ import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
+import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
@@ -49,7 +50,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
@@ -153,14 +153,13 @@ public class MapResolverTest {
                 .setAuthoritative(false)
                 .setMapVersion((short) 0)
                 .setEid(IPV4_PREFIX_EID_1)
-                .setAction(MappingRecord.Action.NativelyForward)
+                .setAction(LispMessage.NEGATIVE_MAPPING_ACTION)
                 .setRecordTtl(TTL_RLOC_TIMED_OUT);
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
                 .thenReturn(null);
-        Mockito.when(mapServiceMock.getAuthenticationKey(IPV4_PREFIX_EID_1))
-                .thenReturn(new MappingAuthkeyBuilder().build());
-        Mockito.when(mapServiceMock.getWidestNegativePrefix(IPV4_PREFIX_EID_1)).thenReturn(IPV4_PREFIX_EID_1);
+        Mockito.when(mapServiceMock.addNegativeMapping(IPV4_PREFIX_EID_1))
+                .thenReturn(getDefaultMappingData(mappingRecordBuilder.build()));
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
