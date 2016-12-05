@@ -49,6 +49,10 @@ public class RadixTrieTest {
     private static byte[] IP4_BYTES19;
     private static byte[] IP4_BYTES20;
     private static byte[] IP4_BYTES21;
+    private static byte[] IP4_BYTES22;
+    private static byte[] IP4_BYTES23;
+    private static byte[] IP4_BYTES24;
+    private static byte[] IP4_BYTES25;
 
     ArrayList<byte []> itPrefixList4;
     ArrayList<Integer> itPreflenList4;
@@ -86,6 +90,10 @@ public class RadixTrieTest {
             IP4_BYTES19 = InetAddress.getByName("64.142.3.176").getAddress();
             IP4_BYTES20 = InetAddress.getByName("64.228.0.0").getAddress();
             IP4_BYTES21 = InetAddress.getByName("64.0.0.0").getAddress();
+            IP4_BYTES22 = InetAddress.getByName("1.1.1.1").getAddress();
+            IP4_BYTES23 = InetAddress.getByName("2.2.2.2").getAddress();
+            IP4_BYTES24 = InetAddress.getByName("10.10.10.10").getAddress();
+            IP4_BYTES25 = InetAddress.getByName("20.20.20.20").getAddress();
 
             IP6_BYTES1 = InetAddress.getByName("192:168::0:0").getAddress();
             IP6_BYTES2 = InetAddress.getByName("192:167::0:0").getAddress();
@@ -341,5 +349,32 @@ public class RadixTrieTest {
         trie.insert(IP6_BYTES4, 112, 1);
         trie.insert(IP6_BYTES5, 112, 1);
         trie.insert(IP6_BYTES6, 113, 1);
+    }
+
+    @Test
+    public void testClearIntermediariesToRoot() {
+        RadixTrie<String> radixTrie4 = new RadixTrie<>(32);
+
+        // Add prefixes
+        radixTrie4.insert(IP4_BYTES22, 32, "1.1.1.1");
+        radixTrie4.insert(IP4_BYTES23, 32, "2.2.2.2");
+        radixTrie4.insert(IP4_BYTES24, 32, "10.10.10.10");
+        radixTrie4.insert(IP4_BYTES25, 32, "20.20.20.20");
+
+        // Remove 10.10.10.10 & 20.20.20.20 (root should be updated)
+        radixTrie4.remove(IP4_BYTES24, 32);
+        radixTrie4.remove(IP4_BYTES25, 32);
+
+        // Re-add 10.10.10.10 & 20.20.20.20
+        radixTrie4.insert(IP4_BYTES24, 32, "10.10.10.10");
+        radixTrie4.insert(IP4_BYTES25, 32, "20.20.20.20");
+
+        // Make sure 10.10.10.10 & 20.20.20.20 lookup succeeds
+        RadixTrie<String>.TrieNode res2 = radixTrie4.lookupBest(IP4_BYTES24, 32);
+        assertTrue("Lookup 10.10.10.10 result is NULL", res2 != null);
+        assertTrue("Lookup Result for 10.10.10.10 is not right", res2.data().equals("10.10.10.10"));
+        RadixTrie<String>.TrieNode res3 = radixTrie4.lookupBest(IP4_BYTES25, 32);
+        assertTrue("Lookup 20.20.20.20 result is NULL", res3 != null);
+        assertTrue("Lookup Result for 20.20.20.20 is not right", res3.data().equals("20.20.20.20"));
     }
 }
