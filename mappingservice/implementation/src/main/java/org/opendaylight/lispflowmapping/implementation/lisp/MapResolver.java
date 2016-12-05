@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2017 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -46,7 +46,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
@@ -58,9 +57,6 @@ import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolverAsync {
     protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
-
-    private static final int TTL_RLOC_TIMED_OUT = 1;
-    private static final int TTL_NO_RLOC_KNOWN = 15;
 
     private IMappingService mapService;
     private boolean subscriptionService;
@@ -113,8 +109,7 @@ public class MapResolver implements IMapResolverAsync {
             MappingData mappingData = mapService.getMapping(srcEid, eidRecord.getEid());
             MappingRecord mapping;
             if (mappingData == null) {
-                mapping = getNegativeMapping(eidRecord.getEid());
-                mapService.addMapping(MappingOrigin.Southbound, mapping.getEid(), null, new MappingData(mapping));
+                mapping = mapService.addNegativeMapping(eidRecord.getEid()).getRecord();
             } else {
                 mapping = mappingData.getRecord();
             }
@@ -181,27 +176,6 @@ public class MapResolver implements IMapResolverAsync {
             // if none of the above, return the first Rloc
             return itrRlocList.get(0).getRloc();
         }
-    }
-
-    private MappingRecord getNegativeMapping(Eid eid) {
-        MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
-        recordBuilder.setAuthoritative(false);
-        recordBuilder.setMapVersion((short) 0);
-        recordBuilder.setEid(eid);
-        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class)
-                || eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
-            Eid widestNegativePrefix = mapService.getWidestNegativePrefix(eid);
-            if (widestNegativePrefix != null) {
-                recordBuilder.setEid(widestNegativePrefix);
-            }
-        }
-        recordBuilder.setAction(Action.NativelyForward);
-        if (authenticate && mapService.getAuthenticationKey(eid) != null) {
-            recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
-        } else {
-            recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
-        }
-        return recordBuilder.build();
     }
 
     private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
