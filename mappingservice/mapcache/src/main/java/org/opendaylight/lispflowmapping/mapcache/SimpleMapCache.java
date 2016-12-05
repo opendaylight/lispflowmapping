@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2017 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -171,22 +171,39 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public Eid getParentPrefix(Eid eid) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(key);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return null;
         }
-        return table.getParentPrefix(key);
+        return table.getParentPrefix(MaskUtil.normalize(eid));
+    }
+
+    @Override
+    public Eid getSiblingPrefix(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+        return table.getSiblingPrefix(MaskUtil.normalize(eid));
+    }
+
+    @Override
+    public Eid getVirtualParentSiblingPrefix(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+        return table.getVirtualParentSiblingPrefix(MaskUtil.normalize(eid));
     }
 
     @Override
     public void removeMapping(Eid eid) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(key);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
 
+        Eid key = MaskUtil.normalize(eid);
         // We intentionally don't remove subscribers, so in case a mapping is re-added, they get notified
         table.removeSpecific(key, SubKeys.RECORD);
         table.removeSpecific(key, SubKeys.SRC_RLOCS);
@@ -195,11 +212,11 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public void removeMapping(Eid eid, XtrId xtrId) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(key);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
+        Eid key = MaskUtil.normalize(eid);
         ILispDAO xtrIdTable = (ILispDAO) table.getSpecific(key, SubKeys.XTRID_RECORDS);
         if (xtrIdTable == null) {
             return;
@@ -209,11 +226,11 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public void removeXtrIdMappings(Eid eid, List<XtrId> xtrIds) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(key);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
+        Eid key = MaskUtil.normalize(eid);
         ILispDAO xtrIdTable = (ILispDAO) table.getSpecific(key, SubKeys.XTRID_RECORDS);
         if (xtrIdTable == null) {
             return;
@@ -225,8 +242,8 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public void addData(Eid eid, String subKey, Object data) {
+        ILispDAO table = getOrInstantiateVniTable(eid);
         Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getOrInstantiateVniTable(key);
         table.put(key, new MappingEntry<>(subKey, data));
     }
 
