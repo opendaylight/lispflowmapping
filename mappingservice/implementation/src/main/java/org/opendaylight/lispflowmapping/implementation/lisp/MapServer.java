@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2017 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -45,6 +45,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -102,6 +103,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
+        boolean oldMappingRemoved = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
         Set<Subscriber> subscribers = null;
         MappingRecord oldMapping;
@@ -124,6 +126,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
             oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid));
             mapService.addMapping(MappingOrigin.Southbound, eid, getSiteId(mapRegister), mappingData);
+            if (oldMapping != null && MappingRecordUtil.isNegativeMapping(oldMapping)) {
+                mapService.removeMapping(MappingOrigin.Southbound, oldMapping.getEid());
+                oldMappingRemoved = true;
+            }
 
             if (subscriptionService) {
                 MappingRecord newMapping = merge
@@ -139,6 +145,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         subscribers = addParentSubscribers(eid, subscribers);
                     }
                     sendSmrs(eid, subscribers);
+                    if (oldMapping != null && oldMappingRemoved && !oldMapping.getEid().equals(eid)) {
+                        subscribers = getSubscribers(oldMapping.getEid());
+                        sendSmrs(oldMapping.getEid(), subscribers);
+                    }
                     mappingUpdated = true;
                 }
             }
