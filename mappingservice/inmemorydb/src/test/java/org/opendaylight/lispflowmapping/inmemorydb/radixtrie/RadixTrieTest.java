@@ -376,5 +376,27 @@ public class RadixTrieTest {
         RadixTrie<String>.TrieNode res3 = radixTrie4.lookupBest(IP4_BYTES25, 32);
         assertTrue("Lookup 20.20.20.20 result is NULL", res3 != null);
         assertTrue("Lookup Result for 20.20.20.20 is not right", res3.data().equals("20.20.20.20"));
+
+        // Remove 10.10.10.10 & 20.20.20.20 (root should be updated)
+        radixTrie4.remove(IP4_BYTES24, 32);
+        radixTrie4.remove(IP4_BYTES25, 32);
+
+        // Add 10.10.10.0 & 20.20.20.0
+        radixTrie4.insert(IP4_BYTES25, 24, "20.20.20.0");
+        radixTrie4.insert(IP4_BYTES24, 24, "10.10.10.0");
+
+        RadixTrie<String>.TrieNode res4 = radixTrie4.lookupBest(IP4_BYTES23, 32);
+        assertTrue("Lookup 2.2.2.2 result is NULL", res4 != null);
+        assertTrue("Lookup Result for 2.2.2.2 is not right", res4.data().equals("2.2.2.2"));
+        RadixTrie<String>.TrieNode res5 = radixTrie4.lookupBest(IP4_BYTES22, 32);
+        assertTrue("Lookup 1.1.1.1 result is NULL", res5 != null);
+        assertTrue("Lookup Result for 1.1.1.1 is not right", res5.data().equals("1.1.1.1"));
+
+        RadixTrie<String>.TrieNode res6 = radixTrie4.lookupBest(IP4_BYTES25, 24);
+        assertTrue("Lookup 20.20.20.20 result is NULL", res6 != null);
+        assertTrue("Lookup Result for 20.20.20.0 is not right", res6.data().equals("20.20.20.0"));
+        RadixTrie<String>.TrieNode res7 = radixTrie4.lookupBest(IP4_BYTES24, 24);
+        assertTrue("Lookup 10.10.10.10 result is NULL", res7 != null);
+        assertTrue("Lookup Result for 10.10.10.0 is not right", res7.data().equals("10.10.10.0"));
     }
 }
