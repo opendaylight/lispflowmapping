@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_d774409e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-06T21:24:33Z",
+      "side": 1,
+      "message": "We should probably give an error or at least warn here, if the xtrIdMappingData is null. As it is now, it will be ignored without action, while the default action one would assume is to store it under the xtrId.",
+      "range": {
+        "startLine": 157,
+        "startChar": 3,
+        "endLine": 159,
+        "endChar": 13
+      },
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_b779c495",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-06T21:24:33Z",
+      "side": 1,
+      "message": "what happens if xtrId is not null, but it is the sole xtr registering the mapping? the main mapping still will need to be removed.",
+      "range": {
+        "startLine": 289,
+        "startChar": 1,
+        "endLine": 293,
+        "endChar": 2
+      },
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_576830ba",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-06T21:24:33Z",
+      "side": 1,
+      "message": "right. So one option is to periodically update  timestamps, I guess. Maye as part of the timebucket patch? \nAnd, in case of graceful termination, we need to update the mappings in DS and store the last timestamps there... Lets discuss",
+      "range": {
+        "startLine": 383,
+        "startChar": 0,
+        "endLine": 383,
+        "endChar": 44
+      },
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
