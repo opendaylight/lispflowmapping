@@ -489,8 +489,14 @@ public class RadixTrie<T> {
                 TrieNode child = cur.left != null ? cur.left : cur.right;
 
                 if (parent == null) {
-                    setRoot(child);
-                    isRoot = true;
+                    if (child != null) {
+                        if (!rootZero) {
+                            child.up = null;
+                            setRoot(child);
+                        }
+                    } else {
+                        isRoot = true;
+                    }
                 } else {
                     if (parent.left != null && parent.left.equals(cur)) {
                         parent.left = child;
