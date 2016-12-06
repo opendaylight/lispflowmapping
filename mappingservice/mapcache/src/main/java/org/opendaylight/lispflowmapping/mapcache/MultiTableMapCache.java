@@ -153,14 +153,10 @@ public class MultiTableMapCache implements IMapCache {
         if (key.getAddress() instanceof SourceDestKey) {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
-                db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key),
-                        SubKeys.RECORD);
-                db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key),
-                        SubKeys.REGDATE);
+                db.remove(SourceDestKeyHelper.getSrcBinary(key));
             }
         } else {
-            table.removeSpecific(key, SubKeys.RECORD);
-            table.removeSpecific(key, SubKeys.REGDATE);
+            table.remove(key);
         }
     }
 
