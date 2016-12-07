@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_eb4a3582",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-12-07T21:01:12Z",
+      "side": 1,
+      "message": "Good idea, done!",
+      "parentUuid": "1a622d24_d774409e",
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_b779c495",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 17
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_7d1a6b6f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-12-07T21:01:12Z",
+      "side": 1,
+      "message": "Since this is a private function, I chose to use it for two different functions: EITHER remove the main mapping, OR the xTR-ID mapping, but never both. Higher level functions should make sure they try to remove both, as appropriate. To address your question, when xTR-ID is not null, the main mapping is not removed, because the caller wanted to remove the mapping at the xTR-ID level specifically. Added comment to clarify.",
+      "parentUuid": "1a622d24_b779c495",
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_576830ba",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 17
@@ -65,6 +101,24 @@
         "endLine": 383,
         "endChar": 44
       },
+      "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_4b7409cf",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-12-07T21:01:12Z",
+      "side": 1,
+      "message": "Based on off-line discussion, I implemented a global \"last updated\" timestamp.",
+      "parentUuid": "1a622d24_576830ba",
       "revId": "663c4d7b778573dd7e4010b78f31dbc42b170a80",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
