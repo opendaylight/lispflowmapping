@@ -213,7 +213,7 @@ public class RadixTrie<T> {
         TrieNode node = root.findClosest(prefix, preflen);
 
         // if no node is found or if node not a prefix or if mask is too long
-        if (node == null || node.prefix == null || node.bit > preflen) {
+        if (node == null || node.prefix == null || node.bit != preflen) {
             return null;
         }
 
