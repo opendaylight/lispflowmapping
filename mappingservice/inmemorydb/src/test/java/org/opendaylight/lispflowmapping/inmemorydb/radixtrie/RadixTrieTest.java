@@ -399,4 +399,17 @@ public class RadixTrieTest {
         assertTrue("Lookup 10.10.10.10 result is NULL", res7 != null);
         assertTrue("Lookup Result for 10.10.10.0 is not right", res7.data().equals("10.10.10.0"));
     }
+
+    @Test
+    public void testLookupExact() {
+        RadixTrie<String> radixTrie4 = new RadixTrie<>(32);
+
+        radixTrie4.insert(IP4_BYTES1, 16, "192.168.0.0");
+
+        RadixTrie<String>.TrieNode res1 = radixTrie4.lookupExact(IP4_BYTES4, 24);
+        assertTrue("Lookup for 192.168.1.0 is not NULL", res1 == null);
+
+        RadixTrie<String>.TrieNode res2 = radixTrie4.lookupExact(IP4_BYTES1, 16);
+        assertTrue("Lookup for 192.168.0.0 is NULL", res2 != null);
+    }
 }
