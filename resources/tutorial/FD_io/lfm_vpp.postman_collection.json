@@ -1,0 +1,186 @@
+{
+	"variables": [],
+	"info": {
+		"name": "lfm_vpp",
+		"_postman_id": "a85cc8b6-fd84-8b71-111b-24794a4fa573",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "VPP1 IPV4 Add Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.2.0%2f24/northbound/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mapping\": {\n        \"eid-uri\": \"ipv4:6.0.2.0/24\",\n        \"origin\": \"northbound\",\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                    \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n                    \"ipv4-prefix\": \"6.0.2.0/24\"\n            },\n            \"LocatorRecord\": [\n                {\n                    \"locator-id\": \"ELP\",\n                    \"priority\": 1,\n                    \"weight\": 1,\n                    \"multicastPriority\": 255,\n                    \"multicastWeight\": 0,\n                    \"localLocator\": true,\n                    \"rlocProbed\": false,\n                    \"routed\": false,\n                    \"rloc\": {\n                        \"address-type\": \"ietf-lisp-address-types:explicit-locator-path-lcaf\",\n                        \"explicit-locator-path\": {\n                            \"hop\": [\n                                {\n                                    \"hop-id\": \"Hop 1\",\n                                    \"address\": \"6.0.3.3\",\n                                    \"lrs-bits\": \"lookup rloc-probe strict\"\n                                },\n                                {\n                                    \"hop-id\": \"Hop 2\",\n                                    \"address\": \"6.0.3.1\",\n                                    \"lrs-bits\": \"lookup strict\"\n                                }\n                            ]\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VPP2 IPV4 Add Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.4.0%2f24/northbound/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mapping\": {\n        \"eid-uri\": \"ipv4:6.0.4.0/24\",\n        \"origin\": \"northbound\",\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                    \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n                    \"ipv4-prefix\": \"6.0.4.0/24\"\n            },\n            \"LocatorRecord\": [\n                {\n                    \"locator-id\": \"ELP\",\n                    \"priority\": 1,\n                    \"weight\": 1,\n                    \"multicastPriority\": 255,\n                    \"multicastWeight\": 0,\n                    \"localLocator\": true,\n                    \"rlocProbed\": false,\n                    \"routed\": false,\n                    \"rloc\": {\n                        \"address-type\": \"ietf-lisp-address-types:explicit-locator-path-lcaf\",\n                        \"explicit-locator-path\": {\n                            \"hop\": [\n                                {\n                                    \"hop-id\": \"Hop 1\",\n                                    \"address\": \"6.0.3.3\",\n                                    \"lrs-bits\": \"lookup rloc-probe strict\"\n                                },\n                                {\n                                    \"hop-id\": \"Hop 2\",\n                                    \"address\": \"6.0.3.2\",\n                                    \"lrs-bits\": \"lookup strict\"\n                                }\n                            ]\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VPP1 IPV4 Get Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.2.0%2f24/northbound/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mapping\": {\n        \"eid-uri\": \"ipv4:6.0.2.0/24\",\n        \"origin\": \"northbound\",\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                    \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n                    \"ipv4-prefix\": \"6.0.2.0/24\"\n            },\n            \"LocatorRecord\": [\n                {\n                    \"locator-id\": \"ELP\",\n                    \"priority\": 1,\n                    \"weight\": 1,\n                    \"multicastPriority\": 255,\n                    \"multicastWeight\": 0,\n                    \"localLocator\": true,\n                    \"rlocProbed\": false,\n                    \"routed\": false,\n                    \"rloc\": {\n                        \"address-type\": \"ietf-lisp-address-types:explicit-locator-path-lcaf\",\n                        \"explicit-locator-path\": {\n                            \"hop\": [\n                                {\n                                    \"hop-id\": \"Hop 1\",\n                                    \"address\": \"6.0.3.3\",\n                                    \"lrs-bits\": \"lookup rloc-probe strict\"\n                                },\n                                {\n                                    \"hop-id\": \"Hop 2\",\n                                    \"address\": \"6.0.3.1\",\n                                    \"lrs-bits\": \"lookup strict\"\n                                }\n                            ]\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VPP2 IPV4 Get Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.4.0%2f24/northbound/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mapping\": {\n        \"eid-uri\": \"ipv4:6.0.2.0/24\",\n        \"origin\": \"northbound\",\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                    \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n                    \"ipv4-prefix\": \"6.0.2.0/24\"\n            },\n            \"LocatorRecord\": [\n                {\n                    \"locator-id\": \"ELP\",\n                    \"priority\": 1,\n                    \"weight\": 1,\n                    \"multicastPriority\": 255,\n                    \"multicastWeight\": 0,\n                    \"localLocator\": true,\n                    \"rlocProbed\": false,\n                    \"routed\": false,\n                    \"rloc\": {\n                        \"address-type\": \"ietf-lisp-address-types:explicit-locator-path-lcaf\",\n                        \"explicit-locator-path\": {\n                            \"hop\": [\n                                {\n                                    \"hop-id\": \"Hop 1\",\n                                    \"address\": \"6.0.3.3\",\n                                    \"lrs-bits\": \"lookup rloc-probe strict\"\n                                },\n                                {\n                                    \"hop-id\": \"Hop 2\",\n                                    \"address\": \"6.0.3.1\",\n                                    \"lrs-bits\": \"lookup strict\"\n                                }\n                            ]\n                        }\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VPP1 IPV4 Delete Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.2.0%2f24/northbound/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VPP2 IPV4 Delete Mapping",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:6.0.4.0%2f24/northbound/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ALL database content",
+			"request": {
+				"url": "http://{{controllerHost}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
