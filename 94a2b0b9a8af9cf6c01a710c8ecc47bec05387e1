@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_465b6054",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-08T02:13:13Z",
+      "side": 1,
+      "message": "Only operational datastore should be dropped. The config datastore with origin\u003dnb should still be restored. right?",
+      "range": {
+        "startLine": 386,
+        "startChar": 11,
+        "endLine": 387,
+        "endChar": 19
+      },
+      "revId": "94a2b0b9a8af9cf6c01a710c8ecc47bec05387e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_c6365003",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-08T02:13:13Z",
+      "side": 1,
+      "message": "Probably we should set the last updated back to null after this no?",
+      "range": {
+        "startLine": 402,
+        "startChar": 2,
+        "endLine": 403,
+        "endChar": 5
+      },
+      "revId": "94a2b0b9a8af9cf6c01a710c8ecc47bec05387e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
