@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_99c152e7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2016-12-08T23:10:49Z",
+      "side": 1,
+      "message": "I would add a comment here saying at the time, operational data is not persisted, so this call should have no effects. plus the note from Robert on how to turn this on, and the fact that so far that option does not seem to work.",
+      "range": {
+        "startLine": 392,
+        "startChar": 0,
+        "endLine": 392,
+        "endChar": 83
+      },
+      "revId": "87e0eae7f86490825b9b9ce24c4f42b93484071a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
