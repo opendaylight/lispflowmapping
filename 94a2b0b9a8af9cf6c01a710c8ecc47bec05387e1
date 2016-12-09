@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_8c48f75c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-12-09T07:38:43Z",
+      "side": 1,
+      "message": "Right, and authentication keys too...",
+      "parentUuid": "1a622d24_465b6054",
+      "revId": "94a2b0b9a8af9cf6c01a710c8ecc47bec05387e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_c6365003",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 18
@@ -42,6 +60,24 @@
         "endLine": 403,
         "endChar": 5
       },
+      "revId": "94a2b0b9a8af9cf6c01a710c8ecc47bec05387e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_00ff8b68",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-12-09T07:38:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_c6365003",
       "revId": "94a2b0b9a8af9cf6c01a710c8ecc47bec05387e1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
