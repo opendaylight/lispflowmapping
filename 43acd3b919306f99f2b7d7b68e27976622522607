@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_24a9e07b",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-12-14T17:41:39Z",
+      "side": 1,
+      "message": "I would do here: while (node !\u003d null \u0026\u0026 node.prefix \u003d\u003d null) and at the end return node",
+      "range": {
+        "startLine": 193,
+        "startChar": 8,
+        "endLine": 193,
+        "endChar": 33
+      },
+      "revId": "43acd3b919306f99f2b7d7b68e27976622522607",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
