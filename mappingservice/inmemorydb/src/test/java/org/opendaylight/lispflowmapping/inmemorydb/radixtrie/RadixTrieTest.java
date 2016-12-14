@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.inmemorydb.radixtrie;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.InetAddress;
@@ -244,6 +245,28 @@ public class RadixTrieTest {
         radixTrie4.removeAll();
         assertTrue(!Arrays.equals(radixTrie4.getRoot().prefix(), IP4_DEFAULT));
         assertTrue(radixTrie4.getRoot().bit == 0);
+    }
+
+    /**
+     * Tests v4 parent lookup.
+     */
+    @Test
+    public void testIp4ParentLookup() {
+        radixTrie4 = new RadixTrie<>(32, true);
+
+        addIp4Addresses(radixTrie4);
+
+        RadixTrie<Integer>.TrieNode res = radixTrie4.lookupParent(IP4_BYTES7, 32);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES6));
+        assertEquals(res.bit, 25);
+
+        res = radixTrie4.lookupParent(IP4_BYTES6, 25);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES4));
+        assertEquals(res.bit, 24);
+
+        res = radixTrie4.lookupParent(IP4_BYTES4, 24);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES1));
+        assertEquals(res.bit, 16);
     }
 
     /**
