@@ -122,6 +122,26 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     }
 
     @Override
+    public Eid getParentPrefix(Eid key) {
+        RadixTrie<Object>.TrieNode node = null;
+
+        if (key.getAddress() instanceof Ipv4PrefixBinary) {
+            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
+            node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            if (node != null) {
+                return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+            }
+        } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
+            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
+            node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            if (node != null) {
+                return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Eid getWidestNegativePrefix(Eid key) {
         RadixTrie<Object>.TrieNode node = null;
 

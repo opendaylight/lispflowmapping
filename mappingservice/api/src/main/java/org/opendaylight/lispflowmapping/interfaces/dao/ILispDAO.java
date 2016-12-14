@@ -64,6 +64,15 @@ public interface ILispDAO {
     SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key);
 
     /**
+     * Get parent prefix.
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The parent prefix of the longest prefix match for the key.
+     */
+    Eid getParentPrefix(Eid key);
+
+    /**
      * Get widest negative prefix.
      *
      * @param key
