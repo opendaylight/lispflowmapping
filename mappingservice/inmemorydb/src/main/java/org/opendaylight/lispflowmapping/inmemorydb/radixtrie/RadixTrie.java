@@ -177,6 +177,29 @@ public class RadixTrie<T> {
     }
 
     /**
+     * Given an EID, lookup the longest prefix match, then return its parent node.
+     *
+     * @param prefix Prefix looked up.
+     * @param preflen Prefix length.
+     * @return Parent node of longest prefix match or null if nothing is found.
+     */
+    public TrieNode lookupParent(byte[] prefix, int preflen) {
+        TrieNode node = lookupBest(prefix, preflen);
+
+        if (node == null) {
+            return null;
+        } else {
+            node = node.up;
+        }
+
+        while (node != null && node.prefix == null) {
+            node = node.up;
+        }
+
+        return node;
+    }
+
+    /**
      * Lookup widest negative (i.e., overlapping but not present in trie) prefix for given prefix and prefix length.
      *
      * @param prefix Prefix looked up.
