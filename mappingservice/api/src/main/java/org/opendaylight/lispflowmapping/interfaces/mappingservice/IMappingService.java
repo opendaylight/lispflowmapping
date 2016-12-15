@@ -172,13 +172,13 @@ public interface IMappingService {
     void removeData(MappingOrigin origin, Eid key, String subKey);
 
     /**
-     * Configures Mapping Service mapping overwrite option. If set to true, mappings with the same key are overwritten,
+     * Configures Mapping Service mapping merge option. If set to false, mappings with the same key are overwritten,
      * otherwise, mappings with the same key but from different xTR-IDs are all stored.
      *
-     * @param overwrite
-     *            enables or disables mapping overwrite
+     * @param mappingMerge
+     *            enables or disables mapping merge
      */
-    void setMappingOverwrite(boolean overwrite);
+    void setMappingMerge(boolean mappingMerge);
 
     /**
      * Configures Mapping Service mapping lookup policy option.

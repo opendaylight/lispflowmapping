@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private boolean notificationService;
-    private boolean overwrite;
+    private boolean mappingMerge;
     private ILispDAO dao;
     private ILispMapCache smc;
     private IMapCache pmc;
@@ -68,10 +68,10 @@ public class MappingSystem implements IMappingSystem {
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
 
-    public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean overwrite) {
+    public MappingSystem(ILispDAO dao, boolean iterateMask, boolean notifications, boolean mappingMerge) {
         this.dao = dao;
         this.notificationService = notifications;
-        this.overwrite = overwrite;
+        this.mappingMerge = mappingMerge;
         buildMapCaches();
     }
 
@@ -80,8 +80,8 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    public void setOverwritePolicy(boolean overwrite) {
-        this.overwrite = overwrite;
+    public void setMappingMerge(boolean mappingMerge) {
+        this.mappingMerge = mappingMerge;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class MappingSystem implements IMappingSystem {
                 LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
                 return;
             }
-            if (xtrId != null && !overwrite) {
+            if (xtrId != null && mappingMerge) {
                 smc.addMapping(key, xtrId, mappingData);
             }
             if (xtrId != null && mappingData.isMergeEnabled()) {
