@@ -25,6 +25,16 @@ public final class ConfigIni {
     private long smrTimeout;
     private int smrRetryCount;
 
+    /*
+     * XXX  When configuration options are added or removed, they should also be added/removed in the karaf
+     * `etc/custom.properties file`, hosted in the odlparent repository [0]. The "Configuring LISP Flow Mapping"
+     * section in the LISP Flow Mapping User Guide [1] has to be updated too, including when a configuration option's
+     * semantics or behavior is changed, in addition to having added/removed and option. Since we don't document
+     * options extensively in this file, the User Guide is the canonical documentation for them.
+     *
+     * [0] https://git.opendaylight.org/gerrit/gitweb?p=odlparent.git;a=blob;f=karaf/opendaylight-karaf-resources/src/main/resources/etc/custom.properties
+     * [1] https://git.opendaylight.org/gerrit/gitweb?p=docs.git;a=blob;f=docs/user-guide/lisp-flow-mapping-user-guide.rst
+     */
     private static final String LISP_LOOKUP_POLICY = "lisp.lookupPolicy";
     private static final String LISP_MAPPING_MERGE = "lisp.mappingMerge";
     private static final String LISP_SMR = "lisp.smr";
