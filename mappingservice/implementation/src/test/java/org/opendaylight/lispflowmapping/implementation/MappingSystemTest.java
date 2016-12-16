@@ -564,7 +564,7 @@ public class MappingSystemTest {
         mappingSystem.destroy();
         mappingSystem = new MappingSystem(daoMock, true, true, true);
         mappingSystem.setDataStoreBackEnd(dsbeMock);
-        mappingSystem.setOverwritePolicy(true);
+        mappingSystem.setMappingMerge(false);
         mappingSystem.setIterateMask(true);
     }
 

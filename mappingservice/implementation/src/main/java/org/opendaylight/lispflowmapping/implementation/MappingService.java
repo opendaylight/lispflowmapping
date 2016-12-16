@@ -92,7 +92,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
 
-    private boolean overwritePolicy = ConfigIni.getInstance().mappingOverwriteIsSet();
+    private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
     private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private boolean iterateMask = true;
     private boolean isMaster = false;
@@ -109,11 +109,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
 
     @Override
-    public void setMappingOverwrite(boolean overwrite) {
-        this.overwritePolicy = overwrite;
+    public void setMappingMerge(boolean mergeMapping) {
+        this.mappingMergePolicy = mergeMapping;
         if (mappingSystem != null) {
-            mappingSystem.setOverwritePolicy(overwrite);
-            ConfigIni.getInstance().setMappingOverwrite(overwrite);
+            mappingSystem.setMappingMerge(mergeMapping);
+            ConfigIni.getInstance().setMappingMerge(mappingMergePolicy);
         }
     }
 
@@ -126,7 +126,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
 
-        mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, overwritePolicy);
+        mappingSystem = new MappingSystem(dao, iterateMask, notificationPolicy, mappingMergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
         mappingSystem.initialize();
 

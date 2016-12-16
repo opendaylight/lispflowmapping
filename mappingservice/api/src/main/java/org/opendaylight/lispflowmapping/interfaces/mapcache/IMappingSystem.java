@@ -188,12 +188,12 @@ public interface IMappingSystem {
     void setIterateMask(boolean iterate);
 
     /**
-     * Configure overwrite policy. If set to true, mappings are overwritten.
+     * Configure merge policy. If set to true, mappings are merged.
      *
-     * @param overwrite
+     * @param mappingMerge
      *            Value to configure
      */
-    void setOverwritePolicy(boolean overwrite);
+    void setMappingMerge(boolean mappingMerge);
 
     /**
      * Print all mappings. Used for testing, debugging and the karaf shell.

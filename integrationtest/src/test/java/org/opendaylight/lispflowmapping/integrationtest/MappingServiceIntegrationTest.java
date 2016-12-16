@@ -228,7 +228,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void before() throws Exception {
         areWeReady();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
-        mapService.setMappingOverwrite(true);
+        mapService.setMappingMerge(false);
 
         locatorEid = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         socket = initSocket(socket, LispMessage.PORT_NUM);
@@ -781,7 +781,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final SocketReader socketReader = SocketReader.startReadingInStandaloneThread(socket);
 
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
-        mapService.setMappingOverwrite(false);
+        mapService.setMappingMerge(true);
 
         //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(true, SITE_A_SB, SITE_B_SB, SITE_C_WP_100_1_SB, SITE_D_WP_100_1_SB,
@@ -984,7 +984,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
-        mapService.setMappingOverwrite(true);
+        mapService.setMappingMerge(false);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         Rloc rloc1Value = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         Rloc rloc2Value = LispAddressUtil.asIpv4Rloc("4.3.2.2");
@@ -996,7 +996,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void testMapRegisterDoesntOverwritesNoSubkey() throws SocketTimeoutException {
         cleanUP();
-        mapService.setMappingOverwrite(false);
+        mapService.setMappingMerge(true);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         Rloc rloc1Value = LispAddressUtil.asIpv4Rloc("4.3.2.1");
         Rloc rloc2Value = LispAddressUtil.asIpv4Rloc("4.3.2.2");
@@ -2087,7 +2087,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void timedOutMappingRecord() {
         cleanUP();
-        mapService.setMappingOverwrite(false);
+        mapService.setMappingMerge(true);
         // mapping expires after 1 second
         ConfigIni.getInstance().setRegistrationValiditySb(1000L);
 
