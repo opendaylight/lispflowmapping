@@ -414,6 +414,17 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public Future<RpcResult<Void>> removeAllOperationalContent() {
+        RpcResultBuilder<Void> rpcResultBuilder;
+
+        dsbe.removeAllOperationalDatastoreContent();
+
+        rpcResultBuilder = RpcResultBuilder.success();
+
+        return Futures.immediateFuture(rpcResultBuilder.build());
+    }
+
+    @Override
     public Eid getWidestNegativePrefix(Eid key) {
         return mappingSystem.getWidestNegativePrefix(key);
     }
