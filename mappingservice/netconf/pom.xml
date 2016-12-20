@@ -5,17 +5,17 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.3-SNAPSHOT</version>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.netconf</artifactId>
-  <version>1.4.2-SNAPSHOT</version>
+  <version>1.4.3-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Mapping Service NETCONF Connector</name>
 
   <properties>
-    <netconf.connector.version>1.4.2-SNAPSHOT</netconf.connector.version>
+    <netconf.connector.version>1.4.3-SNAPSHOT</netconf.connector.version>
   </properties>
 
   <dependencies>
