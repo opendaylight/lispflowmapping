@@ -285,6 +285,9 @@ module odl-mappingservice {
     rpc remove-all-mappings {
     }
 
+    rpc remove-all-operational-content {
+    }
+
     notification mapping-changed {
         description "Notification sent when a mapping is changed";
         leaf change-type {
