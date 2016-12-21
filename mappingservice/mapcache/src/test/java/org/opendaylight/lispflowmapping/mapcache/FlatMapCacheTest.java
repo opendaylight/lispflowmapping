@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.mapcache;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atMost;
@@ -27,8 +26,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 
 public class FlatMapCacheTest {
 
@@ -39,8 +36,6 @@ public class FlatMapCacheTest {
 
     private static final Eid EID_TEST = new EidBuilder().setAddress(new Ipv4Builder()
             .setIpv4(new Ipv4Address("127.0.0.1")).build()).build();
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyString("auth_string_test")
-            .build();
     private static final Eid NORMALIZED_EID = MaskUtil.normalize(EID_TEST);
 
     @Before
@@ -75,42 +70,6 @@ public class FlatMapCacheTest {
     public void removeMappingTest() {
         flatMapCache.removeMapping(EID_TEST);
         verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.RECORD);
-    }
-
-    /**
-     * Tests {@link FlatMapCache#addAuthenticationKey}.
-     */
-    @Test
-    public void addAuthenticationKeyTest() {
-        flatMapCache.addAuthenticationKey(EID_TEST, MAPPING_AUTHKEY);
-        verify(daoMock, atMost(1)).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
-    }
-
-    /**
-     * Tests {@link FlatMapCache#getAuthenticationKey}.
-     */
-    @Test
-    public void getAuthenticationKeyTest() {
-        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-        assertEquals(MAPPING_AUTHKEY, flatMapCache.getAuthenticationKey(EID_TEST));
-    }
-
-    /**
-     * Tests {@link FlatMapCache#getAuthenticationKey} with other than MappingAuthkey object.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withNull() {
-        when(daoMock.getSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY)).thenReturn(new Object());
-        assertNull(flatMapCache.getAuthenticationKey(EID_TEST));
-    }
-
-    /**
-     * Tests {@link FlatMapCache#removeAuthenticationKey}.
-     */
-    @Test
-    public void removeAuthenticationKeyTest() {
-        flatMapCache.removeAuthenticationKey(EID_TEST);
-        verify(daoMock).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
     }
 
     /**

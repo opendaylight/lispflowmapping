@@ -40,7 +40,7 @@ import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.lisp.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
@@ -62,7 +62,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             LISPFLOWMAPPING_ENTITY_NAME);
 
     private volatile String bindingAddress;
-    private SimpleMapCache smc;
+    private AuthKeyDb akdb;
     private MapRegisterCache mapRegisterCache = new MapRegisterCache();
     private boolean mapRegisterCacheEnabled;
     private long mapRegisterCacheTimeout;
@@ -106,14 +106,14 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public void init() {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         synchronized (startLock) {
-            this.smc = new SimpleMapCache(new HashMapDb());
-            this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, smc);
+            this.akdb = new AuthKeyDb(new HashMapDb());
+            this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
             this.dsbe = new DataStoreBackEnd(dataBroker);
 
             lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
             lispSouthboundHandler.setNotificationProvider(notificationPublishService);
-            lispSouthboundHandler.setSimpleMapCache(smc);
+            lispSouthboundHandler.setAuthKeyDb(akdb);
             lispSouthboundHandler.setMapRegisterCache(mapRegisterCache);
             lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
             lispSouthboundHandler.setAuthenticationKeyDataListener(authenticationKeyDataListener);

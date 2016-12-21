@@ -32,13 +32,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4PrefixBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.MacBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 
 public class MultiTableMapCacheTest {
 
@@ -67,13 +63,9 @@ public class MultiTableMapCacheTest {
             .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV_4_PREFIX_DST).build()).build();
     private static final Eid NORMALIZED_SRCDST_EID = MaskUtil.normalize(EID_SOURCE_DEST_KEY_TYPE);
     private static final Eid NORMALIZED_PREFIX_SRC_EID = MaskUtil.normalize(EID_IPV4_PREFIX_SRC);
-    private static final Eid EID_MAC = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
-            .setAddress(new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build()).build();
     private static final Eid NORMALIZED_EID = MaskUtil.normalize(EID_TEST);
     private static final Object DUMMY_OBJECT = "dummy_object";
     private static final Object DUMMY_OBJECT_2 = "mapping_lpm_eid";
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
-            .setKeyString("mapping_authkey_test").build();
 
     @Before
     public void init() {
@@ -212,139 +204,6 @@ public class MultiTableMapCacheTest {
         multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE);
         verifyZeroInteractions(tableDaoMock);
         verifyZeroInteractions(dbMock);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#addAuthenticationKey}.
-     */
-    @Test
-    public void addAuthenticationKeyTest() {
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.putNestedTable(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
-                .thenReturn(srcDstDaoMock);
-
-        multiTableMapCache.addAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE, MAPPING_AUTHKEY);
-        verify(srcDstDaoMock).put(SourceDestKeyHelper.getSrcBinary(NORMALIZED_SRCDST_EID),
-                new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
-
-        multiTableMapCache.addAuthenticationKey(EID_TEST, MAPPING_AUTHKEY);
-        verify(tableDaoMock).put(NORMALIZED_EID, new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Ipv4Prefix address.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withIpv4Prefix() {
-        final short maskLength = MaskUtil.getMaskForAddress(EID_IPV4_PREFIX_SRC.getAddress());
-        final Eid key = MaskUtil.normalize(EID_IPV4_PREFIX_SRC, maskLength);
-
-        when(daoMock.getSpecific(0L, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-
-        assertEquals(MAPPING_AUTHKEY, multiTableMapCache.getAuthenticationKey(EID_IPV4_PREFIX_SRC));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with SourceDestKey address.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withSourceDestKey() {
-        final Eid eidSrc = SourceDestKeyHelper.getSrcBinary(EID_SOURCE_DEST_KEY_TYPE);
-        final Eid eidDst = SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY_TYPE);
-        final short maskLength = MaskUtil.getMaskForAddress(eidSrc.getAddress());
-        final Eid key = MaskUtil.normalize(eidSrc, maskLength);
-
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(eidDst, SubKeys.LCAF_SRCDST))
-                .thenReturn(srcDstDaoMock);
-        when(srcDstDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-
-        assertEquals(MAPPING_AUTHKEY, multiTableMapCache.getAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with SourceDestKey address, srcDstDao == null.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withSourceDestKey_nullDao() {
-        final Eid eidDst = SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY_TYPE);
-
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(eidDst, SubKeys.LCAF_SRCDST))
-                .thenReturn(null);
-
-        assertNull(multiTableMapCache.getAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withMac() {
-        final Eid key = MaskUtil.normalize(EID_MAC);
-
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-
-        assertEquals(MAPPING_AUTHKEY, multiTableMapCache.getAuthenticationKey(EID_MAC));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address, failed authentication.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withMac_failedAuthentication() {
-        final Eid key = MaskUtil.normalize(EID_MAC);
-
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(key, SubKeys.AUTH_KEY)).thenReturn(null);
-
-        assertNull(multiTableMapCache.getAuthenticationKey(EID_MAC));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#getAuthenticationKey} with Mac address, table == null.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withMac_nullTable() {
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
-        assertNull(multiTableMapCache.getAuthenticationKey(EID_MAC));
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#removeAuthenticationKey} with SourceDestKey address type.
-     */
-    @Test
-    public void removeAuthenticationKeyTest_withSourceDestKey() {
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-        when(tableDaoMock.getSpecific(SourceDestKeyHelper.getDstBinary(NORMALIZED_SRCDST_EID), SubKeys.LCAF_SRCDST))
-                .thenReturn(srcDstDaoMock);
-
-        multiTableMapCache.removeAuthenticationKey(EID_SOURCE_DEST_KEY_TYPE);
-        verify(srcDstDaoMock).removeSpecific(NORMALIZED_SRCDST_EID, SubKeys.AUTH_KEY);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#removeAuthenticationKey} with Ipv4 address type.
-     */
-    @Test
-    public void removeAuthenticationKeyTest_withIpv4() {
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(tableDaoMock);
-
-        multiTableMapCache.removeAuthenticationKey(EID_TEST);
-        verify(tableDaoMock).removeSpecific(NORMALIZED_EID, SubKeys.AUTH_KEY);
-    }
-
-    /**
-     * Tests {@link MultiTableMapCache#removeAuthenticationKey} with table == null.
-     */
-    @Test
-    public void removeAuthenticationKeyTest_withNullTable() {
-        when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
-
-        multiTableMapCache.removeAuthenticationKey(EID_TEST);
-        verifyZeroInteractions(tableDaoMock);
     }
 
     /**

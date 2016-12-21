@@ -28,8 +28,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 
@@ -63,9 +61,6 @@ public class SimpleMapCacheTest {
     private static final Eid NORMALIZED_EID_IPV4_PREFIX_DST = MaskUtil.normalize(EID_IPV4_PREFIX_DST, (short) 24);
 
     private static final IpAddressBinary IP_ADDRESS = new IpAddressBinary(new Ipv4AddressBinary(IPV4_RLOC_BINARY));
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
-            .setKeyString("pass")
-            .setKeyType(1).build();
 
     @Before
     public void init() {
@@ -128,85 +123,6 @@ public class SimpleMapCacheTest {
 
         simpleMapCache.removeMapping(EID_IPV4);
         Mockito.verifyNoMoreInteractions(tableMock);
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#addAuthenticationKey} method.
-     */
-    @Test
-    public void addAuthenticationKeyTest() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-
-        simpleMapCache.addAuthenticationKey(EID_IPV4, MAPPING_AUTHKEY);
-        Mockito.verify(tableMock)
-                .put(MaskUtil.normalize(EID_IPV4), new MappingEntry<>(SubKeys.AUTH_KEY, MAPPING_AUTHKEY));
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#getAuthenticationKey} method with maskable address.
-     */
-    @Test
-    public void getAuthenticationKeyTest_withMaskableAddress() {
-        Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.getSpecific(MaskUtil.normalize(EID_IPV4_PREFIX_1_VNI, MASK), SubKeys.AUTH_KEY))
-                .thenReturn(MAPPING_AUTHKEY);
-
-        assertEquals(MAPPING_AUTHKEY, simpleMapCache.getAuthenticationKey(EID_IPV4_PREFIX_1_VNI));
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#getAuthenticationKey} method with non maskable address.
-     */
-    @Test
-    public void addAuthenticationKeyTest_withNonMaskableAddress() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.getSpecific(NORMALIZED_EID_IPV4, SubKeys.AUTH_KEY)).thenReturn(MAPPING_AUTHKEY);
-
-        assertEquals(MAPPING_AUTHKEY, simpleMapCache.getAuthenticationKey(EID_IPV4));
-        Mockito.verify(tableMock).getSpecific(NORMALIZED_EID_IPV4, SubKeys.AUTH_KEY);
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#getAuthenticationKey} method with no MappingAuthkey.
-     */
-    @Test
-    public void addAuthenticationKeyTest_withNoMappingAuthkey() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-        Mockito.when(tableMock.getSpecific(NORMALIZED_EID_IPV4, SubKeys.AUTH_KEY)).thenReturn(null);
-
-        assertNull(simpleMapCache.getAuthenticationKey(EID_IPV4));
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#getAuthenticationKey} method with no VNI_100 table.
-     */
-    @Test
-    public void addAuthenticationKeyTest_withNullVniTable() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(null);
-
-        assertNull(simpleMapCache.getAuthenticationKey(EID_IPV4));
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#removeAuthenticationKey} method.
-     */
-    @Test
-    public void removeAuthenticationKeyTest() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
-
-        simpleMapCache.removeAuthenticationKey(EID_IPV4);
-        Mockito.verify(tableMock).removeSpecific(NORMALIZED_EID_IPV4, SubKeys.AUTH_KEY);
-    }
-
-    /**
-     * Tests {@link SimpleMapCache#removeAuthenticationKey} method with no VNI_100 table.
-     */
-    @Test
-    public void removeAuthenticationKeyTest_withNoVniTable() {
-        Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(null);
-
-        simpleMapCache.removeAuthenticationKey(EID_IPV4);
-        Mockito.verify(tableMock, Mockito.never()).removeSpecific(Mockito.any(Eid.class), Mockito.anyString());
     }
 
     /**
