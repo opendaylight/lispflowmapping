@@ -108,9 +108,7 @@ public class SimpleMapCacheTest {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
 
         simpleMapCache.removeMapping(EID_IPV4);
-        Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.RECORD);
-        Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.SRC_RLOCS);
-        Mockito.verify(tableMock).removeSpecific(MaskUtil.normalize(EID_IPV4), SubKeys.XTRID_RECORDS);
+        Mockito.verify(tableMock).remove(MaskUtil.normalize(EID_IPV4));
         Mockito.verifyNoMoreInteractions(tableMock);
     }
 
