@@ -417,6 +417,13 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     public Future<RpcResult<Void>> removeAllOperationalContent() {
         RpcResultBuilder<Void> rpcResultBuilder;
 
+        /*
+         * Since master nodes ignore datastore changes for southbound originated mappings, they need to be removed
+         * explicitly.
+         */
+        if (isMaster) {
+            mappingSystem.cleanSBMappings();
+        }
         dsbe.removeAllOperationalDatastoreContent();
 
         rpcResultBuilder = RpcResultBuilder.success();
