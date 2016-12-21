@@ -62,6 +62,7 @@ public class MappingSystem implements IMappingSystem {
     private boolean notificationService;
     private boolean mappingMerge;
     private ILispDAO dao;
+    private ILispDAO sdao;
     private ILispMapCache smc;
     private IMapCache pmc;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
@@ -102,7 +103,8 @@ public class MappingSystem implements IMappingSystem {
          * but that option is no longer supported in the code, since it was never tested and may lead to unexpected
          * results.
          */
-        smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
+        sdao = dao.putTable(MappingOrigin.Southbound.toString());
+        smc = new SimpleMapCache(sdao);
         pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
@@ -431,6 +433,14 @@ public class MappingSystem implements IMappingSystem {
     public void cleanCaches() {
         dao.removeAll();
         buildMapCaches();
+    }
+
+    /*
+     * XXX  Mappings and keys should be separated for this to work properly, as is it will remove northbound originated
+     * authentication keys too, since they are currently stored in smc.
+     */
+    public void cleanSBMappings() {
+        smc = new SimpleMapCache(sdao);
     }
 
     @Override
