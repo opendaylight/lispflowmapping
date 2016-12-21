@@ -196,6 +196,13 @@ public interface IMappingService {
     String printMappings();
 
     /**
+     * Print all authentication keys. Used for testing, debugging and the karaf shell.
+     *
+     * @return String consisting of all mappings
+     */
+    String printKeys();
+
+    /**
      * Cleans all cached mappings.Used for testing.
      */
     void cleanCachedMappings();

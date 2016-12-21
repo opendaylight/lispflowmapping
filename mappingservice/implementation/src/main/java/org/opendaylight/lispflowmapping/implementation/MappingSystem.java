@@ -20,6 +20,7 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
@@ -27,6 +28,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -59,11 +61,13 @@ import org.slf4j.LoggerFactory;
  */
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
+    private static final String AUTH_KEY_TABLE = "authentication";
     private boolean notificationService;
     private boolean mappingMerge;
     private ILispDAO dao;
     private ILispMapCache smc;
     private IMapCache pmc;
+    private IAuthKeyDb akdb;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
@@ -102,8 +106,9 @@ public class MappingSystem implements IMappingSystem {
          * but that option is no longer supported in the code, since it was never tested and may lead to unexpected
          * results.
          */
-        smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
         pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
+        smc = new SimpleMapCache(dao.putTable(MappingOrigin.Southbound.toString()));
+        akdb = new AuthKeyDb(dao.putTable(AUTH_KEY_TABLE));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
     }
@@ -332,7 +337,7 @@ public class MappingSystem implements IMappingSystem {
     public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
         LOG.debug("Adding authentication key '{}' with key-ID {} for {}", authKey.getKeyString(), authKey.getKeyType(),
                 LispAddressStringifier.getString(key));
-        smc.addAuthenticationKey(key, authKey);
+        akdb.addAuthenticationKey(key, authKey);
     }
 
     @Override
@@ -340,7 +345,7 @@ public class MappingSystem implements IMappingSystem {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Retrieving authentication key for {}", LispAddressStringifier.getString(key));
         }
-        return smc.getAuthenticationKey(key);
+        return akdb.getAuthenticationKey(key);
     }
 
     @Override
@@ -348,7 +353,7 @@ public class MappingSystem implements IMappingSystem {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing authentication key for {}", LispAddressStringifier.getString(key));
         }
-        smc.removeAuthenticationKey(key);
+        akdb.removeAuthenticationKey(key);
     }
 
     @Override
@@ -426,6 +431,11 @@ public class MappingSystem implements IMappingSystem {
         sb.append("SbMapCache\n----------\n");
         sb.append(smc.printMappings());
         return sb.toString();
+    }
+
+    @Override
+    public String printKeys() {
+        return akdb.printKeys();
     }
 
     public void cleanCaches() {
