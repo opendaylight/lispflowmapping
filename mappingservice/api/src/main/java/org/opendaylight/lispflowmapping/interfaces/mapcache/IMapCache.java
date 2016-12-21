@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,7 +9,6 @@
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 
 /**
  * Map-cache interface.
@@ -56,33 +55,6 @@ public interface IMapCache {
      *            Key to be removed
      */
     void removeMapping(Eid key);
-
-    /**
-     * Add authentication key.
-     *
-     * @param key
-     *            The key for which the authentication key is added
-     * @param authKey
-     *            The authentication key
-     */
-    void addAuthenticationKey(Eid key, MappingAuthkey authKey);
-
-    /**
-     * Retrieve authentication key.
-     *
-     * @param key
-     *            The key for which the authentication key is being looked up.
-     * @return The authentication key.
-     */
-    MappingAuthkey getAuthenticationKey(Eid key);
-
-    /**
-     * Remove authentication key.
-     *
-     * @param key
-     *            Key for which the authentication key should be removed.
-     */
-    void removeAuthenticationKey(Eid key);
 
     /**
      * Add data for key.

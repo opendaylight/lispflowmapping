@@ -34,6 +34,7 @@ import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -84,6 +85,7 @@ public class MappingSystemTest {
     private static ILispDAO daoMock = Mockito.mock(ILispDAO.class);
     @Mock private static ILispMapCache smcMock;
     @Mock private static IMapCache pmcMock;
+    @Mock private static IAuthKeyDb akdbMock;
     @Mock private static DataStoreBackEnd dsbeMock;
     @Mock private static EnumMap<MappingOrigin, IMapCache> tableMapMock;
     @InjectMocks private static MappingSystem mappingSystem = new MappingSystem(daoMock, false, true, true);
@@ -479,8 +481,8 @@ public class MappingSystemTest {
         assertEquals(captor.getValue().getRecord(), mapping_1.getMappingRecord());
         Mockito.verify(pmcMock).addMapping(Mockito.eq(EID_IPV4_2), captor.capture());
         assertEquals(captor.getValue().getRecord(), mapping_2.getMappingRecord());
-        Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_1, mappingAuthkey_1);
-        Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_2, mappingAuthkey_2);
+        Mockito.verify(akdbMock).addAuthenticationKey(EID_IPV4_1, mappingAuthkey_1);
+        Mockito.verify(akdbMock).addAuthenticationKey(EID_IPV4_2, mappingAuthkey_2);
     }
 
     /**
@@ -489,7 +491,7 @@ public class MappingSystemTest {
     @Test
     public void addAuthenticationKeyTest() {
         mappingSystem.addAuthenticationKey(EID_IPV4_1, MAPPING_AUTHKEY_BUILDER.build());
-        Mockito.verify(smcMock).addAuthenticationKey(EID_IPV4_1, MAPPING_AUTHKEY_BUILDER.build());
+        Mockito.verify(akdbMock).addAuthenticationKey(EID_IPV4_1, MAPPING_AUTHKEY_BUILDER.build());
     }
 
     /**
@@ -497,7 +499,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getAuthenticationKeyTest() {
-        Mockito.when(smcMock.getAuthenticationKey(EID_IPV4_1)).thenReturn(MAPPING_AUTHKEY_BUILDER.build());
+        Mockito.when(akdbMock.getAuthenticationKey(EID_IPV4_1)).thenReturn(MAPPING_AUTHKEY_BUILDER.build());
         assertEquals(MAPPING_AUTHKEY_BUILDER.build(), mappingSystem.getAuthenticationKey(EID_IPV4_1));
     }
 
@@ -507,7 +509,7 @@ public class MappingSystemTest {
     @Test
     public void removeAuthenticationKeyTest() {
         mappingSystem.removeAuthenticationKey(EID_IPV4_1);
-        Mockito.verify(smcMock).removeAuthenticationKey(EID_IPV4_1);
+        Mockito.verify(akdbMock).removeAuthenticationKey(EID_IPV4_1);
     }
 
     /**

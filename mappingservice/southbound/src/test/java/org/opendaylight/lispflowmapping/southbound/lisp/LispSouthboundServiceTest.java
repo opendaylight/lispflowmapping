@@ -50,7 +50,7 @@ import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
@@ -102,7 +102,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private ConcurrentLispSouthboundStats lispSouthboundStats;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
-    private static SimpleMapCache smc;
+    private static AuthKeyDb akdb;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -125,23 +125,23 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @BeforeClass
     public static void initTests() {
-        smc = Mockito.mock(SimpleMapCache.class);
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("10.10.10.10/8"))))
+        akdb = Mockito.mock(AuthKeyDb.class);
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("10.10.10.10/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "2610:d0:ffff:192:0:0:0:1/128"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"))))
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("125.124.123.122/8", new
-                InstanceIdType(21L)))))
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("125.124.123.122/8",
+                new InstanceIdType(21L)))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asMacEid("0a:0b:0c:0d:0e:0f"))))
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asMacEid("0a:0b:0c:0d:0e:0f"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(smc.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
+        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
     }
 
@@ -158,7 +158,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         mapRegisterCache = new MapRegisterCache();
         testedLispService.setMapRegisterCache(mapRegisterCache);
         testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
-        testedLispService.setSimpleMapCache(smc);
+        testedLispService.setAuthKeyDb(akdb);
         testedLispService.setAuthenticationKeyDataListener(Mockito.mock(AuthenticationKeyDataListener.class));
         testedLispService.setDataStoreBackEnd(Mockito.mock(DataStoreBackEnd.class));
         nps = context.mock(NotificationPublishService.class);
