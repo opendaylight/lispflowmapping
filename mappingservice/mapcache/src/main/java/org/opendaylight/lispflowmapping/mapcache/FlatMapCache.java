@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -15,7 +15,6 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 
 /**
  * Flat key implementation of a map-cache. As the name suggests, no longest prefix matching is done for IP addresses
@@ -56,29 +55,6 @@ public class FlatMapCache implements IMapCache {
     public void removeMapping(Eid eid) {
         Eid key = MaskUtil.normalize(eid);
         dao.removeSpecific(key, SubKeys.RECORD);
-    }
-
-    @Override
-    public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
-        Eid key = MaskUtil.normalize(eid);
-        dao.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
-    }
-
-    @Override
-    public MappingAuthkey getAuthenticationKey(Eid eid) {
-        Eid key = MaskUtil.normalize(eid);
-        Object data = dao.getSpecific(key, SubKeys.AUTH_KEY);
-        if (data instanceof MappingAuthkey) {
-            return (MappingAuthkey) data;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void removeAuthenticationKey(Eid eid) {
-        Eid key = MaskUtil.normalize(eid);
-        dao.removeSpecific(key, SubKeys.AUTH_KEY);
     }
 
     @Override

@@ -34,7 +34,7 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
-import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
@@ -86,7 +86,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private boolean authenticationEnabled = true;
     private final LispSouthboundPlugin lispSbPlugin;
     private ConcurrentLispSouthboundStats lispSbStats = null;
-    private SimpleMapCache smc;
+    private AuthKeyDb akdb;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
     private boolean isReadFromChannelEnabled = true;
@@ -323,9 +323,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         for (int i = 0; i < eidLispAddresses.size(); i++) {
             final Eid eid = eidLispAddresses.get(i).getEid();
             if (i == 0) {
-                firstAuthKey = smc.getAuthenticationKey(eid);
+                firstAuthKey = akdb.getAuthenticationKey(eid);
             } else {
-                final MappingAuthkey authKey = smc.getAuthenticationKey(eid);
+                final MappingAuthkey authKey = akdb.getAuthenticationKey(eid);
                 if (!Objects.equals(firstAuthKey, authKey)) {
                     return null;
                 }
@@ -393,7 +393,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
      * <p>Methods pass through all records from map register message. For the EID of the first record it gets
      * authentication key and does validation of authentication data again this authentication key. If it pass
      * it just checks for remaining records (and its EID) whether they have the same authenticatin key stored in
-     * simple map cache (smc).
+     * the authentication key database (akdb).
      *
      * @return Returns authentication key if all of EIDs have the same authentication key or null otherwise
      */
@@ -402,7 +402,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             return null;
         }
 
-        if (smc == null) {
+        if (akdb == null) {
             LOG.debug("Simple map cache wasn't instantieted and set.");
             return null;
         }
@@ -413,13 +413,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             final MappingRecordItem recordItem = mappingRecords.get(i);
             final MappingRecord mappingRecord = recordItem.getMappingRecord();
             if (i == 0) {
-                firstAuthKey = smc.getAuthenticationKey(mappingRecord.getEid());
+                firstAuthKey = akdb.getAuthenticationKey(mappingRecord.getEid());
                 if (!LispAuthenticationUtil.validate(mapRegister, byteBuffer, mappingRecord.getEid(), firstAuthKey)) {
                     return null;
                 }
             } else {
                 final Eid eid = mappingRecord.getEid();
-                final MappingAuthkey authKey = smc.getAuthenticationKey(eid);
+                final MappingAuthkey authKey = akdb.getAuthenticationKey(eid);
                 if (!firstAuthKey.equals(authKey)) {
                     LOG.debug("Map register packet contained several eids. Authentication keys for first one and for "
                             + "{} are different.",LispAddressStringifier.getString(eid));
@@ -516,8 +516,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     public void close() throws Exception {
     }
 
-    public void setSimpleMapCache(final SimpleMapCache smc) {
-        this.smc = smc;
+    public void setAuthKeyDb(final AuthKeyDb smc) {
+        this.akdb = smc;
     }
 
     public void setDataBroker(final DataBroker dataBroker) {
@@ -557,7 +557,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
                     mappingAuthkey.getKeyType(),
                     LispAddressStringifier.getString(key));
-            smc.addAuthenticationKey(key, mappingAuthkey);
+            akdb.addAuthenticationKey(key, mappingAuthkey);
         }
     }
 

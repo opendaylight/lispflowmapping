@@ -21,7 +21,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
+import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationKeyDataListenerTest {
 
-    @Mock(name = "smc") private static SimpleMapCache smcMock;
+    @Mock(name = "akdb") private static AuthKeyDb akdbMock;
     @Mock(name = "broker") private static DataBroker brokerMock;
     @Mock(name = "registration") private static ListenerRegistration<AuthenticationKeyDataListener>
             registrationMock;
@@ -92,7 +92,7 @@ public class AuthenticationKeyDataListenerTest {
 
         Mockito.when(brokerMock.registerDataTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
                 Mockito.any(AuthenticationKeyDataListener.class))).thenReturn(registrationMock);
-        authenticationKeyDataListener = new AuthenticationKeyDataListener(brokerMock, smcMock);
+        authenticationKeyDataListener = new AuthenticationKeyDataListener(brokerMock, akdbMock);
     }
 
     /**
@@ -104,7 +104,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_1);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
-        Mockito.verify(smcMock).removeAuthenticationKey(IPV4_BINARY_EID_1);
+        Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_BINARY_EID_1);
     }
 
     /**
@@ -116,7 +116,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_PREFIX);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
-        Mockito.verify(smcMock).removeAuthenticationKey(IPV4_PREFIX_BINARY_EID);
+        Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_PREFIX_BINARY_EID);
     }
 
     /**
@@ -128,7 +128,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(AUTHENTICATION_KEY_2);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_subtreeModified));
-        Mockito.verify(smcMock).addAuthenticationKey(IPV4_BINARY_EID_2, MAPPING_AUTHKEY);
+        Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_2, MAPPING_AUTHKEY);
     }
 
     /**
@@ -140,7 +140,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_write.getDataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_write));
-        Mockito.verify(smcMock).addAuthenticationKey(IPV4_BINARY_EID_3, MAPPING_AUTHKEY);
+        Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_3, MAPPING_AUTHKEY);
     }
 
     /**
@@ -155,7 +155,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_nullModType.getModificationType()).thenReturn(null);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_nullModType));
-        Mockito.verifyZeroInteractions(smcMock);
+        Mockito.verifyZeroInteractions(akdbMock);
     }
 
     /**
