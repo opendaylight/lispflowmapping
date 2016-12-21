@@ -180,11 +180,7 @@ public class SimpleMapCache implements ILispMapCache {
         if (table == null) {
             return;
         }
-
-        // We intentionally don't remove subscribers, so in case a mapping is re-added, they get notified
-        table.removeSpecific(key, SubKeys.RECORD);
-        table.removeSpecific(key, SubKeys.SRC_RLOCS);
-        table.removeSpecific(key, SubKeys.XTRID_RECORDS);
+        table.remove(key);
     }
 
     @Override
