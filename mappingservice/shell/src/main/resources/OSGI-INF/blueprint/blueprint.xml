@@ -7,6 +7,11 @@
       </action>
     </command>
     <command>
+      <action class="org.opendaylight.lispflowmapping.shell.LispKeys">
+        <property name="mappingServiceShell" ref="mappingServiceShellRef"/>
+      </action>
+    </command>
+    <command>
       <action class="org.opendaylight.lispflowmapping.shell.LispAddKey">
         <property name="mappingServiceShell" ref="mappingServiceShellRef"/>
       </action>

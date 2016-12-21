@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -18,9 +18,6 @@ import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Multi table map-cache that works with 'simple' and SourceDest LCAF addresses (see lisp-proto.yang). It can do longest
@@ -30,8 +27,6 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras
  */
 public class MultiTableMapCache implements IMapCache {
-    private static final Logger LOG = LoggerFactory.getLogger(MultiTableMapCache.class);
-
     private ILispDAO dao;
 
     public MultiTableMapCache(ILispDAO dao) {
@@ -154,77 +149,6 @@ public class MultiTableMapCache implements IMapCache {
             }
         } else {
             table.remove(key);
-        }
-    }
-
-    public void addAuthenticationKey(Eid eid, MappingAuthkey authKey) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getOrInstantiateVniTable(key);
-
-        if (key.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getOrInstantiateSDInnerDao(key, table);
-            srcDstDao.put(SourceDestKeyHelper.getSrcBinary(key), new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
-        } else {
-            table.put(key, new MappingEntry<>(SubKeys.AUTH_KEY, authKey));
-        }
-    }
-
-    private MappingAuthkey getAuthKeyLpm(Eid prefix, ILispDAO db) {
-        short maskLength = MaskUtil.getMaskForAddress(prefix.getAddress());
-        while (maskLength >= 0) {
-            Eid key = MaskUtil.normalize(prefix, maskLength);
-            Object password = db.getSpecific(key, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof MappingAuthkey) {
-                return (MappingAuthkey) password;
-            }
-            maskLength -= 1;
-        }
-        return null;
-    }
-
-    public MappingAuthkey getAuthenticationKey(Eid eid) {
-        ILispDAO table = getVniTable(eid);
-        if (table == null) {
-            return null;
-        }
-
-        if (MaskUtil.isMaskable(eid.getAddress())) {
-            if (eid.getAddress() instanceof SourceDestKey) {
-                // NOTE: this is an exact match, not a longest prefix match
-                ILispDAO srcDstDao = getSDInnerDao(eid, table);
-                if (srcDstDao != null) {
-                    return getAuthKeyLpm(SourceDestKeyHelper.getSrcBinary(eid), srcDstDao);
-                }
-                return null;
-            } else {
-                return getAuthKeyLpm(eid, table);
-            }
-        } else {
-            Eid key = MaskUtil.normalize(eid);
-            Object password = table.getSpecific(key, SubKeys.AUTH_KEY);
-            if (password != null && password instanceof MappingAuthkey) {
-                return (MappingAuthkey) password;
-            } else {
-                LOG.warn("Failed to find password!");
-                return null;
-            }
-        }
-    }
-
-    public void removeAuthenticationKey(Eid eid) {
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO table = getVniTable(key);
-        if (table == null) {
-            return;
-        }
-
-        if (key.getAddress() instanceof SourceDestKey) {
-            ILispDAO srcDstDao = getSDInnerDao(key, table);
-            if (srcDstDao != null) {
-                srcDstDao.removeSpecific(key, SubKeys.AUTH_KEY);
-            }
-        } else {
-            table.removeSpecific(key, SubKeys.AUTH_KEY);
         }
     }
 

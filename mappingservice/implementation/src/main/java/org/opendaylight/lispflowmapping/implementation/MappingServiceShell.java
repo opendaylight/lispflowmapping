@@ -38,6 +38,11 @@ public class MappingServiceShell implements IMappingServiceShell {
     }
 
     @Override
+    public String printKeys() {
+        return mappingService.printKeys();
+    }
+
+    @Override
     public void addDefaultKeyIPv4() {
         Eid eid = LispAddressUtil.toEid(new Ipv4Prefix("0.0.0.0/0"), null);
         MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build();
