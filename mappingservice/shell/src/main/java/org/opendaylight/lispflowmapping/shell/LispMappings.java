@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc.  All rights reserved.
+ * Copyright (c) 2015, 2017 Cisco Systems, Inc.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.shell;
 
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
@@ -20,12 +21,19 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
  */
 @Command(scope = "mappingservice", name = "mappings", description = "Print mapping database")
 public class LispMappings  extends OsgiCommandSupport {
+    @Option(name = "-d", aliases = "--debug", description = "Debug output", required = false, multiValued = false)
+    private boolean debug;
+
     private IMappingServiceShell mappingServiceShell;
 
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
-        System.out.print(mappingServiceShell.printMappings());
+        if (debug) {
+            System.out.print(mappingServiceShell.printMappings());
+        } else {
+            System.out.print(mappingServiceShell.prettyPrintMappings());
+        }
         return null;
     }
 

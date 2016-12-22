@@ -95,4 +95,11 @@ public interface IMapCache {
      * @return a String consisting of all the mappings in the cache
      */
     String printMappings();
+
+    /**
+     * Print mappings in cache in a human friendly format.
+     *
+     * @return a String consisting of all the mappings in the cache
+     */
+    String prettyPrintMappings();
 }

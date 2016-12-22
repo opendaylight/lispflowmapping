@@ -9,11 +9,11 @@
 package org.opendaylight.lispflowmapping.mapcache;
 
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.mapcache.lisp.LispMapCacheStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
@@ -115,41 +115,6 @@ public class AuthKeyDb implements IAuthKeyDb {
 
     @Override
     public String printKeys() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append("Keys\tValues\n");
-
-        final IRowVisitor innerVisitor = (new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                sb.append(valueKey + "=" + value + "\t");
-                lastKey = key;
-            }
-        });
-
-        dao.getAll(new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                if (valueKey.equals(SubKeys.VNI)) {
-                    sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(innerVisitor);
-                    sb.append("}\t");
-                } else {
-                    sb.append(valueKey + "=" + value + "\t");
-                }
-                lastKey = key;
-            }
-        });
-        sb.append("\n");
-        return sb.toString();
+        return LispMapCacheStringifier.printKeys(dao);
     }
 }

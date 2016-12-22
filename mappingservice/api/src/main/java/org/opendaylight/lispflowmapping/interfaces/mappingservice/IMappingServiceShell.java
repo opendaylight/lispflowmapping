@@ -23,6 +23,13 @@ public interface IMappingServiceShell {
     String printMappings();
 
     /**
+     * Print the full mapping database in human readable form.
+     *
+     * @return the text to be printed on the Karaf console.
+     */
+    String prettyPrintMappings();
+
+    /**
      * Print the full authentication key database.
      *
      * @return the text to be printed on the Karaf console.

@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.subscriber.data.grouping.SubscriberData;
@@ -139,5 +140,10 @@ public class Subscriber {
     public String toString() {
         return "_rloc=" + data.getRloc().toString() + ", _eid=" + data.getEid().toString()
                 + ", _ttl=" + data.getTtl().toString() + ", last request @ " + lastRequestDate.toString();
+    }
+
+    public String getString() {
+        return "[" + LispAddressStringifier.getString(data.getRloc())
+                + ", " + LispAddressStringifier.getString(data.getEid()) + "]";
     }
 }
