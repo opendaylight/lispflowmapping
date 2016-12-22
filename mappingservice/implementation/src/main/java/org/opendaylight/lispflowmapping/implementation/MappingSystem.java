@@ -116,23 +116,16 @@ public class MappingSystem implements IMappingSystem {
 
         if (origin == MappingOrigin.Southbound) {
             XtrId xtrId = mappingData.getXtrId();
-            if (xtrId == null && mappingData.isMergeEnabled()) {
+            if (xtrId == null && mappingMerge && mappingData.isMergeEnabled()) {
                 LOG.warn("addMapping() called will null xTR-ID in MappingRecord, while merge is set, ignoring");
                 return;
             }
             if (xtrId != null && mappingMerge) {
                 smc.addMapping(key, xtrId, mappingData);
-            }
-            if (xtrId != null && mappingData.isMergeEnabled()) {
-                List<XtrId> expiredMappings = new ArrayList<>();
-                Set<IpAddressBinary> sourceRlocs = new HashSet<>();
-                MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
-                        expiredMappings, sourceRlocs);
-                smc.removeXtrIdMappings(key, expiredMappings);
-                if (mergedMappingData != null) {
-                    smc.addMapping(key, mergedMappingData, sourceRlocs);
+                if (mappingData.isMergeEnabled()) {
+                    mergeMappings(key);
+                    return;
                 }
-                return;
             }
         }
 
@@ -201,6 +194,17 @@ public class MappingSystem implements IMappingSystem {
         } else {
             LOG.warn("Nothing to do with ServicePath mapping record");
             return mappingData;
+        }
+    }
+
+    private void mergeMappings(Eid key) {
+        List<XtrId> expiredMappings = new ArrayList<>();
+        Set<IpAddressBinary> sourceRlocs = new HashSet<>();
+        MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
+                expiredMappings, sourceRlocs);
+        smc.removeXtrIdMappings(key, expiredMappings);
+        if (mergedMappingData != null) {
+            smc.addMapping(key, mergedMappingData, sourceRlocs);
         }
     }
 
@@ -297,6 +301,9 @@ public class MappingSystem implements IMappingSystem {
         } else {
             smc.removeMapping(key, xtrId);
             dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
+            if (mappingMerge && mappingData.isMergeEnabled()) {
+                mergeMappings(key);
+            }
         }
     }
 
