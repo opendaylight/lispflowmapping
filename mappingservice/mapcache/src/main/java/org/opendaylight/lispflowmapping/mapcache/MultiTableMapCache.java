@@ -9,13 +9,13 @@ package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Map;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.mapcache.lisp.LispMapCacheStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
@@ -170,61 +170,6 @@ public class MultiTableMapCache implements IMapCache {
         return (ILispDAO) mappingsDb.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
-    public String printMappings() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append("Keys\tValues\n");
-        final IRowVisitor innerVisitor = (new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                sb.append(valueKey + "=" + value + "\t");
-                lastKey = key;
-            }
-        });
-        final IRowVisitor vniVisitor = (new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append(key + "\t");
-                }
-                if ((valueKey.equals(SubKeys.LCAF_SRCDST))) {
-                    sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(innerVisitor);
-                    sb.append("}\t");
-                } else {
-                    sb.append(valueKey + "=" + value + "\t");
-                }
-                lastKey = key;
-            }
-        });
-        dao.getAll(new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                if (valueKey.equals(SubKeys.VNI)) {
-                    sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(vniVisitor);
-                    sb.append("}\t");
-                } else {
-                    sb.append(valueKey + "=" + value + "\t");
-                }
-                lastKey = key;
-            }
-        });
-        sb.append("\n");
-        return sb.toString();
-    }
-
     @Override
     public void addData(Eid eid, String subKey, Object data) {
         Eid key = MaskUtil.normalize(eid);
@@ -269,5 +214,15 @@ public class MultiTableMapCache implements IMapCache {
         } else {
             table.removeSpecific(key, subKey);
         }
+    }
+
+    @Override
+    public String printMappings() {
+        return LispMapCacheStringifier.printMTMCMappings(dao);
+    }
+
+    @Override
+    public String prettyPrintMappings() {
+        return LispMapCacheStringifier.prettyPrintMTMCMappings(dao);
     }
 }

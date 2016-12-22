@@ -10,7 +10,9 @@ package org.opendaylight.lispflowmapping.lisp.type;
 
 import com.google.common.base.Optional;
 import java.util.Date;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
+import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 
@@ -107,6 +109,31 @@ public class MappingData {
         if (record != null) {
             sb.append(", record=");
             sb.append(record);
+        }
+
+        return sb.append(']').toString();
+    }
+
+    public String getString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Merge: ");
+        sb.append(mergeEnabled ? "on" : "off");
+
+        if (xtrId != null) {
+            sb.append(", xTR-ID: ");
+            sb.append(LispAddressStringifier.getString(xtrId));
+        }
+
+        if (timestamp != null) {
+            sb.append(", timestamp: ");
+            sb.append(timestamp.toString());
+        }
+
+        if (record != null) {
+            sb.append("\n");
+            sb.append(Stringifier.getString(record));
+            sb.append("\n");
         }
 
         return sb.append(']').toString();

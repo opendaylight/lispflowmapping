@@ -38,6 +38,11 @@ public class MappingServiceShell implements IMappingServiceShell {
     }
 
     @Override
+    public String prettyPrintMappings() {
+        return mappingService.prettyPrintMappings();
+    }
+
+    @Override
     public String printKeys() {
         return mappingService.printKeys();
     }
