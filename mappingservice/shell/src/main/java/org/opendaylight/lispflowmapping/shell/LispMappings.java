@@ -25,7 +25,7 @@ public class LispMappings  extends OsgiCommandSupport {
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
-        System.out.print(mappingServiceShell.printMappings());
+        System.out.print(mappingServiceShell.prettyPrintMappings());
         return null;
     }
 

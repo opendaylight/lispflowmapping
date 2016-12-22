@@ -651,10 +651,20 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public String printMappings() {
         final StringBuffer sb = new StringBuffer();
-        sb.append("PolicyMapCache\n--------------\n");
+        sb.append("Policy map-cache\n----------------\n");
         sb.append(pmc.printMappings());
-        sb.append("SbMapCache\n----------\n");
+        sb.append("\nSouthbound map-cache\n--------------------\n");
         sb.append(smc.printMappings());
+        return sb.toString();
+    }
+
+    @Override
+    public String prettyPrintMappings() {
+        final StringBuffer sb = new StringBuffer();
+        sb.append("Policy map-cache\n----------------\n");
+        sb.append(pmc.prettyPrintMappings());
+        sb.append("\nSouthbound map-cache\n--------------------\n");
+        sb.append(smc.prettyPrintMappings());
         return sb.toString();
     }
 

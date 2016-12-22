@@ -17,8 +17,13 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.lisp.util.Constants;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -301,6 +306,74 @@ public class SimpleMapCache implements ILispMapCache {
             }
         });
         sb.append("\n");
+        return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String prettyPrintMappings() {
+        final StringBuffer sb = new StringBuffer();
+
+        final IRowVisitor mappingVisitor = (new IRowVisitor() {
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                switch (valueKey) {
+                    case SubKeys.RECORD:
+                        MappingData md = (MappingData) value;
+                        sb.append(Stringifier.getString(md.getRecord(), 2));
+                        sb.append("\n");
+                        break;
+                    case SubKeys.SUBSCRIBERS:
+                        Set<Subscriber> subscribers = (Set<Subscriber>) value;
+                        sb.append(prettyPrintSubscriberSet(subscribers, 4));
+                        sb.append("\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        dao.getAll(new IRowVisitor() {
+            String lastKey = "";
+
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
+                    sb.append("Instance ID " + keyId + "\n");
+                }
+                if (valueKey.equals(SubKeys.VNI)) {
+                    ((ILispDAO)value).getAll(mappingVisitor);
+                }
+                lastKey = key;
+            }
+        });
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    // TODO move to a util class (where?)
+    private static String prettyPrintSubscriberSet(Set<Subscriber> subscribers, int indentation) {
+        final String indent = new String(new char[indentation]).replace("\0", " ");
+
+        StringBuilder sb = new StringBuilder(indent);
+        sb.append("   -----------------------------------------------------------------\n");
+        sb.append(indent);
+        sb.append("-> Subscriber RLOC                                 Subscriber EID\n   ");
+        sb.append(indent);
+        boolean first = true;
+        for (Subscriber subscriber : subscribers) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append("\n   ");
+                sb.append(indent);
+            }
+            String srcRloc = LispAddressStringifier.getString(subscriber.getSrcRloc());
+            int padLen = Constants.INET6_ADDRSTRLEN + 2 - srcRloc.length();
+            sb.append(srcRloc);
+            sb.append(new String(new char[padLen]).replace("\0", " "));
+            sb.append(LispAddressStringifier.getString(subscriber.getSrcEid()));
+        }
         return sb.toString();
     }
 }

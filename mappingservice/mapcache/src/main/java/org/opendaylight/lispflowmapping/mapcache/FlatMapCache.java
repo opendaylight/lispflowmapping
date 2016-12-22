@@ -13,7 +13,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
@@ -89,6 +91,26 @@ public class FlatMapCache implements IMapCache {
                 }
                 sb.append(valueKey + "=" + value + "\t");
                 lastKey = key;
+            }
+        });
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    @Override
+    public String prettyPrintMappings() {
+        final StringBuffer sb = new StringBuffer();
+        dao.getAll(new IRowVisitor() {
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                switch (valueKey) {
+                    case SubKeys.RECORD:
+                        MappingData md = (MappingData) value;
+                        sb.append(Stringifier.getString(md.getRecord(), 2));
+                        sb.append("\n");
+                        break;
+                    default:
+                        break;
+                }
             }
         });
         sb.append("\n");

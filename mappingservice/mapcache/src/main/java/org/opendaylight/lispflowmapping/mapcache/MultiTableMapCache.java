@@ -225,6 +225,11 @@ public class MultiTableMapCache implements IMapCache {
         return sb.toString();
     }
 
+    public String prettyPrintMappings() {
+        // TODO
+        return new String("\n");
+    }
+
     @Override
     public void addData(Eid eid, String subKey, Object data) {
         Eid key = MaskUtil.normalize(eid);
