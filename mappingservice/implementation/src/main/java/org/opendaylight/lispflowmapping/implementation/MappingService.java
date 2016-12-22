@@ -482,6 +482,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public String prettyPrintMappings() {
+        return mappingSystem.prettyPrintMappings();
+    }
+
+    @Override
     public String printKeys() {
         return mappingSystem.printKeys();
     }
