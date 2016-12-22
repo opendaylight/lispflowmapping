@@ -68,4 +68,29 @@ public class MappingData {
     public synchronized void setMergeEnabled(boolean mergeEnabled) {
         this.mergeEnabled = mergeEnabled;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("MappingData [");
+
+        sb.append("merge=");
+        sb.append(mergeEnabled);
+
+        if (xtrId != null) {
+            sb.append(", xTR-ID=");
+            sb.append(xtrId);
+        }
+
+        if (timestamp != null) {
+            sb.append(", timestamp=");
+            sb.append(timestamp);
+        }
+
+        if (record != null) {
+            sb.append(", record=");
+            sb.append(record);
+        }
+
+        return sb.append(']').toString();
+    }
 }
