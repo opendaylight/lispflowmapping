@@ -269,13 +269,11 @@ public class SimpleMapCacheTest {
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
         final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
                 NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
-        final ILispDAO xtrIdRecordsMock = Mockito.mock(ILispDAO.class);
         final MappingData mappingData = new MappingData(getDefaultMappingRecordBuilder().build());
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);
-        Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdRecordsMock);
-        Mockito.when(xtrIdRecordsMock.getSpecific(EID_IPV4_PREFIX_DST, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
+        Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD))
                 .thenReturn(mappingData);       // second invocation
 

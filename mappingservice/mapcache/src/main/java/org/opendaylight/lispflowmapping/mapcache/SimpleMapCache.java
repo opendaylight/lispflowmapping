@@ -108,7 +108,7 @@ public class SimpleMapCache implements ILispMapCache {
         SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = dao.getBestPair(MaskUtil.normalize(eid));
         if (daoEntry != null) {
             if (xtrId != null) {
-                ILispDAO xtrIdTable = getXtrIdTable(eid, (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS));
+                ILispDAO xtrIdTable = (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS);
                 if (xtrIdTable != null) {
                     return xtrIdTable.getSpecific(xtrId, SubKeys.RECORD);
                 }
