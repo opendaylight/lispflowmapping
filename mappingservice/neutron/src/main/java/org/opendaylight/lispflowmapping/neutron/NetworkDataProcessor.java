@@ -20,23 +20,23 @@ public class NetworkDataProcessor implements DataProcessor<Network> {
 
     public NetworkDataProcessor(ILispNeutronService lispNeutronService) {
         this.lispNeutronService = lispNeutronService;
-    }
-
-    @Override
-    public void create(Network network) {
-        LOG.info("Neutron Network Created : Network name: " + network.getName());
-        LOG.debug("Lisp Neutron Network: " + network.toString());
-    }
-
-    @Override
-    public void update(Network network) {
-        LOG.info("Neutron Network Updated : Network name: " + network.getName());
-        LOG.debug("Lisp Neutron Network: " + network.toString());
-    }
-
-    @Override
-    public void delete(Network network) {
-        LOG.info("Neutron Network Deleted : Network name: " + network.getName());
-        LOG.debug("Lisp Neutron Network: " + network.toString());
-    }
+ }
+   
+       @Override
+       public void create(Network network) {
+   LOG.info("Neutron Network Created : Network name: {}, Network UUID: {}", network.getName(), network.getUuid());
+   LOG.debug("Lisp Neutron Network: " + network.toString());
+       }
+   
+       @Override
+       public void update(Network network) {
+           LOG.info("Neutron Network Updated :  Network name: {}, Network UUID: {}", network.getName(), network.getUuid());
+           LOG.debug("Lisp Neutron Network: " + network.toString());
+       }
+   
+       @Override
+       public void delete(Network network) {
+          LOG.info("Neutron Network Deleted :  Network name: {}, Network UUID: {}", network.getName(), network.getUuid());
+           LOG.debug("Lisp Neutron Network: " + network.toString());
+       }
 }
