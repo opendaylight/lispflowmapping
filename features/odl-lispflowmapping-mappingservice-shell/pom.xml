@@ -11,29 +11,29 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
-    <artifactId>odlparent-lite</artifactId>
+    <artifactId>single-feature-parent</artifactId>
     <version>1.8.0-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
-  <artifactId>features-aggregator</artifactId>
+  <artifactId>odl-lispflowmapping-mappingservice-shell</artifactId>
   <version>1.5.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>LISP Flow Mapping Project - Karaf Features Aggregator POM</name>
+  <packaging>feature</packaging>
+  <name>OpenDaylight :: LISP Flow Mapping :: Mapping Service Shell</name>
 
-  <modules>
-    <module>features-lispflowmapping</module>
-    <!--
-    <module>features4-lispflowmapping</module>
-    <module>odl-lispflowmapping-models</module>
-    <module>odl-lispflowmapping-inmemorydb</module>
-    <module>odl-lispflowmapping-mappingservice</module>
-    <module>odl-lispflowmapping-southbound</module>
-    <module>odl-lispflowmapping-msmr</module>
-    <module>odl-lispflowmapping-mappingservice-shell</module>
-    <module>odl-lispflowmapping-neutron</module>
-    <module>odl-lispflowmapping-ui</module>
-    -->
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>odl-lispflowmapping-mappingservice</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mappingservice.shell</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>
