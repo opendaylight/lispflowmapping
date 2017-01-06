@@ -81,6 +81,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.config</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- Features -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>features-lispflowmapping</artifactId>
@@ -88,6 +90,22 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+      <!--
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>odl-lispflowmapping-models</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>odl-lispflowmapping-inmemorydb</artifactId>
+        <version>${project.version}</version>
+        <classifier>features</classifier>
+        <type>xml</type>
+      </dependency>
+      -->
     </dependencies>
   </dependencyManagement>
 
