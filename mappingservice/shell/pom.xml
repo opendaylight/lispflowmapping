@@ -35,8 +35,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>org.apache.karaf.shell.commands,
-              org.apache.karaf.shell.console,
+            <Import-Package>org.apache.karaf.shell.commands;version="[3.0,5)",
+              org.apache.karaf.shell.console;version="[3.0,5)",
               org.opendaylight.lispflowmapping.interfaces.mappingservice</Import-Package>
           </instructions>
         </configuration>
