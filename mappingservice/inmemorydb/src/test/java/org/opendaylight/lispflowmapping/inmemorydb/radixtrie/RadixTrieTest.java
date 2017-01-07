@@ -270,6 +270,26 @@ public class RadixTrieTest {
     }
 
     /**
+     * Tests v4 sibling lookup.
+     */
+    @Test
+    public void testIp4SiblingLookup() {
+        radixTrie4 = new RadixTrie<>(32, true);
+
+        addIp4Addresses(radixTrie4);
+
+        radixTrie4.insert(IP4_BYTES1, 24, 8);
+
+        RadixTrie<Integer>.TrieNode res = radixTrie4.lookupSibling(IP4_BYTES3, 16);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES1));
+        assertEquals(res.bit, 16);
+
+        res = radixTrie4.lookupSibling(IP4_BYTES6, 24);
+        assertTrue(Arrays.equals(res.prefix(), IP4_BYTES1));
+        assertEquals(res.bit, 24);
+    }
+
+    /**
      * Tests v4 widest negative prefix.
      */
     @Test

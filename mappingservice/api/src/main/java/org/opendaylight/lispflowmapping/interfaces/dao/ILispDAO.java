@@ -73,6 +73,15 @@ public interface ILispDAO {
     Eid getParentPrefix(Eid key);
 
     /**
+     * Get sibling prefix.
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The sibling prefix of the longest prefix match for the key.
+     */
+    Eid getSiblingPrefix(Eid key);
+
+    /**
      * Get widest negative prefix.
      *
      * @param key
