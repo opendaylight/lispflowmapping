@@ -28,8 +28,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dluxapps.version>0.5.0-SNAPSHOT</dluxapps.version>
     <mdsal.version>1.5.0-SNAPSHOT</mdsal.version>
     <mdsal.model.version>0.10.0-SNAPSHOT</mdsal.model.version>
+    <netconf.version>1.2.0-SNAPSHOT</netconf.version>
     <neutron.version>0.8.0-SNAPSHOT</neutron.version>
     <restconf.version>1.5.0-SNAPSHOT</restconf.version>
+    <vbd.version>1.1.0-SNAPSHOT</vbd.version>
   </properties>
 
   <dependencyManagement>
@@ -39,6 +41,13 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>mdsal-artifacts</artifactId>
         <version>${mdsal.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.honeycomb.vbd</groupId>
+        <artifactId>vbd-artifacts</artifactId>
+        <version>${vbd.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -65,6 +74,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>features-restconf</artifactId>
       <version>${restconf.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>features-netconf-connector</artifactId>
+      <version>${netconf.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>runtime</scope>
@@ -139,6 +156,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>features-neutron</artifactId>
       <version>${neutron.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.honeycomb.vbd</groupId>
+      <artifactId>vbd-features</artifactId>
       <classifier>features</classifier>
       <type>xml</type>
     </dependency>
