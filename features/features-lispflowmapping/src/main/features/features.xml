@@ -19,6 +19,9 @@
     <repository>mvn:org.opendaylight.controller/features-mdsal/{{VERSION}}/xml/features</repository>
     <!-- Needed for odl-restconf -->
     <repository>mvn:org.opendaylight.netconf/features-restconf/{{VERSION}}/xml/features</repository>
+    <!-- Needed by neutron intent handler -->
+    <repository>mvn:org.opendaylight.honeycomb.vbd/vbd-features/{{VERSION}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-netconf-connector/{{VERSION}}/xml/features</repository>
 
     <feature name="odl-lispflowmapping-msmr" description="OpenDaylight :: LISP Flow Mapping :: Map-Server/Map-Resolver" version='${project.version}'>
         <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
@@ -61,6 +64,8 @@
     <feature name="odl-lispflowmapping-neutron" description="OpenDaylight :: LISP Flow Mapping :: Neutron Integration" version='${project.version}'>
         <feature version="${neutron.version}">odl-neutron-service</feature>
         <feature version="${project.version}">odl-lispflowmapping-mappingservice</feature>
+        <feature version="${vbd.version}">odl-vbd</feature>
+        <feature version='${netconf.version}'>odl-netconf-clustered-topology</feature>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.neutron/{{VERSION}}</bundle>
     </feature>
 
