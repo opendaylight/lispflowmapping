@@ -30,6 +30,7 @@
     <module>southbound</module>
     <module>neutron</module>
     <module>shell</module>
+    <module>neutron-intent</module>
   </modules>
 
   <dependencyManagement>
