@@ -12,6 +12,10 @@
   <packaging>bundle</packaging>
   <name>Mapping Service Neutron APIs</name>
 
+  <!--<properties>-->
+    <!--<checkstyle.skip>true</checkstyle.skip>-->
+  <!--</properties>-->
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
@@ -34,6 +38,12 @@
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.groupbasedpolicy</groupId>
+      <artifactId>neutron-vpp-mapper</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
