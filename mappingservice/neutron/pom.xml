@@ -14,6 +14,31 @@
        build failure. Please do not modify this unless you have a good reason. -->
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
+  <properties>
+    <!--<checkstyle.skip>true</checkstyle.skip>-->
+    <netconf.version>1.2.0-SNAPSHOT</netconf.version>
+    <mdsal.version>1.5.0-SNAPSHOT</mdsal.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opendaylight.netconf</groupId>
+        <artifactId>netconf-artifacts</artifactId>
+        <version>${netconf.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>mdsal-artifacts</artifactId>
+        <version>${mdsal.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
@@ -36,6 +61,24 @@
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>yang-ext</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.honeycomb.vbd</groupId>
+      <artifactId>vbd-api</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>sal-netconf-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal</groupId>
+      <artifactId>mdsal-singleton-common-api</artifactId>
+      <version>2.2.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
