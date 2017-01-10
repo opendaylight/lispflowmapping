@@ -7,6 +7,8 @@
     interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping" />
   <reference id="bindingAwareBroker"
     interface="org.opendaylight.controller.sal.binding.api.BindingAwareBroker" />
+  <reference id="dataBroker"
+    interface="org.opendaylight.controller.md.sal.binding.api.DataBroker"/>
 
   <bean id="lispNeutronPlugin"
     class="org.opendaylight.lispflowmapping.neutron.LispNeutronService"
@@ -14,6 +16,14 @@
     <argument ref="mappingService" />
     <argument ref="bindingAwareBroker"/>
   </bean>
+
+  <bean id="lispGbp"
+        class="org.opendaylight.lispflowmapping.neutron.vpp.VppEndpointListener"
+        destroy-method="close">
+    <argument ref="dataBroker" />
+    <argument ref="bindingAwareBroker"/>
+  </bean>
+
   <service ref="lispNeutronPlugin"
     interface="org.opendaylight.lispflowmapping.neutron.ILispNeutronService"
     odl:type="default" />

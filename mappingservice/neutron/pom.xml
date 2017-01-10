@@ -35,6 +35,17 @@
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.groupbasedpolicy</groupId>
+      <artifactId>neutron-vpp-mapper</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.honeycomb.vbd</groupId>
+      <artifactId>vbd-impl</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <!--
