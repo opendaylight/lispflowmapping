@@ -157,7 +157,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
 
     /**
-     * Defines how many attempt to create instance of DatagramSocket will be done before giving up.
+     * Defines how many attempt to initialize instance of DatagramSocket will be done before giving up.
      */
     private static final int NUM_OF_ATTEMPTS_TO_CREATE_SOCKET = 2;
 
@@ -2491,7 +2491,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 // LOG.warn("Required imports are: " +
                 // element.getHeaders().get("IMPORT-PACKAGE"));
                 // } else {
-                // element.start();
+                // element.initialize();
                 // }
                 // } catch (BundleException e) {
                 // LOG.error("BundleException:", e);

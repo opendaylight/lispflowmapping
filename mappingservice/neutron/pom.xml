@@ -12,6 +12,30 @@
   <packaging>bundle</packaging>
   <name>Mapping Service Neutron APIs</name>
 
+  <properties>
+    <!--<checkstyle.skip>true</checkstyle.skip>-->
+    <netconf.version>1.2.0-SNAPSHOT</netconf.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opendaylight.honeycomb.vbd</groupId>
+        <artifactId>vbd-artifacts</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.netconf</groupId>
+        <artifactId>netconf-artifacts</artifactId>
+        <version>${netconf.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
@@ -35,6 +59,25 @@
       <groupId>org.opendaylight.lispflowmapping</groupId>
       <artifactId>common.unittest.tools</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.mdsal</groupId>
+      <artifactId>mdsal-singleton-common-api</artifactId>
+      <version>2.2.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>sal-netconf-connector</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opendaylight.honeycomb.vbd</groupId>
+      <artifactId>vbd-api</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+
+
   </dependencies>
 
   <!--
