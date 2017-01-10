@@ -49,13 +49,11 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.mapcache</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!--
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.neutron</artifactId>
         <version>${project.version}</version>
       </dependency>
-      -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.shell</artifactId>
