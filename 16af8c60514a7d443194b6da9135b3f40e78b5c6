@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_70a852db",
+        "filename": "features/odl-lispflowmapping-models/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2017-01-12T08:03:16Z",
+      "side": 1,
+      "message": "For bonus points, you can actually remove this, the Karaf Maven plugin will include it since it\u0027s depended upon transitively.\n\n(It\u0027s probably safer to leave this kind of cleanup for later — it\u0027s easier to compare old and new if the POMs match the features.xml closely.)",
+      "revId": "16af8c60514a7d443194b6da9135b3f40e78b5c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
