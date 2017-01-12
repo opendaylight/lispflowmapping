@@ -16,6 +16,24 @@
       "revId": "16af8c60514a7d443194b6da9135b3f40e78b5c6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_f0b3c24a",
+        "filename": "features/odl-lispflowmapping-models/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-12T08:06:46Z",
+      "side": 1,
+      "message": "Thanks, I will keep a mental node to remove it before I remove the WIP and submit it. I saw that netconf is done now, so I will work on the rest of our features.",
+      "parentUuid": "1a622d24_70a852db",
+      "revId": "16af8c60514a7d443194b6da9135b3f40e78b5c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
