@@ -68,11 +68,15 @@ public class SimpleMapCache implements ILispMapCache {
     }
 
     private ILispDAO getXtrIdTable(Eid eid, ILispDAO dao) {
-        return (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+        Map<String, ?> daoEntry = dao.getBest(eid);
+        if (daoEntry != null) {
+            return (ILispDAO) daoEntry.get(SubKeys.XTRID_RECORDS);
+        }
+        return null;
     }
 
     private ILispDAO getOrInstantiateXtrIdTable(Eid eid, ILispDAO dao) {
-        ILispDAO table = (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+        ILispDAO table = getXtrIdTable(eid, dao);
         if (table == null) {
             table = dao.putNestedTable(eid, SubKeys.XTRID_RECORDS);
         }
