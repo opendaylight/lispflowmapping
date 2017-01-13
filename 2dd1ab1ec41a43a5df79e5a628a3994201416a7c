@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_645a4f2b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucket.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-13T16:27:40Z",
+      "side": 1,
+      "message": "I think it\u0027s more meaningful to use the full name here, perhaps with the \u0027@author\u0027 tag as in some of the other source files.",
+      "revId": "2dd1ab1ec41a43a5df79e5a628a3994201416a7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
