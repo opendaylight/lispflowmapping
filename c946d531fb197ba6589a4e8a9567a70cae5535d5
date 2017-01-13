@@ -22,6 +22,24 @@
       "revId": "c946d531fb197ba6589a4e8a9567a70cae5535d5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_7097ad3a",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-13T04:53:00Z",
+      "side": 1,
+      "message": "Performance. We already did a lookup, let\u0027s avoid doing another one.",
+      "parentUuid": "1a622d24_3001b505",
+      "revId": "c946d531fb197ba6589a4e8a9567a70cae5535d5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
