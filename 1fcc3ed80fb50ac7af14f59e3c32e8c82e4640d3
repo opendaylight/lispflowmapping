@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_258b2769",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-17T17:55:54Z",
+      "side": 0,
+      "message": "So here we are losing the possibility of setting different source-dest keys. It could be replicated in authKeyDb if needed in future, so not a big deal I think, but something to keep in mind. Maybe a comment in the AuthkeyDb where src-dst keys are put in as specific and not maskable.",
+      "range": {
+        "startLine": 164,
+        "startChar": 4,
+        "endLine": 167,
+        "endChar": 16
+      },
+      "revId": "1fcc3ed80fb50ac7af14f59e3c32e8c82e4640d3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

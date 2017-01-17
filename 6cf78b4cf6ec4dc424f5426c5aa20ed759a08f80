@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_a55bb7f4",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/AuthKeyDb.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-17T17:55:54Z",
+      "side": 1,
+      "message": "Maybe here you can document that source-dest keys will be treated as specific and not maskable.",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 13
+      },
+      "revId": "6cf78b4cf6ec4dc424f5426c5aa20ed759a08f80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_255047d3",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-17T17:55:54Z",
+      "side": 1,
+      "message": "Authentication Cache?",
+      "range": {
+        "startLine": 396,
+        "startChar": 7,
+        "endLine": 396,
+        "endChar": 17
+      },
+      "revId": "6cf78b4cf6ec4dc424f5426c5aa20ed759a08f80",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
