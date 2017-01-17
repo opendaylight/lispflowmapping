@@ -22,6 +22,24 @@
       "revId": "1fcc3ed80fb50ac7af14f59e3c32e8c82e4640d3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_251b27cb",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-17T18:47:03Z",
+      "side": 0,
+      "message": "We were not using this, and as you say, it can be implemented if needed. I added the comment as you mentioned.",
+      "parentUuid": "1a622d24_258b2769",
+      "revId": "1fcc3ed80fb50ac7af14f59e3c32e8c82e4640d3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
