@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_05cc2b69",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-17T18:28:01Z",
+      "side": 1,
+      "message": "This is used only in remove mappings, where the exact mapping should be removed if it exists. Longest prefix matching is not needed. Are you sure this is the right change?",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 59
+      },
+      "revId": "0e72a4f8246bc41ed07abd0561febda247639eb0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
