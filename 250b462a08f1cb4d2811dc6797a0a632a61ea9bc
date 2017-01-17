@@ -46,6 +46,24 @@
       "revId": "250b462a08f1cb4d2811dc6797a0a632a61ea9bc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_887695a2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-17T08:29:05Z",
+      "side": 1,
+      "message": "It shouldn\u0027t since these patches are stacked, they depend on each other (to be merged in order).",
+      "parentUuid": "1a622d24_4d53efe1",
+      "revId": "250b462a08f1cb4d2811dc6797a0a632a61ea9bc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
