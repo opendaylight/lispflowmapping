@@ -22,6 +22,24 @@
       "revId": "0e72a4f8246bc41ed07abd0561febda247639eb0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_852ddb00",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-17T18:33:54Z",
+      "side": 1,
+      "message": "You\u0027re right that it is only used for removals. But the on the one hand, it may be used in the future for other operations, and then the developer expectation would be for the method to do the right thing.\n\nAdditionally, I modified getOrInstantiateXtrIdTable() to use it, where it is very important to do LPM, because the first time we add an xTR-ID mapping, we need to put it in the right place, unless I\u0027m missing something.",
+      "parentUuid": "1a622d24_05cc2b69",
+      "revId": "0e72a4f8246bc41ed07abd0561febda247639eb0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
