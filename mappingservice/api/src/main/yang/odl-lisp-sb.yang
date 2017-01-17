@@ -4,7 +4,6 @@ module odl-lisp-sb {
     namespace "urn:opendaylight:lfm:lisp-sb";
     prefix "lisp-sb";
 
-    import config { prefix config; revision-date 2013-04-05; }
     import odl-lisp-proto { prefix lisp-proto; revision-date 2015-11-05; }
 
     contact "Lorand Jakab <lojakab@cisco.com";
