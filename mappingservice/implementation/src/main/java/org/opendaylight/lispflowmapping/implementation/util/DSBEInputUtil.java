@@ -13,6 +13,7 @@ import java.util.List;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -57,6 +58,10 @@ public final class DSBEInputUtil {
         MappingRecord record = (mappingData != null) ? mappingData.getRecord() : null;
         return new XtrIdMappingBuilder().setXtrIdUri(
                 new XtrIdUri(LispAddressStringifier.getURIString(record.getXtrId()))).setMappingRecord(record).build();
+    }
+
+    public static XtrIdMapping toXtrIdMapping(XtrId xtrId) {
+        return new XtrIdMappingBuilder().setXtrIdUri(new XtrIdUri(LispAddressStringifier.getURIString(xtrId))).build();
     }
 
     public static AuthenticationKey toAuthenticationKey(Eid key, MappingAuthkey authKey) {
