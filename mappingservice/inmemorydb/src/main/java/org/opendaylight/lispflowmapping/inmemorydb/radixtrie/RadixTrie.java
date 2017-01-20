@@ -208,22 +208,36 @@ public class RadixTrie<T> {
      */
     public TrieNode lookupSibling(byte[] prefix, int preflen) {
         TrieNode node = lookupBest(prefix, preflen);
-
-        if (node == null || node.up == null) {
-            return null;
-        }
-
-        TrieNode sibling = null;
-        if (node.up.left == node) {
-            sibling = node.up.right;
-        } else {
-            sibling = node.up.left;
-        }
+        TrieNode sibling = node.sibling();
 
         if (sibling.prefix != null) {
             return sibling;
         }
         return null;
+    }
+
+
+    /**
+     * Given an EID, lookup the longest prefix match, then return its direct parent's sibling node, if the parent is a
+     * virtual node.
+     *
+     * @param prefix Prefix looked up.
+     * @param preflen Prefix length.
+     * @return The longest prefix match node's virtual parent's sibling or null if nothing is found.
+     */
+    public TrieNode lookupVirtualParentSibling(byte[] prefix, int preflen) {
+        TrieNode node = lookupBest(prefix, preflen);
+
+        if (node == null || node.up == null) {
+            return null;
+        }
+
+        // Parent is not a virtual node
+        if (node.up.prefix != null) {
+            return null;
+        }
+
+        return node.up.sibling();
     }
 
     /**
@@ -439,6 +453,26 @@ public class RadixTrie<T> {
                 parent = node.up;
             }
             return node;
+        }
+
+        /**
+         * Return sibling node.
+         *
+         * @return Sibling node, if there is a parent, else null
+         */
+        public TrieNode sibling() {
+            TrieNode node = this;
+            if (node == null || node.up == null) {
+                return null;
+            }
+
+            TrieNode sibling = null;
+            if (node.up.left == node) {
+                sibling = node.up.right;
+            } else {
+                sibling = node.up.left;
+            }
+            return sibling;
         }
 
         /**
