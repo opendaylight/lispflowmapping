@@ -33,6 +33,13 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private RadixTrie<Object> ip4Trie = new RadixTrie<>(32, true);
     private RadixTrie<Object> ip6Trie = new RadixTrie<>(128, true);
 
+    private enum GetPrefixMethods {
+        PARENT,
+        SIBLING,
+        VIRTUAL_PARENT_SIBLING,
+        WIDEST_NEGATIVE
+    }
+
     public void tryAddToIpTrie(Object key) {
         if (key instanceof Eid) {
             Eid eid = (Eid) key;
@@ -121,64 +128,79 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         }
     }
 
-    @Override
-    public Eid getParentPrefix(Eid key) {
+    private Eid getPrefix(Eid key, GetPrefixMethods method) {
         RadixTrie<Object>.TrieNode node = null;
 
         if (key.getAddress() instanceof Ipv4PrefixBinary) {
             Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
-            node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            switch (method) {
+                case PARENT:
+                    node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+                    break;
+                case SIBLING:
+                    node = ip4Trie.lookupSibling(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+                    break;
+                case VIRTUAL_PARENT_SIBLING:
+                    node = ip4Trie.lookupVirtualParentSibling(prefix.getIpv4AddressBinary().getValue(),
+                            prefix.getIpv4MaskLength());
+                    break;
+                case WIDEST_NEGATIVE:
+                    node = ip4Trie.lookupWidestNegative(prefix.getIpv4AddressBinary().getValue(),
+                            prefix.getIpv4MaskLength());
+                    break;
+                default:
+                    node = null;
+                    break;
+            }
             if (node != null) {
                 return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
             }
         } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
-            node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            switch (method) {
+                case PARENT:
+                    node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+                    break;
+                case SIBLING:
+                    node = ip6Trie.lookupSibling(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+                    break;
+                case VIRTUAL_PARENT_SIBLING:
+                    node = ip6Trie.lookupVirtualParentSibling(prefix.getIpv6AddressBinary().getValue(),
+                            prefix.getIpv6MaskLength());
+                    break;
+                case WIDEST_NEGATIVE:
+                    node = ip6Trie.lookupWidestNegative(prefix.getIpv6AddressBinary().getValue(),
+                            prefix.getIpv6MaskLength());
+                    break;
+                default:
+                    node = null;
+                    break;
+            }
             if (node != null) {
                 return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
             }
         }
         return null;
+    }
+
+    @Override
+    public Eid getParentPrefix(Eid key) {
+        return getPrefix(key, GetPrefixMethods.PARENT);
     }
 
     @Override
     public Eid getSiblingPrefix(Eid key) {
-        RadixTrie<Object>.TrieNode node = null;
+        return getPrefix(key, GetPrefixMethods.SIBLING);
+    }
 
-        if (key.getAddress() instanceof Ipv4PrefixBinary) {
-            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
-            node = ip4Trie.lookupSibling(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
-            if (node != null) {
-                return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
-            }
-        } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
-            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
-            node = ip6Trie.lookupSibling(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
-            if (node != null) {
-                return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
-            }
-        }
-        return null;
+    @Override
+    public Eid getVirtualParentSiblingPrefix(Eid key) {
+        return getPrefix(key, GetPrefixMethods.VIRTUAL_PARENT_SIBLING);
     }
 
     @Override
     public Eid getWidestNegativePrefix(Eid key) {
-        RadixTrie<Object>.TrieNode node = null;
-
-        if (key.getAddress() instanceof Ipv4PrefixBinary) {
-            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
-            node = ip4Trie.lookupWidestNegative(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
-            if (node != null) {
-                return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
-            }
-        } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
-            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
-            node = ip6Trie.lookupWidestNegative(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
-            if (node != null) {
-                return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
-            }
-        }
-        return null;
+        return getPrefix(key, GetPrefixMethods.WIDEST_NEGATIVE);
     }
 
     private void tryRemoveFromTrie(Object key) {
