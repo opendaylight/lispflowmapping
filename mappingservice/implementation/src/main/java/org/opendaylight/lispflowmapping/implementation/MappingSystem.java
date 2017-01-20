@@ -204,15 +204,24 @@ public class MappingSystem implements IMappingSystem {
         }
     }
 
-    private void mergeMappings(Eid key) {
+    private MappingData mergeMappings(Eid key) {
         List<XtrId> expiredMappings = new ArrayList<>();
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
         MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
                 expiredMappings, sourceRlocs);
         smc.removeXtrIdMappings(key, expiredMappings);
+        for (XtrId xtrId : expiredMappings) {
+            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(xtrId));
+        }
         if (mergedMappingData != null) {
             smc.addMapping(key, mergedMappingData, sourceRlocs);
+            dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key,
+                    mergedMappingData.getRecord().getSiteId(), mergedMappingData));
+        } else {
+            smc.removeMapping(key);
+            dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key));
         }
+        return mergedMappingData;
     }
 
     @Override
@@ -289,8 +298,7 @@ public class MappingSystem implements IMappingSystem {
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
         if (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
-            removeExpiredMapping(dst, xtrId, mappingData);
-            return null;
+            return removeExpiredMapping(dst, xtrId, mappingData);
         } else {
             return mappingData;
         }
@@ -300,7 +308,10 @@ public class MappingSystem implements IMappingSystem {
      * This private method either removes the main mapping ONLY, or the xTR-ID mapping ONLY, based on xtrId being
      * null or non-null. Caller functions should take care of removing both when necessary.
      */
-    private void removeExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+    private MappingData removeExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+        if (mappingMerge && mappingData.isMergeEnabled()) {
+            return mergeMappings(key);
+        }
         if (xtrId == null) {
             smc.removeMapping(key);
             dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mappingData.getRecord().getEid(),
@@ -308,10 +319,8 @@ public class MappingSystem implements IMappingSystem {
         } else {
             smc.removeMapping(key, xtrId);
             dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
-            if (mappingMerge && mappingData.isMergeEnabled()) {
-                mergeMappings(key);
-            }
         }
+        return null;
     }
 
     @Override
