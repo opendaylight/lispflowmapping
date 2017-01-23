@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -128,6 +129,10 @@ public class MappingSystem implements IMappingSystem {
                 return;
             }
             if (xtrId != null && mappingMerge) {
+                if (!mappingData.isMergeEnabled()) {
+                    clearPresentXtrIdMappings(key);
+                }
+
                 smc.addMapping(key, xtrId, mappingData);
                 if (mappingData.isMergeEnabled()) {
                     mergeMappings(key);
@@ -137,6 +142,19 @@ public class MappingSystem implements IMappingSystem {
         }
 
         tableMap.get(origin).addMapping(key, mappingData);
+    }
+
+    private void clearPresentXtrIdMappings(Eid key) {
+        List<MappingData> allXtrMappingList = (List<MappingData>) (List<?>) smc.getAllXtrIdMappings(key);
+
+        if (((MappingData) smc.getMapping(key, (XtrId) null)).isMergeEnabled()) {
+            LOG.trace("Different xTRs have different merge configuration!");
+        }
+
+        for (MappingData mappingData : allXtrMappingList) {
+            smc.removeMapping(key, mappingData.getXtrId());
+            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
+        }
     }
 
     /*
