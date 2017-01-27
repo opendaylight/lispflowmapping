@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_51f8527c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-27T20:48:14Z",
+      "side": 1,
+      "message": "Please change to below as it is more readable this way:\n\nif (mappingData.isMergeEnabled()) {\n                smc.addMapping(key, xtrId, mappingData);\n                mergeMappings(key);\n                return;\n}\nelse {\n                clearPresentXtrIdMappings(key);\n                smc.addMapping(key, xtrId, mappingData);\n}",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 17
+      },
+      "revId": "60bb90d37833ea14c0d417e67efb9e0e9d3feb9a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
