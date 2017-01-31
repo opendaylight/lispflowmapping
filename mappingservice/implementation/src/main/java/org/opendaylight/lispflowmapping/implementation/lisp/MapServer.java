@@ -32,7 +32,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener;
@@ -105,7 +105,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         boolean mappingUpdated = false;
         boolean oldMappingRemoved = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
-        Set<SubscriberRLOC> subscribers = null;
+        Set<Subscriber> subscribers = null;
         MappingRecord oldMapping;
 
         if (merge) {
@@ -250,18 +250,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return false;
     }
 
-    private void sendSmrs(Eid eid, Set<SubscriberRLOC> subscribers) {
+    private void sendSmrs(Eid eid, Set<Subscriber> subscribers) {
         handleSmr(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
-            Set<SubscriberRLOC> dstSubs = getSubscribers(dstAddr);
+            Set<Subscriber> dstSubs = getSubscribers(dstAddr);
             handleSmr(dstAddr, dstSubs);
         }
     }
 
-    private void handleSmr(Eid eid, Set<SubscriberRLOC> subscribers) {
+    private void handleSmr(Eid eid, Set<Subscriber> subscribers) {
         if (subscribers == null) {
             return;
         }
@@ -273,17 +273,17 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     @SuppressWarnings("unchecked")
-    private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+    private Set<Subscriber> getSubscribers(Eid address) {
+        return (Set<Subscriber>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
-    private Set<SubscriberRLOC> addParentSubscribers(Eid eid, Set<SubscriberRLOC> subscribers) {
+    private Set<Subscriber> addParentSubscribers(Eid eid, Set<Subscriber> subscribers) {
         Eid parentPrefix = mapService.getParentPrefix(eid);
         if (parentPrefix == null) {
             return subscribers;
         }
 
-        Set<SubscriberRLOC> parentSubscribers = getSubscribers(parentPrefix);
+        Set<Subscriber> parentSubscribers = getSubscribers(parentPrefix);
         if (parentSubscribers != null) {
             if (subscribers != null) {
                 subscribers.addAll(parentSubscribers);
@@ -298,7 +298,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         mapService.removeData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
-    private void addSubscribers(Eid address, Set<SubscriberRLOC> subscribers) {
+    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
         mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
@@ -345,11 +345,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(cpuCores * 2, threadFactory);
         private final Map<IpAddressBinary, Map<Eid, ScheduledFuture<?>>> subscriberFutureMap = Maps.newConcurrentMap();
 
-        void scheduleSmrs(MapRequestBuilder mrb, Iterator<SubscriberRLOC> subscribers) {
-            // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a SubscriberRLOC
+        void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
+            // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a Subscriber
             // from a Set.
             while (subscribers.hasNext()) {
-                SubscriberRLOC subscriber = subscribers.next();
+                Subscriber subscriber = subscribers.next();
                 if (subscriber.timedOut()) {
                     LOG.trace("Lazy removing expired subscriber entry " + subscriber.toString());
                     subscribers.remove();
@@ -391,10 +391,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
         private final class CancellableRunnable implements Runnable {
             private MapRequestBuilder mrb;
-            private SubscriberRLOC subscriber;
+            private Subscriber subscriber;
             private int executionCount = 1;
 
-            CancellableRunnable(MapRequestBuilder mrb, SubscriberRLOC subscriber) {
+            CancellableRunnable(MapRequestBuilder mrb, Subscriber subscriber) {
                 this.mrb = mrb;
                 this.subscriber = subscriber;
             }

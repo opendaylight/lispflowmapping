@@ -390,6 +390,15 @@ module odl-lisp-proto {
         }
     }
 
+    grouping subscriber-addresses-grouping {
+        container subscriber-addresses {
+            description
+                "A network element which subscribed to notifications about mapping changes.";
+            uses rloc-container;
+            uses eid-container;
+        }
+    }
+
     typedef message-type {
         type enumeration {
             enum reserved {

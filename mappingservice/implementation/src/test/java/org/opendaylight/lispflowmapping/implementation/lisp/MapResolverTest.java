@@ -21,7 +21,7 @@ import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
@@ -66,7 +66,7 @@ public class MapResolverTest {
 
     private static MapResolver mapResolver;
     private static MappingService mapServiceMock;
-    private static Set<SubscriberRLOC> subscriberSetMock;
+    private static Set<Subscriber> subscriberSetMock;
     private static LispMappingService lispMappingServiceMock;
 
     private static final String ITR_RLOC_KEY_STRING =   "itr_rloc_key";
@@ -106,8 +106,8 @@ public class MapResolverTest {
 
     private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1);
     private static MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,
-            LispAddressUtil.asIpv4Eid(IPV4_SOURCE), SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
+    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,
+            LispAddressUtil.asIpv4Eid(IPV4_SOURCE), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     @Before
     @SuppressWarnings("unchecked")
@@ -184,7 +184,7 @@ public class MapResolverTest {
                 .thenReturn(mappingData);
         Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock);
-        Mockito.when(subscriberSetMock.contains(Mockito.any(SubscriberRLOC.class))).thenReturn(false);
+        Mockito.when(subscriberSetMock.contains(Mockito.any(Subscriber.class))).thenReturn(false);
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
@@ -193,7 +193,7 @@ public class MapResolverTest {
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
-        Mockito.verify(subscriberSetMock, Mockito.never()).remove(Mockito.any(SubscriberRLOC.class));
+        Mockito.verify(subscriberSetMock, Mockito.never()).remove(Mockito.any(Subscriber.class));
     }
 
     /**
@@ -211,7 +211,7 @@ public class MapResolverTest {
                 .thenReturn(mappingData);
         Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock);
-        Mockito.when(subscriberSetMock.contains(Mockito.any(SubscriberRLOC.class))).thenReturn(false);
+        Mockito.when(subscriberSetMock.contains(Mockito.any(Subscriber.class))).thenReturn(false);
 
         // ----------------------
         // with sourceRloc = null
@@ -219,7 +219,7 @@ public class MapResolverTest {
                 newItrRloc(MacAfi.class, null),
                 newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
 
-        ArgumentCaptor<SubscriberRLOC> captor = ArgumentCaptor.forClass(SubscriberRLOC.class);
+        ArgumentCaptor<Subscriber> captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequestBuilder.setSourceRloc(null).setItrRloc(itrRlocList).build());
         Mockito.verify(subscriberSetMock).add(captor.capture());
         // Since mapRequest's sourceRloc is null, first ItrRloc from the itrRlocList must be used.
@@ -235,7 +235,7 @@ public class MapResolverTest {
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
                 .setItrRloc(itrRlocList).build();
 
-        captor = ArgumentCaptor.forClass(SubscriberRLOC.class);
+        captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequest);
         Mockito.verify(subscriberSetMock, Mockito.times(2)).add(captor.capture());
         assertEquals(IPV4_ADDRESS, captor.getValue().getSrcRloc().getAddress());
@@ -251,7 +251,7 @@ public class MapResolverTest {
                 .setSourceRloc(IPV6_ADDRESS_BINARY)
                 .setItrRloc(itrRlocList).build();
 
-        captor = ArgumentCaptor.forClass(SubscriberRLOC.class);
+        captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequest);
         Mockito.verify(subscriberSetMock, Mockito.times(3)).add(captor.capture());
         assertEquals(IPV6_ADDRESS, captor.getValue().getSrcRloc().getAddress());
@@ -267,7 +267,7 @@ public class MapResolverTest {
                 .setSourceRloc(IPV4_ADDRESS_BINARY_2)
                 .setItrRloc(itrRlocList).build();
 
-        captor = ArgumentCaptor.forClass(SubscriberRLOC.class);
+        captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequest);
         Mockito.verify(subscriberSetMock, Mockito.times(4)).add(captor.capture());
         assertEquals(IPV4_ADDRESS, captor.getValue().getSrcRloc().getAddress());
@@ -283,7 +283,7 @@ public class MapResolverTest {
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
                 .setItrRloc(itrRlocList).build();
 
-        captor = ArgumentCaptor.forClass(SubscriberRLOC.class);
+        captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequest);
         Mockito.verify(subscriberSetMock, Mockito.times(5)).add(captor.capture());
         assertEquals(mac, captor.getValue().getSrcRloc().getAddress());
@@ -304,12 +304,12 @@ public class MapResolverTest {
                 .thenReturn(mappingData);
         Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock);
-        SubscriberRLOC subscriberRLOCMock = new SubscriberRLOC(
+        Subscriber subscriberMock = new Subscriber(
                 mapRequestBuilder.getItrRloc().get(0).getRloc(),
-                mapRequestBuilder.getSourceEid().getEid(), SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
-        subscriberRLOCMock.setSubscriberTimeoutByRecordTtl(
+                mapRequestBuilder.getSourceEid().getEid(), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
+        subscriberMock.setSubscriberTimeoutByRecordTtl(
                 mappingRecordBuilder.getRecordTtl());
-        Mockito.when(subscriberSetMock.contains(subscriberRLOCMock))
+        Mockito.when(subscriberSetMock.contains(subscriberMock))
                 .thenReturn(true);
 
         // result

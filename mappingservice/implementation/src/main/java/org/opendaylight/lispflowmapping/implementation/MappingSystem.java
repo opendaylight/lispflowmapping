@@ -23,7 +23,7 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
@@ -404,11 +404,11 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
-        Set<SubscriberRLOC> subscribers = null;
+        Set<Subscriber> subscribers = null;
         if (origin == MappingOrigin.Southbound) {
             MappingData mapping = (MappingData) smc.getMapping(null, key);
             if (mapping != null && mapping.isNegative()) {
-                SimpleImmutableEntry<Eid, Set<SubscriberRLOC>> mergedNegativePrefix = computeMergedNegativePrefix(key);
+                SimpleImmutableEntry<Eid, Set<Subscriber>> mergedNegativePrefix = computeMergedNegativePrefix(key);
                 if (mergedNegativePrefix != null) {
                     addNegativeMapping(mergedNegativePrefix.getKey());
                     subscribers = mergedNegativePrefix.getValue();
@@ -425,15 +425,15 @@ public class MappingSystem implements IMappingSystem {
     /*
      * Returns the "merged" prefix and the subscribers of the prefixes that were merged.
      */
-    private SimpleImmutableEntry<Eid, Set<SubscriberRLOC>> computeMergedNegativePrefix(Eid eid) {
+    private SimpleImmutableEntry<Eid, Set<Subscriber>> computeMergedNegativePrefix(Eid eid) {
         // Variable to hold subscribers we collect along the way
-        Set<SubscriberRLOC> subscribers = null;
+        Set<Subscriber> subscribers = null;
 
         // If prefix sibling has a negative mapping, save its subscribers
         Eid sibling = smc.getSiblingPrefix(eid);
         MappingData mapping = (MappingData) smc.getMapping(null, sibling);
         if (mapping != null && mapping.isNegative()) {
-            subscribers = (Set<SubscriberRLOC>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
+            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
         } else {
             return null;
         }
@@ -443,7 +443,7 @@ public class MappingSystem implements IMappingSystem {
         while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
             if (mapping != null && mapping.isNegative()) {
-                subscribers.addAll((Set<SubscriberRLOC>)
+                subscribers.addAll((Set<Subscriber>)
                         getData(MappingOrigin.Southbound, currentNode, SubKeys.SUBSCRIBERS));
                 smc.removeMapping(currentNode);
             } else {
