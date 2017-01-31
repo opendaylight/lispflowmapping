@@ -294,5 +294,9 @@ module odl-mappingservice {
             type mapping-change;
         }
         uses lisp-proto:mapping-record-container;
+        list subscribers {
+            description "The list of subscribers to be notified of this change.";
+            uses lisp-proto:subscriber-address-grouping;
+        }
     }
 }

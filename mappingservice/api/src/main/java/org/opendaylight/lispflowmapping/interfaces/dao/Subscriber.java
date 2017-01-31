@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2017 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,24 +9,23 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.subscriber.address.grouping.SubscriberAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.subscriber.address.grouping.SubscriberAddressBuilder;
 
 /**
  * Request source RLOC in the mapping service with it's properties.
  */
-public class SubscriberRLOC {
-
-    private Rloc rloc;
-    private Eid eid;
-    private Date lastRequestDate;
-    private int subscriberTimeout = DEFAULT_SUBSCRIBER_TIMEOUT;
-
+public class Subscriber {
+    // 1 day is default Cisco IOS mapping TTL
+    public static final int DEFAULT_SUBSCRIBER_TIMEOUT = (int) TimeUnit.DAYS.toMinutes(1);
+    // Subscriber timeout should be slightly higher than the mapping TTL. Arbitrary value is set to 10 minutes
     private static final int SUBSCRIBER_TIMEOUT_CONSTANT = 10;
 
-    //1 day is default Cisco IOS mapping TTL
-    public static final int DEFAULT_SUBSCRIBER_TIMEOUT = (int) TimeUnit.DAYS.toMinutes(1);
+    private SubscriberAddress address;
+    private Date lastRequestDate;
+    private int subscriberTimeout = DEFAULT_SUBSCRIBER_TIMEOUT;
 
     /**
      * Constructor.
@@ -35,7 +34,7 @@ public class SubscriberRLOC {
      * @param srcEid  A source EID.
      * @param subscriberTimeout Subscriber timeout in min(s).
      */
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, int subscriberTimeout) {
+    public Subscriber(Rloc srcRloc, Eid srcEid, int subscriberTimeout) {
         this(srcRloc, srcEid, subscriberTimeout, new Date(System.currentTimeMillis()));
     }
 
@@ -47,29 +46,19 @@ public class SubscriberRLOC {
      * @param subscriberTimeout Subscriber timeout in min(s).
      * @param lastRequestDate Last request date for this subscriber.
      */
-    public SubscriberRLOC(Rloc srcRloc, Eid srcEid, int subscriberTimeout,
-                          Date lastRequestDate) {
+    public Subscriber(Rloc srcRloc, Eid srcEid, int subscriberTimeout, Date lastRequestDate) {
         super();
-        this.rloc = srcRloc;
-        this.eid = srcEid;
+        this.address = new SubscriberAddressBuilder().setRloc(srcRloc).setEid(srcEid).build();
         this.lastRequestDate = lastRequestDate;
         this.subscriberTimeout = subscriberTimeout;
     }
 
     public Rloc getSrcRloc() {
-        return rloc;
-    }
-
-    public void setSrcRloc(Rloc srcRloc) {
-        this.rloc = srcRloc;
+        return address.getRloc();
     }
 
     public Eid getSrcEid() {
-        return eid;
-    }
-
-    public void setSrcEid(Eid srcEid) {
-        this.eid = srcEid;
+        return address.getEid();
     }
 
     public Date getLastRequestDate() {
@@ -88,19 +77,21 @@ public class SubscriberRLOC {
         this.subscriberTimeout = subscriberTimeout;
     }
 
-    /**
-     * Set Subscriber Timeout from a record's ttl.
-     *
-     * @param recordTtl A mapping record's ttl in Minutes. If null, the value is
-     *                  set to default value of 1440 mins (1 days).
-     */
+    // Only used in MapResolverTest
     public void setSubscriberTimeoutByRecordTtl(Integer recordTtl) {
         this.subscriberTimeout = recordTtlToSubscriberTime(recordTtl);
     }
 
+    /**
+     * Static method to calculate the subscriber timeout from a mapping record TTL. If a mapping record TTL is not
+     * provided, use the default 1 day TTL. The suscriber timeout is the TTL plus a constant value.
+     *
+     * @param recordTtl The time to live (TTL) value
+     * @return the subscriber timeout
+     */
     public static int recordTtlToSubscriberTime(Integer recordTtl) {
         if (recordTtl != null) {
-            return ( recordTtl + SUBSCRIBER_TIMEOUT_CONSTANT );
+            return (recordTtl + SUBSCRIBER_TIMEOUT_CONSTANT);
         }
         return DEFAULT_SUBSCRIBER_TIMEOUT;
     }
@@ -112,11 +103,7 @@ public class SubscriberRLOC {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((rloc == null) ? 0 : rloc.hashCode());
-        result = prime * result + ((eid == null) ? 0 : eid.hashCode());
-        return result;
+        return address.hashCode();
     }
 
     @Override
@@ -130,8 +117,8 @@ public class SubscriberRLOC {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        SubscriberRLOC other = (SubscriberRLOC) obj;
-        if (!rloc.equals(other.rloc)) {
+        Subscriber other = (Subscriber) obj;
+        if (!address.equals(other.address)) {
             return false;
         }
         return true;
@@ -139,7 +126,7 @@ public class SubscriberRLOC {
 
     @Override
     public String toString() {
-        return "_rloc=" + rloc.toString() + ", _eid=" + eid.toString()
+        return "_rloc=" + address.getRloc().toString() + ", _eid=" + address.getEid().toString()
                 + ", last request @ " + lastRequestDate.toString();
     }
 }
