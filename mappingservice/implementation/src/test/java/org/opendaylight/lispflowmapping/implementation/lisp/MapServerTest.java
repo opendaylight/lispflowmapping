@@ -28,7 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -67,9 +67,9 @@ public class MapServerTest {
     @Mock private static IMapNotifyHandler notifyHandler;
     @Mock private static NotificationService notificationService;
 
-    @Spy private static Set<SubscriberRLOC> subscriberSetMock_1 = new HashSet<>();
-    @Spy private static Set<SubscriberRLOC> subscriberSetMock_2 = new HashSet<>();
-    @Spy private static Set<SubscriberRLOC> subscriberSetMock_3 = new HashSet<>();
+    @Spy private static Set<Subscriber> subscriberSetMock_1 = new HashSet<>();
+    @Spy private static Set<Subscriber> subscriberSetMock_2 = new HashSet<>();
+    @Spy private static Set<Subscriber> subscriberSetMock_3 = new HashSet<>();
     private static MapServer mapServer;
     private static MapRegister mapRegister;
     private static MappingData mappingData;
@@ -115,21 +115,21 @@ public class MapServerTest {
 
     private static final long TWO_DAYS = 86400000L * 2;
 
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_1 = new SubscriberRLOC(RLOC_1,         // timedOut() == true
-            IPV4_SOURCE_EID_1, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,         // timedOut() == true
+            IPV4_SOURCE_EID_1, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_2 = new SubscriberRLOC(RLOC_2,         // timedOut() == false
-            IPV4_SOURCE_EID_2, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_3 = new SubscriberRLOC(RLOC_3,         // timedOut() == true
-            IPV4_SOURCE_EID_3, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+    private static final Subscriber SUBSCRIBER_RLOC_2 = new Subscriber(RLOC_2,         // timedOut() == false
+            IPV4_SOURCE_EID_2, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
+    private static final Subscriber SUBSCRIBER_RLOC_3 = new Subscriber(RLOC_3,         // timedOut() == true
+            IPV4_SOURCE_EID_3, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_4 = new SubscriberRLOC(RLOC_4,         // timedOut() == false
-            IPV4_SOURCE_EID_4, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_5 = new SubscriberRLOC(RLOC_5,         // timedOut() == true
-            IPV4_SOURCE_EID_5, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT,
+    private static final Subscriber SUBSCRIBER_RLOC_4 = new Subscriber(RLOC_4,         // timedOut() == false
+            IPV4_SOURCE_EID_4, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
+    private static final Subscriber SUBSCRIBER_RLOC_5 = new Subscriber(RLOC_5,         // timedOut() == true
+            IPV4_SOURCE_EID_5, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final SubscriberRLOC SUBSCRIBER_RLOC_6 = new SubscriberRLOC(RLOC_6,         // timedOut() == false
-            IPV4_SOURCE_EID_6, SubscriberRLOC.DEFAULT_SUBSCRIBER_TIMEOUT);
+    private static final Subscriber SUBSCRIBER_RLOC_6 = new Subscriber(RLOC_6,         // timedOut() == false
+            IPV4_SOURCE_EID_6, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
             .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);
@@ -222,11 +222,11 @@ public class MapServerTest {
         final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
         final Eid maskedEid1 = LispAddressUtil.asIpv4Eid("1.2.0.0");
 
-        final SubscriberRLOC subscriber1 = Mockito.mock(SubscriberRLOC.class);
+        final Subscriber subscriber1 = Mockito.mock(Subscriber.class);
         Mockito.when(subscriber1.timedOut()).thenReturn(true);
         Mockito.when(subscriber1.toString()).thenReturn("sub1");
 
-        final Set<SubscriberRLOC> set1 = Sets.newHashSet(subscriber1);
+        final Set<Subscriber> set1 = Sets.newHashSet(subscriber1);
 
         Mockito.when(mapService.getAuthenticationKey(IPV4_PREFIX_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SRC_RLOCS))

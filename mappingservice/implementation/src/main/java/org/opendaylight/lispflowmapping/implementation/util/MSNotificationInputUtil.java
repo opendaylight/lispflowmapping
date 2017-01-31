@@ -8,10 +8,17 @@
 
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChangedBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.SubscriberItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.SubscriberItemBuilder;
 
 /**
  * Utility class to convert a mapping change into a notification.
@@ -26,6 +33,17 @@ public final class MSNotificationInputUtil {
 
     public static MappingChanged toMappingChanged(Mapping input, MappingChange change) {
         return new MappingChangedBuilder().setMappingRecord(input.getMappingRecord())
+                .setChangeType(change).build();
+    }
+
+    public static MappingChanged toMappingChanged(MappingData mapping, Set<Subscriber> subscribers,
+            MappingChange change) {
+        List<SubscriberItem> subscriberList = new ArrayList<SubscriberItem>();
+        for (Subscriber subscriber : subscribers) {
+            subscriberList.add(new SubscriberItemBuilder().setSubscriberAddress(
+                    subscriber.getSubscriberAddress()).build());
+        }
+        return new MappingChangedBuilder().setMappingRecord(mapping.getRecord()).setSubscriberItem(subscriberList)
                 .setChangeType(change).build();
     }
 }
