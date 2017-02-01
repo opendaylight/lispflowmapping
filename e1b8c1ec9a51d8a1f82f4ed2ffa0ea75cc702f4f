@@ -1,0 +1,310 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_10323210",
+        "filename": "mappingservice/config/src/main/java/org/opendaylight/lispflowmapping/config/ConfigIni.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "Please make this plural, numberOfBucketsInTimeBucket.",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f0368e02",
+        "filename": "mappingservice/config/src/main/java/org/opendaylight/lispflowmapping/config/ConfigIni.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/BUCKET/BUCKETS/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_36180e81",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we call sbMappingTimeoutService.removeMappingFromTimeoutService() in the generic removeMapping() method too?",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_eb2b3f80",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "While checkstyle is not enforcing this, I would like to avoid spaces after parentheses.  s/Service( ConfigIni/Service(ConfigIni/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_96257ac4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/odlBucketId/oldBucketId/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f61de674",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "You need mappingMerge to be set to true as well, in order to merge, no? Suppose the Map-Register packet is sent with the merge bit set, but globally merge is not enabled.\n\nBut I\u0027m not sure this part is needed, since removeExpiredMappings will merge anyway?",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6b374fe4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucket.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "No need for \" and others.\" since for now only Cisco contributed to this file. When someone else adds significant contributions, they can add \" and others.\" For now, please remove from all new files.",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_b07ec6ac",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucket.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "I would prefer a full name instead of a username, since it\u0027s more descriptive. Same for all other newly added files.",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_0b9cc3bf",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/bucket/buckets/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ab5f770d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "more than 1",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_563cb2e2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/timeForwaded/timeForwarded/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_765bb654",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/Rotation/Rotations/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_364ace80",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/Mili/MIlli/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_d658a258",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/Rotation/Rotations/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_b6551e1f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "I think there is missing word after suddenly, maybe \"rotate\"?",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f6368602",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/implementation/TimeBucketMappingTimeoutService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/numberOfBucket/numberOfBuckets/ also s/Milis/Millis/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_10199288",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/interfaces/ISouthBoundMappingTimeoutService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "@param presentBucketId missing",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f01dee74",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/timebucket/interfaces/ISouthBoundMappingTimeoutService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-01T23:31:30Z",
+      "side": 1,
+      "message": "s/TIme/Time/",
+      "revId": "e1b8c1ec9a51d8a1f82f4ed2ffa0ea75cc702f4f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
