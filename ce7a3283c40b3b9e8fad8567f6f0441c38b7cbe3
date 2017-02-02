@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_d74ff990",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-02T18:54:28Z",
+      "side": 1,
+      "message": "You need mappingMerge to be set to true as well, in order to merge, no? Suppose the Map-Register packet is sent with the merge bit set, but globally merge is not enabled.\n\nBut I\u0027m not sure this part is needed, since removeExpiredMappings will merge anyway?",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_d76899f7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-02T18:54:28Z",
+      "side": 1,
+      "message": "Why 2015? The file was created in 2016. Same for all other newly created files.",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_376e4502",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-02T18:54:28Z",
+      "side": 1,
+      "message": "I would prefer a full name instead of a username, since it\u0027s more descriptive. Same for all other newly added files.",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_177341ea",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/TimeBucketWheelUnitTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-02T18:54:28Z",
+      "side": 1,
+      "message": "remove \u0027 and others.\u0027",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
