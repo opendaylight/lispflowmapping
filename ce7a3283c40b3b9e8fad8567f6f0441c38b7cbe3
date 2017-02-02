@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_b277e301",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-02T22:40:54Z",
+      "side": 1,
+      "message": "Even though I discussed with you the situation, posting the comment for clarification.\nmappingData.isMergedEnabled is true implies both merge configuration and Mep-Register merge bit is set.\n\nMore info: https://git.opendaylight.org/gerrit/gitweb?p\u003dlispflowmapping.git;a\u003dblob;f\u003dmappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java;h\u003d5d2244907b2a93174c122c441b11c851b41958de;hb\u003dHEAD#l105",
+      "parentUuid": "fafc7978_d74ff990",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_d76899f7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
         "patchSetId": 15
@@ -30,6 +48,24 @@
       "writtenOn": "2017-02-02T18:54:28Z",
       "side": 1,
       "message": "Why 2015? The file was created in 2016. Same for all other newly created files.",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f2604b37",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-02T22:40:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_d76899f7",
       "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_92745ffe",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-02T22:40:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_376e4502",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_177341ea",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/TimeBucketWheelUnitTest.java",
         "patchSetId": 15
@@ -64,6 +118,24 @@
       "writtenOn": "2017-02-02T18:54:28Z",
       "side": 1,
       "message": "remove \u0027 and others.\u0027",
+      "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_12606f31",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/TimeBucketWheelUnitTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-02T22:40:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_177341ea",
       "revId": "ce7a3283c40b3b9e8fad8567f6f0441c38b7cbe3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
