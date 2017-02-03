@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_c83116a4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T08:23:03Z",
+      "side": 1,
+      "message": "Very true, I will update this.",
+      "parentUuid": "fafc7978_ed2cec4c",
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_f1797094",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 18
@@ -42,6 +60,24 @@
         "endLine": 417,
         "endChar": 9
       },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_082cbe46",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T08:23:03Z",
+      "side": 1,
+      "message": "This is actually part of this patch, since we need to compute the subscribers for the merged negative prefix here. However, to actually act on them, we need to send a notification with the subscribers, and that depends on https://git.opendaylight.org/gerrit/#/c/51268/ which adds the YANG model for the MappingChanged notification.",
+      "parentUuid": "fafc7978_f1797094",
       "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_8800aeab",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T08:23:03Z",
+      "side": 1,
+      "message": "Absolutely. This was modified in a different patch actually, but it looks like with all the interactive rebases it ended up here. Will remove.",
+      "parentUuid": "fafc7978_2df434f1",
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_6ddd9c70",
         "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MappingRecordUtil.java",
         "patchSetId": 18
@@ -88,6 +142,24 @@
         "endLine": 32,
         "endChar": 60
       },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_48f6c6d8",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MappingRecordUtil.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T08:23:03Z",
+      "side": 1,
+      "message": "Here I took what Cisco IOS considers and generates as a negative mapping. That may or may not be the right definition. But I wouldn\u0027t consider ACT \u003d drop a negative mapping, because it\u0027s an action that blackholes traffic. For me a negative mapping means that \"I have no information on this prefix, don\u0027t modify traffic in any way, meaning no encap, no drop, nothing\".",
+      "parentUuid": "fafc7978_6ddd9c70",
       "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
