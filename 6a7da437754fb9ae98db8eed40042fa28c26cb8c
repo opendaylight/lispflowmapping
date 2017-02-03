@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_486526e0",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/TimeBucketWheelUnitTest.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T07:32:37Z",
+      "side": 1,
+      "message": "Sorry, I missed this yesterday: this should also be in package org.opendaylight.lispflowmapping.implementation.timebucket",
+      "revId": "6a7da437754fb9ae98db8eed40042fa28c26cb8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
