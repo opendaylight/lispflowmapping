@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_4809a630",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T10:30:34Z",
+      "side": 1,
+      "message": "I swapped the order of the patches to make this part finished. The subscribers patch needs to be merged first.",
+      "parentUuid": "fafc7978_082cbe46",
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_2df434f1",
         "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
         "patchSetId": 18
