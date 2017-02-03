@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_ca846bb3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "Since this adds a new bundle and new functionality, it would be nice to have a brief of introduction/description about it in the commit message.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_8a8703d7",
+        "filename": "artifacts/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "I would put this right after mappingservice.neutron",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ea6def33",
+        "filename": "features/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "Again, I would put this right after mappingservice.neutron",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2a7897f1",
+        "filename": "mappingservice/neutron-intent/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "Please remove the \u003cproperties\u003e section, release people recommend agains setting versions with properties, except for the features/pom.xml, because there it is reused in the features.xml.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_0a731316",
+        "filename": "mappingservice/neutron-intent/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "You can put 1.2.0-SNAPSHOT here, no need for a property.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6a61ff38",
+        "filename": "mappingservice/neutron-intent/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "This should be ${project.version} though, so we only need to update in one place.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_4acb5b1e",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/GroupBasedPolicyNeutronIntentHandlerBean.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "New file, copyright year should be 2017. Same for all new files.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_cad62bc3",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/GroupBasedPolicyNeutronIntentHandlerBean.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "I think this should be made a Javadoc, since that would be helpful, so add one more * here. You could then add \u0027@author Shekib Ahmed\u0027 at the end, and remove the \u0027Created by sheikahm\u0027 above.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2ae6d7b4",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/HostIdToRlocMapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "Same as the previous patch for all files.",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ea020f3d",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/util/InfoUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "Please add a private constructor with comment \u0027// Utility class, should not be instantiated\u0027, see example in https://git.opendaylight.org/gerrit/gitweb?p\u003dlispflowmapping.git;a\u003dblob;f\u003dmappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DSBEInputUtil.java",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6a961ff2",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/util/LispNeutronUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "private constructor here too",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ea896fcb",
+        "filename": "mappingservice/neutron-intent/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/util/VppNetconfConnectionProbe.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "I would move this one and the following two files out of the util package, maybe create a separate package?",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ea54cf55",
+        "filename": "mappingservice/neutron-intent/src/main/resources/org.opendaylight.blueprint/neutron-intent.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-03T12:27:15Z",
+      "side": 1,
+      "message": "The path for this file should be org/opendaylight/blueprint instead of org.opendaylight.blueprint",
+      "revId": "1b1ccac7a0d1c76de2ec18a0e3205979d2499cc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
