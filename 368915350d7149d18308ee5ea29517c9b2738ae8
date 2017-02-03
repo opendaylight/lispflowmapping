@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_ed2cec4c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 18
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "A bit more detail on what the patch does would be nice.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f1797094",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "So what is this for? you plan to use it in another patch?",
+      "range": {
+        "startLine": 407,
+        "startChar": 8,
+        "endLine": 417,
+        "endChar": 9
+      },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2df434f1",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "no changes to this file, so I think we should remove this. If we plan to update all files in general, I think we should do it in a different patch.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 69
+      },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6ddd9c70",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MappingRecordUtil.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be a || ? ACT \u003d drop is still Negative mapping no?",
+      "range": {
+        "startLine": 32,
+        "startChar": 58,
+        "endLine": 32,
+        "endChar": 60
+      },
+      "revId": "368915350d7149d18308ee5ea29517c9b2738ae8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
