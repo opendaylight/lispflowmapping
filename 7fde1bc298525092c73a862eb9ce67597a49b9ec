@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_9a0ac6d0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "no actions here?",
+      "range": {
+        "startLine": 390,
+        "startChar": 6,
+        "endLine": 400,
+        "endChar": 9
+      },
+      "revId": "7fde1bc298525092c73a862eb9ce67597a49b9ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_5a9cde69",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-03T01:44:41Z",
+      "side": 1,
+      "message": "this file is not touched otherwise. If we want to update untouched files, I think its best to do so in a separate patch.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 69
+      },
+      "revId": "7fde1bc298525092c73a862eb9ce67597a49b9ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
