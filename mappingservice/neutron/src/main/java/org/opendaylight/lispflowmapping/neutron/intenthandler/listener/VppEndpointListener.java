@@ -34,7 +34,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.IntentHandlerAsyncExecutorProvider;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.util.VppNetconfConnectionProbe;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.util.VppNodeReader;
-import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostIdToRlocMapper;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
@@ -61,7 +61,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
     private final ListenerRegistration<?> reg;
 
     private final VppNodeReader vppNodeReader;
-    private final HostIdToRlocMapper hostIdToRlocMapper;
+    private final HostInformationManager hostInformationManager;
 
     private final Multimap<NodeId, KeyedInstanceIdentifier<Node, NodeKey>> nodeIdToKeyedInstanceIdentifierMap =
             ArrayListMultimap.create();
@@ -77,7 +77,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
 
         vppNodeReader = new VppNodeReader(this.dataBroker, this.mountService);
 
-        hostIdToRlocMapper = HostIdToRlocMapper.getInstance();
+        hostInformationManager = HostInformationManager.getInstance();
 
         reg = dataBroker.registerDataTreeChangeListener(
                 new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, topologyII), this);
@@ -128,7 +128,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
             Futures.addCallback(processingTask, new FutureCallback<KeyedInstanceIdentifier<Node, NodeKey>>() {
                 @Override
                 public void onSuccess(@Nullable KeyedInstanceIdentifier<Node, NodeKey> kiiToNode) {
-                    hostIdToRlocMapper.addMapping(newOrModifiedNode.getNodeId().getValue(),
+                    hostInformationManager.addHostRelatedInfo(newOrModifiedNode.getNodeId().getValue(),
                             LispAddressUtil.toRloc(vppNodeReader.rlocIpOfNode(kiiToNode)));
                 }
 
