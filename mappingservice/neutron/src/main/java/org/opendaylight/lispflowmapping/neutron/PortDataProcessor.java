@@ -8,21 +8,14 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.binding.rev150712.PortBindingExtension;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIps;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
-import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +37,8 @@ public class PortDataProcessor implements DataProcessor<Port> {
     // Service Manager
     private volatile ILispNeutronService lispNeutronService;
 
+    private final HostInformationManager hostInformationManager = HostInformationManager.getInstance();
+
     public PortDataProcessor(ILispNeutronService lispNeutronService) {
         this.lispNeutronService = lispNeutronService;
     }
@@ -64,35 +59,35 @@ public class PortDataProcessor implements DataProcessor<Port> {
                     port.toString());
             return;
         }
-        Eid hostAddress = LispAddressUtil.asDistinguishedNameEid(hostId);
-
-        MappingRecord eidRecord;
-        List<LocatorRecord> hostLocRecords;
-        GetMappingInput input = LispUtil.buildGetMappingInput(hostAddress);
-        try {
-            OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
-            if (lfmdb == null) {
-                LOG.debug("lfmdb is null!!!");
-                return;
-            }
-            Future<RpcResult<GetMappingOutput>> result = lfmdb.getMapping(input);
-            GetMappingOutput output = result.get().getResult();
-            if (output == null) {
-                LOG.debug("No mapping found to Host Id {}", hostId);
-                return;
-            }
-
-            // TODO for now only selecting the first EidToLocatorRecord from the
-            // Host_ID mapping
-            eidRecord = output.getMappingRecord();
-            hostLocRecords = eidRecord.getLocatorRecord();
-            LOG.debug("hostLocRecords is : {}",hostLocRecords);
-
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.warn("Failed to GET mapping for EID {}: , mappingInput: {} , Exception: {}", hostAddress, input,
-                    ExceptionUtils.getStackTrace(e));
-            return;
-        }
+//        Eid hostAddress = LispAddressUtil.asDistinguishedNameEid(hostId);
+//
+//        MappingRecord eidRecord;
+//        List<LocatorRecord> hostLocRecords;
+//        GetMappingInput input = LispUtil.buildGetMappingInput(hostAddress);
+//        try {
+//            OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
+//            if (lfmdb == null) {
+//                LOG.debug("lfmdb is null!!!");
+//                return;
+//            }
+//            Future<RpcResult<GetMappingOutput>> result = lfmdb.getMapping(input);
+//            GetMappingOutput output = result.get().getResult();
+//            if (output == null) {
+//                LOG.debug("No mapping found to Host Id {}", hostId);
+//                return;
+//            }
+//
+//            // TODO for now only selecting the first EidToLocatorRecord from the
+//            // Host_ID mapping
+//            eidRecord = output.getMappingRecord();
+//            hostLocRecords = eidRecord.getLocatorRecord();
+//            LOG.debug("hostLocRecords is : {}",hostLocRecords);
+//
+//        } catch (InterruptedException | ExecutionException e) {
+//            LOG.warn("Failed to GET mapping for EID {}: , mappingInput: {} , Exception: {}", hostAddress, input,
+//                    ExceptionUtils.getStackTrace(e));
+//            return;
+//        }
 
         List<FixedIps> fixedIPs = port.getFixedIps();
         if (fixedIPs != null && fixedIPs.size() > 0) {
@@ -103,9 +98,11 @@ public class PortDataProcessor implements DataProcessor<Port> {
                 // Get subnet for this port, based on v4 or v6 decide address
                 // iana code.
 
-                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue() + "/32");
-                lispNeutronService.getMappingDbService().addMapping(LispUtil.buildAddMappingInput(eidAddress,
-                        hostLocRecords));
+                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
+                                                            + "/32");
+
+                PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
+                hostInformationManager.addHostRelatedInfo(hostId, portData);
             }
         }
 
