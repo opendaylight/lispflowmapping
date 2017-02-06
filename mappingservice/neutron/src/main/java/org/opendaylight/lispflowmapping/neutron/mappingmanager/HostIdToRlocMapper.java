@@ -22,17 +22,9 @@ public class HostIdToRlocMapper {
     private static final Logger LOG = LoggerFactory.getLogger(HostIdToRlocMapper.class);
 
     private ConcurrentHashMap<String, List<Rloc>> mapper;
-    private static HostIdToRlocMapper instance;
 
-    private HostIdToRlocMapper() {
+    public HostIdToRlocMapper() {
         mapper = new ConcurrentHashMap();
-    }
-
-    public static synchronized HostIdToRlocMapper getInstance() {
-        if (instance == null) {
-            instance = new HostIdToRlocMapper();
-        }
-        return instance;
     }
 
     public synchronized void addMapping(String hostId, Rloc hostRloc) {
