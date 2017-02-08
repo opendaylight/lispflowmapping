@@ -46,48 +46,16 @@ public class PortDataProcessor implements DataProcessor<Port> {
     @Override
     public void create(Port port) {
         // TODO Consider adding Port MAC -> Port fixed IP in MS
-        // TODO Add Port fixed ip -> host ip , if Port.host_id mapping to
         // host_ip exists in MS
 
         LOG.debug("Neutron Port Created : " + port.toString());
 
-        // Check if port.hostID is in map-server, if it is, get host eidtoloc
-        // record?
         final String hostId = port.getAugmentation(PortBindingExtension.class).getHostId();
         if (hostId == null) {
             LOG.error("Adding new Neutron port to lisp mapping service failed. Port does not have a HostID. Port: {}",
                     port.toString());
             return;
         }
-//        Eid hostAddress = LispAddressUtil.asDistinguishedNameEid(hostId);
-//
-//        MappingRecord eidRecord;
-//        List<LocatorRecord> hostLocRecords;
-//        GetMappingInput input = LispUtil.buildGetMappingInput(hostAddress);
-//        try {
-//            OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
-//            if (lfmdb == null) {
-//                LOG.debug("lfmdb is null!!!");
-//                return;
-//            }
-//            Future<RpcResult<GetMappingOutput>> result = lfmdb.getMapping(input);
-//            GetMappingOutput output = result.get().getResult();
-//            if (output == null) {
-//                LOG.debug("No mapping found to Host Id {}", hostId);
-//                return;
-//            }
-//
-//            // TODO for now only selecting the first EidToLocatorRecord from the
-//            // Host_ID mapping
-//            eidRecord = output.getMappingRecord();
-//            hostLocRecords = eidRecord.getLocatorRecord();
-//            LOG.debug("hostLocRecords is : {}",hostLocRecords);
-//
-//        } catch (InterruptedException | ExecutionException e) {
-//            LOG.warn("Failed to GET mapping for EID {}: , mappingInput: {} , Exception: {}", hostAddress, input,
-//                    ExceptionUtils.getStackTrace(e));
-//            return;
-//        }
 
         List<FixedIps> fixedIPs = port.getFixedIps();
         if (fixedIPs != null && fixedIPs.size() > 0) {
@@ -97,10 +65,8 @@ public class PortDataProcessor implements DataProcessor<Port> {
                 // TODO Add check/support for IPv6.
                 // Get subnet for this port, based on v4 or v6 decide address
                 // iana code.
-
                 eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
                                                             + "/32");
-
                 PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
                 hostInformationManager.addHostRelatedInfo(hostId, portData);
             }
@@ -115,8 +81,26 @@ public class PortDataProcessor implements DataProcessor<Port> {
 
     @Override
     public void update(Port port) {
-        // TODO Port IP and port's host ip is stored by Lisp Neutron Service. If
-        // there is change to these fields, the update needs to be processed.
+
+        final String hostId = port.getAugmentation(PortBindingExtension.class).getHostId();
+        if (hostId == null) {
+            LOG.error("Updating port to lisp mapping service failed. Port does not have a HostID. Port: {}",
+                    port.toString());
+            return;
+        }
+
+        List<FixedIps> fixedIPs = port.getFixedIps();
+        if (fixedIPs != null && fixedIPs.size() > 0) {
+            Eid eidAddress;
+            for (FixedIps ip : fixedIPs) {
+
+                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
+                        + "/32");
+
+                PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
+                hostInformationManager.addHostRelatedInfo(hostId, portData);
+            }
+        }
 
         LOG.info("Neutron Port updated: Port name: "
                 + port.getName()
