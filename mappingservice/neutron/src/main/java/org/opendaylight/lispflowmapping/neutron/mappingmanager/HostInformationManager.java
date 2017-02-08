@@ -12,9 +12,13 @@ import java.util.List;
 
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.LispUtil;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToPortDataMapper;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToRlocMapper;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.PortUuidToPortDataMapper;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +52,8 @@ public class HostInformationManager {
 
     public synchronized void addHostRelatedInfo(String hostId, Object data) {
         if (data instanceof PortData) {
+            attemptToDeleteMappingRecord(hostId, ((PortData) data).getPortUuid());
             hostIdToPortDataMapper.addMapping(hostId, (PortData) data);
-
         } else if (data instanceof Rloc) {
             hostIdToRlocMapper.addMapping(hostId, (Rloc) data);
         } else {
@@ -77,6 +81,23 @@ public class HostInformationManager {
             uuidToEidMapper.addPortDataToProcessed(portData);
         });
         uuidToEidMapper.clearAllUnprocessedData();
+    }
 
+    private synchronized void attemptToDeleteMappingRecord(String hostId, String portUuid) {
+        PortUuidToPortDataMapper uuidToEidMapper = hostIdToPortDataMapper.getAllPortData(hostId);
+
+        if (uuidToEidMapper == null) {
+            return;
+        }
+
+        PortData oldPortData = uuidToEidMapper.getProcessedPortData(portUuid);
+
+        if (oldPortData == null) {
+            return;
+        }
+
+        RemoveMappingInput removeMappingInput = LispUtil.buildRemoveMappingInput(oldPortData.getPortEid());
+        lfmDbService.removeMapping(removeMappingInput);
+        uuidToEidMapper.deleteProcessedPortData(portUuid);
     }
 }

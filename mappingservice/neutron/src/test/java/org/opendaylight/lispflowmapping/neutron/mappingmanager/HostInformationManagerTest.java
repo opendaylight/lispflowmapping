@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -43,8 +44,11 @@ public class HostInformationManagerTest {
 
     private static final Eid SAMPLE_EID_1 = Mockito.mock(Eid.class);
     private static final Eid SAMPLE_EID_2 = Mockito.mock(Eid.class);
+    private static final Eid SAMPLE_EID_3 = Mockito.mock(Eid.class);
     private static final PortData PORT_DATA_1 = new PortData("1", SAMPLE_EID_1);
     private static final PortData PORT_DATA_2 = new PortData("2", SAMPLE_EID_2);
+
+    private static final PortData PORT_DATA_1_1 = new PortData("1", SAMPLE_EID_3);
 
     @Test
     public void testScenarioRlocFirst() {
@@ -126,6 +130,25 @@ public class HostInformationManagerTest {
         destroySingleton(hostInformationManager);
     }
 
+    @Test
+    public void testProperMappingRecordRemoval() {
+        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+
+        addPortData1(hostInformationManager);
+
+        addRlocData(hostInformationManager);
+
+        addUpdatedPortData1(hostInformationManager);
+
+        RemoveMappingInput removeMappingInput = LispUtil.buildRemoveMappingInput(PORT_DATA_1.getPortEid());
+        Mockito.verify(lfmDbService).removeMapping(removeMappingInput);
+
+        AddMappingInput addMappingInput = createAddMappingInput(SAMPLE_RLOC, SAMPLE_EID_3);
+        Mockito.verify(lfmDbService).addMapping(addMappingInput);
+
+        destroySingleton(hostInformationManager);
+    }
+
     private void addRlocData(HostInformationManager hostInformationManager) {
         hostInformationManager.addHostRelatedInfo(HOST_ID, SAMPLE_RLOC);
     }
@@ -136,6 +159,10 @@ public class HostInformationManagerTest {
 
     private void addPortData2(HostInformationManager hostInformationManager) {
         hostInformationManager.addHostRelatedInfo(HOST_ID, PORT_DATA_2);
+    }
+
+    private void addUpdatedPortData1(HostInformationManager hostInformationManager) {
+        hostInformationManager.addHostRelatedInfo(HOST_ID, PORT_DATA_1_1);
     }
 
     private AddMappingInput createAddMappingInput(Rloc rloc, Eid eid) {
