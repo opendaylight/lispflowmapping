@@ -5,10 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.neutron.mappingmanager;
+package org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers;
 
 import java.util.Collection;
 import java.util.HashMap;
+
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
 
 /**
  * Created by Shakib Ahmed on 2/6/17.
@@ -28,6 +30,18 @@ public class PortUuidToPortDataMapper {
 
     public synchronized void addPortDataToProcessed(PortData portData) {
         processedPortUuidToEidMapper.put(portData.getPortUuid(), portData);
+    }
+
+    public synchronized PortData getProcessedPortData(String uuid) {
+        return processedPortUuidToEidMapper.get(uuid);
+    }
+
+    public synchronized void deleteProcessedPortData(String portUuid) {
+        processedPortUuidToEidMapper.remove(portUuid);
+    }
+
+    public synchronized void delereUnprocessedPortData(String portUuid) {
+        unprocessedPortUuidToEidMapper.remove(portUuid);
     }
 
     public synchronized Collection<PortData> getAllUnprocessedPorts() {
