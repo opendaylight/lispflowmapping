@@ -30,6 +30,18 @@ public class PortUuidToPortDataMapper {
         processedPortUuidToEidMapper.put(portData.getPortUuid(), portData);
     }
 
+    public synchronized PortData getProcessedPortData(String uuid) {
+        return processedPortUuidToEidMapper.get(uuid);
+    }
+
+    public synchronized void deleteProcessedPortData(String portUuid) {
+        processedPortUuidToEidMapper.remove(portUuid);
+    }
+
+    public synchronized void delereUnprocessedPortData(String portUuid) {
+        unprocessedPortUuidToEidMapper.remove(portUuid);
+    }
+
     public synchronized Collection<PortData> getAllUnprocessedPorts() {
         return unprocessedPortUuidToEidMapper.values();
     }

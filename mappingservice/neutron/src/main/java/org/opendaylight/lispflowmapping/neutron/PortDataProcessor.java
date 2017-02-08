@@ -115,8 +115,26 @@ public class PortDataProcessor implements DataProcessor<Port> {
 
     @Override
     public void update(Port port) {
-        // TODO Port IP and port's host ip is stored by Lisp Neutron Service. If
-        // there is change to these fields, the update needs to be processed.
+
+        final String hostId = port.getAugmentation(PortBindingExtension.class).getHostId();
+        if (hostId == null) {
+            LOG.error("Updating port to lisp mapping service failed. Port does not have a HostID. Port: {}",
+                    port.toString());
+            return;
+        }
+
+        List<FixedIps> fixedIPs = port.getFixedIps();
+        if (fixedIPs != null && fixedIPs.size() > 0) {
+            Eid eidAddress;
+            for (FixedIps ip : fixedIPs) {
+
+                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
+                        + "/32");
+
+                PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
+                hostInformationManager.addHostRelatedInfo(hostId, portData);
+            }
+        }
 
         LOG.info("Neutron Port updated: Port name: "
                 + port.getName()
