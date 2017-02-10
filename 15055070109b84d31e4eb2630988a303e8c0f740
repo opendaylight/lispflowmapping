@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_4ebd1268",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/Subscriber.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T03:28:34Z",
+      "side": 1,
+      "message": "+10 ?",
+      "range": {
+        "startLine": 100,
+        "startChar": 40,
+        "endLine": 100,
+        "endChar": 42
+      },
+      "revId": "15055070109b84d31e4eb2630988a303e8c0f740",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_aeabde1c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T03:28:34Z",
+      "side": 1,
+      "message": "doesnt belong to this patch anymore.",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 1
+      },
+      "revId": "15055070109b84d31e4eb2630988a303e8c0f740",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
