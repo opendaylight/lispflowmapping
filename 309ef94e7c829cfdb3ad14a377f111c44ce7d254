@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "fafc7978_4ec87222",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T03:08:56Z",
+      "side": 1,
+      "message": "No used!",
+      "range": {
+        "startLine": 214,
+        "startChar": 4,
+        "endLine": 225,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_8e5b7a86",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T03:08:56Z",
+      "side": 1,
+      "message": "this can be factored out to a removeExpiredMappings method as it is repeated for removeMapping as well.",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 291,
+        "endChar": 13
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6e8736d8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T03:08:56Z",
+      "side": 1,
+      "message": "I think it may be best to move this to removeMapping method itself. whenever Mapping is removed, the timebucket Subkey should be removed too.",
+      "range": {
+        "startLine": 294,
+        "startChar": 11,
+        "endLine": 294,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_2e16cea7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
         "patchSetId": 18
