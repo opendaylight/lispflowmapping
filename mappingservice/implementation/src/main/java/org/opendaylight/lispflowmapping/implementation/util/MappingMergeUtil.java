@@ -224,7 +224,7 @@ public final class MappingMergeUtil {
 
     public static boolean timestampIsExpired(Long timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb() ) {
+        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb()) {
             return true;
         }
         return false;
@@ -252,7 +252,7 @@ public final class MappingMergeUtil {
             if (nbMapping.getEid().getAddress() instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang
                     .ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey) {
                 nbMask = SourceDestKeyHelper.getDstMask(nbMapping.getEid());
-                if ( nbMask < sbMask) {
+                if (nbMask < sbMask) {
                     // We have to create a new SourceDest EID, where the source is same as the
                     // one in NB record, and dest EID is the more specific from SB mapping record.
 
