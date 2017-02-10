@@ -57,7 +57,7 @@ import org.opendaylight.controller.mdsal.it.base.AbstractMdsalTestBase;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -445,7 +445,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add subscribers */
         final String subscriberSrcRloc1 = "127.0.0.3";
         final String subscriberSrcRloc2 = "127.0.0.4";
-        final Set<SubscriberRLOC> subscriberSet1 = Sets.newHashSet(newSubscriber(eid1, subscriberSrcRloc1),
+        final Set<Subscriber> subscriberSet1 = Sets.newHashSet(newSubscriber(eid1, subscriberSrcRloc1),
                 newSubscriber(eid1, subscriberSrcRloc2));
         mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet1);
 
@@ -532,13 +532,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return true;
     }
 
-    private static SubscriberRLOC newSubscriber(Eid srcEid, String srcRlocIp) {
+    private static Subscriber newSubscriber(Eid srcEid, String srcRlocIp) {
         final byte[] addressBinary = InetAddresses.forString(srcRlocIp).getAddress();
         final int timeout = 5;
         final Rloc srcRloc = new RlocBuilder().setAddress(new Ipv4BinaryBuilder()
                 .setIpv4Binary(new Ipv4AddressBinary(addressBinary)).build()).build();
 
-        return new SubscriberRLOC(srcRloc, srcEid, timeout);
+        return new Subscriber(srcRloc, srcEid, timeout);
     }
 
     private void testMultipleMappings() throws UnknownHostException {

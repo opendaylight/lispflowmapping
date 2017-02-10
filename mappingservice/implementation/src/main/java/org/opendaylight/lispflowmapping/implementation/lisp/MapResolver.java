@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubscriberRLOC;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener;
@@ -205,8 +205,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
-        SubscriberRLOC subscriberRloc = new SubscriberRLOC(itrRloc, srcEid,
-                SubscriberRLOC.recordTtlToSubscriberTime(recordTtl));
+        Subscriber subscriber = new Subscriber(itrRloc, srcEid, Subscriber.recordTtlToSubscriberTime(recordTtl));
         Eid subscribedEid = mapEid;
 
         // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe itrRloc only
@@ -217,18 +216,17 @@ public class MapResolver implements IMapResolverAsync {
             subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
         }
 
-        Set<SubscriberRLOC> subscribers = getSubscribers(subscribedEid);
+        Set<Subscriber> subscribers = getSubscribers(subscribedEid);
         if (subscribers == null) {
             subscribers = Sets.newConcurrentHashSet();
-        } else if (subscribers.contains(subscriberRloc)) {
-            // If there is an entry already for this subscriberRloc, remove it, so that it gets the new
-            // timestamp
-            subscribers.remove(subscriberRloc);
+        } else if (subscribers.contains(subscriber)) {
+            // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
+            subscribers.remove(subscriber);
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding new subscriber: " + LispAddressStringifier.getString(subscriberRloc.getSrcRloc()));
+            LOG.trace("Adding new subscriber: " + LispAddressStringifier.getString(subscriber.getSrcRloc()));
         }
-        subscribers.add(subscriberRloc);
+        subscribers.add(subscriber);
         addSubscribers(subscribedEid, subscribers);
     }
 
@@ -351,11 +349,11 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<SubscriberRLOC> getSubscribers(Eid address) {
-        return (Set<SubscriberRLOC>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+    private Set<Subscriber> getSubscribers(Eid address) {
+        return (Set<Subscriber>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
-    private void addSubscribers(Eid address, Set<SubscriberRLOC> subscribers) {
+    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
         mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
