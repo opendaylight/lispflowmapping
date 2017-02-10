@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_69644de5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Correct. But isnt this logic already in removeExpiredMapping? why not just call that directly?",
+      "parentUuid": "fafc7978_09f3049f",
+      "range": {
+        "startLine": 214,
+        "startChar": 4,
+        "endLine": 225,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8e5b7a86",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 18
@@ -143,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_090781cb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "We agreed to move this to smc, and clean the code such that whenever the core mapping is removed , all per xtrId and subkeys are also removed.",
+      "parentUuid": "fafc7978_a93ab831",
+      "range": {
+        "startLine": 294,
+        "startChar": 11,
+        "endLine": 294,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_2e16cea7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
         "patchSetId": 18
@@ -190,6 +238,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_a9ff55a9",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_29936850",
+      "range": {
+        "startLine": 25,
+        "startChar": 25,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8e36da50",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -225,6 +297,30 @@
       "side": 1,
       "message": "Mapping validity is more than recordValidity. Say, the record validity is 4000 ms. Then time frame is 2000ms. So, for every timeFrame pass we rotate once. It takes in total 6000 ms to rotate the whole structure. Why this extra time? Because the youngest mapping record in the expiring time bucket is 4000ms old. Exactly the mappingRecordValidity.",
       "parentUuid": "fafc7978_8e36da50",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_092e6143",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_09dca411",
       "range": {
         "startLine": 44,
         "startChar": 8,
@@ -330,6 +426,53 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_69472d1e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_29e1a8d0",
+      "range": {
+        "startLine": 61,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_894c1144",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "please log an error here.",
+      "range": {
+        "startLine": 91,
+        "startChar": 10,
+        "endLine": 91,
+        "endChar": 30
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_6e029670",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -365,6 +508,30 @@
       "side": 1,
       "message": "Addressed above.",
       "parentUuid": "fafc7978_6e029670",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c95619d2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_89e894b5",
       "range": {
         "startLine": 83,
         "startChar": 0,
@@ -424,6 +591,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_a95115da",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_69ebb0b0",
+      "range": {
+        "startLine": 145,
+        "startChar": 8,
+        "endLine": 146,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_aef3de9d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -463,6 +654,29 @@
         "startLine": 161,
         "startChar": 3,
         "endLine": 164,
+        "endChar": 1
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_495a29f4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/implementation/TimeBucketMappingTimeoutService.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T18:55:09Z",
+      "side": 1,
+      "message": "not needed anymore.",
+      "range": {
+        "startLine": 62,
+        "startChar": 1,
+        "endLine": 66,
         "endChar": 1
       },
       "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
