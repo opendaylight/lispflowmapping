@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_09f3049f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "Yes, this is being used, from TimeBucket",
+      "parentUuid": "fafc7978_4ec87222",
+      "range": {
+        "startLine": 214,
+        "startChar": 4,
+        "endLine": 225,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8e5b7a86",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 18
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-10T03:08:56Z",
       "side": 1,
       "message": "this can be factored out to a removeExpiredMappings method as it is repeated for removeMapping as well.",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 291,
+        "endChar": 13
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_094ae4c4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "refer to the next case",
+      "parentUuid": "fafc7978_8e5b7a86",
       "range": {
         "startLine": 285,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_a93ab831",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "there is a reason why this has to be out. Refer to line 387. This is a very well crafted case. Suppose we have global merge config on and the packet merge bit false, so, we have xtrId specific mapping and not merge mapping. So, the getMapping function only removes the main mapping record in case this is not a xtrId specific getMapping. So, if we also remove the TIME_BUCKET_ID from inside, what is going to happen is, we are going to loose track of the xtrId specific mapping as well and it is going to be in mapcache. I do agree that it may be it will be better to handle getMapping\u0027s mapping expiration differently. But that\u0027s a different patch.",
+      "parentUuid": "fafc7978_6e8736d8",
+      "range": {
+        "startLine": 294,
+        "startChar": 11,
+        "endLine": 294,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_2e16cea7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
         "patchSetId": 18
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_29936850",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "Well, we need mappingData.isMergeEnabled(). We can maintain a Eid to Boolean mapping, but I think this is better.",
+      "parentUuid": "fafc7978_2e16cea7",
+      "range": {
+        "startLine": 25,
+        "startChar": 25,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8e36da50",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -105,6 +201,30 @@
       "writtenOn": "2017-02-10T02:25:54Z",
       "side": 1,
       "message": "these numbers dont work for numbucket\u003d3.  if you always empty previous bucket at time of rotation, the timeframe should be at least as much as the mappingRecordValitity itself. I think this will be simpler if you set default numOfBuckets to 3, and base all the calculations on that. We can remove the configuration part and make it always be 3 if that simplifies things.",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_09dca411",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "Mapping validity is more than recordValidity. Say, the record validity is 4000 ms. Then time frame is 2000ms. So, for every timeFrame pass we rotate once. It takes in total 6000 ms to rotate the whole structure. Why this extra time? Because the youngest mapping record in the expiring time bucket is 4000ms old. Exactly the mappingRecordValidity.",
+      "parentUuid": "fafc7978_8e36da50",
       "range": {
         "startLine": 44,
         "startChar": 8,
@@ -186,6 +306,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_29e1a8d0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "No. So, think about the merged mapping case. We may not always insert the mapping record in the current bucket. In can go to any bucket in the middle. So, this is needed.",
+      "parentUuid": "fafc7978_8efffa66",
+      "range": {
+        "startLine": 61,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_6e029670",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -197,6 +341,30 @@
       "writtenOn": "2017-02-10T02:25:54Z",
       "side": 1,
       "message": "seems extra.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_89e894b5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "Addressed above.",
+      "parentUuid": "fafc7978_6e029670",
       "range": {
         "startLine": 83,
         "startChar": 0,
@@ -232,6 +400,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_69ebb0b0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "No. The one that got cleared is the new current bucket. The previous current bucket in the second newest, the previous of previous is the third current and so on.",
+      "parentUuid": "fafc7978_eed686f0",
+      "range": {
+        "startLine": 145,
+        "startChar": 8,
+        "endLine": 146,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_aef3de9d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
         "patchSetId": 18
@@ -243,6 +435,30 @@
       "writtenOn": "2017-02-10T02:25:54Z",
       "side": 1,
       "message": "if not used, remove",
+      "range": {
+        "startLine": 161,
+        "startChar": 3,
+        "endLine": 164,
+        "endChar": 1
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_e944c0b8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-10T06:38:18Z",
+      "side": 1,
+      "message": "It is used in TimeBucketMappingTimeoutService",
+      "parentUuid": "fafc7978_aef3de9d",
       "range": {
         "startLine": 161,
         "startChar": 3,
