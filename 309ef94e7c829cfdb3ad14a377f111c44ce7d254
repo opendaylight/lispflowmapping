@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_2e16cea7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucket.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "looks like MappingData is not needed. Please remove it from the bucket altogether if that is the case.",
+      "range": {
+        "startLine": 25,
+        "startChar": 25,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_8e36da50",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "these numbers dont work for numbucket\u003d3.  if you always empty previous bucket at time of rotation, the timeframe should be at least as much as the mappingRecordValitity itself. I think this will be simpler if you set default numOfBuckets to 3, and base all the calculations on that. We can remove the configuration part and make it always be 3 if that simplifies things.",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ae775e3a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "Why is this passed, isnt it a global var?",
+      "range": {
+        "startLine": 49,
+        "startChar": 38,
+        "endLine": 49,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_4e051279",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "clearExpired... seems to already check if rotation is needed or not. this way the getNumOfRotationsNeeded is called twice. remove if not needed.",
+      "range": {
+        "startLine": 58,
+        "startChar": 12,
+        "endLine": 58,
+        "endChar": 44
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_8efffa66",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "clearExpired.. will always bring fix the currentBucket to where it has to be, so I think this is not needed either. You should be able to just pick the current id.",
+      "range": {
+        "startLine": 61,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 56
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6e029670",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "seems extra.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_eed686f0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "shouldnt this be (current+1)%numOfBuckets ? , you are setting the current to the one you just cleared! The one cleared should be the oldest, while the current should change to the next bucket  in the wheel.",
+      "range": {
+        "startLine": 145,
+        "startChar": 8,
+        "endLine": 146,
+        "endChar": 5
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_aef3de9d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/containers/TimeBucketWheel.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-10T02:25:54Z",
+      "side": 1,
+      "message": "if not used, remove",
+      "range": {
+        "startLine": 161,
+        "startChar": 3,
+        "endLine": 164,
+        "endChar": 1
+      },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
