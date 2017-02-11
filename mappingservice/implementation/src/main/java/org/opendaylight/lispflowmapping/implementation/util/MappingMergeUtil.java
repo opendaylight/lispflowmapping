@@ -161,7 +161,7 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
-    public static MappingData mergeXtrIdMappings(List<Object> mappingDataList, List<XtrId> expiredMappings,
+    public static MappingData mergeXtrIdMappings(List<Object> mappingDataList, List<MappingData> expiredMappings,
             Set<IpAddressBinary> sourceRlocs) {
         MappingRecordBuilder mrb = null;
         XtrId xtrId = null;
@@ -173,7 +173,7 @@ public final class MappingMergeUtil {
 
             // Skip expired mappings and add them to a list to be returned to the caller
             if (timestampIsExpired(mappingData.getTimestamp())) {
-                expiredMappings.add(mappingData.getXtrId());
+                expiredMappings.add(mappingData);
                 continue;
             }
 

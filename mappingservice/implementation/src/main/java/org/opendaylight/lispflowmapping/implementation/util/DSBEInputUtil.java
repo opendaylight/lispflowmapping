@@ -8,8 +8,13 @@
 
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -42,8 +47,23 @@ public final class DSBEInputUtil {
     public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingData mappingData) {
         MappingRecord record = (mappingData != null) ? mappingData.getRecord() : null;
         List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
-        return new MappingBuilder().setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
-                .setOrigin(origin).setSiteId(siteIds).setMappingRecord(record).build();
+        return new MappingBuilder()
+                    .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
+                    .setOrigin(origin)
+                    .setSiteId(siteIds)
+                    .setMappingRecord(record).build();
+    }
+
+    public static Mapping toMapping(MappingOrigin origin, Eid key, @Nullable MappingData mappingData) {
+        MappingRecord record = (mappingData != null) ? mappingData.getRecord() :
+                                                        new MappingRecordBuilder().setEid(key).build();
+        SiteId siteId = (record != null) ? record.getSiteId() : null;
+        List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
+        return new MappingBuilder()
+                .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
+                .setOrigin(origin)
+                .setSiteId(siteIds)
+                .setMappingRecord(record).build();
     }
 
     public static Mapping toMapping(MappingOrigin origin, Eid key) {
@@ -54,10 +74,13 @@ public final class DSBEInputUtil {
         return mb.build();
     }
 
-    public static XtrIdMapping toXtrIdMapping(MappingData mappingData) {
-        MappingRecord record = (mappingData != null) ? mappingData.getRecord() : null;
-        return new XtrIdMappingBuilder().setXtrIdUri(
-                new XtrIdUri(LispAddressStringifier.getURIString(record.getXtrId()))).setMappingRecord(record).build();
+    public static XtrIdMapping toXtrIdMapping(@Nonnull MappingData mappingData) {
+        Preconditions.checkNotNull(mappingData);
+        MappingRecord record = mappingData.getRecord();
+        Preconditions.checkNotNull(mappingData.getRecord());
+        return new XtrIdMappingBuilder()
+                    .setXtrIdUri(new XtrIdUri(LispAddressStringifier.getURIString(record.getXtrId())))
+                    .setMappingRecord(record).build();
     }
 
     public static XtrIdMapping toXtrIdMapping(XtrId xtrId) {
