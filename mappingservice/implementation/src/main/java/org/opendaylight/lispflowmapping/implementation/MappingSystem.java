@@ -39,7 +39,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -131,7 +130,7 @@ public class MappingSystem implements IMappingSystem {
             if (xtrId != null && mappingMerge) {
                 if (mappingData.isMergeEnabled()) {
                     smc.addMapping(key, xtrId, mappingData);
-                    mergeMappings(key);
+                    handleMergedMapping(key);
                     return;
                 } else {
                     clearPresentXtrIdMappings(key);
@@ -151,8 +150,7 @@ public class MappingSystem implements IMappingSystem {
         }
 
         for (MappingData mappingData : allXtrMappingList) {
-            smc.removeMapping(key, mappingData.getXtrId());
-            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
+            removeSbXtrIdSpecificMapping(key, mappingData.getXtrId());
         }
     }
 
@@ -221,22 +219,22 @@ public class MappingSystem implements IMappingSystem {
         }
     }
 
-    private MappingData mergeMappings(Eid key) {
-        List<XtrId> expiredMappings = new ArrayList<>();
+    private MappingData handleMergedMapping(Eid key) {
+        List<XtrId> expiredXtrdIds = new ArrayList<>();
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
+
         MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
-                expiredMappings, sourceRlocs);
-        smc.removeXtrIdMappings(key, expiredMappings);
-        for (XtrId xtrId : expiredMappings) {
-            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(xtrId));
+                expiredXtrdIds, sourceRlocs);
+
+        for (XtrId expiredXtrId : expiredXtrdIds) {
+            removeSbXtrIdSpecificMapping(key, expiredXtrId);
         }
+
         if (mergedMappingData != null) {
             smc.addMapping(key, mergedMappingData, sourceRlocs);
-            dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key,
-                    mergedMappingData.getRecord().getSiteId(), mergedMappingData));
+            dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mergedMappingData));
         } else {
-            smc.removeMapping(key);
-            dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key));
+            removeSbMapping(key, mergedMappingData);
         }
         return mergedMappingData;
     }
@@ -315,29 +313,38 @@ public class MappingSystem implements IMappingSystem {
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
         if (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
-            return removeExpiredMapping(dst, xtrId, mappingData);
+            return handleSbExpiredMapping(dst, xtrId, mappingData);
         } else {
             return mappingData;
         }
     }
 
-    /*
-     * This private method either removes the main mapping ONLY, or the xTR-ID mapping ONLY, based on xtrId being
-     * null or non-null. Caller functions should take care of removing both when necessary.
-     */
-    private MappingData removeExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+    private MappingData handleSbExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
         if (mappingMerge && mappingData.isMergeEnabled()) {
-            return mergeMappings(key);
+            return handleMergedMapping(key);
         }
-        if (xtrId == null) {
-            smc.removeMapping(key);
-            dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mappingData.getRecord().getEid(),
-                    new SiteId(mappingData.getRecord().getSiteId()), mappingData));
+
+        if (xtrId != null) {
+            removeSbXtrIdSpecificMapping(key, xtrId);
         } else {
-            smc.removeMapping(key, xtrId);
-            dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
+            removeSbMapping(key, mappingData);
         }
+
         return null;
+    }
+
+    private void removeSbXtrIdSpecificMapping(Eid key, XtrId xtrId) {
+        smc.removeMapping(key, xtrId);
+        dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(xtrId));
+    }
+
+    private void removeSbMapping(Eid key, MappingData mappingData) {
+        if (mappingData != null && mappingData.getXtrId() != null) {
+            removeSbXtrIdSpecificMapping(key, mappingData.getXtrId());
+        }
+
+        smc.removeMapping(key);
+        dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
     }
 
     @Override
