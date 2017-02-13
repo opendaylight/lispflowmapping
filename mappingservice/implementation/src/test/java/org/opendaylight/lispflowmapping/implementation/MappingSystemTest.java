@@ -174,7 +174,7 @@ public class MappingSystemTest {
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
         final Mapping mapping = new MappingBuilder()
-                .setEidUri(new EidUri("ipv4:1.2.3.0"))
+                .setEidUri(new EidUri("ipv4:" + IPV4_DST))
                 .setOrigin(MappingOrigin.Southbound)
                 .setSiteId(Lists.newArrayList(SITE_ID))
                 .setMappingRecord(mappingData.getRecord()).build();
@@ -342,7 +342,7 @@ public class MappingSystemTest {
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData);
 
         final Mapping mapping = new MappingBuilder()
-                .setEidUri(new EidUri("ipv4:1.2.3.0"))
+                .setEidUri(new EidUri("ipv4:" + IPV4_DST))
                 .setOrigin(MappingOrigin.Southbound)
                 .setSiteId(Lists.newArrayList(SITE_ID))
                 .setMappingRecord(mappingRecord).build();
@@ -584,7 +584,7 @@ public class MappingSystemTest {
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
         return new MappingRecordBuilder()
                 .setSiteId(SITE_ID)
-                .setEid(EID_IPV4_1);
+                .setEid(EID_IPV4_DST);
     }
 
     private static ServicePath getDefaultServicePath(short index) {
