@@ -2,7 +2,7 @@ define(['angularAMD',
     'app/routingConfig',
     'angular-ui-router',
     'app/core/core.services',
-    'common/yangutils/yangutils.services'
+    'common/yangutils/yangutils.module'
 ], function() {
 
     var lispui = angular.module('app.lispui', ['ui.router.state',
