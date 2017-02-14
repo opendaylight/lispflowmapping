@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_8e453a72",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-14T18:44:28Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be MappingChange.Deleted?",
+      "range": {
+        "startLine": 419,
+        "startChar": 109,
+        "endLine": 419,
+        "endChar": 116
+      },
+      "revId": "8adbe04f1be4f03371b712e7c1b630ee227f4e43",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f2c81924",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-02-14T18:44:28Z",
+      "side": 1,
+      "message": "move to before the if, so we can guarantee the SMRs will result in the new mapping.",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 43
+      },
+      "revId": "8adbe04f1be4f03371b712e7c1b630ee227f4e43",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
