@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_46cdeb5c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-14T09:26:32Z",
+      "side": 1,
+      "message": "I saw this too, but I thought it doesn\u0027t matter, once we solve bug 7272 this line will be removed.",
+      "parentUuid": "fafc7978_69644de5",
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8e5b7a86",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 18
@@ -185,6 +203,24 @@
         "endLine": 294,
         "endChar": 56
       },
+      "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_864513b5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-14T09:26:32Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "fafc7978_090781cb",
       "revId": "309ef94e7c829cfdb3ad14a377f111c44ce7d254",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
