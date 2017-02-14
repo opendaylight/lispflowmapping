@@ -33,6 +33,23 @@
       "revId": "ec904d0937c812b146ff761db6464171b94bcb74",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_4685ebab",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DSBEInputUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-14T09:43:24Z",
+      "side": 1,
+      "message": "This is one area where I don\u0027t have a strong opinion yet, so I asked the ODL community\u0027s opinion a couple of months back. In general they were against javax.annotation, but it\u0027s still not clear to me what the reason is. See the full thread here https://lists.opendaylight.org/pipermail/dev/2016-December/003037.html M. Vorburger seems to recommend org.eclipse.jdt.annotations, see the commit message here https://git.opendaylight.org/gerrit/#/c/47359/2  I\u0027m still not fully clear either way, so I\u0027ll let you read all the above and come to your own conclusion, and I\u0027ll merge whatever you prefer. We may change later if we change our minds.",
+      "revId": "ec904d0937c812b146ff761db6464171b94bcb74",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
