@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_c338a2a2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-15T17:08:07Z",
+      "side": 1,
+      "message": "Actually it is needed. If you take a look at the DataStoreBackEnd.removeXtrIdMapping(XtrIdMapping mapping) implementation, then we need the mappingData. Now, thanks for pointing this out as we can confirm toXtrIdMapping(XtrId xtrId) is probably not a right implementation at all.",
+      "parentUuid": "fafc7978_46220b02",
+      "revId": "ec904d0937c812b146ff761db6464171b94bcb74",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_4685ebab",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DSBEInputUtil.java",
         "patchSetId": 3
