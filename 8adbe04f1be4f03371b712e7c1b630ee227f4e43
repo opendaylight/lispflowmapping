@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_5d7db51b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-15T13:15:22Z",
+      "side": 1,
+      "message": "No, because we just added a negative mapping, and that\u0027s what we\u0027re signaling here. This patch doesn\u0027t switch to using notifications for removal SMRs, which are still handled in Map-Server.",
+      "parentUuid": "fafc7978_8e453a72",
+      "revId": "8adbe04f1be4f03371b712e7c1b630ee227f4e43",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_f2c81924",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 20
@@ -42,6 +60,24 @@
         "endLine": 132,
         "endChar": 43
       },
+      "revId": "8adbe04f1be4f03371b712e7c1b630ee227f4e43",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_3d78b12a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-02-15T13:15:22Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "fafc7978_f2c81924",
       "revId": "8adbe04f1be4f03371b712e7c1b630ee227f4e43",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
