@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_631c56c2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/DSBEInputUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-02-15T18:14:16Z",
+      "side": 0,
+      "message": "The justification removing this portion of code is the implementation of DataStoreBackEnd. removeXtrIdMapping()\nTake a look here: https://git.opendaylight.org/gerrit/gitweb?p\u003dlispflowmapping.git;a\u003dblob;f\u003dmappingservice/dsbackend/src/main/java/org/opendaylight/lispflowmapping/dsbackend/DataStoreBackEnd.java;h\u003d446ef60660080993c92da64d7d4812b414a465af;hb\u003dHEAD#l124",
+      "range": {
+        "startLine": 63,
+        "startChar": 3,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "3b537e55d926fe034090d1fdf8760d257b15da9c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
