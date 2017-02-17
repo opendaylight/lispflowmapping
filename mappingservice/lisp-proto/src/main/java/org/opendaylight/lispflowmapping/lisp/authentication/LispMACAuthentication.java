@@ -78,7 +78,9 @@ public class LispMACAuthentication implements ILispAuthentication {
         if (buffer.hasArray()) {
             bufferAsArray = buffer.array();
         } else {
+            buffer.position(0);
             bufferAsArray = new byte[buffer.limit()];
+            buffer.get(bufferAsArray);
         }
 
         return getAuthenticationData(bufferAsArray, key);
