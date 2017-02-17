@@ -1505,16 +1505,6 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#toIpPrefixEid(IpAddress, int)} method.
-     */
-    @Test
-    public void toIpPrefixEid() throws UnknownHostException {
-        final Eid eid = LispAddressUtil.toIpPrefixEid(IP_ADDRESS_IPV4_TEST,
-                INSTANCE_ID_TYPE_VALUE_SHORT_TEST);
-        verifyEidContainsIpPrefix(eid, MASK_OK_DEFAULT_IPV4_TEST);
-    }
-
-    /**
      * Tests {@link LispAddressUtil#toEidNoVni(IpPrefix)} method.
      */
     @Test
