@@ -12,6 +12,7 @@ import java.util.List;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.binding.rev150712.PortBindingExtension;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIps;
@@ -65,8 +66,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
                 // TODO Add check/support for IPv6.
                 // Get subnet for this port, based on v4 or v6 decide address
                 // iana code.
-                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
-                                                            + "/32");
+                eidAddress = getEid(port, ip);
                 PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
                 hostInformationManager.addHostRelatedInfo(hostId, portData);
             }
@@ -77,6 +77,12 @@ public class PortDataProcessor implements DataProcessor<Port> {
                 + " Port Fixed IP: "
                 + (port.getFixedIps() != null ? port.getFixedIps().get(0)
                 : "No Fixed IP assigned"));
+    }
+
+    private Eid getEid(Port port, FixedIps ip) {
+        InstanceIdType vni = new InstanceIdType(hostInformationManager
+                                                    .getInstanceId(port.getTenantId().getValue()));
+        return LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address(), vni);
     }
 
     @Override
@@ -94,8 +100,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
             Eid eidAddress;
             for (FixedIps ip : fixedIPs) {
 
-                eidAddress = LispAddressUtil.asIpv4PrefixEid(ip.getIpAddress().getIpv4Address().getValue()
-                        + "/32");
+                eidAddress = getEid(port, ip);
 
                 PortData portData = new PortData(port.getUuid().getValue(), eidAddress);
                 hostInformationManager.addHostRelatedInfo(hostId, portData);

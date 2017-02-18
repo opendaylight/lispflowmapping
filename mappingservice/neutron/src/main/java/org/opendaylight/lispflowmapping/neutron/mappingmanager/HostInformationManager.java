@@ -14,6 +14,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.LispUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToPortDataMapper;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToRlocMapper;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.NeutronTenantToVniMapper;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.PortUuidToPortDataMapper;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -31,12 +32,14 @@ public class HostInformationManager {
     private OdlMappingserviceService lfmDbService;
     private HostIdToPortDataMapper hostIdToPortDataMapper;
     private HostIdToRlocMapper hostIdToRlocMapper;
+    private NeutronTenantToVniMapper neutronTenantToVniMapper;
 
     private static HostInformationManager instance;
 
     private HostInformationManager() {
         hostIdToPortDataMapper = new HostIdToPortDataMapper();
         hostIdToRlocMapper = new HostIdToRlocMapper();
+        neutronTenantToVniMapper = new NeutronTenantToVniMapper();
     }
 
     public static synchronized HostInformationManager getInstance() {
@@ -44,6 +47,10 @@ public class HostInformationManager {
             instance = new HostInformationManager();
         }
         return instance;
+    }
+
+    public long getInstanceId(String tenantUuid) {
+        return neutronTenantToVniMapper.getVni(tenantUuid);
     }
 
     public void setOdlMappingserviceService(OdlMappingserviceService lfmDbService) {
