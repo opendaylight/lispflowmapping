@@ -40,8 +40,8 @@ public final class MSNotificationInputUtil {
             MappingChange change) {
         List<SubscriberItem> subscriberList = new ArrayList<SubscriberItem>();
         for (Subscriber subscriber : subscribers) {
-            subscriberList.add(new SubscriberItemBuilder().setSubscriberAddress(
-                    subscriber.getSubscriberAddress()).build());
+            subscriberList.add(new SubscriberItemBuilder().setSubscriberData(
+                    subscriber.getSubscriberData()).build());
         }
         return new MappingChangedBuilder().setMappingRecord(mapping.getRecord()).setSubscriberItem(subscriberList)
                 .setChangeType(change).build();
