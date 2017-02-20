@@ -308,7 +308,7 @@ public class MapResolverTest {
         Subscriber subscriberMock = new Subscriber(
                 mapRequestBuilder.getItrRloc().get(0).getRloc(),
                 mapRequestBuilder.getSourceEid().getEid(), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
-        subscriberMock.setSubscriberTimeoutByRecordTtl(
+        subscriberMock.setSubscriberTtlByRecordTtl(
                 mappingRecordBuilder.getRecordTtl());
         Mockito.when(subscriberSetMock.contains(subscriberMock))
                 .thenReturn(true);
@@ -320,8 +320,8 @@ public class MapResolverTest {
 
         // check if a subscriber is re-instantiating when there already is one in the subscriber set
         mapResolver.handleMapRequest(mapRequestBuilder.build());
-        Mockito.verify(subscriberSetMock).remove(SUBSCRIBER_RLOC_1);
-        Mockito.verify(subscriberSetMock).add(SUBSCRIBER_RLOC_1);
+        Mockito.verify(subscriberSetMock).remove(subscriberMock);
+        Mockito.verify(subscriberSetMock).add(subscriberMock);
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
         Mockito.verify(mapServiceMock).addData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1,
                 SubKeys.SUBSCRIBERS, subscriberSetMock);
