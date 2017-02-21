@@ -45,7 +45,7 @@ public class SocketReader implements Runnable {
      * Index to array of buffers from where current reading is done
      */
     private int currentBufferReaderIndex = 0;
-    private boolean readFromSocket = true;
+    private volatile boolean readFromSocket = true;
 
     private SocketReader(DatagramSocket receivedSocket) {
         this.socket = receivedSocket;
@@ -97,6 +97,9 @@ public class SocketReader implements Runnable {
      * @return array of buffers
      */
     byte[][] getBuffers(final int count) {
+        if (currentBufferReaderIndex >= currentBufferWriteIndex) {
+            LOG.warn("Reading past current cursor, no new packets received on socket since last read!");
+        }
         final byte[][] subBuffer = Arrays.copyOfRange(buffers, currentBufferReaderIndex, currentBufferReaderIndex +
                 count);
         currentBufferReaderIndex = currentBufferReaderIndex + count;
