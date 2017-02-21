@@ -520,16 +520,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void assertNextBufferEmpty(SocketReader socketReader) {
-        assertTrue(isArrayEmpty(socketReader.getBuffers(1)[0]));
-    }
-
-    private boolean isArrayEmpty(byte[] byteArray) {
-        for (byte b : byteArray) {
-            if (b != 0) {
-                return false;
-            }
-        }
-        return true;
+        assertTrue(MultiSiteScenario.areBuffersEmpty(socketReader.getBuffers(1)));
     }
 
     private static Subscriber newSubscriber(Eid srcEid, String srcRlocIp) {
@@ -659,6 +650,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
         ConfigIni.getInstance().setSmrRetryCount(1);
+        ConfigIni.getInstance().setSmrTimeout(30000L);
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
@@ -2456,9 +2448,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private DatagramSocket initSocket(DatagramSocket socket, int port) {
         for (int i=0; i < NUM_OF_ATTEMPTS_TO_CREATE_SOCKET; i++) {
             try {
+                LOG.debug("Binding socket on {}:{}", ourAddress, port);
                 return new DatagramSocket(new InetSocketAddress(ourAddress, port));
             } catch (SocketException e) {
-                LOG.error("Can't initialize socket for {}", ourAddress, e);
+                LOG.error("Can't initialize socket for {}:{}", ourAddress, port, e);
             }
         }
         fail();

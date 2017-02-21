@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
@@ -63,7 +64,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
@@ -144,10 +144,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
                         subscribers = addParentSubscribers(eid, subscribers);
                     }
-                    sendSmrs(eid, subscribers);
+                    handleSmr(eid, subscribers);
                     if (oldMapping != null && oldMappingRemoved && !oldMapping.getEid().equals(eid)) {
                         subscribers = getSubscribers(oldMapping.getEid());
-                        sendSmrs(oldMapping.getEid(), subscribers);
+                        handleSmr(oldMapping.getEid(), subscribers);
                     }
                     mappingUpdated = true;
                 }
@@ -216,10 +216,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         if (subscriptionService) {
             Eid eid = notification.getMappingRecord().getEid();
             if (mapService.isMaster()) {
-                sendSmrs(eid, getSubscribers(eid));
-            }
-            if (notification.getChangeType().equals(MappingChange.Removed)) {
-                removeSubscribers(eid);
+                sendSmrs(eid, MSNotificationInputUtil.toSubscriberSet(notification.getSubscriberItem()));
+                if (eid.getAddress() instanceof SourceDestKey) {
+                    sendSmrs(SourceDestKeyHelper.getDstBinary(eid),
+                            MSNotificationInputUtil.toSubscriberSetFromDst(notification.getDstSubscriberItem()));
+                }
             }
         }
     }
@@ -250,18 +251,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return false;
     }
 
-    private void sendSmrs(Eid eid, Set<Subscriber> subscribers) {
-        handleSmr(eid, subscribers);
+    private void handleSmr(Eid eid, Set<Subscriber> subscribers) {
+        sendSmrs(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
             Set<Subscriber> dstSubs = getSubscribers(dstAddr);
-            handleSmr(dstAddr, dstSubs);
+            sendSmrs(dstAddr, dstSubs);
         }
     }
 
-    private void handleSmr(Eid eid, Set<Subscriber> subscribers) {
+    private void sendSmrs(Eid eid, Set<Subscriber> subscribers) {
         if (subscribers == null) {
             return;
         }
@@ -269,7 +270,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         LOG.trace("Built SMR packet: " + mrb.build().toString());
 
         scheduler.scheduleSmrs(mrb, subscribers.iterator());
-        addSubscribers(eid, subscribers);
     }
 
     @SuppressWarnings("unchecked")
@@ -292,10 +292,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             }
         }
         return subscribers;
-    }
-
-    private void removeSubscribers(Eid address) {
-        mapService.removeData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
     private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
