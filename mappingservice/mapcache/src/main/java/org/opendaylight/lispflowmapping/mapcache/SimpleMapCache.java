@@ -204,11 +204,7 @@ public class SimpleMapCache implements ILispMapCache {
         }
 
         Eid key = MaskUtil.normalize(eid);
-        // We intentionally don't remove subscribers, so in case a mapping is re-added, they get notified
-        table.removeSpecific(key, SubKeys.RECORD);
-        table.removeSpecific(key, SubKeys.SRC_RLOCS);
-        table.removeSpecific(key, SubKeys.XTRID_RECORDS);
-        table.removeSpecific(key, SubKeys.TIME_BUCKET_ID);
+        table.remove(key);
     }
 
     @Override

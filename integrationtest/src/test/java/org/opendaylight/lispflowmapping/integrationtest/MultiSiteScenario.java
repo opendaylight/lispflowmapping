@@ -466,7 +466,11 @@ class MultiSiteScenario {
     }
 
     void checkSMR(final SocketReader socketReader, final String site, final String ... hosts) {
-        List<MapRequest> mapRequests = translateBuffersToMapRequest(socketReader.getBuffers(hosts.length));
+        byte[][] buffers = socketReader.getBuffers(hosts.length);
+        if (areBuffersEmpty(buffers)) {
+            fail("No SMR received!");
+        }
+        List<MapRequest> mapRequests = translateBuffersToMapRequest(buffers);
         final Set<Eid> eids = prepareExpectedEid(hosts);
         final SourceEid expectedSourceEid = prepareSourceEid(site);
         for(MapRequest mapRequest : mapRequests) {
@@ -491,4 +495,14 @@ class MultiSiteScenario {
         return true;
     }
 
+    protected static boolean areBuffersEmpty(byte[][] buffers) {
+        for (byte[] buffer : buffers) {
+            for (byte b : buffer) {
+                if (b != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
