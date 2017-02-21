@@ -29,6 +29,17 @@ public class Subscriber {
     /**
      * Constructor.
      *
+     * @param subscriberData YANG modeled SubscriberData object.
+     */
+    public Subscriber(SubscriberData subscriberData) {
+        super();
+        this.data = subscriberData;
+        this.lastRequestDate = new Date(System.currentTimeMillis());
+    }
+
+    /**
+     * Constructor.
+     *
      * @param srcRloc A source RLOC.
      * @param srcEid  A source EID.
      * @param subscriberTimeout Subscriber timeout in min(s).
