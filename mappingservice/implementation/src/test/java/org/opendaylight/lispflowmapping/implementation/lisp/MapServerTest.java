@@ -176,8 +176,6 @@ public class MapServerTest {
         Mockito.verify(mapService).addMapping(Mockito.eq(MappingOrigin.Southbound), Mockito.eq(IPV4_EID_1),
                 Mockito.eq(mapRegister.getSiteId()), captor.capture());
         assertEquals(captor.getValue().getRecord(), mappingData.getRecord());
-        Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
-                subscriberSetMock_1);
         Mockito.verify(notifyHandler).handleMapNotify(getDefaultMapNotifyBuilder(mapRegister)
                 .setAuthenticationData(null).build(), null);
 
@@ -320,25 +318,18 @@ public class MapServerTest {
         // for SrcDstKey mapping
         final ArgumentCaptor<MapRequest> captor_1 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_1.capture(), Mockito.eq(RLOC_2));
-        Mockito.verify(mapService).addData(MappingOrigin.Southbound, SOURCE_DEST_KEY_EID, SubKeys.SUBSCRIBERS,
-                subscriberSetMock_1);
         final Eid resultEid_1 = captor_1.getValue().getEidItem().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_2, resultEid_1);
 
         // for SrcDst destination mapping
         final ArgumentCaptor<MapRequest> captor_2 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_2.capture(), Mockito.eq(RLOC_4));
-        Mockito.verify(mapService).addData(MappingOrigin.Southbound,
-                SourceDestKeyHelper.getDstBinary(SOURCE_DEST_KEY_EID),
-                SubKeys.SUBSCRIBERS, subscriberSetMock_2);
         final Eid resultEid_2 = captor_2.getValue().getEidItem().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_4, resultEid_2);
 
         // for Ipv4 mapping
         final ArgumentCaptor<MapRequest> captor_3 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_3.capture(), Mockito.eq(RLOC_6));
-        Mockito.verify(mapService).addData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS,
-                subscriberSetMock_3);
         final Eid resultEid_3 = captor_3.getValue().getEidItem().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_6, resultEid_3);
     }

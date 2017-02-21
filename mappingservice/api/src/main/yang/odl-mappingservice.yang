@@ -298,5 +298,9 @@ module odl-mappingservice {
             description "The list of subscribers to be notified of this change.";
             uses lisp-proto:subscriber-data-grouping;
         }
+        list dst-subscriber-item {
+            description "For Src/Dst EIDs, The list of the Dst subscribers to be notified of this change.";
+            uses lisp-proto:subscriber-data-grouping;
+        }
     }
 }
