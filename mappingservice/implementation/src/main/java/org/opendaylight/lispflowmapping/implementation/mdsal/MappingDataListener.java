@@ -10,12 +10,15 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
+import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -87,12 +90,6 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
 
                 mapSystem.removeMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid());
-                try {
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
-                            convertedMapping, MappingChange.Removed));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
 
             } else if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType() || ModificationType.WRITE == mod
                     .getModificationType()) {
@@ -119,13 +116,15 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
 
-                mapSystem.addMapping(convertedMapping.getOrigin(),convertedMapping.getMappingRecord().getEid(),
+                mapSystem.addMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid(),
                         new MappingData(convertedMapping.getMappingRecord()));
+                Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(convertedMapping.getOrigin(),
+                        convertedMapping.getMappingRecord().getEid(), SubKeys.SUBSCRIBERS);
 
                 try {
                     // The notifications are used for sending SMR.
                     notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
-                            convertedMapping, mappingChange));
+                            convertedMapping, subscribers, mappingChange));
                 } catch (InterruptedException e) {
                     LOG.warn("Notification publication interrupted!");
                 }
