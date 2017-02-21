@@ -60,6 +60,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
@@ -169,6 +170,7 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).addMapping(key, mappingData);
     }
 
+    @SuppressWarnings("unchecked")
     private void clearPresentXtrIdMappings(Eid key) {
         List<MappingData> allXtrMappingList = (List<MappingData>) (List<?>) smc.getAllXtrIdMappings(key);
 
@@ -450,27 +452,39 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void removeMapping(MappingOrigin origin, Eid key) {
         Set<Subscriber> subscribers = null;
+        MappingData mapping = (MappingData) smc.getMapping(null, key);
+
+        if (mapping != null) {
+            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+            notifyChange(mapping, subscribers, MappingChange.Removed);
+        }
+
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
-            MappingData mapping = (MappingData) smc.getMapping(null, key);
             if (mapping != null && mapping.isNegative()) {
                 SimpleImmutableEntry<Eid, Set<Subscriber>> mergedNegativePrefix = computeMergedNegativePrefix(key);
                 if (mergedNegativePrefix != null) {
                     addNegativeMapping(mergedNegativePrefix.getKey());
                     subscribers = mergedNegativePrefix.getValue();
-                    try {
-                        notificationPublishService.putNotification(
-                                MSNotificationInputUtil.toMappingChanged(mapping, subscribers, MappingChange.Created));
-                    } catch (InterruptedException e) {
-                        LOG.warn("Notification publication interrupted!");
-                    }
+                    notifyChange(mapping, subscribers, MappingChange.Created);
                 }
             }
         }
         tableMap.get(origin).removeMapping(key);
     }
+
+    private void notifyChange(MappingData mapping, Set<Subscriber> subscribers, MappingChange mappingChange) {
+        MappingChanged notification = MSNotificationInputUtil.toMappingChanged(mapping, subscribers, mappingChange);
+        try {
+            notificationPublishService.putNotification(notification);
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     /*
