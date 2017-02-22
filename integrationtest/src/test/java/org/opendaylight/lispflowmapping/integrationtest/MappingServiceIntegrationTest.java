@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Contextream, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2017 Contextream, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -183,7 +183,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public String getKarafDistro() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
-                .artifactId("distribution-karaf")
+                .artifactId("lispflowmapping-karaf")
                 .versionAsInProject()
                 .type("zip")
                 .getURL();
@@ -193,7 +193,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public MavenUrlReference getFeatureRepo() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
-                .artifactId("features-lispflowmapping")
+                .artifactId("features4-lispflowmapping")
                 .classifier("features")
                 .type("xml")
                 .versionAsInProject();
