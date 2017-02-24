@@ -74,12 +74,12 @@ nat_traversal_support  = off
 #   key: password to authenticate with the map-server
 #   proxy-reply [on/off]: Configure map-server to Map-Reply on behalf of the xTR
 
-map-server {
-        address        = 192.168.16.11
-        key-type       = 1
-        key            = password
-        proxy-reply    = on
-}
+#map-server {
+#        address        = 192.168.16.11
+#        key-type       = 1
+#        key            = password
+#        proxy-reply    = on
+#}
 
 # IPv4 / IPv6 EID of the node.
 #   eid-prefix: EID prefix (ip-prefix/mask) of the mapping
