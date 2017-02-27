@@ -82,6 +82,10 @@ public class LispAddressStringifier {
         return getAddrString(Destination.USER, lispAddress);
     }
 
+    public static String getString(Address address) {
+        return getAddrString(Destination.USER, address, null);
+    }
+
     public static String getString(XtrId xtrId) {
         return getXtrIdString(xtrId);
     }
@@ -109,12 +113,22 @@ public class LispAddressStringifier {
     private static String getAddrString(Destination dst, LispAddress lispAddress) {
         Preconditions.checkNotNull(lispAddress, "lispAddress should not be null");
         Address addr = lispAddress.getAddress();
+        Long vni = null;
+
+        if (lispAddress.getVirtualNetworkId() != null) {
+            vni = lispAddress.getVirtualNetworkId().getValue();
+        }
+
+        return getAddrString(dst, addr, vni);
+    }
+
+    private static String getAddrString(Destination dst, Address addr, Long virtualNetworkId) {
         String prefix = "";
         String vni = "";
         String address = "";
 
-        if (lispAddress.getVirtualNetworkId() != null) {
-            vni = "[" + lispAddress.getVirtualNetworkId().getValue() + "] ";
+        if (virtualNetworkId != null) {
+            vni = "[" + virtualNetworkId + "] ";
         }
 
         if (addr instanceof Ipv4) {
