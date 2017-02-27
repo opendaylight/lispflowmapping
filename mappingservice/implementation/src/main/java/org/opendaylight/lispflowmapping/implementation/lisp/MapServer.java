@@ -418,6 +418,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
             private void cancelAndRemove(IpAddressBinary subscriberAddress) {
                 final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
+                if (eidFutureMap == null) {
+                    LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", subscriberAddress);
+                    return;
+                }
                 final Eid eid = mrb.getSourceEid().getEid();
                 if (eidFutureMap.containsKey(eid)) {
                     eidFutureMap.get(eid).cancel(false);
