@@ -19,7 +19,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>distribution-karaf</artifactId>
   <version>1.5.0-SNAPSHOT</version>
-  <name>LISP Flow Mapping Project - Karaf Distribution</name>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <prerequisites>
     <maven>3.1.1</maven>
@@ -69,7 +71,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         </configuration>
       </plugin>
     </plugins>
-  </build> 
+  </build>
 
   <!--
       Maven Site Configuration

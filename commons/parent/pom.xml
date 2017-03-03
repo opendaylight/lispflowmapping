@@ -23,7 +23,9 @@
   <artifactId>lispflowmapping-commons</artifactId>
   <version>1.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Parent POM</name>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
     <branding.version>1.8.0-SNAPSHOT</branding.version>

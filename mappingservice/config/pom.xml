@@ -10,7 +10,9 @@
 
   <artifactId>mappingservice.config</artifactId>
   <packaging>bundle</packaging>
-  <name>Mapping Service Config</name>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <dependencies>
     <dependency>

@@ -10,7 +10,9 @@
 
     <artifactId>lispflowmapping-ui-bundle</artifactId>
     <packaging>bundle</packaging>
-    <name>LISP Flow Mapping UI - Bundle</name>
+    <!-- <name> formatting is used by autorelease to parse and notify projects on
+         build failure. Please do not modify this unless you have a good reason. -->
+    <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
     <dependencies>
         <dependency>
