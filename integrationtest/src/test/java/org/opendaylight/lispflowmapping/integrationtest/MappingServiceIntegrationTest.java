@@ -563,10 +563,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName(resultPrefix1).getAddress()))
                 .setIpv4MaskLength((short) 18).build();
 
-        final String resultPrefix2 = "1.1.192.0";
+        final String resultPrefix2 = "1.1.128.0";
         final Address resultMapping2 = new Ipv4PrefixBinaryBuilder()
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName(resultPrefix2).getAddress()))
-                .setIpv4MaskLength((short) 18).build();
+                .setIpv4MaskLength((short) 17).build();
 
         final String resultPrefix3 = "1.3.0.0";
         final Address resultNegMapping3 = new Ipv4PrefixBinaryBuilder()
