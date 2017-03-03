@@ -646,8 +646,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return new MappingRecordBuilder()
                 .setEid(prefixBinary)
                 .setLocatorRecord(Lists.newArrayList(new LocatorRecordBuilder()
-                        .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2")).setLocatorId("loc_id").build()))
-                .setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
+                        .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2"))
+                        .setLocatorId("loc_id")
+                        .setPriority((short) 1).build()))
+                .setTimestamp(System.currentTimeMillis())
+                .setRecordTtl(1440).build();
     }
 
     /**
