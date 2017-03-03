@@ -627,7 +627,7 @@ public class RadixTrie<T> {
                 }
             }
             if ((remainder = bit % 8) != 0) {
-                int mask = (0xFF << remainder) & 0xFF;
+                int mask = (0xFF << (8 - remainder)) & 0xFF;
                 return ((prefix[iterator] & mask) == (pref[iterator] & mask));
             }
             return true;

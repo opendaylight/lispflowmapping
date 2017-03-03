@@ -66,6 +66,9 @@ public class RadixTrieTest {
     private static byte[] IP6_BYTES5;
     private static byte[] IP6_BYTES6;
     private static byte[] IP6_BYTES7;
+    private static byte[] IP6_BYTES8;
+    private static byte[] IP6_BYTES9;
+    private static byte[] IP6_BYTES10;
 
     @Before
     public void init() {
@@ -104,6 +107,9 @@ public class RadixTrieTest {
             IP6_BYTES5 = InetAddress.getByName("192:168::2:0").getAddress();
             IP6_BYTES6 = InetAddress.getByName("192:168::1:0").getAddress();
             IP6_BYTES7 = InetAddress.getByName("192:168::1:1").getAddress();
+            IP6_BYTES8 = InetAddress.getByName("15::0").getAddress();
+            IP6_BYTES9 = InetAddress.getByName("15::7").getAddress();
+            IP6_BYTES10 = InetAddress.getByName("15::8").getAddress();
 
             itPrefixList4 = new ArrayList<>();
             itPrefixList4.add(IP4_BYTES2);
@@ -412,6 +418,7 @@ public class RadixTrieTest {
         trie.insert(IP6_BYTES4, 112, 1);
         trie.insert(IP6_BYTES5, 112, 1);
         trie.insert(IP6_BYTES6, 113, 1);
+        trie.insert(IP6_BYTES8, 123, 1);
     }
 
     @Test
@@ -474,5 +481,20 @@ public class RadixTrieTest {
 
         RadixTrie<String>.TrieNode res2 = radixTrie4.lookupExact(IP4_BYTES1, 16);
         assertTrue("Lookup for 192.168.0.0 is NULL", res2 != null);
+    }
+
+    @Test
+    public void testIPv6PrefLastByteComp() {
+        radixTrie6 = new RadixTrie<>(128);
+
+        addIp6Addresses(radixTrie6);
+
+        RadixTrie<Integer>.TrieNode res = radixTrie6.lookupBest(IP6_BYTES9, 128);
+        assertTrue(Arrays.equals(res.prefix(), IP6_BYTES8));
+
+        res = radixTrie6.lookupBest(IP6_BYTES10, 128);
+        assertTrue(Arrays.equals(res.prefix(), IP6_BYTES8));
+
+        radixTrie6.removeAll();
     }
 }
