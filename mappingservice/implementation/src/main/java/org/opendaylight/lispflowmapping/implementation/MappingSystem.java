@@ -199,7 +199,7 @@ public class MappingSystem implements IMappingSystem {
         } else {
             LOG.warn("Could not update timestamp for EID {}, no mapping found", LispAddressStringifier.getString(key));
         }
-        if (xtrId != null) {
+        if (mappingMerge && xtrId != null) {
             MappingData xtrIdMappingData = (MappingData) smc.getMapping(key, xtrId);
             if (xtrIdMappingData != null) {
                 xtrIdMappingData.setTimestamp(new Date(timestamp));
