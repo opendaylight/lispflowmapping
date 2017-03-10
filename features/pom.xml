@@ -25,6 +25,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <properties>
     <dlux.core.version>0.5.0-SNAPSHOT</dlux.core.version>
+    <dluxapps.version>0.5.0-SNAPSHOT</dluxapps.version>
     <mdsal.version>1.5.0-SNAPSHOT</mdsal.version>
     <mdsal.model.version>0.10.0-SNAPSHOT</mdsal.model.version>
     <neutron.version>0.8.0-SNAPSHOT</neutron.version>
@@ -72,6 +73,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <groupId>org.opendaylight.dlux</groupId>
       <artifactId>features-dlux</artifactId>
       <version>${dlux.core.version}</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.dluxapps</groupId>
+      <artifactId>features-dluxapps</artifactId>
+      <version>${dluxapps.version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>runtime</scope>

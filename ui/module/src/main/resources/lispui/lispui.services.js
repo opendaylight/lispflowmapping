@@ -1,14 +1,14 @@
 define(['app/lispui/lispui.module'], function(lispui) {
 
     lispui.register.factory('LispuiNodeFormSvc', ['$filter',
-        '$location', 'apiBuilder', 'constants',
-        'eventDispatcher', 'LispuiUtils', 'nodeWrapper',
-        'reqBuilder', 'syncFact', 'YangUIApis', 'yangUtils',
-        'YangUtilsRestangular',
-        function($filter, $location, apiBuilder, constants,
-            eventDispatcher, LispuiUtils, nodeWrapper,
-            reqBuilder, syncFact, YangUIApis, yangUtils,
-            YangUtilsRestangular) {
+        '$location', 'ApiBuilderService', 'constants',
+        'EventDispatcherService', 'LispuiUtils', 'NodeWrapperService',
+        'RequestBuilderService', 'SyncService', 'YangUiApisService', 'YangUtilsService',
+        'YangUtilsRestangularService',
+        function($filter, $location, ApiBuilderService, constants,
+            EventDispatcherService, LispuiUtils, NodeWrapperService,
+            RequestBuilderService, SyncService, YangUiApisService, YangUtilsService,
+                 YangUtilsRestangularService) {
             var api = {};
 
             api.initValues = function(scope) {
@@ -27,13 +27,13 @@ define(['app/lispui/lispui.module'], function(lispui) {
             api.loadNode = function(type, scope) {
 
                 loadingCallback(scope, '');
-                yangUtils.generateNodesToApis(function(apis,
+                YangUtilsService.generateNodesToApis(function(apis,
                     allNodes) {
                     scope.apis = apis;
                     scope.allNodes = allNodes;
                     console.info('got data', scope.apis,
                         allNodes);
-                    scope.treeApis = yangUtils.generateApiTreeData(
+                    scope.treeApis = YangUtilsService.generateApiTreeData(
                         apis);
                     console.info('tree api', scope.treeApis);
 
@@ -107,11 +107,11 @@ define(['app/lispui/lispui.module'], function(lispui) {
                             reqPath.length) : reqString;
                         var requestPath = scope.selApi.basePath +
                             reqString;
-                        scope.node.buildRequest(reqBuilder,
+                        scope.node.buildRequest(RequestBuilderService,
                             requestData);
                         angular.copy(requestData,
                             preparedRequestData);
-                        preparedRequestData = yangUtils.prepareRequestData(
+                        preparedRequestData = YangUtilsService.prepareRequestData(
                             preparedRequestData,
                             operation, reqString, scope
                             .selSubApi);
@@ -120,7 +120,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
                         operation = operation === 'DELETE' ?
                             'REMOVE' : operation;
 
-                        YangUtilsRestangular.one('restconf')
+                        YangUtilsRestangularService.one('restconf')
                             .customOperation(operation.toLowerCase(),
                                 reqString, null, headers,
                                 preparedRequestData).then(
@@ -212,7 +212,7 @@ define(['app/lispui/lispui.module'], function(lispui) {
             ////////// Snippet originally from yangui.controller.js //////////
             api.buildRoot = function(scope) {
                 return function() {
-                    scope.node.buildRequest(reqBuilder, {});
+                    scope.node.buildRequest(RequestBuilderService, {});
                 };
             };
             ////////// End snippet originally from yangui.controller.js //////////

@@ -10,8 +10,10 @@ define(['angularAMD',
     ]);
 
     lispui.config(function($stateProvider, $controllerProvider,
-        $compileProvider, $provide, $translateProvider,
+        $compileProvider, $provide, $translateProvider, $urlRouterProvider,
         NavHelperProvider) {
+
+        $urlRouterProvider.otherwise('/lispui/keys');
 
         $translateProvider.useStaticFilesLoader({
             prefix: '/src/app/lispui/assets/data/locale-',
