@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_07d7b3c0",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:17:28Z",
+      "side": 1,
+      "message": "I\u0027d rather remove this instead of just commenting it out, we should avoid commented out code in something that we release. This was just a \u0027Hello World\u0027 style code, to experiment with Neutron.",
+      "revId": "f4f55a383c61ead113ea8e9ef68b45d5cff04fe5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c7ec8b92",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/mappingmanager/HostInformationManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:17:28Z",
+      "side": 1,
+      "message": "LOG.warn would be better, it would make it easier to see if this method is called in a way that it shouldn\u0027t.",
+      "revId": "f4f55a383c61ead113ea8e9ef68b45d5cff04fe5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_e7b54f7f",
+        "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:17:28Z",
+      "side": 1,
+      "message": "Remove.",
+      "revId": "f4f55a383c61ead113ea8e9ef68b45d5cff04fe5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c7bacb6d",
+        "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:17:28Z",
+      "side": 1,
+      "message": "Remove.",
+      "revId": "f4f55a383c61ead113ea8e9ef68b45d5cff04fe5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
