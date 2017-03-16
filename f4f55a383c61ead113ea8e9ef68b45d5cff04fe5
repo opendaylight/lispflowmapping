@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_47a6db54",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:18:39Z",
+      "side": 1,
+      "message": "I was going through the patches in sequential order, and saw that the next one removes it, so just ignore this comment :)",
+      "parentUuid": "fafc7978_07d7b3c0",
+      "revId": "f4f55a383c61ead113ea8e9ef68b45d5cff04fe5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_c7ec8b92",
         "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/mappingmanager/HostInformationManager.java",
         "patchSetId": 5
