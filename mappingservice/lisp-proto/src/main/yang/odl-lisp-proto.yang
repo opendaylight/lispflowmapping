@@ -390,12 +390,17 @@ module odl-lisp-proto {
         }
     }
 
-    grouping subscriber-address-grouping {
-        container subscriber-address {
+    grouping subscriber-data-grouping {
+        container subscriber-data {
             description
                 "A network element which subscribed to notifications about mapping changes.";
             uses rloc-container;
             uses eid-container;
+            leaf ttl {
+                type int32;
+                description
+                    "The time to live for the subscriber entry in minutes";
+            }
         }
     }
 
