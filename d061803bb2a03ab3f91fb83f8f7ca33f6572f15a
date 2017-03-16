@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_09250f0a",
+        "filename": "mappingservice/neutron/pom.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "Please remove the \u003cproperties\u003e section and use explicit versions in the \u003cdependencyManagement\u003e section.",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_697dbbe7",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/GroupBasedPolicyNeutronIntentHandlerBean.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "All caps should only be used with very important warnings/errors, in this case I would just use normal capitalization.",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_15e36034",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/listener/VbridgeTopologyListener.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "Is it worth handling SUBTREE_MODIFIED as well here (and calling handleVbridgeTopologyWrite()), or you think that should never occur during normal operation?",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_35194423",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/listener/VppEndpointListener.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "s/mdification/modification/",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_d520b8b2",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/listener/VppEndpointListener.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "This is more of a question than a comment, do we want this implemented before Carbon ships? In that case we should make a note somewhere (like a Trello card) so we don\u0027t forget.",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_a781874f",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/intenthandler/util/InfoUtil.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T13:02:50Z",
+      "side": 1,
+      "message": "It\u0027s worth adding an empty private constructor to avoid instantiation, like our other utility classes with only static methods.",
+      "revId": "d061803bb2a03ab3f91fb83f8f7ca33f6572f15a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
