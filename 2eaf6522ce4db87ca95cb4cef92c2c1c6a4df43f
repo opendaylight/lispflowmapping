@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_eab35608",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T14:14:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_86172c54",
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_2f8f3377",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 32
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_cab812e8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T14:14:55Z",
+      "side": 1,
+      "message": "Indeed, not sure how I mixed it up :(",
+      "parentUuid": "fafc7978_2f8f3377",
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_afaa0383",
         "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/type/MappingData.java",
         "patchSetId": 32
@@ -65,6 +101,24 @@
         "endLine": 77,
         "endChar": 23
       },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ca13f20b",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/type/MappingData.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T14:14:55Z",
+      "side": 1,
+      "message": "I wanted to convey that we don\u0027t know, and let the caller decide how to treat that information (positive of negative).",
+      "parentUuid": "fafc7978_afaa0383",
       "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -111,6 +165,24 @@
         "endLine": 182,
         "endChar": 42
       },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6a192622",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-03-16T14:14:55Z",
+      "side": 1,
+      "message": "Yes, MappingSystem.java lines 512 and 518 (getVirtualParent).",
+      "parentUuid": "fafc7978_0f9b4f73",
       "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
