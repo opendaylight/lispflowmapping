@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_86172c54",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-03-16T06:57:04Z",
+      "side": 1,
+      "message": "change to buildNegativeMapping",
+      "range": {
+        "startLine": 207,
+        "startChar": 26,
+        "endLine": 207,
+        "endChar": 29
+      },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2f8f3377",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-03-16T06:57:04Z",
+      "side": 1,
+      "message": "we should never have a negative node with a negative sibling! Shouldnt this be !negative? The merging is needed only when a positive is removed - positive turns to negative",
+      "range": {
+        "startLine": 458,
+        "startChar": 34,
+        "endLine": 458,
+        "endChar": 57
+      },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_afaa0383",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/type/MappingData.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-03-16T06:57:04Z",
+      "side": 1,
+      "message": "why not false? returning null is generally not ideal, for boolean there is a good alternative.",
+      "range": {
+        "startLine": 77,
+        "startChar": 19,
+        "endLine": 77,
+        "endChar": 23
+      },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_8faf3f94",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/type/MappingData.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-03-16T06:57:04Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 85,
+        "startChar": 10,
+        "endLine": 85,
+        "endChar": 24
+      },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_0f9b4f73",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/MaskUtil.java",
+        "patchSetId": 32
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-03-16T06:57:04Z",
+      "side": 1,
+      "message": "is this really used outside?",
+      "range": {
+        "startLine": 182,
+        "startChar": 25,
+        "endLine": 182,
+        "endChar": 42
+      },
+      "revId": "2eaf6522ce4db87ca95cb4cef92c2c1c6a4df43f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
