@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_b1f25e6d",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/mappingmanager/HostInformationManager.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-03-17T16:14:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_4cc71a65",
+      "revId": "c6366be79ee31e23acb0ba57d6c2d2e35b0acd98",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_ecc9ae7a",
         "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
         "patchSetId": 8
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_f1ece691",
+        "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-03-17T16:14:41Z",
+      "side": 1,
+      "message": "Done. Replaced with TODO, as will be implemented in a following commit.",
+      "parentUuid": "fafc7978_ecc9ae7a",
+      "revId": "c6366be79ee31e23acb0ba57d6c2d2e35b0acd98",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_0ccd1287",
         "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
         "patchSetId": 8
@@ -47,6 +83,24 @@
       "writtenOn": "2017-03-17T10:41:15Z",
       "side": 1,
       "message": "Just remove completely.",
+      "revId": "c6366be79ee31e23acb0ba57d6c2d2e35b0acd98",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_11b6ca8a",
+        "filename": "mappingservice/neutron/src/test/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessorTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 6491
+      },
+      "writtenOn": "2017-03-17T16:14:41Z",
+      "side": 1,
+      "message": "Done. Replaced with TODO, as will be implemented in a following commit.",
+      "parentUuid": "fafc7978_0ccd1287",
       "revId": "c6366be79ee31e23acb0ba57d6c2d2e35b0acd98",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
