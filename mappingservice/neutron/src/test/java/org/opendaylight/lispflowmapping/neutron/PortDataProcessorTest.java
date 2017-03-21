@@ -8,18 +8,25 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 import com.google.common.collect.Lists;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedNameBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.Uuid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -37,16 +44,19 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 public class PortDataProcessorTest {
 
     private static ILispNeutronService iLispNeutronServiceMock = Mockito.mock(ILispNeutronService.class);
+    private static HostInformationManager hostInformationManager = Mockito.mock(HostInformationManager.class);
     private OdlMappingserviceService odlMappingserviceServiceMock;
     private Port portMock;
     private PortBindingExtension augmentationMock;
     private Future<RpcResult<GetMappingOutput>> future;
     private RpcResult<GetMappingOutput> rpcResult;
 
-    private static final String HOST_ID = "host-id";
+    private static final String PORT_UUID_1 = "a9607d99-0afa-41cc-8f2f-8d62b6e9bc1c";
+    private static final String HOST_ID_1 = "host-id1";
+    private static final String TENANT_1 = "92070479-5900-498b-84e3-893a04f55709";
     private static final String IPV4 = "192.168.0.1";
     private static final Address ADDRESS = new DistinguishedNameBuilder()
-            .setDistinguishedName(new DistinguishedNameType(HOST_ID)).build();
+            .setDistinguishedName(new DistinguishedNameType(HOST_ID_1)).build();
 
     private PortDataProcessor portDataProcessor = new PortDataProcessor(iLispNeutronServiceMock);
 
@@ -58,6 +68,7 @@ public class PortDataProcessorTest {
         augmentationMock = Mockito.mock(PortBindingExtension.class);
         future = Mockito.mock(Future.class);
         rpcResult = Mockito.mock(RpcResult.class);
+        Whitebox.setInternalState(portDataProcessor, "hostInformationManager", hostInformationManager);
         commonStubbing(); // common stubbing is called before invocation of each test
     }
 
@@ -65,8 +76,17 @@ public class PortDataProcessorTest {
      * Tests {@link PortDataProcessor#create} method.
      */
     @Test
-    public void createTest() throws ExecutionException, InterruptedException {
-        //TODO : Implement test according to new implementation
+    public void createTest()
+            throws ExecutionException, InterruptedException, NoSuchMethodException,
+                   IllegalAccessException, InvocationTargetException {
+        portDataProcessor.create(portMock);
+
+        List<FixedIps> fixedIps = portMock.getFixedIps();
+
+        for (FixedIps ip : fixedIps) {
+            Mockito.verify(hostInformationManager).addHostRelatedInfo(HOST_ID_1,
+                    getEid(portDataProcessor, portMock, ip));
+        }
     }
 
     /**
@@ -77,7 +97,10 @@ public class PortDataProcessorTest {
         Mockito.when(augmentationMock.getHostId()).thenReturn(null); // overriding default stubbing
 
         portDataProcessor.create(portMock);
-        //TODO : Change test according to new Implementation
+
+        List<FixedIps> fixedIps = portMock.getFixedIps();
+
+        Mockito.verifyZeroInteractions(hostInformationManager);
     }
 
     /**
@@ -98,8 +121,11 @@ public class PortDataProcessorTest {
     public void commonStubbing() {
         Mockito.when(portMock.getAugmentation(PortBindingExtension.class)).thenReturn(augmentationMock);
         Mockito.when(iLispNeutronServiceMock.getMappingDbService()).thenReturn(odlMappingserviceServiceMock);
+        Mockito.when(portMock.getUuid()).thenReturn(new Uuid(PORT_UUID_1));
         Mockito.when(portMock.getFixedIps()).thenReturn(getDefaultListOfFixedIps());
-        Mockito.when(augmentationMock.getHostId()).thenReturn(HOST_ID);
+        Mockito.when(portMock.getTenantId()).thenReturn(new Uuid(TENANT_1));
+        Mockito.when(augmentationMock.getHostId()).thenReturn(HOST_ID_1);
+        Mockito.when(hostInformationManager.getInstanceId(TENANT_1)).thenReturn(1L);
     }
 
     private static LocatorRecord getDefaultLocatorRecord() {
@@ -116,5 +142,21 @@ public class PortDataProcessorTest {
         FixedIps fixedIps = new FixedIpsBuilder().setIpAddress(new IpAddress(new Ipv4Address(IPV4))).build();
 
         return Lists.newArrayList(fixedIps);
+    }
+
+    private static Eid getEid(PortDataProcessor portDataProcessor, Port port, FixedIps ip)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        try {
+            Method method = (portDataProcessor.getClass())
+                                .getDeclaredMethod("getEid", Port.class, FixedIps.class);
+            method.setAccessible(true);
+            return (Eid) method.invoke(portDataProcessor, port, ip);
+        } catch (NoSuchMethodException e) {
+            throw e;
+        } catch (IllegalAccessException e) {
+            throw e;
+        } catch (InvocationTargetException e) {
+            throw e;
+        }
     }
 }
