@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.lisp.type;
 
+import com.google.common.base.Optional;
 import java.util.Date;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -70,19 +71,19 @@ public class MappingData {
         this.mergeEnabled = mergeEnabled;
     }
 
-    public Boolean isNegative() {
+    public Optional<Boolean> isNegative() {
         if (record != null) {
-            return MappingRecordUtil.isNegativeMapping(record);
+            return Optional.of(MappingRecordUtil.isNegativeMapping(record));
         } else {
-            return null;
+            return Optional.absent();
         }
     }
 
-    public Boolean isPositive() {
+    public Optional<Boolean> isPositive() {
         if (record != null) {
-            return MappingRecordUtil.isPositiveMapping(record);
+            return Optional.of(MappingRecordUtil.isPositiveMapping(record));
         } else {
-            return null;
+            return Optional.absent();
         }
     }
 
