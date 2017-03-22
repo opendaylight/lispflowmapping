@@ -455,7 +455,7 @@ public class MappingSystem implements IMappingSystem {
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
             MappingData mapping = (MappingData) smc.getMapping(null, key);
-            if (mapping != null && !mapping.isNegative()) {
+            if (mapping != null && mapping.isPositive().or(false)) {
                 SimpleImmutableEntry<Eid, Set<Subscriber>> mergedNegativePrefix = computeMergedNegativePrefix(key);
                 if (mergedNegativePrefix != null) {
                     addNegativeMapping(mergedNegativePrefix.getKey());
@@ -483,7 +483,7 @@ public class MappingSystem implements IMappingSystem {
         // If prefix sibling has a negative mapping, save its subscribers
         Eid sibling = smc.getSiblingPrefix(eid);
         MappingData mapping = (MappingData) smc.getMapping(null, sibling);
-        if (mapping != null && mapping.isNegative()) {
+        if (mapping != null && mapping.isNegative().or(false)) {
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
         } else {
             return null;
@@ -493,7 +493,7 @@ public class MappingSystem implements IMappingSystem {
         Eid previousNode = sibling;
         while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
-            if (mapping != null && mapping.isNegative()) {
+            if (mapping != null && mapping.isNegative().or(false)) {
                 subscribers.addAll((Set<Subscriber>)
                         getData(MappingOrigin.Southbound, currentNode, SubKeys.SUBSCRIBERS));
                 removeSbMapping(currentNode, mapping);
