@@ -216,8 +216,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         if (subscriptionService) {
             Eid eid = notification.getMappingRecord().getEid();
             if (mapService.isMaster()) {
+                LOG.trace("Will send SMRs for EID {} to these subscribers: {}", eid, notification.getSubscriberItem());
                 sendSmrs(eid, MSNotificationInputUtil.toSubscriberSet(notification.getSubscriberItem()));
                 if (eid.getAddress() instanceof SourceDestKey) {
+                    Eid dstEid = SourceDestKeyHelper.getDstBinary(eid);
+                    LOG.trace("Will send DST SMRs for EID {} to these subscribers: {}", dstEid,
+                            notification.getDstSubscriberItem());
                     sendSmrs(SourceDestKeyHelper.getDstBinary(eid),
                             MSNotificationInputUtil.toSubscriberSetFromDst(notification.getDstSubscriberItem()));
                 }
@@ -407,9 +411,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
                         mrb.setEidItem(new ArrayList<EidItem>());
                         mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
-                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
                         LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
                                 + " to subscriber " + subscriber.getSrcRloc(), executionCount);
+                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);

@@ -37,7 +37,6 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
@@ -46,7 +45,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
@@ -462,19 +460,10 @@ public class MappingSystem implements IMappingSystem {
 
         if (mapping != null) {
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
-            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
-            // For SrcDst LCAF also send SMRs to Dst prefix
-            if (key.getAddress() instanceof SourceDestKey) {
-                Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
-                dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
-                if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
-                    mapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
-                }
-            }
             notifyChange(mapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
-        if (origin == MappingOrigin.Northbound) {
+        if (origin == MappingOrigin.Northbound && smc.getMapping(null, key) == null) {
             removeData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
         }
 
