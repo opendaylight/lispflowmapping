@@ -395,20 +395,38 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         void smrReceived(SmrEvent event) {
             final List<Subscriber> subscriberList = event.getSubscriberList();
             for (Subscriber subscriber : subscriberList) {
-                LOG.trace("SMR-invoked event, EID {}, subscriber {}", LispAddressStringifier.getString(event.getEid()),
-                        subscriber.getString());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("SMR-invoked event, EID {}, subscriber {}",
+                            LispAddressStringifier.getString(event.getEid()),
+                            subscriber.getString());
+                    LOG.trace("eidFutureMap: {}", eidFutureMap);
+                }
                 final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(event.getEid());
                 if (subscriberFutureMap != null) {
                     final ScheduledFuture<?> future = subscriberFutureMap.get(subscriber);
                     if (future != null && !future.isCancelled()) {
                         future.cancel(true);
-                        LOG.debug("SMR-invoked MapRequest received, scheduled task for subscriber {}, EID {} with"
-                                + " nonce {} has been cancelled", subscriber.getString(),
-                                LispAddressStringifier.getString(event.getEid()), event.getNonce());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("SMR-invoked MapRequest received, scheduled task for subscriber {}, EID {} with"
+                                    + " nonce {} has been cancelled", subscriber.getString(),
+                                    LispAddressStringifier.getString(event.getEid()), event.getNonce());
+                        }
                         subscriberFutureMap.remove(subscriber);
+                    } else {
+                        if (future == null) {
+                            LOG.trace("No outstanding SMR tasks for EID {}, subscriber {}",
+                                    LispAddressStringifier.getString(event.getEid()), subscriber.getString());
+                        } else {
+                            LOG.trace("Future {} is cancelled", future);
+                        }
                     }
                     if (subscriberFutureMap.isEmpty()) {
                         eidFutureMap.remove(event.getEid());
+                    }
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("No outstanding SMR tasks for EID {}",
+                                LispAddressStringifier.getString(event.getEid()));
                     }
                 }
             }
