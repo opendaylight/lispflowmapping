@@ -30,10 +30,12 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -167,6 +169,55 @@ class MultiSiteScenario {
         mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
         mapRequestBuilder.setSmrInvoked(false);
         return lms.handleMapRequest(mapRequestBuilder.build());
+    }
+
+    /**
+     * This method expects a SMR Map-Request as input, which it will turn into a SMR-invoked Map-Request and use the
+     * LISP mapping service to send it
+     *
+     * @param mapRequest the SMR Map-Request
+     */
+    private void emitSMRInvokedMapRequestMessage(MapRequest mapRequest) {
+        if (mapRequest.getEidItem().isEmpty()) {
+            fail("Empty SMR received!");
+        }
+
+        Eid srcEid = addMaximumPrefixIfNecessary(mapRequest.getSourceEid().getEid());
+        final EidItemBuilder eidItemBuilder = new EidItemBuilder();
+        eidItemBuilder.setEid(srcEid);
+        eidItemBuilder.setEidItemId(LispAddressStringifier.getString(srcEid));
+        final List<EidItem> eidItem = Collections.singletonList(eidItemBuilder.build());
+
+        final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder(mapRequest);
+        mapRequestBuilder.setSmr(false);
+        mapRequestBuilder.setSmrInvoked(true);
+        mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
+        mapRequestBuilder.setEidItem(eidItem);
+        for (EidItem ei : mapRequest.getEidItem()) {
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(ei.getEid()).build());
+            LOG.debug("Sending SMR-invoked Map-Reqeust for EID {}, Source EID {}",
+                    LispAddressStringifier.getString(srcEid),
+                    LispAddressStringifier.getString(ei.getEid()));
+            lms.handleMapRequest(mapRequestBuilder.build());
+        }
+    }
+
+    /*
+     * Since the Source EID field from a Map-Request packet does not have a prefix length field, IPv4 and IPv6 addresses
+     * are serialized into Ipv4Binary and Ipv6Binary objects. However, when we want to use the addresses in a
+     * SMR-invoked Map-Request, we need to use an Ipv4PrefixBinary or Ipv6PrefixBinary object respectively, since that's
+     * what the EID item field would be deserialized into.
+     */
+    private static Eid addMaximumPrefixIfNecessary(Eid eid) {
+        Address address = eid.getAddress();
+        if (address instanceof Ipv4Binary) {
+            return LispAddressUtil.asIpv4PrefixBinaryEid(
+                    eid, ((Ipv4Binary) address).getIpv4Binary().getValue(), MaskUtil.IPV4_MAX_MASK);
+        } else if (address instanceof Ipv6Binary) {
+            return LispAddressUtil.asIpv6PrefixBinaryEid(
+                    eid, ((Ipv6Binary) address).getIpv6Binary().getValue(), MaskUtil.IPV6_MAX_MASK);
+        }
+        return eid;
     }
 
     private List<ItrRloc> prepareDummyItrRloc() {
@@ -490,6 +541,7 @@ class MultiSiteScenario {
             final List<EidItem> currentEidItems = mapRequest.getEidItem();
             assertNotNull(currentEidItems);
             assertTrue(SMRContainsExpectedEid(eids, currentEidItems));
+            emitSMRInvokedMapRequestMessage(mapRequest);
         }
         //all expected eids should be after looping via mapRequests matched.
         assertTrue("Expected eids wasn't/weren't found " + eids, eids.isEmpty());
