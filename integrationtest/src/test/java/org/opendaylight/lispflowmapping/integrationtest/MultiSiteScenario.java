@@ -169,6 +169,33 @@ class MultiSiteScenario {
         return lms.handleMapRequest(mapRequestBuilder.build());
     }
 
+    /**
+     * This method expects a SMR Map-Request as input, which it will turn into a SMR-invoked Map-Request and use the
+     * LISP mapping service to send it
+     *
+     * @param mapRequest the SMR Map-Request
+     */
+    private void emitSMRInvokedMapRequestMessage(MapRequest mapRequest) {
+        if (mapRequest.getEidItem().isEmpty()) {
+            fail("Empty SMR received!");
+        }
+
+        final EidItemBuilder eidItemBuilder = new EidItemBuilder();
+        eidItemBuilder.setEid(mapRequest.getSourceEid().getEid());
+        eidItemBuilder.setEidItemId(LispAddressStringifier.getString(mapRequest.getSourceEid().getEid()));
+        final List<EidItem> eidItem = Collections.singletonList(eidItemBuilder.build());
+
+        final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder(mapRequest);
+        mapRequestBuilder.setSmr(false);
+        mapRequestBuilder.setSmrInvoked(true);
+        mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
+        mapRequestBuilder.setEidItem(eidItem);
+        for (EidItem ei : mapRequest.getEidItem()) {
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(ei.getEid()).build());
+            lms.handleMapRequest(mapRequestBuilder.build());
+        }
+    }
+
     private List<ItrRloc> prepareDummyItrRloc() {
         List<ItrRloc> itrRlocs = new ArrayList<>();
         final ItrRlocBuilder itrRlocBuilder = new ItrRlocBuilder();
@@ -480,6 +507,7 @@ class MultiSiteScenario {
             final List<EidItem> currentEidItems = mapRequest.getEidItem();
             assertNotNull(currentEidItems);
             assertTrue(SMRContainsExpectedEid(eids, currentEidItems));
+            emitSMRInvokedMapRequestMessage(mapRequest);
         }
         //all expected eids should be after looping via mapRequests matched.
         assertTrue("Expected eids wasn't/weren't found " + eids, eids.isEmpty());
