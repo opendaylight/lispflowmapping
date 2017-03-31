@@ -88,6 +88,7 @@ public class MapResolver implements IMapResolverAsync {
         }
         if (request.isSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
+            LOG.trace("Map-Request object: {}", request);
             for (EidItem eidItem : request.getEidItem()) {
                 final SmrEvent event = new SmrEvent(
                         subscriberListFromItrRlocs(request.getItrRloc(), request.getSourceEid().getEid()),
