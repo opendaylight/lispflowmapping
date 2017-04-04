@@ -9,9 +9,8 @@
 package org.opendaylight.lispflowmapping.implementation.timebucket.containers;
 
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
