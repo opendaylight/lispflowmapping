@@ -12,19 +12,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucket;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucketWheel;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -32,6 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -66,9 +64,6 @@ public class TimeBucketWheelUnitTest {
 
     private static final SiteId SITE_ID_1 = new SiteId(new byte[]{1, 1, 1, 1, 1, 1, 1, 1});
 
-    private static final long REGISTRATION_VALIDITY = ConfigIni.getInstance().getRegistrationValiditySb();
-
-    private static ILispDAO daoMock = Mockito.mock(ILispDAO.class);
     private static MappingSystem mappingSystem = Mockito.mock(MappingSystem.class);
 
     /**
@@ -261,15 +256,6 @@ public class TimeBucketWheelUnitTest {
         Mockito.verify(mappingSystem).handleSbExpiredMapping(IPV4_EID_1, null, mappingData);
     }
 
-
-    private MappingData getDefaultMappingDataWithProperTimestamp(Eid eid, long timeStamp) {
-        MappingData mappingData = getDefaultMappingData(eid);
-        Date date = new Date();
-        date.setTime(timeStamp);
-        mappingData.setTimestamp(date);
-        return mappingData;
-    }
-
     private static TimeBucketWheel getDefaultTimeBucketWheel() {
         return new TimeBucketWheel(4, 3000, mappingSystem);
     }
@@ -282,7 +268,7 @@ public class TimeBucketWheelUnitTest {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder(eid).build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder(Eid eid) {
