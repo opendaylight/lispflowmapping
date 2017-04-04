@@ -23,9 +23,9 @@ import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6Address;
@@ -107,8 +107,6 @@ public class MapResolverTest {
 
     private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1);
     private static MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
-    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,
-            LispAddressUtil.asIpv4Eid(IPV4_SOURCE), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     @Before
     @SuppressWarnings("unchecked")
@@ -509,7 +507,7 @@ public class MapResolverTest {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
