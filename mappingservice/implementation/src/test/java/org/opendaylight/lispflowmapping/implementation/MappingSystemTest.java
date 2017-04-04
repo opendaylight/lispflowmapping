@@ -170,7 +170,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbFirst_withNullExpiredNbMapping() {
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         mappingData.setTimestamp(EXPIRED_DATE);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
@@ -191,7 +191,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbFirst_withNullNbMapping() {
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
@@ -208,7 +208,7 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build(), // set two locators
                         getDefaultLocatorRecordBuilder().build())).build();
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
@@ -223,7 +223,7 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
@@ -239,7 +239,7 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB));
@@ -256,7 +256,7 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         final MappingData result = (MappingData) mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
@@ -275,7 +275,7 @@ public class MappingSystemTest {
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getIpPrefixTypeRloc()).build())).build();
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
@@ -289,7 +289,7 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build();
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -318,7 +318,7 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-        final MappingData mappingData = getDefaultMappingData(mappingRecord);
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         assertEquals(mappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH));
@@ -336,8 +336,8 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
-        MappingData nbMappingData = getDefaultMappingData(mappingRecord);
-        MappingData sbMappingData = getDefaultMappingData(mappingRecord);
+        MappingData nbMappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
+        MappingData sbMappingData = getDefaultMappingData(MappingOrigin.Southbound, mappingRecord);
         sbMappingData.setTimestamp(EXPIRED_DATE);
 
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingData);
@@ -365,8 +365,8 @@ public class MappingSystemTest {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         getDefaultLocatorRecordBuilder().build())).build();
-        final MappingData nbMappingData = getDefaultMappingData(mappingRecord);
-        final MappingData sbMappingData = getDefaultMappingData(mappingRecord);
+        final MappingData nbMappingData = getDefaultMappingData(MappingOrigin.Northbound, mappingRecord);
+        final MappingData sbMappingData = getDefaultMappingData(MappingOrigin.Southbound, mappingRecord);
 
         // this mock will be ultimately returned when MappingMergeUtil.computeNbSbIntersection is called
         final MappingData resultMock = Mockito.mock(MappingData.class);
@@ -385,7 +385,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withSrcNull() {
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         Mockito.when(pmcMock.getMapping(null, EID_IPV4_DST)).thenReturn(null);
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
 
@@ -397,7 +397,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withXtrId() {
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         mappingData.setXtrId(XTR_ID);
 
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, XTR_ID)).thenReturn(mappingData);
@@ -410,7 +410,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_withMappingOrigin() {
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         Mockito.when(smcMock.getMapping(EID_IPV4_SRC, (XtrId) null)).thenReturn(mappingData);
 
         mappingSystem.getMapping(MappingOrigin.Southbound, EID_IPV4_SRC);
@@ -572,15 +572,15 @@ public class MappingSystemTest {
         mappingSystem.setIterateMask(true);
     }
 
-    private static MappingData getDefaultMappingData() {
-        return getDefaultMappingData(null);
+    private static MappingData getDefaultMappingData(MappingOrigin origin) {
+        return getDefaultMappingData(origin, null);
     }
 
-    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+    private static MappingData getDefaultMappingData(MappingOrigin origin, MappingRecord mappingRecord) {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(origin, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {

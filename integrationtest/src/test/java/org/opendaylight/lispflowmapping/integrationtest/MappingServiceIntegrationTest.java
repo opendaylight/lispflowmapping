@@ -456,7 +456,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add mapping */
         final MappingRecord mapping1 = new MappingRecordBuilder()
                 .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
-        mapService.addMapping(MappingOrigin.Northbound, eid1, null, new MappingData(mapping1));
+        mapService.addMapping(MappingOrigin.Northbound, eid1, null,
+                new MappingData(MappingOrigin.Northbound, mapping1));
 
         sleepForMilliseconds((timeout * expectedSmrs1) - (timeout / 2));
         final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
@@ -613,13 +614,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
 
         mapService.addMapping(MappingOrigin.Northbound, mapRecordNbLeft.getEid(), null,
-                new MappingData(mapRecordNbLeft));
+                new MappingData(MappingOrigin.Northbound, mapRecordNbLeft));
         mapService.addMapping(MappingOrigin.Northbound, mapRecordNbRight.getEid(), null,
-                new MappingData(mapRecordNbRight));
+                new MappingData(MappingOrigin.Northbound, mapRecordNbRight));
         mapService.addMapping(MappingOrigin.Southbound, mapRecordSbLeft.getEid(), null,
-                new MappingData(mapRecordSbLeft, System.currentTimeMillis()));
+                new MappingData(MappingOrigin.Southbound, mapRecordSbLeft, System.currentTimeMillis()));
         mapService.addMapping(MappingOrigin.Southbound, mapRecordSbRight.getEid(), null,
-                new MappingData(mapRecordSbRight, System.currentTimeMillis()));
+                new MappingData(MappingOrigin.Southbound, mapRecordSbRight, System.currentTimeMillis()));
 
         restartSocket();
         sleepForSeconds(2);
@@ -2112,7 +2113,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         mapService.addMapping(MappingOrigin.Southbound, eid, siteId,
-                new MappingData(mappingRecord, System.currentTimeMillis()));
+                new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis()));
         sleepForSeconds(2);
 
         MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);

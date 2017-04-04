@@ -187,7 +187,7 @@ class MultiSiteScenario {
         mrbNegative.setAction(action);
 
         mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrbNegative.build()));
+                new MappingData(MappingOrigin.Northbound, mrbNegative.build()));
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -201,13 +201,13 @@ class MultiSiteScenario {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
                 dstSite);
         mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrb.build()));
+                new MappingData(MappingOrigin.Northbound, mrb.build()));
     }
 
     void storeNorthMappingIpPrefix(final Site... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
         mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(),  new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrb.build()));
+                new MappingData(MappingOrigin.Northbound, mrb.build()));
     }
 
     private void storeDestinationSiteMappingViaSouthbound(final Site dstSite, final boolean merge) {

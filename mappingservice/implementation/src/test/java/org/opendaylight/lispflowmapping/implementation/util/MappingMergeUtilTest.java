@@ -29,6 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 public class MappingMergeUtilTest {
 
@@ -258,7 +259,7 @@ public class MappingMergeUtilTest {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {

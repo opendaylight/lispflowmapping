@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,12 +166,18 @@ public final class MappingMergeUtil {
     public static MappingData mergeXtrIdMappings(List<Object> mappingDataList, List<MappingData> expiredMappingDataList,
             Set<IpAddressBinary> sourceRlocs) {
         MappingRecordBuilder mrb = null;
+        Set<MappingOrigin> origin = Sets.newConcurrentHashSet();
         XtrId xtrId = null;
         Long timestamp = Long.MAX_VALUE;
 
         for (int i = 0; i < mappingDataList.size(); i++) {
             MappingData mappingData = (MappingData) mappingDataList.get(i);
             MappingRecord record = mappingData.getRecord();
+
+            // We add all origins (but we exepect them to SB only)
+            synchronized (origin) {
+                origin.addAll(mappingData.getOrigin());
+            }
 
             // Skip expired mappings and add them to a list to be returned to the caller
             if (timestampIsExpired(mappingData.getTimestamp())) {
@@ -201,7 +209,7 @@ public final class MappingMergeUtil {
         }
         mrb.setXtrId(xtrId);
 
-        return new MappingData(mrb.build(), new Date(timestamp));
+        return new MappingData(origin, mrb.build(), new Date(timestamp));
     }
 
     /*
@@ -232,7 +240,11 @@ public final class MappingMergeUtil {
 
     public static MappingData computeNbSbIntersection(MappingData nbMappingData,
             MappingData sbMappingData) {
-        return new MappingData(computeNbSbIntersection(nbMappingData.getRecord(), sbMappingData.getRecord()));
+        Set<MappingOrigin> origin = nbMappingData.getOrigin();
+        synchronized (origin) {
+            origin.addAll(sbMappingData.getOrigin());
+        }
+        return new MappingData(origin, computeNbSbIntersection(nbMappingData.getRecord(), sbMappingData.getRecord()));
     }
 
     private static MappingRecord computeNbSbIntersection(MappingRecord nbMapping, MappingRecord sbMapping) {

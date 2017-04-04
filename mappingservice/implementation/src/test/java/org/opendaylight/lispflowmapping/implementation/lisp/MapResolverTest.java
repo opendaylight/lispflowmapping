@@ -107,8 +107,6 @@ public class MapResolverTest {
 
     private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1);
     private static MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
-    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,
-            LispAddressUtil.asIpv4Eid(IPV4_SOURCE), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     @Before
     @SuppressWarnings("unchecked")
@@ -509,7 +507,7 @@ public class MapResolverTest {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {

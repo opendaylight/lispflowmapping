@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 public class SimpleMapCacheTest {
 
@@ -183,7 +184,8 @@ public class SimpleMapCacheTest {
         final Map<String, Object> mapMock = Mockito.mock(Map.class);
         final SimpleImmutableEntry<Eid, Map<String, ?>> mapPair = new SimpleImmutableEntry<>(
                 NORMALIZED_EID_IPV4_PREFIX_DST, mapMock);
-        final MappingData mappingData = new MappingData(getDefaultMappingRecordBuilder().build());
+        final MappingData mappingData = new MappingData(MappingOrigin.Southbound,
+                getDefaultMappingRecordBuilder().build());
 
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);

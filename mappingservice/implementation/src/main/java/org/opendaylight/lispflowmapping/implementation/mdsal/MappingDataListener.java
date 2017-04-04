@@ -121,7 +121,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 Eid convertedEid = convertedMapping.getMappingRecord().getEid();
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
-                        new MappingData(convertedMapping.getMappingRecord()));
+                        new MappingData(convertedMapping.getOrigin(), convertedMapping.getMappingRecord()));
                 Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
                         convertedEid, SubKeys.SUBSCRIBERS);
                 Set<Subscriber> dstSubscribers = null;

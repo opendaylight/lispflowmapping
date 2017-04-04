@@ -120,7 +120,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
             Eid eid = mapping.getEid();
-            MappingData mappingData = new MappingData(mapping, System.currentTimeMillis());
+            MappingData mappingData = new MappingData(MappingOrigin.Southbound, mapping, System.currentTimeMillis());
             mappingData.setMergeEnabled(merge);
             mappingData.setXtrId(mapRegister.getXtrId());
 
