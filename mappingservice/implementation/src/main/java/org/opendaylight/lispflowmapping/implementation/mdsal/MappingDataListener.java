@@ -20,9 +20,9 @@ import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputU
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -121,7 +121,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 Eid convertedEid = convertedMapping.getMappingRecord().getEid();
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
-                        new MappingData(convertedMapping.getMappingRecord()));
+                        new MappingData(convertedMapping.getOrigin(), convertedMapping.getMappingRecord()));
                 Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
                         convertedEid, SubKeys.SUBSCRIBERS);
                 Set<Subscriber> dstSubscribers = null;

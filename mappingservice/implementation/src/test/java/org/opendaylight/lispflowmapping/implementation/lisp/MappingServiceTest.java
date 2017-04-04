@@ -30,8 +30,8 @@ import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -98,7 +98,7 @@ public class MappingServiceTest {
             .setKeyType(1).build();
     private static final SiteId SITE_ID = new SiteId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7});
     private static final XtrId XTR_ID = new XtrId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
-    private static final MappingData DUMMY_MAPPING = new MappingData(null);
+    private static final MappingData DUMMY_MAPPING = new MappingData(MappingOrigin.Southbound, null);
 
     /**
      * Tests {@link MappingService#addKey} method.
@@ -221,7 +221,7 @@ public class MappingServiceTest {
     public void getMappingTest() throws ExecutionException, InterruptedException {
         // input
         final GetMappingInput getMappingInput = new GetMappingInputBuilder().setEid(IPV4_EID).build();
-        final MappingData mappingData = getDefaultMappingData();
+        final MappingData mappingData = getDefaultMappingData(MappingOrigin.Southbound);
         final MappingRecord nonBinaryMappingRecord = getDefaultMappingRecordBuilder()
                 .setEid(LispAddressUtil.toEid(new Ipv4Address(IPV4_STRING), null)).build();
 
@@ -368,7 +368,7 @@ public class MappingServiceTest {
         // input
         final MappingRecord record = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
-        final MappingData data = getDefaultMappingData(record);
+        final MappingData data = getDefaultMappingData(MappingOrigin.Southbound, record);
 
         mappingService.addMapping(MappingOrigin.Southbound, IPV4_EID, SITE_ID, data);
 
@@ -385,7 +385,7 @@ public class MappingServiceTest {
         final MappingOrigin origin = MappingOrigin.Northbound;
         final MappingRecord record = getDefaultMappingRecordBuilder()
                 .setXtrId(XTR_ID).build();
-        final MappingData data = getDefaultMappingData(record);
+        final MappingData data = getDefaultMappingData(origin, record);
 
         mappingService.addMapping(origin, IPV4_EID, SITE_ID, data);
         Mockito.verify(dsbe).addMapping(DSBEInputUtil.toMapping(origin, IPV4_EID, SITE_ID, data));
@@ -532,15 +532,15 @@ public class MappingServiceTest {
         assertNull(mappingService.getAllMappings());
     }
 
-    private static MappingData getDefaultMappingData() {
-        return getDefaultMappingData(null);
+    private static MappingData getDefaultMappingData(MappingOrigin origin) {
+        return getDefaultMappingData(origin, null);
     }
 
-    private static MappingData getDefaultMappingData(MappingRecord mappingRecord) {
+    private static MappingData getDefaultMappingData(MappingOrigin origin, MappingRecord mappingRecord) {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(origin, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {

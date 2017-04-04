@@ -41,13 +41,13 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -120,7 +120,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
             MappingRecord mapping = record.getMappingRecord();
             Eid eid = mapping.getEid();
-            MappingData mappingData = new MappingData(mapping, System.currentTimeMillis());
+            MappingData mappingData = new MappingData(MappingOrigin.Southbound, mapping, System.currentTimeMillis());
             mappingData.setMergeEnabled(merge);
             mappingData.setXtrId(mapRegister.getXtrId());
 
