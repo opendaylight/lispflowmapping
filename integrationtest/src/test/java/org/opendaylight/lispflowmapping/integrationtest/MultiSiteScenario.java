@@ -27,9 +27,9 @@ import org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.Si
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -187,7 +187,7 @@ class MultiSiteScenario {
         mrbNegative.setAction(action);
 
         mapService.addMapping(MappingOrigin.Northbound, eidAsIpv4Prefix, new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrbNegative.build()));
+                new MappingData(MappingOrigin.Northbound, mrbNegative.build()));
     }
 
     void deleteNorthMappingNegative(final Site dstSite) {
@@ -201,13 +201,13 @@ class MultiSiteScenario {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_SRC_DST, srcSite,
                 dstSite);
         mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(), new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrb.build()));
+                new MappingData(MappingOrigin.Northbound, mrb.build()));
     }
 
     void storeNorthMappingIpPrefix(final Site... dstSite) {
         final MappingRecordBuilder mrb = prepareMappingRecord(EidType.EID_WITH_PREFIX, null, dstSite);
         mapService.addMapping(MappingOrigin.Northbound, mrb.getEid(),  new SiteId(DEFAULT_SITE_ID),
-                new MappingData(mrb.build()));
+                new MappingData(MappingOrigin.Northbound, mrb.build()));
     }
 
     private void storeDestinationSiteMappingViaSouthbound(final Site dstSite, final boolean merge) {
