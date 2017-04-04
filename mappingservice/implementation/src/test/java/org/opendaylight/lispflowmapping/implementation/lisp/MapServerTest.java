@@ -32,9 +32,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -143,8 +143,10 @@ public class MapServerTest {
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
     private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
-    private static final MappingData OLD_MAPPING_DATA_1 = new MappingData(OLD_MAPPING_RECORD_1);
-    private static final MappingData OLD_MAPPING_DATA_2 = new MappingData(OLD_MAPPING_RECORD_2);
+    private static final MappingData OLD_MAPPING_DATA_1 = new MappingData(MappingOrigin.Southbound,
+            OLD_MAPPING_RECORD_1);
+    private static final MappingData OLD_MAPPING_DATA_2 = new MappingData(MappingOrigin.Southbound,
+            OLD_MAPPING_RECORD_2);
 
     private static final Set<IpAddressBinary> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
 
@@ -158,7 +160,8 @@ public class MapServerTest {
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_5);
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_6);
         mapRegister = getDefaultMapRegisterBuilder().build();
-        mappingData = new MappingData(mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
+        mappingData = new MappingData(MappingOrigin.Southbound,
+                mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
                 System.currentTimeMillis());
         setConfigIniMappingMergeField(false);
     }
@@ -508,7 +511,7 @@ public class MapServerTest {
         if (mappingRecord == null) {
             mappingRecord = getDefaultMappingRecordBuilder().build();
         }
-        return new MappingData(mappingRecord, System.currentTimeMillis());
+        return new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis());
     }
 
     private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder() {
