@@ -8,7 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation.timebucket.interfaces;
 
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.type.MappingData;
+
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
