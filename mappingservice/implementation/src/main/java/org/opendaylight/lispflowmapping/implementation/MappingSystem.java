@@ -8,7 +8,9 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -81,6 +83,10 @@ public class MappingSystem implements IMappingSystem {
     private static final String AUTH_KEY_TABLE = "authentication";
     //private static final int TTL_RLOC_TIMED_OUT = 1;
     private static final int TTL_NO_RLOC_KNOWN = ConfigIni.getInstance().getNegativeMappingTTL();
+    private static final MappingOrigin[] ORIGIN_NB_AND_SB_VALUES =
+            new MappingOrigin[] {MappingOrigin.Northbound, MappingOrigin.Southbound};
+    private static final Set<MappingOrigin> ORIGIN_NB_AND_SB =
+            new HashSet<MappingOrigin>(Arrays.asList(ORIGIN_NB_AND_SB_VALUES));
     private NotificationPublishService notificationPublishService;
     private boolean mappingMerge;
     private ILispDAO dao;
@@ -201,7 +207,7 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public MappingData addNegativeMapping(Eid key) {
         MappingRecord mapping = buildNegativeMapping(key);
-        MappingData mappingData = new MappingData(MappingOrigin.Southbound, mapping);
+        MappingData mappingData = new MappingData(ORIGIN_NB_AND_SB, mapping);
         smc.addMapping(mapping.getEid(), mappingData);
         dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(), null, mappingData));
         return mappingData;
@@ -480,21 +486,17 @@ public class MappingSystem implements IMappingSystem {
 
         if (mapping != null) {
             MappingData notificationMapping = mapping;
-            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+            subscribers = (Set<Subscriber>) getData(origin, key, SubKeys.SUBSCRIBERS);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
-                dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
+                dstSubscribers = (Set<Subscriber>) getData(origin, dstAddr, SubKeys.SUBSCRIBERS);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
                     notificationMapping = new MappingData(mapping.getOrigin(),
                             new MappingRecordBuilder().setEid(key).build());
                 }
             }
             notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
-        }
-
-        if (origin == MappingOrigin.Northbound) {
-            removeData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
         }
 
         if (origin == MappingOrigin.Southbound) {
@@ -504,6 +506,26 @@ public class MappingSystem implements IMappingSystem {
             }
         }
         tableMap.get(origin).removeMapping(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public synchronized void updateSubscribers(Set<MappingOrigin> origins, Eid eid, Subscriber subscriber) {
+        for (MappingOrigin origin : origins) {
+            Set<Subscriber> subscribers = (Set<Subscriber>) getData(origin, eid, SubKeys.SUBSCRIBERS);
+            if (subscribers == null) {
+                subscribers = Sets.newConcurrentHashSet();
+            } else if (subscribers.contains(subscriber)) {
+                // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
+                subscribers.remove(subscriber);
+            }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Adding new subscriber: {} to origin {}",
+                        LispAddressStringifier.getString(subscriber.getSrcRloc()), origin);
+            }
+            subscribers.add(subscriber);
+            addData(origin, eid, SubKeys.SUBSCRIBERS, subscribers);
+        }
     }
 
     private void notifyChange(MappingData mapping, Set<Subscriber> subscribers, Set<Subscriber> dstSubscribers,
@@ -588,8 +610,8 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public void addData(MappingOrigin origin, Eid key, String subKey, Object data) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Add data of {} for key {} and subkey {}", data.getClass(),
-                    LispAddressStringifier.getString(key), subKey);
+            LOG.debug("Add data of {} for key {} and subkey {} to origin {}", data.getClass(),
+                    LispAddressStringifier.getString(key), subKey, origin);
         }
         tableMap.get(origin).addData(key, subKey, data);
     }
@@ -597,7 +619,8 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public Object getData(MappingOrigin origin, Eid key, String subKey) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Retrieving data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+            LOG.debug("Retrieving data for key {} and subkey {} from origin {}",
+                    LispAddressStringifier.getString(key), subKey, origin);
         }
         return tableMap.get(origin).getData(key, subKey);
     }
@@ -605,7 +628,8 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public void removeData(MappingOrigin origin, Eid key, String subKey) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing data for key {} and subkey {}", LispAddressStringifier.getString(key), subKey);
+            LOG.debug("Removing data for key {} and subkey {} from origin {}",
+                    LispAddressStringifier.getString(key), subKey, origin);
         }
         tableMap.get(origin).removeData(key, subKey);
     }
