@@ -8,8 +8,9 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.type.MappingData;
-
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
@@ -119,6 +120,18 @@ public interface IMappingSystem {
      *
      */
     void removeMapping(MappingOrigin origin, Eid key);
+
+    /**
+     * Update subscribers.
+     *
+     * @param origins
+     *            List of origins for which subscribers will be updated
+     * @param eid
+     *            EID key for subscriber
+     * @param subscriber
+     *            Subscriber object
+     */
+    void updateSubscribers(Set<MappingOrigin> origins, Eid eid, Subscriber subscriber);
 
     /**
      * Add authentication key.

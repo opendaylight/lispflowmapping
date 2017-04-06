@@ -10,12 +10,10 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
@@ -115,16 +113,21 @@ public class MapResolver implements IMapResolverAsync {
         for (EidItem eidRecord : request.getEidItem()) {
             MappingData mappingData = mapService.getMapping(srcEid, eidRecord.getEid());
             MappingRecord mapping;
+            Set<MappingOrigin> origins;
             if (mappingData == null) {
-                mapping = mapService.addNegativeMapping(eidRecord.getEid()).getRecord();
-            } else {
-                mapping = mappingData.getRecord();
+                mappingData = mapService.addNegativeMapping(eidRecord.getEid());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No mapping found for EID {}, adding negative mapping.",
+                            LispAddressStringifier.getString(eidRecord.getEid()));
+                }
             }
+            mapping = mappingData.getRecord();
+            origins = mappingData.getOrigin();
 
             if (itrRlocs != null && itrRlocs.size() != 0) {
                 if (subscriptionService) {
                     final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
-                    updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
+                    updateSubscribers(origins, resolvedRloc, eidRecord.getEid(), mapping.getEid(),
                             srcEid, mapping.getRecordTtl());
                 }
                 mapping = updateLocators(mapping, itrRlocs);
@@ -186,7 +189,8 @@ public class MapResolver implements IMapResolverAsync {
         }
     }
 
-    private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
+    private void updateSubscribers(Set<MappingOrigin> origins, Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid,
+            Integer recordTtl) {
         Subscriber subscriber = new Subscriber(itrRloc, srcEid, Subscriber.recordTtlToSubscriberTime(recordTtl));
         Eid subscribedEid = mapEid;
 
@@ -198,19 +202,13 @@ public class MapResolver implements IMapResolverAsync {
             subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
         }
 
-        Set<Subscriber> subscribers = getSubscribers(subscribedEid);
-        if (subscribers == null) {
-            subscribers = Sets.newConcurrentHashSet();
-        } else if (subscribers.contains(subscriber)) {
-            // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
-            subscribers.remove(subscriber);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding new subscriber {} for EID {}", subscriber.getString(),
-                    LispAddressStringifier.getString(subscribedEid));
-        }
-        subscribers.add(subscriber);
-        addSubscribers(subscribedEid, subscribers);
+        LOG.debug("Adding subscriber from source EID {}, RLOC {} for EID {}\nOrigins: {}",
+                LispAddressStringifier.getString(srcEid),
+                LispAddressStringifier.getString(itrRloc),
+                LispAddressStringifier.getString(subscribedEid),
+                origins);
+
+        mapService.updateSubscribers(origins, subscribedEid, subscriber);
     }
 
     // Fixes mapping if request was for simple dst EID but the matched mapping is a SourceDest
@@ -346,15 +344,6 @@ public class MapResolver implements IMapResolverAsync {
             subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
         }
         return subscriberList;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Set<Subscriber> getSubscribers(Eid address) {
-        return (Set<Subscriber>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
-    }
-
-    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
-        mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
     @Override
