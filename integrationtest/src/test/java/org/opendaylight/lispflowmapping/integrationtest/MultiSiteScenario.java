@@ -8,14 +8,13 @@
 package org.opendaylight.lispflowmapping.integrationtest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest.ourAddress;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
-
-import org.opendaylight.lispflowmapping.type.MappingData;
 
 import com.google.common.net.InetAddresses;
 import java.nio.ByteBuffer;
@@ -31,6 +30,8 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
+import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -120,6 +121,7 @@ class MultiSiteScenario {
         assertNotNull(mappingRecordItem);
         final MappingRecord mappingRecord = mappingRecordItem.getMappingRecord();
         assertNotNull(mappingRecord);
+        assertFalse(MappingRecordUtil.isNegativeMapping(mappingRecord));
         return mappingRecord;
     }
 
@@ -167,6 +169,8 @@ class MultiSiteScenario {
         mapRequestBuilder.setEidItem(eidItem);
         mapRequestBuilder.setItrRloc(prepareDummyItrRloc());
         mapRequestBuilder.setSmrInvoked(false);
+        LOG.debug("'Pinging' EID {} from source EID {}", LispAddressStringifier.getString(dstEid),
+                LispAddressStringifier.getString(srcEid));
         return lms.handleMapRequest(mapRequestBuilder.build());
     }
 
