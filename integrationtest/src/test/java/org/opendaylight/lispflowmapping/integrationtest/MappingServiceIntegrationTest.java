@@ -450,7 +450,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final String subscriberSrcRloc2 = "127.0.0.4";
         final Set<Subscriber> subscriberSet1 = Sets.newHashSet(newSubscriber(subscriberEid, subscriberSrcRloc1),
                 newSubscriber(subscriberEid, subscriberSrcRloc2));
-        mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet1);
+        mapService.addData(MappingOrigin.Northbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet1);
 
         final SocketReader reader1 = startSocketReader(subscriberSrcRloc1, 15000);
         final SocketReader reader2 = startSocketReader(subscriberSrcRloc2, 15000);

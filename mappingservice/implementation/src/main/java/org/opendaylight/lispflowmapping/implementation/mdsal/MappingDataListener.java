@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -123,16 +124,14 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                         new MappingData(convertedMapping.getOrigin(), convertedMapping.getMappingRecord()));
-                Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
-                        convertedEid, SubKeys.SUBSCRIBERS);
+                Set<Subscriber> subscribers = getAllSubscribers(convertedEid);
                 LoggingUtil.logSubscribers(LOG, convertedEid, subscribers);
 
                 Set<Subscriber> dstSubscribers = null;
                 // For SrcDst LCAF also send SMRs to Dst prefix
                 if (convertedEid.getAddress() instanceof SourceDestKey) {
                     Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
-                    dstSubscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
-                            dstAddr, SubKeys.SUBSCRIBERS);
+                    dstSubscribers = getAllSubscribers(dstAddr);
                     LoggingUtil.logSubscribers(LOG, dstAddr, dstSubscribers);
                 }
 
@@ -148,6 +147,25 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Subscriber> getAllSubscribers(Eid address) {
+        Set<Subscriber> subscriberSet = Sets.newConcurrentHashSet();
+        Set<Subscriber> nbSubscribers = (Set<Subscriber>) mapSystem.getData(
+                MappingOrigin.Northbound, address, SubKeys.SUBSCRIBERS);
+        if (nbSubscribers != null) {
+            subscriberSet.addAll(nbSubscribers);
+        }
+        Set<Subscriber> sbSubscribers = (Set<Subscriber>) mapSystem.getData(
+                MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
+        if (sbSubscribers != null) {
+            subscriberSet.addAll(sbSubscribers);
+        }
+        if (!subscriberSet.isEmpty()) {
+            return subscriberSet;
+        }
+        return null;
     }
 
     private static Mapping convertToBinaryIfNecessary(Mapping mapping) {
