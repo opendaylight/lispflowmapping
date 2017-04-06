@@ -134,7 +134,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     // subscribers of the NEW mapping below (since the EIDs are different, the result of
                     // mappingChanged() will be true, and then send an SMR to all subscribers with the EID of the NEW
                     // mapping only.
-                    Set<Subscriber> oldMappingSubscribers = getSubscribers(oldMapping.getEid());
+                    Set<Subscriber> oldMappingSubscribers = getSBSubscribers(oldMapping.getEid());
                     if (oldMappingSubscribers != null) {
                         subscribers.addAll(oldMappingSubscribers);
                     }
@@ -151,7 +151,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
                                 LispAddressStringifier.getString(eid));
                     }
-                    Set<Subscriber> newMappingSubscribers = getSubscribers(eid);
+                    Set<Subscriber> newMappingSubscribers = getSBSubscribers(eid);
                     if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
                         newMappingSubscribers = addParentSubscribers(eid, newMappingSubscribers);
                     }
@@ -267,7 +267,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         // For SrcDst LCAF also send SMRs to Dst prefix
         if (eid.getAddress() instanceof SourceDestKey) {
             Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
-            Set<Subscriber> dstSubs = getSubscribers(dstAddr);
+            Set<Subscriber> dstSubs = getSBSubscribers(dstAddr);
             sendSmrs(dstAddr, dstSubs);
         }
     }
@@ -283,7 +283,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     @SuppressWarnings("unchecked")
-    private Set<Subscriber> getSubscribers(Eid address) {
+    private Set<Subscriber> getSBSubscribers(Eid address) {
         return (Set<Subscriber>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
     }
 
@@ -293,7 +293,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             return subscribers;
         }
 
-        Set<Subscriber> parentSubscribers = getSubscribers(parentPrefix);
+        Set<Subscriber> parentSubscribers = getSBSubscribers(parentPrefix);
         if (parentSubscribers != null) {
             if (subscribers != null) {
                 subscribers.addAll(parentSubscribers);
@@ -302,10 +302,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             }
         }
         return subscribers;
-    }
-
-    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
-        mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
     private static InetAddress getLocalAddress() {

@@ -122,13 +122,13 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                         new MappingData(convertedMapping.getOrigin(), convertedMapping.getMappingRecord()));
-                Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
+                Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Northbound,
                         convertedEid, SubKeys.SUBSCRIBERS);
                 Set<Subscriber> dstSubscribers = null;
                 // For SrcDst LCAF also send SMRs to Dst prefix
                 if (convertedEid.getAddress() instanceof SourceDestKey) {
                     Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
-                    dstSubscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
+                    dstSubscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Northbound,
                             dstAddr, SubKeys.SUBSCRIBERS);
                 }
 
