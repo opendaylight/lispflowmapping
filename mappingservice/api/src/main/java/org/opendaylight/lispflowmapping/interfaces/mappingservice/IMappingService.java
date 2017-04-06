@@ -8,8 +8,9 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mappingservice;
 
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.type.MappingData;
-
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -104,6 +105,18 @@ public interface IMappingService {
      *            New timestamp for the mapping
      */
     void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp);
+
+    /**
+     * Update subscribers.
+     *
+     * @param origins
+     *            List of origins for which subscribers will be updated
+     * @param eid
+     *            EID key for subscriber
+     * @param subscriber
+     *            Subscriber object
+     */
+    void updateSubscribers(Set<MappingOrigin> origins, Eid eid, Subscriber subscriber);
 
     /**
      * Remove mapping.

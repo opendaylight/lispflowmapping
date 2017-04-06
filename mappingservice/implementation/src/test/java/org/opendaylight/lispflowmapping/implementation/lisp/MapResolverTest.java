@@ -7,15 +7,11 @@
  */
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import static org.junit.Assert.assertEquals;
-
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
@@ -24,28 +20,9 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6Afi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddressFamily;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.MacAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4Builder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6Builder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Mac;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.MacBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv6AddressBinary;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -60,7 +37,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 public class MapResolverTest {
@@ -80,30 +56,14 @@ public class MapResolverTest {
     private static final String IPV6_STRING =           "0:0:0:0:0:0:0:1";
     private static final String IPV6_PREFIX_STRING =    "/128";
 
-    private static final byte[] IPV4_BINARY_BYTES_1 = new byte[]{1, 2, 3, 0};
-    private static final byte[] IPV4_BINARY_BYTES_2 = new byte[]{1, 2, 5, 0};
-    private static final byte[] IPV6_BINARY_BYTES_1 = new byte[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-
     private static final LocatorRecordKey LOCATOR_RECORD_KEY = new LocatorRecordKey("key");
     private static final int TTL_RLOC_TIMED_OUT = 1;
 
     private static final IpAddress IPV4_ADDRESS_1 = new IpAddress(new Ipv4Address(IPV4_STRING_1));
     private static final IpAddress IPV4_ADDRESS_2 = new IpAddress(new Ipv4Address(IPV4_STRING_2));
 
-    private static final IpAddressBinary IPV4_ADDRESS_BINARY_1 =
-            new IpAddressBinary(new Ipv4AddressBinary(IPV4_BINARY_BYTES_1));
-    private static final IpAddressBinary IPV4_ADDRESS_BINARY_2 =
-            new IpAddressBinary(new Ipv4AddressBinary(IPV4_BINARY_BYTES_2));
-    private static final IpAddressBinary IPV6_ADDRESS_BINARY =
-            new IpAddressBinary(new Ipv6AddressBinary(IPV6_BINARY_BYTES_1));
-
     private static final Eid IPV4_PREFIX_EID_1 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING);
-    private static final Eid IPV4_PREFIX_EID_2 = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_2 + IPV4_PREFIX_STRING);
     private static final Eid IPV6_PREFIX_EID = LispAddressUtil.asIpv6PrefixEid(IPV6_STRING + IPV6_PREFIX_STRING);
-    private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil.asSrcDstEid(IPV4_SOURCE, IPV4_STRING_2, 24, 24, 0);
-
-    private static final Address IPV4_ADDRESS = new Ipv4Builder().setIpv4(new Ipv4Address(IPV4_STRING_1)).build();
-    private static final Address IPV6_ADDRESS = new Ipv6Builder().setIpv6(new Ipv6Address(IPV6_STRING)).build();
 
     private static final Rloc RLOC_1 = LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1);
     private static MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
@@ -193,147 +153,6 @@ public class MapResolverTest {
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
         Mockito.verify(subscriberSetMock, Mockito.never()).remove(Mockito.any(Subscriber.class));
-    }
-
-    /**
-     * Tests {@link MapResolver#isEqualIpVersion} method.
-     */
-    @Test
-    public void isEqualIpVersionTest() {
-        // input mapping
-        final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
-        final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
-        final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
-
-        Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
-                .thenReturn(mappingData);
-        Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
-                .thenReturn(subscriberSetMock);
-        Mockito.when(subscriberSetMock.contains(Mockito.any(Subscriber.class))).thenReturn(false);
-
-        // ----------------------
-        // with sourceRloc = null
-        List<ItrRloc> itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
-
-        ArgumentCaptor<Subscriber> captor = ArgumentCaptor.forClass(Subscriber.class);
-        mapResolver.handleMapRequest(mapRequestBuilder.setSourceRloc(null).setItrRloc(itrRlocList).build());
-        Mockito.verify(subscriberSetMock).add(captor.capture());
-        // Since mapRequest's sourceRloc is null, first ItrRloc from the itrRlocList must be used.
-        assertEquals(MacAfi.class, captor.getValue().getSrcRloc().getAddressType());
-
-        // ----------------------
-        // with sourceRloc address = itrRloc address
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
-
-        MapRequest mapRequest = mapRequestBuilder
-                .setSourceRloc(IPV4_ADDRESS_BINARY_1)
-                .setItrRloc(itrRlocList).build();
-
-        captor = ArgumentCaptor.forClass(Subscriber.class);
-        mapResolver.handleMapRequest(mapRequest);
-        Mockito.verify(subscriberSetMock, Mockito.times(2)).add(captor.capture());
-        assertEquals(IPV4_ADDRESS, captor.getValue().getSrcRloc().getAddress());
-
-        // ----------------------
-        // with sourceRloc address Afi = itrRloc address Afi (for Ipv4)
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
-
-        mapRequest = mapRequestBuilder
-                .setSourceRloc(IPV6_ADDRESS_BINARY)
-                .setItrRloc(itrRlocList).build();
-
-        captor = ArgumentCaptor.forClass(Subscriber.class);
-        mapResolver.handleMapRequest(mapRequest);
-        Mockito.verify(subscriberSetMock, Mockito.times(3)).add(captor.capture());
-        assertEquals(IPV6_ADDRESS, captor.getValue().getSrcRloc().getAddress());
-
-        // ----------------------
-        // with sourceRloc address Afi = itrRloc address Afi (for Ipv6)
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
-
-        mapRequest = mapRequestBuilder
-                .setSourceRloc(IPV4_ADDRESS_BINARY_2)
-                .setItrRloc(itrRlocList).build();
-
-        captor = ArgumentCaptor.forClass(Subscriber.class);
-        mapResolver.handleMapRequest(mapRequest);
-        Mockito.verify(subscriberSetMock, Mockito.times(4)).add(captor.capture());
-        assertEquals(IPV4_ADDRESS, captor.getValue().getSrcRloc().getAddress());
-
-        // ----------------------
-        // with no common ip address nor Afi
-        final Mac mac = new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build();
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, mac),
-                newItrRloc(NoAddressAfi.class, Mockito.mock(NoAddress.class)));
-
-        mapRequest = mapRequestBuilder
-                .setSourceRloc(IPV4_ADDRESS_BINARY_1)
-                .setItrRloc(itrRlocList).build();
-
-        captor = ArgumentCaptor.forClass(Subscriber.class);
-        mapResolver.handleMapRequest(mapRequest);
-        Mockito.verify(subscriberSetMock, Mockito.times(5)).add(captor.capture());
-        assertEquals(mac, captor.getValue().getSrcRloc().getAddress());
-    }
-
-    /**
-     * Tests {@link MapResolver#handleMapRequest} method.
-     */
-    @Test
-    public void handleMapRequest__withSubscribersToRemove() {
-        // input mapping
-        final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
-        final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
-        MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
-
-        Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
-                .thenReturn(mappingData);
-        Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
-                .thenReturn(subscriberSetMock);
-        Subscriber subscriberMock = new Subscriber(
-                mapRequestBuilder.getItrRloc().get(0).getRloc(),
-                mapRequestBuilder.getSourceEid().getEid(), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
-        subscriberMock.setSubscriberTtlByRecordTtl(
-                mappingRecordBuilder.getRecordTtl());
-        Mockito.when(subscriberSetMock.contains(subscriberMock))
-                .thenReturn(true);
-
-        // result
-        final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(mappingRecordBuilder.build()).build());
-
-        // check if a subscriber is re-instantiating when there already is one in the subscriber set
-        mapResolver.handleMapRequest(mapRequestBuilder.build());
-        Mockito.verify(subscriberSetMock).remove(subscriberMock);
-        Mockito.verify(subscriberSetMock).add(subscriberMock);
-        Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
-        Mockito.verify(mapServiceMock).addData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1,
-                SubKeys.SUBSCRIBERS, subscriberSetMock);
-
-        // verify that itrRloc is subscribed to dst address
-        mappingRecordBuilder.setEid(SOURCE_DEST_KEY_EID);
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV4_PREFIX_EID_2).build());
-        mappingData = getDefaultMappingData(mappingRecordBuilder.build());
-        Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_2))
-                .thenReturn(mappingData);
-
-        mapResolver.handleMapRequest(mapRequestBuilder.build());
-        Mockito.verify(mapServiceMock).getData(MappingOrigin.Southbound,
-                SourceDestKeyHelper.getDstBinary(SOURCE_DEST_KEY_EID), SubKeys.SUBSCRIBERS);
     }
 
     /**
@@ -465,12 +284,6 @@ public class MapResolverTest {
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
-    }
-
-    private static ItrRloc newItrRloc(Class<? extends LispAddressFamily> clazz, Address address) {
-        return new ItrRlocBuilder().setRloc(new RlocBuilder()
-                .setAddress(address)
-                .setAddressType(clazz).build()).build();
     }
 
     private static List<ItrRloc> getDefaultItrRlocList() {
