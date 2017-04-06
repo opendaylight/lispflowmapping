@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
@@ -21,6 +22,7 @@ import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.type.MappingData;
@@ -195,6 +197,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
         mappingSystem.refreshMappingRegistration(key, xtrId, timestamp);
+    }
+
+    @Override
+    public void updateSubscribers(Set<MappingOrigin> origins, Eid eid, Subscriber subscriber) {
+        mappingSystem.updateSubscribers(origins, eid, subscriber);
     }
 
     @Override

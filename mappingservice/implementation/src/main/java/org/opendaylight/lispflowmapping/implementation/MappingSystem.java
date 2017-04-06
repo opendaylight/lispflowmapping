@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.collect.Sets;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
@@ -491,6 +492,29 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).removeMapping(key);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void updateSubscribers(Set<MappingOrigin> origins, Eid eid, Subscriber subscriber) {
+        for (MappingOrigin origin : origins) {
+            Set<Subscriber> subscribers = (Set<Subscriber>) getData(origin, eid, SubKeys.SUBSCRIBERS);
+            if (subscribers == null) {
+                subscribers = Sets.newConcurrentHashSet();
+            } else if (subscribers.contains(subscriber)) {
+                // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
+                synchronized (subscribers) {
+                    subscribers.remove(subscriber);
+                }
+            }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Adding new subscriber: " + LispAddressStringifier.getString(subscriber.getSrcRloc()));
+            }
+            synchronized (subscribers) {
+                subscribers.add(subscriber);
+            }
+            addData(origin, eid, SubKeys.SUBSCRIBERS, subscribers);
+        }
+    }
+
     private void notifyChange(MappingData mapping, Set<Subscriber> subscribers, Set<Subscriber> dstSubscribers,
             MappingChange mappingChange) {
         MappingChanged notification = MSNotificationInputUtil.toMappingChanged(mapping, subscribers, dstSubscribers,
@@ -515,6 +539,7 @@ public class MappingSystem implements IMappingSystem {
         Eid sibling = smc.getSiblingPrefix(eid);
         MappingData mapping = (MappingData) smc.getMapping(null, sibling);
         if (mapping != null && mapping.isNegative().or(false)) {
+            // We use SB origin here, since mapping is from SB and negative prefix manipulations is done for SB only
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
         } else {
             return null;
@@ -525,6 +550,7 @@ public class MappingSystem implements IMappingSystem {
         while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
             if (mapping != null && mapping.isNegative().or(false)) {
+                // We use SB origin here, since mapping is from SB and negative prefix manipulations is done for SB only
                 subscribers.addAll((Set<Subscriber>)
                         getData(MappingOrigin.Southbound, currentNode, SubKeys.SUBSCRIBERS));
                 removeSbMapping(currentNode, mapping);
