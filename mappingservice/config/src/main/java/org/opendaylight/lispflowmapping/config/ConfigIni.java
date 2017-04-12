@@ -7,12 +7,11 @@
  */
 package org.opendaylight.lispflowmapping.config;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +29,13 @@ public final class ConfigIni {
 
     /*
      * XXX  When configuration options are added or removed, they should also be added/removed in the karaf
-     * `etc/custom.properties file`, hosted in the odlparent repository [0]. The "Configuring LISP Flow Mapping"
-     * section in the LISP Flow Mapping User Guide [1] has to be updated too, including when a configuration option's
-     * semantics or behavior is changed, in addition to having added/removed and option. Since we don't document
-     * options extensively in this file, the User Guide is the canonical documentation for them.
+     * `etc/org.opendaylight.lispflowmapping.startup.cfg file` during runtime and in startup.cfg at [0] for prebuilt.
+     * The "Configuring LISP Flow Mapping" section in the LISP Flow Mapping User Guide [1] has to be updated too,
+     * including when a configuration option's semantics or behavior is changed, in addition to having added/removed
+     * and option. Since we don't document options extensively in this file, the User Guide is the canonical
+     * documentation for them.
      *
-     * [0] https://git.opendaylight.org/gerrit/gitweb?p=odlparent.git;a=blob;f=karaf/opendaylight-karaf-resources/src/main/resources/etc/custom.properties
+     * [0] ../mappingservice/implementation/src/main/resources/
      * [1] https://git.opendaylight.org/gerrit/gitweb?p=docs.git;a=blob;f=docs/user-guide/lisp-flow-mapping-user-guide.rst
      */
     private static final String LISP_LOOKUP_POLICY = "lisp.lookupPolicy";
@@ -56,71 +56,72 @@ public final class ConfigIni {
     private static final ConfigIni INSTANCE = new ConfigIni();
 
     private ConfigIni() {
-        Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-        BundleContext context = null;
-        if (bundle != null) {
-            context = bundle.getBundleContext();
-        }
-
-        initMappingMerge(context);
-        initSmr(context);
-        initElpPolicy(context);
-        initLookupPolicy(context);
-        initRegisterValiditySb(context);
-        initSmrRetryCount(context);
-        initSmrTimeout(context);
-        initBucketNumber();
+        initConfigPropertiesWithDefaultValue();
     }
 
-    private void initRegisterValiditySb(BundleContext context) {
+    private void initConfigPropertiesWithDefaultValue() {
+        initMappingMerge(null);
+        initSmr(null);
+        initElpPolicy(null);
+        initLookupPolicy(null);
+        initRegisterValiditySb(null);
+        initSmrRetryCount(null);
+        initSmrTimeout(null);
+    }
+
+    public HashMap<String, Consumer> provideConfigToConsumerMapper() {
+        HashMap<String, Consumer> configConsumer = new HashMap<>();
+
+        configConsumer.put(LISP_MAPPING_MERGE, configStr -> initMappingMerge((String) configStr));
+        configConsumer.put(LISP_SMR, configStr -> initSmr((String) configStr));
+        configConsumer.put(LISP_ELP_POLICY, configStr -> initElpPolicy((String) configStr));
+        configConsumer.put(LISP_LOOKUP_POLICY, configStr -> initLookupPolicy((String) configStr));
+        configConsumer.put(LISP_REGISTER_VALIDITY_SB, configStr -> initRegisterValiditySb((String) configStr));
+        configConsumer.put(LISP_SMR_RETRY_COUNT, configStr -> initSmrRetryCount((String) configStr));
+        configConsumer.put(LISP_SMR_TIMEOUT, configStr -> initSmrTimeout((String) configStr));
+
+        return configConsumer;
+    }
+
+    private void initRegisterValiditySb(String configStr) {
         // set the default value first
         this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_REGISTER_VALIDITY_SB);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_REGISTER_VALIDITY_SB);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_REGISTER_VALIDITY_SB);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: '3.33 minutes' ",
                         LISP_REGISTER_VALIDITY_SB);
+                initBucketNumber();
                 return;
             }
         }
 
         try {
-            final long regValidity = Long.parseLong(str.trim());
+            final long regValidity = Long.parseLong(configStr.trim());
             setRegistrationValiditySb(regValidity);
         } catch (NumberFormatException e) {
             this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
             LOG.debug("Configuration variable 'registerValiditySb' was not set correctly. Registration validity for"
                     + "South Bound Map Registers is set to default value of 3.3 minutes");
         }
+        initBucketNumber();
     }
 
-    private void initLookupPolicy(BundleContext context) {
+    private void initLookupPolicy(String configStr) {
         // set the default value first
         this.lookupPolicy = IMappingService.LookupPolicy.NB_FIRST;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_LOOKUP_POLICY);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_LOOKUP_POLICY);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_LOOKUP_POLICY);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'northboundFirst' "
                         + "(Southbound is only looked up if Northbound is empty) ", LISP_LOOKUP_POLICY);
                 return;
             }
         }
 
-        if (str.trim().equalsIgnoreCase("northboundAndSouthbound")) {
+        if (configStr.trim().equalsIgnoreCase("northboundAndSouthbound")) {
             this.lookupPolicy = IMappingService.LookupPolicy.NB_AND_SB;
             LOG.debug("Setting configuration variable '{}' to 'northboundAndSouthbound' (Southbound is always "
                     + "looked up and can filter Northbound if intersection is not empty)", LISP_LOOKUP_POLICY);
@@ -130,26 +131,20 @@ public final class ConfigIni {
         }
     }
 
-    private void initMappingMerge(BundleContext context) {
+    private void initMappingMerge(String configStr) {
         // set the default value first
         this.mappingMerge = false;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_MAPPING_MERGE);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_MAPPING_MERGE);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_MAPPING_MERGE);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'false'",
                         LISP_MAPPING_MERGE);
                 return;
             }
         }
 
-        if (str.trim().equalsIgnoreCase("true")) {
+        if (configStr.trim().equalsIgnoreCase("true")) {
             this.mappingMerge = true;
             LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_MERGE);
         } else {
@@ -157,25 +152,19 @@ public final class ConfigIni {
         }
     }
 
-    private void initSmr(BundleContext context) {
+    private void initSmr(String configStr) {
         // set the default value first
         this.smr = true;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_SMR);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_SMR);
                 return;
             }
         }
 
-        if (str.trim().equalsIgnoreCase("false")) {
+        if (configStr.trim().equalsIgnoreCase("false")) {
             this.smr = false;
             LOG.debug("Setting configuration variable '{}' to 'false'", LISP_SMR);
         } else {
@@ -183,29 +172,23 @@ public final class ConfigIni {
         }
     }
 
-    private void initElpPolicy(BundleContext context) {
+    private void initElpPolicy(String configStr) {
         // set the default value first
         this.elpPolicy = "default";
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_ELP_POLICY);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_ELP_POLICY);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_ELP_POLICY);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'default' (ELP only)",
                         LISP_ELP_POLICY);
                 return;
             }
         }
 
-        if (str.trim().equalsIgnoreCase("both")) {
+        if (configStr.trim().equalsIgnoreCase("both")) {
             this.elpPolicy = "both";
             LOG.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
-        } else if (str.trim().equalsIgnoreCase("replace")) {
+        } else if (configStr.trim().equalsIgnoreCase("replace")) {
             this.elpPolicy = "replace";
             LOG.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
         } else {
@@ -213,19 +196,13 @@ public final class ConfigIni {
         }
     }
 
-    private void initSmrRetryCount(BundleContext context) {
+    private void initSmrRetryCount(String configStr) {
         // set the default value first
         this.smrRetryCount = DEFAULT_SMR_RETRY_COUNT;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR_RETRY_COUNT);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR_RETRY_COUNT);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_SMR_RETRY_COUNT);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_RETRY_COUNT,
                         smrRetryCount);
                 return;
@@ -233,7 +210,7 @@ public final class ConfigIni {
         }
 
         try {
-            this.smrRetryCount = Integer.valueOf(str);
+            this.smrRetryCount = Integer.valueOf(configStr);
             LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
         } catch (NumberFormatException e) {
             LOG.debug("Configuration variable '{}' was not set correctly. SMR retry count "
@@ -241,19 +218,13 @@ public final class ConfigIni {
         }
     }
 
-    private void initSmrTimeout(BundleContext context) {
+    private void initSmrTimeout(String configStr) {
         // set the default value first
         this.smrTimeout = DEFAULT_SMR_TIMEOUT;
 
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR_TIMEOUT);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR_TIMEOUT);
-            if (str == null) {
+        if (configStr == null) {
+            configStr = System.getProperty(LISP_SMR_TIMEOUT);
+            if (configStr == null) {
                 LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_TIMEOUT,
                         smrTimeout);
                 return;
@@ -261,7 +232,7 @@ public final class ConfigIni {
         }
 
         try {
-            this.smrTimeout = Long.valueOf(str);
+            this.smrTimeout = Long.valueOf(configStr);
             LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
         } catch (NumberFormatException e) {
             LOG.debug("Configuration variable '{}' was not set correctly. SMR timeout "

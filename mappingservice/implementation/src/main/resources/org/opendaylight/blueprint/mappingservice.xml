@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
   xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+  xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
   odl:use-default-for-reference-types="true">
 
   <reference id="dataBroker"
@@ -18,12 +19,26 @@
   <odl:rpc-service id="odlLispSbService"
     interface="org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService" />
 
+  <bean id="configService"
+    class="org.opendaylight.lispflowmapping.implementation.ConfigurationService">
+  </bean>
+
+  <cm:property-placeholder persistent-id="org.opendaylight.lispflowmapping.startup" update-strategy="none">
+    <cm:default-properties>
+      <cm:property name="lisp.smr" value="true"/>
+      <cm:property name="lisp.elpPolicy" value="default"/>
+      <cm:property name="lisp.mappingMerge" value="false"/>
+    </cm:default-properties>
+  </cm:property-placeholder>
+
   <bean id="mappingService"
     class="org.opendaylight.lispflowmapping.implementation.MappingService"
-    init-method="initialize" destroy-method="close">
+    init-method="initialize" destroy-method="close" depends-on="configService">
     <argument ref="dataBroker" />
     <argument ref="notificationPublishService" />
     <argument ref="lispDAO" />
+    <argument value="${lisp.mappingMerge}"/>
+    <argument value="${lisp.smr}"/>
   </bean>
   <service ref="mappingService"
     interface="org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService"
@@ -40,11 +55,13 @@
 
   <bean id="lispMappingService"
     class="org.opendaylight.lispflowmapping.implementation.LispMappingService"
-    init-method="initialize" destroy-method="close">
+    init-method="initialize" destroy-method="close" depends-on="configService">
     <argument ref="notificationService" />
     <argument ref="mappingService" />
     <argument ref="odlLispSbService" />
     <argument ref="clusterSingletonService" />
+    <argument value="${lisp.smr}"/>
+    <argument value="${lisp.elpPolicy}"/>
   </bean>
   <service ref="lispMappingService"
     interface="org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping"

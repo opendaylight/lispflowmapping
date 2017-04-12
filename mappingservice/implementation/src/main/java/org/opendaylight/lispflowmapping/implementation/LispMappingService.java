@@ -8,9 +8,11 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
@@ -70,8 +72,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService;
 
-    private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
-    private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
+    private volatile boolean smr;
+    private volatile String elpPolicy;
 
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify =
@@ -87,14 +89,31 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private final NotificationService notificationService;
 
     public LispMappingService(final NotificationService notificationService,
-            final IMappingService mappingService,
-            final OdlLispSbService odlLispService, final ClusterSingletonServiceProvider clusterSingletonService) {
+                              final IMappingService mappingService,
+                              final OdlLispSbService odlLispService,
+                              final ClusterSingletonServiceProvider clusterSingletonService,
+                              final String smrStr,
+                              final String elpPolicy) {
+        this.smr = getSmrValue(smrStr);
+        this.elpPolicy = elpPolicy;
 
         this.notificationService = notificationService;
         this.mapService = mappingService;
         this.lispSB = odlLispService;
         this.clusterSingletonService = clusterSingletonService;
         LOG.debug("LispMappingService Module constructed!");
+    }
+
+    private boolean getSmrValue(String smrStr) {
+        Preconditions.checkNotNull(smrStr, "Invalid configuration state for lisp.smr!");
+
+        smrStr = smrStr.trim();
+
+        if (smrStr.equalsIgnoreCase("true")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean shouldUseSmr() {
