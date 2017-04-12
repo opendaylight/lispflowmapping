@@ -81,9 +81,13 @@ public class LispMappingServiceTest {
     private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
             ClusterSingletonServiceProvider.class);
 
+    private static final String DEFAULT_SMR_POLICY = "true";
+    private static final String DEFAULT_ELP_POLICY = "default";
+
     @InjectMocks
     private LispMappingService lispMappingService = new LispMappingService(
-            notificationService, mappingService, odlLispSbService, clusterSingletonService);
+            notificationService, mappingService, odlLispSbService, clusterSingletonService,
+            DEFAULT_SMR_POLICY, DEFAULT_ELP_POLICY);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};

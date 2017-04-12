@@ -85,9 +85,12 @@ public class MappingServiceTest {
             .mock(NotificationPublishService.class);
     private final ILispDAO lispDAO = Mockito.mock(ILispDAO.class);
 
+    private static final String DEFAULT_MAPPING_MERGE_POLICY = "false";
+    private static final String DEFAULT_NOTIFICATION_POLICY = "true";
+
     @InjectMocks
     MappingService mappingService = new MappingService(dataBroker,
-            notificationPublishService, lispDAO);
+            notificationPublishService, lispDAO, DEFAULT_MAPPING_MERGE_POLICY, DEFAULT_NOTIFICATION_POLICY);
 
     private static final String IPV4_STRING = "1.2.3.0";
     private static final Eid IPV4_EID = LispAddressUtil.asIpv4Eid(IPV4_STRING);

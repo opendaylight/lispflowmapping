@@ -12,6 +12,8 @@ import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
@@ -92,19 +94,32 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
 
-    private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
+    private boolean mappingMergePolicy;
+    private boolean notificationPolicy;
     private boolean iterateMask = true;
     private boolean isMaster = false;
 
     public MappingService(final DataBroker broker,
-            final NotificationPublishService notificationPublishService,
-            final ILispDAO lispDAO) {
+                          final NotificationPublishService notificationPublishService,
+                          final ILispDAO lispDAO,
+                          final String mappingMergePolicy,
+                          final String notificationPolicy) {
+        this.mappingMergePolicy = getBooleanFromConfigStr(mappingMergePolicy);
+        this.notificationPolicy = getBooleanFromConfigStr(notificationPolicy);
+
         this.dataBroker = broker;
         this.notificationPublishService = notificationPublishService;
         this.dao = lispDAO;
 
         LOG.debug("MappingService created!");
+    }
+
+    private boolean getBooleanFromConfigStr(String configStr) {
+        if (configStr == null) {
+            Preconditions.checkNotNull(configStr, "Invalid configuration state!");
+        }
+
+        return configStr.equalsIgnoreCase("true");
     }
 
 
@@ -123,6 +138,9 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     public void initialize() {
+
+        waitForConfigServiceToComplete();
+
         LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
 
@@ -133,6 +151,18 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
         mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
         LOG.info("Mapping Service loaded.");
+    }
+
+    private void waitForConfigServiceToComplete() {
+        try {
+            boolean configRendered = ConfigurationService.confirugationRendered.await(10, TimeUnit.SECONDS);
+            if (!configRendered) {
+                LOG.warn("ConfigurationService Initialized but update never invoked. Possibly loading cfg failed!");
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("{} initialization failed due to {}!",
+                    this.getClass().getName(), e.getMessage());
+        }
     }
 
     @Override
