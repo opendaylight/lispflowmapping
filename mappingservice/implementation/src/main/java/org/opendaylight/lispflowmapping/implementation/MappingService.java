@@ -12,9 +12,12 @@ import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.config.ConfigurationService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
@@ -92,14 +95,27 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
 
-    private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
+    private boolean mappingMergePolicy;
+    private boolean notificationPolicy;
     private boolean iterateMask = true;
     private boolean isMaster = false;
 
     public MappingService(final DataBroker broker,
             final NotificationPublishService notificationPublishService,
             final ILispDAO lispDAO) {
+        try {
+            boolean configRendered = ConfigurationService.confirugationRendered.await(10, TimeUnit.SECONDS);
+            if (!configRendered) {
+                LOG.warn("ConfigurationService Initialized but update never invoked. Possibly loading cfg failed!");
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("{} initialization failed due to {}!",
+                    this.getClass().getName(), e.getMessage());
+        }
+
+        mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
+        notificationPolicy = ConfigIni.getInstance().smrIsSet();
+
         this.dataBroker = broker;
         this.notificationPublishService = notificationPublishService;
         this.dao = lispDAO;
