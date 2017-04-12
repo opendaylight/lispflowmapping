@@ -15,6 +15,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.config.ConfigurationService;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
@@ -70,8 +71,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService;
 
-    private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
-    private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
+    private volatile boolean smr;
+    private volatile String elpPolicy;
 
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
     private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify =
@@ -89,6 +90,20 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public LispMappingService(final NotificationService notificationService,
             final IMappingService mappingService,
             final OdlLispSbService odlLispService, final ClusterSingletonServiceProvider clusterSingletonService) {
+
+        synchronized (ConfigurationService.NOTIFIER_OBJECT) {
+            while (!ConfigurationService.CONFIG_EVENT_OCCURED) {
+                try {
+                    ConfigurationService.NOTIFIER_OBJECT.wait();
+                } catch (InterruptedException e) {
+                    LOG.warn("{} failed for failed lock of ConfigurationService.CONFIG_EVENT_OCCURED due to {}!",
+                            this.getClass().getName(), e.getMessage());
+                }
+            }
+        }
+
+        smr = ConfigIni.getInstance().smrIsSet();
+        elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
         this.notificationService = notificationService;
         this.mapService = mappingService;

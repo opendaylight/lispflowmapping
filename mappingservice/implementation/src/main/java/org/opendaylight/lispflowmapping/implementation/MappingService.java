@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.config.ConfigurationService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
@@ -92,14 +93,29 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
 
-    private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
+    private boolean mappingMergePolicy;
+    private boolean notificationPolicy;
     private boolean iterateMask = true;
     private boolean isMaster = false;
 
     public MappingService(final DataBroker broker,
             final NotificationPublishService notificationPublishService,
             final ILispDAO lispDAO) {
+
+        synchronized (ConfigurationService.NOTIFIER_OBJECT) {
+            while (!ConfigurationService.CONFIG_EVENT_OCCURED) {
+                try {
+                    ConfigurationService.NOTIFIER_OBJECT.wait();
+                } catch (InterruptedException e) {
+                    LOG.warn("{} failed for failed lock of ConfigurationService.CONFIG_EVENT_OCCURED due to {}!",
+                            this.getClass().getName(), e.getMessage());
+                }
+            }
+        }
+
+        mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
+        notificationPolicy = ConfigIni.getInstance().smrIsSet();
+
         this.dataBroker = broker;
         this.notificationPublishService = notificationPublishService;
         this.dao = lispDAO;

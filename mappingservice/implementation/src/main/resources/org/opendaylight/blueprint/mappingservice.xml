@@ -18,9 +18,13 @@
   <odl:rpc-service id="odlLispSbService"
     interface="org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService" />
 
+  <bean id="configService"
+    class="org.opendaylight.lispflowmapping.config.ConfigurationService">
+  </bean>
+
   <bean id="mappingService"
     class="org.opendaylight.lispflowmapping.implementation.MappingService"
-    init-method="initialize" destroy-method="close">
+    init-method="initialize" destroy-method="close" depends-on="configService">
     <argument ref="dataBroker" />
     <argument ref="notificationPublishService" />
     <argument ref="lispDAO" />
@@ -40,7 +44,7 @@
 
   <bean id="lispMappingService"
     class="org.opendaylight.lispflowmapping.implementation.LispMappingService"
-    init-method="initialize" destroy-method="close">
+    init-method="initialize" destroy-method="close" depends-on="configService">
     <argument ref="notificationService" />
     <argument ref="mappingService" />
     <argument ref="odlLispSbService" />
