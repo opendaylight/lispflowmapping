@@ -153,6 +153,15 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <classifier>features</classifier>
         <type>xml</type>
       </dependency>
+
+      <!-- config files -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mappingservice.implementation</artifactId>
+        <version>${project.version}</version>
+        <type>cfg</type>
+        <classifier>config</classifier>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

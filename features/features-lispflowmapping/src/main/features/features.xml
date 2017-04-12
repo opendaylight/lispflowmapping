@@ -38,6 +38,7 @@
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.mapcache/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.config/{{VERSION}}</bundle>
+        <configfile finalname="/etc/org.opendaylight.lispflowmapping.startup.cfg">mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/{{VERSION}}/cfg/config</configfile>
     </feature>
 
     <feature name="odl-lispflowmapping-mappingservice-shell" description="OpenDaylight :: LISP Flow Mapping :: Mappingservice Shell" version='${project.version}'>
