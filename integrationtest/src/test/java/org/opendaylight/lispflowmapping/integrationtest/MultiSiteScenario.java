@@ -466,6 +466,7 @@ class MultiSiteScenario {
     }
 
     void checkSMR(final SocketReader socketReader, final String site, final String ... hosts) {
+        LOG.debug("\n" + mapService.prettyPrintMappings());
         byte[][] buffers = socketReader.getBuffers(hosts.length);
         if (areBuffersEmpty(buffers)) {
             fail("No SMR received!");
