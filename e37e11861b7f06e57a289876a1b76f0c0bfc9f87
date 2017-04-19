@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da01753e_4beb4bb0",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-19T04:44:31Z",
+      "side": 1,
+      "message": "Pretty printing doesn\u0027t print all data in a structure. For very detailed debugging, it is still useful to use the old print method. So the old methods are still invoked, by using \u0027mappings -d\u0027",
+      "parentUuid": "da01753e_eb55dfc6",
+      "revId": "e37e11861b7f06e57a289876a1b76f0c0bfc9f87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da01753e_cb50dbd6",
         "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/lisp/LispMapCacheStringifier.java",
         "patchSetId": 3
@@ -42,6 +60,24 @@
         "endLine": 21,
         "endChar": 50
       },
+      "revId": "e37e11861b7f06e57a289876a1b76f0c0bfc9f87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_abd117fd",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/lisp/LispMapCacheStringifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-19T04:44:31Z",
+      "side": 1,
+      "message": "I didn\u0027t want the other classes to import classes and \"understand\" the data they store, per our previous discussions they are just dumb data stores. In case we store something else, we can just create a new stringifier class. The above applies mostly to the prettyPrinting part, but to me the print methods looked a bit out of place already.",
+      "parentUuid": "da01753e_cb50dbd6",
       "revId": "e37e11861b7f06e57a289876a1b76f0c0bfc9f87",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
