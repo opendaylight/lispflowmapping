@@ -14,7 +14,6 @@ package org.opendaylight.lispflowmapping.neutron.intenthandler.util;
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus.Connected;
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus.Connecting;
 
-
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Collection;

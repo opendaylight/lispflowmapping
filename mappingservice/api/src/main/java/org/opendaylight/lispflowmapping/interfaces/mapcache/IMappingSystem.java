@@ -233,7 +233,7 @@ public interface IMappingSystem {
      * @param isMaster
      *            is|isn't master
      */
-    void setIsMaster(final boolean isMaster);
+    void setIsMaster(boolean isMaster);
 
     /**
      * Get cluster master status.
