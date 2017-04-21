@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Michael Vorburger <vorburger@redhat.com>
+Code-Review+2: Vina Ermagan <vermagan@cisco.com>
+Submitted-by: Vina Ermagan <vermagan@cisco.com>
+Submitted-at: Fri, 21 Apr 2017 04:41:50 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/55268
+Project: lispflowmapping
+Branch: refs/heads/stable/carbon
