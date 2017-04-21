@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_f3901f45",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "odlparent seems to be using version 5.0.0 of the org.osgi artifacts. Is this specific version really necessary?",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_d3935b4d",
+        "filename": "mappingservice/config/src/main/java/org/opendaylight/lispflowmapping/config/ConfigIni.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "typo starup.cfg",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_339bc768",
+        "filename": "mappingservice/config/src/main/java/org/opendaylight/lispflowmapping/config/ConfigIni.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "the link shouldn\u0027t contain hashes and \u0027HEAD\u0027, but should contain filename",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_73a42fa6",
+        "filename": "mappingservice/implementation/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "Same comment about the version.",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_b3ae9783",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "I would like to avoid adding more and more arguments to the constructor, these values should be controlled based on the config file, not blueprint.",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_93a9d37d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "I would like to avoid adding more and more arguments to the constructor, these values should be controlled based on the config file, not blueprint.",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_539f6b50",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-21T20:43:49Z",
+      "side": 1,
+      "message": "I don\u0027t like having extra configuration in blueprint, that\u0027s what the config file is for.",
+      "revId": "2461f12bc57df2ac12856f0244973f214be85203",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
