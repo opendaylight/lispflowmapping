@@ -34,12 +34,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.lisp.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
@@ -51,7 +53,10 @@ import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvid
 import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +98,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
         this.clusterSingletonService = clusterSingletonService;
-        this.clusterSingletonService.registerClusterSingletonService(this);
         if (Epoll.isAvailable()) {
             // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
             // utilization. In order to have some headroom, we reserve 3 cores for "other" tasks, and allow the
@@ -109,20 +113,21 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             this.akdb = new AuthKeyDb(new HashMapDb());
             this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
             this.dsbe = new DataStoreBackEnd(dataBroker);
+            restoreDaoFromDatastore();
 
-            lispSouthboundHandler = new LispSouthboundHandler(this);
+            LispSouthboundHandler lispSouthboundHandler = new LispSouthboundHandler(this);
             lispSouthboundHandler.setDataBroker(dataBroker);
             lispSouthboundHandler.setNotificationProvider(notificationPublishService);
             lispSouthboundHandler.setAuthKeyDb(akdb);
             lispSouthboundHandler.setMapRegisterCache(mapRegisterCache);
             lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
             lispSouthboundHandler.setAuthenticationKeyDataListener(authenticationKeyDataListener);
-            lispSouthboundHandler.setDataStoreBackEnd(dsbe);
             lispSouthboundHandler.setStats(statistics);
-            lispSouthboundHandler.restoreDaoFromDatastore();
+            this.lispSouthboundHandler = lispSouthboundHandler;
 
-            lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
+            LispXtrSouthboundHandler lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
             lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
+            this.lispXtrSouthboundHandler = lispXtrSouthboundHandler;
 
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(numChannels, threadFactory);
@@ -147,6 +152,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             start();
             startXtr();
 
+            clusterSingletonService.registerClusterSingletonService(this);
             LOG.info("LISP (RFC6830) Southbound Plugin is up!");
         }
     }
@@ -219,6 +225,23 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         stopXtr();
 
         LOG.info("LISP (RFC6830) Southbound Plugin is down!");
+    }
+
+    /**
+     * Restore all keys from MDSAL datastore.
+     */
+    public void restoreDaoFromDatastore() {
+        final List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
+        LOG.info("Restoring {} keys from datastore into southbound DAO", authKeys.size());
+
+        for (AuthenticationKey authKey : authKeys) {
+            final Eid key = authKey.getEid();
+            final MappingAuthkey mappingAuthkey = authKey.getMappingAuthkey();
+            LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
+                    mappingAuthkey.getKeyType(),
+                    LispAddressStringifier.getString(key));
+            akdb.addAuthenticationKey(key, mappingAuthkey);
+        }
     }
 
     public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
@@ -337,13 +360,13 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         lispSouthboundHandler.close();
         unloadActions();
         clusterSingletonService.close();
+        dsbe.closeTransactionChain();
     }
 
     @Override
     public void instantiateServiceInstance() {
         if (lispSouthboundHandler != null) {
             lispSouthboundHandler.setNotificationProvider(notificationPublishService);
-            lispSouthboundHandler.restoreDaoFromDatastore();
             lispSouthboundHandler.setIsMaster(true);
         }
         if (lispXtrSouthboundHandler != null) {
