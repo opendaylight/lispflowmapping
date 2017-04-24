@@ -50,12 +50,18 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier.create(MappingDatabase.class);
     private static final InstanceIdentifier<LastUpdated> LAST_UPDATED =
             InstanceIdentifier.create(MappingDatabase.class).child(LastUpdated.class);
+    private DataBroker broker;
     private BindingTransactionChain txChain;
 
     public DataStoreBackEnd(DataBroker broker) {
-        this.txChain = broker.createTransactionChain(this);
+        this.broker = broker;
+        createTransactionChain();
     }
 
+    public void createTransactionChain() {
+        LOG.debug("Creating DataStoreBackEnd transaction chain...");
+        txChain = broker.createTransactionChain(this);
+    }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
         if (LOG.isDebugEnabled()) {
@@ -306,5 +312,10 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
+    }
+
+    public void closeTransactionChain() {
+        LOG.debug("Closing DataStoreBackEnd transaction chain...");
+        txChain.close();
     }
 }
