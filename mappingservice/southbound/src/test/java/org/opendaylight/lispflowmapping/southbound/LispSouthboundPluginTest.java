@@ -29,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
@@ -192,6 +193,8 @@ public class LispSouthboundPluginTest {
     public void closeTest() throws Exception {
         EventLoopGroup elgMock = Mockito.mock(EventLoopGroup.class);
         LispSouthboundPluginTest.injectField("eventLoopGroup", elgMock);
+        DataStoreBackEnd dsbeMock = Mockito.mock(DataStoreBackEnd.class);
+        LispSouthboundPluginTest.injectField("dsbe", dsbeMock);
 
         LispSouthboundHandler handlerMock = Mockito.mock(LispSouthboundHandler.class);
         LispSouthboundPluginTest.injectField("lispSouthboundHandler", handlerMock);

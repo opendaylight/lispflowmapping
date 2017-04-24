@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.lisp.authentication.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -66,7 +65,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +86,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private ConcurrentLispSouthboundStats lispSbStats = null;
     private AuthKeyDb akdb;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
-    private DataStoreBackEnd dsbe;
     private boolean isReadFromChannelEnabled = true;
 
     private Channel channel;
@@ -536,29 +533,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.authenticationKeyDataListener = authenticationKeyDataListener;
     }
 
-    public void setDataStoreBackEnd(DataStoreBackEnd dsbe) {
-        this.dsbe = dsbe;
-    }
-
     public void setStats(ConcurrentLispSouthboundStats lispSbStats) {
         this.lispSbStats = lispSbStats;
-    }
-
-    /**
-     * Restore all keys from MDSAL datastore.
-     */
-    public void restoreDaoFromDatastore() {
-        final List<AuthenticationKey> authKeys = dsbe.getAllAuthenticationKeys();
-        LOG.info("Restoring {} keys from datastore into southbound DAO", authKeys.size());
-
-        for (AuthenticationKey authKey : authKeys) {
-            final Eid key = authKey.getEid();
-            final MappingAuthkey mappingAuthkey = authKey.getMappingAuthkey();
-            LOG.debug("Adding authentication key '{}' with key-ID {} for {}", mappingAuthkey.getKeyString(),
-                    mappingAuthkey.getKeyType(),
-                    LispAddressStringifier.getString(key));
-            akdb.addAuthenticationKey(key, mappingAuthkey);
-        }
     }
 
     public void setIsMaster(boolean isReadFromChannelEnabled) {
