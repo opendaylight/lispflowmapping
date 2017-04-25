@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da01753e_1222f300",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-25T06:26:44Z",
+      "side": 1,
+      "message": "rovarga specifically asked for this change, saying \"it is a good practice to not leak uninitialized objects to heap (via fields), you probably want to create a local variable then run oall the init on it and then store it in the field\"",
+      "parentUuid": "da01753e_32e8d7e1",
+      "revId": "bd75bffaf36ebd18efd2731a787b853d96e0c260",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da01753e_92d70323",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 130,
         "endChar": 69
       },
+      "revId": "bd75bffaf36ebd18efd2731a787b853d96e0c260",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_7221bffa",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-04-25T06:26:44Z",
+      "side": 1,
+      "message": "Same as above.",
+      "parentUuid": "da01753e_92d70323",
       "revId": "bd75bffaf36ebd18efd2731a787b853d96e0c260",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
