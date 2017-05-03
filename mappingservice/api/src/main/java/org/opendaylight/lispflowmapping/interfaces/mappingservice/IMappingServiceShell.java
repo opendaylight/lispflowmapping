@@ -40,4 +40,9 @@ public interface IMappingServiceShell {
      * Add the default key "password" for the IPv4 prefix 0.0.0.0/0.
      */
     void addDefaultKeyIPv4();
+
+    /**
+     * Add the default key "password" for the IPv6 prefix ::0/0.
+     */
+    void addDefaultKeyIPv6();
 }

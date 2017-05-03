@@ -25,6 +25,7 @@ public class LispAddKey  extends OsgiCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         mappingServiceShell.addDefaultKeyIPv4();
+        mappingServiceShell.addDefaultKeyIPv6();
         return null;
     }
 
