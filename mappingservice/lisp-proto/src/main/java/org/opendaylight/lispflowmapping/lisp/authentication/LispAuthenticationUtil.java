@@ -30,7 +30,8 @@ public final class LispAuthenticationUtil {
     private static ILispAuthentication resolveAuthentication(final MapRegister mapRegister, final Eid eid, final
             MappingAuthkey key) {
         if (key == null) {
-            LOG.warn("Authentication failed: mapping authentication key is null");
+            LOG.warn("Authentication failed: mapping authentication for EID {} key is null",
+                    LispAddressStringifier.getString(eid));
             return null;
         }
         short keyId = 0;
@@ -38,7 +39,8 @@ public final class LispAuthenticationUtil {
             keyId = mapRegister.getKeyId();
         }
         if (keyId != key.getKeyType().shortValue()) {
-            LOG.warn("Authentication failed: key-ID in Map-Register is different from the one on file for {}",
+            LOG.warn("Authentication failed: key-ID in Map-Register ({}) is different from the one on file ({}) for {}",
+                    keyId, key.getKeyType().shortValue(),
                     LispAddressStringifier.getString(eid));
             return null;
         }

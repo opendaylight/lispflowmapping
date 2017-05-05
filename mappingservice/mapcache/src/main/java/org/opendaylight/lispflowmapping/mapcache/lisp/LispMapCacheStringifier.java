@@ -286,6 +286,11 @@ public class LispMapCacheStringifier {
         StringBuilder sb = new StringBuilder(indent);
         sb.append("   -----------------------------------------------------------------\n");
         sb.append(indent);
+
+        if (subscribers == null) {
+            return sb.append("   No subscribers").toString();
+        }
+
         sb.append("-> Subscriber RLOC                                 Subscriber EID\n   ");
         sb.append(indent);
         boolean first = true;

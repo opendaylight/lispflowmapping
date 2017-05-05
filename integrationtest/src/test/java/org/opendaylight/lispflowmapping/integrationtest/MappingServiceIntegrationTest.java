@@ -208,7 +208,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public Option getLoggingOption() {
         Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
                 "log4j.logger.org.opendaylight.lispflowmapping",
-                LogLevel.DEBUG.name());
+                LogLevel.TRACE.name());
         option = composite(option, super.getLoggingOption());
         return option;
     }
