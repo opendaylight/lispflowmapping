@@ -183,7 +183,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public String getKarafDistro() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
-                .artifactId("lispflowmapping-karaf")
+                .artifactId("distribution-karaf")
                 .versionAsInProject()
                 .type("zip")
                 .getURL();
@@ -193,7 +193,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public MavenUrlReference getFeatureRepo() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
-                .artifactId("features4-lispflowmapping")
+                .artifactId("features-lispflowmapping")
                 .classifier("features")
                 .type("xml")
                 .versionAsInProject();
@@ -208,7 +208,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public Option getLoggingOption() {
         Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
                 "log4j.logger.org.opendaylight.lispflowmapping",
-                LogLevel.DEBUG.name());
+                LogLevel.TRACE.name());
         option = composite(option, super.getLoggingOption());
         return option;
     }

@@ -27,7 +27,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <properties>
     <skipITs>false</skipITs>
     <karaf.distro.groupId>org.opendaylight.lispflowmapping</karaf.distro.groupId>
-    <karaf.distro.artifactId>lispflowmapping-karaf</karaf.distro.artifactId>
+    <karaf.distro.artifactId>distribution-karaf</karaf.distro.artifactId>
     <karaf.distro.version>1.5.0-SNAPSHOT</karaf.distro.version>
     <karaf.distro.type>zip</karaf.distro.type>
   </properties>
@@ -35,7 +35,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>lispflowmapping-karaf</artifactId>
+      <artifactId>distribution-karaf</artifactId>
       <version>${project.version}</version>
       <type>zip</type>
     </dependency>
