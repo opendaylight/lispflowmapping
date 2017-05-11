@@ -356,16 +356,27 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     LOG.debug("Lazy removing expired subscriber entry " + subscriber.getString());
                     subscribers.remove();
                 } else {
+                    final Eid srcEid = mrb.getSourceEid().getEid();
                     final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
                             mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
                     final IpAddressBinary subscriberAddress = LispAddressUtil
                             .addressBinaryFromAddress(subscriber.getSrcRloc().getAddress());
 
                     if (subscriberFutureMap.containsKey(subscriberAddress)) {
-                        subscriberFutureMap.get(subscriberAddress).put(mrb.getSourceEid().getEid(), future);
+                        Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
+                        if (eidFutureMap.containsKey(srcEid)) {
+                            final ScheduledFuture<?> oldFuture = eidFutureMap.get(srcEid);
+                            if (oldFuture != null && !oldFuture.isCancelled()) {
+                                oldFuture.cancel(false);
+                                LOG.debug("Scheduled task for subscriber {}, EID {} has been cancelled because"
+                                        + "a rescheduling request arrived.", subscriberAddress.toString(),
+                                        LispAddressStringifier.getString(srcEid));
+                            }
+                        }
+                        eidFutureMap.put(srcEid, future);
                     } else {
                         final Map<Eid, ScheduledFuture<?>> eidFutureMap = Maps.newConcurrentMap();
-                        eidFutureMap.put(mrb.getSourceEid().getEid(), future);
+                        eidFutureMap.put(srcEid, future);
                         subscriberFutureMap.put(subscriberAddress, eidFutureMap);
                     }
                 }
@@ -379,9 +390,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 if (eidFutureMap != null) {
                     final ScheduledFuture<?> future = eidFutureMap.get(event.getEid());
                     if (future != null && !future.isCancelled()) {
-                        future.cancel(false);
-                        LOG.debug("SMR-invoked MapRequest received, scheduled task for subscriber {} with nonce {} has "
-                                + "been canceled", subscriberAddress.toString(), event.getNonce());
+                        future.cancel(true);
+                        LOG.debug("SMR-invoked MapRequest received, scheduled task for subscriber {}, EID {} with"
+                                + " nonce {} has been cancelled", subscriberAddress.toString(),
+                                LispAddressStringifier.getString(event.getEid()), event.getNonce());
                         eidFutureMap.remove(event.getEid());
                     }
                     if (eidFutureMap.isEmpty()) {
@@ -406,39 +418,45 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             public void run() {
                 final IpAddressBinary subscriberAddress = LispAddressUtil
                         .addressBinaryFromAddress(subscriber.getSrcRloc().getAddress());
+                final Eid srcEid = mrb.getSourceEid().getEid();
+
                 try {
                     // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked
                     // Map-Request. To ensure consistent behavior it is set to the value used to originally request
                     // a given mapping.
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
-                        mrb.setEidItem(new ArrayList<EidItem>());
-                        mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
-                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                        LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
-                                + " to subscriber " + subscriber.getSrcRloc(), executionCount);
+                        synchronized (mrb) {
+                            mrb.setEidItem(new ArrayList<EidItem>());
+                            mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
+                            notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
+                            LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
+                                    + " to subscriber " + subscriber.getSrcRloc(), executionCount);
+                        }
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
-                        cancelAndRemove(subscriberAddress);
+                        cancelAndRemove(subscriberAddress, srcEid);
+                        return;
                     }
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:", e);
-                    cancelAndRemove(subscriberAddress);
+                    cancelAndRemove(subscriberAddress, srcEid);
+                    return;
                 }
                 executionCount++;
             }
 
-            private void cancelAndRemove(IpAddressBinary subscriberAddress) {
+            private void cancelAndRemove(IpAddressBinary subscriberAddress, Eid eid) {
                 final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriberAddress);
                 if (eidFutureMap == null) {
                     LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", subscriberAddress);
                     return;
                 }
-                final Eid eid = mrb.getSourceEid().getEid();
+
                 if (eidFutureMap.containsKey(eid)) {
-                    eidFutureMap.get(eid).cancel(false);
+                    eidFutureMap.remove(eid);
+                    eidFutureMap.get(eid).cancel(true);
                 }
-                eidFutureMap.remove(eid);
                 if (eidFutureMap.isEmpty()) {
                     subscriberFutureMap.remove(subscriberAddress);
                 }
