@@ -443,6 +443,10 @@ class MultiSiteScenario {
     private List<MapRequest> translateBuffersToMapRequest(byte[][] buffers) {
         final List<MapRequest> mapRequests = new ArrayList<>();
         for (byte[] buffer : buffers) {
+            if (isBufferEmpty(buffer)) {
+                LOG.error("Empty buffer while translating Map-Request");
+                continue;
+            }
             final MapRequest mapRequest = MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(buffer), null);
             assertNotNull(mapRequest);
             mapRequests.add(mapRequest);
@@ -472,9 +476,14 @@ class MultiSiteScenario {
             fail("No SMR received!");
         }
         List<MapRequest> mapRequests = translateBuffersToMapRequest(buffers);
+        if (hosts.length != mapRequests.size()) {
+            LOG.error("Expected {} SMRs, received {}", hosts.length, mapRequests.size());
+            fail("Unexpected number of SMRs received");
+        }
         final Set<Eid> eids = prepareExpectedEid(hosts);
         final SourceEid expectedSourceEid = prepareSourceEid(site);
         for(MapRequest mapRequest : mapRequests) {
+            LOG.trace("Map-Request: {}", mapRequest);
             assertTrue(mapRequest.isSmr());
             final SourceEid receivedSourceEid = mapRequest.getSourceEid();
             assertEquals(expectedSourceEid, receivedSourceEid);
@@ -497,12 +506,19 @@ class MultiSiteScenario {
         return true;
     }
 
+    private static boolean isBufferEmpty(byte[] buffer) {
+        for (byte b : buffer) {
+            if (b != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected static boolean areBuffersEmpty(byte[][] buffers) {
         for (byte[] buffer : buffers) {
-            for (byte b : buffer) {
-                if (b != 0) {
-                    return false;
-                }
+            if (!isBufferEmpty(buffer)) {
+                return false;
             }
         }
         return true;

@@ -198,7 +198,10 @@ public class MapResolver implements IMapResolverAsync {
             subscribers.remove(subscriber);
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding new subscriber: " + LispAddressStringifier.getString(subscriber.getSrcRloc()));
+            LOG.trace("Adding new subscriber {} for EID {}, source EID {}",
+                    LispAddressStringifier.getString(subscriber.getSrcRloc()),
+                    LispAddressStringifier.getString(subscribedEid),
+                    LispAddressStringifier.getString(subscriber.getSrcEid()));
         }
         subscribers.add(subscriber);
         addSubscribers(subscribedEid, subscribers);

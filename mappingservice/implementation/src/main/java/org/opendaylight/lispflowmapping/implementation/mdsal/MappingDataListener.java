@@ -16,6 +16,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
@@ -124,12 +125,15 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                         new MappingData(convertedMapping.getMappingRecord()));
                 Set<Subscriber> subscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
                         convertedEid, SubKeys.SUBSCRIBERS);
+                LoggingUtil.logSubscribers(LOG, convertedEid, subscribers);
+
                 Set<Subscriber> dstSubscribers = null;
                 // For SrcDst LCAF also send SMRs to Dst prefix
                 if (convertedEid.getAddress() instanceof SourceDestKey) {
                     Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
                     dstSubscribers = (Set<Subscriber>) mapSystem.getData(MappingOrigin.Southbound,
                             dstAddr, SubKeys.SUBSCRIBERS);
+                    LoggingUtil.logSubscribers(LOG, dstAddr, dstSubscribers);
                 }
 
                 try {
