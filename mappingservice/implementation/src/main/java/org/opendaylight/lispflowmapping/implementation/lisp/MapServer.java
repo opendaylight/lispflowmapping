@@ -413,16 +413,19 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     // Map-Request. To ensure consistent behavior it is set to the value used to originally request
                     // a given mapping.
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
-                        mrb.setEidItem(new ArrayList<EidItem>());
-                        mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("{}. attempt to send SMR for MapRequest EID {} to subscriber {}, source EID {}",
-                                    executionCount,
-                                    LispAddressStringifier.getString(mrb.getSourceEid().getEid()),
-                                    LispAddressStringifier.getString(subscriber.getSrcRloc()),
-                                    LispAddressStringifier.getString(mrb.getEidItem().get(0).getEid()));
+                        synchronized (mrb) {
+                            mrb.setEidItem(new ArrayList<EidItem>());
+                            mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace(
+                                        "#{} attempt to send SMR for MapRequest EID {} to subscriber {}, source EID {}",
+                                        executionCount,
+                                        LispAddressStringifier.getString(mrb.getSourceEid().getEid()),
+                                        LispAddressStringifier.getString(subscriber.getSrcRloc()),
+                                        LispAddressStringifier.getString(mrb.getEidItem().get(0).getEid()));
+                            }
+                            notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
                         }
-                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
                                 executionCount - 1);
