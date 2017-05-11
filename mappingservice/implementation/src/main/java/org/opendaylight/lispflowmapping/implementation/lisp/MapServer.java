@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
+import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
@@ -48,7 +49,6 @@ import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
-import org.opendaylight.lispflowmapping.mapcache.lisp.LispMapCacheStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -145,9 +145,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
                         subscribers = addParentSubscribers(eid, subscribers);
                     }
+                    LoggingUtil.logSubscribers(LOG, eid, subscribers);
                     handleSmr(eid, subscribers);
                     if (oldMapping != null && oldMappingRemoved && !oldMapping.getEid().equals(eid)) {
                         subscribers = getSubscribers(oldMapping.getEid());
+                        LoggingUtil.logSubscribers(LOG, oldMapping.getEid(), subscribers);
                         handleSmr(oldMapping.getEid(), subscribers);
                     }
                     mappingUpdated = true;
@@ -214,17 +216,17 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @Override
     public void onMappingChanged(MappingChanged notification) {
-        LOG.trace("MappingChanged event of type {}", notification.getChangeType());
+        LOG.trace("MappingChanged event of type: `{}'", notification.getChangeType());
         if (subscriptionService) {
             Eid eid = notification.getMappingRecord().getEid();
             Set<Subscriber> subscribers = MSNotificationInputUtil.toSubscriberSet(notification.getSubscriberItem());
-            LOG.trace("Subscribers:\n{}", LispMapCacheStringifier.prettyPrintSubscriberSet(subscribers, 0));
+            LoggingUtil.logSubscribers(LOG, eid, subscribers);
             if (mapService.isMaster()) {
                 sendSmrs(eid, subscribers);
                 if (eid.getAddress() instanceof SourceDestKey) {
                     Set<Subscriber> dstSubscribers = MSNotificationInputUtil.toSubscriberSetFromDst(
                             notification.getDstSubscriberItem());
-                    LOG.trace("DstSubscribers:\n{}", LispMapCacheStringifier.prettyPrintSubscriberSet(subscribers, 0));
+                    LoggingUtil.logSubscribers(LOG, SourceDestKeyHelper.getDstBinary(eid), dstSubscribers);
                     sendSmrs(SourceDestKeyHelper.getDstBinary(eid), dstSubscribers);
                 }
             }
@@ -309,7 +311,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface current = interfaces.nextElement();
-                LOG.debug("Interface " + current.toString());
+                LOG.trace("Interface " + current.toString());
                 if (!current.isUp() || current.isLoopback() || current.isVirtual()) {
                     continue;
                 }
@@ -429,8 +431,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                             mrb.setEidItem(new ArrayList<EidItem>());
                             mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                             notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                            LOG.trace("{}. attempt to send SMR for MapRequest " + mrb.getSourceEid().getEid()
-                                    + " to subscriber " + subscriber.getSrcRloc(), executionCount);
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Attempt #{} to send SMR for MapRequest EID {} to subscriber {}, source EID {}",
+                                        executionCount,
+                                        LispAddressStringifier.getString(mrb.getSourceEid().getEid()),
+                                        LispAddressStringifier.getString(subscriber.getSrcRloc()),
+                                        LispAddressStringifier.getString(mrb.getEidItem().get(0).getEid()));
+                            }
                         }
                     } else {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
