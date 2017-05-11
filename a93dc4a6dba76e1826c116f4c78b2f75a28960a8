@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba068154_7dc8bc74",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-05-11T22:22:40Z",
+      "side": 1,
+      "message": "In this case, it may be that smr event is for the same EID, meaning that subscriberFutureMap.get().put() is overwriting an existing future which is running for the same eid. If you  agree this could happen , I think we should properly close the old runnable before replacing it.",
+      "range": {
+        "startLine": 366,
+        "startChar": 20,
+        "endLine": 368,
+        "endChar": 28
+      },
+      "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_3d72b47c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-05-11T22:22:40Z",
+      "side": 1,
+      "message": "Shouldnt these also be synchronized? both maps are shared.\nAlso I am thinking now, it might be better if first the future is removed from the Map  (clean the two tier Map) and then the final job should be to close it (with interrupt \u003dtrue), or alternatively put \n a return after any cancelAndRemove() call in the run() above. thoughts?",
+      "range": {
+        "startLine": 448,
+        "startChar": 0,
+        "endLine": 454,
+        "endChar": 17
+      },
+      "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
