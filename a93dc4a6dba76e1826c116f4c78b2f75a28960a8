@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba068154_7e79d32e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-12T15:41:22Z",
+      "side": 1,
+      "message": "Yes, it is possible for handleSmr() and/or sendSmrs() to be called concurrently, so I did what you suggested.",
+      "parentUuid": "ba068154_7dc8bc74",
+      "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba068154_3d72b47c",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 3
@@ -42,6 +60,24 @@
         "endLine": 454,
         "endChar": 17
       },
+      "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_5ee84fb4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-12T15:41:22Z",
+      "side": 1,
+      "message": "Unlike the MapRequestBuilder object, these Maps are all concurrent Maps, so synchronization shouldn\u0027t be an issue. Regarding the suggestion, I think it\u0027s a good idea, so implemented.",
+      "parentUuid": "ba068154_3d72b47c",
       "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
