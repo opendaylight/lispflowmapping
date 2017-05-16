@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "ba068154_afbe5cfd",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-16T14:13:30Z",
+      "side": 1,
+      "message": "I just reverted this change, since it\u0027s part of a bigger issue, tracked in bug 8469, and needs a separate patch. Let\u0027s just solve the Heisenbug in this submission.",
+      "parentUuid": "ba068154_7e79d32e",
+      "revId": "a93dc4a6dba76e1826c116f4c78b2f75a28960a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba068154_3d72b47c",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 3
