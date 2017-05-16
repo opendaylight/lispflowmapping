@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba068154_8fbb980d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-16T14:13:30Z",
+      "side": 1,
+      "message": "See an additional comment on the previous patch set. I\u0027m reverting this part for this patch.",
+      "parentUuid": "ba068154_fb4dca73",
+      "revId": "fb10585e38bf5ee682a1c3712d70926f4eb20d23",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba068154_3b2112a0",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 4
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "ba068154_ef37c4ae",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-16T14:13:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba068154_3b2112a0",
+      "revId": "fb10585e38bf5ee682a1c3712d70926f4eb20d23",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba068154_db2ba680",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 4
@@ -65,6 +101,24 @@
         "endLine": 458,
         "endChar": 53
       },
+      "revId": "fb10585e38bf5ee682a1c3712d70926f4eb20d23",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_cf3c8096",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-05-16T14:13:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba068154_db2ba680",
       "revId": "fb10585e38bf5ee682a1c3712d70926f4eb20d23",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
