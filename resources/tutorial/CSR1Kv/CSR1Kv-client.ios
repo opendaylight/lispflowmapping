@@ -1,0 +1,20 @@
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+router lisp
+ locator-set rloc-network
+  IPv4-interface GigabitEthernet2 priority 1 weight 1
+  exit
+ !
+ map-request itr-rlocs rloc-network
+ eid-table default instance-id 0
+  database-mapping 1.1.1.1/32 locator-set rloc-network
+  map-cache 0.0.0.0/0 map-request
+  no ipv4 map-cache-persistent
+  ipv4 itr map-resolver 192.168.16.11
+  ipv4 itr
+  ipv4 etr map-server 192.168.16.11 key password
+  ipv4 etr
+  exit
+ !
+ exit
