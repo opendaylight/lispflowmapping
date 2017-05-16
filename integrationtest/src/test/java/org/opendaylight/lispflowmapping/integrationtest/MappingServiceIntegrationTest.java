@@ -413,16 +413,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testRepeatedSmr();
     }
 
-/*
- * These tests cause intermittent failures for which the root cause is not yet know.
- * Disableing until we can figure out what the issue is.
- *
     @Test
     public void testMultiSite() throws Exception {
         testMultiSiteScenarioA();
         testMultiSiteScenarioB();
     }
-*/
 
     @Test
     public void testNegativePrefix_gapIntersection() throws UnknownHostException {
