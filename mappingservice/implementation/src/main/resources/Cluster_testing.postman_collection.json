@@ -1,0 +1,422 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Cluster testing",
+		"_postman_id": "e2eb1afb-6669-cf17-fd57-b51971ab7715",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add mapping to VM1 (master)",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mapping\": {\n        \"eid-uri\": \"ipv4:192.0.2.1/32\",\n        \"origin\": \"northbound\",\n        \"site-id\": [\n            \"AAAAAAAAAAA=\"\n        ],\n        \"mapping-record\": {\n            \"recordTtl\": 1440,\n            \"action\": \"NoAction\",\n            \"authoritative\": true,\n            \"eid\": {\n                \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n                \"ipv4-prefix\": \"192.0.2.1/32\"\n            },\n            \"LocatorRecord\": [\n                {\n                    \"locator-id\": \"ISP1\",\n                    \"priority\": 1,\n                    \"weight\": 1,\n                    \"multicastPriority\": 255,\n                    \"multicastWeight\": 0,\n                    \"localLocator\": true,\n                    \"rlocProbed\": false,\n                    \"routed\": false,\n                    \"rloc\": {\n                        \"address-type\": \"ietf-lisp-address-types:ipv4-afi\",\n                        \"ipv4\": \"10.10.10.10\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM1",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM2",
+			"request": {
+				"url": "http://{{clusterVM2}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM3",
+			"request": {
+				"url": "http://{{clusterVM3}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM1 (RPC)",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/operations/odl-mappingservice:get-mapping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"eid\": {\n            \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n            \"ipv4-prefix\": \"192.0.2.1/32\"\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM2 (RPC)",
+			"request": {
+				"url": "http://{{clusterVM2}}:{{restconfPort}}/restconf/operations/odl-mappingservice:get-mapping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"eid\": {\n            \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n            \"ipv4-prefix\": \"192.0.2.1/32\"\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read mapping from VM3 (RPC)",
+			"request": {
+				"url": "http://{{clusterVM3}}:{{restconfPort}}/restconf/operations/odl-mappingservice:get-mapping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"input\": {\n        \"eid\": {\n            \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n            \"ipv4-prefix\": \"192.0.2.1/32\"\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete mapping from VM1",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/mapping/ipv4:192.0.2.1%2f32/northbound/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "VM1: Allow authenticated Map-Registers",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/virtual-network-identifier/0/authentication-key/ipv4:0.0.0.0%2f0/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"authentication-key\": {\n        \"eid-uri\": \"ipv4:0.0.0.0/0\",\n        \"eid\": {\n            \"address-type\": \"ietf-lisp-address-types:ipv4-prefix-afi\",\n            \"ipv4-prefix\": \"0.0.0.0/0\"\n        },\n        \"mapping-authkey\": {\n            \"key-string\": \"password\",\n            \"key-type\": 1\n        }\n    }\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM1: get ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM2: get ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM2}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM3: get ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM3}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM1: delete ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM2: delete ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM2}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM3: delete ALL config database content",
+			"request": {
+				"url": "http://{{clusterVM3}}:{{restconfPort}}/restconf/config/odl-mappingservice:mapping-database/",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM1: get ALL operational database content",
+			"request": {
+				"url": "http://{{clusterVM1}}:{{restconfPort}}/restconf/operational/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM2: get ALL operational database content",
+			"request": {
+				"url": "http://{{clusterVM2}}:{{restconfPort}}/restconf/operational/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "DEBUG: VM3: get ALL operational database content",
+			"request": {
+				"url": "http://{{clusterVM3}}:{{restconfPort}}/restconf/operational/odl-mappingservice:mapping-database/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
