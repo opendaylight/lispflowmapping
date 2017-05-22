@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +88,10 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
             for (EidItem eidItem : request.getEidItem()) {
-                final SmrEvent event = new SmrEvent(LispAddressUtil.addressBinariesFromItrRlocs(request.getItrRloc()),
-                        eidItem.getEid(), request.getNonce());
+                final SmrEvent event = new SmrEvent(
+                        subscriberListFromItrRlocs(request.getItrRloc(), request.getSourceEid().getEid()),
+                        eidItem.getEid(),
+                        request.getNonce());
                 smrNotificationListener.onSmrInvokedReceived(event);
             }
         }
@@ -323,6 +326,14 @@ public class MapResolver implements IMapResolverAsync {
         }
 
         return nextHop;
+    }
+
+    private static List<Subscriber> subscriberListFromItrRlocs(List<ItrRloc> itrRlocs, Eid srcEid) {
+        List<Subscriber> subscriberList = Lists.newArrayList();
+        for (ItrRloc itrRloc : itrRlocs) {
+            subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
+        }
+        return subscriberList;
     }
 
     @SuppressWarnings("unchecked")
