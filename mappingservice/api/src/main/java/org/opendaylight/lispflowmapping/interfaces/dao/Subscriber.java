@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.dao;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -115,7 +116,11 @@ public class Subscriber {
 
     @Override
     public int hashCode() {
-        return data.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Objects.hashCode(data.getRloc());
+        result = prime * result + Objects.hashCode(data.getEid());
+        return result;
     }
 
     @Override
@@ -130,7 +135,10 @@ public class Subscriber {
             return false;
         }
         Subscriber other = (Subscriber) obj;
-        if (!data.equals(other.data)) {
+        if (!Objects.equals(data.getEid(), other.getSrcEid())) {
+            return false;
+        }
+        if (!Objects.equals(data.getRloc(), other.getSrcRloc())) {
             return false;
         }
         return true;

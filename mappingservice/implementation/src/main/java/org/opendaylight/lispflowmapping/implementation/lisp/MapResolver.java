@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     public void handleMapRequest(MapRequest request) {
+        LOG.trace("Map-Request received: {}", request);
         // SMRs and RLOC probes are directed towards xTRs and we're a Map-Resolver here, so ignore them
         if (request.isSmr() != null && request.isSmr()) {
             LOG.debug("Map-Resolver ignoring incoming SMR control message.");
@@ -87,8 +89,10 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
             for (EidItem eidItem : request.getEidItem()) {
-                final SmrEvent event = new SmrEvent(LispAddressUtil.addressBinariesFromItrRlocs(request.getItrRloc()),
-                        eidItem.getEid(), request.getNonce());
+                final SmrEvent event = new SmrEvent(
+                        subscriberListFromItrRlocs(request.getItrRloc(), request.getSourceEid().getEid()),
+                        eidItem.getEid(),
+                        request.getNonce());
                 smrNotificationListener.onSmrInvokedReceived(event);
             }
         }
@@ -198,10 +202,8 @@ public class MapResolver implements IMapResolverAsync {
             subscribers.remove(subscriber);
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding new subscriber {} for EID {}, source EID {}",
-                    LispAddressStringifier.getString(subscriber.getSrcRloc()),
-                    LispAddressStringifier.getString(subscribedEid),
-                    LispAddressStringifier.getString(subscriber.getSrcEid()));
+            LOG.trace("Adding new subscriber {} for EID {}", subscriber.getString(),
+                    LispAddressStringifier.getString(subscribedEid));
         }
         subscribers.add(subscriber);
         addSubscribers(subscribedEid, subscribers);
@@ -323,6 +325,14 @@ public class MapResolver implements IMapResolverAsync {
         }
 
         return nextHop;
+    }
+
+    private static List<Subscriber> subscriberListFromItrRlocs(List<ItrRloc> itrRlocs, Eid srcEid) {
+        List<Subscriber> subscriberList = Lists.newArrayList();
+        for (ItrRloc itrRloc : itrRlocs) {
+            subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
+        }
+        return subscriberList;
     }
 
     @SuppressWarnings("unchecked")

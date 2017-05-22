@@ -259,7 +259,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Override
     public void handleSMR(MapRequest smr, Rloc subscriber) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending SMR to {} with Source-EID {} and EID Record {}",
+            LOG.debug("Sending SMR Map-Request to {} with Source-EID {} and EID Record {} (reversed)",
                     LispAddressStringifier.getString(subscriber),
                     LispAddressStringifier.getString(smr.getSourceEid().getEid()),
                     LispAddressStringifier.getString(smr.getEidItem().get(0).getEid()));

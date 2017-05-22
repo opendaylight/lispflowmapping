@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import java.util.List;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
@@ -16,29 +16,29 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
  */
 public class SmrEvent {
 
-    private final List<IpAddressBinary> subscriberAddresses;
+    private final List<Subscriber> subscribers;
     private final Eid eid;
     private final long nonce;
 
-    public SmrEvent(List<IpAddressBinary> subscriberAddresses, Eid eid, long nonce) {
-        this.subscriberAddresses = subscriberAddresses;
+    public SmrEvent(List<Subscriber> subscribers, Eid eid, long nonce) {
+        this.subscribers = subscribers;
         this.eid = eid;
         this.nonce = nonce;
     }
 
     /**
-     * Returns the list of subscriber addresses that are subscribed to receive SMR MapRequest for a specific eid.
+     * Returns the list of subscriber addresses that are subscribed to receive SMR MapRequest for a specific EID.
      *
-     * @return the list of subscriber Addresses.
+     * @return the list of subscriber addresses.
      */
-    public List<IpAddressBinary> getSubscriberAddressList() {
-        return subscriberAddresses;
+    public List<Subscriber> getSubscriberList() {
+        return subscribers;
     }
 
     /**
-     * Returns the eid which the xTRs are subscribed to.
+     * Returns the EID which the xTRs are subscribed to.
      *
-     * @return the subscribed eid.
+     * @return the subscribed EID.
      */
     public Eid getEid() {
         return eid;

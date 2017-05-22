@@ -33,7 +33,6 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfi
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.net.InetAddresses;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -102,7 +101,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
@@ -435,6 +433,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         final InstanceIdType iid = new InstanceIdType(1L);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
+        final Eid subscriberEid = LispAddressUtil.asIpv4Eid("2.2.2.2", 1L);
         final int expectedSmrs1 = 2;
         final int expectedSmrs2 = 3;
 
@@ -445,8 +444,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add subscribers */
         final String subscriberSrcRloc1 = "127.0.0.3";
         final String subscriberSrcRloc2 = "127.0.0.4";
-        final Set<Subscriber> subscriberSet1 = Sets.newHashSet(newSubscriber(eid1, subscriberSrcRloc1),
-                newSubscriber(eid1, subscriberSrcRloc2));
+        final Set<Subscriber> subscriberSet1 = Sets.newHashSet(newSubscriber(subscriberEid, subscriberSrcRloc1),
+                newSubscriber(subscriberEid, subscriberSrcRloc2));
         mapService.addData(MappingOrigin.Southbound, eid1, SubKeys.SUBSCRIBERS, subscriberSet1);
 
         final SocketReader reader1 = startSocketReader(subscriberSrcRloc1, 15000);
@@ -462,6 +461,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
         final MapReply mapReply1 = lms.handleMapRequest(
                 new MapRequestBuilder(requests1.get(0))
+                        .setSourceEid(new SourceEidBuilder().setEid(subscriberEid).build())
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc1)).build()))
                         .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
@@ -473,6 +473,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final List<MapRequest> requests2 = processSmrPackets(reader2, subscriberSrcRloc2, expectedSmrs2);
         final MapReply mapReply2 = lms.handleMapRequest(
                 new MapRequestBuilder(requests2.get(0))
+                        .setSourceEid(new SourceEidBuilder().setEid(subscriberEid).build())
                         .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc2)).build()))
                         .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
@@ -524,11 +525,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private static Subscriber newSubscriber(Eid srcEid, String srcRlocIp) {
-        final byte[] addressBinary = InetAddresses.forString(srcRlocIp).getAddress();
         final int timeout = 5;
-        final Rloc srcRloc = new RlocBuilder().setAddress(new Ipv4BinaryBuilder()
-                .setIpv4Binary(new Ipv4AddressBinary(addressBinary)).build()).build();
-
+        final Rloc srcRloc = LispAddressUtil.asIpv4Rloc(srcRlocIp);
         return new Subscriber(srcRloc, srcEid, timeout);
     }
 
