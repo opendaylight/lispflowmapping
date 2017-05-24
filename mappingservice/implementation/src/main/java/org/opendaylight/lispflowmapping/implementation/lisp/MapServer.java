@@ -347,7 +347,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("smr-executor-%d").build();
         private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(cpuCores * 2, threadFactory);
-        private final Map<Subscriber, Map<Eid, ScheduledFuture<?>>> subscriberFutureMap = Maps.newConcurrentMap();
+        private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = Maps.newConcurrentMap();
 
         void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
             // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a Subscriber
@@ -362,12 +362,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
                             mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
 
-                    if (subscriberFutureMap.containsKey(subscriber)) {
-                        subscriberFutureMap.get(subscriber).put(srcEid, future);
+                    if (eidFutureMap.containsKey(srcEid)) {
+                        eidFutureMap.get(srcEid).put(subscriber, future);
                     } else {
-                        final Map<Eid, ScheduledFuture<?>> eidFutureMap = Maps.newConcurrentMap();
-                        eidFutureMap.put(srcEid, future);
-                        subscriberFutureMap.put(subscriber, eidFutureMap);
+                        final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = Maps.newConcurrentMap();
+                        subscriberFutureMap.put(subscriber, future);
+                        eidFutureMap.put(srcEid, subscriberFutureMap);
                     }
                 }
             }
@@ -378,18 +378,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             for (Subscriber subscriber : subscriberList) {
                 LOG.trace("SMR-invoked event, EID {}, subscriber {}", LispAddressStringifier.getString(event.getEid()),
                         subscriber.getString());
-                final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriber);
-                if (eidFutureMap != null) {
-                    final ScheduledFuture<?> future = eidFutureMap.get(event.getEid());
+                final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(event.getEid());
+                if (subscriberFutureMap != null) {
+                    final ScheduledFuture<?> future = subscriberFutureMap.get(subscriber);
                     if (future != null && !future.isCancelled()) {
                         future.cancel(true);
                         LOG.debug("SMR-invoked MapRequest received, scheduled task for subscriber {}, EID {} with"
                                 + " nonce {} has been cancelled", subscriber.getString(),
                                 LispAddressStringifier.getString(event.getEid()), event.getNonce());
-                        eidFutureMap.remove(event.getEid());
-                    }
-                    if (eidFutureMap.isEmpty()) {
                         subscriberFutureMap.remove(subscriber);
+                    }
+                    if (subscriberFutureMap.isEmpty()) {
+                        eidFutureMap.remove(event.getEid());
                     }
                 }
             }
@@ -441,19 +441,19 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             }
 
             private void cancelAndRemove(Subscriber subscriber, Eid eid) {
-                final Map<Eid, ScheduledFuture<?>> eidFutureMap = subscriberFutureMap.get(subscriber);
-                if (eidFutureMap == null) {
+                final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(eid);
+                if (subscriberFutureMap == null) {
                     LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", subscriber);
                     return;
                 }
 
-                if (eidFutureMap.containsKey(eid)) {
-                    ScheduledFuture<?> eidFuture = eidFutureMap.get(eid);
-                    eidFutureMap.remove(eid);
+                if (subscriberFutureMap.containsKey(subscriber)) {
+                    ScheduledFuture<?> eidFuture = subscriberFutureMap.get(subscriber);
+                    subscriberFutureMap.remove(subscriber);
                     eidFuture.cancel(false);
                 }
-                if (eidFutureMap.isEmpty()) {
-                    subscriberFutureMap.remove(subscriber);
+                if (subscriberFutureMap.isEmpty()) {
+                    eidFutureMap.remove(eid);
                 }
             }
         }
