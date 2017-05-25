@@ -224,8 +224,18 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
     @Override
     public void removeSpecific(Object key, String valueKey) {
-        if (data.containsKey(key) && data.get(key).containsKey(valueKey)) {
-            data.get(key).remove(valueKey);
+        Map<String, Object> keyToValues = data.get(key);
+        if (keyToValues == null) {
+            return;
+        }
+
+        synchronized (keyToValues) {
+            if (keyToValues.containsKey(valueKey)) {
+                keyToValues.remove(valueKey);
+                if (keyToValues.isEmpty()) {
+                    remove(key);
+                }
+            }
         }
     }
 
@@ -262,5 +272,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         table = new HashMapDb();
         put(TABLES, new MappingEntry<>(key, table));
         return table;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return data.isEmpty();
     }
 }

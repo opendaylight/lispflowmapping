@@ -35,23 +35,24 @@ public class AuthKeyDb implements IAuthKeyDb {
         this.dao = dao;
     }
 
-    private ILispDAO getVniTable(Eid eid) {
-        long vni = 0;
+    private long getVni(Eid eid) {
         if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
+            return 0;
         } else {
-            vni = eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue();
         }
-        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getVniTable(Eid eid) {
+        return (ILispDAO) dao.getSpecific(getVni(eid), SubKeys.VNI);
+    }
+
+    private void removeVniTable(Eid eid) {
+        dao.removeSpecific(getVni(eid), SubKeys.VNI);
     }
 
     private ILispDAO getOrInstantiateVniTable(Eid eid) {
-        long vni = 0;
-        if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
-        } else {
-            vni = eid.getVirtualNetworkId().getValue();
-        }
+        long vni = getVni(eid);
         ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
         if (table == null) {
             table = dao.putNestedTable(vni, SubKeys.VNI);
@@ -111,6 +112,9 @@ public class AuthKeyDb implements IAuthKeyDb {
             return;
         }
         table.removeSpecific(key, SubKeys.AUTH_KEY);
+        if (table.isEmpty()) {
+            removeVniTable(eid);
+        }
     }
 
     @Override
