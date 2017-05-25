@@ -350,6 +350,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = Maps.newConcurrentMap();
 
         void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
+            final Eid srcEid = mrb.getSourceEid().getEid();
+            cancelExistingFuturesForEid(srcEid);
+
+            final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = Maps.newConcurrentMap();
+
             // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a Subscriber
             // from a Set.
             while (subscribers.hasNext()) {
@@ -358,19 +363,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     LOG.debug("Lazy removing expired subscriber entry " + subscriber.getString());
                     subscribers.remove();
                 } else {
-                    final Eid srcEid = mrb.getSourceEid().getEid();
                     final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
                             mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
-
-                    if (eidFutureMap.containsKey(srcEid)) {
-                        eidFutureMap.get(srcEid).put(subscriber, future);
-                    } else {
-                        final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = Maps.newConcurrentMap();
-                        subscriberFutureMap.put(subscriber, future);
-                        eidFutureMap.put(srcEid, subscriberFutureMap);
-                    }
+                    subscriberFutureMap.put(subscriber, future);
                 }
             }
+
+            if (subscriberFutureMap.isEmpty()) {
+                return;
+            }
+            eidFutureMap.put(srcEid, subscriberFutureMap);
         }
 
         void smrReceived(SmrEvent event) {
@@ -391,6 +393,21 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     if (subscriberFutureMap.isEmpty()) {
                         eidFutureMap.remove(event.getEid());
                     }
+                }
+            }
+        }
+
+        private void cancelExistingFuturesForEid(Eid eid) {
+            synchronized (eidFutureMap) {
+                if (eidFutureMap.containsKey(eid)) {
+                    final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(eid);
+                    Iterator<Subscriber> oldSubscribers = subscriberFutureMap.keySet().iterator();
+                    while (oldSubscribers.hasNext()) {
+                        Subscriber subscriber = oldSubscribers.next();
+                        ScheduledFuture<?> subscriberFuture = subscriberFutureMap.get(subscriber);
+                        subscriberFuture.cancel(true);
+                    }
+                    eidFutureMap.remove(eid);
                 }
             }
         }
