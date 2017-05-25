@@ -33,23 +33,24 @@ public class MultiTableMapCache implements IMapCache {
         this.dao = dao;
     }
 
-    private ILispDAO getVniTable(Eid eid) {
-        long vni = 0;
+    private long getVni(Eid eid) {
         if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
+            return 0;
         } else {
-            vni = eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue();
         }
-        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getVniTable(Eid eid) {
+        return (ILispDAO) dao.getSpecific(getVni(eid), SubKeys.VNI);
+    }
+
+    private void removeVniTable(Eid eid) {
+        dao.removeSpecific(getVni(eid), SubKeys.VNI);
     }
 
     private ILispDAO getOrInstantiateVniTable(Eid eid) {
-        long vni = 0;
-        if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
-        } else {
-            vni = eid.getVirtualNetworkId().getValue();
-        }
+        long vni = getVni(eid);
         ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
         if (table == null) {
             table = dao.putNestedTable(vni, SubKeys.VNI);
@@ -146,9 +147,15 @@ public class MultiTableMapCache implements IMapCache {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
                 db.remove(SourceDestKeyHelper.getSrcBinary(key));
+                if (db.isEmpty()) {
+                    removeSDInnerDao(key, table);
+                }
             }
         } else {
             table.remove(key);
+        }
+        if (table.isEmpty()) {
+            removeVniTable(eid);
         }
     }
 
@@ -168,6 +175,10 @@ public class MultiTableMapCache implements IMapCache {
     // This method returns the DAO associated to dst or null if it doesn't exist.
     private ILispDAO getSDInnerDao(Eid address, ILispDAO mappingsDb) {
         return (ILispDAO) mappingsDb.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
+    }
+
+    private void removeSDInnerDao(Eid address, ILispDAO mappingsDb) {
+        mappingsDb.removeSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
     @Override
@@ -210,9 +221,15 @@ public class MultiTableMapCache implements IMapCache {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
                 db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key), subKey);
+                if (db.isEmpty()) {
+                    removeSDInnerDao(key, table);
+                }
             }
         } else {
             table.removeSpecific(key, subKey);
+        }
+        if (table.isEmpty()) {
+            removeVniTable(eid);
         }
     }
 

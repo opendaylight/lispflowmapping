@@ -109,6 +109,7 @@ public class SimpleMapCacheTest {
 
         simpleMapCache.removeMapping(EID_IPV4);
         Mockito.verify(tableMock).remove(MaskUtil.normalize(EID_IPV4));
+        Mockito.verify(tableMock).isEmpty();
         Mockito.verifyNoMoreInteractions(tableMock);
     }
 
