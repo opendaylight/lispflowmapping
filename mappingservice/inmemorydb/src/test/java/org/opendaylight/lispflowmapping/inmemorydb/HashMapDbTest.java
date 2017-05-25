@@ -252,7 +252,7 @@ public class HashMapDbTest {
         map.removeSpecific(dbEntryKey, mapKey3);
         Assert.assertNull("Entry should not be present in DB", map.getSpecific(dbEntryKey, mapKey3));
 
-        Assert.assertEquals("MapEntry should be empty after removal the last entry", 0, map.get(dbEntryKey).size());
+        Assert.assertNull("MapEntry should not be present after removal the last entry", map.get(dbEntryKey));
     }
 
     @Test
