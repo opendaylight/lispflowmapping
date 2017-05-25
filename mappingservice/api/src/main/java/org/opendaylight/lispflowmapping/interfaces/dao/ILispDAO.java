@@ -149,4 +149,11 @@ public interface ILispDAO {
      * @return The inserted table
      */
     ILispDAO putNestedTable(Object key, String valueKey);
+
+    /**
+     * Check if the DAO is empty.
+     *
+     * @return true if empty
+     */
+    boolean isEmpty();
 }
