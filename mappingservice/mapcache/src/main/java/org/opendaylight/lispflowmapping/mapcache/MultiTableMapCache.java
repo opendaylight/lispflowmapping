@@ -33,23 +33,24 @@ public class MultiTableMapCache implements IMapCache {
         this.dao = dao;
     }
 
-    private ILispDAO getVniTable(Eid eid) {
-        long vni = 0;
+    private long getVni(Eid eid) {
         if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
+            return 0;
         } else {
-            vni = eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue();
         }
-        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getVniTable(Eid eid) {
+        return (ILispDAO) dao.getSpecific(getVni(eid), SubKeys.VNI);
+    }
+
+    private void removeVniTable(Eid eid) {
+        dao.removeSpecific(getVni(eid), SubKeys.VNI);
     }
 
     private ILispDAO getOrInstantiateVniTable(Eid eid) {
-        long vni = 0;
-        if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
-        } else {
-            vni = eid.getVirtualNetworkId().getValue();
-        }
+        long vni = getVni(eid);
         ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
         if (table == null) {
             table = dao.putNestedTable(vni, SubKeys.VNI);
@@ -146,9 +147,15 @@ public class MultiTableMapCache implements IMapCache {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
                 db.remove(SourceDestKeyHelper.getSrcBinary(key));
+                if (db.isEmpty()) {
+                    removeSDInnerDao(key, table);
+                }
             }
         } else {
             table.remove(key);
+        }
+        if (table.isEmpty()) {
+            removeVniTable(eid);
         }
     }
 
@@ -170,59 +177,8 @@ public class MultiTableMapCache implements IMapCache {
         return (ILispDAO) mappingsDb.getSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
-    public String printMappings() {
-        final StringBuffer sb = new StringBuffer();
-        sb.append("Keys\tValues\n");
-        final IRowVisitor innerVisitor = (new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                sb.append(valueKey + "=" + value + "\t");
-                lastKey = key;
-            }
-        });
-        final IRowVisitor vniVisitor = (new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append(key + "\t");
-                }
-                if ((valueKey.equals(SubKeys.LCAF_SRCDST))) {
-                    sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(innerVisitor);
-                    sb.append("}\t");
-                } else {
-                    sb.append(valueKey + "=" + value + "\t");
-                }
-                lastKey = key;
-            }
-        });
-        dao.getAll(new IRowVisitor() {
-            String lastKey = "";
-
-            public void visitRow(Object keyId, String valueKey, Object value) {
-                String key = keyId.getClass().getSimpleName() + "#" + keyId;
-                if (!lastKey.equals(key)) {
-                    sb.append("\n" + key + "\t");
-                }
-                if (valueKey.equals(SubKeys.VNI)) {
-                    sb.append(valueKey + "= { ");
-                    ((ILispDAO)value).getAll(vniVisitor);
-                    sb.append("}\t");
-                } else {
-                    sb.append(valueKey + "=" + value + "\t");
-                }
-                lastKey = key;
-            }
-        });
-        sb.append("\n");
-        return sb.toString();
+    private void removeSDInnerDao(Eid address, ILispDAO mappingsDb) {
+        mappingsDb.removeSpecific(SourceDestKeyHelper.getDstBinary(address), SubKeys.LCAF_SRCDST);
     }
 
     @Override
@@ -265,9 +221,15 @@ public class MultiTableMapCache implements IMapCache {
             ILispDAO db = getSDInnerDao(key, table);
             if (db != null) {
                 db.removeSpecific(SourceDestKeyHelper.getSrcBinary(key), subKey);
+                if (db.isEmpty()) {
+                    removeSDInnerDao(key, table);
+                }
             }
         } else {
             table.removeSpecific(key, subKey);
+        }
+        if (table.isEmpty()) {
+            removeVniTable(eid);
         }
     }
 }
