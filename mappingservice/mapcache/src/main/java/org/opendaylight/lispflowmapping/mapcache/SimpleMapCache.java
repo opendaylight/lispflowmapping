@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,23 +40,24 @@ public class SimpleMapCache implements ILispMapCache {
         this.dao = dao;
     }
 
-    private ILispDAO getVniTable(Eid eid) {
-        long vni = 0;
+    private long getVni(Eid eid) {
         if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
+            return 0;
         } else {
-            vni = eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue();
         }
-        return (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
+    }
+
+    private ILispDAO getVniTable(Eid eid) {
+        return (ILispDAO) dao.getSpecific(getVni(eid), SubKeys.VNI);
+    }
+
+    private void removeVniTable(Eid eid) {
+        dao.removeSpecific(getVni(eid), SubKeys.VNI);
     }
 
     private ILispDAO getOrInstantiateVniTable(Eid eid) {
-        long vni = 0;
-        if (eid.getVirtualNetworkId() == null) {
-            vni = 0;
-        } else {
-            vni = eid.getVirtualNetworkId().getValue();
-        }
+        long vni = getVni(eid);
         ILispDAO table = (ILispDAO) dao.getSpecific(vni, SubKeys.VNI);
         if (table == null) {
             table = dao.putNestedTable(vni, SubKeys.VNI);
@@ -206,20 +208,15 @@ public class SimpleMapCache implements ILispMapCache {
 
         Eid key = MaskUtil.normalize(eid);
         table.remove(key);
+        if (table.isEmpty()) {
+            removeVniTable(eid);
+        }
     }
 
     @Override
     public void removeMapping(Eid eid, XtrId xtrId) {
-        ILispDAO table = getVniTable(eid);
-        if (table == null) {
-            return;
-        }
-        Eid key = MaskUtil.normalize(eid);
-        ILispDAO xtrIdTable = (ILispDAO) table.getSpecific(key, SubKeys.XTRID_RECORDS);
-        if (xtrIdTable == null) {
-            return;
-        }
-        xtrIdTable.removeSpecific(xtrId, SubKeys.RECORD);
+        List<XtrId> xtrIds = Arrays.asList(xtrId);
+        removeXtrIdMappings(eid, xtrIds);
     }
 
     @Override
@@ -236,6 +233,12 @@ public class SimpleMapCache implements ILispMapCache {
         for (XtrId xtrId : xtrIds) {
             xtrIdTable.removeSpecific(xtrId, SubKeys.RECORD);
         }
+        if (xtrIdTable.isEmpty()) {
+            table.removeSpecific(key, SubKeys.XTRID_RECORDS);
+            if (table.isEmpty()) {
+                removeVniTable(eid);
+            }
+        }
     }
 
     @Override
@@ -247,7 +250,7 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public Object getData(Eid eid, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(eid);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return null;
         }
@@ -257,12 +260,15 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public void removeData(Eid eid, String subKey) {
-        ILispDAO table = getOrInstantiateVniTable(eid);
+        ILispDAO table = getVniTable(eid);
         if (table == null) {
             return;
         }
         Eid key = MaskUtil.normalize(eid);
         table.removeSpecific(key, subKey);
+        if (table.isEmpty()) {
+            removeVniTable(eid);
+        }
     }
 
     @Override
