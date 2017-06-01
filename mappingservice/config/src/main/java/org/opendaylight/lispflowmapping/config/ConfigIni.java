@@ -26,6 +26,7 @@ public final class ConfigIni {
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
+    private boolean authEnabled;
     private int numberOfBucketsInTimeBucketWheel;
 
     /*
@@ -45,6 +46,7 @@ public final class ConfigIni {
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
     private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
+    private static final String LISP_AUTH_ENABLED = "lisp.authEnabled";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
@@ -69,6 +71,7 @@ public final class ConfigIni {
         initRegisterValiditySb(context);
         initSmrRetryCount(context);
         initSmrTimeout(context);
+        initAuthEnabled(context);
         initBucketNumber();
     }
 
@@ -269,6 +272,32 @@ public final class ConfigIni {
         }
     }
 
+    private void initAuthEnabled(BundleContext context) {
+        // set the default value first
+        this.authEnabled = true;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_AUTH_ENABLED);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_AUTH_ENABLED);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_AUTH_ENABLED);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("false")) {
+            this.smr = false;
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_AUTH_ENABLED);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_AUTH_ENABLED);
+        }
+    }
+
     //one bucket should contain mapping of approximate 1 min time frame
     private void initBucketNumber() {
         numberOfBucketsInTimeBucketWheel = (int) (TimeUnit.MILLISECONDS.toMinutes(getRegistrationValiditySb()) + 1);
@@ -334,6 +363,15 @@ public final class ConfigIni {
 
     public long getSmrTimeout() {
         return this.smrTimeout;
+    }
+
+    public boolean isAuthEnabled() {
+        return this.authEnabled;
+    }
+
+    public void setAuthEnabled(boolean authEnabled) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_AUTH_ENABLED, authEnabled);
+        this.authEnabled = authEnabled;
     }
 
     public int getNumberOfBucketsInTimeBucketWheel() {
