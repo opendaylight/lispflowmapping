@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.authentication.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -81,7 +82,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
-    private boolean authenticationEnabled = true;
+    private boolean authenticationEnabled = ConfigIni.getInstance().isAuthEnabled();
     private final LispSouthboundPlugin lispSbPlugin;
     private ConcurrentLispSouthboundStats lispSbStats = null;
     private AuthKeyDb akdb;
@@ -194,6 +195,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 cacheValue = resolveCacheValue(artificialEntry);
             }
             if (cacheValue != null) {
+                lispSbStats.incrementCacheHits();
                 MapRegisterCacheMetadata mapRegisterMeta = cacheValue.getMapRegisterCacheMetadata();
                 LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterMeta.getSiteId(),
                         mapRegisterMeta.getXtrId());
@@ -204,38 +206,43 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                         sendMapNotifyMsg(inBuffer, sourceAddress, port, cacheValue);
                     }
                 }
-                lispSbStats.incrementCacheHits();
             } else {
+                lispSbStats.incrementCacheMisses();
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
-                final MappingAuthkey mappingAuthkey = tryToAuthenticateMessage(mapRegister, inBuffer);
-                if (mappingAuthkey != null) {
-                    AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
-                    addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
-                    TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
-                    transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressBinaryFromInetAddress(
-                            sourceAddress));
-                    transportAddressBuilder.setPort(new PortNumber(port));
-                    addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-                    sendNotificationIfPossible(addMappingBuilder.build());
-                    if (artificialEntry != null) {
-                        final MapRegisterCacheMetadataBuilder cacheMetadataBldNew = new
-                                MapRegisterCacheMetadataBuilder();
-                        cacheMetadataBldNew.setEidLispAddress(provideEidPrefixesFromMessage(mapRegister));
-                        cacheMetadataBldNew.setXtrId(mapRegister.getXtrId());
-                        cacheMetadataBldNew.setSiteId(mapRegister.getSiteId());
-                        cacheMetadataBldNew.setWantMapNotify(mapRegister.isWantMapNotify());
-                        cacheMetadataBldNew.setMergeEnabled(mapRegister.isMergeEnabled());
-                        cacheMetadataBldNew.setTimestamp(System.currentTimeMillis());
 
-                        final MapRegisterCacheValueBuilder cacheValueBldNew = new MapRegisterCacheValueBuilder();
-                        cacheValueBldNew.setPacketData(artificialEntry.getValue());
-                        cacheValueBldNew.setMappingAuthkey(mappingAuthkey);
-                        cacheValueBldNew.setMapRegisterCacheMetadata(cacheMetadataBldNew.build());
-
-                        mapRegisterCache.addEntry(cacheKey, cacheValueBldNew.build());
+                MappingAuthkey mappingAuthkey = null;
+                if (authenticationEnabled) {
+                    mappingAuthkey = tryToAuthenticateMessage(mapRegister, inBuffer);
+                    if (mappingAuthkey == null) {
+                        return;
                     }
                 }
-                lispSbStats.incrementCacheMisses();
+
+                AddMappingBuilder addMappingBuilder = new AddMappingBuilder();
+                addMappingBuilder.setMapRegister(LispNotificationHelper.convertMapRegister(mapRegister));
+                TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
+                transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressBinaryFromInetAddress(
+                        sourceAddress));
+                transportAddressBuilder.setPort(new PortNumber(port));
+                addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
+                sendNotificationIfPossible(addMappingBuilder.build());
+                if (artificialEntry != null) {
+                    final MapRegisterCacheMetadataBuilder cacheMetadataBldNew = new
+                            MapRegisterCacheMetadataBuilder();
+                    cacheMetadataBldNew.setEidLispAddress(provideEidPrefixesFromMessage(mapRegister));
+                    cacheMetadataBldNew.setXtrId(mapRegister.getXtrId());
+                    cacheMetadataBldNew.setSiteId(mapRegister.getSiteId());
+                    cacheMetadataBldNew.setWantMapNotify(mapRegister.isWantMapNotify());
+                    cacheMetadataBldNew.setMergeEnabled(mapRegister.isMergeEnabled());
+                    cacheMetadataBldNew.setTimestamp(System.currentTimeMillis());
+
+                    final MapRegisterCacheValueBuilder cacheValueBldNew = new MapRegisterCacheValueBuilder();
+                    cacheValueBldNew.setPacketData(artificialEntry.getValue());
+                    cacheValueBldNew.setMappingAuthkey(mappingAuthkey);
+                    cacheValueBldNew.setMapRegisterCacheMetadata(cacheMetadataBldNew.build());
+
+                    mapRegisterCache.addEntry(cacheKey, cacheValueBldNew.build());
+                }
             }
         } catch (RuntimeException re) {
             throw new LispMalformedPacketException("Couldn't deserialize Map-Register (len="
@@ -395,10 +402,6 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
      * @return Returns authentication key if all of EIDs have the same authentication key or null otherwise
      */
     private MappingAuthkey tryToAuthenticateMessage(final MapRegister mapRegister, final ByteBuffer byteBuffer) {
-        if (!authenticationEnabled) {
-            return null;
-        }
-
         if (akdb == null) {
             LOG.debug("Simple map cache wasn't instantieted and set.");
             return null;
