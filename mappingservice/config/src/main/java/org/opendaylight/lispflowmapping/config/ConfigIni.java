@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.config;
 
 import java.util.concurrent.TimeUnit;
-
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,6 +25,7 @@ public final class ConfigIni {
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
+    private boolean authEnabled;
     private int numberOfBucketsInTimeBucketWheel;
 
     /*
@@ -45,6 +45,7 @@ public final class ConfigIni {
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
     private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
+    private static final String LISP_AUTH_ENABLED = "lisp.authEnabled";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
@@ -60,8 +61,19 @@ public final class ConfigIni {
         BundleContext context = null;
         if (bundle != null) {
             context = bundle.getBundleContext();
+            if (context == null) {
+                LOG.warn("Couldn't get the BundleContext needed for reading the properties in the configuration file, "
+                        + "bundle state is '{}'", bundleStateToString(bundle.getState()));
+            }
+        } else {
+            LOG.warn("Couldn't get the Bundle object needed for reading the properties in the configuration file, "
+                    + "using built-in defaults");
         }
 
+        initConfigs(context);
+    }
+
+    private void initConfigs(BundleContext context) {
         initMappingMerge(context);
         initSmr(context);
         initElpPolicy(context);
@@ -69,7 +81,27 @@ public final class ConfigIni {
         initRegisterValiditySb(context);
         initSmrRetryCount(context);
         initSmrTimeout(context);
+        initAuthEnabled(context);
         initBucketNumber();
+    }
+
+    private String bundleStateToString(int state) {
+        switch (state) {
+            case Bundle.ACTIVE:
+                return "Active";
+            case Bundle.INSTALLED:
+                return "Installed";
+            case Bundle.RESOLVED:
+                return "Resolved";
+            case Bundle.STARTING:
+                return "Starting";
+            case Bundle.STOPPING:
+                return "Stopping";
+            case Bundle.UNINSTALLED:
+                return "Uninstalled";
+            default:
+                return "_Unknown_";
+        }
     }
 
     private void initRegisterValiditySb(BundleContext context) {
@@ -269,6 +301,32 @@ public final class ConfigIni {
         }
     }
 
+    private void initAuthEnabled(BundleContext context) {
+        // set the default value first
+        this.authEnabled = true;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_AUTH_ENABLED);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_AUTH_ENABLED);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_AUTH_ENABLED);
+                return;
+            }
+        }
+
+        if (str.trim().equalsIgnoreCase("false")) {
+            this.authEnabled = false;
+            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_AUTH_ENABLED);
+        } else {
+            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_AUTH_ENABLED);
+        }
+    }
+
     //one bucket should contain mapping of approximate 1 min time frame
     private void initBucketNumber() {
         numberOfBucketsInTimeBucketWheel = (int) (TimeUnit.MILLISECONDS.toMinutes(getRegistrationValiditySb()) + 1);
@@ -334,6 +392,15 @@ public final class ConfigIni {
 
     public long getSmrTimeout() {
         return this.smrTimeout;
+    }
+
+    public boolean isAuthEnabled() {
+        return this.authEnabled;
+    }
+
+    public void setAuthEnabled(boolean authEnabled) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_AUTH_ENABLED, authEnabled);
+        this.authEnabled = authEnabled;
     }
 
     public int getNumberOfBucketsInTimeBucketWheel() {

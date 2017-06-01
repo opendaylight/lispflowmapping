@@ -34,10 +34,10 @@
         <feature version='${project.version}'>odl-lispflowmapping-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
         <feature version="${project.version}">odl-lispflowmapping-southbound</feature>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.config/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.dsbackend/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.mapcache/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.implementation/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.config/{{VERSION}}</bundle>
     </feature>
 
     <feature name="odl-lispflowmapping-mappingservice-shell" description="OpenDaylight :: LISP Flow Mapping :: Mappingservice Shell" version='${project.version}'>
@@ -56,6 +56,7 @@
         <feature version="${mdsal.version}">odl-mdsal-broker</feature>
         <feature version='${project.version}'>odl-lispflowmapping-models</feature>
         <feature version="${project.version}">odl-lispflowmapping-inmemorydb</feature>
+        <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.config/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.dsbackend/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.mapcache/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.lispflowmapping/mappingservice.southbound/{{VERSION}}</bundle>
