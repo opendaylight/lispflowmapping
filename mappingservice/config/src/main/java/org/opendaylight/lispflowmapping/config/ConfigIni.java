@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.config;
 
 import java.util.concurrent.TimeUnit;
-
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -62,8 +61,19 @@ public final class ConfigIni {
         BundleContext context = null;
         if (bundle != null) {
             context = bundle.getBundleContext();
+            if (context == null) {
+                LOG.warn("Couldn't get the BundleContext needed for reading the properties in the configuration file, "
+                        + "bundle state is '{}'", bundleStateToString(bundle.getState()));
+            }
+        } else {
+            LOG.warn("Couldn't get the Bundle object needed for reading the properties in the configuration file, "
+                    + "using built-in defaults");
         }
 
+        initConfigs(context);
+    }
+
+    private void initConfigs(BundleContext context) {
         initMappingMerge(context);
         initSmr(context);
         initElpPolicy(context);
@@ -73,6 +83,25 @@ public final class ConfigIni {
         initSmrTimeout(context);
         initAuthEnabled(context);
         initBucketNumber();
+    }
+
+    private String bundleStateToString(int state) {
+        switch (state) {
+            case Bundle.ACTIVE:
+                return "Active";
+            case Bundle.INSTALLED:
+                return "Installed";
+            case Bundle.RESOLVED:
+                return "Resolved";
+            case Bundle.STARTING:
+                return "Starting";
+            case Bundle.STOPPING:
+                return "Stopping";
+            case Bundle.UNINSTALLED:
+                return "Uninstalled";
+            default:
+                return "_Unknown_";
+        }
     }
 
     private void initRegisterValiditySb(BundleContext context) {
