@@ -117,7 +117,7 @@
         <version>${config.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opendaylight.controller</groupId>
+        <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>opendaylight-karaf-empty</artifactId>
         <version>${karaf.empty.version}</version>
         <type>zip</type>
