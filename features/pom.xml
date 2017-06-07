@@ -25,7 +25,9 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <modules>
+    <!--
     <module>features-lispflowmapping</module>
+    -->
     <module>features4-lispflowmapping</module>
     <module>odl-lispflowmapping-models</module>
     <module>odl-lispflowmapping-inmemorydb</module>
