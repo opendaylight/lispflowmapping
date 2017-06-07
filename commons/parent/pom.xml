@@ -15,7 +15,7 @@
          for plugin configuration etc. -->
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>1.9.0</version>
+    <version>2.0.0</version>
     <relativePath/>
   </parent>
 
@@ -28,15 +28,13 @@
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
-    <branding.version>1.9.0</branding.version>
+    <branding.version>2.0.0</branding.version>
     <build.suffix>1.0.0</build.suffix>
     <config.version>0.7.0-SNAPSHOT</config.version>
     <dlux.loader.version>0.6.0-SNAPSHOT</dlux.loader.version>
     <dlux.core.version>0.6.0-SNAPSHOT</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
     <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
-    <karaf.empty.version>1.9.0</karaf.empty.version>
-    <karaf.resources.version>1.9.0</karaf.resources.version>
     <lispflowmapping.version>1.6.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.6.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.9.0-SNAPSHOT</neutron.version>
@@ -104,29 +102,10 @@
         <artifactId>config-util</artifactId>
         <version>0.7.0-SNAPSHOT</version>
       </dependency>
-
-      <dependency>
-        <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>karaf.branding</artifactId>
-        <version>${branding.version}</version>
-        <scope>compile</scope>
-      </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>netty-event-executor-config</artifactId>
         <version>${config.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>opendaylight-karaf-empty</artifactId>
-        <version>${karaf.empty.version}</version>
-        <type>zip</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>opendaylight-karaf-resources</artifactId>
-        <version>${karaf.resources.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>

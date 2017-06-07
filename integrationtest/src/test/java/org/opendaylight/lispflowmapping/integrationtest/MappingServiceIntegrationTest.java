@@ -191,7 +191,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public MavenUrlReference getFeatureRepo() {
         return maven()
                 .groupId("org.opendaylight.lispflowmapping")
-                .artifactId("features4-lispflowmapping")
+                .artifactId("features-lispflowmapping")
                 .classifier("features")
                 .type("xml")
                 .versionAsInProject();

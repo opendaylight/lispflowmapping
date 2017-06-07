@@ -26,9 +26,6 @@
     <module>mappingservice</module>
     <module>ui</module>
     <module>features</module>
-    <!--
-    <module>distribution-karaf</module>
-    -->
     <module>lispflowmapping-karaf</module>
     <module>integrationtest</module>
   </modules>

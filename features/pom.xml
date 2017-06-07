@@ -12,7 +12,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent-lite</artifactId>
-    <version>1.9.0</version>
+    <version>2.0.0</version>
     <relativePath/>
   </parent>
 
@@ -25,10 +25,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <modules>
-    <!--
-    <module>features-lispflowmapping</module>
-    -->
-    <module>features4-lispflowmapping</module>
     <module>odl-lispflowmapping-models</module>
     <module>odl-lispflowmapping-inmemorydb</module>
     <module>odl-lispflowmapping-southbound</module>
@@ -37,5 +33,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <module>odl-lispflowmapping-mappingservice-shell</module>
     <module>odl-lispflowmapping-neutron</module>
     <module>odl-lispflowmapping-ui</module>
+    <module>features-lispflowmapping</module>
   </modules>
 </project>
