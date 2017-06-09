@@ -15,7 +15,7 @@
          for plugin configuration etc. -->
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.8.0-Carbon</version>
     <relativePath/>
   </parent>
 
@@ -28,15 +28,15 @@
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
-    <branding.version>1.9.0-SNAPSHOT</branding.version>
+    <branding.version>1.8.0-Carbon</branding.version>
     <build.suffix>1.0.0</build.suffix>
     <config.version>0.7.0-SNAPSHOT</config.version>
     <dlux.loader.version>0.6.0-SNAPSHOT</dlux.loader.version>
     <dlux.core.version>0.6.0-SNAPSHOT</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
     <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
-    <karaf.empty.version>1.9.0-SNAPSHOT</karaf.empty.version>
-    <karaf.resources.version>1.9.0-SNAPSHOT</karaf.resources.version>
+    <karaf.empty.version>1.8.0-Carbon</karaf.empty.version>
+    <karaf.resources.version>1.8.0-Carbon</karaf.resources.version>
     <lispflowmapping.version>1.6.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.6.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.9.0-SNAPSHOT</neutron.version>
