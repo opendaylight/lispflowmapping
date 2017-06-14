@@ -228,6 +228,13 @@ public interface IMappingService {
     String printKeys();
 
     /**
+     * Print keys in cache in a human friendly format.
+     *
+     * @return a String consisting of all the keys in the cache
+     */
+    String prettyPrintKeys();
+
+    /**
      * Cleans all cached mappings.Used for testing.
      */
     void cleanCachedMappings();

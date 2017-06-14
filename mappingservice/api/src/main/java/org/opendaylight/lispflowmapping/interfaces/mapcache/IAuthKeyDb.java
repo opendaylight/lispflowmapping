@@ -52,4 +52,11 @@ public interface IAuthKeyDb {
      * @return a String consisting of all the authentication keys in the database
      */
     String printKeys();
+
+    /**
+     * Print keys in cache in a human friendly format.
+     *
+     * @return a String consisting of all the keys in the cache
+     */
+    String prettyPrintKeys();
 }

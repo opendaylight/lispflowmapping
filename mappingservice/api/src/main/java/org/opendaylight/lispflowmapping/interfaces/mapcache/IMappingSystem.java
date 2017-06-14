@@ -235,6 +235,13 @@ public interface IMappingSystem {
     String printKeys();
 
     /**
+     * Print keys in cache in a human friendly format.
+     *
+     * @return a String consisting of all the keys in the cache
+     */
+    String prettyPrintKeys();
+
+    /**
      * Set cluster master status.
      *
      * @param isMaster

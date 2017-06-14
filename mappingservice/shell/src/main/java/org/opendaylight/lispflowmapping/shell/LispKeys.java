@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.shell;
 
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
@@ -20,6 +21,9 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
  */
 @Command(scope = "mappingservice", name = "keys", description = "Print LISP authentication keys")
 public class LispKeys  extends OsgiCommandSupport {
+    @Option(name = "-d", aliases = "--debug", description = "Debug output", required = false, multiValued = false)
+    private boolean debug;
+
     private IMappingServiceShell mappingServiceShell;
 
     /*
@@ -29,7 +33,11 @@ public class LispKeys  extends OsgiCommandSupport {
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
-        System.out.print(mappingServiceShell.printKeys());
+        if (debug) {
+            System.out.print(mappingServiceShell.printKeys());
+        } else {
+            System.out.print(mappingServiceShell.prettyPrintKeys());
+        }
         return null;
     }
 

@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.util;
 
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 
 /**
@@ -20,12 +21,30 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 public class Stringifier {
     private static final String NEW_LINE = System.lineSeparator();
 
+    public static String getSpacesAsString(int length) {
+        return new String(new char[length]).replace("\0", " ");
+    }
+
+    public static String getString(MappingAuthkey key) {
+        return getString(key, 0);
+    }
+
+    public static String getString(MappingAuthkey key, int indentation) {
+        final String indent = getSpacesAsString(indentation);
+
+        StringBuilder masb = new StringBuilder(indent);
+        masb.append(key.getKeyString());
+        masb.append("   ");
+        masb.append(key.getKeyType());
+        return masb.toString();
+    }
+
     public static String getString(MappingRecord mapping) {
         return getString(mapping, 0);
     }
 
     public static String getString(MappingRecord mapping, int indentation) {
-        final String indent = new String(new char[indentation]).replace("\0", " ");
+        final String indent = getSpacesAsString(indentation);
 
         StringBuilder mrsb = new StringBuilder(indent);
 
@@ -68,14 +87,14 @@ public class Stringifier {
     }
 
     public static String getString(LocatorRecord locator, int indentation) {
-        final String indent = new String(new char[indentation]).replace("\0", " ");
+        final String indent = getSpacesAsString(indentation);
 
         StringBuilder lrsb = new StringBuilder(indent);
 
         String rloc = LispAddressStringifier.getString(locator.getRloc());
-        int padLen = Constants.INET6_ADDRSTRLEN + 2 - rloc.length();
+        int padLen = Math.max(2, Constants.INET6_ADDRSTRLEN + 2 - rloc.length());
         lrsb.append(rloc);
-        lrsb.append(new String(new char[padLen]).replace("\0", " "));
+        lrsb.append(getSpacesAsString(padLen));
         lrsb.append(locator.isRouted() ? "up        " : "no-route  ");
         lrsb.append(locator.getPriority().toString());
         lrsb.append('/');

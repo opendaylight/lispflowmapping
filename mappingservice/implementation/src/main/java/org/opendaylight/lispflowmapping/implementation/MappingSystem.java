@@ -688,6 +688,11 @@ public class MappingSystem implements IMappingSystem {
         return akdb.printKeys();
     }
 
+    @Override
+    public String prettyPrintKeys() {
+        return akdb.prettyPrintKeys();
+    }
+
     public void cleanCaches() {
         dao.removeAll();
         buildMapCaches();

@@ -12,10 +12,13 @@ import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
+import org.opendaylight.lispflowmapping.lisp.authentication.LispKeyIDEnum;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.Constants;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 
 public class LispMapCacheStringifier {
     public static String printKeys(ILispDAO dao) {
@@ -54,6 +57,50 @@ public class LispMapCacheStringifier {
             }
         });
         sb.append("\n");
+        return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String prettyPrintKeys(ILispDAO dao) {
+        final StringBuffer sb = new StringBuffer();
+
+        final IRowVisitor innerVisitor = (new IRowVisitor() {
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                switch (valueKey) {
+                    case SubKeys.AUTH_KEY:
+                        String eid = LispAddressStringifier.getString((Eid) keyId);
+                        sb.append("     ");
+                        sb.append(eid);
+                        int padLen = Math.max(2, Constants.INET6_ADDRSTRLEN - eid.length());
+                        sb.append(Stringifier.getSpacesAsString(padLen));
+                        MappingAuthkey authKey = (MappingAuthkey) value;
+                        String hmac = LispKeyIDEnum.valueOf(authKey.getKeyType().shortValue()).getAuthenticationName();
+                        sb.append(hmac);
+                        sb.append(Stringifier.getSpacesAsString(Math.max(2, 22 - hmac.length())));
+                        sb.append(authKey.getKeyString());
+                        sb.append("\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        dao.getAll(new IRowVisitor() {
+            String lastKey = "";
+
+            public void visitRow(Object keyId, String valueKey, Object value) {
+                String key = keyId.getClass().getSimpleName() + "#" + keyId;
+                if (!lastKey.equals(key)) {
+                    sb.append("Instance ID " + keyId + "\n");
+                    sb.append("  -> EID                                           HMAC Algorithm        Shared Key\n");
+                }
+                if (valueKey.equals(SubKeys.VNI)) {
+                    ((ILispDAO)value).getAll(innerVisitor);
+                }
+                lastKey = key;
+            }
+        });
         return sb.toString();
     }
 

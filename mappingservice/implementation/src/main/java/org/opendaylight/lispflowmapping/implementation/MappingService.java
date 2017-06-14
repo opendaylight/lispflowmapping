@@ -492,6 +492,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public String prettyPrintKeys() {
+        return mappingSystem.prettyPrintKeys();
+    }
+
+    @Override
     public void close() throws Exception {
         LOG.info("Mapping Service is being destroyed!");
         keyListener.closeDataChangeListener();

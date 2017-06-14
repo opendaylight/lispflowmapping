@@ -37,6 +37,13 @@ public interface IMappingServiceShell {
     String printKeys();
 
     /**
+     * Print the full authentication key database in human readable form.
+     *
+     * @return the text to be printed on the Karaf console.
+     */
+    String prettyPrintKeys();
+
+    /**
      * Add the default key "password" for the IPv4 prefix 0.0.0.0/0.
      */
     void addDefaultKeyIPv4();

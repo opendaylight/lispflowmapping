@@ -121,4 +121,9 @@ public class AuthKeyDb implements IAuthKeyDb {
     public String printKeys() {
         return LispMapCacheStringifier.printKeys(dao);
     }
+
+    @Override
+    public String prettyPrintKeys() {
+        return LispMapCacheStringifier.prettyPrintKeys(dao);
+    }
 }
