@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.opendaylight.mdsal</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>0.9.4-SNAPSHOT</version>
+    <version>0.9.4-Boron-SR4</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>mappingservice.inmemorydb</artifactId>
-  <version>1.4.4-SNAPSHOT</version>
+  <version>1.4.4-Boron-SR4</version>
   <packaging>bundle</packaging>
   <name>Mapping Service Inmemory Mappings Database</name>
 
