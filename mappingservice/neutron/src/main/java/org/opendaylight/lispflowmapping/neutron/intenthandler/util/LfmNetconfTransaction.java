@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Shakib Ahmed on 1/12/17.
  */
-public class VppNetconfTrasaction {
-    private static final Logger LOG = LoggerFactory.getLogger(VppNetconfTrasaction.class);
+public class LfmNetconfTransaction {
+    private static final Logger LOG = LoggerFactory.getLogger(LfmNetconfTransaction.class);
 
     public static final byte RETRY_COUNT = 5;
 
@@ -48,7 +48,6 @@ public class VppNetconfTrasaction {
                 readTransaction.close();
                 return returnData;
             } catch (IllegalStateException e) {
-
                 LOG.warn("Assuming that netconf read-transaction failed, retrying. Retry Count: " + retryCounter,
                             e.getMessage());
                 readTransaction.close();
@@ -66,10 +65,8 @@ public class VppNetconfTrasaction {
                                                                       LogicalDatastoreType datastoreType,
                                                                       ReadOnlyTransaction readTransaction)
             throws IllegalStateException, InterruptedException, ExecutionException {
-
         CheckedFuture<Optional<T>, ReadFailedException> futureData =
                 readTransaction.read(datastoreType, instanceIdentifier);
-
         return futureData.get();
     }
 }
