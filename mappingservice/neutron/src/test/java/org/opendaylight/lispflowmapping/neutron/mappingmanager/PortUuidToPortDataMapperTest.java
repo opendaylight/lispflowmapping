@@ -92,7 +92,7 @@ public class PortUuidToPortDataMapperTest {
         HashMap<String, PortData> processedDataMap;
         try {
             processedDataMap = (HashMap<String, PortData>) Whitebox
-                    .getInternalState(portUuidToPortDataMapper, "processedPortUuidToEidMapper");
+                    .getInternalState(portUuidToPortDataMapper, "processedPortUuidToPortDataMapper");
         } catch (ClassCastException e) {
             throw e;
         }
@@ -103,7 +103,7 @@ public class PortUuidToPortDataMapperTest {
         HashMap<String, PortData> unprocessedDataMap;
         try {
             unprocessedDataMap = (HashMap<String, PortData>) Whitebox
-                    .getInternalState(portUuidToPortDataMapper, "unprocessedPortUuidToEidMapper");
+                    .getInternalState(portUuidToPortDataMapper, "unprocessedPortUuidToPortDataMapper");
         } catch (ClassCastException e) {
             throw e;
         }
