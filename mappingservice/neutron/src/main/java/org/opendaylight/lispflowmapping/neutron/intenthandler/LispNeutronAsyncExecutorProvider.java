@@ -15,21 +15,21 @@ import java.util.concurrent.Executors;
 /**
  * Created by Shakib Ahmed on 1/24/17.
  */
-public class IntentHandlerAsyncExecutorProvider {
+public class LispNeutronAsyncExecutorProvider {
     private static ListeningExecutorService listeningExecutorService;
 
     private static final int EXTRA_THREADS_TO_HANDLE_VPP_LISTENER = 1;
 
-    private static IntentHandlerAsyncExecutorProvider intentHandlerAsyncExecutorProvider;
+    private static LispNeutronAsyncExecutorProvider intentHandlerAsyncExecutorProvider;
 
-    private IntentHandlerAsyncExecutorProvider() {
+    private LispNeutronAsyncExecutorProvider() {
         listeningExecutorService = MoreExecutors
                 .listeningDecorator(Executors.newFixedThreadPool(EXTRA_THREADS_TO_HANDLE_VPP_LISTENER));
     }
 
-    public static synchronized IntentHandlerAsyncExecutorProvider getInstace() {
+    public static synchronized LispNeutronAsyncExecutorProvider getInstace() {
         if (intentHandlerAsyncExecutorProvider == null) {
-            intentHandlerAsyncExecutorProvider = new IntentHandlerAsyncExecutorProvider();
+            intentHandlerAsyncExecutorProvider = new LispNeutronAsyncExecutorProvider();
         }
         return intentHandlerAsyncExecutorProvider;
     }
