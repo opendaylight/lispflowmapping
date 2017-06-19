@@ -16,44 +16,44 @@ import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
  * Created by Shakib Ahmed on 2/6/17.
  */
 public class PortUuidToPortDataMapper {
-    private HashMap<String, PortData> unprocessedPortUuidToEidMapper;
-    private HashMap<String, PortData> processedPortUuidToEidMapper;
+    private HashMap<String, PortData> unprocessedPortUuidToPortDataMapper;
+    private HashMap<String, PortData> processedPortUuidToPortDataMapper;
 
     public PortUuidToPortDataMapper() {
-        unprocessedPortUuidToEidMapper = new HashMap<>();
-        processedPortUuidToEidMapper = new HashMap<>();
+        unprocessedPortUuidToPortDataMapper = new HashMap<>();
+        processedPortUuidToPortDataMapper = new HashMap<>();
     }
 
     public synchronized void addUnprocessedUuidToPortDataMapping(String uuid, PortData portData) {
-        unprocessedPortUuidToEidMapper.put(uuid, portData);
+        unprocessedPortUuidToPortDataMapper.put(uuid, portData);
     }
 
     public synchronized void addPortDataToProcessed(PortData portData) {
-        processedPortUuidToEidMapper.put(portData.getPortUuid(), portData);
+        processedPortUuidToPortDataMapper.put(portData.getPortUuid(), portData);
     }
 
     public synchronized PortData getProcessedPortData(String uuid) {
-        return processedPortUuidToEidMapper.get(uuid);
+        return processedPortUuidToPortDataMapper.get(uuid);
     }
 
     public synchronized void deleteProcessedPortData(String portUuid) {
-        processedPortUuidToEidMapper.remove(portUuid);
+        processedPortUuidToPortDataMapper.remove(portUuid);
     }
 
     public synchronized void delereUnprocessedPortData(String portUuid) {
-        unprocessedPortUuidToEidMapper.remove(portUuid);
+        unprocessedPortUuidToPortDataMapper.remove(portUuid);
     }
 
     public synchronized Collection<PortData> getAllUnprocessedPorts() {
-        return unprocessedPortUuidToEidMapper.values();
+        return unprocessedPortUuidToPortDataMapper.values();
     }
 
     public synchronized void clearAllUnprocessedData() {
-        unprocessedPortUuidToEidMapper.clear();
+        unprocessedPortUuidToPortDataMapper.clear();
     }
 
     public synchronized void clearAllProcessedData() {
-        processedPortUuidToEidMapper.clear();
+        processedPortUuidToPortDataMapper.clear();
     }
 
     public synchronized void clearAllData() {
@@ -62,7 +62,11 @@ public class PortUuidToPortDataMapper {
     }
 
     public synchronized void transferAllProcessedPortDataToUnprocessed() {
-        processedPortUuidToEidMapper.forEach(unprocessedPortUuidToEidMapper::putIfAbsent);
-        processedPortUuidToEidMapper.clear();
+        processedPortUuidToPortDataMapper.forEach(unprocessedPortUuidToPortDataMapper::putIfAbsent);
+        processedPortUuidToPortDataMapper.clear();
+    }
+
+    public synchronized Collection<PortData> getAllProcessedPortData() {
+        return processedPortUuidToPortDataMapper.values();
     }
 }
