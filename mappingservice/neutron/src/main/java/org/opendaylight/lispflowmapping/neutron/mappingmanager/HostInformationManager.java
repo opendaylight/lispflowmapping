@@ -103,8 +103,27 @@ public class HostInformationManager {
             return;
         }
 
+        removeMappingFromLfmDb(oldPortData);
+        uuidToEidMapper.deleteProcessedPortData(portUuid);
+    }
+
+    private synchronized void removeMappingFromLfmDb(PortData oldPortData) {
         RemoveMappingInput removeMappingInput = LispUtil.buildRemoveMappingInput(oldPortData.getPortEid());
         lfmDbService.removeMapping(removeMappingInput);
-        uuidToEidMapper.deleteProcessedPortData(portUuid);
+    }
+
+    public synchronized void attemptToDeleteAllHostMapping(String hostId) {
+        PortUuidToPortDataMapper uuidToPortDataMapper = hostIdToPortDataMapper.getAllPortData(hostId);
+
+        if (uuidToPortDataMapper == null) {
+            return;
+        }
+
+        Collection<PortData> allProcessedPortDataOfHost = uuidToPortDataMapper.getAllProcessedPortData();
+        allProcessedPortDataOfHost.forEach(portData -> {
+            removeMappingFromLfmDb(portData);
+        });
+
+        uuidToPortDataMapper.transferAllProcessedPortDataToUnprocessed();
     }
 }
