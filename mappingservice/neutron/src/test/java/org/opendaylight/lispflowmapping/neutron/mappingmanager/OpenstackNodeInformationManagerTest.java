@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.neutron.LispUtil;
+import org.opendaylight.lispflowmapping.neutron.util.LispUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -33,8 +33,8 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest(HostInformationManager.class)
-public class HostInformationManagerTest {
+@PrepareForTest(OpenstackNodeInformationManager.class)
+public class OpenstackNodeInformationManagerTest {
 
     private OdlMappingserviceService lfmDbService = Mockito.mock(OdlMappingserviceService.class);
 
@@ -44,22 +44,18 @@ public class HostInformationManagerTest {
 
     private static final Eid SAMPLE_EID_1 = Mockito.mock(Eid.class);
     private static final Eid SAMPLE_EID_2 = Mockito.mock(Eid.class);
-    private static final Eid SAMPLE_EID_3 = Mockito.mock(Eid.class);
-    private static final PortData PORT_DATA_1 = new PortData("1", SAMPLE_EID_1);
-    private static final PortData PORT_DATA_2 = new PortData("2", SAMPLE_EID_2);
-
-    private static final PortData PORT_DATA_1_1 = new PortData("1", SAMPLE_EID_3);
+    private static final Eid SAMPLE_EID_1_1 = Mockito.mock(Eid.class);
 
     @Test
     public void testScenarioRlocFirst() {
-        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+        OpenstackNodeInformationManager hostInformationManager = getDefaultHostInformationManager();
 
         addRlocData(hostInformationManager);
 
         Mockito.verify(lfmDbService, Mockito.times(0))
                 .addMapping(Mockito.any(AddMappingInput.class));
 
-        addPortData1(hostInformationManager);
+        addEid1(hostInformationManager);
 
         AddMappingInput desiredMappingRecord = createAddMappingInput(SAMPLE_RLOC, SAMPLE_EID_1);
         Mockito.verify(lfmDbService).addMapping(desiredMappingRecord);
@@ -69,9 +65,9 @@ public class HostInformationManagerTest {
 
     @Test
     public void testScenarioPortDataFirst() {
-        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+        OpenstackNodeInformationManager hostInformationManager = getDefaultHostInformationManager();
 
-        addPortData1(hostInformationManager);
+        addEid1(hostInformationManager);
 
         Mockito.verify(lfmDbService, Mockito.times(0))
                 .addMapping(Mockito.any(AddMappingInput.class));
@@ -86,10 +82,10 @@ public class HostInformationManagerTest {
 
     @Test
     public void testScenarioMultiplePortDataAndThenRloc() {
-        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+        OpenstackNodeInformationManager hostInformationManager = getDefaultHostInformationManager();
 
-        addPortData1(hostInformationManager);
-        addPortData2(hostInformationManager);
+        addEid1(hostInformationManager);
+        addEid2(hostInformationManager);
 
         Mockito.verify(lfmDbService, Mockito.times(0))
                 .addMapping(Mockito.any(AddMappingInput.class));
@@ -107,16 +103,16 @@ public class HostInformationManagerTest {
 
     @Test
     public void testOnlyUnprocessedPortDataIsBeingProcessed() {
-        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+        OpenstackNodeInformationManager hostInformationManager = getDefaultHostInformationManager();
 
-        addPortData1(hostInformationManager);
+        addEid1(hostInformationManager);
 
         Mockito.verify(lfmDbService, Mockito.times(0))
                 .addMapping(Mockito.any(AddMappingInput.class));
 
         addRlocData(hostInformationManager);
 
-        addPortData2(hostInformationManager);
+        addEid2(hostInformationManager);
 
         Mockito.verify(lfmDbService, Mockito.times(2))
                 .addMapping(Mockito.any(AddMappingInput.class));
@@ -132,37 +128,38 @@ public class HostInformationManagerTest {
 
     @Test
     public void testProperMappingRecordRemoval() {
-        HostInformationManager hostInformationManager = getDefaultHostInformationManager();
+        OpenstackNodeInformationManager hostInformationManager = getDefaultHostInformationManager();
 
-        addPortData1(hostInformationManager);
+        addEid1(hostInformationManager);
 
         addRlocData(hostInformationManager);
 
-        addUpdatedPortData1(hostInformationManager);
+        addUpdatedEid1(hostInformationManager);
 
-        RemoveMappingInput removeMappingInput = LispUtil.buildRemoveMappingInput(PORT_DATA_1.getPortEid());
+        RemoveMappingInput removeMappingInput = LispUtil.buildRemoveMappingInput(SAMPLE_EID_1);
         Mockito.verify(lfmDbService).removeMapping(removeMappingInput);
 
-        AddMappingInput addMappingInput = createAddMappingInput(SAMPLE_RLOC, SAMPLE_EID_3);
+        AddMappingInput addMappingInput = createAddMappingInput(SAMPLE_RLOC, SAMPLE_EID_1_1);
         Mockito.verify(lfmDbService).addMapping(addMappingInput);
 
         destroySingleton(hostInformationManager);
     }
 
-    private void addRlocData(HostInformationManager hostInformationManager) {
-        hostInformationManager.addHostRelatedInfo(HOST_ID, SAMPLE_RLOC);
+    private void addRlocData(OpenstackNodeInformationManager hostInformationManager) {
+        hostInformationManager.addRlocOfHost(HOST_ID, SAMPLE_RLOC);
     }
 
-    private void addPortData1(HostInformationManager hostInformationManager) {
-        hostInformationManager.addHostRelatedInfo(HOST_ID, PORT_DATA_1);
+    private void addEid1(OpenstackNodeInformationManager hostInformationManager) {
+        hostInformationManager.addEidInHost(HOST_ID, SAMPLE_EID_1);
     }
 
-    private void addPortData2(HostInformationManager hostInformationManager) {
-        hostInformationManager.addHostRelatedInfo(HOST_ID, PORT_DATA_2);
+    private void addEid2(OpenstackNodeInformationManager hostInformationManager) {
+        hostInformationManager.addEidInHost(HOST_ID, SAMPLE_EID_2);
     }
 
-    private void addUpdatedPortData1(HostInformationManager hostInformationManager) {
-        hostInformationManager.addHostRelatedInfo(HOST_ID, PORT_DATA_1_1);
+    private void addUpdatedEid1(OpenstackNodeInformationManager hostInformationManager) {
+        hostInformationManager.attemptToDeleteExistingMappingRecord(HOST_ID, SAMPLE_EID_1);
+        hostInformationManager.addEidInHost(HOST_ID, SAMPLE_EID_1_1);
     }
 
     private AddMappingInput createAddMappingInput(Rloc rloc, Eid eid) {
@@ -173,13 +170,13 @@ public class HostInformationManagerTest {
         return LispUtil.buildAddMappingInput(eid, locatorRecordList);
     }
 
-    private HostInformationManager getDefaultHostInformationManager() {
-        HostInformationManager hostInformationManager = HostInformationManager.getInstance();
+    private OpenstackNodeInformationManager getDefaultHostInformationManager() {
+        OpenstackNodeInformationManager hostInformationManager = OpenstackNodeInformationManager.getInstance();
         hostInformationManager.setOdlMappingserviceService(lfmDbService);
         return hostInformationManager;
     }
 
-    private void destroySingleton(HostInformationManager hostInformationManager) {
+    private void destroySingleton(OpenstackNodeInformationManager hostInformationManager) {
         try {
             Field field = hostInformationManager.getClass().getDeclaredField("instance");
             field.setAccessible(true);

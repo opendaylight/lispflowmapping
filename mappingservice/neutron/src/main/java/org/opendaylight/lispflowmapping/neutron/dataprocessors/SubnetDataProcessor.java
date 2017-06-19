@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.neutron;
+package org.opendaylight.lispflowmapping.neutron.dataprocessors;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.neutron.ILispNeutronService;
+import org.opendaylight.lispflowmapping.neutron.util.LispUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
@@ -30,10 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SubnetDataProcessor implements DataProcessor<Subnet> {
     private static final Logger LOG = LoggerFactory.getLogger(SubnetDataProcessor.class);
-//    private static final Integer SIX = Integer.valueOf(6);
 
-    // The implementation for each of these services is resolved by the OSGi
-    // Service Manager
     private volatile ILispNeutronService lispNeutronService;
 
     public SubnetDataProcessor(ILispNeutronService lispNeutronService) {
@@ -46,15 +45,15 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
      * prefix.
      */
     @Override
-    public void create(Subnet subnet) {
+    public void create(Subnet objectAfter) {
         // TODO update for multi-tenancy
-        LOG.info("Neutron Subnet Created request : Subnet name: "
-                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
-        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
+        LOG.info("Neutron Subnet Created request : Subnet name: {} Subnet Cidr: {}",
+                objectAfter.getName(), objectAfter.getCidr());
+        LOG.debug("Lisp Neutron Subnet: {}", objectAfter.toString());
 
         // Determine the IANA code for the subnet IP version
         // Default is set to IPv4 for neutron subnets
-        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(objectAfter.getCidr().getValue()));
 
         try {
             final OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
@@ -62,26 +61,24 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
                 LOG.debug("lfmdb is null!!!");
                 return;
             }
-            final AddKeyInput addKeyInput = LispUtil.buildAddKeyInput(eid, subnet.getUuid().getValue());
+            final AddKeyInput addKeyInput = LispUtil.buildAddKeyInput(eid, objectAfter.getUuid().getValue());
             final Future<RpcResult<Void>> result = lfmdb.addKey(addKeyInput);
             final Boolean isSuccessful = result.get().isSuccessful();
 
             if (isSuccessful) {
-                LOG.debug("Neutron Subnet Added to MapServer : Subnet name: "
-                        + subnet.getName() + " EID Prefix: "
-                        + subnet.getCidr() + " Key: "
-                        + subnet.getUuid());
+                LOG.debug("Neutron Subnet Added to MapServer : Subnet name: {} EID Prefix: {} Key: {}",
+                        objectAfter.getName(), objectAfter.getCidr(), objectAfter.getUuid());
             }
-            LOG.info("Neutron Subnet Created request : Subnet name: "
-                    + subnet.getName() + " Subnet Cidr: " + subnet.getCidr());
+            LOG.info("Neutron Subnet Created request : Subnet name: {} Subnet Cidr: {}", objectAfter.getName(),
+                    objectAfter.getCidr());
         } catch (InterruptedException | ExecutionException e) {
-            LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : "
-                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
+            LOG.error("Adding new subnet to lisp service mapping service failed. Subnet : {} Error: {}",
+                    objectAfter.toString(), ExceptionUtils.getStackTrace(e));
         }
     }
 
     @Override
-    public void update(Subnet subnet) {
+    public void update(Subnet objectBefore, Subnet objectAfter) {
         // Nothing to do here.
     }
 
@@ -90,15 +87,14 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
      * from Lisp mapping service.
      */
     @Override
-    public void delete(Subnet subnet) {
-        LOG.info("Neutron Subnet Deleted Request : Subnet name: "
-                + subnet.getName() + " Subnet Cidr: " + subnet.getCidr()
-                + "Key: " + subnet.getUuid());
-        LOG.debug("Lisp Neutron Subnet: " + subnet.toString());
+    public void delete(Subnet objectBefore) {
+        LOG.info("Neutron Subnet Deleted Request : Subnet name: {} Subnet Cidr: {} Key: {}", objectBefore.getName(),
+                objectBefore.getCidr(), objectBefore.getUuid());
+        LOG.debug("Lisp Neutron Subnet: {}", objectBefore.toString());
 
         // Determine the IANA code for the subnet IP version
         // Default is set to IPv4 for neutron subnets
-        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(objectBefore.getCidr().getValue()));
 
         try {
             final OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
@@ -111,14 +107,12 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
             final Boolean isSuccessful = result.get().isSuccessful();
 
             if (isSuccessful) {
-                LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: "
-                        + subnet.getName() + " Eid Prefix: "
-                        + subnet.getCidr() + " Key: "
-                        + subnet.getUuid());
+                LOG.debug("Neutron Subnet Deleted from MapServer : Subnet name: {} Eid Prefix: {} Key: {}",
+                        objectBefore.getName(), objectBefore.getCidr(), objectBefore.getUuid());
             }
         } catch (InterruptedException | ExecutionException e) {
-            LOG.error("Deleting subnet's EID prefix from mapping service failed + Subnet: "
-                    + subnet.toString() + "Error: " + ExceptionUtils.getStackTrace(e));
+            LOG.error("Deleting subnet's EID prefix from mapping service failed Subnet: {} Error: {}",
+                    objectBefore.toString(), ExceptionUtils.getStackTrace(e));
         }
     }
 }

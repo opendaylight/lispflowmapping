@@ -13,7 +13,8 @@ import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderCo
 import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
-import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
+import org.opendaylight.lispflowmapping.neutron.listeners.DelegatingDataTreeListener;
+import org.opendaylight.lispflowmapping.neutron.mappingmanager.OpenstackNodeInformationManager;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.networks.rev150712.networks.attributes.networks.Network;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
@@ -50,7 +51,7 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
         lfmDbService = rpcRegistry.getRpcService(OdlMappingserviceService.class);
         broker = session.getSALService(DataBroker.class);
 
-        HostInformationManager.getInstance().setOdlMappingserviceService(lfmDbService);
+        OpenstackNodeInformationManager.getInstance().setOdlMappingserviceService(lfmDbService);
 
         DelegatingDataTreeListener.initiateListener(Network.class, this, broker);
         DelegatingDataTreeListener.initiateListener(Subnet.class, this, broker);

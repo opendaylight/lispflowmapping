@@ -17,6 +17,11 @@ import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.lispflowmapping.neutron.dataprocessors.DataProcessor;
+import org.opendaylight.lispflowmapping.neutron.listeners.DelegatingDataTreeListener;
+import org.opendaylight.lispflowmapping.neutron.listeners.NetworkListener;
+import org.opendaylight.lispflowmapping.neutron.listeners.PortListener;
+import org.opendaylight.lispflowmapping.neutron.listeners.SubnetListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.networks.rev150712.networks.attributes.Networks;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.networks.rev150712.networks.attributes.networks.Network;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
@@ -37,7 +42,8 @@ public class DelegatingDataTreeListenerTest {
     private final DelegatingDataTreeListener<Network> networkDelegatingDataTreeListener =
             new DelegatingDataTreeListener<>(DATA_PROCESSOR_NETWORK_MOCK, dataBrokerMock, NETWORK_ID);
 
-    private static final Network DUMMY_NETWORK = Mockito.mock(Network.class);
+    private static final Network DUMMY_NETWORK_BEFORE = Mockito.mock(Network.class);
+    private static final Network DUMMY_NETWORK_AFTER = Mockito.mock(Network.class);
 
     private static final DataTreeModification<Network> DATA_TREE_MODIFICATION =
             Mockito.mock(DataTreeModification.class);
@@ -63,12 +69,12 @@ public class DelegatingDataTreeListenerTest {
     @Test
     public void onDataTreeChangedTest_write() {
         Mockito.when(DATA_TREE_MODIFICATION.getRootNode()).thenReturn(DATA_OBJECT_MODIFICATION);
-        Mockito.when(DATA_OBJECT_MODIFICATION.getDataAfter()).thenReturn(DUMMY_NETWORK);
+        Mockito.when(DATA_OBJECT_MODIFICATION.getDataAfter()).thenReturn(DUMMY_NETWORK_AFTER);
         Mockito.when(DATA_OBJECT_MODIFICATION.getModificationType())
                 .thenReturn(DataObjectModification.ModificationType.WRITE);
 
         networkDelegatingDataTreeListener.onDataTreeChanged(Lists.newArrayList(DATA_TREE_MODIFICATION));
-        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).create(DUMMY_NETWORK);
+        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).create(DUMMY_NETWORK_AFTER);
     }
 
     /**
@@ -77,12 +83,12 @@ public class DelegatingDataTreeListenerTest {
     @Test
     public void onDataTreeChangedTest_delete() {
         Mockito.when(DATA_TREE_MODIFICATION.getRootNode()).thenReturn(DATA_OBJECT_MODIFICATION);
-        Mockito.when(DATA_OBJECT_MODIFICATION.getDataBefore()).thenReturn(DUMMY_NETWORK);
+        Mockito.when(DATA_OBJECT_MODIFICATION.getDataBefore()).thenReturn(DUMMY_NETWORK_BEFORE);
         Mockito.when(DATA_OBJECT_MODIFICATION.getModificationType())
                 .thenReturn(DataObjectModification.ModificationType.DELETE);
 
         networkDelegatingDataTreeListener.onDataTreeChanged(Lists.newArrayList(DATA_TREE_MODIFICATION));
-        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).delete(DUMMY_NETWORK);
+        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).delete(DUMMY_NETWORK_BEFORE);
     }
 
     /**
@@ -91,11 +97,12 @@ public class DelegatingDataTreeListenerTest {
     @Test
     public void onDataTreeChangedTest_subtreeModified() {
         Mockito.when(DATA_TREE_MODIFICATION.getRootNode()).thenReturn(DATA_OBJECT_MODIFICATION);
-        Mockito.when(DATA_OBJECT_MODIFICATION.getDataAfter()).thenReturn(DUMMY_NETWORK);
+        Mockito.when(DATA_OBJECT_MODIFICATION.getDataBefore()).thenReturn(DUMMY_NETWORK_BEFORE);
+        Mockito.when(DATA_OBJECT_MODIFICATION.getDataAfter()).thenReturn(DUMMY_NETWORK_AFTER);
         Mockito.when(DATA_OBJECT_MODIFICATION.getModificationType())
                 .thenReturn(DataObjectModification.ModificationType.SUBTREE_MODIFIED);
 
         networkDelegatingDataTreeListener.onDataTreeChanged(Lists.newArrayList(DATA_TREE_MODIFICATION));
-        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).update(DUMMY_NETWORK);
+        Mockito.verify(DATA_PROCESSOR_NETWORK_MOCK).update(DUMMY_NETWORK_BEFORE, DUMMY_NETWORK_AFTER);
     }
 }

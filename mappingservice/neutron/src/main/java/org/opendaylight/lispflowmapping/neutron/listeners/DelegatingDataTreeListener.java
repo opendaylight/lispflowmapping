@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.neutron;
+package org.opendaylight.lispflowmapping.neutron.listeners;
 
 import com.google.common.base.Preconditions;
 import java.util.Collection;
@@ -15,6 +15,11 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
+import org.opendaylight.lispflowmapping.neutron.ILispNeutronService;
+import org.opendaylight.lispflowmapping.neutron.dataprocessors.DataProcessor;
+import org.opendaylight.lispflowmapping.neutron.dataprocessors.NetworkDataProcessor;
+import org.opendaylight.lispflowmapping.neutron.dataprocessors.PortDataProcessor;
+import org.opendaylight.lispflowmapping.neutron.dataprocessors.SubnetDataProcessor;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.networks.rev150712.networks.attributes.networks.Network;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.subnets.Subnet;
@@ -59,15 +64,16 @@ public class DelegatingDataTreeListener<T extends DataObject> implements Cluster
             if (mod.getModificationType() == DataObjectModification.ModificationType.WRITE) {
                 T object = mod.getDataAfter();
                 dataProcessor.create(object);
-                LOG.info(object.toString() + " created.");
+                LOG.info("{} created.", object.toString());
             } else if (mod.getModificationType() == DataObjectModification.ModificationType.DELETE) {
                 T object = mod.getDataBefore();
                 dataProcessor.delete(object);
-                LOG.info(object.toString() + " removed.");
+                LOG.info("{} removed.", object.toString());
             } else {
-                T object = mod.getDataAfter();
-                dataProcessor.update(object);
-                LOG.info(object.toString() + " updated.");
+                T objectBefore = mod.getDataBefore();
+                T objectAfter = mod.getDataAfter();
+                dataProcessor.update(objectBefore, objectAfter);
+                LOG.info("{} updated to {}", objectBefore.toString(), objectAfter.toString());
             }
         }
     }
