@@ -27,7 +27,7 @@ public class HostIdToRlocMapper {
         mapper = new ConcurrentHashMap();
     }
 
-    public synchronized void addMapping(String hostId, Rloc hostRloc) {
+    public synchronized void addRlocToHost(String hostId, Rloc hostRloc) {
         List<Rloc> hostIdSpeceficRlocs = mapper.get(hostId);
 
         if (hostIdSpeceficRlocs == null) {
@@ -43,7 +43,7 @@ public class HostIdToRlocMapper {
         return mapper.get(hostId);
     }
 
-    public synchronized void deleteMapping(String hostId) {
+    public synchronized void deleteRlocs(String hostId) {
         //for now, delete all rlocs
         mapper.remove(hostId);
     }
