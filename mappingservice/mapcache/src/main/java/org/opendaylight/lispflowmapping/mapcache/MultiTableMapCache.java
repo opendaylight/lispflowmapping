@@ -131,7 +131,7 @@ public class MultiTableMapCache implements IMapCache {
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {
-            return null;
+            return MaskUtil.normalize(key, (short) 0);
         }
         return table.getWidestNegativePrefix(key);
     }

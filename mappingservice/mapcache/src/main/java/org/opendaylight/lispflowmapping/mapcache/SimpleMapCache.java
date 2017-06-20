@@ -167,7 +167,7 @@ public class SimpleMapCache implements ILispMapCache {
     public Eid getWidestNegativeMapping(Eid eid) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
-            return null;
+            return MaskUtil.normalize(eid, (short) 0);
         }
         return table.getWidestNegativePrefix(MaskUtil.normalize(eid));
     }
