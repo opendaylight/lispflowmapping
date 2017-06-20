@@ -127,11 +127,12 @@ public class MultiTableMapCache implements IMapCache {
         return getMappingLpmSD(srcEid, dstEid, table);
     }
 
+    // Returns null for positive mappings, and 0/0 for empty cache.
     @Override
     public Eid getWidestNegativeMapping(Eid key) {
         ILispDAO table = getVniTable(key);
         if (table == null) {
-            return null;
+            return MaskUtil.normalize(key, (short) 0);
         }
         return table.getWidestNegativePrefix(key);
     }
