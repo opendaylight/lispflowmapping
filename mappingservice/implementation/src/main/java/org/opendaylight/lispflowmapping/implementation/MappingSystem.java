@@ -436,11 +436,17 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public Eid getWidestNegativePrefix(Eid key) {
         Eid nbPrefix = pmc.getWidestNegativeMapping(key);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWidestNegativePrefix NB: {}", LispAddressStringifier.getString(nbPrefix));
+        }
         if (nbPrefix == null) {
             return null;
         }
 
         Eid sbPrefix = smc.getWidestNegativeMapping(key);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWidestNegativePrefix SB: {}", LispAddressStringifier.getString(sbPrefix));
+        }
         if (sbPrefix == null) {
             return null;
         }

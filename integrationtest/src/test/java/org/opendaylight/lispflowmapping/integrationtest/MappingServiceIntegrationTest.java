@@ -428,6 +428,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         // https://bugs.opendaylight.org/show_bug.cgi?id=8679
         testBug8679();
+
+        // https://bugs.opendaylight.org/show_bug.cgi?id=8506
+        testBug8506();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
@@ -602,6 +605,19 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "11.0.0.0/8");
         assertEquals(expectedNegativePrefix, mapReply.getMappingRecordItem().get(0).getMappingRecord().getEid());
         assertTrue(MappingRecordUtil.isNegativeMapping(mapReply.getMappingRecordItem().get(0).getMappingRecord()));
+    }
+
+    private void testBug8506() {
+        cleanUP();
+
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "11.0.0.0/8");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        insertSBMappings(1L, "192.168.32.0/19");
     }
 
     private void insertMappings() {
