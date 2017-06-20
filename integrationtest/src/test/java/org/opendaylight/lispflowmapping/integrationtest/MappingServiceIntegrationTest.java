@@ -419,15 +419,21 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     @Test
-    public void testNegativePrefix_gapIntersection() throws UnknownHostException {
+    public void testNbAndSbNegativePrefix() throws UnknownHostException {
         insertMappings();
         testGapIntersection();
 
         insertMappings();
         testMultipleMappings();
+    }
 
+    @Test
+    public void testExplicitSbNegativePrefixes() {
         // https://bugs.opendaylight.org/show_bug.cgi?id=8679
         testNegativePrefix();
+
+        // https://bugs.opendaylight.org/show_bug.cgi?id=9023
+        testPositiveMappingRemoval();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
@@ -620,6 +626,46 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
     }
 
+    private void testPositiveMappingRemoval() {
+        cleanUP();
+
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        insertSBMappings(1L, "192.168.32.0/19");
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/19");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.64.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.64.0/18");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.128.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.128.0/17");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        printMapCacheState();
+
+        mapService.removeMapping(MappingOrigin.Southbound, LispAddressUtil.asIpv4PrefixBinaryEid(
+                1L, "192.168.32.0/19"));
+
+        printMapCacheState();
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.32.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        printMapCacheState();
+    }
+
     private void insertMappings() {
         cleanUP();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
@@ -632,15 +678,19 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void insertNBMappings(long iid, String ... prefixes) {
+        LOG.debug("Adding Northbound mappings for prefixes: {}", prefixes);
         final InstanceIdType iiType = new InstanceIdType(iid);
         for (String prefix : prefixes) {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null,
                     new MappingData(MappingOrigin.Northbound, record));
         }
+        sleepForMilliseconds(25);
+        printMapCacheState();
     }
 
     private void insertSBMappings(long iid, String ... prefixes) {
+        LOG.debug("Adding Southbound mappings for prefixes: {}", prefixes);
         final InstanceIdType iiType = new InstanceIdType(iid);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iiType);
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
@@ -650,6 +700,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             mapService.addMapping(MappingOrigin.Southbound, record.getEid(), null,
                     new MappingData(MappingOrigin.Southbound, record, System.currentTimeMillis()));
         }
+        printMapCacheState();
+    }
+
+    private void printMapCacheState() {
+        LOG.debug("Map-cache state:\n{}", mapService.prettyPrintMappings());
     }
 
     /**
@@ -666,6 +721,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setLocatorRecord(Lists.newArrayList(new LocatorRecordBuilder()
                         .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2"))
                         .setLocatorId("loc_id")
+                        .setRouted(true)
                         .setPriority((short) 1)
                         .setWeight((short) 1).build()))
                 .setTimestamp(System.currentTimeMillis())
