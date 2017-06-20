@@ -435,14 +435,29 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public Eid getWidestNegativePrefix(Eid key) {
+        if (!MaskUtil.isMaskable(key.getAddress())) {
+            LOG.warn("Widest negative prefix only makes sense for maskable addresses!");
+            return null;
+        }
+
+        // We assume that ILispMapCache#getWidestNegativeMapping() returns null for positive mappings, and 0/0
+        // for empty cache.
         Eid nbPrefix = pmc.getWidestNegativeMapping(key);
         if (nbPrefix == null) {
+            LOG.trace("getWidestNegativePrefix NB: positive mapping, returning null");
             return null;
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWidestNegativePrefix NB: {}", LispAddressStringifier.getString(nbPrefix));
         }
 
         Eid sbPrefix = smc.getWidestNegativeMapping(key);
         if (sbPrefix == null) {
+            LOG.trace("getWidestNegativePrefix SB: positive mapping, returning null");
             return null;
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getWidestNegativePrefix SB: {}", LispAddressStringifier.getString(sbPrefix));
         }
 
         // since prefixes overlap, just return the more specific (larger mask)

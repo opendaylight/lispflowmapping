@@ -473,6 +473,11 @@ public final class LispAddressUtil {
         return asIpv4PrefixBinaryEid(prefix, null);
     }
 
+    public static Eid asIpv4PrefixBinaryEid(long vni, final String prefix) {
+        InstanceIdType iid = new InstanceIdType(vni);
+        return asIpv4PrefixBinaryEid(prefix, iid);
+    }
+
     public static Eid asIpv4PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
         String address = MaskUtil.getPrefixAddress(prefix);
         short mask = Short.valueOf(MaskUtil.getPrefixMask(prefix));
@@ -527,6 +532,11 @@ public final class LispAddressUtil {
 
     public static Eid asIpv6PrefixBinaryEid(final String prefix) {
         return asIpv6PrefixBinaryEid(prefix, null);
+    }
+
+    public static Eid asIpv6PrefixBinaryEid(long vni, final String prefix) {
+        InstanceIdType iid = new InstanceIdType(vni);
+        return asIpv6PrefixBinaryEid(prefix, iid);
     }
 
     public static Eid asIpv6PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
