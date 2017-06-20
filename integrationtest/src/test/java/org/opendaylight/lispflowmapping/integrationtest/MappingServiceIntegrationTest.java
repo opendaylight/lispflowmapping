@@ -68,6 +68,7 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
@@ -424,6 +425,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         insertMappings();
         testMultipleMappings();
+
+        // https://bugs.opendaylight.org/show_bug.cgi?id=8679
+        testBug8679();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
@@ -574,14 +578,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      * Tests a negative mapping from an intersection of gaps in northbound and southbound.
      */
     private void testGapIntersection() throws UnknownHostException {
-        final InstanceIdType iid = new InstanceIdType(1L);
-
         // request an Eid from a gap between mappings
-        final MapRequest mapRequest = new MapRequestBuilder().setSmrInvoked(false).setEidItem(Lists.newArrayList(
-                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid("1.1.127.10/32", iid))
-                        .build()))
-                .build();
-        final MapReply mapReply = lms.handleMapRequest(mapRequest);
+        final MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "1.1.127.10/32"));
 
         // expected negative mapping
         final Address resultNegMapping = new Ipv4PrefixBinaryBuilder()
@@ -591,36 +589,50 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .getAddress());
     }
 
+    private void testBug8679() {
+        cleanUP();
+
+        insertNBMappings(1L, "192.0.2.0/24");
+        insertSBMappings(1L, "10.0.0.0/32");
+
+        restartSocket();
+        sleepForSeconds(2);
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "11.1.1.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "11.0.0.0/8");
+        assertEquals(expectedNegativePrefix, mapReply.getMappingRecordItem().get(0).getMappingRecord().getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mapReply.getMappingRecordItem().get(0).getMappingRecord()));
+    }
+
     private void insertMappings() {
         cleanUP();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
-        final InstanceIdType iid = new InstanceIdType(1L);
-        final String prefixNbLeft = "1.2.0.0/16";
-        final String prefixNbRight = "1.1.128.0/17";
-        final String prefixSbLeft = "1.1.32.0/19";
-        final String prefixSbRight = "1.0.0.0/8";
-
-        final MappingRecord mapRecordNbLeft = newMappingRecord(prefixNbLeft, iid);
-        final MappingRecord mapRecordNbRight = newMappingRecord(prefixNbRight, iid);
-        final MappingRecord mapRecordSbLeft = newMappingRecord(prefixSbLeft, iid);
-        final MappingRecord mapRecordSbRight = newMappingRecord(prefixSbRight, iid);
-
-        /* set auth */
-        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iid);
-        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-
-        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbLeft.getEid(), null,
-                new MappingData(mapRecordNbLeft));
-        mapService.addMapping(MappingOrigin.Northbound, mapRecordNbRight.getEid(), null,
-                new MappingData(mapRecordNbRight));
-        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbLeft.getEid(), null,
-                new MappingData(mapRecordSbLeft, System.currentTimeMillis()));
-        mapService.addMapping(MappingOrigin.Southbound, mapRecordSbRight.getEid(), null,
-                new MappingData(mapRecordSbRight, System.currentTimeMillis()));
+        insertNBMappings(1L, "1.2.0.0/16", "1.1.128.0/17");
+        insertSBMappings(1L, "1.1.32.0/19", "1.0.0.0/8");
 
         restartSocket();
         sleepForSeconds(2);
+    }
+
+    private void insertNBMappings(long iid, String ... prefixes) {
+        final InstanceIdType iiType = new InstanceIdType(iid);
+        for (String prefix : prefixes) {
+            MappingRecord record = newMappingRecord(prefix, iiType);
+            mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
+        }
+    }
+
+    private void insertSBMappings(long iid, String ... prefixes) {
+        final InstanceIdType iiType = new InstanceIdType(iid);
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iiType);
+        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
+
+        for (String prefix : prefixes) {
+            MappingRecord record = newMappingRecord(prefix, iiType);
+            mapService.addMapping(MappingOrigin.Southbound, record.getEid(), null,
+                    new MappingData(record, System.currentTimeMillis()));
+        }
     }
 
     /**
@@ -637,9 +649,19 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 .setLocatorRecord(Lists.newArrayList(new LocatorRecordBuilder()
                         .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2"))
                         .setLocatorId("loc_id")
-                        .setPriority((short) 1).build()))
+                        .setPriority((short) 1)
+                        .setWeight((short) 1).build()))
                 .setTimestamp(System.currentTimeMillis())
                 .setRecordTtl(1440).build();
+    }
+
+    private MapRequest newMapRequest(long iid, String prefix) {
+        final InstanceIdType iidt = new InstanceIdType(iid);
+        return new MapRequestBuilder()
+                .setSmrInvoked(false)
+                .setEidItem(Lists.newArrayList(
+                        new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix, iidt)).build()))
+                .build();
     }
 
     /**
