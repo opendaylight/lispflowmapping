@@ -11,8 +11,10 @@ package org.opendaylight.lispflowmapping.implementation;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
@@ -202,6 +204,8 @@ public class MappingSystem implements IMappingSystem {
     public MappingData addNegativeMapping(Eid key) {
         MappingRecord mapping = buildNegativeMapping(key);
         MappingData mappingData = new MappingData(MappingOrigin.Southbound, mapping);
+        LOG.debug("Adding negative mapping for EID {}", LispAddressStringifier.getString(key));
+        LOG.trace(mappingData.getString());
         smc.addMapping(mapping.getEid(), mappingData);
         dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(), null, mappingData));
         return mappingData;
@@ -478,8 +482,17 @@ public class MappingSystem implements IMappingSystem {
         Set<Subscriber> dstSubscribers = null;
         MappingData mapping = (MappingData) tableMap.get(origin).getMapping(null, key);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing mapping for EID {} from {}",
+                    LispAddressStringifier.getString(key), origin);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(mapping.getString());
+        }
+
+        MappingData notificationMapping = mapping;
+
         if (mapping != null) {
-            MappingData notificationMapping = mapping;
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
@@ -490,7 +503,6 @@ public class MappingSystem implements IMappingSystem {
                             new MappingRecordBuilder().setEid(key).build());
                 }
             }
-            notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
         if (origin == MappingOrigin.Northbound) {
@@ -499,11 +511,18 @@ public class MappingSystem implements IMappingSystem {
 
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
-            if (mapping != null && mapping.isPositive().or(false)) {
-                mergeNegativePrefixes(key);
-            }
         }
-        tableMap.get(origin).removeMapping(key);
+
+        if (origin == MappingOrigin.Southbound && mapping != null && mapping.isPositive().or(false)) {
+            mergeNegativePrefixes(key);
+        } else {
+            // mergeNegativePrefixes() above removes the mapping, so addNegativeMapping() will work correctly
+            tableMap.get(origin).removeMapping(key);
+        }
+
+        if (notificationMapping != null) {
+            notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
+        }
     }
 
     private void notifyChange(MappingData mapping, Set<Subscriber> subscribers, Set<Subscriber> dstSubscribers,
@@ -522,26 +541,38 @@ public class MappingSystem implements IMappingSystem {
      * Merges adjacent negative prefixes and notifies their subscribers.
      */
     private void mergeNegativePrefixes(Eid eid) {
-        // If prefix sibling has a negative mapping, save its subscribers
-        Eid sibling = smc.getSiblingPrefix(eid);
-        MappingData mapping = (MappingData) smc.getMapping(null, sibling);
+        LOG.debug("Merging negative prefixes starting from EID {}", LispAddressStringifier.getString(eid));
+
+        // If we delete nodes while we walk up the radix trie the algorithm will give incorrect results, because
+        // removals rearrange relationships in the trie. So we save prefixes to be removed into a HashMap.
+        Map<Eid, MappingData> mergedMappings = new HashMap<>();
+
+        Eid currentNode = smc.getSiblingPrefix(eid);
+        MappingData mapping = (MappingData) smc.getMapping(null, currentNode);
         if (mapping != null && mapping.isNegative().or(false)) {
-            removeSbMapping(sibling, mapping);
+            mergedMappings.put(currentNode, mapping);
         } else {
             return;
         }
 
-        Eid currentNode = sibling;
-        Eid previousNode = sibling;
-        while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
+        Eid previousNode = currentNode;
+        currentNode = smc.getVirtualParentSiblingPrefix(currentNode);
+        while (currentNode != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
             if (mapping != null && mapping.isNegative().or(false)) {
-                removeSbMapping(currentNode, mapping);
+                mergedMappings.put(currentNode, mapping);
             } else {
                 break;
             }
             previousNode = currentNode;
+            currentNode = smc.getVirtualParentSiblingPrefix(previousNode);
         }
+
+        for (Eid key : mergedMappings.keySet()) {
+            removeSbMapping(key, mergedMappings.get(key));
+        }
+        smc.removeMapping(eid);
+
         addNegativeMapping(getVirtualParent(previousNode));
     }
 
