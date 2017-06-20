@@ -164,10 +164,12 @@ public class SimpleMapCache implements ILispMapCache {
         return null;
     }
 
+    // Returns null for positive mappings, and 0/0 for empty cache.
+    @Override
     public Eid getWidestNegativeMapping(Eid eid) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
-            return null;
+            return MaskUtil.normalize(eid, (short) 0);
         }
         return table.getWidestNegativePrefix(MaskUtil.normalize(eid));
     }
