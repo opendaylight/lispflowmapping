@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa2559ec_5911afab",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-06-21T20:13:27Z",
+      "side": 1,
+      "message": "Maybe testNegativePrefix()? the bug number as comment is great but not sure if it is a good convention for test case naming.",
+      "range": {
+        "startLine": 430,
+        "startChar": 12,
+        "endLine": 430,
+        "endChar": 19
+      },
+      "revId": "ce6a214368b82057fd66b5e9d9a6425c5ee611c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa2559ec_d9e11f9c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-06-21T20:13:27Z",
+      "side": 1,
+      "message": "Can you please add this comment to top of the methods themselves as well (in Simple/MultiTable MapChaces). Thanks",
+      "range": {
+        "startLine": 443,
+        "startChar": 0,
+        "endLine": 443,
+        "endChar": 110
+      },
+      "revId": "ce6a214368b82057fd66b5e9d9a6425c5ee611c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
