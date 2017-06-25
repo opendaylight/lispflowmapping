@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "fa2559ec_92876e0f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/type/MappingData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-06-25T19:39:59Z",
+      "side": 1,
+      "message": "Yes, I came to the same conclusion and in fact this patch moves it to API (see file name change above). I need it in API though, and not MS or IMDB, because we do use MappingData in several of the interfaces.",
+      "parentUuid": "fa2559ec_8cec75c9",
+      "revId": "ad5a81728ac5478e77b09f164d49f026a2646d1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa2559ec_ec7b7127",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 132,
         "endChar": 13
       },
+      "revId": "ad5a81728ac5478e77b09f164d49f026a2646d1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa2559ec_f27b4a27",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-06-25T19:39:59Z",
+      "side": 1,
+      "message": "Hmm, I don\u0027t see here how could we overwrite the new mapping with the old one...",
+      "parentUuid": "fa2559ec_ec7b7127",
       "revId": "ad5a81728ac5478e77b09f164d49f026a2646d1c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
