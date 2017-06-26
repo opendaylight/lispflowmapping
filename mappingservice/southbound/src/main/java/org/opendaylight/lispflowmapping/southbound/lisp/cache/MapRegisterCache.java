@@ -46,7 +46,7 @@ public class MapRegisterCache {
         }
     }
 
-    public MapRegisterCacheValue refreshEntry(final MapRegisterCacheKey mapRegisterCacheKey) {
+    public synchronized MapRegisterCacheValue refreshEntry(final MapRegisterCacheKey mapRegisterCacheKey) {
         final MapRegisterCacheValue mapRegisterCacheValueOld = getEntry(mapRegisterCacheKey);
         final MapRegisterCacheMetadata mapRegisterCacheMetadataOld = mapRegisterCacheValueOld
                 .getMapRegisterCacheMetadata();
