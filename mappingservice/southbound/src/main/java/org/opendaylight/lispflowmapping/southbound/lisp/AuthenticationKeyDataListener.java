@@ -38,8 +38,8 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
     private final DataBroker broker;
     private final InstanceIdentifier<AuthenticationKey> path;
     private ListenerRegistration<ClusteredDataTreeChangeListener<AuthenticationKey>> registration;
-    private boolean authKeyRefreshing = false;
-    private long authKeyRefreshingDate;
+    private volatile boolean authKeyRefreshing = false;
+    private volatile long authKeyRefreshingDate;
 
 
     public AuthenticationKeyDataListener(final DataBroker broker, final AuthKeyDb akdb) {
