@@ -13,17 +13,17 @@ import java.lang.reflect.Field;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LispSouthboundStatsTest {
+public class ConcurrentLispSouthboundStatsTest {
 
-    private static LispSouthboundStats lispSouthboundStats;
+    private static ConcurrentLispSouthboundStats lispSouthboundStats;
 
     @Before
     public void init() {
-        lispSouthboundStats = new LispSouthboundStats();
+        lispSouthboundStats = new ConcurrentLispSouthboundStats();
     }
 
     /**
-     * Tests {@link LispSouthboundStats#resetStats} method.
+     * Tests {@link ConcurrentLispSouthboundStats#resetStats} method.
      */
 
     @Test
@@ -37,7 +37,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementRx} method.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementRx} method.
      */
     @Test
     public void incrementRxTest() {
@@ -54,7 +54,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementRx} method.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementRx} method.
      */
     @Test
     public void incrementRxTest_withMaxValue() throws NoSuchFieldException, IllegalAccessException {
@@ -72,7 +72,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementTx} method.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementTx} method.
      */
     @Test
     public void incrementTxTest() {
@@ -89,7 +89,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementRxUnknown} method.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementRxUnknown} method.
      */
     @Test
     public void incrementRxUnknownTest() throws NoSuchFieldException, IllegalAccessException {
@@ -100,7 +100,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementRxUnknown} method with Long.MAX_VALUE.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementRxUnknown} method with Long.MAX_VALUE.
      */
     @Test
     public void incrementRxUnknownTest_withMaxValue() throws NoSuchFieldException, IllegalAccessException {
@@ -111,7 +111,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementTxErrors} method.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementTxErrors} method.
      */
     @Test
     public void incrementTxErrorsTest() throws NoSuchFieldException, IllegalAccessException {
@@ -122,7 +122,7 @@ public class LispSouthboundStatsTest {
     }
 
     /**
-     * Tests {@link LispSouthboundStats#incrementTxErrors} method with Long.MAX_VALUE.
+     * Tests {@link ConcurrentLispSouthboundStats#incrementTxErrors} method with Long.MAX_VALUE.
      */
     @Test
     public void incrementTxErrorsTest_withMaxValue() throws NoSuchFieldException, IllegalAccessException {
@@ -133,19 +133,19 @@ public class LispSouthboundStatsTest {
     }
 
     private static void setRxField(long[] array) throws NoSuchFieldException, IllegalAccessException {
-        Field rx = LispSouthboundStats.class.getDeclaredField("rx");
+        Field rx = ConcurrentLispSouthboundStats.class.getDeclaredField("rx");
         rx.setAccessible(true);
         rx.set(lispSouthboundStats, array);
     }
 
     private static void setRxUnkownField(long value) throws NoSuchFieldException, IllegalAccessException {
-        Field rxUnknown = LispSouthboundStats.class.getDeclaredField("rxUnknown");
+        Field rxUnknown = ConcurrentLispSouthboundStats.class.getDeclaredField("rxUnknown");
         rxUnknown.setAccessible(true);
         rxUnknown.set(lispSouthboundStats, value);
     }
 
     private static void setTxErrorsField(long value) throws NoSuchFieldException, IllegalAccessException {
-        Field txErrors = LispSouthboundStats.class.getDeclaredField("txErrors");
+        Field txErrors = ConcurrentLispSouthboundStats.class.getDeclaredField("txErrors");
         txErrors.setAccessible(true);
         txErrors.set(lispSouthboundStats, value);
     }
