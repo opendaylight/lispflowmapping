@@ -26,6 +26,7 @@ public final class ConfigIni {
     private long smrTimeout;
     private int smrRetryCount;
     private boolean authEnabled;
+    private int negativeMappingTTL;
     private int numberOfBucketsInTimeBucketWheel;
 
     /*
@@ -46,11 +47,13 @@ public final class ConfigIni {
     private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
     private static final String LISP_AUTH_ENABLED = "lisp.authEnabled";
+    private static final String LISP_NEGATIVE_MAPPING_TTL = "lisp.negativeMappingTTL";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
     private static final long MIN_REGISTRATION_VALIDITY_SB = 200000L;
     private static final long DEFAULT_SMR_TIMEOUT = 3000L;
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
+    private static final int DEFAULT_NEGATIVE_MAPPING_TTL = 1440;
     private static final int MIN_NUMBER_OF_BUCKETS_IN_TIME_BUCKET_WHEEL = 2;
     private static final int TIMEOUT_TOLERANCE_MULTIPLIER_IN_TIME_BUCKET_WHEEL = 2;
 
@@ -82,6 +85,7 @@ public final class ConfigIni {
         initSmrRetryCount(context);
         initSmrTimeout(context);
         initAuthEnabled(context);
+        initNegativeMappingTTL(context);
         initBucketNumber();
     }
 
@@ -327,6 +331,34 @@ public final class ConfigIni {
         }
     }
 
+    private void initNegativeMappingTTL(BundleContext context) {
+        // set the default value first
+        this.negativeMappingTTL = DEFAULT_NEGATIVE_MAPPING_TTL;
+
+        String str = null;
+
+        if (context != null) {
+            str = context.getProperty(LISP_NEGATIVE_MAPPING_TTL);
+        }
+
+        if (str == null) {
+            str = System.getProperty(LISP_NEGATIVE_MAPPING_TTL);
+            if (str == null) {
+                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'",
+                        LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
+                return;
+            }
+        }
+
+        try {
+            this.negativeMappingTTL = Integer.valueOf(str);
+            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
+        } catch (NumberFormatException e) {
+            LOG.debug("Configuration variable '{}' was not set correctly. Negative TTL "
+                    + "is set to default value ({} minutes)", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
+        }
+    }
+
     //one bucket should contain mapping of approximate 1 min time frame
     private void initBucketNumber() {
         numberOfBucketsInTimeBucketWheel = (int) (TimeUnit.MILLISECONDS.toMinutes(getRegistrationValiditySb()) + 1);
@@ -401,6 +433,15 @@ public final class ConfigIni {
     public void setAuthEnabled(boolean authEnabled) {
         LOG.debug("Setting configuration variable '{}' to '{}'", LISP_AUTH_ENABLED, authEnabled);
         this.authEnabled = authEnabled;
+    }
+
+    public void setNegativeMappingTTL(int negativeMappingTTL) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
+        this.negativeMappingTTL = negativeMappingTTL;
+    }
+
+    public int getNegativeMappingTTL() {
+        return this.negativeMappingTTL;
     }
 
     public int getNumberOfBucketsInTimeBucketWheel() {
