@@ -80,8 +80,8 @@ import org.slf4j.LoggerFactory;
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private static final String AUTH_KEY_TABLE = "authentication";
-    private static final int TTL_RLOC_TIMED_OUT = 1;
-    private static final int TTL_NO_RLOC_KNOWN = 15;
+    //private static final int TTL_RLOC_TIMED_OUT = 1;
+    private static final int TTL_NO_RLOC_KNOWN = ConfigIni.getInstance().getNegativeMappingTTL();
     private NotificationPublishService notificationPublishService;
     private boolean mappingMerge;
     private ILispDAO dao;
@@ -221,11 +221,11 @@ public class MappingSystem implements IMappingSystem {
             }
         }
         recordBuilder.setAction(LispMessage.NEGATIVE_MAPPING_ACTION);
-        if (getAuthenticationKey(eid) != null) {
-            recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
-        } else {
-            recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
-        }
+        //if (getAuthenticationKey(eid) != null) {
+        //    recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+        //} else {
+        recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+        //}
         return recordBuilder.build();
     }
 
