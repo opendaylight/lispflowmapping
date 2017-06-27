@@ -26,6 +26,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <modules>
     <module>features-lispflowmapping</module>
+    <!--
     <module>features4-lispflowmapping</module>
     <module>odl-lispflowmapping-models</module>
     <module>odl-lispflowmapping-inmemorydb</module>
@@ -35,5 +36,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <module>odl-lispflowmapping-mappingservice-shell</module>
     <module>odl-lispflowmapping-neutron</module>
     <module>odl-lispflowmapping-ui</module>
+    -->
   </modules>
 </project>
