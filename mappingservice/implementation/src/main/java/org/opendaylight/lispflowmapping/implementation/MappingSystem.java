@@ -476,16 +476,17 @@ public class MappingSystem implements IMappingSystem {
         MappingData mapping = (MappingData) tableMap.get(origin).getMapping(null, key);
 
         if (mapping != null) {
+            MappingData notificationMapping = mapping;
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
                 dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
-                    mapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
+                    notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
                 }
             }
-            notifyChange(mapping, subscribers, dstSubscribers, MappingChange.Removed);
+            notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
         if (origin == MappingOrigin.Northbound) {

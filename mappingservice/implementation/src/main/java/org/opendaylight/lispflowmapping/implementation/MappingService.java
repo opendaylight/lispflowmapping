@@ -306,6 +306,9 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
+        if (origin.equals(MappingOrigin.Southbound)) {
+            mappingSystem.removeMapping(origin, key);
+        }
         dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }
 
