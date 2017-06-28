@@ -8,7 +8,6 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
@@ -417,13 +416,17 @@ public class MappingSystem implements IMappingSystem {
         dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
     }
 
+    @SuppressWarnings("unchecked")
     private void removeSbMapping(Eid key, MappingData mappingData) {
         if (mappingData != null && mappingData.getXtrId() != null) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
         }
+
         removeFromSbTimeoutService(key);
+        Set<Subscriber> subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
         smc.removeMapping(key);
         dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
+        notifyChange(mappingData, subscribers, null, MappingChange.Removed);
     }
 
     private void removeFromSbTimeoutService(Eid key) {
@@ -476,16 +479,17 @@ public class MappingSystem implements IMappingSystem {
         MappingData mapping = (MappingData) tableMap.get(origin).getMapping(null, key);
 
         if (mapping != null) {
+            MappingData notificationMapping = mapping;
             subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
                 dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
-                    mapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
+                    notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
                 }
             }
-            notifyChange(mapping, subscribers, dstSubscribers, MappingChange.Removed);
+            notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
         if (origin == MappingOrigin.Northbound) {
@@ -495,12 +499,7 @@ public class MappingSystem implements IMappingSystem {
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
             if (mapping != null && mapping.isPositive().or(false)) {
-                SimpleImmutableEntry<Eid, Set<Subscriber>> mergedNegativePrefix = computeMergedNegativePrefix(key);
-                if (mergedNegativePrefix != null) {
-                    addNegativeMapping(mergedNegativePrefix.getKey());
-                    subscribers = mergedNegativePrefix.getValue();
-                    notifyChange(mapping, subscribers, null, MappingChange.Created);
-                }
+                mergeNegativePrefixes(key);
             }
         }
         tableMap.get(origin).removeMapping(key);
@@ -518,21 +517,17 @@ public class MappingSystem implements IMappingSystem {
     }
 
 
-    @SuppressWarnings("unchecked")
     /*
-     * Returns the "merged" prefix and the subscribers of the prefixes that were merged.
+     * Merges adjacent negative prefixes and notifies their subscribers.
      */
-    private SimpleImmutableEntry<Eid, Set<Subscriber>> computeMergedNegativePrefix(Eid eid) {
-        // Variable to hold subscribers we collect along the way
-        Set<Subscriber> subscribers = null;
-
+    private void mergeNegativePrefixes(Eid eid) {
         // If prefix sibling has a negative mapping, save its subscribers
         Eid sibling = smc.getSiblingPrefix(eid);
         MappingData mapping = (MappingData) smc.getMapping(null, sibling);
         if (mapping != null && mapping.isNegative().or(false)) {
-            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, eid, SubKeys.SUBSCRIBERS);
+            removeSbMapping(sibling, mapping);
         } else {
-            return null;
+            return;
         }
 
         Eid currentNode = sibling;
@@ -540,15 +535,13 @@ public class MappingSystem implements IMappingSystem {
         while ((currentNode = smc.getVirtualParentSiblingPrefix(currentNode)) != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
             if (mapping != null && mapping.isNegative().or(false)) {
-                subscribers.addAll((Set<Subscriber>)
-                        getData(MappingOrigin.Southbound, currentNode, SubKeys.SUBSCRIBERS));
                 removeSbMapping(currentNode, mapping);
             } else {
                 break;
             }
             previousNode = currentNode;
         }
-        return new SimpleImmutableEntry<>(getVirtualParent(previousNode), subscribers);
+        addNegativeMapping(getVirtualParent(previousNode));
     }
 
     private static Eid getVirtualParent(Eid eid) {
@@ -683,10 +676,6 @@ public class MappingSystem implements IMappingSystem {
         buildMapCaches();
     }
 
-    /*
-     * XXX  Mappings and keys should be separated for this to work properly, as is it will remove northbound originated
-     * authentication keys too, since they are currently stored in smc.
-     */
     public void cleanSBMappings() {
         smc = new SimpleMapCache(sdao);
     }
