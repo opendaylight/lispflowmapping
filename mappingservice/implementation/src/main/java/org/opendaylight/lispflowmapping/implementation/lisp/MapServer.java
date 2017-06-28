@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -104,9 +105,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
-        boolean oldMappingRemoved = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
-        Set<Subscriber> subscribers = null;
+        Set<Subscriber> subscribers = Sets.newConcurrentHashSet();
         MappingRecord oldMapping;
 
         if (merge) {
@@ -127,9 +127,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
             oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid));
             mapService.addMapping(MappingOrigin.Southbound, eid, getSiteId(mapRegister), mappingData);
-            if (oldMapping != null && MappingRecordUtil.isNegativeMapping(oldMapping)) {
+            if (oldMapping != null &&
+                    MappingRecordUtil.isNegativeMapping(oldMapping) &&
+                    !oldMapping.getEid().equals(eid)) {
+                if (subscriptionService) {
+                    // Here we save the subscribers of the OLD mapping before removing. We will add to this set the
+                    // subscribers of the NEW mapping below (since the EIDs are different, the result of
+                    // mappingChanged() will be true, and then send an SMR to all subscribers with the EID of the NEW
+                    // mapping only. Sending an SMR with the OLD EID makes no sense, since there will be nothing there.
+                    subscribers.addAll(getSubscribers(oldMapping.getEid()));
+                    LoggingUtil.logSubscribers(LOG, oldMapping.getEid(), subscribers);
+                }
                 mapService.removeMapping(MappingOrigin.Southbound, oldMapping.getEid());
-                oldMappingRemoved = true;
             }
 
             if (subscriptionService) {
@@ -141,17 +150,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                         LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
                                 LispAddressStringifier.getString(mapping.getEid()));
                     }
-                    subscribers = getSubscribers(eid);
-                    if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
-                        subscribers = addParentSubscribers(eid, subscribers);
-                    }
+                    subscribers.addAll(getSubscribers(eid));
                     LoggingUtil.logSubscribers(LOG, eid, subscribers);
                     handleSmr(eid, subscribers);
-                    if (oldMapping != null && oldMappingRemoved && !oldMapping.getEid().equals(eid)) {
-                        subscribers = getSubscribers(oldMapping.getEid());
-                        LoggingUtil.logSubscribers(LOG, oldMapping.getEid(), subscribers);
-                        handleSmr(oldMapping.getEid(), subscribers);
-                    }
                     mappingUpdated = true;
                 }
             }
