@@ -180,7 +180,7 @@ public class MapServerTest {
                 .setAuthenticationData(null).build(), null);
 
         // only 1 subscriber has timed out.
-        assertEquals(1, subscriberSetMock_1.size());
+        assertEquals(2, subscriberSetMock_1.size());
     }
 
     @Test
@@ -329,7 +329,7 @@ public class MapServerTest {
 
         // for Ipv4 mapping
         final ArgumentCaptor<MapRequest> captor_3 = ArgumentCaptor.forClass(MapRequest.class);
-        Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_3.capture(), Mockito.eq(RLOC_6));
+        Mockito.verify(notifyHandler, Mockito.times(2)).handleSMR(captor_3.capture(), Mockito.eq(RLOC_6));
         final Eid resultEid_3 = captor_3.getValue().getEidItem().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_6, resultEid_3);
     }
