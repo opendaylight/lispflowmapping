@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_9d14a5f6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-06-29T22:41:19Z",
+      "side": 1,
+      "message": "not initialized!  need to bring back the new concurrentHash() that is removed above",
+      "range": {
+        "startLine": 138,
+        "startChar": 0,
+        "endLine": 138,
+        "endChar": 76
+      },
+      "revId": "efc010df6253bf34bde2bd4c3e8b5bf2cb11e43c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_5d318da1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-06-29T22:41:19Z",
+      "side": 1,
+      "message": "Parent\u0027s subscribers should also be added if the new prefix is a more specific. So if old eid is a less specific of the new eid, then the parent;s subscribers (i-e  the old-eid\u0027s subscribers should be added to the subscribers to be be notified.",
+      "range": {
+        "startLine": 153,
+        "startChar": 57,
+        "endLine": 153,
+        "endChar": 60
+      },
+      "revId": "efc010df6253bf34bde2bd4c3e8b5bf2cb11e43c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
