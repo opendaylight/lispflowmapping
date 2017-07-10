@@ -15,7 +15,7 @@
          for plugin configuration etc. -->
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
     <relativePath/>
   </parent>
 
@@ -28,7 +28,7 @@
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
-    <branding.version>2.0.0</branding.version>
+    <branding.version>2.0.2</branding.version>
     <build.suffix>1.0.0</build.suffix>
     <config.version>0.7.0-SNAPSHOT</config.version>
     <dlux.loader.version>0.6.0-SNAPSHOT</dlux.loader.version>
