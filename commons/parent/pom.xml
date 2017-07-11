@@ -15,38 +15,38 @@
          for plugin configuration etc. -->
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>1.8.1-SNAPSHOT</version>
+    <version>1.8.1-Carbon</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>lispflowmapping-commons</artifactId>
-  <version>1.5.1-SNAPSHOT</version>
+  <version>1.5.1-Carbon</version>
   <packaging>pom</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
-    <branding.version>1.8.1-SNAPSHOT</branding.version>
+    <branding.version>1.8.1-Carbon</branding.version>
     <build.suffix>1.0.0</build.suffix>
-    <config.version>0.6.1-SNAPSHOT</config.version>
-    <dlux.loader.version>0.5.1-SNAPSHOT</dlux.loader.version>
-    <dlux.core.version>0.5.1-SNAPSHOT</dlux.core.version>
+    <config.version>0.6.1-Carbon</config.version>
+    <dlux.loader.version>0.5.1-Carbon</dlux.loader.version>
+    <dlux.core.version>0.5.1-Carbon</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
     <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
-    <karaf.empty.version>1.8.1-SNAPSHOT</karaf.empty.version>
-    <karaf.resources.version>1.8.1-SNAPSHOT</karaf.resources.version>
-    <lispflowmapping.version>1.5.1-SNAPSHOT</lispflowmapping.version>
-    <mdsal.version>1.5.1-SNAPSHOT</mdsal.version>
-    <neutron.version>0.8.1-SNAPSHOT</neutron.version>
-    <nsf.version>0.8.1-SNAPSHOT</nsf.version>
-    <restconf.version>1.5.1-SNAPSHOT</restconf.version>
-    <sal.version>0.12.1-SNAPSHOT</sal.version>
+    <karaf.empty.version>1.8.1-Carbon</karaf.empty.version>
+    <karaf.resources.version>1.8.1-Carbon</karaf.resources.version>
+    <lispflowmapping.version>1.5.1-Carbon</lispflowmapping.version>
+    <mdsal.version>1.5.1-Carbon</mdsal.version>
+    <neutron.version>0.8.1-Carbon</neutron.version>
+    <nsf.version>0.8.1-Carbon</nsf.version>
+    <restconf.version>1.5.1-Carbon</restconf.version>
+    <sal.version>0.12.1-Carbon</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <yang.src.path>src/main/yang</yang.src.path>
-    <yangtools.version>1.1.1-SNAPSHOT</yangtools.version>
+    <yangtools.version>1.1.1-Carbon</yangtools.version>
   </properties>
 
   <dependencyManagement>
@@ -56,21 +56,21 @@
       <dependency>
        <groupId>org.opendaylight.yangtools</groupId>
        <artifactId>yangtools-artifacts</artifactId>
-       <version>1.1.1-SNAPSHOT</version>
+       <version>1.1.1-Carbon</version>
        <type>pom</type>
       <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>mdsal-artifacts</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>2.2.1-Carbon</version>
         <type>pom</type>
        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.mdsal.model</groupId>
         <artifactId>mdsal-model-artifacts</artifactId>
-        <version>0.10.1-SNAPSHOT</version>
+        <version>0.10.1-Carbon</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -92,7 +92,7 @@
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-api</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.6.1-Carbon</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-util</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.6.1-Carbon</version>
       </dependency>
 
       <dependency>
@@ -161,7 +161,7 @@
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>threadpool-config-impl</artifactId>
-        <version>0.6.1-SNAPSHOT</version>
+        <version>0.6.1-Carbon</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
