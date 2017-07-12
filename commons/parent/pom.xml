@@ -466,34 +466,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <!--
-      Maven Site Configuration
-
-      The following configuration is necessary for maven-site-plugin to
-      correctly identify the correct deployment path for OpenDaylight Maven
-      sites.
-  -->
-  <url>${odl.site.url}/${project.groupId}/${stream}/${project.artifactId}/</url>
-
-  <distributionManagement>
-    <!-- Note: We want the nexus proxy property here because want to enable
-         devs to upload this artifact using mvn deploy to other maven repositories. -->
-    <!-- OpenDayLight Released artifact -->
-    <repository>
-      <id>opendaylight-release</id>
-      <url>${nexusproxy}/repositories/opendaylight.release/</url>
-    </repository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <snapshotRepository>
-      <id>opendaylight-snapshot</id>
-      <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-    </snapshotRepository>
-    <!-- Site deployment -->
-    <site>
-      <id>opendaylight-site</id>
-      <url>${nexus.site.url}/${project.artifactId}/</url>
-    </site>
-  </distributionManagement>
-
 </project>
