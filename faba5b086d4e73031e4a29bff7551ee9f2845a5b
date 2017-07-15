@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_e684fcb2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-07-15T02:05:08Z",
+      "side": 1,
+      "message": "They will be SMRed anyways since removeMapping will do that.",
+      "range": {
+        "startLine": 137,
+        "startChar": 37,
+        "endLine": 137,
+        "endChar": 119
+      },
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_a6168453",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-07-15T02:05:08Z",
+      "side": 1,
+      "message": "Just realized removeMapping is MappingService is just going to DSBE. And DataListener ignores SB origins. This seems wrong, can you please verify?",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 144,
+        "endChar": 88
+      },
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_6635acf6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-07-15T02:05:08Z",
+      "side": 1,
+      "message": "replace with eid",
+      "range": {
+        "startLine": 156,
+        "startChar": 75,
+        "endLine": 156,
+        "endChar": 91
+      },
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
