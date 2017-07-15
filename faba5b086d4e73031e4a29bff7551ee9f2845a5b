@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_5a4f9cbd",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-07-15T14:02:08Z",
+      "side": 1,
+      "message": "Removed last sentence.",
+      "parentUuid": "da2a55be_e684fcb2",
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_a6168453",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 2
@@ -48,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_9ac8f423",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-07-15T14:02:08Z",
+      "side": 1,
+      "message": "Good catch. Before the negative prefixes the assumption was that we never actively remove mappings from SB, because there is no SB message to that, so mappings only expire. That\u0027s why there was no extra code handling SB in MappingService. Fixed.",
+      "parentUuid": "da2a55be_a6168453",
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_6635acf6",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 2
@@ -65,6 +101,24 @@
         "endLine": 156,
         "endChar": 91
       },
+      "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_3a4aa8ac",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-07-15T14:02:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_6635acf6",
       "revId": "faba5b086d4e73031e4a29bff7551ee9f2845a5b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
