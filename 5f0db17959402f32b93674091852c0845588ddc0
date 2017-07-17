@@ -22,6 +22,24 @@
       "revId": "5f0db17959402f32b93674091852c0845588ddc0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_64fd9f3a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-07-17T22:23:39Z",
+      "side": 1,
+      "message": "If we assume that negative mappings have 0 TTL and as a result they are removed in an xTR, than indeed this is no longer necessary, otherwise it is.",
+      "parentUuid": "da2a55be_10e865e1",
+      "revId": "5f0db17959402f32b93674091852c0845588ddc0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
