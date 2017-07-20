@@ -24,6 +24,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
@@ -64,6 +65,7 @@ public class MapResolver implements IMapResolverAsync {
     private IMapRequestResultHandler requestHandler;
     private boolean authenticate = true;
     private ISmrNotificationListener smrNotificationListener;
+    private static final int TTL_DELETE_MAPPING = 0;
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
                        IMapRequestResultHandler requestHandler) {
@@ -123,6 +125,7 @@ public class MapResolver implements IMapResolverAsync {
                 mapping = updateLocators(mapping, itrRlocs);
             }
             mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
+            mapping = fixTtlIfSmrInvoked(request, mapping);
             replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
         }
         requestHandler.handleMapReply(replyBuilder.build());
@@ -210,6 +213,15 @@ public class MapResolver implements IMapResolverAsync {
                 && !(dstEid.getAddress() instanceof SourceDestKey)) {
             return new MappingRecordBuilder(mapping).setEid(
                     SourceDestKeyHelper.getDstBinary(mapping.getEid())).build();
+        }
+        return mapping;
+    }
+
+    // When an SMR-invoked Map-Request is asking for a mapping that is negative, it is most likely an attempt to delete
+    // that mapping.
+    private MappingRecord fixTtlIfSmrInvoked(MapRequest request, MappingRecord mapping) {
+        if (request.isSmrInvoked() && MappingRecordUtil.isNegativeMapping(mapping)) {
+            return new MappingRecordBuilder(mapping).setRecordTtl(TTL_DELETE_MAPPING).build();
         }
         return mapping;
     }
