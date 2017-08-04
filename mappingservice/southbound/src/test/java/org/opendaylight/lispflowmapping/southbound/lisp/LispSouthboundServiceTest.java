@@ -123,6 +123,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
+    @SuppressWarnings("unchecked")
     @BeforeClass
     public static void initTests() {
         akdb = Mockito.mock(AuthKeyDb.class);
@@ -156,17 +157,17 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         // mapServer = context.mock(IMapServer.class);
         mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
         Mockito.when(mockLispSouthboundPlugin.isMapRegisterCacheEnabled()).thenReturn(true);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
-        testedLispService.setMapRegisterCacheTimeout(90000);
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCacheTimeout()).thenReturn(CACHE_RECORD_TIMEOUT);
         mapRegisterCache = new MapRegisterCache();
-        testedLispService.setMapRegisterCache(mapRegisterCache);
-        testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
-        testedLispService.setAuthKeyDb(akdb);
-        testedLispService.setAuthenticationKeyDataListener(akdl);
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCache()).thenReturn(mapRegisterCache);
+        Mockito.when(mockLispSouthboundPlugin.getDataBroker()).thenReturn(Mockito.mock(DataBroker.class));
+        Mockito.when(mockLispSouthboundPlugin.getAkdb()).thenReturn(akdb);
+        Mockito.when(mockLispSouthboundPlugin.getAuthenticationKeyDataListener()).thenReturn(akdl);
         nps = context.mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(nps);
+        Mockito.when(mockLispSouthboundPlugin.getNotificationPublishService()).thenReturn(nps);
         lispSouthboundStats = new ConcurrentLispSouthboundStats();
-        testedLispService.setStats(lispSouthboundStats);
+        Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(lispSouthboundStats);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
         lispNotificationSaver = new ValueSaverAction<Notification>();
         // mapRegisterSaver = new ValueSaverAction<MapRegister>();
         // mapRequestSaver = new ValueSaverAction<MapRequest>();
@@ -433,22 +434,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
             0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
         };
 
-        NotificationPublishService notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider(
-                testedLispService);
-
         //send stream of byte -> map register message
         final MapRegisterCacheKey cacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
         MapRegisterCacheTestUtil.beforeMapRegisterInvocationValidation(cacheKey, mapRegisterCache);
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
-        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(notifServiceMock,
+        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(
                 cacheKey, mapRegisterCache, eidPrefixAfi, eidPrefix);
 
         //sending the same byte stream -> map register second time
-        notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider(testedLispService);
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
 
         //mapping-keep-alive message should be generated
-        MapRegisterCacheTestUtil.afterSecondMapRegisterInvocationValidation(notifServiceMock,
+        MapRegisterCacheTestUtil.afterSecondMapRegisterInvocationValidation(
                 mockLispSouthboundPlugin, eidPrefixAfi, eidPrefix);
     }
 
@@ -573,12 +572,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
             InterruptedException {
         final MapRegisterCacheKey mapRegisterCacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
 
-        final NotificationPublishService mockedNotificationProvider = mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(mockedNotificationProvider);
-
         MapRegisterCacheTestUtil.beforeMapRegisterInvocationValidation(mapRegisterCacheKey, mapRegisterCache);
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, authenticationData);
-        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(mockedNotificationProvider,
+        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(
                 mapRegisterCacheKey, mapRegisterCache, eidPrefixAfi, eidPrefix);
     }
 
@@ -603,8 +600,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private void cacheRecordExpirationTest(boolean cacheRecordTimeouted) throws InterruptedException {
         mapRegisterCache = Mockito.mock(MapRegisterCache.class);
-        testedLispService.setMapRegisterCache(mapRegisterCache);
-        testedLispService.setNotificationProvider(Mockito.mock(NotificationPublishService.class));
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCache()).thenReturn(mapRegisterCache);
 
         final byte[] eidPrefixAfi = new byte[] {0x00, 0x01};
         final byte[] eidPrefix = new byte[] {0x0a, 0x0a, 0x0a, 0x0a};
@@ -631,6 +627,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 cacheValue);
         Mockito.when(mapRegisterCache.refreshEntry(Mockito.eq(cacheKey))).thenReturn(cacheValue);
 
+        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
 
         InOrder inOrder = Mockito.inOrder(mapRegisterCache);
