@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.net.Inet4Address;
@@ -16,11 +15,8 @@ import java.nio.ByteBuffer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Assert;
 import org.mockito.Mockito;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKeyBuilder;
@@ -86,19 +82,9 @@ final class MapRegisterCacheTestUtil {
         return result;
     }
 
-    static NotificationPublishService resetMockForNotificationProvider(final LispSouthboundHandler testedLispService) {
-        NotificationPublishService mockedNotificationProvider = mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(mockedNotificationProvider);
-        return mockedNotificationProvider;
-    }
-
-    static void afterSecondMapRegisterInvocationValidation(final NotificationPublishService
-                                                                    mockedNotificationProvider,
-                                                            final LispSouthboundPlugin mockLispSouthboundPlugin,
+    static void afterSecondMapRegisterInvocationValidation(final LispSouthboundPlugin mockLispSouthboundPlugin,
                                                             byte[] eidPrefixAfi, byte[] eidPrefix) throws
             InterruptedException, UnknownHostException {
-        verify(mockedNotificationProvider).putNotification(Mockito.any(MappingKeepAlive.class));
-
         final byte[] resetForMapNotify = new byte[]{
             0x4C, 0x00, 0x00, 0x01
         };
@@ -123,11 +109,9 @@ final class MapRegisterCacheTestUtil {
                 Mockito.eq(null));
     }
 
-    static void afterMapRegisterInvocationValidation(final NotificationPublishService mockedNotificationProvider, final
-        MapRegisterCacheKey mapRegisterCacheKey, final MapRegisterCache mapRegisterCache, final byte[] eidPrefixAfi,
-                                                     byte[] eidPrefix) throws InterruptedException {
-        Mockito.verify(mockedNotificationProvider).putNotification(Mockito.any(AddMapping.class));
-
+    static void afterMapRegisterInvocationValidation(final MapRegisterCacheKey mapRegisterCacheKey,
+            final MapRegisterCache mapRegisterCache, final byte[] eidPrefixAfi, byte[] eidPrefix)
+                    throws InterruptedException {
         Assert.assertEquals(1, mapRegisterCache.cacheSize());
         final MapRegisterCacheValue currentMapRegisterCacheValue = mapRegisterCache.getEntry(mapRegisterCacheKey);
         Assert.assertNotNull(currentMapRegisterCacheValue);
