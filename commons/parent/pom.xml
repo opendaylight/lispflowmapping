@@ -34,7 +34,6 @@
     <dlux.loader.version>0.6.0-SNAPSHOT</dlux.loader.version>
     <dlux.core.version>0.6.0-SNAPSHOT</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
-    <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
     <lispflowmapping.version>1.6.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.6.0-SNAPSHOT</mdsal.version>
     <neutron.version>0.9.0-SNAPSHOT</neutron.version>
@@ -89,21 +88,6 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
-        <artifactId>config-api</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>config-manager</artifactId>
-        <version>${config.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>config-util</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
         <artifactId>netty-event-executor-config</artifactId>
         <version>${config.version}</version>
       </dependency>
@@ -115,11 +99,6 @@
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>sal-binding-broker-impl</artifactId>
-        <version>${mdsal.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>sal-binding-config</artifactId>
         <version>${mdsal.version}</version>
       </dependency>
       <dependency>
@@ -272,12 +251,6 @@
           <configuration>
             <filesets>
               <fileset>
-                <directory>${jmxGeneratorPath}</directory>
-                <includes>
-                  <include>**</include>
-                </includes>
-              </fileset>
-              <fileset>
                 <directory>${salGeneratorPath}</directory>
                 <includes>
                   <include>**</include>
@@ -335,7 +308,6 @@
               <configuration>
                 <sources>
                   <source>${yang.src.path}</source>
-                  <source>${jmxGeneratorPath}</source>
                   <source>${salGeneratorPath}</source>
                 </sources>
               </configuration>
