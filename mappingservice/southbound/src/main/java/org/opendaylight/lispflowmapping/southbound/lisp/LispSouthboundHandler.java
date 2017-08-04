@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.authentication.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
@@ -34,10 +32,8 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
-import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
-import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterPartialDeserializer;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.lisp.network.PacketHeader;
@@ -73,20 +69,11 @@ import org.slf4j.LoggerFactory;
 @ChannelHandler.Sharable
 public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService, AutoCloseable {
-    private MapRegisterCache mapRegisterCache;
-    private long mapRegisterCacheTimeout;
-
-    private DataBroker dataBroker;
-    private NotificationPublishService notificationPublishService;
-
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
     private boolean authenticationEnabled = ConfigIni.getInstance().isAuthEnabled();
     private final LispSouthboundPlugin lispSbPlugin;
-    private ConcurrentLispSouthboundStats lispSbStats = null;
-    private AuthKeyDb akdb;
-    private AuthenticationKeyDataListener authenticationKeyDataListener;
     private boolean isReadFromChannelEnabled = true;
 
     private Channel channel;
@@ -146,8 +133,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(requestMappingBuilder.build());
+            if (lispSbPlugin.getNotificationPublishService() != null) {
+                lispSbPlugin.getNotificationPublishService().putNotification(requestMappingBuilder.build());
                 LOG.trace("MapRequest was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
@@ -195,7 +182,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 cacheValue = resolveCacheValue(artificialEntry);
             }
             if (cacheValue != null) {
-                lispSbStats.incrementCacheHits();
+                lispSbPlugin.getStats().incrementCacheHits();
                 MapRegisterCacheMetadata mapRegisterMeta = cacheValue.getMapRegisterCacheMetadata();
                 LOG.debug("Map register message site-ID: {} xTR-ID: {} from cache.", mapRegisterMeta.getSiteId(),
                         mapRegisterMeta.getXtrId());
@@ -207,7 +194,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     }
                 }
             } else {
-                lispSbStats.incrementCacheMisses();
+                lispSbPlugin.getStats().incrementCacheMisses();
                 MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(inBuffer, sourceAddress);
 
                 MappingAuthkey mappingAuthkey = null;
@@ -241,7 +228,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     cacheValueBldNew.setMappingAuthkey(mappingAuthkey);
                     cacheValueBldNew.setMapRegisterCacheMetadata(cacheMetadataBldNew.build());
 
-                    mapRegisterCache.addEntry(cacheKey, cacheValueBldNew.build());
+                    lispSbPlugin.getMapRegisterCache().addEntry(cacheKey, cacheValueBldNew.build());
                 }
             }
         } catch (RuntimeException re) {
@@ -253,10 +240,10 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private MapRegisterCacheValue refreshEntry(final MapRegisterCacheKey cacheKey) {
-        MapRegisterCacheValue mapRegisterCacheValue = mapRegisterCache.refreshEntry(cacheKey);
+        MapRegisterCacheValue mapRegisterCacheValue = lispSbPlugin.getMapRegisterCache().refreshEntry(cacheKey);
         if (mapRegisterCacheValue != null) {
             mapRegisterCacheValue = refreshAuthKeyIfNecessary(mapRegisterCacheValue);
-            mapRegisterCache.addEntry(cacheKey, mapRegisterCacheValue);
+            lispSbPlugin.getMapRegisterCache().addEntry(cacheKey, mapRegisterCacheValue);
             return mapRegisterCacheValue;
         }
         return null;
@@ -265,7 +252,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private MapRegisterCacheValue refreshAuthKeyIfNecessary(MapRegisterCacheValue mapRegisterCacheValue) {
         final List<EidLispAddress> eids = mapRegisterCacheValue.getMapRegisterCacheMetadata().getEidLispAddress();
 
-        if (authenticationKeyDataListener.authKeysForEidsUnchanged(eids, mapRegisterCacheTimeout)) {
+        if (lispSbPlugin.getAuthenticationKeyDataListener().authKeysForEidsUnchanged(
+                eids, lispSbPlugin.getMapRegisterCacheTimeout())) {
             return mapRegisterCacheValue;
         }
 
@@ -282,12 +270,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     private MapRegisterCacheValue resolveCacheValue(Map.Entry<MapRegisterCacheKey, byte[]> entry) {
         if (entry != null) {
-            final MapRegisterCacheValue mapRegisterCacheValue = mapRegisterCache.getEntry(entry.getKey());
+            final MapRegisterCacheValue mapRegisterCacheValue =
+                    lispSbPlugin.getMapRegisterCache().getEntry(entry.getKey());
             if (mapRegisterCacheValue != null) {
                 final long creationTime = mapRegisterCacheValue.getMapRegisterCacheMetadata().getTimestamp();
                 final long currentTime = System.currentTimeMillis();
-                if (currentTime - creationTime > mapRegisterCacheTimeout) {
-                    mapRegisterCache.removeEntry(entry.getKey());
+                if (currentTime - creationTime > lispSbPlugin.getMapRegisterCacheTimeout()) {
+                    lispSbPlugin.getMapRegisterCache().removeEntry(entry.getKey());
                     return null;
                 } else if (Arrays.equals(mapRegisterCacheValue.getPacketData(), entry.getValue())) {
                     return mapRegisterCacheValue;
@@ -298,8 +287,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private void sendNotificationIfPossible(final Notification notification) throws InterruptedException {
-        if (notificationPublishService != null) {
-            notificationPublishService.putNotification(notification);
+        if (lispSbPlugin.getNotificationPublishService() != null) {
+            lispSbPlugin.getNotificationPublishService().putNotification(notification);
             LOG.trace("{} was published.", notification.getClass());
         } else {
             LOG.warn("Notification Provider is null!");
@@ -320,9 +309,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         for (int i = 0; i < eidLispAddresses.size(); i++) {
             final Eid eid = eidLispAddresses.get(i).getEid();
             if (i == 0) {
-                firstAuthKey = akdb.getAuthenticationKey(eid);
+                firstAuthKey = lispSbPlugin.getAkdb().getAuthenticationKey(eid);
             } else {
-                final MappingAuthkey authKey = akdb.getAuthenticationKey(eid);
+                final MappingAuthkey authKey = lispSbPlugin.getAkdb().getAuthenticationKey(eid);
                 if (!Objects.equals(firstAuthKey, authKey)) {
                     return null;
                 }
@@ -389,13 +378,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
      *
      * <p>Methods pass through all records from map register message. For the EID of the first record it gets
      * authentication key and does validation of authentication data again this authentication key. If it pass
-     * it just checks for remaining records (and its EID) whether they have the same authenticatin key stored in
-     * the authentication key database (akdb).
+     * it just checks for remaining records (and its EID) whether they have the same authentication key stored in
+     * the authentication key database.
      *
      * @return Returns authentication key if all of EIDs have the same authentication key or null otherwise
      */
     private MappingAuthkey tryToAuthenticateMessage(final MapRegister mapRegister, final ByteBuffer byteBuffer) {
-        if (akdb == null) {
+        if (lispSbPlugin.getAkdb() == null) {
             LOG.debug("Simple map cache wasn't instantieted and set.");
             return null;
         }
@@ -406,13 +395,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             final MappingRecordItem recordItem = mappingRecords.get(i);
             final MappingRecord mappingRecord = recordItem.getMappingRecord();
             if (i == 0) {
-                firstAuthKey = akdb.getAuthenticationKey(mappingRecord.getEid());
+                firstAuthKey = lispSbPlugin.getAkdb().getAuthenticationKey(mappingRecord.getEid());
                 if (!LispAuthenticationUtil.validate(mapRegister, byteBuffer, mappingRecord.getEid(), firstAuthKey)) {
                     return null;
                 }
             } else {
                 final Eid eid = mappingRecord.getEid();
-                final MappingAuthkey authKey = akdb.getAuthenticationKey(eid);
+                final MappingAuthkey authKey = lispSbPlugin.getAkdb().getAuthenticationKey(eid);
                 if (!firstAuthKey.equals(authKey)) {
                     LOG.debug("Map register packet contained several eids. Authentication keys for first one and for "
                             + "{} are different.",LispAddressStringifier.getString(eid));
@@ -434,8 +423,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     .getIpAddressBinaryFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapNotifyBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(gotMapNotifyBuilder.build());
+            if (lispSbPlugin.getNotificationPublishService() != null) {
+                lispSbPlugin.getNotificationPublishService().putNotification(gotMapNotifyBuilder.build());
                 LOG.trace("MapNotify was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
@@ -459,8 +448,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     .getIpAddressBinaryFromInetAddress(sourceAddress));
             transportAddressBuilder.setPort(new PortNumber(port));
             gotMapReplyBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(gotMapReplyBuilder.build());
+            if (lispSbPlugin.getNotificationPublishService() != null) {
+                lispSbPlugin.getNotificationPublishService().putNotification(gotMapReplyBuilder.build());
                 LOG.trace("MapReply was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
@@ -474,11 +463,11 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private void handleStats(int type) {
-        if (lispSbStats != null) {
+        if (lispSbPlugin.getStats() != null) {
             if (type <= ConcurrentLispSouthboundStats.MAX_LISP_TYPES) {
-                lispSbStats.incrementRx(type);
+                lispSbPlugin.getStats().incrementRx(type);
             } else {
-                lispSbStats.incrementRxUnknown();
+                lispSbPlugin.getStats().incrementRxUnknown();
             }
         }
     }
@@ -507,37 +496,5 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
 
     @Override
     public void close() throws Exception {
-    }
-
-    public void setAuthKeyDb(final AuthKeyDb smc) {
-        this.akdb = smc;
-    }
-
-    public void setDataBroker(final DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
-    }
-
-    public void setNotificationProvider(NotificationPublishService nps) {
-        this.notificationPublishService = nps;
-    }
-
-    public void setMapRegisterCache(final MapRegisterCache mapRegisterCache) {
-        this.mapRegisterCache = mapRegisterCache;
-    }
-
-    public void setAuthenticationKeyDataListener(AuthenticationKeyDataListener authenticationKeyDataListener) {
-        this.authenticationKeyDataListener = authenticationKeyDataListener;
-    }
-
-    public void setStats(ConcurrentLispSouthboundStats lispSbStats) {
-        this.lispSbStats = lispSbStats;
-    }
-
-    public void setIsMaster(boolean isReadFromChannelEnabled) {
-        this.isReadFromChannelEnabled = isReadFromChannelEnabled;
-    }
-
-    public void setMapRegisterCacheTimeout(long mapRegisterCacheTimeout) {
-        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
     }
 }

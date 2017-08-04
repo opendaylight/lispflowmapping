@@ -14,12 +14,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.southbound.util.LispNotificationHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 
 public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<DatagramPacket>
         implements ILispSouthboundService {
-    private NotificationPublishService notificationPublishService;
+    private final LispSouthboundPlugin lispSbPlugin;
     protected static final Logger LOG = LoggerFactory.getLogger(LispXtrSouthboundHandler.class);
 
-    public void setNotificationProvider(NotificationPublishService nps) {
-        this.notificationPublishService = nps;
+    public LispXtrSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
+        this.lispSbPlugin = lispSbPlugin;
     }
 
     public void handlePacket(DatagramPacket packet) {
@@ -71,8 +71,8 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
                     LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
             transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(requestMappingBuilder.build());
+            if (lispSbPlugin.getNotificationPublishService() != null) {
+                lispSbPlugin.getNotificationPublishService().putNotification(requestMappingBuilder.build());
                 LOG.trace("MapRequest was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
@@ -93,8 +93,8 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
             XtrReplyMappingBuilder replyMappingBuilder = new XtrReplyMappingBuilder();
             replyMappingBuilder.setMapReply(LispNotificationHelper.convertMapReply(reply));
 
-            if (notificationPublishService != null) {
-                notificationPublishService.putNotification(replyMappingBuilder.build());
+            if (lispSbPlugin.getNotificationPublishService() != null) {
+                lispSbPlugin.getNotificationPublishService().putNotification(replyMappingBuilder.build());
                 LOG.trace("MapReply was published!");
             } else {
                 LOG.warn("Notification Provider is null!");
