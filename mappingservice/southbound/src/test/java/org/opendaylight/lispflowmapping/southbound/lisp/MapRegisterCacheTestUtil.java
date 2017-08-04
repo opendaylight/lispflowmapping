@@ -86,9 +86,9 @@ final class MapRegisterCacheTestUtil {
         return result;
     }
 
-    static NotificationPublishService resetMockForNotificationProvider(final LispSouthboundHandler testedLispService) {
+    static NotificationPublishService resetMockForNotificationProvider(final LispSouthboundPlugin lispSbPlugin) {
         NotificationPublishService mockedNotificationProvider = mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(mockedNotificationProvider);
+        Mockito.when(lispSbPlugin.getNotificationPublishService()).thenReturn(mockedNotificationProvider);
         return mockedNotificationProvider;
     }
 
