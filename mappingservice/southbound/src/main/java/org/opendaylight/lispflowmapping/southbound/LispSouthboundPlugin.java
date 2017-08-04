@@ -57,6 +57,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
             LISPFLOWMAPPING_ENTITY_NAME);
 
+    private volatile boolean isMaster = false;
     private volatile String bindingAddress;
     private AuthKeyDb akdb;
     private MapRegisterCache mapRegisterCache = new MapRegisterCache();
@@ -116,17 +118,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             restoreDaoFromDatastore();
 
             LispSouthboundHandler lispSouthboundHandler = new LispSouthboundHandler(this);
-            lispSouthboundHandler.setDataBroker(dataBroker);
-            lispSouthboundHandler.setNotificationProvider(notificationPublishService);
-            lispSouthboundHandler.setAuthKeyDb(akdb);
-            lispSouthboundHandler.setMapRegisterCache(mapRegisterCache);
-            lispSouthboundHandler.setMapRegisterCacheTimeout(mapRegisterCacheTimeout);
-            lispSouthboundHandler.setAuthenticationKeyDataListener(authenticationKeyDataListener);
-            lispSouthboundHandler.setStats(statistics);
             this.lispSouthboundHandler = lispSouthboundHandler;
 
-            LispXtrSouthboundHandler lispXtrSouthboundHandler = new LispXtrSouthboundHandler();
-            lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
+            LispXtrSouthboundHandler lispXtrSouthboundHandler = new LispXtrSouthboundHandler(this);
             this.lispXtrSouthboundHandler = lispXtrSouthboundHandler;
 
             if (Epoll.isAvailable()) {
@@ -293,10 +287,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         return null;
     }
 
-    public ConcurrentLispSouthboundStats getStats() {
-        return statistics;
-    }
-
     @Override
     @SuppressWarnings("checkstyle:IllegalCatch")
     public void setLispAddress(String address) {
@@ -365,30 +355,41 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     @Override
     public void instantiateServiceInstance() {
-        if (lispSouthboundHandler != null) {
-            lispSouthboundHandler.setNotificationProvider(notificationPublishService);
-            lispSouthboundHandler.setIsMaster(true);
-        }
-        if (lispXtrSouthboundHandler != null) {
-            lispXtrSouthboundHandler.setNotificationProvider(notificationPublishService);
-        }
+        this.isMaster = true;
     }
 
     @Override
     public ListenableFuture<Void> closeServiceInstance() {
-        if (lispSouthboundHandler != null) {
-            lispSouthboundHandler.setNotificationProvider(null);
-            lispSouthboundHandler.setIsMaster(false);
-        }
-        if (lispXtrSouthboundHandler != null) {
-            lispXtrSouthboundHandler.setNotificationProvider(null);
-        }
+        this.isMaster = false;
         return Futures.<Void>immediateFuture(null);
     }
 
     @Override
     public ServiceGroupIdentifier getIdentifier() {
         return SERVICE_GROUP_IDENTIFIER;
+    }
+
+    public void sendNotificationIfPossible(final Notification notification) throws InterruptedException {
+        if (isMaster && notificationPublishService != null) {
+            notificationPublishService.putNotification(notification);
+            LOG.trace("Publishing notification: {}", notification);
+        }
+    }
+
+    public AuthKeyDb getAkdb() {
+        return akdb;
+    }
+
+    public ConcurrentLispSouthboundStats getStats() {
+        return statistics;
+    }
+
+    public DataBroker getDataBroker() {
+        return dataBroker;
+    }
+
+    public AuthenticationKeyDataListener getAuthenticationKeyDataListener() {
+        return authenticationKeyDataListener;
     }
 
     public MapRegisterCache getMapRegisterCache() {

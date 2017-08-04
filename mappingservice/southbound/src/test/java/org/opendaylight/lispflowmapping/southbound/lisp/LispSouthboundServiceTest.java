@@ -12,7 +12,6 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA1;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA2;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA3;
@@ -31,23 +30,21 @@ import java.util.Arrays;
 import java.util.List;
 import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jmock.api.Invocation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats;
@@ -61,8 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv6PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -87,18 +82,14 @@ import org.opendaylight.yangtools.yang.binding.Notification;
 public class LispSouthboundServiceTest extends BaseTestCase {
 
     private LispSouthboundHandler testedLispService;
-    private NotificationPublishService nps;
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacket;
-    private ValueSaverAction<Notification> lispNotificationSaver;
-    // private ValueSaverAction<MapRegister> mapRegisterSaver;
-    // private ValueSaverAction<MapRequest> mapRequestSaver;
     private MapNotifyBuilder mapNotifyBuilder;
     private MapReplyBuilder mapReplyBuilder;
     private MappingRecordBuilder mappingRecordBuilder;
     private MapRegisterCache mapRegisterCache;
     private LispSouthboundPlugin mockLispSouthboundPlugin;
-    private ConcurrentLispSouthboundStats lispSouthboundStats;
+    private LispSouthboundPlugin contextMockLispSouthboundPlugin;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
     private static AuthKeyDb akdb;
@@ -123,6 +114,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
+    @SuppressWarnings("unchecked")
     @BeforeClass
     public static void initTests() {
         akdb = Mockito.mock(AuthKeyDb.class);
@@ -152,24 +144,19 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Before
     public void before() throws Exception {
         super.before();
-        // mapResolver = context.mock(IMapResolver.class);
-        // mapServer = context.mock(IMapServer.class);
-        mockLispSouthboundPlugin = mock(LispSouthboundPlugin.class);
+        mockLispSouthboundPlugin = Mockito.mock(LispSouthboundPlugin.class);
+        contextMockLispSouthboundPlugin = context.mock(LispSouthboundPlugin.class);
         Mockito.when(mockLispSouthboundPlugin.isMapRegisterCacheEnabled()).thenReturn(true);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
-        testedLispService.setMapRegisterCacheTimeout(90000);
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCacheTimeout()).thenReturn(CACHE_RECORD_TIMEOUT);
         mapRegisterCache = new MapRegisterCache();
-        testedLispService.setMapRegisterCache(mapRegisterCache);
-        testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
-        testedLispService.setAuthKeyDb(akdb);
-        testedLispService.setAuthenticationKeyDataListener(akdl);
-        nps = context.mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(nps);
-        lispSouthboundStats = new ConcurrentLispSouthboundStats();
-        testedLispService.setStats(lispSouthboundStats);
-        lispNotificationSaver = new ValueSaverAction<Notification>();
-        // mapRegisterSaver = new ValueSaverAction<MapRegister>();
-        // mapRequestSaver = new ValueSaverAction<MapRequest>();
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCache()).thenReturn(mapRegisterCache);
+        Mockito.when(mockLispSouthboundPlugin.getDataBroker()).thenReturn(Mockito.mock(DataBroker.class));
+        Mockito.when(mockLispSouthboundPlugin.getAkdb()).thenReturn(akdb);
+        Mockito.when(mockLispSouthboundPlugin.getAuthenticationKeyDataListener()).thenReturn(akdl);
+        ConcurrentLispSouthboundStats lispSouthboundStats = new ConcurrentLispSouthboundStats();
+        Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(lispSouthboundStats);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
+
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)
         // IP: 192.168.136.10 -> 1.2.3.4
@@ -272,17 +259,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         handleMapRequestPacket(mapRequestPacket);
     }
 
-    private MapRegister lastMapRegister() {
-        assertTrue(lispNotificationSaver.lastValue instanceof AddMapping);
-        AddMapping lastValue = (AddMapping) lispNotificationSaver.lastValue;
-        return lastValue.getMapRegister();
-    }
-
-    private MapRequest lastMapRequest() {
-        RequestMapping lastValue = (RequestMapping) lispNotificationSaver.lastValue;
-        return lastValue.getMapRequest();
-    }
-
     @Test
     public void mapRegister__TwoRlocs() throws Exception {
         // P Bit & M Bit set
@@ -301,11 +277,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   ff 00 00 05 00 01 0a 01 00 6e 06 64 ff 00 00 05 "
                 + "0070   00 01 c0 a8 88 33"));
 
-        oneOf(nps).putNotification(with(lispNotificationSaver));
-
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(mapRegisterPacket);
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
 
-        List<MappingRecordItem> eidRecords = lastMapRegister().getMappingRecordItem();
+        List<MappingRecordItem> eidRecords = captor.getValue().getMapRegister().getMappingRecordItem();
         assertEquals(1, eidRecords.size());
         MappingRecord eidRecord = eidRecords.get(0).getMappingRecord();
         assertEquals(2, eidRecord.getLocatorRecord().size());
@@ -337,11 +313,12 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0060   01 92 00 00 00 00 00 00 00 01 01 64 ff 00 00 05 "
                 + "0070   00 01 0a 00 3a 9c"));
 
-        oneOf(nps).putNotification(with(lispNotificationSaver));
-
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(mapRegisterPacket);
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        MappingRecord eidToLocatorRecord =
+                captor.getValue().getMapRegister().getMappingRecordItem().get(0).getMappingRecord();
 
-        MappingRecord eidToLocatorRecord = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
         assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:1/128"),
                 eidToLocatorRecord.getEid());
         assertEquals(Ipv6PrefixBinaryAfi.class, eidToLocatorRecord.getEid().getAddressType());
@@ -351,22 +328,20 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     public void mapRegister__VerifyBasicFields() throws Exception {
-        oneOf(nps).putNotification(with(lispNotificationSaver));
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(mapRegisterPacket);
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        MappingRecord eidToLocator =
+                captor.getValue().getMapRegister().getMappingRecordItem().get(0).getMappingRecord();
 
-        MappingRecord eidToLocator = lastMapRegister().getMappingRecordItem().get(0).getMappingRecord();
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), eidToLocator.getEid());
-
         assertEquals(1, eidToLocator.getLocatorRecord().size());
         assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), eidToLocator.getLocatorRecord().get(0).getRloc());
     }
 
     @Test
-    @Ignore
     public void mapRegister__NoResponseFromMapServerShouldReturnNullPacket() throws Exception {
-        oneOf(nps).putNotification(with(lispNotificationSaver));
         mapNotifyBuilder = null;
-
         assertNull(handleMapRegisterPacket(mapRegisterPacket));
     }
 
@@ -380,11 +355,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0040   83 63 a7 79 6e f0 40 97 54 26 3a 44 b4 eb 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
-        stubMapRegister(true);
 
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
-
-        assertFalse(lastMapRegister().isWantMapNotify());
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        assertFalse(captor.getValue().getMapRegister().isWantMapNotify());
     }
 
     @Test
@@ -397,10 +372,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0040   e7 20 25 3d e8 b2 07 e2 63 de 62 2b 7a 20 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
-        stubMapRegister(true);
 
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
-        assertFalse(lastMapRegister().isWantMapNotify());
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        assertFalse(captor.getValue().getMapRegister().isWantMapNotify());
     }
 
     @Test
@@ -413,10 +389,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0040   4e 6b e2 e5 e1 01 40 8a c9 e1 d1 80 cb 72 00 00 "
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
-        stubMapRegister(true);
 
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
-        assertTrue(lastMapRegister().isWantMapNotify());
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        assertTrue(captor.getValue().getMapRegister().isWantMapNotify());
     }
 
     /**
@@ -433,22 +410,23 @@ public class LispSouthboundServiceTest extends BaseTestCase {
             0x0a, 0x0a, 0x0a, 0x0a     //ipv4 address
         };
 
-        NotificationPublishService notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider(
-                testedLispService);
-
         //send stream of byte -> map register message
+        InOrder inOrder = Mockito.inOrder(mockLispSouthboundPlugin);
         final MapRegisterCacheKey cacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
         MapRegisterCacheTestUtil.beforeMapRegisterInvocationValidation(cacheKey, mapRegisterCache);
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
-        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(notifServiceMock,
+        inOrder.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(
                 cacheKey, mapRegisterCache, eidPrefixAfi, eidPrefix);
 
         //sending the same byte stream -> map register second time
-        notifServiceMock = MapRegisterCacheTestUtil.resetMockForNotificationProvider(testedLispService);
+        captor = ArgumentCaptor.forClass(AddMapping.class);
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
+        inOrder.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
 
         //mapping-keep-alive message should be generated
-        MapRegisterCacheTestUtil.afterSecondMapRegisterInvocationValidation(notifServiceMock,
+        MapRegisterCacheTestUtil.afterSecondMapRegisterInvocationValidation(
                 mockLispSouthboundPlugin, eidPrefixAfi, eidPrefix);
     }
 
@@ -573,12 +551,11 @@ public class LispSouthboundServiceTest extends BaseTestCase {
             InterruptedException {
         final MapRegisterCacheKey mapRegisterCacheKey = MapRegisterCacheTestUtil.createMapRegisterCacheKey(eidPrefix);
 
-        final NotificationPublishService mockedNotificationProvider = mock(NotificationPublishService.class);
-        testedLispService.setNotificationProvider(mockedNotificationProvider);
-
         MapRegisterCacheTestUtil.beforeMapRegisterInvocationValidation(mapRegisterCacheKey, mapRegisterCache);
+        ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix, authenticationData);
-        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(mockedNotificationProvider,
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        MapRegisterCacheTestUtil.afterMapRegisterInvocationValidation(
                 mapRegisterCacheKey, mapRegisterCache, eidPrefixAfi, eidPrefix);
     }
 
@@ -603,8 +580,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     private void cacheRecordExpirationTest(boolean cacheRecordTimeouted) throws InterruptedException {
         mapRegisterCache = Mockito.mock(MapRegisterCache.class);
-        testedLispService.setMapRegisterCache(mapRegisterCache);
-        testedLispService.setNotificationProvider(Mockito.mock(NotificationPublishService.class));
+        Mockito.when(mockLispSouthboundPlugin.getMapRegisterCache()).thenReturn(mapRegisterCache);
 
         final byte[] eidPrefixAfi = new byte[] {0x00, 0x01};
         final byte[] eidPrefix = new byte[] {0x0a, 0x0a, 0x0a, 0x0a};
@@ -632,6 +608,8 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         Mockito.when(mapRegisterCache.refreshEntry(Mockito.eq(cacheKey))).thenReturn(cacheValue);
 
         mapRegisterInvocationForCacheTest(eidPrefixAfi, eidPrefix);
+        Mockito.verify(mockLispSouthboundPlugin, Mockito.atLeastOnce()).sendNotificationIfPossible(
+                Mockito.any(AddMapping.class));
 
         InOrder inOrder = Mockito.inOrder(mapRegisterCache);
         inOrder.verify(mapRegisterCache).getEntry(Mockito.eq(cacheKey));
@@ -650,7 +628,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte[] extraDataPacket = new byte[mapRegisterPacket.length + 3];
         extraDataPacket[mapRegisterPacket.length] = 0x9;
         System.arraycopy(mapRegisterPacket, 0, extraDataPacket, 0, mapRegisterPacket.length);
-        stubMapRegister(true);
 
         DatagramPacket dp = new DatagramPacket(wrappedBuffer(extraDataPacket), new InetSocketAddress(0),
                 new InetSocketAddress(0));
@@ -687,8 +664,6 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         byte registerType = mapRegisterPacket[0];
         assertEquals(MessageType.MapRegister.getIntValue(), registerType >> 4);
 
-        stubMapRegister(true);
-
         byte[] result = handleMapRegisterAsByteArray(mapRegisterPacket);
 
         assertEquals(mapRegisterPacket.length, result.length);
@@ -710,22 +685,21 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     @Ignore
     @Test
     public void mapNotify__VerifyPort() throws Exception {
-        stubMapRegister(true);
-
         DatagramPacket notifyPacket = handleMapRegisterPacket(mapRegisterPacket);
         assertEquals(LispMessage.PORT_NUM, notifyPacket.recipient().getPort());
     }
 
     @Test
     public void mapRequest__VerifyBasicFields() throws Exception {
-        oneOf(nps).putNotification(with(lispNotificationSaver));
+        ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         handleMapRequestAsByteArray(mapRequestPacket);
-        List<EidItem> eids = lastMapRequest().getEidItem();
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        List<EidItem> eids = captor.getValue().getMapRequest().getEidItem();
         assertEquals(1, eids.size());
         Eid lispAddress = eids.get(0).getEid();
         assertEquals(Ipv4PrefixBinaryAfi.class, lispAddress.getAddressType());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), lispAddress);
-        assertEquals(0x3d8d2acd39c8d608L, lastMapRequest().getNonce().longValue());
+        assertEquals(0x3d8d2acd39c8d608L, captor.getValue().getMapRequest().getNonce().longValue());
     }
 
     @Test
@@ -755,13 +729,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 "
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
 
-        oneOf(nps).putNotification(with(lispNotificationSaver));
-        // ret(mapReply);
-
+        ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         handleMapRequestAsByteArray(mapRequestPacket);
-        assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"), lastMapRequest().getSourceEid().getEid());
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"),
+                captor.getValue().getMapRequest().getSourceEid().getEid());
         assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:2/128"),
-                lastMapRequest().getEidItem().get(0).getEid());
+                captor.getValue().getMapRequest().getEidItem().get(0).getEid());
     }
 
     @Ignore
@@ -785,10 +759,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0090   00 00 00 00 00 02 00 00 00 0a 01 80 10 00 00 00 "
                 + "00a0   00 02 26 10 00 d0 ff ff 01 92 00 00 00 00 00 00 "
                 + "00b0   00 01 01 64 ff 00 00 05 00 01 0a 00 3a 9c"));
-        oneOf(nps).putNotification(with(lispNotificationSaver));
-        // ret(mapReply);
 
+        ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         DatagramPacket replyPacket = handleMapRequestPacket(mapRequestPacket);
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(Mockito.any());
         assertEquals(4342, replyPacket.recipient().getPort());
     }
 
@@ -808,11 +782,10 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0070   10 00 00 00 00 01 99 10 fe 01 01 64 ff 00 00 05 "
                 + "0080   00 01 0a 00 01 26"));
 
-        oneOf(nps).putNotification(with(lispNotificationSaver));
-        // ret(mapReply);
-
+        ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         handleMapRequestAsByteArray(mapRequestPacket);
-        assertEquals(Ipv4BinaryAfi.class, lastMapRequest().getSourceEid().getEid().getAddressType());
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
+        assertEquals(Ipv4BinaryAfi.class, captor.getValue().getMapRequest().getSourceEid().getEid().getAddressType());
 
     }
 
@@ -843,7 +816,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
 
     @Test
     @Ignore
-    public void mapReply__VerifyBasicIPv6() throws Exception {
+    public void mapReply_q_VerifyBasicIPv6() throws Exception {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:1/128"));
 
         stubHandleRequest();
@@ -987,32 +960,13 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "0080   01 64 ff 00 00 05 00 01 0a 01 00 6f 06 64 ff 00 "
                 + "0090   00 05 00 01 c0 a8 88 33"));
 
-        oneOf(nps).putNotification(with(lispNotificationSaver));
         handleMapRequestAsByteArray(mapRequestPacket);
-
-    }
-
-    private void stubMapRegister(final boolean setNotifyFromRegister) {
-        try {
-            allowing(nps).putNotification(with(lispNotificationSaver));
-        } catch (InterruptedException e) {
-            LOG.debug("Interrupted", e);
-        }
-        will(new SimpleAction() {
-
-            @Override
-            public Object invoke(Invocation invocation) throws Throwable {
-                if (setNotifyFromRegister) {
-                    MapNotifyBuilderHelper.setFromMapRegister(mapNotifyBuilder, lastMapRegister());
-                }
-                return null;
-            }
-        });
+        Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(Mockito.any(RequestMapping.class));
     }
 
     private void stubHandleRequest() {
         try {
-            allowing(nps).putNotification(wany(Notification.class));
+            allowing(contextMockLispSouthboundPlugin).sendNotificationIfPossible(wany(Notification.class));
         } catch (InterruptedException e) {
             LOG.debug("Interrupted", e);
         }
@@ -1088,39 +1042,4 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04").array();
         handleMapRequestPacket(mapRequestPacket);
     }
-
-    // @Ignore
-    // @Test
-    // public void mapRequest__IPITRRLOCIsSecond() throws Exception {
-    // mapRequestPacket = hexToByteBuffer("10 00 " //
-    // + "01 " // This means 3 ITR - RLOCs
-    // + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
-    // + "40 05 c0 a8 88 0a 01 02 " // MAC (ITR-RLOC #1 of 2)
-    // + "00 01 01 02 03 04 " // IP (ITR-RLOC #2 of 2)
-    // + "00 20 00 01 01 02 03 04").array();
-    // oneOf(nps).putNotification(with(lispNotificationSaver));
-    // // ret(mapReply);
-    // DatagramPacket packet = handleMapRequestPacket(mapRequestPacket);
-    // assertEquals(2, lastMapRequest().getItrRlocs().size());
-    // assertEquals((new LispIpv4Address("1.2.3.4")).getAddress(),
-    // packet.getAddress());
-    // }
-    //
-    // @Ignore
-    // @Test
-    // public void mapRequest__MULTIPLEIPITRRLOCs() throws Exception {
-    // mapRequestPacket = hexToByteBuffer("10 00 " //
-    // + "01 " // This means 3 ITR - RLOCs
-    // + "01 3d 8d 2a cd 39 c8 d6 08 00 00 " //
-    // + "00 01 01 02 03 04 " // IP (ITR-RLOC #1 of 2)
-    // + "00 01 c0 a8 88 0a " // MAC (ITR-RLOC #2 of 2)
-    // + "00 20 00 01 01 02 03 04").array();
-    // oneOf(nps).putNotification(with(lispNotificationSaver));
-    // // ret(mapReply);
-    // DatagramPacket packet = handleMapRequestPacket(mapRequestPacket);
-    // assertEquals(2, lastMapRequest().getItrRloc().size());
-    // assertEquals((new LispIpv4Address("1.2.3.4")).getAddress(),
-    // packet.getAddress());
-    // }
-
 }
