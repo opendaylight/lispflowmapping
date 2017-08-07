@@ -263,28 +263,21 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private MapRegisterCacheValue refreshAuthKeyIfNecessary(MapRegisterCacheValue mapRegisterCacheValue) {
-        if (authenticationKeyDataListener.isAuthKeyRefreshing()) {
-            final boolean shouldAuthKeyRefreshingStop = System.currentTimeMillis() - authenticationKeyDataListener
-                    .getAuthKeyRefreshingDate() > mapRegisterCacheTimeout;
-            if (shouldAuthKeyRefreshingStop) {
-                authenticationKeyDataListener.setAuthKeyRefreshing(false);
-            } else {
-                final MappingAuthkey mappingAuthkey = provideAuthenticateKey(mapRegisterCacheValue
-                        .getMapRegisterCacheMetadata().getEidLispAddress());
+        final List<EidLispAddress> eids = mapRegisterCacheValue.getMapRegisterCacheMetadata().getEidLispAddress();
 
-                final MapRegisterCacheValueBuilder newMapRegisterCacheValueBuilder = new MapRegisterCacheValueBuilder(
-                        mapRegisterCacheValue);
-                final MapRegisterCacheMetadataBuilder newMapRegisterCacheMetadataBuilder =
-                        new MapRegisterCacheMetadataBuilder(mapRegisterCacheValue.getMapRegisterCacheMetadata());
-
-                newMapRegisterCacheValueBuilder.setMappingAuthkey(mappingAuthkey);
-                newMapRegisterCacheValueBuilder.setMapRegisterCacheMetadata(newMapRegisterCacheMetadataBuilder.build());
-                return newMapRegisterCacheValueBuilder.build();
-            }
+        if (authenticationKeyDataListener.authKeysForEidsUnchanged(eids, mapRegisterCacheTimeout)) {
+            return mapRegisterCacheValue;
         }
 
-        return mapRegisterCacheValue;
+        final MappingAuthkey mappingAuthkey = provideAuthenticateKey(eids);
+        final MapRegisterCacheValueBuilder newMapRegisterCacheValueBuilder = new MapRegisterCacheValueBuilder(
+                mapRegisterCacheValue);
+        final MapRegisterCacheMetadataBuilder newMapRegisterCacheMetadataBuilder =
+                new MapRegisterCacheMetadataBuilder(mapRegisterCacheValue.getMapRegisterCacheMetadata());
 
+        newMapRegisterCacheValueBuilder.setMappingAuthkey(mappingAuthkey);
+        newMapRegisterCacheValueBuilder.setMapRegisterCacheMetadata(newMapRegisterCacheMetadataBuilder.build());
+        return newMapRegisterCacheValueBuilder.build();
     }
 
     private MapRegisterCacheValue resolveCacheValue(Map.Entry<MapRegisterCacheKey, byte[]> entry) {

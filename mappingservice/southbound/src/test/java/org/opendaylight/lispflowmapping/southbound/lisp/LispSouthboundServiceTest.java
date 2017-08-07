@@ -102,6 +102,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
     private static AuthKeyDb akdb;
+    private static AuthenticationKeyDataListener akdl;
 
     private interface MapReplyIpv4SingleLocatorPos {
         int RECORD_COUNT = 3;
@@ -142,6 +143,9 @@ public class LispSouthboundServiceTest extends BaseTestCase {
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+
+        akdl = Mockito.mock(AuthenticationKeyDataListener.class);
+        Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyList(), Mockito.anyLong())).thenReturn(true);
     }
 
     @Override
@@ -158,7 +162,7 @@ public class LispSouthboundServiceTest extends BaseTestCase {
         testedLispService.setMapRegisterCache(mapRegisterCache);
         testedLispService.setDataBroker(Mockito.mock(DataBroker.class));
         testedLispService.setAuthKeyDb(akdb);
-        testedLispService.setAuthenticationKeyDataListener(Mockito.mock(AuthenticationKeyDataListener.class));
+        testedLispService.setAuthenticationKeyDataListener(akdl);
         nps = context.mock(NotificationPublishService.class);
         testedLispService.setNotificationProvider(nps);
         lispSouthboundStats = new ConcurrentLispSouthboundStats();
