@@ -8,6 +8,8 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
@@ -18,6 +20,7 @@ import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
@@ -38,9 +41,7 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
     private final DataBroker broker;
     private final InstanceIdentifier<AuthenticationKey> path;
     private ListenerRegistration<ClusteredDataTreeChangeListener<AuthenticationKey>> registration;
-    private volatile boolean authKeyRefreshing = false;
-    private volatile long authKeyRefreshingDate;
-
+    private ConcurrentHashMap<Eid, Long> updatedEntries;
 
     public AuthenticationKeyDataListener(final DataBroker broker, final AuthKeyDb akdb) {
         this.broker = broker;
@@ -51,28 +52,15 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = new DataTreeIdentifier<>(
                 LogicalDatastoreType.CONFIGURATION, path);
         registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
+        this.updatedEntries = new ConcurrentHashMap<>();
     }
 
     public void closeDataChangeListener() {
         registration.close();
     }
 
-    public boolean isAuthKeyRefreshing() {
-        return authKeyRefreshing;
-    }
-
-    public void setAuthKeyRefreshing(boolean authKeyRefreshing) {
-        this.authKeyRefreshing = authKeyRefreshing;
-    }
-
-    public long getAuthKeyRefreshingDate() {
-        return authKeyRefreshingDate;
-    }
-
     @Override
-    public void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
-        authKeyRefreshing = true;
-        authKeyRefreshingDate = System.currentTimeMillis();
+    public synchronized void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
         for (DataTreeModification<AuthenticationKey> change : changes) {
             final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 
@@ -86,6 +74,7 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                 akdb.removeAuthenticationKey(convertedAuthKey.getEid());
+                updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
             } else if (ModificationType.WRITE == mod.getModificationType() || ModificationType.SUBTREE_MODIFIED == mod
                     .getModificationType()) {
                 if (ModificationType.WRITE == mod.getModificationType()) {
@@ -102,10 +91,39 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                 akdb.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
+                updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
             } else {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
         }
+    }
+
+    /**
+     * We maintain a HashMap with the update times of AuthenticationKey objects in the updatedEntries field. We keep
+     * entries in the HashMap for the Map-Register cache timeout interval, and lazy remove them afterwards. As a result
+     * the same EID will be considered updated during that interval, even on subsequent queries. This is necessary
+     * because more than one xTR may register the same EID, and to avoid complexity we don't store origin information.
+     * The performance trade-off is not significant, because during a typical cache timeout the same xTR will send only
+     * a few registration packets (2 for the default value of 90s, when UDP Map-Registers are sent at 1 minute
+     * intervals).
+     *
+     * @param eids List of EIDs to check
+     * @param timeout MapRegister cache timeout value
+     * @return false if any of the EIDs in the eids list was updated in the last timout period, true otherwise
+     */
+    public synchronized boolean authKeysForEidsUnchanged(List<EidLispAddress> eids, long timeout) {
+        boolean result = true;
+        Long currentTime = System.currentTimeMillis();
+        for (EidLispAddress eidLispAddress : eids) {
+            Long updateTime = updatedEntries.get(eidLispAddress.getEid());
+            if (updateTime != null) {
+                result = false;
+                if (currentTime - updateTime > timeout) {
+                    updatedEntries.remove(eidLispAddress.getEid());
+                }
+            }
+        }
+        return result;
     }
 
     private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
