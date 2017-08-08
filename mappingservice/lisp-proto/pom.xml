@@ -39,6 +39,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     </dependency>
     <dependency>
       <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>ietf-lisp-address-types-2015-11-05</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
       <artifactId>iana-afn-safi</artifactId>
     </dependency>
     <dependency>
