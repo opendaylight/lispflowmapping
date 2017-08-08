@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_b979a795",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-08T17:10:56Z",
+      "side": 1,
+      "message": "They are notified from removeSbMapping()",
+      "parentUuid": "ba1f61a0_723ac537",
+      "revId": "24f4672dacd68bd07f132739e900b1271a369764",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_9235b948",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 5
@@ -42,6 +60,24 @@
         "endLine": 538,
         "endChar": 54
       },
+      "revId": "24f4672dacd68bd07f132739e900b1271a369764",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_1958b331",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-08T17:10:56Z",
+      "side": 1,
+      "message": "Agree. But that notification is moved to removeSbMapping() to make things more consistent.",
+      "parentUuid": "ba1f61a0_9235b948",
       "revId": "24f4672dacd68bd07f132739e900b1271a369764",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
