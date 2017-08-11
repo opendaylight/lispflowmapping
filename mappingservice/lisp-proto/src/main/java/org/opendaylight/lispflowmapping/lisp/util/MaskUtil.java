@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public final class MaskUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MaskUtil.class);
-    private static final short IPV4_MAX_MASK = 32;
-    private static final short IPV6_MAX_MASK = 128;
+    public static final short IPV4_MAX_MASK = 32;
+    public static final short IPV6_MAX_MASK = 128;
 
     // Utility class, should not be instantiated
     private MaskUtil() {
