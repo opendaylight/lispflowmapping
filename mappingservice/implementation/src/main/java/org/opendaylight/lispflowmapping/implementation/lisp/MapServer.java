@@ -49,13 +49,20 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MapNotifyBuilderHelper;
 import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -360,7 +367,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = Maps.newConcurrentMap();
 
         void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
-            final Eid srcEid = mrb.getSourceEid().getEid();
+            final Eid srcEid = fixSrcEidMask(mrb.getSourceEid().getEid());
             cancelExistingFuturesForEid(srcEid);
 
             final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = Maps.newConcurrentMap();
@@ -420,6 +427,26 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     eidFutureMap.remove(eid);
                 }
             }
+        }
+
+        /*
+         * See https://bugs.opendaylight.org/show_bug.cgi?id=8469#c1 why this is necessary.
+         *
+         * TL;DR  The sourceEid field in the MapRequestBuilder object will be serialized to a packet on the wire, and
+         * a Map-Request can't store the prefix length in the source EID.
+         *
+         * Since we store all prefixes as binary internally, we only care about and fix those address types.
+         */
+        private Eid fixSrcEidMask(Eid eid) {
+            Address address = eid.getAddress();
+            if (address instanceof Ipv4PrefixBinary) {
+                return new EidBuilder(eid).setAddress(new Ipv4PrefixBinaryBuilder((Ipv4PrefixBinary) address)
+                        .setIpv4MaskLength(MaskUtil.IPV4_MAX_MASK).build()).build();
+            } else if (address instanceof Ipv6PrefixBinary) {
+                return new EidBuilder(eid).setAddress(new Ipv6PrefixBinaryBuilder((Ipv6PrefixBinary) address)
+                        .setIpv6MaskLength(MaskUtil.IPV6_MAX_MASK).build()).build();
+            }
+            return eid;
         }
 
         private final class CancellableRunnable implements Runnable {
