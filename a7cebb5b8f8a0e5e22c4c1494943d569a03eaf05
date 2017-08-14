@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_47486f2d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-14T10:22:37Z",
+      "side": 1,
+      "message": "Hmm, good point. I made the whole onDataTreeChanged() method synchronized, so the execution is atomic.",
+      "parentUuid": "ba1f61a0_4c48962d",
+      "revId": "a7cebb5b8f8a0e5e22c4c1494943d569a03eaf05",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_ac55d2c7",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
         "patchSetId": 1
@@ -42,6 +60,24 @@
         "endLine": 94,
         "endChar": 90
       },
+      "revId": "a7cebb5b8f8a0e5e22c4c1494943d569a03eaf05",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_a755ebc7",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-14T10:22:37Z",
+      "side": 1,
+      "message": "Ack. See above.",
+      "parentUuid": "ba1f61a0_ac55d2c7",
       "revId": "a7cebb5b8f8a0e5e22c4c1494943d569a03eaf05",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
