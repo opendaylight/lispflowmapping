@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_4c48962d",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-14T01:41:12Z",
+      "side": 1,
+      "message": "I am thinking this part also should be in a synchronized statement like Synchronized(this){updateEntries.put(..)} . Otherwise, with some interleaving of onDataTreeChanged and the synchronized method below, you may remove a recently updated entry in the synchronized method below. thoughts?",
+      "range": {
+        "startLine": 77,
+        "startChar": 5,
+        "endLine": 77,
+        "endChar": 90
+      },
+      "revId": "a7cebb5b8f8a0e5e22c4c1494943d569a03eaf05",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_ac55d2c7",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-14T01:41:12Z",
+      "side": 1,
+      "message": "same here:\nI am thinking this part also should be in a synchronized statement like Synchronized(this){updateEntries.put(..)} . Otherwise, with some interleaving of onDataTreeChanged and the synchronized method below, you may remove a recently updated entry in the synchronized method below. thoughts?",
+      "range": {
+        "startLine": 94,
+        "startChar": 4,
+        "endLine": 94,
+        "endChar": 90
+      },
+      "revId": "a7cebb5b8f8a0e5e22c4c1494943d569a03eaf05",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
