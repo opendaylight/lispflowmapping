@@ -40,6 +40,24 @@
       "revId": "1125223f7b75c0668233fb33cd339b2ea5f9d473",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_c2af1ce2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-16T17:15:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_f0682d23",
+      "revId": "1125223f7b75c0668233fb33cd339b2ea5f9d473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
