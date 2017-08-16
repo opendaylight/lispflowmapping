@@ -22,6 +22,24 @@
       "revId": "1125223f7b75c0668233fb33cd339b2ea5f9d473",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_f0682d23",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-16T05:19:46Z",
+      "side": 1,
+      "message": "Not sure now why I have that, probably there was more there initially. Removed, since origin is a ConcurrentHashSet and addAll would be atomic.",
+      "parentUuid": "ba1f61a0_5077793a",
+      "revId": "1125223f7b75c0668233fb33cd339b2ea5f9d473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
