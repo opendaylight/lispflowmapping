@@ -22,6 +22,24 @@
       "revId": "0489b25bd3d8d2bf05c2a5f050db5bb2a1daac27",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_8691a254",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-22T04:56:05Z",
+      "side": 1,
+      "message": "My thought here was that when building a negative mapping, we take into account information from both NB and SB, because we do a getWidestNegative on both, and take the more specific.",
+      "parentUuid": "ba1f61a0_863d22be",
+      "revId": "0489b25bd3d8d2bf05c2a5f050db5bb2a1daac27",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
