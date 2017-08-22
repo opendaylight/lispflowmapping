@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_2628b685",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "This wont really help, since the method just returns. Synch will only apply for the duration of this method. What needs to be done is for Handler to pass the parameters and any call to Notif service done here inside the synch method.",
+      "range": {
+        "startLine": 375,
+        "startChar": 3,
+        "endLine": 380,
+        "endChar": 5
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_062bf282",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "same comment applies to all these synch methods. you want to Synch ANY access to the shared objects for the entire duration of the access, while these methods just Synch on getting the shared object (the lock here is the lock for the plugin obj and it is released as soon as this method returns. you want to either get the lock for the shared object you are using (i.e. mapregistercahce or notificationservice) or have a form of wrapper for any of such objects and synch in the wrapper. In this case the wrapper is the plugin but the entire access method should be inside the Synch).",
+      "range": {
+        "startLine": 398,
+        "startChar": 0,
+        "endLine": 398,
+        "endChar": 61
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_6622aea5",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "the synch on the getNotif.. will end as the get returns. We need to keep the lock (or a lock) until putNotif returns and we are done with the notif object. One way to do this is to change the Synched get() in plugin  to putNotificationSynched(..) in plugin, and pass the requestMappingBuilder to that. This way all Handler threads have to synch on  putNotificationSynched(..) which will return only after the putNotif() call to the Notif.Service is finished.",
+      "range": {
+        "startLine": 137,
+        "startChar": 16,
+        "endLine": 137,
+        "endChar": 61
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_4625eaa9",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "Same applies here. The only thing is since the stats object is synchronized (all its methods are synched) it is ok to do the increment inside the handler. So essentially the Synched call to plugin is not adding value I think.  Also, since we have multiple shared objects each synched on its own lock (stats, authkeydb, etc) we have to be extremely careful not to get into a deadlock! As in one thread holding a lock and waiting for another lock which is held by a thread waiting for the other lock. To avoid this in our case I think  it is possible to avoid requiring any thread to hold more than one lock at any time. This means, any call to a Synched method/object should be able to complete without the thread having ANY OTHER LOCK - never call a synched method inside another synched method. If that is not possible, then we have to really verify in detail to make sure still doesnt result in deadlock.",
+      "range": {
+        "startLine": 185,
+        "startChar": 16,
+        "endLine": 185,
+        "endChar": 39
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_a63b06d0",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "the mapregisterCache needs to be synchronized as in all its methods called from the Handler must be synchronized because the synchronized getMapRegisterCache() is doing nothing here, it ends before we access the cache itself for adding the entry. \nAlternatively, we can move all methods modifying the cache to the plugin.  I think just synch-ing the mapregisterCache methods is probably better, but as mentioned the deadlock issue has to be verified.",
+      "range": {
+        "startLine": 231,
+        "startChar": 20,
+        "endLine": 231,
+        "endChar": 55
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_8636c2e5",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "Same comment here and in all changes below.",
+      "range": {
+        "startLine": 242,
+        "startChar": 55,
+        "endLine": 247,
+        "endChar": 41
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_e635feda",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-22T00:41:29Z",
+      "side": 1,
+      "message": "same here but since akdb is synchronized itself (all methods are synched) this hsould be ok",
+      "range": {
+        "startLine": 312,
+        "startChar": 29,
+        "endLine": 315,
+        "endChar": 61
+      },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
