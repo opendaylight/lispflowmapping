@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_1d8858e6",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_2628b685",
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_062bf282",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
         "patchSetId": 5
@@ -42,6 +60,24 @@
         "endLine": 398,
         "endChar": 61
       },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_7d6eb430",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_062bf282",
       "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_bd214cfd",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_6622aea5",
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_4625eaa9",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 5
@@ -88,6 +142,24 @@
         "endLine": 185,
         "endChar": 39
       },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_5d22d001",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_4625eaa9",
       "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -117,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_fd7aa4ef",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "MapRegisterCache methods with more than one operation (refreshEntry()) are already synchronized, the rest are simple atomic calls on ConcurrentHashMap methods.",
+      "parentUuid": "ba1f61a0_a63b06d0",
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_8636c2e5",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 5
@@ -140,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_dd7d20e9",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_8636c2e5",
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_e635feda",
         "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
         "patchSetId": 5
@@ -157,6 +265,24 @@
         "endLine": 315,
         "endChar": 61
       },
+      "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_3d855cd0",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/lisp/LispSouthboundHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-23T13:14:40Z",
+      "side": 1,
+      "message": "Yeap.",
+      "parentUuid": "ba1f61a0_e635feda",
       "revId": "d0a45d7f05b7b29e3b47f4fd6013ee4ef4bdbc37",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
