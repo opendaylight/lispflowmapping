@@ -22,6 +22,24 @@
       "revId": "e83cbae7ef31c49a4371bd097b6c5d0bc1b32178",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_419f8a50",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-24T06:12:11Z",
+      "side": 1,
+      "message": "Right, I thought I made the change.",
+      "parentUuid": "ba1f61a0_e175de98",
+      "revId": "e83cbae7ef31c49a4371bd097b6c5d0bc1b32178",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
