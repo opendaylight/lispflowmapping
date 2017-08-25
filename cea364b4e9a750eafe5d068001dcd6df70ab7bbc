@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_d87a47f0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-25T02:11:52Z",
+      "side": 1,
+      "message": "I think we should move this to after actually removing this mapping, so basically to the end of this method.",
+      "range": {
+        "startLine": 505,
+        "startChar": 0,
+        "endLine": 505,
+        "endChar": 98
+      },
+      "revId": "cea364b4e9a750eafe5d068001dcd6df70ab7bbc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
