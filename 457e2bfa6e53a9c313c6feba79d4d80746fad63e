@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_b432f70d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-28T19:48:09Z",
+      "side": 1,
+      "message": "you\u0027ve removed the \"return\" above, and now this removes from smc when origin is SB, so please remove the smc.removeMapping() from mergeNegativePrefixes.",
+      "range": {
+        "startLine": 518,
+        "startChar": 8,
+        "endLine": 518,
+        "endChar": 48
+      },
+      "revId": "457e2bfa6e53a9c313c6feba79d4d80746fad63e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_54545b20",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-28T19:48:09Z",
+      "side": 1,
+      "message": "You should  remove this if you take out the return from above.",
+      "range": {
+        "startLine": 571,
+        "startChar": 7,
+        "endLine": 571,
+        "endChar": 31
+      },
+      "revId": "457e2bfa6e53a9c313c6feba79d4d80746fad63e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
