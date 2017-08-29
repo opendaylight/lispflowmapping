@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_cfd558ba",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-29T07:22:45Z",
+      "side": 1,
+      "message": "I explain below why I can\u0027t remove that call from mergeNegativePrefixes(). Here I had two options: make some convoluted conditionals for only calling this when mergeNegativeMappings() was not called, which would have made the code less readable, or allowing smc.removeMapping() to be called twice when it was called. Calling it twice incurs a small performance penalty in the rare cases when we merge negative mappings, but doesn\u0027t cause errors or exceptions, while keeping the code more readable.",
+      "parentUuid": "ba1f61a0_b432f70d",
+      "revId": "457e2bfa6e53a9c313c6feba79d4d80746fad63e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_54545b20",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 2
@@ -42,6 +60,24 @@
         "endLine": 571,
         "endChar": 31
       },
+      "revId": "457e2bfa6e53a9c313c6feba79d4d80746fad63e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_efd2dcd0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-08-29T07:22:45Z",
+      "side": 1,
+      "message": "I can\u0027t remove this from here, because then addNegativeMapping() below won\u0027t work as expected. addNegativeMapping() will call getWidestNegative for both NB and SB, and if the positive is not removed, before that, the result will not be the merged negative. I thought of adding something like addExplicitNegativeMapping, which would add whatever argument is passed as a negative, but I think it is safer to keep the original way.",
+      "parentUuid": "ba1f61a0_54545b20",
       "revId": "457e2bfa6e53a9c313c6feba79d4d80746fad63e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
