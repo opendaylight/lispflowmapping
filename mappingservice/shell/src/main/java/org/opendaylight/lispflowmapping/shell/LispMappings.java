@@ -8,9 +8,10 @@
 
 package org.opendaylight.lispflowmapping.shell;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
@@ -20,7 +21,8 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
  *
  */
 @Command(scope = "mappingservice", name = "mappings", description = "Print mapping database")
-public class LispMappings  extends OsgiCommandSupport {
+@Service
+public class LispMappings implements Action {
     @Option(name = "-d", aliases = "--debug", description = "Debug output", required = false, multiValued = false)
     private boolean debug;
 
@@ -28,7 +30,7 @@ public class LispMappings  extends OsgiCommandSupport {
 
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         if (debug) {
             System.out.print(mappingServiceShell.printMappings());
         } else {

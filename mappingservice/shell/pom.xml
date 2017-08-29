@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <artifactId>org.apache.karaf.shell.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
@@ -37,8 +37,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>org.apache.karaf.shell.commands;version="[3.0,5)",
-              org.apache.karaf.shell.console;version="[3.0,5)",
+            <Import-Package>org.apache.karaf.shell.api.action;version="[3.0,5)",
+              org.apache.karaf.shell.api.action.lifecycle;version="[3.0,5)",
               org.opendaylight.lispflowmapping.interfaces.mappingservice</Import-Package>
           </instructions>
         </configuration>
