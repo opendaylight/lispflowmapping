@@ -34,6 +34,7 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
@@ -41,7 +42,6 @@ import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
-import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
@@ -203,7 +203,7 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public MappingData addNegativeMapping(Eid key) {
         MappingRecord mapping = buildNegativeMapping(key);
-        MappingData mappingData = new MappingData(MappingOrigin.Southbound, mapping);
+        MappingData mappingData = new MappingData(mapping);
         LOG.debug("Adding negative mapping for EID {}", LispAddressStringifier.getString(key));
         LOG.trace(mappingData.getString());
         smc.addMapping(mapping.getEid(), mappingData);
@@ -294,7 +294,7 @@ public class MappingSystem implements IMappingSystem {
             LocatorRecordBuilder lrb = new LocatorRecordBuilder(locatorRecord);
             lrb.setRloc(LispAddressUtil.toRloc(nextHop));
             recordBuilder.getLocatorRecord().add(lrb.build());
-            return new MappingData(mappingData.getOrigin(), recordBuilder.build());
+            return new MappingData(recordBuilder.build());
         } else {
             LOG.warn("Nothing to do with ServicePath mapping record");
             return mappingData;
@@ -499,8 +499,7 @@ public class MappingSystem implements IMappingSystem {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
                 dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
-                    notificationMapping = new MappingData(mapping.getOrigin(),
-                            new MappingRecordBuilder().setEid(key).build());
+                    notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
                 }
             }
         }
@@ -675,7 +674,7 @@ public class MappingSystem implements IMappingSystem {
 
         for (Mapping mapping : mappings) {
             addMapping(mapping.getOrigin(), mapping.getMappingRecord().getEid(),
-                    new MappingData(mapping.getOrigin(), mapping.getMappingRecord()));
+                    new MappingData(mapping.getMappingRecord()));
         }
 
         for (AuthenticationKey authKey : authKeys) {
