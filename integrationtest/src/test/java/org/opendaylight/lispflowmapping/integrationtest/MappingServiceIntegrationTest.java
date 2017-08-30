@@ -64,11 +64,11 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
+import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
-import org.opendaylight.lispflowmapping.type.MappingData;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
@@ -459,8 +459,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         /* add mapping */
         final MappingRecord mapping1 = new MappingRecordBuilder()
                 .setEid(eid1).setTimestamp(System.currentTimeMillis()).setRecordTtl(1440).build();
-        mapService.addMapping(MappingOrigin.Northbound, eid1, null,
-                new MappingData(MappingOrigin.Northbound, mapping1));
+        mapService.addMapping(MappingOrigin.Northbound, eid1, null, new MappingData(mapping1));
 
         sleepForMilliseconds((timeout * expectedSmrs1) - (timeout / 2));
         final List<MapRequest> requests1 = processSmrPackets(reader1, subscriberSrcRloc1, expectedSmrs1);
@@ -635,8 +634,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final InstanceIdType iiType = new InstanceIdType(iid);
         for (String prefix : prefixes) {
             MappingRecord record = newMappingRecord(prefix, iiType);
-            mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null,
-                    new MappingData(MappingOrigin.Northbound, record));
+            mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
     }
 
@@ -648,7 +646,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         for (String prefix : prefixes) {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Southbound, record.getEid(), null,
-                    new MappingData(MappingOrigin.Southbound, record, System.currentTimeMillis()));
+                    new MappingData(record, System.currentTimeMillis()));
         }
     }
 
@@ -2160,7 +2158,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         mapService.addMapping(MappingOrigin.Southbound, eid, siteId,
-                new MappingData(MappingOrigin.Southbound, mappingRecord, System.currentTimeMillis()));
+                new MappingData(mappingRecord, System.currentTimeMillis()));
         sleepForSeconds(2);
 
         MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);
