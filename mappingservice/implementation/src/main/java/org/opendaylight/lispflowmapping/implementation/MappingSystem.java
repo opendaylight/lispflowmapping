@@ -8,12 +8,14 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
@@ -21,6 +23,7 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.timebucket.implementation.TimeBucketMappingTimeoutService;
 import org.opendaylight.lispflowmapping.implementation.timebucket.interfaces.ISouthBoundMappingTimeoutService;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -87,6 +90,7 @@ public class MappingSystem implements IMappingSystem {
     private ILispDAO sdao;
     private ILispMapCache smc;
     private IMapCache pmc;
+    private ConcurrentHashMap<Eid, Set<Subscriber>> subscriberdb = new ConcurrentHashMap<>();
     private IAuthKeyDb akdb;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
@@ -416,17 +420,17 @@ public class MappingSystem implements IMappingSystem {
         dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
     }
 
-    @SuppressWarnings("unchecked")
     private void removeSbMapping(Eid key, MappingData mappingData) {
         if (mappingData != null && mappingData.getXtrId() != null) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
         }
 
         removeFromSbTimeoutService(key);
-        Set<Subscriber> subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+        Set<Subscriber> subscribers = getSubscribers(key);
         smc.removeMapping(key);
         dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
         notifyChange(mappingData, subscribers, null, MappingChange.Removed);
+        removeSubscribers(key);
     }
 
     private void removeFromSbTimeoutService(Eid key) {
@@ -472,7 +476,6 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void removeMapping(MappingOrigin origin, Eid key) {
         Set<Subscriber> subscribers = null;
         Set<Subscriber> dstSubscribers = null;
@@ -480,11 +483,11 @@ public class MappingSystem implements IMappingSystem {
 
         if (mapping != null) {
             MappingData notificationMapping = mapping;
-            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+            subscribers = getSubscribers(key);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
-                dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
+                dstSubscribers = getSubscribers(dstAddr);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
                     notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
                 }
@@ -492,9 +495,7 @@ public class MappingSystem implements IMappingSystem {
             notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
-        if (origin == MappingOrigin.Northbound) {
-            removeData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
-        }
+        removeSubscribers(key);
 
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
@@ -559,6 +560,46 @@ public class MappingSystem implements IMappingSystem {
             return LispAddressUtil.asIpv6PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
         }
         return null;
+    }
+
+    @Override
+    public synchronized void subscribe(Subscriber subscriber, Eid subscribedEid) {
+        Set<Subscriber> subscribers = getSubscribers(subscribedEid);
+        if (subscribers == null) {
+            subscribers = Sets.newConcurrentHashSet();
+        } else if (subscribers.contains(subscriber)) {
+            // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
+            subscribers.remove(subscriber);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding new subscriber {} for EID {}", subscriber.getString(),
+                    LispAddressStringifier.getString(subscribedEid));
+        }
+        subscribers.add(subscriber);
+        addSubscribers(subscribedEid, subscribers);
+    }
+
+    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
+        LoggingUtil.logSubscribers(LOG, address, subscribers);
+        subscriberdb.put(address, subscribers);
+    }
+
+    @Override
+    public Set<Subscriber> getSubscribers(Eid address) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieving subscribers for EID {}", LispAddressStringifier.getString(address));
+        }
+
+        Set<Subscriber> subscribers = subscriberdb.get(address);
+        LoggingUtil.logSubscribers(LOG, address, subscribers);
+        return subscribers;
+    }
+
+    private void removeSubscribers(Eid address) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing subscribers for EID {}", LispAddressStringifier.getString(address));
+        }
+        subscriberdb.remove(address);
     }
 
     @Override

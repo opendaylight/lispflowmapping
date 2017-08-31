@@ -83,14 +83,14 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 @PrepareForTest(MappingMergeUtil.class)
 public class MappingSystemTest {
 
-    private static ILispDAO daoMock = Mockito.mock(ILispDAO.class);
+    private static ILispDAO dao = new HashMapDb();
     @Mock private static ILispMapCache smcMock;
     @Mock private static IMapCache pmcMock;
     @Mock private static IAuthKeyDb akdbMock;
     @Mock private static DataStoreBackEnd dsbeMock;
     @Mock private static NotificationPublishService npsMock;
     @Mock private static EnumMap<MappingOrigin, IMapCache> tableMapMock;
-    @InjectMocks private static MappingSystem mappingSystem = new MappingSystem(daoMock, false, npsMock, true);
+    @InjectMocks private static MappingSystem mappingSystem = new MappingSystem(dao, false, npsMock, true);
 
     private static final String IPV4_SRC =      "127.0.0.1";
     private static final String IPV4_DST =      "192.168.0.1";
@@ -128,9 +128,6 @@ public class MappingSystemTest {
 
     @Before
     public void init() throws Exception {
-        Mockito.when(daoMock.putTable(MappingOrigin.Southbound.toString())).thenReturn(Mockito.mock(HashMapDb.class));
-        Mockito.when(daoMock.putTable(MappingOrigin.Northbound.toString())).thenReturn(Mockito.mock(HashMapDb.class));
-
         Mockito.when(tableMapMock.get(MappingOrigin.Southbound)).thenReturn(smcMock);
         Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
 
@@ -436,7 +433,7 @@ public class MappingSystemTest {
      */
     @Test
     public void removeMappingTest_sb() throws NoSuchFieldException, IllegalAccessException {
-        mappingSystem = new MappingSystem(daoMock, false, npsMock, false);
+        mappingSystem = new MappingSystem(dao, false, npsMock, false);
         injectMocks();
         Mockito.when(tableMapMock.get(MappingOrigin.Southbound)).thenReturn(smcMock);
 
@@ -548,15 +545,6 @@ public class MappingSystemTest {
     }
 
     /**
-     * Tests {@link MappingSystem#cleanCaches} method.
-     */
-    @Test
-    public void cleanCachesTest() {
-        mappingSystem.cleanCaches();
-        Mockito.verify(daoMock).removeAll();
-    }
-
-    /**
      * Following test are executed for coverage-increase purpose.
      */
     @Test
@@ -566,7 +554,7 @@ public class MappingSystemTest {
         Mockito.verify(smcMock).printMappings();
 
         mappingSystem.destroy();
-        mappingSystem = new MappingSystem(daoMock, true, npsMock, true);
+        mappingSystem = new MappingSystem(dao, true, npsMock, true);
         mappingSystem.setDataStoreBackEnd(dsbeMock);
         mappingSystem.setMappingMerge(false);
         mappingSystem.setIterateMask(true);
