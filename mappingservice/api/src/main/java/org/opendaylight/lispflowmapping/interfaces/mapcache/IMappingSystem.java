@@ -8,10 +8,13 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 /**
@@ -118,6 +121,32 @@ public interface IMappingSystem {
      *
      */
     void removeMapping(MappingOrigin origin, Eid key);
+
+    /**
+     * Subscribes an RLOC to receive updates about mapping changes.
+     *
+     * @param subRloc
+     *            The RLOC that should receive the mapping change updates
+     * @param reqEid
+     *            The EID that was used in the original mapping lookup
+     * @param mapEid
+     *            The EID of the returned mapping (can only be different for longest prefix match lookups)
+     * @param srcEid
+     *            The source EID of the original mapping lookup
+     * @param recordTtl
+     *            The TTL for the subscription
+     */
+    void subscribe(Rloc subRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl);
+
+    /**
+     * Retrieves the subscribers for an EID.
+     *
+     * @param eid
+     *            The EID to be looked up
+     * @return
+     *            The set of subscribers for the EID
+     */
+    Set<Subscriber> getSubscribers(Eid eid);
 
     /**
      * Add authentication key.

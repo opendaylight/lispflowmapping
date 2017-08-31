@@ -10,12 +10,9 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
@@ -23,7 +20,6 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener
 import org.opendaylight.lispflowmapping.interfaces.lisp.SmrEvent;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
@@ -32,7 +28,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -53,7 +48,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +118,7 @@ public class MapResolver implements IMapResolverAsync {
             if (itrRlocs != null && itrRlocs.size() != 0) {
                 if (subscriptionService) {
                     final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
-                    updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
+                    mapService.subscribe(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
                             srcEid, mapping.getRecordTtl());
                 }
                 mapping = updateLocators(mapping, itrRlocs);
@@ -184,33 +178,6 @@ public class MapResolver implements IMapResolverAsync {
             // if none of the above, return the first Rloc
             return itrRlocList.get(0).getRloc();
         }
-    }
-
-    private void updateSubscribers(Rloc itrRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
-        Subscriber subscriber = new Subscriber(itrRloc, srcEid, Subscriber.recordTtlToSubscriberTime(recordTtl));
-        Eid subscribedEid = mapEid;
-
-        // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe itrRloc only
-        // to dst from the src/dst since that what's been requested. Note though that any updates to to the src/dst
-        // mapping will be pushed to dst as well (see sendSMRs in MapServer)
-        if (mapEid.getAddressType().equals(SourceDestKeyLcaf.class)
-                && !reqEid.getAddressType().equals(SourceDestKeyLcaf.class)) {
-            subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
-        }
-
-        Set<Subscriber> subscribers = getSubscribers(subscribedEid);
-        if (subscribers == null) {
-            subscribers = Sets.newConcurrentHashSet();
-        } else if (subscribers.contains(subscriber)) {
-            // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
-            subscribers.remove(subscriber);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding new subscriber {} for EID {}", subscriber.getString(),
-                    LispAddressStringifier.getString(subscribedEid));
-        }
-        subscribers.add(subscriber);
-        addSubscribers(subscribedEid, subscribers);
     }
 
     // Fixes mapping if request was for simple dst EID but the matched mapping is a SourceDest
@@ -346,15 +313,6 @@ public class MapResolver implements IMapResolverAsync {
             subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
         }
         return subscriberList;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Set<Subscriber> getSubscribers(Eid address) {
-        return (Set<Subscriber>) mapService.getData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS);
-    }
-
-    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
-        mapService.addData(MappingOrigin.Southbound, address, SubKeys.SUBSCRIBERS, subscribers);
     }
 
     @Override

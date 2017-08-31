@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
@@ -21,6 +22,7 @@ import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.timebucket.implementation.TimeBucketMappingTimeoutService;
 import org.opendaylight.lispflowmapping.implementation.timebucket.interfaces.ISouthBoundMappingTimeoutService;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
+import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
@@ -41,6 +43,7 @@ import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv6;
@@ -79,6 +82,7 @@ import org.slf4j.LoggerFactory;
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
     private static final String AUTH_KEY_TABLE = "authentication";
+    private static final String SUBSCRIBER_TABLE = "subscribers";
     //private static final int TTL_RLOC_TIMED_OUT = 1;
     private static final int TTL_NO_RLOC_KNOWN = ConfigIni.getInstance().getNegativeMappingTTL();
     private NotificationPublishService notificationPublishService;
@@ -87,6 +91,7 @@ public class MappingSystem implements IMappingSystem {
     private ILispDAO sdao;
     private ILispMapCache smc;
     private IMapCache pmc;
+    private IMapCache subscriberdb;
     private IAuthKeyDb akdb;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
@@ -135,6 +140,7 @@ public class MappingSystem implements IMappingSystem {
         sdao = dao.putTable(MappingOrigin.Southbound.toString());
         pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         smc = new SimpleMapCache(sdao);
+        subscriberdb = new SimpleMapCache(dao.putTable(SUBSCRIBER_TABLE));
         akdb = new AuthKeyDb(dao.putTable(AUTH_KEY_TABLE));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
@@ -416,14 +422,13 @@ public class MappingSystem implements IMappingSystem {
         dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
     }
 
-    @SuppressWarnings("unchecked")
     private void removeSbMapping(Eid key, MappingData mappingData) {
         if (mappingData != null && mappingData.getXtrId() != null) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
         }
 
         removeFromSbTimeoutService(key);
-        Set<Subscriber> subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+        Set<Subscriber> subscribers = getSubscribers(key);
         smc.removeMapping(key);
         dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
         notifyChange(mappingData, subscribers, null, MappingChange.Removed);
@@ -472,7 +477,6 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void removeMapping(MappingOrigin origin, Eid key) {
         Set<Subscriber> subscribers = null;
         Set<Subscriber> dstSubscribers = null;
@@ -480,11 +484,11 @@ public class MappingSystem implements IMappingSystem {
 
         if (mapping != null) {
             MappingData notificationMapping = mapping;
-            subscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
+            subscribers = getSubscribers(key);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
                 Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
-                dstSubscribers = (Set<Subscriber>) getData(MappingOrigin.Southbound, dstAddr, SubKeys.SUBSCRIBERS);
+                dstSubscribers = getSubscribers(dstAddr);
                 if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
                     notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
                 }
@@ -492,9 +496,7 @@ public class MappingSystem implements IMappingSystem {
             notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
         }
 
-        if (origin == MappingOrigin.Northbound) {
-            removeData(MappingOrigin.Southbound, key, SubKeys.SUBSCRIBERS);
-        }
+        removeSubscribers(key);
 
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
@@ -559,6 +561,57 @@ public class MappingSystem implements IMappingSystem {
             return LispAddressUtil.asIpv6PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
         }
         return null;
+    }
+
+    @Override
+    public void subscribe(Rloc subRloc, Eid reqEid, Eid mapEid, Eid srcEid, Integer recordTtl) {
+        Subscriber subscriber = new Subscriber(subRloc, srcEid, Subscriber.recordTtlToSubscriberTime(recordTtl));
+        Eid subscribedEid = mapEid;
+
+        // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe subRloc only
+        // to dst from the src/dst since that what's been requested. Note though that any updates to to the src/dst
+        // mapping will be pushed to dst as well (see sendSMRs in MapServer)
+        if (mapEid.getAddressType().equals(SourceDestKeyLcaf.class)
+                && !reqEid.getAddressType().equals(SourceDestKeyLcaf.class)) {
+            subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
+        }
+
+        Set<Subscriber> subscribers = getSubscribers(subscribedEid);
+        if (subscribers == null) {
+            subscribers = Sets.newConcurrentHashSet();
+        } else if (subscribers.contains(subscriber)) {
+            // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
+            subscribers.remove(subscriber);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding new subscriber {} for EID {}", subscriber.getString(),
+                    LispAddressStringifier.getString(subscribedEid));
+        }
+        subscribers.add(subscriber);
+        addSubscribers(subscribedEid, subscribers);
+    }
+
+    private void addSubscribers(Eid address, Set<Subscriber> subscribers) {
+        subscriberdb.addData(address, SubKeys.SUBSCRIBERS, subscribers);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<Subscriber> getSubscribers(Eid address) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieving subscribers for EID {}", LispAddressStringifier.getString(address));
+        }
+
+        Set<Subscriber> subscribers = (Set<Subscriber>) subscriberdb.getData(address, SubKeys.SUBSCRIBERS);
+        LoggingUtil.logSubscribers(LOG, address, subscribers);
+        return subscribers;
+    }
+
+    private void removeSubscribers(Eid address) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing subscribers for EID {}", LispAddressStringifier.getString(address));
+        }
+        subscriberdb.removeData(address, SubKeys.SUBSCRIBERS);
     }
 
     @Override
