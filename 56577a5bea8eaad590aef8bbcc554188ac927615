@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_c232435e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-08-31T21:17:58Z",
+      "side": 1,
+      "message": "why not make this subscribe(Subscriber, key)? looking at the getSubscribers() clearly Subscriber class is going to be known outside of MappingSystem",
+      "range": {
+        "startLine": 567,
+        "startChar": 2,
+        "endLine": 567,
+        "endChar": 80
+      },
+      "revId": "56577a5bea8eaad590aef8bbcc554188ac927615",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
