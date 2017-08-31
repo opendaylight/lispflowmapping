@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -118,6 +120,26 @@ public interface IMappingSystem {
      *
      */
     void removeMapping(MappingOrigin origin, Eid key);
+
+    /**
+     * Subscribe a Subscriber to receive updates about mapping changes for an EID.
+     *
+     * @param subscriber
+     *            The Subscriber object with information about the subscriber
+     * @param subscribedEid
+     *            The EID for which the subscriber will receive updates
+     */
+    void subscribe(Subscriber subscriber, Eid subscribedEid);
+
+    /**
+     * Retrieves the subscribers for an EID.
+     *
+     * @param eid
+     *            The EID to be looked up
+     * @return
+     *            The set of subscribers for the EID
+     */
+    Set<Subscriber> getSubscribers(Eid eid);
 
     /**
      * Add authentication key.
