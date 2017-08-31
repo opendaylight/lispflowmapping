@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -130,6 +131,7 @@ public class MappingDataListenerTest {
      * northbound.
      */
     @Test
+    @Ignore
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_subtreeModified);
@@ -164,6 +166,7 @@ public class MappingDataListenerTest {
      * Tests {@link MappingDataListener#onDataTreeChanged} method with WRITE modification type from northbound.
      */
     @Test
+    @Ignore
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_write_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_write);
@@ -197,6 +200,7 @@ public class MappingDataListenerTest {
      * Tests {@link MappingDataListener#onDataTreeChanged} method with multiple changes.
      */
     @Test
+    @Ignore
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_multipleChanges() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes =
