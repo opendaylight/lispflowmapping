@@ -87,10 +87,15 @@ public final class MapNotifySerializer {
     @SuppressWarnings("checkstyle:IllegalCatch")
     public MapNotify deserialize(ByteBuffer notifyBuffer) {
         try {
+            final byte typeAndFlags = notifyBuffer.get();
+            final int type = typeAndFlags >> 4;
+            if (MessageType.forValue(type) != MessageType.MapNotify) {
+                throw new LispSerializationException("Expected Map-Notify packet (type 4), but was type " + type);
+            }
+
             MapNotifyBuilder builder = new MapNotifyBuilder();
             builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
 
-            byte typeAndFlags = notifyBuffer.get();
             boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
             builder.setXtrSiteIdPresent(xtrSiteIdPresent);
 

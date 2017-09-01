@@ -85,10 +85,15 @@ public final class MapRegisterSerializer {
     @SuppressWarnings("checkstyle:IllegalCatch")
     public MapRegister deserialize(ByteBuffer registerBuffer, InetAddress sourceRloc) {
         try {
+            final byte typeAndFlags = registerBuffer.get();
+            final int type = typeAndFlags >> 4;
+            if (MessageType.forValue(type) != MessageType.MapRegister) {
+                throw new LispSerializationException("Expected Map-Register packet (type 3), but was type " + type);
+            }
+
             MapRegisterBuilder builder = new MapRegisterBuilder();
             builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
 
-            byte typeAndFlags = registerBuffer.get();
             boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
             builder.setProxyMapReply(ByteUtil.extractBit(typeAndFlags, Flags.PROXY));
             builder.setXtrSiteIdPresent(xtrSiteIdPresent);
