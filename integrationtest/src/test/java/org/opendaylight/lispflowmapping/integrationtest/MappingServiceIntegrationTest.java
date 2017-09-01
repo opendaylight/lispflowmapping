@@ -1783,8 +1783,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                 etlrBuilder.build()).build());
-        sendMapRegister(mapRegisterBuilder.build());
+        MapRegister mapRegister = mapRegisterBuilder.build();
+        LOG.trace("Sending Map-Register via socket: {}", mapRegister);
+        sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
+        LOG.trace("Received Map-Notify via socket: {}", mapNotify);
         assertEquals(8, mapNotify.getNonce().longValue());
         // wait for the notifications to propagate
         sleepForSeconds(1);
@@ -2394,12 +2397,24 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        return MapRequestSerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket(
-                datagramSocket, 30000).getData()), null);
+        ByteBuffer packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
+        while (!checkType(packet, MessageType.MapRequest)) {
+            packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
+        }
+        return MapRequestSerializer.getInstance().deserialize(packet, null);
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
-        return MapNotifySerializer.getInstance().deserialize(ByteBuffer.wrap(receivePacket().getData()));
+        ByteBuffer packet = ByteBuffer.wrap(receivePacket().getData());
+        while (!checkType(packet, MessageType.MapNotify)) {
+            packet = ByteBuffer.wrap(receivePacket().getData());
+        }
+        return MapNotifySerializer.getInstance().deserialize(packet);
+    }
+
+    private static boolean checkType(ByteBuffer packet, MessageType type) {
+        final int receivedType = ByteUtil.getUnsignedByte(packet, LispMessage.Pos.TYPE) >> 4;
+        return MessageType.forValue(receivedType) == type;
     }
 
     private void sendMapRequest(MapRequest mapRequest) {
