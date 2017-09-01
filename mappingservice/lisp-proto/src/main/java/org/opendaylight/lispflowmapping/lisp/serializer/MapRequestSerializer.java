@@ -119,9 +119,13 @@ public final class MapRequestSerializer {
     @SuppressWarnings("checkstyle:IllegalCatch")
     public MapRequest deserialize(ByteBuffer requestBuffer, InetAddress sourceRloc) {
         try {
-            MapRequestBuilder builder = new MapRequestBuilder();
-
             final byte typeAndFlags = requestBuffer.get();
+            final int type = typeAndFlags >> 4;
+            if (MessageType.forValue(type) != MessageType.MapRequest) {
+                throw new LispSerializationException("Expected Map-Request packet (type 1), but was type " + type);
+            }
+
+            MapRequestBuilder builder = new MapRequestBuilder();
             builder.setAuthoritative(ByteUtil.extractBit(typeAndFlags, Flags.AUTHORITATIVE));
             builder.setMapDataPresent(ByteUtil.extractBit(typeAndFlags, Flags.MAP_DATA_PRESENT));
             builder.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
