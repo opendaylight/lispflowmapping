@@ -79,7 +79,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
-public class LispSouthboundServiceTest extends BaseTestCase {
+public class LispSouthboundHandlerTest extends BaseTestCase {
 
     private LispSouthboundHandler testedLispService;
     private byte[] mapRequestPacket;
