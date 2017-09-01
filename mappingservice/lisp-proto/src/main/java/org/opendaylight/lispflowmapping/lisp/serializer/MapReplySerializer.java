@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
@@ -63,8 +64,13 @@ public final class MapReplySerializer {
     }
 
     public MapReply deserialize(ByteBuffer replyBuffer) {
+        final byte typeAndFlags = replyBuffer.get();
+        final int type = typeAndFlags >> 4;
+        if (MessageType.forValue(type) != MessageType.MapReply) {
+            throw new LispSerializationException("Expected Map-Reply packet (type 2), but was type " + type);
+        }
+
         MapReplyBuilder builder = new MapReplyBuilder();
-        byte typeAndFlags = replyBuffer.get();
         builder.setProbe(ByteUtil.extractBit(typeAndFlags, Flags.PROBE));
         builder.setEchoNonceEnabled(ByteUtil.extractBit(typeAndFlags, Flags.ECHO_NONCE_ENABLED));
         builder.setSecurityEnabled(ByteUtil.extractBit(typeAndFlags, Flags.SECURITY_ENABLED));
