@@ -176,6 +176,11 @@ public class MappingSystem implements IMappingSystem {
         }
 
         tableMap.get(origin).addMapping(key, mappingData);
+
+        // We store explicit negative mappings in SB. That may cause issues, see bug 9037 for details
+        if (origin != MappingOrigin.Southbound) {
+            handleSbNegativeMappings(key);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -203,6 +208,13 @@ public class MappingSystem implements IMappingSystem {
         }
 
         smc.addData(key, SubKeys.TIME_BUCKET_ID, updatedBucketId);
+    }
+
+    private void handleSbNegativeMappings(Eid key) {
+        MappingData mappingData = getSbMappingWithExpiration(null, key, null);
+        if (mappingData != null && mappingData.isNegative().or(false)) {
+            removeSbMapping(mappingData.getRecord().getEid(), mappingData);
+        }
     }
 
     @Override
