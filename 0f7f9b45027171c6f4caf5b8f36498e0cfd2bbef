@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_177f62ac",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-09-06T23:23:16Z",
+      "side": 1,
+      "message": "this is a very good point. I just realized, it is not just the negative issue, even with positive, or change mappings/policies, may have the same problem. When a NB mapping is added, we use the same exact key to lookup subscribers in SB to send SMR. So in your bug example, this means SB returns the /16 negative subscribers, and we send an SMR to those with the /24. So they will request the /24 which will match the NB new mapping, so they should get the NB positive mapping if we have a NB-First setting. But clearly the negative in SB should be deleted because it is an incorrect negative mapping now. \nNow think of a positive less specific being added in NB, where a more specific with subscribers exist in SB. In the datalistener we lookup subscribers for the new NB less specific prefix, SB may return null for that , and so we do nothing. While we should in this case notify  subscribers of any more specific because the new NB mapping may have changed the ultimate mapping for them. Perhaps we should open a bug for this case as well? and also enumerate other interleavings and see if we have other bug possibilities here.",
+      "range": {
+        "startLine": 180,
+        "startChar": 8,
+        "endLine": 184,
+        "endChar": 5
+      },
+      "revId": "0f7f9b45027171c6f4caf5b8f36498e0cfd2bbef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_77705edc",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-09-06T23:23:16Z",
+      "side": 1,
+      "message": "This would return only less specific negatives in SB. What happens if there is a more specific negative key in SB? In that case, this call will return null, but still the negative may have to be removed. We may need to look at all possible immediate children of this key IFF it was insetted into the tree as well (more specifics).  Kind of like a findPotentialChildren() which would be really similar to a insert prefix, but instead of inserting, it would just return the list of children, and then we have to check if any immediate children are negative, if so remove them (and notify subscribers).",
+      "range": {
+        "startLine": 214,
+        "startChar": 34,
+        "endLine": 214,
+        "endChar": 61
+      },
+      "revId": "0f7f9b45027171c6f4caf5b8f36498e0cfd2bbef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
