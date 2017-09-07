@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_6876bfa5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-09-07T13:47:04Z",
+      "side": 1,
+      "message": "To reply to your first paragraph: we no longer have a separate cache for NB and SB subscribers, this patch is on top of the patch implementing a single flat cache for subscribers. And yes, the negative in SB should be deleted in the case mentioned in the bug, and this patch does exactly that.\n\nTo the second paragraph, yes, I prefer to open a separate bug for the reverse case, and fix it separately.",
+      "parentUuid": "ba1f61a0_177f62ac",
+      "range": {
+        "startLine": 180,
+        "startChar": 8,
+        "endLine": 184,
+        "endChar": 5
+      },
+      "revId": "0f7f9b45027171c6f4caf5b8f36498e0cfd2bbef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_77705edc",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-09-06T23:23:16Z",
       "side": 1,
       "message": "This would return only less specific negatives in SB. What happens if there is a more specific negative key in SB? In that case, this call will return null, but still the negative may have to be removed. We may need to look at all possible immediate children of this key IFF it was insetted into the tree as well (more specifics).  Kind of like a findPotentialChildren() which would be really similar to a insert prefix, but instead of inserting, it would just return the list of children, and then we have to check if any immediate children are negative, if so remove them (and notify subscribers).",
+      "range": {
+        "startLine": 214,
+        "startChar": 34,
+        "endLine": 214,
+        "endChar": 61
+      },
+      "revId": "0f7f9b45027171c6f4caf5b8f36498e0cfd2bbef",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_0846234f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-09-07T13:47:04Z",
+      "side": 1,
+      "message": "I actually proposed in one of our meetings to implement a method to get children and use for exactly this purpose. For overlapping prefix support I think we really need this. I will include that work in a patch for the new bug that I will open.",
+      "parentUuid": "ba1f61a0_77705edc",
       "range": {
         "startLine": 214,
         "startChar": 34,
