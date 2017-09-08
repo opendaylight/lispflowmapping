@@ -13,8 +13,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Set;
 
 /**
  * Radix trie/tree (also known as Patricia tree) implementation. Supports CRD operations for
@@ -289,6 +291,32 @@ public class RadixTrie<T> {
         return null;
     }
 
+    /**
+     * For a given prefix look up the longest prefix match, and then return the set of its children (including the
+     * longest prefix match itself, but excluding virtual nodes).
+     *
+     * @param prefix Big endian byte array representation of the prefix to be looked up.
+     * @param preflen Prefix length
+     * @return Set of child prefixes
+     */
+    public Set<TrieNode> lookupChildren(byte[] prefix, int preflen) {
+        TrieNode node = lookupBest(prefix, preflen);
+        if (node == null) {
+            return null;
+        }
+
+        Set<TrieNode> children = new HashSet<>();
+        TrieNode itNode;
+        Iterator<TrieNode> it = node.iterator();
+        while (it.hasNext()) {
+            itNode = it.next();
+            if (itNode.prefix != null) {
+                children.add(itNode);
+            }
+        }
+
+        return children;
+    }
 
     /**
      * Remove prefix from radix trie.
