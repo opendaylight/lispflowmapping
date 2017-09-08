@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -333,6 +334,15 @@ public class RadixTrieTest {
         res = radixTrie4.lookupWidestNegative(IP4_BYTES10, 16);
         assertTrue(Arrays.equals(res.prefix(), IP4_BYTES12));
         assertTrue(res.prefixLength() == 2);
+    }
+
+    @Test
+    public void testIpv4ChildrenLookup() {
+        radixTrie4 = new RadixTrie<>(32, true);
+
+        addIp4Addresses(radixTrie4);
+        Set<RadixTrie<Integer>.TrieNode> res = radixTrie4.lookupChildren(IP4_BYTES4, 24);
+        assertEquals(3, res.size());
     }
 
     /**
