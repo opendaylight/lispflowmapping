@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -335,6 +336,21 @@ public class RadixTrieTest {
         assertTrue(res.prefixLength() == 2);
     }
 
+    @Test
+    public void testIpv4ChildrenLookup() {
+        radixTrie4 = new RadixTrie<>(32, true);
+
+        addIp4Addresses(radixTrie4);
+        Set<RadixTrie<Integer>.TrieNode> res = radixTrie4.lookupChildren(IP4_BYTES4, 24);
+        assertEquals(3, res.size());
+
+        radixTrie4 = new RadixTrie<>(32, true);
+
+        radixTrie4.insert(IP4_BYTES4, 24, 1);
+        res = radixTrie4.lookupChildren(IP4_BYTES1, 16);
+        assertEquals(1, res.size());
+    }
+
     /**
      * Tests v6 CRD operations.
      * It just makes sure v6 prefix lengths don't generate problems. Therefore it's not as thorough as v4.
@@ -402,12 +418,25 @@ public class RadixTrieTest {
     }
 
     private void addIp4Addresses(RadixTrie<Integer> trie) {
+        // 192.168.1.1/32
         trie.insert(IP4_BYTES7, 32, 7);
+
+        // 192.168.1.0/25
         trie.insert(IP4_BYTES6, 25, 6);
+
+        // 192.168.2.0/24
         trie.insert(IP4_BYTES5, 24, 5);
+
+        // 192.168.1.0/24
         trie.insert(IP4_BYTES4, 24, 4);
+
+        // 192.169.0.0/16
         trie.insert(IP4_BYTES3, 16, 3);
+
+        // 192.167.0.0/16
         trie.insert(IP4_BYTES2, 16, 2);
+
+        // 192.168.0.0/16
         trie.insert(IP4_BYTES1, 16, 1);
     }
 
