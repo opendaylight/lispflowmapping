@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.mapcache;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -199,6 +200,15 @@ public class SimpleMapCache implements ILispMapCache {
             return null;
         }
         return table.getVirtualParentSiblingPrefix(MaskUtil.normalize(eid));
+    }
+
+    @Override
+    public Set<Eid> getSubtree(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return Collections.emptySet();
+        }
+        return table.getSubtree(eid);
     }
 
     @Override
