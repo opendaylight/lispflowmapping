@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.interfaces.mapcache;
 
+import java.util.Set;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 /**
@@ -47,6 +48,15 @@ public interface IMapCache {
      * @return Returns the widest negative prefix or null if nothing is found.
      */
     Eid getWidestNegativeMapping(Eid key);
+
+    /**
+     * Retrieves the subtree of a prefix.
+     *
+     * @param key
+     *            Key to be looked up
+     * @return The set of prefixes in the subtree for the prefix
+     */
+    Set<Eid> getSubtree(Eid key);
 
     /**
      * Remove mapping.
