@@ -11,6 +11,7 @@ package org.opendaylight.lispflowmapping.interfaces.dao;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
 
+import java.util.Set;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 
 public interface ILispDAO {
@@ -98,6 +99,15 @@ public interface ILispDAO {
      * @return The widest negative prefix found.
      */
     Eid getWidestNegativePrefix(Eid key);
+
+    /**
+     * Get children of the given prefix.
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The set of EIDs that are children of the given EID.
+     */
+    Set<Eid> getChildPrefixes(Eid key);
 
     /**
      * Enumerate all the entries from the DAO.

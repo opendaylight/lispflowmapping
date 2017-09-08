@@ -8,6 +8,7 @@
 
 package org.opendaylight.lispflowmapping.mapcache;
 
+import java.util.Set;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -48,6 +49,11 @@ public class FlatMapCache implements IMapCache {
 
     @Override
     public Eid getWidestNegativeMapping(Eid key) {
+        return null;
+    }
+
+    @Override
+    public Set<Eid> getChildPrefixes(Eid key) {
         return null;
     }
 
