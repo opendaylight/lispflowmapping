@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.mapcache;
 
 import java.util.Map;
+import java.util.Set;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -135,6 +136,15 @@ public class MultiTableMapCache implements IMapCache {
             return MaskUtil.normalize(key, (short) 0);
         }
         return table.getWidestNegativePrefix(key);
+    }
+
+    @Override
+    public Set<Eid> getSubtree(Eid key) {
+        ILispDAO table = getVniTable(key);
+        if (table == null) {
+            return null;
+        }
+        return table.getSubtree(key);
     }
 
     public void removeMapping(Eid eid) {

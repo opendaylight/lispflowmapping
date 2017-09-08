@@ -202,6 +202,15 @@ public class SimpleMapCache implements ILispMapCache {
     }
 
     @Override
+    public Set<Eid> getSubtree(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+        return table.getSubtree(eid);
+    }
+
+    @Override
     public void removeMapping(Eid eid) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
