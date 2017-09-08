@@ -9,7 +9,9 @@
 package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.lispflowmapping.inmemorydb.radixtrie.RadixTrie;
@@ -153,7 +155,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
                     break;
             }
             if (node != null) {
-                return LispAddressUtil.asIpv4PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+                return LispAddressUtil.asIpv4PrefixBinaryEid(
+                        key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength());
             }
         } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
@@ -177,7 +180,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
                     break;
             }
             if (node != null) {
-                return LispAddressUtil.asIpv6PrefixBinaryEid(key, node.prefix(), (short) node.prefixLength());
+                return LispAddressUtil.asIpv6PrefixBinaryEid(
+                        key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength());
             }
         }
         return null;
@@ -201,6 +205,37 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     @Override
     public Eid getWidestNegativePrefix(Eid key) {
         return getPrefix(key, GetPrefixMethods.WIDEST_NEGATIVE);
+    }
+
+    @Override
+    public Set<Eid> getChildPrefixes(Eid key) {
+        Set<RadixTrie<Object>.TrieNode> nodes = null;
+        if (key.getAddress() instanceof Ipv4PrefixBinary) {
+            Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
+            nodes = ip4Trie.lookupChildren(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+        } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
+            Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
+            nodes = ip6Trie.lookupChildren(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+        }
+        return nodesToEids(key, nodes);
+    }
+
+    private static Set<Eid> nodesToEids(Eid key, Set<RadixTrie<Object>.TrieNode> nodes) {
+        if (nodes == null || nodes.isEmpty()) {
+            return null;
+        }
+
+        Set<Eid> children = new HashSet<>();
+        for (RadixTrie<Object>.TrieNode node : nodes) {
+            if (key.getAddress() instanceof Ipv4PrefixBinary) {
+                children.add(LispAddressUtil.asIpv4PrefixBinaryEid(
+                        key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength()));
+            } else if  (key.getAddress() instanceof Ipv6PrefixBinary) {
+                children.add(LispAddressUtil.asIpv6PrefixBinaryEid(
+                        key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength()));
+            }
+        }
+        return children;
     }
 
     private void tryRemoveFromTrie(Object key) {

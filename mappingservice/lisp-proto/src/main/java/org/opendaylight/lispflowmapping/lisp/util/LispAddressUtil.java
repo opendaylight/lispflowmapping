@@ -485,11 +485,19 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv4PrefixBinaryEid(Eid eid, byte[] address, short mask) {
+        return asIpv4PrefixBinaryEid(eid.getVirtualNetworkId(), address, mask);
+    }
+
+    public static Eid asIpv4PrefixBinaryEid(long vni, byte[] address, short mask) {
+        return asIpv4PrefixBinaryEid(new InstanceIdType(vni), address, mask);
+    }
+
+    public static Eid asIpv4PrefixBinaryEid(InstanceIdType vni, byte[] address, short mask) {
         Preconditions.checkArgument(address.length == 4,
                 "asIpv4PrefixBinaryEid called with incorrect length byte array ({})", address.length);
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(Ipv4PrefixBinaryAfi.class);
-        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
+        builder.setVirtualNetworkId(vni);
         builder.setAddress(new Ipv4PrefixBinaryBuilder().setIpv4AddressBinary(new Ipv4AddressBinary(address))
                 .setIpv4MaskLength(mask).build());
         return builder.build();
@@ -546,11 +554,19 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv6PrefixBinaryEid(Eid eid, byte[] address, short mask) {
+        return asIpv6PrefixBinaryEid(eid.getVirtualNetworkId(), address, mask);
+    }
+
+    public static Eid asIpv6PrefixBinaryEid(long vni, byte[] address, short mask) {
+        return asIpv6PrefixBinaryEid(new InstanceIdType(vni), address, mask);
+    }
+
+    public static Eid asIpv6PrefixBinaryEid(InstanceIdType vni, byte[] address, short mask) {
         Preconditions.checkArgument(address.length == 16,
                 "asIpv6PrefixBinaryEid called with incorrect length byte array ({})", address.length);
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(Ipv6PrefixBinaryAfi.class);
-        builder.setVirtualNetworkId(eid.getVirtualNetworkId());
+        builder.setVirtualNetworkId(vni);
         builder.setAddress(new Ipv6PrefixBinaryBuilder().setIpv6AddressBinary(new Ipv6AddressBinary(address))
                 .setIpv6MaskLength(mask).build());
         return builder.build();
