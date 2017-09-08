@@ -59,13 +59,11 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
-import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
@@ -111,7 +109,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -996,7 +993,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         socket = initSocket(socket, 56756);
 
         sendPacket(mapRequestPacket);
-        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        ByteBuffer readBuf = receivePacket();
         MapReply reply = MapReplySerializer.getInstance().deserialize(readBuf);
         assertEquals(4435248268955932168L, reply.getNonce().longValue());
 
@@ -1194,8 +1191,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
         sendPacket(mapRegisterPacketWithoutNotify);
 
-        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
-        MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf, null);
+        MapRequest smr = receiveMapRequest();
         assertTrue(smr.isSmr());
         Eid sourceEid = smr.getSourceEid().getEid();
         assertTrue(LispAddressUtil.asIpv4Eid("153.16.254.1").equals(sourceEid));
@@ -2443,7 +2439,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         sendMapRequest(mapRequest);
         DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
-        MapRequest receivedMapRequest = receiveMapRequest(nonProxySocket);
+        MapRequest receivedMapRequest = MappingServiceIntegrationTestUtil.receiveMapRequest(nonProxySocket);
         assertEquals(mapRequest.getNonce(), receivedMapRequest.getNonce());
         assertEquals(mapRequest.getSourceEid(), receivedMapRequest.getSourceEid());
         assertEquals(mapRequest.getItrRloc(), receivedMapRequest.getItrRloc());
@@ -2463,35 +2459,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         builder.setPitr(true);
         mapRequest = builder.build();
         return mapRequest;
-    }
-
-    private void assertMapNotifyReceived() throws SocketTimeoutException {
-        receiveMapNotify();
-    }
-
-    private MapReply receiveMapReply() throws SocketTimeoutException {
-        return receiveMapReply(socket, 1000);
-    }
-
-    private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        ByteBuffer packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
-        while (!checkType(packet, MessageType.MapRequest)) {
-            packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
-        }
-        return MapRequestSerializer.getInstance().deserialize(packet, null);
-    }
-
-    private MapNotify receiveMapNotify() throws SocketTimeoutException {
-        ByteBuffer packet = ByteBuffer.wrap(receivePacket().getData());
-        while (!checkType(packet, MessageType.MapNotify)) {
-            packet = ByteBuffer.wrap(receivePacket().getData());
-        }
-        return MapNotifySerializer.getInstance().deserialize(packet);
-    }
-
-    private static boolean checkType(ByteBuffer packet, MessageType type) {
-        final int receivedType = ByteUtil.getUnsignedByte(packet, LispMessage.Pos.TYPE) >> 4;
-        return MessageType.forValue(receivedType) == type;
     }
 
     private void sendMapRequest(MapRequest mapRequest) {
@@ -2521,47 +2488,27 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
     }
 
-    private DatagramPacket receivePacket() throws SocketTimeoutException {
-        return receivePacket(6000);
+    private ByteBuffer receivePacket() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receivePacket(socket);    }
+
+    private ByteBuffer receivePacket(int timeout) throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receivePacket(socket, timeout);
     }
 
-    private DatagramPacket receivePacket(int timeout) throws SocketTimeoutException {
-        return receivePacket(socket, timeout);
+    private void assertMapNotifyReceived() throws SocketTimeoutException {
+        MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
     }
 
-    private DatagramPacket receivePacket(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
-        try {
-            byte[] buffer = new byte[4096];
-            DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-            LOG.trace("Waiting for packet from socket...");
-            receivedSocket.setSoTimeout(timeout);
-            receivedSocket.receive(receivePacket);
-            LOG.trace("Received packet from socket!");
-            return receivePacket;
-        } catch (SocketTimeoutException ste) {
-            throw ste;
-        } catch (Throwable t) {
-            fail();
-            return null;
-        }
+    private MapRequest receiveMapRequest() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapRequest(socket);
     }
 
-    private MapReply receiveMapReply(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
-        DatagramPacket packet;
-        try {
-            while (true) {
-                packet = receivePacket(receivedSocket, timeout);
-                final ByteBuffer buff = ByteBuffer.wrap(packet.getData());
-                final int type = ByteUtil.getUnsignedByte(buff, LispMessage.Pos.TYPE) >> 4;
-                final Object lispType = MessageType.forValue(type);
+    private MapReply receiveMapReply() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapReply(socket);
+    }
 
-                if (lispType == MessageType.MapReply) {
-                    return MapReplySerializer.getInstance().deserialize(buff);
-                }
-            }
-        } catch (SocketTimeoutException ste) {
-            throw ste;
-        }
+    private MapNotify receiveMapNotify() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
     }
 
     private void sleepForSeconds(int seconds) {
