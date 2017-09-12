@@ -46,6 +46,18 @@ public interface IMappingSystem {
     MappingData addNegativeMapping(Eid key);
 
     /**
+     * Update mapping.
+     *
+     * @param origin
+     *            Table where mapping should be added
+     * @param key
+     *            Key of the mapping
+     * @param mapping
+     *            Mapping to be stored
+     */
+    void updateMapping(MappingOrigin origin, Eid key, MappingData mapping);
+
+    /**
      * Retrieves mapping for the provided src and dst key.
      *
      * @param src
@@ -97,6 +109,17 @@ public interface IMappingSystem {
      * @return Returns the prefix found in the cache or null if nothing is found.
      */
     Eid getWidestNegativePrefix(Eid key);
+
+    /**
+     * Retrieves the subtree of a maskable prefix from the given map-cache.
+     *
+     * @param origin
+     *            Table where the key should be looked up
+     * @param key
+     *            Key to be looked up
+     * @return The child prefixes of the prefix, including the prefix itself if present
+     */
+    Set<Eid> getSubtree(MappingOrigin origin, Eid key);
 
     /**
      * Refresh southbound mapping registration timestamp.

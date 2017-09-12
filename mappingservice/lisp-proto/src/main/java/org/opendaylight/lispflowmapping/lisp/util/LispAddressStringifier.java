@@ -7,13 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Set;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
@@ -39,6 +39,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public class LispAddressStringifier {
+public final class LispAddressStringifier {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAddressStringifier.class);
 
     private static final String PREFIX_SEPARATOR = ":";
@@ -78,8 +79,26 @@ public class LispAddressStringifier {
         URL;
     }
 
+    // Utility class, should not be instantiated
+    private LispAddressStringifier() {
+    }
+
     public static String getString(LispAddress lispAddress) {
         return getAddrString(Destination.USER, lispAddress);
+    }
+
+    public static String getString(Set<Eid> eids) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean first = true;
+        for (Eid eid : eids) {
+            if (!first) {
+                sb.append(", ");
+            }
+            sb.append(getString(eid));
+            first = false;
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     public static String getString(Address address) {
@@ -111,7 +130,10 @@ public class LispAddressStringifier {
     }
 
     private static String getAddrString(Destination dst, LispAddress lispAddress) {
-        Preconditions.checkNotNull(lispAddress, "lispAddress should not be null");
+        if (lispAddress == null) {
+            return "null";
+        }
+
         Address addr = lispAddress.getAddress();
         Long vni = null;
 

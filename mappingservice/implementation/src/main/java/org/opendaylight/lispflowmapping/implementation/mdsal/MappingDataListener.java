@@ -10,25 +10,19 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
 import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
-import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
@@ -104,40 +98,22 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                     continue;
                 }
 
-                MappingChange mappingChange;
-
-                if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType()) {
-                    LOG.trace("Received update data");
-                    mappingChange = MappingChange.Updated;
-                } else {
-                    LOG.trace("Received write data");
-                    mappingChange = MappingChange.Created;
-                }
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
-                LOG.trace("Value: {}", mapping);
-
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
                 Eid convertedEid = convertedMapping.getMappingRecord().getEid();
 
-                mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
-                        new MappingData(convertedMapping.getMappingRecord()));
-                Set<Subscriber> subscribers = mapSystem.getSubscribers(convertedEid);
-
-                Set<Subscriber> dstSubscribers = null;
-                // For SrcDst LCAF also send SMRs to Dst prefix
-                if (convertedEid.getAddress() instanceof SourceDestKey) {
-                    Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
-                    dstSubscribers = mapSystem.getSubscribers(dstAddr);
+                if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType()) {
+                    LOG.trace("Received update data");
+                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Value: {}", mapping);
+                    mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
+                            new MappingData(convertedMapping.getMappingRecord()));
+                } else {
+                    LOG.trace("Received write data");
+                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Value: {}", mapping);
+                    mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
+                            new MappingData(convertedMapping.getMappingRecord()));
                 }
-
-                try {
-                    // The notifications are used for sending SMR.
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
-                            convertedMapping, subscribers, dstSubscribers, mappingChange));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
-
             } else {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
