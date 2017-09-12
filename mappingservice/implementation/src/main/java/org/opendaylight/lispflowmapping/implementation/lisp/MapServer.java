@@ -237,7 +237,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             return;
         }
         final MapRequestBuilder mrb = MapRequestUtil.prepareSMR(eid, LispAddressUtil.toRloc(getLocalAddress()));
-        LOG.trace("Built SMR packet: " + mrb.build().toString());
+        LOG.trace("Built SMR packet template (EID field will be set later): " + mrb.build().toString());
 
         scheduler.scheduleSmrs(mrb, subscribers.iterator());
     }
