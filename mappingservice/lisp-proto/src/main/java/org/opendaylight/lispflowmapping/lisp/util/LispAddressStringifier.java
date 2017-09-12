@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
-public class LispAddressStringifier {
+public final class LispAddressStringifier {
     protected static final Logger LOG = LoggerFactory.getLogger(LispAddressStringifier.class);
 
     private static final String PREFIX_SEPARATOR = ":";
@@ -78,6 +78,10 @@ public class LispAddressStringifier {
         USER,
         URI,
         URL;
+    }
+
+    // Utility class, should not be instantiated
+    private LispAddressStringifier() {
     }
 
     public static String getString(LispAddress lispAddress) {
