@@ -69,11 +69,11 @@ public final class MaskUtil {
         return slash;
     }
 
-    protected static String getPrefixAddress(final String prefix) {
+    public static String getPrefixAddress(final String prefix) {
         return prefix.substring(0, slashPosition(prefix));
     }
 
-    protected static String getPrefixMask(final String prefix) {
+    public static String getPrefixMask(final String prefix) {
         return prefix.substring(slashPosition(prefix) + 1);
     }
 
