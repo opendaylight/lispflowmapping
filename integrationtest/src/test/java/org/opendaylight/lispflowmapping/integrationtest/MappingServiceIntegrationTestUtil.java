@@ -20,7 +20,12 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
@@ -28,6 +33,10 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
@@ -35,6 +44,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
@@ -60,10 +70,13 @@ final class MappingServiceIntegrationTestUtil {
     static final String RECEIVE_ADDRESS = "127.0.0.2";
     static final int NUM_OF_ATTEMPTS_TO_CREATE_SOCKET = 2;
     static final int DEFAULT_SOCKET_TIMEOUT = 6000;
+    static final int SHORT_SOCKET_TIMEOUT = 250;
 
     // Packet creation method constants
     static final String DEFAULT_IPV4_EID_STRING = "192.0.2.1";
     static final Eid DEFAULT_IPV4_EID = LispAddressUtil.asIpv4Eid(DEFAULT_IPV4_EID_STRING);
+    static final String DEFAULT_IPV4_EID_PREFIX_STRING = "192.0.2.1/32";
+    static final Eid DEFAULT_IPV4_EID_PREFIX = LispAddressUtil.asIpv4PrefixBinaryEid(DEFAULT_IPV4_EID_PREFIX_STRING);
     static final String DEFAULT_IPV4_RLOC_STRING = "172.16.0.1";
     static final Rloc DEFAULT_IPV4_RLOC = LispAddressUtil.asIpv4Rloc(DEFAULT_IPV4_RLOC_STRING);
     static final Rloc DEFAULT_IPV4_ITR_RLOC = LispAddressUtil.asIpv4Rloc(RECEIVE_ADDRESS);
@@ -71,7 +84,6 @@ final class MappingServiceIntegrationTestUtil {
     static final SiteId DEFAULT_SITE_ID = new SiteId(DEFAULT_SITE_ID_BYTES);
     static final byte[] DEFAULT_XTR_ID_BYTES = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     static final XtrId DEFAULT_XTR_ID = new XtrId(DEFAULT_XTR_ID_BYTES);
-    private static final Eid NO_ADDRESS_EID = LispAddressUtil.getNoAddressEid();
 
     // Utility class, should not be instantiated
     private MappingServiceIntegrationTestUtil() {
@@ -190,8 +202,8 @@ final class MappingServiceIntegrationTestUtil {
      * @return the Map-Request
      * @throws SocketTimeoutException
      */
-    static MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, DEFAULT_SOCKET_TIMEOUT, MessageType.MapRequest);
+    static MapRequest receiveMapRequest(DatagramSocket datagramSocket, int timeout) throws SocketTimeoutException {
+        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, timeout, MessageType.MapRequest);
         return MapRequestSerializer.getInstance().deserialize(packet, null);
     }
 
@@ -202,8 +214,8 @@ final class MappingServiceIntegrationTestUtil {
      * @return the Map-Reply
      * @throws SocketTimeoutException
      */
-    static MapReply receiveMapReply(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, DEFAULT_SOCKET_TIMEOUT, MessageType.MapReply);
+    static MapReply receiveMapReply(DatagramSocket datagramSocket, int timeout) throws SocketTimeoutException {
+        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, timeout, MessageType.MapReply);
         return MapReplySerializer.getInstance().deserialize(packet);
     }
 
@@ -214,8 +226,8 @@ final class MappingServiceIntegrationTestUtil {
      * @return the Map-Notify
      * @throws SocketTimeoutException
      */
-    static MapNotify receiveMapNotify(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, DEFAULT_SOCKET_TIMEOUT, MessageType.MapNotify);
+    static MapNotify receiveMapNotify(DatagramSocket datagramSocket, int timeout) throws SocketTimeoutException {
+        ByteBuffer packet = receiveSpecificPacketType(datagramSocket, timeout, MessageType.MapNotify);
         return MapNotifySerializer.getInstance().deserialize(packet);
     }
 
@@ -234,25 +246,202 @@ final class MappingServiceIntegrationTestUtil {
     }
 
     /**
+     * Receive all outstanding packets on the socket so we can start clean.
+     *
+     * @param datagramSocket the listening socket which we want to drain
+     */
+    static void drainSocket(DatagramSocket datagramSocket) {
+        while (true) {
+            try {
+                receivePacket(datagramSocket, SHORT_SOCKET_TIMEOUT);
+            } catch (SocketTimeoutException ste) {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Try to receive a packet on the socket, and expect that it will time out. Otherwise fail.
+     *
+     * @param datagramSocket the listening socket where we don't expect the packet
+     */
+    static void assertNoMorePackets(DatagramSocket datagramSocket) {
+        try {
+            receivePacket(datagramSocket, SHORT_SOCKET_TIMEOUT);
+            fail("Packet received, when none expected!");
+        } catch (SocketTimeoutException ste) {
+            LOG.debug("No more packets, just as expected, great!");
+        }
+    }
+
+    /**
+     * Try to receive a specific packet type on the socket, and expect that it will time out. Otherwise fail.
+     *
+     * @param datagramSocket the listening socket where we don't expect the packet
+     * @param type the non-expected packet type
+     */
+    static void assertNoMoreSpecificTypePackets(DatagramSocket datagramSocket, MessageType type) {
+        try {
+            receiveSpecificPacketType(datagramSocket, SHORT_SOCKET_TIMEOUT, type);
+            fail(type + " packet received, when none expected!");
+        } catch (SocketTimeoutException ste) {
+            LOG.debug("No more {} packets, just as expected, great!", type);
+        }
+    }
+
+    /**
+     * Try to receive an SMR on the socket, and expect that it will time out. Otherwise fail.
+     *
+     * @param datagramSocket the listening socket where we don't expect the packet
+     */
+    static void assertNoMoreSMRs(DatagramSocket datagramSocket, IMappingService mappingService) {
+        try {
+            MapRequest mr = receiveMapRequest(datagramSocket, SHORT_SOCKET_TIMEOUT);
+            if (mr.isSmr()) {
+                if (mappingService != null) {
+                    printMapCacheState(mappingService);
+                }
+                fail("Unexpected SMR received for " + LispAddressStringifier.getString(mr.getSourceEid().getEid()));
+            } else {
+                fail("Unexpected Map-Request (non-SMR) received");
+            }
+        } catch (SocketTimeoutException ste) {
+            LOG.debug("No more SMR packets, just as expected, great!");
+        }
+    }
+
+    /**
      * Read packets from the given socket until a Map-Request is found. Assert that the request is an SMR, and the
-     * Source EID field contains the given IPv4 EID. Note that the source EID does not have a mask length.
+     * Source EID field contains the given IPv4 EID. Note that the source EID does not have a mask length. If a
+     * reference to the LISP Mapping Service is passed, send an SMR-invoked Map-Request, to simulate what would happen
+     * in the real world. If a reference to the Mapping Service is passed, the internal state of the map caches and
+     * subscribers is logged.
+     *
+     * @param socket the receive socket
+     * @param lms reference to the LISP Mapping Service, if present, an SMR-invoked Map-Request is sent in reply to the
+     *            SMR
+     * @param ms reference to the Mapping System, if present, the internal state of map-caches and subscribers is logged
+     * @param vni the VNI for the expected EID
+     * @param eids the expected EIDs, as an IPv4 string, without mask length
+     */
+    static void checkSmr(DatagramSocket socket, IFlowMapping lms, IMappingService ms, long vni, String ... eids) {
+        LOG.debug("checkSmr: expecting {} SMRs: {}", eids.length, eids);
+        List<MapRequest> mapRequests = receiveExpectedSmrs(socket, eids.length);
+
+        assertNoMoreSMRs(socket, ms);
+
+        Set<Eid> eidSet = prepareExpectedEids(vni, eids);
+        for(MapRequest mapRequest : mapRequests) {
+            LOG.trace("Solicit Map-Request: {}", mapRequest);
+            Eid originalSourceEid = mapRequest.getEidItem().get(0).getEid();
+            assertEquals(DEFAULT_IPV4_EID_PREFIX, originalSourceEid);
+            Eid smrEid = mapRequest.getSourceEid().getEid();
+            if (!eidSet.remove(smrEid)) {
+                fail("checkSmr: SMR contains EID " + LispAddressStringifier.getString(smrEid) +
+                        ", which is not in the list of expected EIDs (" +
+                        LispAddressStringifier.getString(eidSet) + ")");
+            } else {
+                LOG.debug("checkSmr: successfully received expected SMR for {}",
+                        LispAddressStringifier.getString(smrEid));
+            }
+
+            if (lms != null) {
+                sendSMRInvokedMapRequestMessage(mapRequest, lms);
+            }
+        }
+
+        if (ms != null) {
+            printMapCacheState(ms);
+        }
+    }
+
+    /**
+     * Receive a given number of SMR packets on the given UDP socket or fail.
      *
      * @param datagramSocket the receive socket
-     * @param vni the VNI for the expected EID
-     * @param eid the expected EID, as an IPv4 string, without mask length
+     * @param count the number of expected SMRs
+     * @return the list of received SMRs
      */
-    static void checkSmr(DatagramSocket datagramSocket, long vni, String eid) {
+    static List<MapRequest> receiveExpectedSmrs(DatagramSocket datagramSocket, int count) {
+        LOG.debug("Expecting {} SMRs ", count);
+        List<MapRequest> mapRequests = new ArrayList<>();
+        int i = 0;
         try {
-            MapRequest mapRequest = receiveMapRequest(datagramSocket);
-            assertEquals(true, mapRequest.isSmr());
-
-            Eid smrEid = mapRequest.getSourceEid().getEid();
-            Eid originalSourceEid = mapRequest.getEidItem().get(0).getEid();
-            assertEquals(LispAddressUtil.asIpv4Eid(eid, vni), smrEid);
-            assertEquals(NO_ADDRESS_EID, originalSourceEid);
+            while (i < count) {
+                MapRequest mapRequest = receiveMapRequest(datagramSocket, DEFAULT_SOCKET_TIMEOUT);
+                LOG.trace("Solicit Map-Request: {}", mapRequest);
+                assertEquals(true, mapRequest.isSmr());
+                if (mapRequest.getEidItem().isEmpty()) {
+                    fail("Empty SMR received (no EID record)!");
+                }
+                mapRequests.add(mapRequest);
+                i++;
+            }
         } catch (SocketTimeoutException ste) {
-            fail("No SMR received");
+            fail("Expected " + count + " SMRs, received " + i);
         }
+        return mapRequests;
+    }
+
+    /**
+     * Create a Set of Eid objects in a given VNI from a variable length argument of EIDs as String
+     *
+     * @param vni the VNI of the EIDs
+     * @param eids the list of EIDs, as an IPv4 string, without mask length
+     * @return the set of Eid objects
+     */
+    static Set<Eid> prepareExpectedEids(long vni, String ... eids) {
+        final Set<Eid> eidSet = new HashSet<>();
+        for (String eid : eids) {
+            eidSet.add(LispAddressUtil.asIpv4Eid(eid, vni));
+        }
+        return eidSet;
+    }
+
+    /**
+     * This method expects a SMR Map-Request as input, which it will turn into a SMR-invoked Map-Request and use the
+     * LISP mapping service to send it
+     *
+     * @param mapRequest the SMR Map-Request
+     * @param lms referencs to the LISP Mapping Service
+     */
+    static void sendSMRInvokedMapRequestMessage(MapRequest mapRequest, IFlowMapping lms) {
+        Eid srcEid = addMaximumPrefixIfNecessary(mapRequest.getSourceEid().getEid());
+        final EidItemBuilder eidItemBuilder = new EidItemBuilder();
+        eidItemBuilder.setEid(srcEid);
+        eidItemBuilder.setEidItemId(LispAddressStringifier.getString(srcEid));
+        final List<EidItem> eidItem = Collections.singletonList(eidItemBuilder.build());
+
+        final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder(mapRequest);
+        mapRequestBuilder.setSmr(false);
+        mapRequestBuilder.setSmrInvoked(true);
+        mapRequestBuilder.setItrRloc(getDefaultItrRlocList(LispAddressUtil.asIpv4Rloc(RECEIVE_ADDRESS)));
+        mapRequestBuilder.setEidItem(eidItem);
+        for (EidItem ei : mapRequest.getEidItem()) {
+            mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(ei.getEid()).build());
+            LOG.debug("Sending SMR-invoked Map-Reqeust for EID {}, Source EID {}",
+                    LispAddressStringifier.getString(srcEid),
+                    LispAddressStringifier.getString(ei.getEid()));
+            lms.handleMapRequest(mapRequestBuilder.build());
+        }
+    }
+
+    /**
+     * Since the Source EID field from a Map-Request packet does not have a prefix length field, IPv4 and IPv6 addresses
+     * are serialized into Ipv4Binary and Ipv6Binary objects. However, when we want to use the addresses in a
+     * SMR-invoked Map-Request, we need to use an Ipv4PrefixBinary or Ipv6PrefixBinary object respectively, since that's
+     * what the EID item field would be deserialized into.
+     */
+    private static Eid addMaximumPrefixIfNecessary(Eid eid) {
+        Address address = eid.getAddress();
+        if (address instanceof Ipv4Binary) {
+            return LispAddressUtil.asIpv4PrefixBinaryEid(
+                    eid, ((Ipv4Binary) address).getIpv4Binary().getValue(), MaskUtil.IPV4_MAX_MASK);
+        } else if (address instanceof Ipv6Binary) {
+            return LispAddressUtil.asIpv6PrefixBinaryEid(
+                    eid, ((Ipv6Binary) address).getIpv6Binary().getValue(), MaskUtil.IPV6_MAX_MASK);
+        }
+        return eid;
     }
 
     /*
@@ -281,7 +470,7 @@ final class MappingServiceIntegrationTestUtil {
                 .setProbe(false)
                 .setSmr(false)
                 .setSmrInvoked(false)
-                .setSourceEid(new SourceEidBuilder().setEid(NO_ADDRESS_EID).build())
+                .setSourceEid(new SourceEidBuilder().setEid(DEFAULT_IPV4_EID).build())
                 .setItrRloc(getDefaultItrRlocList(DEFAULT_IPV4_ITR_RLOC));
 
         mrBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
@@ -342,8 +531,8 @@ final class MappingServiceIntegrationTestUtil {
                 .setMappingRecordItem(new ArrayList<>())
                 .setMergeEnabled(true)
                 .setNonce(8L)
-                .setSiteId(new SiteId(DEFAULT_SITE_ID_BYTES))
-                .setXtrId(new XtrId(DEFAULT_XTR_ID_BYTES))
+                .setSiteId(DEFAULT_SITE_ID)
+                .setXtrId(DEFAULT_XTR_ID)
                 .setXtrSiteIdPresent(true);
         mapRegisterBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(eid, rloc).build());
 
@@ -383,7 +572,7 @@ final class MappingServiceIntegrationTestUtil {
      */
     static MappingRecordBuilder getDefaultMappingRecordBuilder(Eid eid, Rloc rloc) {
         if (eid == null) {
-            eid = DEFAULT_IPV4_EID;
+            eid = DEFAULT_IPV4_EID_PREFIX;
             LOG.warn("getDefaultMappingRecordBuilder(): null EID received, using the default {}",
                     DEFAULT_IPV4_EID_STRING);
         }
@@ -395,6 +584,8 @@ final class MappingServiceIntegrationTestUtil {
                 .setLocatorRecord(new ArrayList<>())
                 .setMapVersion((short) 0)
                 .setRecordTtl(60)
+                .setSiteId(DEFAULT_SITE_ID)
+                .setXtrId(DEFAULT_XTR_ID)
                 .setTimestamp(System.currentTimeMillis());
 
         // We want to allow for empty locator records, so we only add one if rloc is not null
@@ -427,5 +618,20 @@ final class MappingServiceIntegrationTestUtil {
                 .setWeight((short) 1)
                 .setKey(new LocatorRecordKey(LispAddressStringifier.getString(rloc)))
                 .setRloc(rloc);
+    }
+
+    /*
+     * MISCELLANEOUS METHODS
+     */
+
+    /**
+     * Log the current state of the map caches maintained internally by the mapping service in the DAO structures,
+     * including subscribers
+     *
+     * @param ms reference to the Mapping Service
+     */
+    static void printMapCacheState(IMappingService ms) {
+        LOG.debug("Map-cache state:\n{}", ms.prettyPrintMappings());
+        LOG.trace("Detailed map-cache state:\n{}", ms.printMappings());
     }
 }
