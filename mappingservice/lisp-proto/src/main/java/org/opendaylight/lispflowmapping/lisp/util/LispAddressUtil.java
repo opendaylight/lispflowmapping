@@ -704,7 +704,7 @@ public final class LispAddressUtil {
         return builder.build();
     }
 
-    public static Eid asSrcDstEid(String src, String dst, int smask, int dmask, int vni) {
+    public static Eid asSrcDstEid(String src, String dst, int smask, int dmask, long vni) {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(SourceDestKeyLcaf.class);
         builder.setVirtualNetworkId(new InstanceIdType(Long.valueOf(vni)));
