@@ -99,6 +99,17 @@ public interface IMappingSystem {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
+     * Retrieves the subtree of a maskable prefix from the given map-cache.
+     *
+     * @param origin
+     *            Table where the key should be looked up
+     * @param key
+     *            Key to be looked up
+     * @return The child prefixes of the prefix, including the prefix itself if present
+     */
+    Set<Eid> getSubtree(MappingOrigin origin, Eid key);
+
+    /**
      * Refresh southbound mapping registration timestamp.
      *
      * @param key

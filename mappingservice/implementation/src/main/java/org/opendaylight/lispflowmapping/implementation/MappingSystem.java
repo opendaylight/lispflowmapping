@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -490,6 +491,16 @@ public class MappingSystem implements IMappingSystem {
         } else {
             return nbPrefix;
         }
+    }
+
+    @Override
+    public Set<Eid> getSubtree(MappingOrigin origin, Eid key) {
+        if (!MaskUtil.isMaskable(key.getAddress())) {
+            LOG.warn("Child prefixes only make sense for maskable addresses!");
+            return Collections.emptySet();
+        }
+
+        return tableMap.get(origin).getSubtree(key);
     }
 
     @Override
