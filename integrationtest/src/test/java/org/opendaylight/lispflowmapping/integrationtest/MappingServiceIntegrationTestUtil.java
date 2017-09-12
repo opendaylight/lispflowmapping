@@ -71,7 +71,6 @@ final class MappingServiceIntegrationTestUtil {
     static final SiteId DEFAULT_SITE_ID = new SiteId(DEFAULT_SITE_ID_BYTES);
     static final byte[] DEFAULT_XTR_ID_BYTES = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     static final XtrId DEFAULT_XTR_ID = new XtrId(DEFAULT_XTR_ID_BYTES);
-    private static final Eid NO_ADDRESS_EID = LispAddressUtil.getNoAddressEid();
 
     // Utility class, should not be instantiated
     private MappingServiceIntegrationTestUtil() {
@@ -249,7 +248,7 @@ final class MappingServiceIntegrationTestUtil {
             Eid smrEid = mapRequest.getSourceEid().getEid();
             Eid originalSourceEid = mapRequest.getEidItem().get(0).getEid();
             assertEquals(LispAddressUtil.asIpv4Eid(eid, vni), smrEid);
-            assertEquals(NO_ADDRESS_EID, originalSourceEid);
+            assertEquals(DEFAULT_IPV4_EID, originalSourceEid);
         } catch (SocketTimeoutException ste) {
             fail("No SMR received");
         }
@@ -281,7 +280,7 @@ final class MappingServiceIntegrationTestUtil {
                 .setProbe(false)
                 .setSmr(false)
                 .setSmrInvoked(false)
-                .setSourceEid(new SourceEidBuilder().setEid(NO_ADDRESS_EID).build())
+                .setSourceEid(new SourceEidBuilder().setEid(DEFAULT_IPV4_EID).build())
                 .setItrRloc(getDefaultItrRlocList(DEFAULT_IPV4_ITR_RLOC));
 
         mrBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
