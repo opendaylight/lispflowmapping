@@ -397,6 +397,10 @@ public final class ConfigIni {
         return registrationValiditySb;
     }
 
+    public long getDefaultRegistrationValiditySb() {
+        return MIN_REGISTRATION_VALIDITY_SB;
+    }
+
     public void setRegistrationValiditySb(long registrationValiditySb) {
         this.registrationValiditySb = registrationValiditySb;
         if (registrationValiditySb < MIN_REGISTRATION_VALIDITY_SB) {
