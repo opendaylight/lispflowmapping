@@ -104,8 +104,6 @@ public class MappingDataListenerTest {
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_del);
-        final MappingChanged mapChanged = MSNotificationInputUtil
-                .toMappingChanged(MAPPING_EID_1_NB, null, null, MappingChange.Removed);
         Mockito.when(mod_del.getDataBefore()).thenReturn(MAPPING_EID_1_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
@@ -135,8 +133,8 @@ public class MappingDataListenerTest {
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_subtreeModified);
-        final MappingChanged mapChanged = MSNotificationInputUtil
-                .toMappingChanged(MAPPING_EID_2_NB, null, null, MappingChange.Updated);
+        final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
+                MAPPING_EID_2_NB.getMappingRecord(), null, null, null, MappingChange.Updated);
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(MAPPING_EID_2_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
@@ -170,8 +168,8 @@ public class MappingDataListenerTest {
     @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_write_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_write);
-        final MappingChanged mapChanged = MSNotificationInputUtil
-                .toMappingChanged(MAPPING_EID_3_NB, null, null, MappingChange.Created);
+        final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
+                MAPPING_EID_3_NB.getMappingRecord(), null, null, null, MappingChange.Created);
         Mockito.when(mod_write.getDataAfter()).thenReturn(MAPPING_EID_3_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
@@ -205,10 +203,8 @@ public class MappingDataListenerTest {
     public void onDataTreeChangedTest_multipleChanges() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes =
                 Lists.newArrayList(change_del, change_subtreeModified, change_write);
-        final MappingChanged mapChangedDel = MSNotificationInputUtil
-                .toMappingChanged(MAPPING_EID_1_NB, null, null, MappingChange.Removed);
-        final MappingChanged mapChangedSubtreeMod = MSNotificationInputUtil
-                .toMappingChanged(MAPPING_EID_2_NB, null, null, MappingChange.Updated);
+        final MappingChanged mapChangedSubtreeMod = MSNotificationInputUtil.toMappingChanged(
+                MAPPING_EID_2_NB.getMappingRecord(), null, null, null, MappingChange.Updated);
 
         Mockito.when(mod_del.getDataBefore()).thenReturn(MAPPING_EID_1_NB);
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(MAPPING_EID_2_NB);
