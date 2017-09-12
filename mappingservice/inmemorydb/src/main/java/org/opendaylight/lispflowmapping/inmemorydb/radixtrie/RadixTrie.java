@@ -304,15 +304,27 @@ public class RadixTrie<T> {
             return Collections.emptySet();
         }
 
-        TrieNode node = root.findClosest(prefix, preflen);
+        TrieNode node = root;
 
-        // if no node is found or if node not a prefix
-        if (node == null || node.prefix == null) {
-            return Collections.emptySet();
+        // Find closest node, including virtual nodes
+        while (node.bit < preflen) {
+            if (testBitInPrefixByte(prefix, node.bit)) {
+                if (node.right == null) {
+                    break;
+                }
+                node = node.right;
+            } else {
+                if (node.left == null) {
+                    break;
+                }
+                node = node.left;
+            }
         }
 
         Set<TrieNode> children = new HashSet<>();
-        children.add(node);
+        if (node.prefix != null) {
+            children.add(node);
+        }
         Iterator<TrieNode> it = node.iterator();
         while (it.hasNext()) {
             node = it.next();
@@ -686,6 +698,44 @@ public class RadixTrie<T> {
         @Override
         public Iterator<RadixTrie<T>.TrieNode> iterator() {
             return new TriePostOrderIterator(this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(printPrefixAndMask());
+            if (up != null) {
+                sb.append(", parent: ");
+                sb.append(up.printPrefixAndMask());
+            }
+            if (left != null) {
+                sb.append(", left child: ");
+                sb.append(left.printPrefixAndMask());
+            }
+            if (right != null) {
+                sb.append(", right child: ");
+                sb.append(right.printPrefixAndMask());
+            }
+            if (data != null) {
+                sb.append(", data: ");
+                sb.append(data);
+            }
+            return sb.toString();
+        }
+
+        private String printPrefixAndMask() {
+            if (prefix == null) {
+                return "Virtual @ bit " + bit;
+            }
+            StringBuilder sb = new StringBuilder();
+            try {
+                sb.append(InetAddress.getByAddress(prefix));
+                sb.append("/");
+                sb.append(bit);
+            } catch (UnknownHostException e) {
+                return "NaP";
+            }
+            return sb.toString();
         }
 
         /**
