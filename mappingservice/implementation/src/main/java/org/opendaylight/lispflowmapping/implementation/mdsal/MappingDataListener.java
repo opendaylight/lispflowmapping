@@ -121,26 +121,49 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                         new MappingData(convertedMapping.getMappingRecord()));
-                Set<Subscriber> subscribers = mapSystem.getSubscribers(convertedEid);
-
-                Set<Subscriber> dstSubscribers = null;
-                // For SrcDst LCAF also send SMRs to Dst prefix
-                if (convertedEid.getAddress() instanceof SourceDestKey) {
-                    Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
-                    dstSubscribers = mapSystem.getSubscribers(dstAddr);
-                }
-
-                try {
-                    // The notifications are used for sending SMR.
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
-                            convertedMapping, subscribers, dstSubscribers, mappingChange));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
-
+                notifyChange(convertedEid, convertedMapping, mappingChange);
             } else {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
+        }
+    }
+
+    private void notifyChange(Eid eid, Mapping mapping, MappingChange mappingChange) {
+        Set<Subscriber> subscribers = mapSystem.getSubscribers(eid);
+
+        Set<Subscriber> dstSubscribers = null;
+        // For SrcDst LCAF also send SMRs to Dst prefix
+        if (eid.getAddress() instanceof SourceDestKey) {
+            Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
+            dstSubscribers = mapSystem.getSubscribers(dstAddr);
+            notifyChildren(dstAddr, mapping, mappingChange);
+        }
+        publishNotification(mapping, subscribers, dstSubscribers, mappingChange);
+
+        notifyChildren(eid, mapping, mappingChange);
+    }
+
+    private void notifyChildren(Eid eid, Mapping mapping, MappingChange mappingChange) {
+        Set<Eid> childPrefixes = mapSystem.getAllChildPrefixes(eid);
+        if (childPrefixes == null) {
+            return;
+        }
+
+        childPrefixes.remove(eid);
+        for (Eid prefix : childPrefixes) {
+            Set<Subscriber> subscribers = mapSystem.getSubscribers(prefix);
+            publishNotification(mapping, subscribers, null, mappingChange);
+        }
+    }
+
+    private void publishNotification(Mapping mapping, Set<Subscriber> subscribers, Set<Subscriber> dstSubscribers,
+                                     MappingChange mappingChange) {
+        try {
+            // The notifications are used for sending SMR.
+            notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
+                    mapping, subscribers, dstSubscribers, mappingChange));
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 

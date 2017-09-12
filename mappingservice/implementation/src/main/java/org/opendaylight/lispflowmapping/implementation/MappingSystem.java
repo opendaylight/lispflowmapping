@@ -493,6 +493,30 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    public Set<Eid> getChildPrefixes(MappingOrigin origin, Eid key) {
+        if (!MaskUtil.isMaskable(key.getAddress())) {
+            LOG.warn("Child prefixes only make sense for maskable addresses!");
+            return null;
+        }
+
+        return tableMap.get(origin).getChildPrefixes(key);
+    }
+
+    @Override
+    public Set<Eid> getAllChildPrefixes(Eid key) {
+        Set<Eid> nbChildren =  pmc.getChildPrefixes(key);
+        Set<Eid> sbChildren = smc.getChildPrefixes(key);
+
+        if (nbChildren == null) {
+            return sbChildren;
+        } else if (sbChildren == null) {
+            return nbChildren;
+        } else {
+            return Sets.union(nbChildren, sbChildren);
+        }
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
         Set<Subscriber> subscribers = null;
         Set<Subscriber> dstSubscribers = null;
