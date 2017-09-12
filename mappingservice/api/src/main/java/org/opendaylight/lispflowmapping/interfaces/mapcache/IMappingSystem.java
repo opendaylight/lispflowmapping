@@ -14,6 +14,8 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 
 /**
@@ -44,6 +46,18 @@ public interface IMappingSystem {
      * @return Returns the generated negative mapping (which is never null).
      */
     MappingData addNegativeMapping(Eid key);
+
+    /**
+     * Update mapping.
+     *
+     * @param origin
+     *            Table where mapping should be added
+     * @param key
+     *            Key of the mapping
+     * @param mapping
+     *            Mapping to be stored
+     */
+    void updateMapping(MappingOrigin origin, Eid key, MappingData mapping);
 
     /**
      * Retrieves mapping for the provided src and dst key.
@@ -99,6 +113,17 @@ public interface IMappingSystem {
     Eid getWidestNegativePrefix(Eid key);
 
     /**
+     * Retrieves the subtree of a maskable prefix from the given map-cache.
+     *
+     * @param origin
+     *            Table where the key should be looked up
+     * @param key
+     *            Key to be looked up
+     * @return The child prefixes of the prefix, including the prefix itself if present
+     */
+    Set<Eid> getSubtree(MappingOrigin origin, Eid key);
+
+    /**
      * Refresh southbound mapping registration timestamp.
      *
      * @param key
@@ -140,6 +165,18 @@ public interface IMappingSystem {
      *            The set of subscribers for the EID
      */
     Set<Subscriber> getSubscribers(Eid eid);
+
+    /**
+     * Sends a MappingChanged notification to MD-SAL listeners.
+     *
+     * @param eid
+     *            The EID prefix for the notification
+     * @param mapping
+     *            The mapping for the notification
+     * @param mappingChange
+     *            The mapping change type
+     */
+    void notifyChange(Eid eid, MappingRecord mapping, MappingChange mappingChange);
 
     /**
      * Add authentication key.
