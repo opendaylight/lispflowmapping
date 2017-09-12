@@ -493,6 +493,16 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    public Set<Eid> getSubtree(MappingOrigin origin, Eid key) {
+        if (!MaskUtil.isMaskable(key.getAddress())) {
+            LOG.warn("Child prefixes only make sense for maskable addresses!");
+            return null;
+        }
+
+        return tableMap.get(origin).getSubtree(key);
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
         Set<Subscriber> subscribers = null;
         Set<Subscriber> dstSubscribers = null;
