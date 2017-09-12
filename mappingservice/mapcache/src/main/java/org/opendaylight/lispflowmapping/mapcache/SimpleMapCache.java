@@ -176,6 +176,15 @@ public class SimpleMapCache implements ILispMapCache {
     }
 
     @Override
+    public Eid getCoveringLessSpecific(Eid eid) {
+        ILispDAO table = getVniTable(eid);
+        if (table == null) {
+            return null;
+        }
+        return table.getCoveringLessSpecific(MaskUtil.normalize(eid));
+    }
+
+    @Override
     public Eid getParentPrefix(Eid eid) {
         ILispDAO table = getVniTable(eid);
         if (table == null) {
