@@ -246,7 +246,7 @@ public class RadixTrie<T> {
         TrieNode node = lookupBest(prefix, preflen);
         TrieNode sibling = node.sibling();
 
-        if (sibling.prefix != null) {
+        if (sibling != null && sibling.prefix != null) {
             return sibling;
         }
         return null;
