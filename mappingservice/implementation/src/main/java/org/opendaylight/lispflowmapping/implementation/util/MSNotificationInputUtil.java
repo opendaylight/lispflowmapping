@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
-import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChangedBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.DstSubscriberItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.DstSubscriberItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.changed.SubscriberItem;
@@ -35,19 +35,11 @@ public final class MSNotificationInputUtil {
     private MSNotificationInputUtil() {
     }
 
-    public static MappingChanged toMappingChanged(Mapping input, Set<Subscriber> subscribers,
-            Set<Subscriber> dstSubscribers, MappingChange change) {
+    public static MappingChanged toMappingChanged(MappingRecord mapping, Eid eid, Set<Subscriber> subscribers,
+                                                  Set<Subscriber> dstSubscribers, MappingChange change) {
         return new MappingChangedBuilder()
-                .setMappingRecord(input.getMappingRecord())
-                .setSubscriberItem(toSubscriberList(subscribers))
-                .setDstSubscriberItem(toDstSubscriberList(dstSubscribers))
-                .setChangeType(change).build();
-    }
-
-    public static MappingChanged toMappingChanged(MappingData mapping, Set<Subscriber> subscribers,
-            Set<Subscriber> dstSubscribers, MappingChange change) {
-        return new MappingChangedBuilder()
-                .setMappingRecord(mapping.getRecord())
+                .setMappingRecord(mapping)
+                .setEid(eid)
                 .setSubscriberItem(toSubscriberList(subscribers))
                 .setDstSubscriberItem(toDstSubscriberList(dstSubscribers))
                 .setChangeType(change).build();

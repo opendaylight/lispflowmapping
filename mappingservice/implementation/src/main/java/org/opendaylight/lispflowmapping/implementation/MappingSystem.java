@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -67,7 +68,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
@@ -147,7 +147,17 @@ public class MappingSystem implements IMappingSystem {
         tableMap.put(MappingOrigin.Southbound, smc);
     }
 
+    @Override
+    public void updateMapping(MappingOrigin origin, Eid key, MappingData mappingData) {
+        addMapping(origin, key, mappingData, MappingChange.Updated);
+    }
+
+    @Override
     public void addMapping(MappingOrigin origin, Eid key, MappingData mappingData) {
+        addMapping(origin, key, mappingData, MappingChange.Created);
+    }
+
+    private void addMapping(MappingOrigin origin, Eid key, MappingData mappingData, MappingChange changeType) {
 
         sbMappingTimeoutService.removeExpiredMappings();
 
@@ -177,9 +187,11 @@ public class MappingSystem implements IMappingSystem {
 
         tableMap.get(origin).addMapping(key, mappingData);
 
-        // We store explicit negative mappings in SB. That may cause issues, see bug 9037 for details
         if (origin != MappingOrigin.Southbound) {
+            // If a NB mapping is added, we need to check if it's covering negative mappings in SB, and remove those
             handleSbNegativeMappings(key);
+            // Notifications for SB changes are sent in the SB code itself, so this is called for non-SB additions only
+            notifyChange(key, mappingData.getRecord(), changeType);
         }
     }
 
@@ -211,6 +223,23 @@ public class MappingSystem implements IMappingSystem {
     }
 
     private void handleSbNegativeMappings(Eid key) {
+        Set<Eid> childPrefixes = getSubtree(MappingOrigin.Southbound, key);
+        LOG.trace("handleSbNegativeMappings(): subtree prefix set for EID {}: {}",
+                LispAddressStringifier.getString(key),
+                LispAddressStringifier.getString(childPrefixes));
+        if (childPrefixes == null || childPrefixes.isEmpty()) {
+            // The assumption here is that negative prefixes are well maintained and never overlapping.
+            // If we have children for the EID, no parent lookup should thus be necessary.
+            handleSbNegativeMapping(getParentPrefix(key));
+            return;
+        }
+
+        for (Eid prefix : childPrefixes) {
+            handleSbNegativeMapping(prefix);
+        }
+    }
+
+    private void handleSbNegativeMapping(Eid key) {
         MappingData mappingData = getSbMappingWithExpiration(null, key, null);
         if (mappingData != null && mappingData.isNegative().or(false)) {
             removeSbMapping(mappingData.getRecord().getEid(), mappingData);
@@ -221,7 +250,7 @@ public class MappingSystem implements IMappingSystem {
     public MappingData addNegativeMapping(Eid key) {
         MappingRecord mapping = buildNegativeMapping(key);
         MappingData mappingData = new MappingData(mapping);
-        LOG.debug("Adding negative mapping for EID {}", LispAddressStringifier.getString(key));
+        LOG.debug("Adding negative mapping for EID {}", LispAddressStringifier.getString(mapping.getEid()));
         LOG.trace(mappingData.getString());
         smc.addMapping(mapping.getEid(), mappingData);
         dsbe.addMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, mapping.getEid(), null, mappingData));
@@ -446,8 +475,8 @@ public class MappingSystem implements IMappingSystem {
         Set<Subscriber> subscribers = getSubscribers(key);
         smc.removeMapping(key);
         dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
-        notifyChange(mappingData, subscribers, null, MappingChange.Removed);
-        removeSubscribers(key);
+        publishNotification(mappingData.getRecord(), null, subscribers, null, MappingChange.Removed);
+        removeSubscribersConditionally(MappingOrigin.Southbound, key);
     }
 
     private void removeFromSbTimeoutService(Eid key) {
@@ -493,7 +522,18 @@ public class MappingSystem implements IMappingSystem {
     }
 
     @Override
+    public Set<Eid> getSubtree(MappingOrigin origin, Eid key) {
+        if (!MaskUtil.isMaskable(key.getAddress())) {
+            LOG.warn("Child prefixes only make sense for maskable addresses!");
+            return Collections.emptySet();
+        }
+
+        return tableMap.get(origin).getSubtree(key);
+    }
+
+    @Override
     public void removeMapping(MappingOrigin origin, Eid key) {
+        Eid dstAddr = null;
         Set<Subscriber> subscribers = null;
         Set<Subscriber> dstSubscribers = null;
         MappingData mapping = (MappingData) tableMap.get(origin).getMapping(null, key);
@@ -506,21 +546,19 @@ public class MappingSystem implements IMappingSystem {
             LOG.trace(mapping.getString());
         }
 
-        MappingData notificationMapping = mapping;
+        MappingRecord notificationMapping = null;
 
         if (mapping != null) {
+            notificationMapping = mapping.getRecord();
             subscribers = getSubscribers(key);
             // For SrcDst LCAF also send SMRs to Dst prefix
             if (key.getAddress() instanceof SourceDestKey) {
-                Eid dstAddr = SourceDestKeyHelper.getDstBinary(key);
+                dstAddr = SourceDestKeyHelper.getDstBinary(key);
                 dstSubscribers = getSubscribers(dstAddr);
-                if (!(mapping.getRecord().getEid().getAddress() instanceof SourceDestKey)) {
-                    notificationMapping = new MappingData(new MappingRecordBuilder().setEid(key).build());
-                }
             }
         }
 
-        removeSubscribers(key);
+        removeSubscribersConditionally(origin, key);
 
         if (origin == MappingOrigin.Southbound) {
             removeFromSbTimeoutService(key);
@@ -534,21 +572,58 @@ public class MappingSystem implements IMappingSystem {
         }
 
         if (notificationMapping != null) {
-            notifyChange(notificationMapping, subscribers, dstSubscribers, MappingChange.Removed);
+            publishNotification(notificationMapping, key, subscribers, dstSubscribers, MappingChange.Removed);
+            notifyChildren(key, notificationMapping, MappingChange.Removed);
+            if (dstAddr != null) {
+                notifyChildren(dstAddr, notificationMapping, MappingChange.Removed);
+            }
         }
     }
 
-    private void notifyChange(MappingData mapping, Set<Subscriber> subscribers, Set<Subscriber> dstSubscribers,
-            MappingChange mappingChange) {
-        MappingChanged notification = MSNotificationInputUtil.toMappingChanged(mapping, subscribers, dstSubscribers,
-                mappingChange);
+    public void notifyChange(Eid eid, MappingRecord mapping, MappingChange mappingChange) {
+        Set<Subscriber> subscribers = getSubscribers(eid);
+
+        Set<Subscriber> dstSubscribers = null;
+        // For SrcDst LCAF also send SMRs to Dst prefix
+        if (eid.getAddress() instanceof SourceDestKey) {
+            Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
+            dstSubscribers = getSubscribers(dstAddr);
+            notifyChildren(dstAddr, mapping, mappingChange);
+        }
+        publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+
+        notifyChildren(eid, mapping, mappingChange);
+    }
+
+    private void notifyChildren(Eid eid, MappingRecord mapping, MappingChange mappingChange) {
+        // Update/created only happens for NB mappings. We assume no overlapping prefix support for NB mappings - so
+        // this NB mapping should not have any children. Both for NB first and NB&SB cases all subscribers for SB
+        // prefixes that are equal or more specific to this NB prefix have to be notified of the potential change.
+        // Each subscriber is notified for the prefix that it is currently subscribed to, and MS should return to them
+        // a Map-Reply with the same prefix and update mapping in cases of EID_INTERSECTION_RLOC_NB_FIRST which is a
+        // new option we are creating TODO
+        Set<Eid> childPrefixes = getSubtree(MappingOrigin.Southbound, eid);
+        if (childPrefixes == null || childPrefixes.isEmpty()) {
+            return;
+        }
+
+        childPrefixes.remove(eid);
+        for (Eid prefix : childPrefixes) {
+            Set<Subscriber> subscribers = getSubscribers(prefix);
+            publishNotification(mapping, prefix, subscribers, null, mappingChange);
+        }
+    }
+
+    private void publishNotification(MappingRecord mapping, Eid eid, Set<Subscriber> subscribers,
+                                     Set<Subscriber> dstSubscribers, MappingChange mappingChange) {
         try {
-            notificationPublishService.putNotification(notification);
+            // The notifications are used for sending SMR.
+            notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
+                    mapping, eid, subscribers, dstSubscribers, mappingChange));
         } catch (InterruptedException e) {
             LOG.warn("Notification publication interrupted!");
         }
     }
-
 
     /*
      * Merges adjacent negative prefixes and notifies their subscribers.
@@ -637,6 +712,23 @@ public class MappingSystem implements IMappingSystem {
         Set<Subscriber> subscribers = subscriberdb.get(address);
         LoggingUtil.logSubscribers(LOG, address, subscribers);
         return subscribers;
+    }
+
+    /*
+     * Only remove subscribers if there is no exact match mapping in the map-cache other than the one specified by
+     * origin. Right now we only have two origins, but in case we will have more, we only need to update this method,
+     * not the callers. We use getData() instead of getMapping to do exact match instead of longest prefix match.
+     */
+    private void removeSubscribersConditionally(MappingOrigin origin, Eid address) {
+        if (origin == MappingOrigin.Southbound) {
+            if (pmc.getData(address, SubKeys.RECORD) == null) {
+                removeSubscribers(address);
+            }
+        } else if (origin == MappingOrigin.Northbound) {
+            if (smc.getData(address, SubKeys.RECORD) == null) {
+                removeSubscribers(address);
+            }
+        }
     }
 
     private void removeSubscribers(Eid address) {
