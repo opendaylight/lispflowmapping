@@ -65,6 +65,16 @@ public interface ILispDAO {
     SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key);
 
     /**
+     * Look up the covering prefix for the argument, but exclude the argument itself, so the result is always less
+     * specific than the lookup key.
+     *
+     * @param key
+     *            The eid prefix, IPv4 or IPv6, to be looked up. Key must be normalized.
+     * @return The covering prefix.
+     */
+    Eid getCoveringLessSpecific(Eid key);
+
+    /**
      * Get parent prefix.
      *
      * @param key

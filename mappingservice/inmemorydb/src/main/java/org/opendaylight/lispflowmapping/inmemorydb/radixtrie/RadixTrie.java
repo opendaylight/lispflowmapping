@@ -125,7 +125,7 @@ public class RadixTrie<T> {
         }
 
         // find closest prefix starting at ROOT
-        TrieNode closest = root.findClosest(prefix, preflen);
+        TrieNode closest = root.findClosest(prefix, preflen, false);
 
         // find first different bit <= min(closestNode.preflen, preflen)
         int diffbit = closest.firstDifferentBit(prefix, preflen);
@@ -180,6 +180,38 @@ public class RadixTrie<T> {
     }
 
     /**
+     * Look up the covering prefix for the argument, but exclude the argument itself, so the result is always less
+     * specific than the lookup key.
+     *
+     * @param prefix Big endian byte array representation of the prefix argument
+     * @param preflen Prefix length
+     * @return Covering node
+     */
+    public TrieNode lookupCoveringLessSpecific(byte[] prefix, int preflen) {
+        if (root == null || preflen > maxBits) {
+            return null;
+        }
+
+        TrieNode node = root.findClosest(prefix, preflen, true);
+
+        if (node == null) {
+            return null;
+        } else if (node.bit < preflen && node.prefix != null) {
+            // If the current node is not virtual and is less specific than the query, we can return it directly
+            return node;
+        }
+
+        // Else, we need to find a non-virtual parent
+        node = node.up;
+
+        while (node != null && node.prefix == null) {
+            node = node.up;
+        }
+
+        return node;
+    }
+
+    /**
      * Given an EID, lookup the longest prefix match, then return its parent node.
      *
      * @param prefix Prefix looked up.
@@ -191,9 +223,9 @@ public class RadixTrie<T> {
 
         if (node == null) {
             return null;
-        } else {
-            node = node.up;
         }
+
+        node = node.up;
 
         while (node != null && node.prefix == null) {
             node = node.up;
@@ -255,7 +287,7 @@ public class RadixTrie<T> {
             return null;
         }
 
-        TrieNode node = root.findClosest(prefix, preflen);
+        TrieNode node = root.findClosest(prefix, preflen, false);
 
         // not a negative match
         if (node.prefix != null && node.prefixLength() <= preflen && node.comparePrefix(prefix)) {
@@ -277,7 +309,7 @@ public class RadixTrie<T> {
             return null;
         }
 
-        TrieNode node = root.findClosest(prefix, preflen);
+        TrieNode node = root.findClosest(prefix, preflen, false);
 
         // if no node is found or if node not a prefix or if mask is not the same
         if (node == null || node.prefix == null || node.bit != preflen) {
@@ -304,19 +336,16 @@ public class RadixTrie<T> {
             return Collections.emptySet();
         }
 
-        TrieNode node = root.findClosest(prefix, preflen);
-
-        // if no node is found or if node not a prefix
-        if (node == null || node.prefix == null) {
-            return Collections.emptySet();
-        }
+        TrieNode node = root.findClosest(prefix, preflen, true);
 
         Set<TrieNode> children = new HashSet<>();
-        children.add(node);
+        if (node.prefix != null && node.bit >= preflen) {
+            children.add(node);
+        }
         Iterator<TrieNode> it = node.iterator();
         while (it.hasNext()) {
             node = it.next();
-            if (node.prefix != null) {
+            if (node.prefix != null && node.bit >= preflen) {
                 children.add(node);
             }
         }
@@ -334,42 +363,6 @@ public class RadixTrie<T> {
         TrieNode node = lookupExact(prefix, preflen);
         if (node != null) {
             node.erase();
-        }
-    }
-
-    /**
-     * Remove node's subtree.
-     *
-     * @param node Node who's subtree is to be removed
-     */
-    public void removeSubtree(TrieNode node) {
-        TrieNode itNode;
-        Iterator<TrieNode> it = node.iterator();
-
-        while (it.hasNext()) {
-            itNode = it.next();
-            itNode.erase();
-        }
-    }
-
-    /**
-     * Remove subtree for longest match.
-     *
-     * @param prefix Prefix to be looked up
-     * @param preflen Prefix length
-     */
-    public void removeSubtree(byte[] prefix, int preflen) {
-        TrieNode itNode = lookupBest(prefix, preflen);
-
-        if (itNode == null) {
-            return;
-        }
-
-        Iterator<TrieNode> it = itNode.iterator();
-
-        while (it.hasNext()) {
-            itNode = it.next();
-            itNode.erase();
         }
     }
 
@@ -421,12 +414,13 @@ public class RadixTrie<T> {
          *
          * @param pref Searched prefix
          * @param preflen Searched prefix length
+         * @param virtual Include virtual nodes in search
          * @return The node found
          */
-        public TrieNode findClosest(byte[] pref, int preflen) {
+        public TrieNode findClosest(byte[] pref, int preflen, boolean virtual) {
             TrieNode node = this;
 
-            while (node.prefix == null || node.bit < preflen) {
+            while ((!virtual && node.prefix == null) || node.bit < preflen) {
                 if (testBitInPrefixByte(pref, node.bit)) {
                     if (node.right == null) {
                         break;
@@ -690,6 +684,44 @@ public class RadixTrie<T> {
         @Override
         public Iterator<RadixTrie<T>.TrieNode> iterator() {
             return new TriePostOrderIterator(this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(printPrefixAndMask());
+            if (up != null) {
+                sb.append(", parent: ");
+                sb.append(up.printPrefixAndMask());
+            }
+            if (left != null) {
+                sb.append(", left child: ");
+                sb.append(left.printPrefixAndMask());
+            }
+            if (right != null) {
+                sb.append(", right child: ");
+                sb.append(right.printPrefixAndMask());
+            }
+            if (data != null) {
+                sb.append(", data: ");
+                sb.append(data);
+            }
+            return sb.toString();
+        }
+
+        private String printPrefixAndMask() {
+            if (prefix == null) {
+                return "Virtual @ bit " + bit;
+            }
+            StringBuilder sb = new StringBuilder();
+            try {
+                sb.append(InetAddress.getByAddress(prefix));
+                sb.append("/");
+                sb.append(bit);
+            } catch (UnknownHostException e) {
+                return "NaP";
+            }
+            return sb.toString();
         }
 
         /**
