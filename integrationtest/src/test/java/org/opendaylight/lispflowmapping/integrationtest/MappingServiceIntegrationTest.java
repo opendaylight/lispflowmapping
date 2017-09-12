@@ -17,6 +17,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_B_SB;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C;
+import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_NEGATIVE;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_RLOC_10;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_SB;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_C_WP_100_1_SB;
@@ -60,13 +61,13 @@ import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
@@ -213,8 +214,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         if (socket != null) {
             socket.close();
         }
-        // reset mapping record validity to default value
-        ConfigIni.getInstance().setRegistrationValiditySb(200000L);
     }
 
     @Before
@@ -373,16 +372,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 */
     @Test
-    public void testOverWriting() throws Exception {
-        //testMapRegisterDosntOverwritesOtherSubKeys(); TODO weird failure, needs debug
-
-        // TODO: remove, we don't support overwrite flag any longer and RLOCs are not saved as independent RLOC groups
-        // testMapRegisterOverwritesSameSubkey();
-        // testMapRegisterOverwritesNoSubkey();
-        // testMapRegisterDoesntOverwritesNoSubkey();
-    }
-
-    @Test
     public void testTimeOuts() throws Exception {
         timedOutMappingRecord();
         mapRequestMapRegisterAndMapRequestTestTimeout();
@@ -434,6 +423,32 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Test
     public void testMappingChangeCases() {
+        test1nullToNB();
+        test2nullToSB();
+        test3deleteNB();
+        test4NBtoNBmoreSpecific();
+        test5NBtoNBexactMatch();
+        test6NBtoNBlessSpecific();
+        test7NBtoSBmoreSpecific();
+        test8NBtoSBexactMatch();
+        test9NBtoSBlessSpecific();
+        test10deleteSBpositive();
+        test11SBpositiveToNBmoreSpecific();
+        test12SBpositiveToNBexactMatch();
+        test13SBtoNBlessSpecific();
+        test14SBpositiveToSBmoreSpecific();
+        test15SBpositiveToSBexactMatch();
+        test16SBpositiveToSBlessSpecific();
+        test17deleteSBnegative();
+        test18SBnegativeToNBmoreSpecific();
+        test19SBnegativeToNBexactMatch();
+        test20SBnegativeToNBlessSpecific();
+        test21SBnegativeToSBmoreSpecific();
+        test22SBnegativeToSBexactMatch();
+        test23SBnegativeToSBlessSpecific();
+
+        testNbSourceDest();
+
         testSubtree();
     }
 
@@ -602,9 +617,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void testNegativePrefix() {
         // First, we test with one mapping in NB and one mapping in SB
         cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
 
         insertNBMappings(1L, "192.0.2.0/24");
-        insertSBMappings(1L, "10.0.0.0/32");
+        insertSBMappings(false, 1L, "10.0.0.0/32");
 
         restartSocket();
         sleepForSeconds(2);
@@ -631,9 +647,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void testPositiveMappingRemoval() {
         cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
 
         insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
-        insertSBMappings(1L, "192.168.32.0/19");
+        insertSBMappings(false, 1L, "192.168.32.0/19");
 
         MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
         Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/19");
@@ -653,12 +670,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(expectedNegativePrefix, mr.getEid());
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
 
-        printMapCacheState();
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
 
         mapService.removeMapping(MappingOrigin.Southbound, LispAddressUtil.asIpv4PrefixBinaryEid(
                 1L, "192.168.32.0/19"));
 
-        printMapCacheState();
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
 
         mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.32.1/32"));
         expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
@@ -666,7 +683,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(expectedNegativePrefix, mr.getEid());
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
 
-        printMapCacheState();
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
     private void testPositivePrefixOverlappingNegativePrefix_moreSpecific() {
@@ -681,6 +698,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
 
         insertNBMappings(1L, "192.168.1.0/24");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
 
         mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
         expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/24");
@@ -701,6 +719,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
 
         insertNBMappings(1L, "192.0.0.0/8");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
 
         mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
         Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.0.0.0/8");
@@ -709,10 +728,556 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertTrue(MappingRecordUtil.isPositiveMapping(mr));
     }
 
-    private void testSubtree() {
+    /*
+     * Mapping change: NO old mapping, new mapping is from northbound
+     * Support status: SUPPORTED
+     * Description: If no mappings exists in either NB or SB, that means no subscriptions exist either, so
+     *              this is just a simple case of adding a new mapping, no SMR required.
+     */
+    private void test1nullToNB() {
         cleanUP();
 
-        insertSBMappings(1L, "10.0.0.0/8",
+        insertNBMappings(1L, "192.168.0.0/16");
+        MappingServiceIntegrationTestUtil.assertNoMoreSMRs(socket, mapService);
+    }
+
+    /*
+     * Mapping change: NO old mapping, new mapping is from southbound
+     * Support status: SUPPORTED
+     * Description: If no mappings exists in either NB or SB, that means no subscriptions exist either, so
+     *              this is just a simple case of adding a new mapping, no SMR required.
+     */
+    private void test2nullToSB() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        registerSBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.assertNoMoreSMRs(socket, mapService);
+    }
+
+    /*
+     * Mapping change: deleting a mapping from northbound
+     * Support status: SUPPORTED
+     * Description: When a NB mapping is deleted, its subscribers, and the subscribers of its children are notified.
+     */
+    private void test3deleteNB() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Overlapping SB mapping, which will stay
+        insertSBMappings(false, 1L, "192.168.255.0/24");
+        // Subscribe to the overlapping SB mapping
+        lms.handleMapRequest(newMapRequest(1L, "192.168.255.1/32"));
+        // NB mapping which will be removed
+        insertNBMappings(1L, "192.168.0.0/16");
+        // The child prefix is notified of the change
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.255.0");
+        // The above SMR will result in a SMR-invoked Map-Request for 192.168.255.0/32, which in turn will result  in
+        // subscribing to the new NB mapping
+
+        // Remove NB mapping
+        removeNBMapping(1L, "192.168.0.0/16");
+        // The removed prefix and the child prefix are both notified of the change
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0", "192.168.255.0");
+    }
+
+    /*
+     * Mapping change: adding a more specific northbound mapping overlapping a less specific one
+     * Support status: PARTIALLY SUPPORTED (?)
+     * Description: Overlapping prefixes in general are not "officially" supported in NB and should not be used.
+     *              That said, adding a more specific does result in an SMR, but adding a less specific does not (see
+     *              test 6 below).
+     */
+    private void test4NBtoNBmoreSpecific() {
+        cleanUP();
+
+        // Original (less specific) NB mapping
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the more specific new overlapping mapping
+        insertNBMapping(1L, "192.168.1.0/24", "10.10.10.10");
+        // No notification is sent
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: updating a northbound mapping
+     * Support status: SUPPORTED
+     * Description: Simple case of updating an exact match NB prefix.
+     */
+    private void test5NBtoNBexactMatch() {
+        cleanUP();
+
+        // Original NB mapping
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Updated NB mapping with different locator set for the same exact prefix
+        insertNBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a less specific northbound mapping overlapping a more specific one
+     * Support status: NOT SUPPORTED
+     * Description: Overlapping prefixes in general are not "officially" supported in NB and should not be used.
+     *              That said, adding a more specific does result in an SMR (see test 4 above), but adding a less
+     *              specific does not.
+     */
+    private void test6NBtoNBlessSpecific() {
+        cleanUP();
+
+        // Original (more specific) NB mapping
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the less specific new overlapping mapping
+        insertNBMapping(1L, "192.0.0.0/8", "10.10.10.10");
+        // No notification is sent
+        MappingServiceIntegrationTestUtil.assertNoMoreSMRs(socket, mapService);
+    }
+
+    /*
+     * Mapping change: adding a more specific southbound mapping overlapping a less specific northbound mapping
+     * Support status: SUPPORTED
+     * Description: This is not an issue for NB_FIRST, since there is no change in the resolved mappings for the
+     *              prefix range covered by the existing NB mapping. For NB_AND_SB it does make a difference, and that
+     *              case is supported.
+     */
+    private void test7NBtoSBmoreSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+        mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+
+        // Original (less specific) NB mapping
+        insertNBMapping(1L, "192.168.0.0/16", "172.16.0.1", "10.10.10.10");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the more specific new overlapping SB mapping
+        registerSBMapping(1L, "192.168.1.0/24", "10.10.10.10");
+        // Notification is sent for the original prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a southbound mapping matching a northbound mapping
+     * Support status: SUPPORTED
+     * Description: When a SB mapping is added that has an existing exact match NB counterpart the subscribers of the
+     *              prefix are notified. This is not strictly necessary for the NB_FIRST policy, but it is still useful
+     *              for the NB_AND_SB policy.
+     */
+    private void test8NBtoSBexactMatch() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+        mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+
+        // Original NB mapping
+        insertNBMapping(1L, "192.168.0.0/16", "172.16.0.1", "10.10.10.10");
+        // Subscribe, by sending a Map-Request
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add a mapping with the same EID but different locator set in SB
+        registerSBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a less specific southbound mapping overlapping a more specific northbound mapping
+     * Support status: PARTIALLY SUPPORTED (?)
+     * Description: When a less specific SB mapping is added no SMR is sent, but for the NB mapping subscribers there
+     *              is no actual change in the mapping. Part of the southbound prefix is not covered by the existing NB,
+     *              and queries for that part will resolve to the full SB prefix, shadowing the NB prefix. This is a
+     *              general problem with overlapping prefixes, but this particular combination is pretty bad.
+     */
+    private void test9NBtoSBlessSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original (more specific) NB mapping
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the less specific new overlapping SB mapping
+        registerSBMapping(1L, "192.0.0.0/8", "10.10.10.10");
+        // No notification is sent
+        MappingServiceIntegrationTestUtil.assertNoMoreSMRs(socket, mapService);
+    }
+
+    /*
+     * Mapping change: deleting a positive mapping from southbound
+     * Support status: SUPPORTED
+     * Description: When a positive SB mapping is deleted, its subscribers, and the subscribers of its children are
+     *              notified.
+     */
+    private void test10deleteSBpositive() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Overlapping SB mapping, which will stay
+        insertSBMappings(false, 1L, "192.168.255.0/24");
+        // Subscribe to the overlapping SB mapping
+        lms.handleMapRequest(newMapRequest(1L, "192.168.255.1/32"));
+        // Overlapping negative mapping
+        insertSBMappings(true, 1L, "192.168.127.0/24");
+        // Subscribe to the overlapping negative SB mapping
+        lms.handleMapRequest(newMapRequest(1L, "192.168.127.1/32"));
+        // Positive SB mapping which will be removed
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+        // The child prefix is notified of the change
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.127.0", "192.168.255.0");
+        // The above SMR will result in a SMR-invoked Map-Request for 192.168.255.0/32 and 192.168.255.0/32, which in
+        // turn will result  in subscribing to the new SB mapping
+
+        // Remove positive SB mapping
+        removeSBMapping(1L, "192.168.0.0/16");
+        // The removed prefix and the child prefix are both notified of the change
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0", "192.168.255.0");
+    }
+
+    /*
+     * Mapping change: adding a more specific northbound mapping overlapping a less specific southbound mapping
+     * Support status: PARTIALLY SUPPORTED (?)
+     * Description: This mapping change is detected and an SMR is sent, but the EID prefix in it is for the base address
+     *              of the old prefix. When xTRs query for that, they won't actually install the new mapping. This is
+     *              one of those cases where saving the original request causing the subscription would help the xTR get
+     *              the correct mapping. Additionally, similar to case 9 above, this combination will shadow the NB
+     *              mapping for new requests into the non-overlapping part.
+     */
+    private void test11SBpositiveToNBmoreSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original (less specific) SB mapping
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the more specific new overlapping NB mapping
+        insertNBMappings(1L, "192.168.1.0/24");
+        // Notification is sent for the original prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a northbound mapping matching a southbound mapping
+     * Support status: SUPPORTED
+     * Description: When a NB mapping is added that has an existing exact match SB counterpart, the subscribers of the
+     *              prefix are notified.
+     */
+    private void test12SBpositiveToNBexactMatch() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original SB mapping
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add a mapping with the same EID but different locator set in NB
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a less specific northbound mapping overlapping a more specific southbound mapping
+     * Support status: PARTIALLY SUPPORTED (?)
+     * Description: No SMR is sent, but the NB mapping takes precedence for new requests.
+     */
+    private void test13SBtoNBlessSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original (more specific) SB mapping
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the less specific new overlapping SB mapping
+        registerSBMapping(1L, "192.0.0.0/8", "10.10.10.10");
+        // No notification is sent
+        MappingServiceIntegrationTestUtil.assertNoMoreSMRs(socket, mapService);
+    }
+
+    /*
+     * Mapping change: adding a more specific southbound mapping overlapping a less specific one
+     * Support status: SUPPORTED
+     * Description: When a more specific SB mapping is added, the subscribers of the overlapping less specific existing
+     *              SB mapping are notified.
+     */
+    private void test14SBpositiveToSBmoreSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+
+        registerSBMapping(1L, "192.168.254.0/24", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.254.1/32"));
+        expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.254.0/24");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+    }
+
+    /*
+     * Mapping change: updating a southbound mapping
+     * Support status: SUPPORTED
+     * Description: Simple case of updating an exact match SB prefix.
+     */
+    private void test15SBpositiveToSBexactMatch() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original SB mapping
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Updated SB mapping with different locator set for the same exact prefix
+        registerSBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a less specific southbound mapping overlapping a more specific one
+     * Support status: SUPPORTED
+     * Description: When a less specific SB mapping is added, all child prefixes with subscribers are notified.
+     */
+    private void test16SBpositiveToSBlessSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Original (more specific) SB mapping
+        insertSBMappings(false, 1L, "192.168.0.0/16");
+        // Subscribe, by sending a Map-Request
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add the less specific new overlapping SB mapping
+        registerSBMapping(1L, "192.0.0.0/8", "10.10.10.10");
+        // Notification is sent for the original prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: deleting a negative mapping from southbound
+     * Support status: SUPPORTED
+     * Description: When a negative SB mapping is deleted, its subscribers are notified.
+     */
+    private void test17deleteSBnegative() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // First we add two negative mappings to NB with a hole between them
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        // We query for the hole, adding a negative SB mapping for 192.168.0.0/16 with a subscriber in the process
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Remove positive SB mapping
+        removeSBMapping(1L, "192.168.0.0/16");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a more specific northbound mapping overlapping a less specific negative southbound mapping
+     * Support status: SUPPORTED
+     * Description: When a more specific NB mapping is added, the overlapping negative prefix is deleted, its
+     *              subscribers notified, and then more specific negatives are created when requested.
+     */
+    private void test18SBnegativeToNBmoreSpecific() {
+        cleanUP();
+
+        // First we add two negative mappings to NB with a hole between them
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        // We query for the hole, adding a negative SB mapping for 192.168.0.0/16 with a subscriber in the process
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        // Add the more specific new overlapping NB mapping
+        insertNBMappings(1L, "192.168.1.0/24");
+        // Notification is sent for the original prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+
+        // The original negative should now be broken up
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/24");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.64.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.64.0/18");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.1.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.1.0/24");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+    }
+
+    /*
+     * Mapping change: adding a northbound mapping matching a negative southbound mapping
+     * Support status: SUPPORTED
+     * Description: When a NB mapping is added that has an existing exact match negative SB counterpart,
+     *              the subscribers of the prefix are notified, and the negative is deleted.
+     */
+    private void test19SBnegativeToNBexactMatch() {
+        cleanUP();
+
+        // First we add two negative mappings to NB with a hole between them
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        // We query for the hole, adding a negative SB mapping for 192.168.0.0/16 with a subscriber in the process
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        insertNBMappings(1L, "192.168.0.0/16");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a less specific northbound mapping overlapping a more specific negative southbound mapping
+     * Support status: PARTIALLY SUPPORTED (?)
+     * Description: When a less specific NB mapping covering a more specific negative SB mapping is added, the negative
+     *              is deleted and its subscribers notified. Depending on the particular xTR map-cache implementation,
+     *              the negative prefix may or may not stay cached (hence partially supported).
+     */
+    private void test20SBnegativeToNBlessSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Add a negative mapping
+        insertSBMappings(true, 1L, "192.168.0.0/16");
+        // Subscribe for the mapping
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add less specific northbound mapping
+        insertNBMappings(1L, "192.0.0.0/8");
+        // Notification is sent for the negative prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    /*
+     * Mapping change: adding a more specific southbound mapping overlapping a less specific negative mapping
+     * Support status: SUPPORTED
+     * Description: When a more specific SB mapping is added, the subscribers of the overlapping less specific existing
+     *              negative SB mapping are notified, the negative is deleted, and then more specific negatives are
+     *              created when requested.
+     */
+    private void test21SBnegativeToSBmoreSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // First we add two negative mappings to NB with a hole between them
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        // We query for the hole, adding a negative SB mapping for 192.168.0.0/16 with a subscriber in the process
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        // Add the more specific new overlapping SB mapping
+        registerSBMapping(1L, "192.168.254.0/24", "10.10.10.10");
+        // Notification is sent for the original prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L,"192.168.0.0");
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/17");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.254.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.254.0/24");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+    }
+
+    /*
+     * Mapping change: updating a negative southbound mapping with a positive one
+     * Support status: SUPPORTED
+     * Description: Simple case of updating an exact match SB prefix.
+     */
+    private void test22SBnegativeToSBexactMatch() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // First we add two negative mappings to NB with a hole between them
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+        // We query for the hole, adding a negative SB mapping for 192.168.0.0/16 with a subscriber in the process
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+        // Updated SB mapping with different locator set for the same exact prefix
+        registerSBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        // Notification is sent for the prefix
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+    }
+
+    /*
+     * Mapping change: adding a less specific southbound mapping overlapping a more specific negative mapping
+     * Support status: SUPPORTED
+     * Description: When a less specific SB mapping is added, all child prefixes with subscribers are notified. In this
+     *              case, the overlapping more specific negative is removed.
+     */
+    private void test23SBnegativeToSBlessSpecific() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        // Add a negative mapping
+        insertSBMappings(true, 1L, "192.168.0.0/16");
+        // Subscribe for the mapping
+        lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        // Add less specific southbound mapping
+        registerSBMapping(1L, "192.0.0.0/8", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    private void testNbSourceDest() {
+        cleanUP();
+
+        insertNBMappingSourceDest(1L, "192.0.2.0/24", "192.168.0.0/16",
+                MappingServiceIntegrationTestUtil.DEFAULT_IPV4_RLOC_STRING);
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+
+        insertNBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    private void testSubtree() {
+        cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
+
+        insertSBMappings(false, 1L, "10.0.0.0/8",
                 "10.0.0.0/16", "10.2.0.0/16", "10.255.0.0/16");
         Eid queryPrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "10.0.0.0/9");
         Set<Eid> subtreePrefixes = mapService.getSubtree(MappingOrigin.Southbound, queryPrefix);
@@ -726,47 +1291,111 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void insertMappings() {
         cleanUP();
+        allowNullAuthenticationForAllIPv4(1L);
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         insertNBMappings(1L, "1.2.0.0/16", "1.1.128.0/17");
-        insertSBMappings(1L, "1.1.32.0/19", "1.0.0.0/8");
+        insertSBMappings(false, 1L, "1.1.32.0/19", "1.0.0.0/8");
 
         restartSocket();
         sleepForSeconds(2);
     }
 
     private void insertNBMappings(long iid, String ... prefixes) {
-        LOG.debug("Adding Northbound mappings for prefixes: {}", prefixes);
+        LOG.debug("Adding Northbound mappings in VNI {} for prefixes: {}", iid, prefixes);
         final InstanceIdType iiType = new InstanceIdType(iid);
         for (String prefix : prefixes) {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
-        sleepForMilliseconds(25);
-        printMapCacheState();
+        sleepForMilliseconds(100);
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
-    private void insertSBMappings(long iid, String ... prefixes) {
-        LOG.debug("Adding Southbound mappings for prefixes: {}", prefixes);
+    private void removeNBMapping(long iid, String prefix) {
+        LOG.debug("Removing Northbound mapping in VNI {} for prefix {}", iid, prefix);
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(iid, prefix);
+        mapService.removeMapping(MappingOrigin.Northbound, eid);
+    }
+
+    private void insertNBMapping(long iid, String prefix, String ... locators) {
+        LOG.debug("Adding Northbound mapping in VNI {} for prefix {}, locators {}", iid, prefix, locators);
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(iid, prefix);
+        List<Rloc> rlocs = new ArrayList<>();
+        for (String locator : locators) {
+            rlocs.add(LispAddressUtil.asIpv4Rloc(locator));
+        }
+        insertNBMapping(eid, rlocs);
+    }
+
+    private void insertNBMappingSourceDest(long iid, String src, String dst, String locator) {
+        String srcAddress = MaskUtil.getPrefixAddress(src);
+        String dstAddress = MaskUtil.getPrefixAddress(dst);
+        int srcMask = Integer.parseInt(MaskUtil.getPrefixMask(src));
+        int dstMask = Integer.parseInt(MaskUtil.getPrefixMask(dst));
+        LOG.debug("Adding Northbound mapping in VNI {} for prefix {}|{}, locator {}", iid, src, dst, locator);
+        Eid eid = LispAddressUtil.asSrcDstEid(srcAddress, dstAddress, srcMask, dstMask, iid);
+        List<Rloc> rlocs = Arrays.asList(LispAddressUtil.asIpv4Rloc(locator));
+        insertNBMapping(eid, rlocs);
+    }
+
+    private void insertNBMapping(Eid eid, List<Rloc> rlocs) {
+        MappingRecord record = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid, rlocs).build();
+        mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
+        sleepForMilliseconds(100);
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
+    }
+
+    private void allowNullAuthenticationForAllIPv4(long iid) {
         final InstanceIdType iiType = new InstanceIdType(iid);
-        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iiType);
-        mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
+        Eid allIPs = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iiType);
+        mapService.addAuthenticationKey(allIPs, NULL_AUTH_KEY);
+    }
+
+    private void insertSBMappings(boolean negative, long iid, String... prefixes) {
+        LOG.debug("Adding Southbound mappings in VNI {} for prefixes: {}", iid, prefixes);
+        final InstanceIdType iiType = new InstanceIdType(iid);
 
         for (String prefix : prefixes) {
-            MappingRecord record = newMappingRecord(prefix, iiType);
+            MappingRecord record;
+            if (negative) {
+                record = newMappingRecordNegative(prefix, iiType);
+            } else {
+                record = newMappingRecord(prefix, iiType);
+            }
             mapService.addMapping(MappingOrigin.Southbound, record.getEid(), null,
                     new MappingData(record, System.currentTimeMillis()));
         }
-        printMapCacheState();
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
-    private void printMapCacheState() {
-        LOG.debug("Map-cache state:\n{}", mapService.prettyPrintMappings());
+    private void registerSBMapping(long iid, String prefix, String locator) {
+        LOG.debug("Registering Southbound mapping in VNI {} for prefix {}, locator {}" +
+                " via simulated Map-Register a.k.a. handleMapRegister()", iid, prefix, locator);
+
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(iid, prefix);
+        Rloc rloc = LispAddressUtil.asIpv4Rloc(locator);
+        MapRegister mr = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid, rloc).build();
+        lms.handleMapRegister(mr);
+        sleepForMilliseconds(100);
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
+    }
+
+    private void removeSBMapping(long iid, String prefix) {
+        LOG.debug("Removing Southbound mapping in VNI {} for prefix {}", iid, prefix);
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(iid, prefix);
+        mapService.removeMapping(MappingOrigin.Southbound, eid);
     }
 
     private MappingRecord newMappingRecord(String prefix, InstanceIdType iid) {
         final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, iid);
         return MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(prefixBinary).build();
+    }
+
+    private MappingRecord newMappingRecordNegative(String prefix, InstanceIdType iid) {
+        final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, iid);
+        return MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(prefixBinary, (List<Rloc>) null)
+                .setAction(Action.NativelyForward).build();
     }
 
     private MapRequest newMapRequest(long iid, String prefix) {
@@ -791,7 +1420,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         //TEST CASE 1
         multiSiteScenario.storeSouthboundMappings(false, SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
-        multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
+        multiSiteScenario.storeNorthMappingNegative(SITE_C_NEGATIVE, Action.Drop);
         sleepForSeconds(MULTI_SITE_SLEEP_TIME);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
@@ -915,6 +1544,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      * TEST SCENARIO B
      */
     public void testMultiSiteScenarioB() throws IOException {
+        restartSocket();
         cleanUP();
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
@@ -1012,10 +1642,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         socket = MappingServiceIntegrationTestUtil.initSocket(56756);
 
         sendPacket(mapRequestPacket);
-        ByteBuffer readBuf = receivePacket();
-        MapReply reply = MapReplySerializer.getInstance().deserialize(readBuf);
+        MapReply reply = receiveMapReply();
         assertEquals(4435248268955932168L, reply.getNonce().longValue());
-
+        restartSocket();
     }
 
     public void mapRegisterWithMapNotify() throws SocketTimeoutException {
@@ -2143,6 +2772,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);
         assertNull(resultRecord);
+        ConfigIni.getInstance().setRegistrationValiditySb(ConfigIni.getInstance().getDefaultRegistrationValiditySb());
     }
 
     private void testTTLAfterClean(MapRequest mapRequest) throws SocketTimeoutException {
@@ -2314,7 +2944,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         sendMapRequest(mapRequest);
         DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
-        MapRequest receivedMapRequest = MappingServiceIntegrationTestUtil.receiveMapRequest(nonProxySocket);
+        MapRequest receivedMapRequest = MappingServiceIntegrationTestUtil.receiveMapRequest(
+                nonProxySocket, MappingServiceIntegrationTestUtil.DEFAULT_SOCKET_TIMEOUT);
         assertEquals(mapRequest.getNonce(), receivedMapRequest.getNonce());
         assertEquals(mapRequest.getSourceEid(), receivedMapRequest.getSourceEid());
         assertEquals(mapRequest.getItrRloc(), receivedMapRequest.getItrRloc());
@@ -2364,19 +2995,23 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void assertMapNotifyReceived() throws SocketTimeoutException {
-        MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
+        MappingServiceIntegrationTestUtil.receiveMapNotify(
+                socket, MappingServiceIntegrationTestUtil.DEFAULT_SOCKET_TIMEOUT);
     }
 
     private MapRequest receiveMapRequest() throws SocketTimeoutException {
-        return MappingServiceIntegrationTestUtil.receiveMapRequest(socket);
+        return MappingServiceIntegrationTestUtil.receiveMapRequest(
+                socket, MappingServiceIntegrationTestUtil.DEFAULT_SOCKET_TIMEOUT);
     }
 
     private MapReply receiveMapReply() throws SocketTimeoutException {
-        return MappingServiceIntegrationTestUtil.receiveMapReply(socket);
+        return MappingServiceIntegrationTestUtil.receiveMapReply(
+                socket, MappingServiceIntegrationTestUtil.DEFAULT_SOCKET_TIMEOUT);
     }
 
     private MapNotify receiveMapNotify() throws SocketTimeoutException {
-        return MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
+        return MappingServiceIntegrationTestUtil.receiveMapNotify(
+                socket, MappingServiceIntegrationTestUtil.DEFAULT_SOCKET_TIMEOUT);
     }
 
     private void sleepForSeconds(int seconds) {
@@ -2481,16 +3116,18 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void cleanUP() {
-        after();
+        LOG.debug("\n\n\nCleaning up...\n\n");
         mapService.cleanCachedMappings();
+        mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         configLispPlugin.shouldListenOnXtrPort(false);
-        socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
-
+        MappingServiceIntegrationTestUtil.drainSocket(socket);
+        LOG.debug("\n\n\n... finished cleaning up!\n\n");
     }
 
     private void restartSocket() {
         after();
         socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
+        MappingServiceIntegrationTestUtil.drainSocket(socket);
     }
 
 }
