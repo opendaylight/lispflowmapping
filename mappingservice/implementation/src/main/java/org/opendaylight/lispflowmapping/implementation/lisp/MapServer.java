@@ -235,7 +235,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     public void onMappingChanged(MappingChanged notification) {
         LOG.trace("MappingChanged event of type: `{}'", notification.getChangeType());
         if (subscriptionService) {
-            Eid eid = notification.getMappingRecord().getEid();
+            Eid eid = notification.getEid();
+            if (eid == null) {
+                eid = notification.getMappingRecord().getEid();
+            }
             Set<Subscriber> subscribers = MSNotificationInputUtil.toSubscriberSet(notification.getSubscriberItem());
             LoggingUtil.logSubscribers(LOG, eid, subscribers);
             if (mapService.isMaster()) {
