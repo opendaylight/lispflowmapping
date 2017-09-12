@@ -40,7 +40,8 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         PARENT,
         SIBLING,
         VIRTUAL_PARENT_SIBLING,
-        WIDEST_NEGATIVE
+        WIDEST_NEGATIVE,
+        COVERING
     }
 
     public void tryAddToIpTrie(Object key) {
@@ -137,6 +138,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         if (key.getAddress() instanceof Ipv4PrefixBinary) {
             Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
             switch (method) {
+                case COVERING:
+                    node = ip4Trie.lookupCoveringLessSpecific(prefix.getIpv4AddressBinary().getValue(),
+                            prefix.getIpv4MaskLength());
+                    break;
                 case PARENT:
                     node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
                     break;
@@ -155,13 +160,17 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
                     node = null;
                     break;
             }
-            if (node != null) {
+            if (node != null && node.prefix() != null) {
                 return LispAddressUtil.asIpv4PrefixBinaryEid(
                         key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength());
             }
         } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
             switch (method) {
+                case COVERING:
+                    node = ip6Trie.lookupCoveringLessSpecific(prefix.getIpv6AddressBinary().getValue(),
+                            prefix.getIpv6MaskLength());
+                    break;
                 case PARENT:
                     node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
                     break;
@@ -180,12 +189,17 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
                     node = null;
                     break;
             }
-            if (node != null) {
+            if (node != null && node.prefix() != null) {
                 return LispAddressUtil.asIpv6PrefixBinaryEid(
                         key.getVirtualNetworkId(), node.prefix(), (short) node.prefixLength());
             }
         }
         return null;
+    }
+
+    @Override
+    public Eid getCoveringLessSpecific(Eid key) {
+        return getPrefix(key, GetPrefixMethods.COVERING);
     }
 
     @Override

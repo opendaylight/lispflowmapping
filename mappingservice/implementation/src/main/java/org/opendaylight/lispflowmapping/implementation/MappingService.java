@@ -457,6 +457,11 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     @Override
+    public Set<Eid> getSubtree(MappingOrigin origin, Eid key) {
+        return mappingSystem.getSubtree(origin, key);
+    }
+
+    @Override
     public void addAuthenticationKey(Eid key, MappingAuthkey authKey) {
         dsbe.addAuthenticationKey(DSBEInputUtil.toAuthenticationKey(key, authKey));
     }
