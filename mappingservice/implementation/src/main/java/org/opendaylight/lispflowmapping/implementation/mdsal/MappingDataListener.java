@@ -121,26 +121,55 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                 mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                         new MappingData(convertedMapping.getMappingRecord()));
-                Set<Subscriber> subscribers = mapSystem.getSubscribers(convertedEid);
-
-                Set<Subscriber> dstSubscribers = null;
-                // For SrcDst LCAF also send SMRs to Dst prefix
-                if (convertedEid.getAddress() instanceof SourceDestKey) {
-                    Eid dstAddr = SourceDestKeyHelper.getDstBinary(convertedEid);
-                    dstSubscribers = mapSystem.getSubscribers(dstAddr);
-                }
-
-                try {
-                    // The notifications are used for sending SMR.
-                    notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
-                            convertedMapping, subscribers, dstSubscribers, mappingChange));
-                } catch (InterruptedException e) {
-                    LOG.warn("Notification publication interrupted!");
-                }
-
+                notifyChange(convertedEid, convertedMapping, mappingChange);
             } else {
                 LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
             }
+        }
+    }
+
+    private void notifyChange(Eid eid, Mapping mapping, MappingChange mappingChange) {
+        Set<Subscriber> subscribers = mapSystem.getSubscribers(eid);
+
+        Set<Subscriber> dstSubscribers = null;
+        // For SrcDst LCAF also send SMRs to Dst prefix
+        if (eid.getAddress() instanceof SourceDestKey) {
+            Eid dstAddr = SourceDestKeyHelper.getDstBinary(eid);
+            dstSubscribers = mapSystem.getSubscribers(dstAddr);
+            notifyChildren(dstAddr, mapping, mappingChange);
+        }
+        publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+
+        notifyChildren(eid, mapping, mappingChange);
+    }
+
+    private void notifyChildren(Eid eid, Mapping mapping, MappingChange mappingChange) {
+        // Update/created only happens for NB mappings. We assume no overlapping prefix support for NB mappings - so
+        // this NB mapping should not have any children. Both for NB first and NB&SB cases all subscribers for SB
+        // prefixes that are equal or more specific to this NB prefix have to be notified of the potential change.
+        // Each subscriber is notified for the prefix that it is currently subscribed to, and MS should return to them
+        // a Map-Reply with the same prefix and update mapping in cases of EID_INTERSECTION_RLOC_NB_FIRST which is a
+        // new option we are creating TODO
+        Set<Eid> childPrefixes = mapSystem.getSubtree(MappingOrigin.Southbound, eid);
+        if (childPrefixes == null || childPrefixes.isEmpty()) {
+            return;
+        }
+
+        childPrefixes.remove(eid);
+        for (Eid prefix : childPrefixes) {
+            Set<Subscriber> subscribers = mapSystem.getSubscribers(prefix);
+            publishNotification(mapping, prefix, subscribers, null, mappingChange);
+        }
+    }
+
+    private void publishNotification(Mapping mapping, Eid eid, Set<Subscriber> subscribers,
+                                     Set<Subscriber> dstSubscribers, MappingChange mappingChange) {
+        try {
+            // The notifications are used for sending SMR.
+            notificationPublishService.putNotification(MSNotificationInputUtil.toMappingChanged(
+                    mapping, eid, subscribers, dstSubscribers, mappingChange));
+        } catch (InterruptedException e) {
+            LOG.warn("Notification publication interrupted!");
         }
     }
 

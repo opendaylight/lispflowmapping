@@ -425,7 +425,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testPositiveMappingRemoval();
 
         // https://bugs.opendaylight.org/show_bug.cgi?id=9037
-        testPositivePrefixOverlappingNegativePrefix();
+        testPositivePrefixOverlappingNegativePrefix_moreSpecific();
+
+        // https://bugs.opendaylight.org/show_bug.cgi?id=9116
+        testPositivePrefixOverlappingNegativePrefix_lessSpecific();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
@@ -660,7 +663,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         printMapCacheState();
     }
 
-    private void testPositivePrefixOverlappingNegativePrefix() {
+    private void testPositivePrefixOverlappingNegativePrefix_moreSpecific() {
         cleanUP();
 
         insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
@@ -678,6 +681,26 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
         assertEquals(expectedNegativePrefix, mr.getEid());
         assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+    }
+
+    private void testPositivePrefixOverlappingNegativePrefix_lessSpecific() {
+        cleanUP();
+
+        insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedNegativePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isNegativeMapping(mr));
+
+        insertNBMappings(1L, "192.0.0.0/8");
+
+        mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.0.0.0/8");
+        mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
     }
 
     private void insertMappings() {

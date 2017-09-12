@@ -294,6 +294,7 @@ module odl-mappingservice {
             type mapping-change;
         }
         uses lisp-proto:mapping-record-container;
+        uses lisp-proto:eid-container;
         list subscriber-item {
             description "The list of subscribers to be notified of this change.";
             uses lisp-proto:subscriber-data-grouping;
