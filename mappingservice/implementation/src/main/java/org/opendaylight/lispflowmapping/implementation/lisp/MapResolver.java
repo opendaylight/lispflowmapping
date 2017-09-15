@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.NoAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -117,7 +118,7 @@ public class MapResolver implements IMapResolverAsync {
             }
 
             if (itrRlocs != null && itrRlocs.size() != 0) {
-                if (subscriptionService) {
+                if (subscriptionService && isValidSourceEidForSubscriber(srcEid)) {
                     final Rloc resolvedRloc = resolveRloc(itrRlocs, sourceRloc);
                     updateSubscribers(resolvedRloc, eidRecord.getEid(), mapping.getEid(),
                             srcEid, mapping.getRecordTtl());
@@ -146,6 +147,13 @@ public class MapResolver implements IMapResolverAsync {
             return true;
         }
         return false;
+    }
+
+    private static boolean isValidSourceEidForSubscriber(Eid eid) {
+        if (eid == null || eid.getAddress() instanceof NoAddress) {
+            return false;
+        }
+        return true;
     }
 
     private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
