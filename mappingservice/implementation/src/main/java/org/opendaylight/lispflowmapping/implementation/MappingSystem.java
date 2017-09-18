@@ -743,7 +743,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public String printMappings() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Policy map-cache\n----------------\n");
         sb.append(pmc.printMappings());
         sb.append("\nSouthbound map-cache\n--------------------\n");
@@ -753,7 +753,7 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public String prettyPrintMappings() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Policy map-cache\n----------------\n");
         sb.append(pmc.prettyPrintMappings());
         sb.append("\nSouthbound map-cache\n--------------------\n");
@@ -764,7 +764,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     private static String prettyPrintSubscribers(Map<Eid, Set<Subscriber>> subscribers) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (Eid eid: subscribers.keySet()) {
             sb.append("\n  ");
             sb.append(LispAddressStringifier.getString(eid));
