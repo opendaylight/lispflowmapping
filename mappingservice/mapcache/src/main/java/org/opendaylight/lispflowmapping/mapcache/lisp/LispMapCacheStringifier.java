@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 
 public class LispMapCacheStringifier {
     public static String printKeys(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Keys\tValues\n");
 
         final IRowVisitor innerVisitor = (new IRowVisitor() {
@@ -62,7 +62,7 @@ public class LispMapCacheStringifier {
 
     @SuppressWarnings("unchecked")
     public static String prettyPrintKeys(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         final IRowVisitor innerVisitor = (new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
@@ -105,7 +105,7 @@ public class LispMapCacheStringifier {
     }
 
     public static String printFMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Keys\tValues\n");
         dao.getAll(new IRowVisitor() {
             String lastKey = "";
@@ -124,7 +124,7 @@ public class LispMapCacheStringifier {
     }
 
     public static String prettyPrintFMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         dao.getAll(new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
                 switch (valueKey) {
@@ -143,7 +143,7 @@ public class LispMapCacheStringifier {
     }
 
     public static String printMTMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Keys\tValues\n");
         final IRowVisitor innerVisitor = (new IRowVisitor() {
             String lastKey = "";
@@ -199,7 +199,7 @@ public class LispMapCacheStringifier {
 
     @SuppressWarnings("unchecked")
     public static String prettyPrintMTMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         final IRowVisitor mappingVisitor = (new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
@@ -241,7 +241,7 @@ public class LispMapCacheStringifier {
     }
 
     public static String printSMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Keys\tValues\n");
 
         final IRowVisitor innerVisitor = (new IRowVisitor() {
@@ -281,7 +281,7 @@ public class LispMapCacheStringifier {
 
     @SuppressWarnings("unchecked")
     public static String prettyPrintSMCMappings(ILispDAO dao) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         final IRowVisitor mappingVisitor = (new IRowVisitor() {
             public void visitRow(Object keyId, String valueKey, Object value) {
