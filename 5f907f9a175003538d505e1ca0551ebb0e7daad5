@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_eab8c02b",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-09-19T18:36:58Z",
+      "side": 1,
+      "message": "you have access to the vni info as well, wouldnt it be better to add the vni too? even if it is not used later...",
+      "range": {
+        "startLine": 229,
+        "startChar": 14,
+        "endLine": 229,
+        "endChar": 117
+      },
+      "revId": "5f907f9a175003538d505e1ca0551ebb0e7daad5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_cab33c4b",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-09-19T18:36:58Z",
+      "side": 1,
+      "message": "you have access to the vni info as well, wouldnt it be better to add the vni too? even if it is not used later...",
+      "range": {
+        "startLine": 231,
+        "startChar": 0,
+        "endLine": 231,
+        "endChar": 117
+      },
+      "revId": "5f907f9a175003538d505e1ca0551ebb0e7daad5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
