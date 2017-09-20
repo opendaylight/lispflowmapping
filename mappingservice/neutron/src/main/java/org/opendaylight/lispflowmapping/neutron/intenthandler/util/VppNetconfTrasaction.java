@@ -25,10 +25,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Shakib Ahmed on 1/12/17.
  */
-public class VppNetconfTrasaction {
+public final class VppNetconfTrasaction {
     private static final Logger LOG = LoggerFactory.getLogger(VppNetconfTrasaction.class);
 
     public static final byte RETRY_COUNT = 5;
+
+    private VppNetconfTrasaction() {
+    }
 
     public static synchronized <T extends DataObject> Optional<T> read(DataBroker dataBroker,
                                                                        LogicalDatastoreType datastoreType,

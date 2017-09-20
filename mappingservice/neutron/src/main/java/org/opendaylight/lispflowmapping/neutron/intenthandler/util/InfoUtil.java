@@ -16,10 +16,8 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 /**
  * Created by Shakib Ahmed on 1/23/17.
  */
-public class InfoUtil {
-
+public final class InfoUtil {
     private InfoUtil() {
-
     }
 
     public static String topology(final KeyedInstanceIdentifier<Topology, TopologyKey> topoIID) {

@@ -20,7 +20,11 @@ import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 
-public class LispMapCacheStringifier {
+public final class LispMapCacheStringifier {
+    // Utility class, should not be instantiated
+    private LispMapCacheStringifier() {
+    }
+
     public static String printKeys(ILispDAO dao) {
         final StringBuilder sb = new StringBuilder();
         sb.append("Keys\tValues\n");
