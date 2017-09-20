@@ -36,7 +36,7 @@ public class HostInformationManager {
 
     private static HostInformationManager instance;
 
-    private HostInformationManager() {
+    HostInformationManager() {
         hostIdToPortDataMapper = new HostIdToPortDataMapper();
         hostIdToRlocMapper = new HostIdToRlocMapper();
         neutronTenantToVniMapper = new NeutronTenantToVniMapper();

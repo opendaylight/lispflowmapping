@@ -20,7 +20,7 @@ import org.slf4j.Logger;
  * @author Lorand Jakab
  *
  */
-public class LoggingUtil {
+public final class LoggingUtil {
     // Utility class, should not be instantiated
     private LoggingUtil() {
     }
