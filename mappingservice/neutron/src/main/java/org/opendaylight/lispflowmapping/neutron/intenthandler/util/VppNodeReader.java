@@ -60,7 +60,7 @@ public class VppNodeReader {
         } catch (final InterruptedException | ExecutionException ex) {
             LOG.warn("Got exception while reading IP addresses from nodes {}",
                     InfoUtil.node(instanceIdentifierToVppNode));
-            throw new RlocNotFoundOnVppNode(InfoUtil.node(instanceIdentifierToVppNode));
+            throw new RlocNotFoundOnVppNode(InfoUtil.node(instanceIdentifierToVppNode), ex);
         }
     }
 
