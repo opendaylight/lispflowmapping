@@ -11,7 +11,13 @@ package org.opendaylight.lispflowmapping.neutron.intenthandler.exception;
  * Created by Shakib Ahmed on 1/12/17.
  */
 public class RlocNotFoundOnVppNode extends RuntimeException {
+    private static final String MESSAGE = "No available interface found on node ";
+
     public RlocNotFoundOnVppNode(String hostId) {
-        super("No available interface found on node " + hostId);
+        super(MESSAGE + hostId);
+    }
+
+    public RlocNotFoundOnVppNode(String hostId, Throwable cause) {
+        super(MESSAGE + hostId, cause);
     }
 }
