@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_60b06fdd",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-09-20T08:51:10Z",
+      "side": 1,
+      "message": "the asIpv4PrefixBinaryEid() method\u0027s first argument is an EID, the VNI is taken form there. I agree it is not too intuitive, but I didn\u0027t want to create a new method, since LispAddressUtil is already huge. So the VNI is take into account. However, code readability has been our focus lately, so I will add new methods to make it clear what\u0027s going on.",
+      "parentUuid": "ba1f61a0_eab8c02b",
+      "range": {
+        "startLine": 229,
+        "startChar": 14,
+        "endLine": 229,
+        "endChar": 117
+      },
+      "revId": "5f907f9a175003538d505e1ca0551ebb0e7daad5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_cab33c4b",
         "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/HashMapDb.java",
         "patchSetId": 3
