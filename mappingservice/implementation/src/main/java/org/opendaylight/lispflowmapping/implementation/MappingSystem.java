@@ -112,8 +112,8 @@ public class MappingSystem implements IMappingSystem {
                 this);
     }
 
-    public void setDataStoreBackEnd(DataStoreBackEnd dsbe) {
-        this.dsbe = dsbe;
+    public void setDataStoreBackEnd(DataStoreBackEnd dataStoreBackEnd) {
+        this.dsbe = dataStoreBackEnd;
     }
 
     @Override

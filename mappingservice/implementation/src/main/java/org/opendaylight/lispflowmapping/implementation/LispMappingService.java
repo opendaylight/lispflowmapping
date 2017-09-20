@@ -101,15 +101,15 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return this.smr;
     }
 
-    public void setShouldUseSmr(boolean smr) {
-        this.smr = smr;
+    public void setShouldUseSmr(boolean shouldUseSmr) {
+        this.smr = shouldUseSmr;
         if (mapServer != null) {
-            mapServer.setSubscriptionService(smr);
+            mapServer.setSubscriptionService(shouldUseSmr);
         }
         if (mapResolver != null) {
-            mapResolver.setSubscriptionService(smr);
+            mapResolver.setSubscriptionService(shouldUseSmr);
         }
-        ConfigIni.getInstance().setSmr(smr);
+        ConfigIni.getInstance().setSmr(shouldUseSmr);
     }
 
     public NotificationService getNotificationService() {
@@ -257,15 +257,15 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void handleSMR(MapRequest smr, Rloc subscriber) {
+    public void handleSMR(MapRequest smrMapRequest, Rloc subscriber) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending SMR Map-Request to {} with Source-EID {} and EID Record {} (reversed)",
                     LispAddressStringifier.getString(subscriber),
-                    LispAddressStringifier.getString(smr.getSourceEid().getEid()),
-                    LispAddressStringifier.getString(smr.getEidItem().get(0).getEid()));
+                    LispAddressStringifier.getString(smrMapRequest.getSourceEid().getEid()),
+                    LispAddressStringifier.getString(smrMapRequest.getEidItem().get(0).getEid()));
         }
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
-        smrib.setMapRequest(new MapRequestBuilder(smr).build());
+        smrib.setMapRequest(new MapRequestBuilder(smrMapRequest).build());
         smrib.setTransportAddress(LispNotificationHelper.getTransportAddressFromRloc(subscriber));
         getLispSB().sendMapRequest(smrib.build());
 

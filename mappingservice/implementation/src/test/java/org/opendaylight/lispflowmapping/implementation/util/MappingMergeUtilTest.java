@@ -244,10 +244,12 @@ public class MappingMergeUtilTest {
         assertEquals(2, result.getRecord().getLocatorRecord().size());
 
         assertEquals("NB-locator-id", resultLocator_1.getLocatorId());
-        assertEquals(255, (short) resultLocator_1.getPriority()); // priority changed to 255
+        // priority changed to 255
+        assertEquals(255, (short) resultLocator_1.getPriority());
 
         assertEquals("NB-locator-id", resultLocator_2.getLocatorId());
-        assertEquals(1, (short) resultLocator_2.getPriority());   // priority remains original
+        // priority remains original
+        assertEquals(1, (short) resultLocator_2.getPriority());
     }
 
     private static MappingData getDefaultMappingData() {

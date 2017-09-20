@@ -189,8 +189,8 @@ public class SimpleMapCacheTest {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getBestPair(NORMALIZED_EID_IPV4_PREFIX_DST)).thenReturn(mapPair);
         Mockito.when(mapMock.get(SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
-        Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD))
-                .thenReturn(mappingData);       // second invocation
+        // second invocation
+        Mockito.when(xtrIdDaoMock.getSpecific(XTR_ID, SubKeys.RECORD)).thenReturn(mappingData);
 
         // with non-expired mapping record
         assertEquals(mappingData, simpleMapCache.getMapping(EID_IPV4_PREFIX_DST, XTR_ID));
@@ -375,7 +375,8 @@ public class SimpleMapCacheTest {
         Mockito.when(daoMock.getSpecific(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_2, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
 
-        simpleMapCache.addMapping(EID_IPV4_PREFIX_2, mappingDataMock); // Eid VNI_100 == null
+        // Eid VNI_100 == null
+        simpleMapCache.addMapping(EID_IPV4_PREFIX_2, mappingDataMock);
         Mockito.verify(daoMock).getSpecific(VNI_0, SubKeys.VNI);
         Mockito.verify(daoMock, Mockito.never()).putNestedTable(VNI_0, SubKeys.VNI);
     }
@@ -389,7 +390,8 @@ public class SimpleMapCacheTest {
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_2, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(daoMock.putNestedTable(VNI_0, SubKeys.VNI)).thenReturn(tableMock);
 
-        simpleMapCache.addMapping(EID_IPV4_PREFIX_2, mappingDataMock); // Eid VNI_100 == null
+        // Eid VNI_100 == null
+        simpleMapCache.addMapping(EID_IPV4_PREFIX_2, mappingDataMock);
         Mockito.verify(daoMock).putNestedTable(VNI_0, SubKeys.VNI);
     }
 
@@ -402,7 +404,8 @@ public class SimpleMapCacheTest {
         Mockito.when(tableMock.getSpecific(NORMALIZED_EID_1, SubKeys.XTRID_RECORDS)).thenReturn(xtrIdDaoMock);
         Mockito.when(daoMock.putNestedTable(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
 
-        simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingDataMock); // Eid VNI_100 == null
+        // Eid VNI_100 == null
+        simpleMapCache.addMapping(EID_IPV4_PREFIX_1_VNI, mappingDataMock);
         Mockito.verify(daoMock).putNestedTable(VNI_100, SubKeys.VNI);
     }
 

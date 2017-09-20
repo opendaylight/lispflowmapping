@@ -349,8 +349,10 @@ public class MapResolverTest {
         mapResolver = new MapResolver(mapServiceMock, true, "both", lispMappingServiceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
-        ipAddressList.add(IPV4_ADDRESS_1); // hop 1
-        ipAddressList.add(IPV4_ADDRESS_2); // hop 2
+        // hop 1
+        ipAddressList.add(IPV4_ADDRESS_1);
+        // hop 2
+        ipAddressList.add(IPV4_ADDRESS_2);
 
         final Rloc rloc = LispAddressUtil.asTeLcafRloc(ipAddressList);
         final LocatorRecordBuilder locatorRecordBuilder_1 = getDefaultLocatorBuilder();
@@ -362,30 +364,31 @@ public class MapResolverTest {
         mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
-        final MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1))
-                .build());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2))
-                .build());
+        final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
+        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
-        Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
-                .thenReturn(mappingData);
+        Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
         // result
         final LocatorRecordBuilder locatorRecordBuilder_3 = getDefaultLocatorBuilder()
-                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority((short) 1); // priority increased by 1
+                // priority increased by 1
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority((short) 1);
         final MappingRecordBuilder resultMappingRecordBuilder = getDefaultMappingRecordBuilder();
 
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build()); // as Ipv4
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build()); // as ELP
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build()); // added to the result
+        // as Ipv4
+        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
+        // as ELP
+        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
+        // added to the result
+        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build());
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
-        mapResolver.handleMapRequest(mapRequestBuilder.build());
+        mapResolver.handleMapRequest(mrb.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
     }
 
@@ -397,8 +400,10 @@ public class MapResolverTest {
         mapResolver = new MapResolver(mapServiceMock, true, "replace", lispMappingServiceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
-        ipAddressList.add(IPV4_ADDRESS_1); // hop 1
-        ipAddressList.add(IPV4_ADDRESS_2); // hop 2
+        // hop 1
+        ipAddressList.add(IPV4_ADDRESS_1);
+        // hop 2
+        ipAddressList.add(IPV4_ADDRESS_2);
 
         final Rloc rloc = LispAddressUtil.asTeLcafRloc(ipAddressList);
         final LocatorRecordBuilder locatorRecordBuilder_1 = getDefaultLocatorBuilder();
@@ -410,29 +415,28 @@ public class MapResolverTest {
         mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
-        final MapRequestBuilder mapRequestBuilder = getDefaultMapRequestBuilder();
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1))
-                .build());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2))
-                .build());
+        final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
+        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
-        Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
-                .thenReturn(mappingData);
+        Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
         // result
         final LocatorRecordBuilder locatorRecordBuilder_3 = getDefaultLocatorBuilder()
                 .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2));
         final MappingRecordBuilder resultMappingRecordBuilder = getDefaultMappingRecordBuilder();
 
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build()); // as Ipv4
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build()); // added to the result
+        // as Ipv4
+        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
+        // added to the result
+        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build());
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
-        mapResolver.handleMapRequest(mapRequestBuilder.build());
+        mapResolver.handleMapRequest(mrb.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
     }
 

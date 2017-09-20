@@ -116,20 +116,26 @@ public class MapServerTest {
 
     private static final long TWO_DAYS = 86400000L * 2;
 
-    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,         // timedOut() == true
+    // timedOut() == true
+    private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,
             IPV4_SOURCE_EID_1, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final Subscriber SUBSCRIBER_RLOC_2 = new Subscriber(RLOC_2,         // timedOut() == false
+    // timedOut() == false
+    private static final Subscriber SUBSCRIBER_RLOC_2 = new Subscriber(RLOC_2,
             IPV4_SOURCE_EID_2, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
-    private static final Subscriber SUBSCRIBER_RLOC_3 = new Subscriber(RLOC_3,         // timedOut() == true
+    // timedOut() == true
+    private static final Subscriber SUBSCRIBER_RLOC_3 = new Subscriber(RLOC_3,
             IPV4_SOURCE_EID_3, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final Subscriber SUBSCRIBER_RLOC_4 = new Subscriber(RLOC_4,         // timedOut() == false
+    // timedOut() == false
+    private static final Subscriber SUBSCRIBER_RLOC_4 = new Subscriber(RLOC_4,
             IPV4_SOURCE_EID_4, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
-    private static final Subscriber SUBSCRIBER_RLOC_5 = new Subscriber(RLOC_5,         // timedOut() == true
+    // timedOut() == true
+    private static final Subscriber SUBSCRIBER_RLOC_5 = new Subscriber(RLOC_5,
             IPV4_SOURCE_EID_5, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT,
             new Date(System.currentTimeMillis() - TWO_DAYS));
-    private static final Subscriber SUBSCRIBER_RLOC_6 = new Subscriber(RLOC_6,         // timedOut() == false
+    // timedOut() == false
+    private static final Subscriber SUBSCRIBER_RLOC_6 = new Subscriber(RLOC_6,
             IPV4_SOURCE_EID_6, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
@@ -539,14 +545,14 @@ public class MapServerTest {
                 .setEid(eid);
     }
 
-    private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mapRegister) {
+    private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mr) {
         final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
-                .setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent())
-                .setSiteId(mapRegister.getSiteId())
-                .setXtrId(mapRegister.getXtrId())
-                .setNonce(mapRegister.getNonce())
-                .setKeyId(mapRegister.getKeyId())
-                .setMergeEnabled(mapRegister.isMergeEnabled())
+                .setXtrSiteIdPresent(mr.isXtrSiteIdPresent())
+                .setSiteId(mr.getSiteId())
+                .setXtrId(mr.getXtrId())
+                .setNonce(mr.getNonce())
+                .setKeyId(mr.getKeyId())
+                .setMergeEnabled(mr.isMergeEnabled())
                 .setMappingRecordItem(new ArrayList<>())
                 .setAuthenticationData(new byte[]{});
         mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());

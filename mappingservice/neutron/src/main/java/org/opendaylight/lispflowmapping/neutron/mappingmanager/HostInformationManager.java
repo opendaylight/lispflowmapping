@@ -36,7 +36,7 @@ public class HostInformationManager {
 
     private static HostInformationManager instance;
 
-    private HostInformationManager() {
+    HostInformationManager() {
         hostIdToPortDataMapper = new HostIdToPortDataMapper();
         hostIdToRlocMapper = new HostIdToRlocMapper();
         neutronTenantToVniMapper = new NeutronTenantToVniMapper();
@@ -53,8 +53,8 @@ public class HostInformationManager {
         return neutronTenantToVniMapper.getVni(tenantUuid);
     }
 
-    public void setOdlMappingserviceService(OdlMappingserviceService lfmDbService) {
-        this.lfmDbService = lfmDbService;
+    public void setOdlMappingserviceService(OdlMappingserviceService mappingservice) {
+        this.lfmDbService = mappingservice;
     }
 
     public synchronized void addHostRelatedInfo(String hostId, Object data) {

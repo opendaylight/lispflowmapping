@@ -104,8 +104,9 @@ public class MappingSystemTest {
     private static final Eid EID_IPV4_1 = LispAddressUtil.asIpv4Eid(IPV4_STRING_1);
     private static final Eid EID_IPV4_2 = LispAddressUtil.asIpv4Eid(IPV4_STRING_2);
     private static final Eid EID_SERVICE_PATH = new EidBuilder().setAddress(getDefaultServicePath((short) 253)).build();
+    // with index out of bounds
     private static final Eid EID_SERVICE_PATH_INDEX_OOB = new EidBuilder()
-            .setAddress(getDefaultServicePath((short) 200)).build(); // with index out of bounds
+            .setAddress(getDefaultServicePath((short) 200)).build();
 
     public static final SimpleAddress SIMPLE_ADDR_1 = new SimpleAddress(new IpAddress(new Ipv4Address(IPV4_STRING_1)));
     public static final SimpleAddress SIMPLE_ADDR_2 = new SimpleAddress(new IpAddress(new Ipv4Address(IPV4_STRING_2)));
@@ -203,7 +204,8 @@ public class MappingSystemTest {
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_multipleLocatorRecords() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build(), // set two locators
+                        // set two locators
+                        getDefaultLocatorRecordBuilder().build(),
                         getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
@@ -219,7 +221,8 @@ public class MappingSystemTest {
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleIpv4LocatorRecord() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
+                        // Ipv4 type Rloc
+                        getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -314,7 +317,8 @@ public class MappingSystemTest {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
+                        // Ipv4 type Rloc
+                        getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -332,7 +336,8 @@ public class MappingSystemTest {
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build(); // Ipv4 type Rloc
+                        // Ipv4 type Rloc
+                        getDefaultLocatorRecordBuilder().build())).build();
         MappingData nbMappingData = getDefaultMappingData(mappingRecord);
         MappingData sbMappingData = getDefaultMappingData(mappingRecord);
         sbMappingData.setTimestamp(EXPIRED_DATE);

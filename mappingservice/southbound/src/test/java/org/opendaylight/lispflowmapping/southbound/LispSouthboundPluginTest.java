@@ -207,8 +207,8 @@ public class LispSouthboundPluginTest {
         Mockito.verify(handlerMock).close();
         assertNull(getField("lispSouthboundHandler"));
         assertNull(getField("lispXtrSouthboundHandler"));
-        Channel[] channel = getField("channel");
-        assertNull(channel[0]);
+        Channel[] channels = getField("channel");
+        assertNull(channels[0]);
     }
 
     private static void injectChannel() throws NoSuchFieldException, IllegalAccessException {

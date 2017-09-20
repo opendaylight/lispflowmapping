@@ -116,7 +116,8 @@ public class MappingServiceTest {
         // input
         final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(RpcError.ErrorType.PROTOCOL, "data-exists",
                 "Key already exists! Please use update-key if you want to change it.").build();
-        final RpcError error = rpc.getErrors().iterator().next(); // equals() not implemented int RpcError
+        // equals() not implemented int RpcError
+        final RpcError error = rpc.getErrors().iterator().next();
 
         // result
         final Future<RpcResult<Void>> result = mappingService.addKey(addKeyInput);

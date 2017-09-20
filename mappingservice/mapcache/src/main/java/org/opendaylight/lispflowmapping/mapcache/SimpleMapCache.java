@@ -66,10 +66,10 @@ public class SimpleMapCache implements ILispMapCache {
         return table;
     }
 
-    private ILispDAO getOrInstantiateXtrIdTable(Eid eid, ILispDAO dao) {
-        ILispDAO table = (ILispDAO) dao.getSpecific(eid, SubKeys.XTRID_RECORDS);
+    private ILispDAO getOrInstantiateXtrIdTable(Eid eid, ILispDAO lispDAO) {
+        ILispDAO table = (ILispDAO) lispDAO.getSpecific(eid, SubKeys.XTRID_RECORDS);
         if (table == null) {
-            table = dao.putNestedTable(eid, SubKeys.XTRID_RECORDS);
+            table = lispDAO.putNestedTable(eid, SubKeys.XTRID_RECORDS);
         }
         return table;
     }
@@ -99,8 +99,8 @@ public class SimpleMapCache implements ILispMapCache {
 
     // Returns the mapping corresponding to the longest prefix match for eid. eid must be a simple (maskable or not)
     // address
-    private Object getMappingLpmEid(Eid eid, XtrId xtrId, ILispDAO dao) {
-        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = dao.getBestPair(MaskUtil.normalize(eid));
+    private Object getMappingLpmEid(Eid eid, XtrId xtrId, ILispDAO lispDAO) {
+        SimpleImmutableEntry<Eid, Map<String, ?>> daoEntry = lispDAO.getBestPair(MaskUtil.normalize(eid));
         if (daoEntry != null) {
             if (xtrId != null) {
                 ILispDAO xtrIdTable = (ILispDAO) daoEntry.getValue().get(SubKeys.XTRID_RECORDS);
@@ -134,10 +134,10 @@ public class SimpleMapCache implements ILispMapCache {
     }
 
     // Returns the list of mappings stored in an xTR-ID DAO
-    private List<Object> getXtrIdMappingList(ILispDAO dao) {
-        if (dao != null) {
+    private List<Object> getXtrIdMappingList(ILispDAO lispDAO) {
+        if (lispDAO != null) {
             final List<Object> records = new ArrayList<>();
-            dao.getAll(new IRowVisitor() {
+            lispDAO.getAll(new IRowVisitor() {
                 public void visitRow(Object keyId, String valueKey, Object value) {
                     if (valueKey.equals(SubKeys.RECORD)) {
                         records.add(value);
