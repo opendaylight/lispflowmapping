@@ -107,17 +107,17 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
     @Override
     public SimpleImmutableEntry<Eid, Map<String, ?>> getBestPair(Object key) {
-        Map<String, ?> data = null;
+        Map<String, ?> result = null;
 
         if (key instanceof Eid) {
             Eid eid = (Eid) key;
             RadixTrie<Object>.TrieNode node = lookupBestNode(eid);
             if (node == null) {
-                data = get(key);
-                return (data == null) ? null : new SimpleImmutableEntry<>((Eid)key, data);
+                result = get(key);
+                return (result == null) ? null : new SimpleImmutableEntry<>((Eid)key, result);
             }
-            data = get(node.data());
-            return (data == null) ? null : new SimpleImmutableEntry<>((Eid)node.data(), data);
+            result = get(node.data());
+            return (result == null) ? null : new SimpleImmutableEntry<>((Eid)node.data(), result);
         }
         return null;
     }

@@ -69,7 +69,8 @@ public class PortDataProcessorTest {
         future = Mockito.mock(Future.class);
         rpcResult = Mockito.mock(RpcResult.class);
         Whitebox.setInternalState(portDataProcessor, "hostInformationManager", hostInformationManager);
-        commonStubbing(); // common stubbing is called before invocation of each test
+        // common stubbing is called before invocation of each test
+        commonStubbing();
     }
 
     /**
@@ -94,7 +95,8 @@ public class PortDataProcessorTest {
      */
     @Test
     public void createTest_nullHostId() throws ExecutionException, InterruptedException {
-        Mockito.when(augmentationMock.getHostId()).thenReturn(null); // overriding default stubbing
+        // overriding default stubbing
+        Mockito.when(augmentationMock.getHostId()).thenReturn(null);
 
         portDataProcessor.create(portMock);
 

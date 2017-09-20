@@ -400,7 +400,8 @@ public class RadixTrie<T> {
             this.bit = prefixlen;
             this.prefix = prefix;
             this.data = data;
-            left = right = null;
+            left = null;
+            right = null;
         }
 
         public byte[] prefix() {
@@ -418,15 +419,15 @@ public class RadixTrie<T> {
         /**
          * Finds closest prefix NOT the longest prefix match.
          *
-         * @param prefix Searched prefix
+         * @param pref Searched prefix
          * @param preflen Searched prefix length
          * @return The node found
          */
-        public TrieNode findClosest(byte[] prefix, int preflen) {
+        public TrieNode findClosest(byte[] pref, int preflen) {
             TrieNode node = this;
 
             while (node.prefix == null || node.bit < preflen) {
-                if (testBitInPrefixByte(prefix, node.bit)) {
+                if (testBitInPrefixByte(pref, node.bit)) {
                     if (node.right == null) {
                         break;
                     }
@@ -449,18 +450,19 @@ public class RadixTrie<T> {
         /**
          * Compares prefix to node's prefix and returns position of first different bit.
          *
-         * @param prefix Prefix to be compared.
+         * @param pref Prefix to be compared.
          * @param preflen Prefix length.
          * @return Position of first different bit.
          */
-        public int firstDifferentBit(byte[] prefix, int preflen) {
+        public int firstDifferentBit(byte[] pref, int preflen) {
             int bitxor;
 
             int maxbit = (bit < preflen) ? bit : preflen;
             int diffbit = 0;
             for (int i = 0; i * 8 < maxbit; i++) {
+                bitxor = ((toUnsignedInt(this.prefix[i])) ^ toUnsignedInt(pref[i]));
                 // if match, move to next byte
-                if ((bitxor = ((toUnsignedInt(this.prefix[i])) ^ toUnsignedInt(prefix[i]))) == 0) {
+                if (bitxor == 0) {
                     diffbit = (i + 1) * 8;
                     continue;
                 }
@@ -515,10 +517,10 @@ public class RadixTrie<T> {
          * @param pref Prefix to be inserted.
          * @param preflen Prefix length of the prefix to be inserted.
          * @param diffbit Bit index of the first different bit between prefix and current node
-         * @param data Data to be stored together with the prefix
+         * @param prefdata Data to be stored together with the prefix
          * @return The trie node created or current node if it's an overwrite.
          */
-        public TrieNode insert(byte[] pref, int preflen, int diffbit, T data, byte[] closest) {
+        public TrieNode insert(byte[] pref, int preflen, int diffbit, T prefdata, byte[] closest) {
             TrieNode parent;
 
             // same node, check if prefix needs saving
@@ -527,12 +529,12 @@ public class RadixTrie<T> {
                     return this;
                 }
                 this.prefix = pref;
-                this.data = data;
+                this.data = prefdata;
                 nbActiveNodes++;
                 return this;
             }
 
-            TrieNode newNode = new TrieNode(pref, preflen, data);
+            TrieNode newNode = new TrieNode(pref, preflen, prefdata);
 
             // node is more specific, add new prefix as parent
             if (preflen == diffbit) {
@@ -660,7 +662,9 @@ public class RadixTrie<T> {
                     return false;
                 }
             }
-            if ((remainder = bit % 8) != 0) {
+
+            remainder = bit % 8;
+            if (remainder != 0) {
                 int mask = (0xFF << (8 - remainder)) & 0xFF;
                 return ((prefix[iterator] & mask) == (pref[iterator] & mask));
             }

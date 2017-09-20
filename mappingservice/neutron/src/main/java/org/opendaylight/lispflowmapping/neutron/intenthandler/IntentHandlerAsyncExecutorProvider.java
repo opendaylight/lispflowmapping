@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by Shakib Ahmed on 1/24/17.
  */
-public class IntentHandlerAsyncExecutorProvider {
+public final class IntentHandlerAsyncExecutorProvider {
     private static ListeningExecutorService listeningExecutorService;
 
     private static final int EXTRA_THREADS_TO_HANDLE_VPP_LISTENER = 1;

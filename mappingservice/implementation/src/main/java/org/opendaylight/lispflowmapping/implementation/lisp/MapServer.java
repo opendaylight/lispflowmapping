@@ -503,16 +503,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 executionCount++;
             }
 
-            private void cancelAndRemove(Subscriber subscriber, Eid eid) {
+            private void cancelAndRemove(Subscriber sub, Eid eid) {
                 final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(eid);
                 if (subscriberFutureMap == null) {
-                    LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", subscriber);
+                    LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", sub);
                     return;
                 }
 
-                if (subscriberFutureMap.containsKey(subscriber)) {
-                    ScheduledFuture<?> eidFuture = subscriberFutureMap.get(subscriber);
-                    subscriberFutureMap.remove(subscriber);
+                if (subscriberFutureMap.containsKey(sub)) {
+                    ScheduledFuture<?> eidFuture = subscriberFutureMap.get(sub);
+                    subscriberFutureMap.remove(sub);
                     eidFuture.cancel(false);
                 }
                 if (subscriberFutureMap.isEmpty()) {

@@ -117,11 +117,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             this.dsbe = new DataStoreBackEnd(dataBroker);
             restoreDaoFromDatastore();
 
-            LispSouthboundHandler lispSouthboundHandler = new LispSouthboundHandler(this);
-            this.lispSouthboundHandler = lispSouthboundHandler;
+            LispSouthboundHandler lsbh = new LispSouthboundHandler(this);
+            this.lispSouthboundHandler = lsbh;
 
-            LispXtrSouthboundHandler lispXtrSouthboundHandler = new LispXtrSouthboundHandler(this);
-            this.lispXtrSouthboundHandler = lispXtrSouthboundHandler;
+            LispXtrSouthboundHandler lxsbh = new LispXtrSouthboundHandler(this);
+            this.lispXtrSouthboundHandler = lxsbh;
 
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(numChannels, threadFactory);
@@ -137,11 +137,11 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
             bootstrap.group(eventLoopGroup);
             bootstrap.channel(channelType);
-            bootstrap.handler(lispSouthboundHandler);
+            bootstrap.handler(lsbh);
 
             xtrBootstrap.group(eventLoopGroup);
             xtrBootstrap.channel(channelType);
-            xtrBootstrap.handler(lispXtrSouthboundHandler);
+            xtrBootstrap.handler(lxsbh);
 
             start();
             startXtr();
