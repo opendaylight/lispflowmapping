@@ -19,10 +19,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Shakib Ahmed on 1/12/17.
  */
-public class LispNeutronUtil {
+public final class LispNeutronUtil {
     protected static final Logger LOG = LoggerFactory.getLogger(LispNeutronUtil.class);
 
-    private LispNeutronUtil(){}
+    private LispNeutronUtil() {
+    }
 
     public static DataBroker resolveDataBrokerForMountPoint(InstanceIdentifier<Node> iiToMountPoint,
                                                             MountPointService mountService) {
