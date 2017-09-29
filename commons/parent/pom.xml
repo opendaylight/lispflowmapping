@@ -43,7 +43,7 @@
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <yang.src.path>src/main/yang</yang.src.path>
-    <yangtools.version>2.0.0-SNAPSHOT</yangtools.version>
+    <yangtools.version>1.2.0</yangtools.version>
   </properties>
 
   <dependencyManagement>
@@ -53,7 +53,7 @@
       <dependency>
        <groupId>org.opendaylight.yangtools</groupId>
        <artifactId>yangtools-artifacts</artifactId>
-       <version>2.0.0-SNAPSHOT</version>
+       <version>1.2.0</version>
        <type>pom</type>
       <scope>import</scope>
       </dependency>
