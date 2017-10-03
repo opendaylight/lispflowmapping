@@ -65,6 +65,7 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
@@ -432,6 +433,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         testOldMappingNull();
         testOldMappingPositiveLess();
         testOldMappingPositiveEqual();
+
+        testNb();
+        testNbSourceDest();
     }
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
@@ -787,6 +791,37 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
     }
 
+    private void testNb() {
+        cleanUP();
+
+        insertNBMappings(1L, "192.168.0.0/16");
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+
+        insertNBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
+    private void testNbSourceDest() {
+        cleanUP();
+
+        insertNBMappingSourceDest(1L, "192.0.2.0/24", "192.168.0.0/16",
+                MappingServiceIntegrationTestUtil.DEFAULT_IPV4_RLOC_STRING);
+
+        MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
+        Eid expectedPositivePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
+        MappingRecord mr = mapReply.getMappingRecordItem().get(0).getMappingRecord();
+        assertEquals(expectedPositivePrefix, mr.getEid());
+        assertTrue(MappingRecordUtil.isPositiveMapping(mr));
+
+        insertNBMapping(1L, "192.168.0.0/16", "10.10.10.10");
+        MappingServiceIntegrationTestUtil.checkSmr(socket, lms, mapService, 1L, "192.168.0.0");
+    }
+
     private void insertMappings() {
         cleanUP();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
@@ -805,6 +840,31 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
+        sleepForMilliseconds(100);
+        MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
+    }
+
+    private void insertNBMapping(long iid, String prefix, String locator) {
+        LOG.debug("Adding Northbound mapping in VNI {} for prefix {}, locator {}", iid, prefix, locator);
+        Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(iid, prefix);
+        Rloc rloc = LispAddressUtil.asIpv4Rloc(locator);
+        insertNBMapping(eid, rloc);
+    }
+
+    private void insertNBMappingSourceDest(long iid, String src, String dst, String locator) {
+        String srcAddress = MaskUtil.getPrefixAddress(src);
+        String dstAddress = MaskUtil.getPrefixAddress(dst);
+        int srcMask = Integer.parseInt(MaskUtil.getPrefixMask(src));
+        int dstMask = Integer.parseInt(MaskUtil.getPrefixMask(dst));
+        LOG.debug("Adding Northbound mapping in VNI {} for prefix {}|{}, locator {}", iid, src, dst, locator);
+        Eid eid = LispAddressUtil.asSrcDstEid(srcAddress, dstAddress, srcMask, dstMask, iid);
+        Rloc rloc = LispAddressUtil.asIpv4Rloc(locator);
+        insertNBMapping(eid, rloc);
+    }
+
+    private void insertNBMapping(Eid eid, Rloc rloc) {
+        MappingRecord record = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid, rloc).build();
+        mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         sleepForMilliseconds(100);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
