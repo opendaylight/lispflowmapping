@@ -53,7 +53,7 @@ public final class MSNotificationInputUtil {
                 .setChangeType(change).build();
     }
 
-    public static List<SubscriberItem> toSubscriberList(Set<Subscriber> subscribers) {
+    private static List<SubscriberItem> toSubscriberList(Set<Subscriber> subscribers) {
         if (subscribers == null) {
             return null;
         }
@@ -65,7 +65,7 @@ public final class MSNotificationInputUtil {
         return subscriberList;
     }
 
-    public static List<DstSubscriberItem> toDstSubscriberList(Set<Subscriber> subscribers) {
+    private static List<DstSubscriberItem> toDstSubscriberList(Set<Subscriber> subscribers) {
         if (subscribers == null) {
             return null;
         }

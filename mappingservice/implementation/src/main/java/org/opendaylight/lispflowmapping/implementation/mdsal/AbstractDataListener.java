@@ -25,7 +25,7 @@ public abstract class AbstractDataListener<T extends DataObject> implements Clus
     private ListenerRegistration<ClusteredDataTreeChangeListener<T>> configRegistration;
     private ListenerRegistration<ClusteredDataTreeChangeListener<T>> operRegistration;
 
-    public void registerDataChangeListener() {
+    void registerDataChangeListener() {
         final DataTreeIdentifier<T> configDataTreeIdentifier = new DataTreeIdentifier<>(
                 LogicalDatastoreType.CONFIGURATION, path);
         final DataTreeIdentifier<T> operDataTreeIdentifier = new DataTreeIdentifier<>(
@@ -40,7 +40,7 @@ public abstract class AbstractDataListener<T extends DataObject> implements Clus
         operRegistration.close();
     }
 
-    public void setBroker(DataBroker broker) {
+    void setBroker(DataBroker broker) {
         this.broker = broker;
     }
 

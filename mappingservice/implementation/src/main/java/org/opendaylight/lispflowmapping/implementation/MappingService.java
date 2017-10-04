@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
-    protected static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
     private static final String NOT_FOUND_TAG = "data-missing";
     private static final String DATA_EXISTS_TAG = "data-exists";
 

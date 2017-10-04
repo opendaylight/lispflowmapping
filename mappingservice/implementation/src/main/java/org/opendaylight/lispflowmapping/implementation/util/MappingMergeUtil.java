@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class MappingMergeUtil {
-    protected static final Logger LOG = LoggerFactory.getLogger(MappingMergeUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MappingMergeUtil.class);
 
     // Utility class, should not be instantiated
     private MappingMergeUtil() {
@@ -98,9 +98,7 @@ public final class MappingMergeUtil {
             Rloc newRloc = newLocator.getRloc();
             if (locatorMap.containsKey(newRloc)) {
                 // overlapping locator
-                if (locatorMap.get(newRloc).equals(newLocator)) {
-                    continue;
-                } else {
+                if (!locatorMap.get(newRloc).equals(newLocator)) {
                     LocatorRecord mergedLocator = mergeLocators(locatorMap.get(newRloc), newLocator);
                     newLocatorList.add(mergedLocator);
                 }
@@ -111,7 +109,7 @@ public final class MappingMergeUtil {
         }
 
         // Build new merged and sorted locator set if need be
-        if (newLocatorList.size() != 0) {
+        if (!newLocatorList.isEmpty()) {
             List<LocatorRecord> mergedLocators = new ArrayList<LocatorRecord>();
 
             int mlocIt = 0;
@@ -211,10 +209,7 @@ public final class MappingMergeUtil {
      */
     public static boolean mappingIsExpired(MappingData mappingData) {
         Preconditions.checkNotNull(mappingData, "mapping should not be null!");
-        if (mappingData.getTimestamp() != null) {
-            return timestampIsExpired(mappingData.getTimestamp());
-        }
-        return false;
+        return mappingData.getTimestamp() != null && timestampIsExpired(mappingData.getTimestamp());
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
@@ -222,12 +217,9 @@ public final class MappingMergeUtil {
         return timestampIsExpired(timestamp.getTime());
     }
 
-    public static boolean timestampIsExpired(Long timestamp) {
+    private static boolean timestampIsExpired(Long timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb()) {
-            return true;
-        }
-        return false;
+        return (System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb();
     }
 
     public static MappingData computeNbSbIntersection(MappingData nbMappingData,

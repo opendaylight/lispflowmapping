@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class LispNotificationHelper {
-    protected static final Logger LOG = LoggerFactory.getLogger(LispNotificationHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LispNotificationHelper.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
 
     // Utility class, should not be instantiated
@@ -103,8 +103,7 @@ public final class LispNotificationHelper {
 
     public static InetAddress getAddressByName(String ipAddress) {
         try {
-            InetAddress address = InetAddress.getByName(ipAddress);
-            return address;
+            return InetAddress.getByName(ipAddress);
         } catch (UnknownHostException e) {
             LOG.debug("Unknown host {}", ipAddress, e);
             return null;
@@ -127,7 +126,7 @@ public final class LispNotificationHelper {
         return mappings;
     }
 
-    public static List<SiteId> getSiteId(MapRegister mapRegister) {
+    private static List<SiteId> getSiteId(MapRegister mapRegister) {
         if (mapRegister.isXtrSiteIdPresent()) {
             List<SiteId> siteIds = new ArrayList<SiteId>();
             SiteId siteId = new SiteId(mapRegister.getSiteId());

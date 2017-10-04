@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolverAsync {
-    protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
 
     private IMappingService mapService;
     private boolean subscriptionService;
@@ -150,10 +150,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     private static boolean isValidSourceEidForSubscriber(Eid eid) {
-        if (eid == null || eid.getAddress() instanceof NoAddress) {
-            return false;
-        }
-        return true;
+        return eid != null && !(eid.getAddress() instanceof NoAddress);
     }
 
     private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {

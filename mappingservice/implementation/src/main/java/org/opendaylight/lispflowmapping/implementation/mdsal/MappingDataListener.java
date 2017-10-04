@@ -61,11 +61,11 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         registerDataChangeListener();
     }
 
-    public void setNotificationProviderService(NotificationPublishService nps) {
+    private void setNotificationProviderService(NotificationPublishService nps) {
         this.notificationPublishService = nps;
     }
 
-    void setMappingSystem(IMappingSystem msmr) {
+    private void setMappingSystem(IMappingSystem msmr) {
         this.mapSystem = msmr;
     }
 

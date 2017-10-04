@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 public class TimeBucket {
     private static final Logger LOG = LoggerFactory.getLogger(TimeBucket.class);
 
-    private ConcurrentHashMap<Eid, MappingData> bucketElements;
+    private final ConcurrentHashMap<Eid, MappingData> bucketElements;
 
-    private MappingSystem mappingSystem;
+    private final MappingSystem mappingSystem;
 
     public TimeBucket(MappingSystem mappingSystem) {
         bucketElements = new ConcurrentHashMap<>();
