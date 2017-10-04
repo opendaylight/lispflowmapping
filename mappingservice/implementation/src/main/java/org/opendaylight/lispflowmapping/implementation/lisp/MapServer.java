@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 
 public class MapServer implements IMapServerAsync, OdlMappingserviceListener, ISmrNotificationListener {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
     private IMappingService mapService;
     private boolean subscriptionService;

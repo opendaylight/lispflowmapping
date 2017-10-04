@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeoutService {
     private static final Logger LOG = LoggerFactory.getLogger(TimeBucketWheel.class);
 
-    TimeBucketWheel timeBucketWheel;
+    private final TimeBucketWheel timeBucketWheel;
 
     public TimeBucketMappingTimeoutService(int numberOfBucket, long mappingRecordValidityInMillis,
                                            MappingSystem mappingSystem) {

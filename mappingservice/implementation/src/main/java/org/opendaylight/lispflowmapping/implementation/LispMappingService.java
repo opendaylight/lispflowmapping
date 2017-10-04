@@ -62,12 +62,12 @@ import org.slf4j.LoggerFactory;
 
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
         IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterSingletonService {
-    public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
-    public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
+    private static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
+    private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
             LISPFLOWMAPPING_ENTITY_NAME);
 
 
-    protected static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService;
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
@@ -276,7 +276,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         tlsMapRequest.set(new MutablePair<MapRequest, TransportAddress>(mapRequest, transportAddress));
     }
 
-    public void destroy() {
+    private void destroy() {
         LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
         mapServer = null;

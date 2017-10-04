@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolverAsync {
-    protected static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
 
     private IMappingService mapService;
     private boolean subscriptionService;
