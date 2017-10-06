@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_0d55231d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "I already have a patch preparing for checkstyle changes in odlparent 3.0.0 that does exaclt this, but I can rebase that on top of yours later.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_6d313f0b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "We have more permissive access levels on several variables and classes because we use then from integration tests every now and then, and we don\u0027t want to modify access levels all the time, but for now I think some of these changes are ok, I will note in the individual files where I would like to keep things as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_ed240fc8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Most of the changes proposed do simplify the experssions, but I would argue they make the code less readable. Having a separate \"return false\" or \"return true\" makes it very clear which is the default response, and then you can take a look for what is the exception case where we return the opposite. So I would propose to keep those as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_0d2c03ab",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_ad121760",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_ed0b6f29",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_cd082b30",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_e8123d57",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/LispNotificationHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_c80f792d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_281d7567",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_081a316e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_68264dbc",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-06T08:04:57Z",
+      "side": 1,
+      "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
