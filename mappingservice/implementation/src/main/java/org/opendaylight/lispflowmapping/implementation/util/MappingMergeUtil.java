@@ -209,7 +209,10 @@ public final class MappingMergeUtil {
      */
     public static boolean mappingIsExpired(MappingData mappingData) {
         Preconditions.checkNotNull(mappingData, "mapping should not be null!");
-        return mappingData.getTimestamp() != null && timestampIsExpired(mappingData.getTimestamp());
+        if (mappingData.getTimestamp() != null) {
+            return timestampIsExpired(mappingData.getTimestamp());
+        }
+        return false;
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
@@ -219,7 +222,10 @@ public final class MappingMergeUtil {
 
     private static boolean timestampIsExpired(Long timestamp) {
         Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        return (System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb();
+        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb()) {
+            return true;
+        }
+        return false;
     }
 
     public static MappingData computeNbSbIntersection(MappingData nbMappingData,

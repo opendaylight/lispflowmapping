@@ -150,7 +150,10 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     private static boolean isValidSourceEidForSubscriber(Eid eid) {
-        return eid != null && !(eid.getAddress() instanceof NoAddress);
+        if (eid == null || eid.getAddress() instanceof NoAddress) {
+            return false;
+        }
+        return true;
     }
 
     private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {

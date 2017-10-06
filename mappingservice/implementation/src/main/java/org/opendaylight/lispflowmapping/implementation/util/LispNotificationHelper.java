@@ -126,7 +126,7 @@ public final class LispNotificationHelper {
         return mappings;
     }
 
-    private static List<SiteId> getSiteId(MapRegister mapRegister) {
+    public static List<SiteId> getSiteId(MapRegister mapRegister) {
         if (mapRegister.isXtrSiteIdPresent()) {
             List<SiteId> siteIds = new ArrayList<SiteId>();
             SiteId siteId = new SiteId(mapRegister.getSiteId());

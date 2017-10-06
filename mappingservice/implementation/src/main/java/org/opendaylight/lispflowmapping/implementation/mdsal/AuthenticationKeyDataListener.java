@@ -89,7 +89,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
         return authKey;
     }
 
-    private void setMappingSystem(IMappingSystem msmr) {
+    void setMappingSystem(IMappingSystem msmr) {
         this.mapSystem = msmr;
     }
 }
