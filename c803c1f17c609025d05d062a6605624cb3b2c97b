@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_13d8a21c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_0d2c03ab",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_ad121760",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/AuthenticationKeyDataListener.java",
         "patchSetId": 1
@@ -81,6 +99,24 @@
       "writtenOn": "2017-10-06T08:04:57Z",
       "side": 1,
       "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_b3fef669",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/AuthenticationKeyDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_ad121760",
       "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -104,6 +140,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_f3f7ce8a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_ed0b6f29",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_cd082b30",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
         "patchSetId": 1
@@ -115,6 +169,24 @@
       "writtenOn": "2017-10-06T08:04:57Z",
       "side": 1,
       "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_d3f44a89",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_cd082b30",
       "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -138,6 +210,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_33f2069b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/LispNotificationHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_e8123d57",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_c80f792d",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
         "patchSetId": 1
@@ -149,6 +239,24 @@
       "writtenOn": "2017-10-06T08:04:57Z",
       "side": 1,
       "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_d3228a00",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_c80f792d",
       "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -172,6 +280,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_332046f7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MSNotificationInputUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_281d7567",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_081a316e",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -189,6 +315,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_732bdeeb",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_081a316e",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_68264dbc",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
         "patchSetId": 1
@@ -200,6 +344,24 @@
       "writtenOn": "2017-10-06T08:04:57Z",
       "side": 1,
       "message": "Please keep as-is.",
+      "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_f3250e0b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 5861
+      },
+      "writtenOn": "2017-10-06T16:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_68264dbc",
       "revId": "c803c1f17c609025d05d062a6605624cb3b2c97b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
