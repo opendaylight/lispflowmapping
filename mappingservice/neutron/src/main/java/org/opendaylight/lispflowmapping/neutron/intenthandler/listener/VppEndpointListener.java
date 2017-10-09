@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,7 +116,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
                 public void onFailure(Throwable throwable) {
                     LOG.debug("Failed to handle VppEndpoint modifications!");
                 }
-            });
+            }, MoreExecutors.directExecutor());
         }
     }
 
@@ -136,7 +137,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
                 public void onFailure(Throwable throwable) {
                     LOG.debug("Couldn't process {}", newOrModifiedNode.getNodeId().getValue());
                 }
-            });
+            }, MoreExecutors.directExecutor());
             processingTasks.add(processNode(newOrModifiedNode));
         }
         return Futures.immediateFuture(null);

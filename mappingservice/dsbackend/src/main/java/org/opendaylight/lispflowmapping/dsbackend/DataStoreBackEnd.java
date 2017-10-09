@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -267,7 +268,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
             public void onFailure(Throwable throwable) {
                 LOG.error("Transaction failed:", throwable);
             }
-        });
+        }, MoreExecutors.directExecutor());
     }
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
@@ -301,7 +302,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
             public void onFailure(Throwable throwable) {
                 LOG.error("Transaction failed:", throwable);
             }
-        });
+        }, MoreExecutors.directExecutor());
     }
 
     public void onTransactionChainFailed(TransactionChain<?, ?> chain, AsyncTransaction<?, ?> transaction,
