@@ -34,7 +34,6 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfi
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -59,13 +58,11 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
-import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
@@ -114,8 +111,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -156,11 +151,6 @@ import org.slf4j.LoggerFactory;
 @ExamReactorStrategy(PerClass.class)
 public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(MappingServiceIntegrationTest.class);
-
-    /**
-     * Defines how many attempt to create instance of DatagramSocket will be done before giving up.
-     */
-    private static final int NUM_OF_ATTEMPTS_TO_CREATE_SOCKET = 2;
 
     private byte[] mapRequestPacket;
     private byte[] mapRegisterPacketWithNotify;
@@ -233,8 +223,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapService.setMappingMerge(false);
         ConfigIni.getInstance().setSmrRetryCount(1);
 
-        locatorEid = LispAddressUtil.asIpv4Rloc("4.3.2.1");
-        socket = initSocket(socket, LispMessage.PORT_NUM);
+        socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
 
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)
@@ -248,13 +237,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // Nonce: 0x3d8d2acd39c8d608
         // ITR-RLOC AFI=1 Address=192.168.136.10
         // Record 1: 153.16.254.1/32
-        mapRequestPacket = extractWSUdpByteArray(new String("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 " //
+        mapRequestPacket = extractWSUdpByteArray("0000   00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 "
                 + "0010   00 58 00 00 40 00 40 11 3c 93 7f 00 00 01 7f 00 "
                 + "0020   00 01 e4 c0 10 f6 00 44 fe 57 80 00 00 00 45 00 "
                 + "0030   00 3c d4 31 00 00 ff 11 56 f3 7f 00 00 02 99 10 "
                 + "0040   fe 01 dd b4 10 f6 00 28 ef 3a 10 00 00 01 3d 8d "
-                + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 00 02 00 20 " //
-                + "0060   00 01 99 10 fe 01"));
+                + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 7f 00 00 02 00 20 "
+                + "0060   00 01 99 10 fe 01");
 
         // IP: 192.168.136.10 -> 128.223.156.35
         // UDP: 49289 -> 4342
@@ -271,14 +260,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithAuthenticationAndMapNotify = extractWSUdpByteArray(new String(
-                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithAuthenticationAndMapNotify = extractWSUdpByteArray(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 00 00 01 00 14 0e a4 c6 d8 a4 06 "
                 + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
+                + "0060   ff 00 00 05 00 01 c0 a8 88 0a");
 
         // IP: 192.168.136.10 -> 128.223.156.35
         // UDP: 49289 -> 4342
@@ -294,14 +283,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithNotify = extractWSUdpByteArray(new String(
-                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithNotify = extractWSUdpByteArray(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 01 01 00 00 "
                 + "0030   00 00 00 00 00 07 00 00 00 14 0e a4 c6 d8 a4 06 "
                 + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
+                + "0060   ff 00 00 05 00 01 c0 a8 88 0a");
 
         // IP: 192.168.136.10 -> 128.223.156.35
         // UDP: 49289 -> 4342
@@ -317,14 +306,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 255/0
         //
 
-        mapRegisterPacketWithoutNotify = extractWSUdpByteArray(new String(
-                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 " //
+        mapRegisterPacketWithoutNotify = extractWSUdpByteArray(
+                  "0000   00 50 56 ee d1 4f 00 0c 29 7a ce 79 08 00 45 00 "
                 + "0010   00 5c 00 00 40 00 40 11 d4 db c0 a8 88 0a 80 df "
                 + "0020   9c 23 d6 40 10 f6 00 48 59 a4 38 00 00 01 00 00 "
                 + "0030   00 00 00 00 00 07 00 00 00 14 0e a4 c6 d8 a4 06 "
                 + "0040   71 7c 33 a4 5c 4a 83 1c de 74 53 03 0c ad 00 00 "
-                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
-                + "0060   ff 00 00 05 00 01 c0 a8 88 0a"));
+                + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
+                + "0060   ff 00 00 05 00 01 c0 a8 88 0a");
     }
 
     @Inject
@@ -528,7 +517,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         byte[][] buffers = reader.getBuffers(expectedSmrs);
         for (byte[] buf : buffers) {
             ByteBuffer packet = ByteBuffer.wrap(buf);
-            if (checkType(packet, MessageType.MapRequest)) {
+            if (MappingServiceIntegrationTestUtil.checkType(packet, MessageType.MapRequest)) {
                 MapRequest request = MapRequestSerializer.getInstance().deserialize(packet, inetAddress);
                 requests.add(request);
             }
@@ -731,34 +720,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         LOG.debug("Map-cache state:\n{}", mapService.prettyPrintMappings());
     }
 
-    /**
-     * Creates a new MappingRecord object.
-     *
-     * @param prefix The Eid prefix
-     * @param iid VNI
-     * @return new MappingRecord object
-     */
     private MappingRecord newMappingRecord(String prefix, InstanceIdType iid) {
         final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, iid);
-        return new MappingRecordBuilder()
-                .setEid(prefixBinary)
-                .setLocatorRecord(Lists.newArrayList(new LocatorRecordBuilder()
-                        .setRloc(LispAddressUtil.asIpv4Rloc("2.2.2.2"))
-                        .setLocatorId("loc_id")
-                        .setRouted(true)
-                        .setPriority((short) 1)
-                        .setWeight((short) 1).build()))
-                .setTimestamp(System.currentTimeMillis())
-                .setRecordTtl(1440).build();
+        return MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(prefixBinary).build();
     }
 
     private MapRequest newMapRequest(long iid, String prefix) {
-        final InstanceIdType iidt = new InstanceIdType(iid);
-        return new MapRequestBuilder()
-                .setSmrInvoked(false)
-                .setEidItem(Lists.newArrayList(
-                        new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix, iidt)).build()))
-                .build();
+        final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, new InstanceIdType(iid));
+        return MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(prefixBinary).build();
     }
 
     /**
@@ -996,10 +965,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         if (socket != null) {
             socket.close();
         }
-        socket = initSocket(socket, 56756);
+        socket = MappingServiceIntegrationTestUtil.initSocket(56756);
 
         sendPacket(mapRequestPacket);
-        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
+        ByteBuffer readBuf = receivePacket();
         MapReply reply = MapReplySerializer.getInstance().deserialize(readBuf);
         assertEquals(4435248268955932168L, reply.getNonce().longValue());
 
@@ -1022,8 +991,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapReply mapReply = registerAddressAndQuery(eid);
 
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(locatorEid, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
-                .getRloc());
+        assertEquals(MappingServiceIntegrationTestUtil.DEFAULT_IPV4_RLOC,
+                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc());
 
     }
 
@@ -1047,40 +1016,21 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
 
-        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
-        mapRequestBuilder.setNonce((long) 4);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
-        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
-        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
-        sendMapRequest(mapRequestBuilder.build());
+        MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
+        sendMapRequest(mapRequest);
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
         assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
-        MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
-        mapRegisterbuilder.setWantMapNotify(true);
-        mapRegisterbuilder.setNonce((long) 8);
-        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setEid(eid);
-        etlrBuilder.setRecordTtl(254);
-        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1"));
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
-        mapRegisterbuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterbuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-        sendMapRegister(mapRegisterbuilder.build());
+        MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
+        sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
         sleepForSeconds(1);
-        sendMapRequest(mapRequestBuilder.build());
+        sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(recordBuilder.getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc());
+        assertEquals(MappingServiceIntegrationTestUtil.DEFAULT_IPV4_RLOC,
+                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc());
 
     }
 
@@ -1197,8 +1147,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
         sendPacket(mapRegisterPacketWithoutNotify);
 
-        ByteBuffer readBuf = ByteBuffer.wrap(receivePacket().getData());
-        MapRequest smr = MapRequestSerializer.getInstance().deserialize(readBuf, null);
+        MapRequest smr = receiveMapRequest();
         assertTrue(smr.isSmr());
         Eid sourceEid = smr.getSourceEid().getEid();
         assertTrue(LispAddressUtil.asIpv4Eid("153.16.254.1").equals(sourceEid));
@@ -1777,33 +1726,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void registerAddress(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
-        MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
-        mapRegisterBuilder.setWantMapNotify(true);
-        mapRegisterBuilder.setKeyId((short) 0);
-        mapRegisterBuilder.setAuthenticationData(new byte[0]);
-        mapRegisterBuilder.setNonce((long) 8);
-        mapRegisterBuilder.setProxyMapReply(false);
-        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setEid(eid);
-        etlrBuilder.setRecordTtl(254);
-        etlrBuilder.setAction(Action.NoAction);
-        etlrBuilder.setAuthoritative(false);
-        etlrBuilder.setMapVersion((short) 0);
-        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setLocalLocator(false);
-        recordBuilder.setRlocProbed(false);
-        recordBuilder.setRouted(true);
-        recordBuilder.setMulticastPriority((short) 0);
-        recordBuilder.setMulticastWeight((short) 0);
-        recordBuilder.setPriority((short) 0);
-        recordBuilder.setWeight((short) 0);
-        recordBuilder.setRloc(locatorEid);
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
-        mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-        sendMapRegister(mapRegisterBuilder.build());
+        MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
+        sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
     }
@@ -1837,33 +1761,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private MapReply registerAddressAndQuery(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
-        MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
-        mapRegisterBuilder.setWantMapNotify(true);
-        mapRegisterBuilder.setKeyId((short) 0);
-        mapRegisterBuilder.setAuthenticationData(new byte[0]);
-        mapRegisterBuilder.setNonce((long) 8);
-        mapRegisterBuilder.setProxyMapReply(false);
-        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setEid(eid);
-        etlrBuilder.setRecordTtl(254);
-        etlrBuilder.setAction(Action.NoAction);
-        etlrBuilder.setAuthoritative(false);
-        etlrBuilder.setMapVersion((short) 0);
-        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setLocalLocator(false);
-        recordBuilder.setRlocProbed(false);
-        recordBuilder.setRouted(true);
-        recordBuilder.setMulticastPriority((short) 0);
-        recordBuilder.setMulticastWeight((short) 0);
-        recordBuilder.setPriority((short) 0);
-        recordBuilder.setWeight((short) 0);
-        recordBuilder.setRloc(locatorEid);
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
-        mapRegisterBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                etlrBuilder.build()).build());
-        MapRegister mapRegister = mapRegisterBuilder.build();
+        MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
         LOG.trace("Sending Map-Register via socket: {}", mapRegister);
         sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
@@ -1871,21 +1769,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(8, mapNotify.getNonce().longValue());
         // wait for the notifications to propagate
         sleepForSeconds(1);
-        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
-        mapRequestBuilder.setNonce((long) 4);
-        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
-        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(ourAddress)).build());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
-        mapRequestBuilder.setAuthoritative(false);
-        mapRequestBuilder.setMapDataPresent(false);
-        mapRequestBuilder.setPitr(false);
-        mapRequestBuilder.setProbe(false);
-        mapRequestBuilder.setSmr(false);
-        mapRequestBuilder.setSmrInvoked(false);
-        sendMapRequest(mapRequestBuilder.build());
+        MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
+        sendMapRequest(mapRequest);
         return receiveMapReply();
     }
 
@@ -2153,49 +2038,27 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
-        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
-        mapRequestBuilder.setNonce((long) 4);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
-        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
-        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
 
-        sendMapRequest(mapRequestBuilder.build());
+        MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
+        sendMapRequest(mapRequest);
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
         assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
 
-        MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
-        mapRegisterbuilder.setWantMapNotify(true);
-        mapRegisterbuilder.setNonce((long) 8);
-
-        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setEid(eid);
-        etlrBuilder.setRecordTtl(254);
-
-        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1"));
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
-        mapRegisterbuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterbuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-
-        sendMapRegister(mapRegisterbuilder.build());
+        MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
+        sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
         sleepForSeconds(1);
 
-        sendMapRequest(mapRequestBuilder.build());
+        sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(recordBuilder.getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc());
+        assertEquals(MappingServiceIntegrationTestUtil.DEFAULT_IPV4_RLOC,
+                mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0).getRloc());
 
         causeEntryToBeCleaned();
-        sendMapRequest(mapRequestBuilder.build());
+        sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
     }
@@ -2226,23 +2089,11 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         ConfigIni.getInstance().setRegistrationValiditySb(1000L);
 
         final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32", new InstanceIdType(10L));
-        final XtrId xtrId = new XtrId(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
-        final SiteId siteId = new SiteId(new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
-
-        final LocatorRecord locatorRecord = new LocatorRecordBuilder()
-                .setRloc(LispAddressUtil.asIpv4Rloc("1.1.1.1")).setLocatorId("locator-id").build();
-        final MappingRecord mappingRecord = new MappingRecordBuilder()
-                .setEid(eid)
-                .setSiteId(siteId)
-                .setRecordTtl(1000)
-                .setXtrId(xtrId)
-                .setAction(Action.NoAction)
-                .setAuthoritative(true)
-                .setLocatorRecord(Lists.newArrayList()).build();
-        mappingRecord.getLocatorRecord().add(locatorRecord);
+        final MappingRecord mappingRecord = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid)
+                .setRecordTtl(1000).build();
 
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        mapService.addMapping(MappingOrigin.Southbound, eid, siteId,
+        mapService.addMapping(MappingOrigin.Southbound, eid, MappingServiceIntegrationTestUtil.DEFAULT_SITE_ID,
                 new MappingData(mappingRecord, System.currentTimeMillis()));
         sleepForSeconds(2);
 
@@ -2299,42 +2150,15 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapRegister createMapRegister(Eid eid, Rloc rloc) {
-        MapRegisterBuilder mapRegisterbuilder = new MapRegisterBuilder();
-        mapRegisterbuilder.setWantMapNotify(true);
-        mapRegisterbuilder.setNonce((long) 8);
-        mapRegisterbuilder.setKeyId((short) 0);
-        MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setEid(eid);
-        etlrBuilder.setRecordTtl(254);
-        etlrBuilder.setAuthoritative(false);
-        etlrBuilder.setAction(Action.NoAction);
-        LocatorRecordBuilder recordBuilder = new LocatorRecordBuilder();
-        recordBuilder.setRloc(rloc);
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
-        etlrBuilder.getLocatorRecord().add(recordBuilder.build());
-        mapRegisterbuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegisterbuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
-        MapRegister mapRegister = mapRegisterbuilder.build();
-        return mapRegister;
+        return MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid, rloc).build();
     }
 
     private MapRegister createMapRegister(Eid eid) {
-        return createMapRegister(eid, LispAddressUtil.asIpv4Rloc("4.3.2.1"));
+        return MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
     }
 
     private MapRequest createMapRequest(Eid eid) {
-        MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
-        mapRequestBuilder.setNonce((long) 4);
-        mapRequestBuilder.setPitr(false);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
-        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
-        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
-        MapRequest mr = mapRequestBuilder.build();
-        return mr;
+        return MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
     }
 
     public void testSimpleNonProxy() throws SocketTimeoutException, SocketException {
@@ -2446,7 +2270,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
         sendMapRequest(mapRequest);
         DatagramSocket nonProxySocket = new DatagramSocket(new InetSocketAddress(rloc, port));
-        MapRequest receivedMapRequest = receiveMapRequest(nonProxySocket);
+        MapRequest receivedMapRequest = MappingServiceIntegrationTestUtil.receiveMapRequest(nonProxySocket);
         assertEquals(mapRequest.getNonce(), receivedMapRequest.getNonce());
         assertEquals(mapRequest.getSourceEid(), receivedMapRequest.getSourceEid());
         assertEquals(mapRequest.getItrRloc(), receivedMapRequest.getItrRloc());
@@ -2468,35 +2292,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return mapRequest;
     }
 
-    private void assertMapNotifyReceived() throws SocketTimeoutException {
-        receiveMapNotify();
-    }
-
-    private MapReply receiveMapReply() throws SocketTimeoutException {
-        return receiveMapReply(socket, 1000);
-    }
-
-    private MapRequest receiveMapRequest(DatagramSocket datagramSocket) throws SocketTimeoutException {
-        ByteBuffer packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
-        while (!checkType(packet, MessageType.MapRequest)) {
-            packet = ByteBuffer.wrap(receivePacket(datagramSocket, 30000).getData());
-        }
-        return MapRequestSerializer.getInstance().deserialize(packet, null);
-    }
-
-    private MapNotify receiveMapNotify() throws SocketTimeoutException {
-        ByteBuffer packet = ByteBuffer.wrap(receivePacket().getData());
-        while (!checkType(packet, MessageType.MapNotify)) {
-            packet = ByteBuffer.wrap(receivePacket().getData());
-        }
-        return MapNotifySerializer.getInstance().deserialize(packet);
-    }
-
-    private static boolean checkType(ByteBuffer packet, MessageType type) {
-        final int receivedType = ByteUtil.getUnsignedByte(packet, LispMessage.Pos.TYPE) >> 4;
-        return MessageType.forValue(receivedType) == type;
-    }
-
     private void sendMapRequest(MapRequest mapRequest) {
         sendMapRequest(mapRequest, LispMessage.PORT_NUM);
     }
@@ -2514,57 +2309,30 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void sendPacket(byte[] bytesToSend, int port) {
-        try {
-            DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length);
-            initPacketAddress(packet, port);
-            LOG.trace("Sending packet to LispPlugin on socket, port {}", port);
-            socket.send(packet);
-        } catch (Throwable t) {
-            fail();
-        }
+        MappingServiceIntegrationTestUtil.sendPacket(socket, bytesToSend, port);
     }
 
-    private DatagramPacket receivePacket() throws SocketTimeoutException {
-        return receivePacket(6000);
+    private ByteBuffer receivePacket() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receivePacket(socket);    }
+
+    private ByteBuffer receivePacket(int timeout) throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receivePacket(socket, timeout);
     }
 
-    private DatagramPacket receivePacket(int timeout) throws SocketTimeoutException {
-        return receivePacket(socket, timeout);
+    private void assertMapNotifyReceived() throws SocketTimeoutException {
+        MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
     }
 
-    private DatagramPacket receivePacket(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
-        try {
-            byte[] buffer = new byte[4096];
-            DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-            LOG.trace("Waiting for packet from socket...");
-            receivedSocket.setSoTimeout(timeout);
-            receivedSocket.receive(receivePacket);
-            LOG.trace("Received packet from socket!");
-            return receivePacket;
-        } catch (SocketTimeoutException ste) {
-            throw ste;
-        } catch (Throwable t) {
-            fail();
-            return null;
-        }
+    private MapRequest receiveMapRequest() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapRequest(socket);
     }
 
-    private MapReply receiveMapReply(DatagramSocket receivedSocket, int timeout) throws SocketTimeoutException {
-        DatagramPacket packet;
-        try {
-            while (true) {
-                packet = receivePacket(receivedSocket, timeout);
-                final ByteBuffer buff = ByteBuffer.wrap(packet.getData());
-                final int type = ByteUtil.getUnsignedByte(buff, LispMessage.Pos.TYPE) >> 4;
-                final Object lispType = MessageType.forValue(type);
+    private MapReply receiveMapReply() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapReply(socket);
+    }
 
-                if (lispType == MessageType.MapReply) {
-                    return MapReplySerializer.getInstance().deserialize(buff);
-                }
-            }
-        } catch (SocketTimeoutException ste) {
-            throw ste;
-        }
+    private MapNotify receiveMapNotify() throws SocketTimeoutException {
+        return MappingServiceIntegrationTestUtil.receiveMapNotify(socket);
     }
 
     private void sleepForSeconds(int seconds) {
@@ -2581,24 +2349,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         } catch (InterruptedException e) {
             LOG.warn("Interrupted while sleeping", e);
         }
-    }
-
-    private void initPacketAddress(DatagramPacket packet, int port) throws UnknownHostException {
-        packet.setAddress(InetAddress.getByName(lispBindAddress));
-        packet.setPort(port);
-    }
-
-    private DatagramSocket initSocket(DatagramSocket socket, int port) {
-        for (int i=0; i < NUM_OF_ATTEMPTS_TO_CREATE_SOCKET; i++) {
-            try {
-                LOG.debug("Binding socket on {}:{}", ourAddress, port);
-                return new DatagramSocket(new InetSocketAddress(ourAddress, port));
-            } catch (SocketException e) {
-                LOG.error("Can't initialize socket for {}:{}", ourAddress, port, e);
-            }
-        }
-        fail();
-        return null;
     }
 
     private byte[] extractWSUdpByteArray(String wiresharkHex) {
@@ -2690,13 +2440,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         after();
         mapService.cleanCachedMappings();
         configLispPlugin.shouldListenOnXtrPort(false);
-        socket = initSocket(socket, LispMessage.PORT_NUM);
+        socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
 
     }
 
     private void restartSocket() {
         after();
-        socket = initSocket(socket, LispMessage.PORT_NUM);
+        socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
     }
 
 }
