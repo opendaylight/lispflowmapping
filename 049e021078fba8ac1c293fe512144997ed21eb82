@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_3d3e43b9",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-12T01:38:42Z",
+      "side": 1,
+      "message": "Old mapping is an NB mapping in these, while it is an SB mapping in the next three. Wondering why, and if we should replicate such that 5 tests are done for : old mapping from NB, new mapping  from SB, and vice versa, and both are from NB and both are from SB? should be mostly copy paste of the tests with minor changes, but they will exercise different parts of code, unless you think some combinations test the same code path..Also, probably this (NB/SB) can be indicated in the names..",
+      "range": {
+        "startLine": 430,
+        "startChar": 1,
+        "endLine": 431,
+        "endChar": 38
+      },
+      "revId": "049e021078fba8ac1c293fe512144997ed21eb82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
