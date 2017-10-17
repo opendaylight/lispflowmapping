@@ -22,6 +22,30 @@
       "revId": "049e021078fba8ac1c293fe512144997ed21eb82",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_c1f1f3ce",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-17T21:09:24Z",
+      "side": 1,
+      "message": "To the first point: old mapping is a negative SB mapping, but it is not installed explicitly, but instead it is \"generated\" by querying for a hole between two NB mappings, adding a subscriber in the process. This exercises more code and is more \"realistic\".\n\nTo the second point, I added many more combinations, which are listed in a testing matrix in Google Sheets, and I folded the NB specific patch into this one, to have everything in one place.",
+      "parentUuid": "9a245df4_3d3e43b9",
+      "range": {
+        "startLine": 430,
+        "startChar": 1,
+        "endLine": 431,
+        "endChar": 38
+      },
+      "revId": "049e021078fba8ac1c293fe512144997ed21eb82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
