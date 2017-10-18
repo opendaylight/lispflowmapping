@@ -743,6 +743,8 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public String printMappings() {
+        sbMappingTimeoutService.removeExpiredMappings();
+
         final StringBuffer sb = new StringBuffer();
         sb.append("Policy map-cache\n----------------\n");
         sb.append(pmc.printMappings());
@@ -753,6 +755,8 @@ public class MappingSystem implements IMappingSystem {
 
     @Override
     public String prettyPrintMappings() {
+        sbMappingTimeoutService.removeExpiredMappings();
+
         final StringBuffer sb = new StringBuffer();
         sb.append("Policy map-cache\n----------------\n");
         sb.append(pmc.prettyPrintMappings());
