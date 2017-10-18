@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_cd1762a2",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-18T17:16:40Z",
+      "side": 1,
+      "message": "subtree may be a better name here, since these are noit just immediate children but entire subtree",
+      "range": {
+        "startLine": 301,
+        "startChar": 31,
+        "endLine": 301,
+        "endChar": 39
+      },
+      "revId": "1f47d1822fac1518251b3a544b57434870544cda",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_cd7e42e4",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/FlatMapCache.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-18T17:16:40Z",
+      "side": 1,
+      "message": "subtree",
+      "range": {
+        "startLine": 56,
+        "startChar": 23,
+        "endLine": 56,
+        "endChar": 36
+      },
+      "revId": "1f47d1822fac1518251b3a544b57434870544cda",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
