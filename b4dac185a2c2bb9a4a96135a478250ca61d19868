@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_e3fd123d",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-19T23:18:10Z",
+      "side": 1,
+      "message": "return empty set instead of null",
+      "range": {
+        "startLine": 303,
+        "startChar": 10,
+        "endLine": 304,
+        "endChar": 9
+      },
+      "revId": "b4dac185a2c2bb9a4a96135a478250ca61d19868",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_43fdfe39",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-19T23:18:10Z",
+      "side": 1,
+      "message": "empty set instead of null for return",
+      "range": {
+        "startLine": 310,
+        "startChar": 0,
+        "endLine": 310,
+        "endChar": 24
+      },
+      "revId": "b4dac185a2c2bb9a4a96135a478250ca61d19868",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_23f8ca48",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/FlatMapCache.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-19T23:18:10Z",
+      "side": 1,
+      "message": "even here probably emptry set is better for returning, but open to  challenge :)",
+      "range": {
+        "startLine": 57,
+        "startChar": 2,
+        "endLine": 57,
+        "endChar": 20
+      },
+      "revId": "b4dac185a2c2bb9a4a96135a478250ca61d19868",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_8396d6ee",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/MultiTableMapCache.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-19T23:18:10Z",
+      "side": 1,
+      "message": "empty set?",
+      "range": {
+        "startLine": 145,
+        "startChar": 9,
+        "endLine": 145,
+        "endChar": 24
+      },
+      "revId": "b4dac185a2c2bb9a4a96135a478250ca61d19868",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_6399221f",
+        "filename": "mappingservice/mapcache/src/main/java/org/opendaylight/lispflowmapping/mapcache/SimpleMapCache.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-10-19T23:18:10Z",
+      "side": 1,
+      "message": "empty set",
+      "range": {
+        "startLine": 208,
+        "startChar": 7,
+        "endLine": 208,
+        "endChar": 24
+      },
+      "revId": "b4dac185a2c2bb9a4a96135a478250ca61d19868",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
