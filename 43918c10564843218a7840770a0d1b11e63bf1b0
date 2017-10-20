@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_e9f4d1d0",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-20T12:19:45Z",
+      "side": 1,
+      "message": "Empty set is better, less chance for NPEs, changed.",
+      "parentUuid": "9a245df4_a3a31a4e",
+      "range": {
+        "startLine": 499,
+        "startChar": 10,
+        "endLine": 499,
+        "endChar": 24
+      },
+      "revId": "43918c10564843218a7840770a0d1b11e63bf1b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_a33f9ad5",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_c910ed03",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-20T12:19:45Z",
+      "side": 1,
+      "message": "Thanks for that, added as a comment and tagged with TODO.",
+      "parentUuid": "9a245df4_a33f9ad5",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 85
+      },
+      "revId": "43918c10564843218a7840770a0d1b11e63bf1b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_43305e01",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2017-10-19T23:50:09Z",
       "side": 1,
       "message": "If the EID prefix itself exists in SB as well, then it should be included, and subscribers notified. If it doesnt exist I dont think it will show up on the set, right? please verify this, and if this is the case, this line should be removed.",
+      "range": {
+        "startLine": 152,
+        "startChar": 8,
+        "endLine": 152,
+        "endChar": 34
+      },
+      "revId": "43918c10564843218a7840770a0d1b11e63bf1b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_690901dd",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListener.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-20T12:19:45Z",
+      "side": 1,
+      "message": "There are no separate NB and SB subscribers anymore. The exact match subscribers were already notified in method notifyChange() above, so no need to notify them again. The notifyChange and notifyChildren() methods are only different to handle source/dest for the exact match, otherwise they could be reduced to a single method.",
+      "parentUuid": "9a245df4_43305e01",
       "range": {
         "startLine": 152,
         "startChar": 8,
