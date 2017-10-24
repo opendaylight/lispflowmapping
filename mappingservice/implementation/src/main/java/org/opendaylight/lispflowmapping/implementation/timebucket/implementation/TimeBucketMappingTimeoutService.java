@@ -8,6 +8,10 @@
 
 package org.opendaylight.lispflowmapping.implementation.timebucket.implementation;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucketWheel;
 import org.opendaylight.lispflowmapping.implementation.timebucket.interfaces.ISouthBoundMappingTimeoutService;
@@ -21,12 +25,24 @@ import org.slf4j.LoggerFactory;
  */
 public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeoutService {
     private static final Logger LOG = LoggerFactory.getLogger(TimeBucketWheel.class);
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> cleanupFuture;
 
     private final TimeBucketWheel timeBucketWheel;
 
     public TimeBucketMappingTimeoutService(int numberOfBucket, long mappingRecordValidityInMillis,
                                            MappingSystem mappingSystem) {
         timeBucketWheel = new TimeBucketWheel(numberOfBucket, mappingRecordValidityInMillis, mappingSystem);
+
+        final Runnable cleanup = new Runnable() {
+            @Override
+            public void run() {
+                timeBucketWheel.clearExpiredMappingAndRotate();
+            }
+        };
+
+        cleanupFuture = executor.scheduleAtFixedRate(cleanup, mappingRecordValidityInMillis / numberOfBucket,
+                mappingRecordValidityInMillis / numberOfBucket, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -54,6 +70,9 @@ public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeou
 
     @Override
     public void removeExpiredMappings() {
-        timeBucketWheel.clearExpiredMappingAndRotate();
+        // If a cleanup is in progress we return
+        if (cleanupFuture.isDone()) {
+            timeBucketWheel.clearExpiredMappingAndRotate();
+        }
     }
 }

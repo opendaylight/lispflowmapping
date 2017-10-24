@@ -148,9 +148,6 @@ public class MappingSystem implements IMappingSystem {
     }
 
     public void addMapping(MappingOrigin origin, Eid key, MappingData mappingData) {
-
-        sbMappingTimeoutService.removeExpiredMappings();
-
         if (mappingData == null) {
             LOG.warn("addMapping() called with null mapping, ignoring");
             return;
@@ -254,9 +251,6 @@ public class MappingSystem implements IMappingSystem {
      * not used when merge is on, it's OK to ignore the effects of timestamp changes on merging for now.
      */
     public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
-
-        sbMappingTimeoutService.removeExpiredMappings();
-
         if (timestamp == null) {
             timestamp = System.currentTimeMillis();
         }
