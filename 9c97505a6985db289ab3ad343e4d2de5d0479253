@@ -45,6 +45,24 @@
       "revId": "9c97505a6985db289ab3ad343e4d2de5d0479253",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_ad0ad21e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/timebucket/implementation/TimeBucketMappingTimeoutService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-10-25T18:44:46Z",
+      "side": 1,
+      "message": "I would like to be able to keep usages introduced in https://git.opendaylight.org/gerrit/#/c/64441/, which is something that\u0027s going to be called very rarely, and only manaully with human intervention.",
+      "parentUuid": "9a245df4_0aa66453",
+      "revId": "9c97505a6985db289ab3ad343e4d2de5d0479253",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
