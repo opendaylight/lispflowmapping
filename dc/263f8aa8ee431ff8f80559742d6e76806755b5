@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Lori Jakab <lorand.jakab+odl@gmail.com>
+Code-Review+2: Vina Ermagan <vermagan@cisco.com>
+Submitted-by: Vina Ermagan <vermagan@cisco.com>
+Submitted-at: Wed, 25 Oct 2017 17:35:42 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/63056
+Project: lispflowmapping
+Branch: refs/heads/master
