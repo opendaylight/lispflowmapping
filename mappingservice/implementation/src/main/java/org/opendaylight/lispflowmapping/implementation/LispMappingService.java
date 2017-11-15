@@ -132,7 +132,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     public MapReply handleMapRequest(MapRequest request) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DAO: Retrieving mapping for {}",
+            LOG.debug("LISP: Retrieving mapping for {}",
                     LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
         }
 
@@ -153,7 +153,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DAO: Adding mapping for {}",
+            LOG.debug("LISP: Adding mapping for {}",
                     LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
                             .getMappingRecord().getEid()));
         }

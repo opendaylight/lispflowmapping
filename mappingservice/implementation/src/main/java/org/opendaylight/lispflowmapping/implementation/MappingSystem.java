@@ -41,6 +41,7 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
@@ -166,6 +167,17 @@ public class MappingSystem implements IMappingSystem {
             return;
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Adding {} mapping for EID {}", origin, LispAddressStringifier.getString(key));
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("mappingData = {}", mappingData.getString());
+        }
+
+        // Save the old mapping for the key before we modify anything, so that we can detect changes later
+        final MappingRecord oldMapping = getMappingRecord(getMapping(key));
+
         if (origin == MappingOrigin.Southbound) {
             XtrId xtrId = mappingData.getXtrId();
             if (xtrId == null && mappingMerge && mappingData.isMergeEnabled()) {
@@ -187,12 +199,16 @@ public class MappingSystem implements IMappingSystem {
 
         tableMap.get(origin).addMapping(key, mappingData);
 
-        if (origin != MappingOrigin.Southbound) {
-            // If a NB mapping is added, we need to check if it's covering negative mappings in SB, and remove those
-            handleSbNegativeMappings(key);
-            // Notifications for SB changes are sent in the SB code itself, so this is called for non-SB additions only
-            notifyChange(key, mappingData.getRecord(), changeType);
-        }
+        // We need to check if the newly added mapping is covering negatives in SB, and remove those (with notification)
+        handleSbNegativeMappings(key);
+
+        MappingRecord newMapping = getMappingRecord(getMapping(key));
+
+        handleAddMappingNotifications(origin, key, mappingData, oldMapping, newMapping, changeType);
+    }
+
+    private static MappingRecord getMappingRecord(MappingData mappingData) {
+        return (mappingData != null) ? mappingData.getRecord() : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -252,6 +268,34 @@ public class MappingSystem implements IMappingSystem {
         if (mappingData != null && mappingData.isNegative().or(false)) {
             removeSbMapping(mappingData.getRecord().getEid(), mappingData);
         }
+    }
+
+    private void handleAddMappingNotifications(MappingOrigin origin, Eid key, MappingData mappingData,
+                                               MappingRecord oldMapping, MappingRecord newMapping,
+                                               MappingChange changeType) {
+        // Non-southbound origins are MD-SAL first, so they only get to call addMapping() if there is a change
+        // Southbound is different, so we need to check if there is a change in the mapping. This check takes into
+        // account policy as well
+        if (origin != MappingOrigin.Southbound || MappingRecordUtil.mappingChanged(oldMapping, newMapping)) {
+            notifyChange(key, mappingData.getRecord(), changeType);
+
+            Eid dstKey = key;
+            // Since the above notifyChange() already notifies the dest part of source/dest addresses, we save the dest
+            // for the checks that we do afterwards
+            if (key.getAddress() instanceof SourceDestKey) {
+                dstKey = SourceDestKeyHelper.getDstBinary(key);
+            }
+            // If the old mapping had a different EID than what was just added, notify those subscribers too
+            if (oldMapping != null && !oldMapping.getEid().equals(key) && !oldMapping.getEid().equals(dstKey)) {
+                notifyChange(oldMapping.getEid(), oldMapping, changeType);
+            }
+            // If the new mapping has a different EID than what was just added (e.g., due to NB_AND_SB), notify those
+            // subscribers too
+            if (newMapping != null && !newMapping.getEid().equals(key) && !newMapping.getEid().equals(dstKey)) {
+                notifyChange(newMapping.getEid(), newMapping, changeType);
+            }
+        }
+
     }
 
     @Override
@@ -356,6 +400,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     private MappingData handleMergedMapping(Eid key) {
+        LOG.trace("Merging mappings for EID {}", LispAddressStringifier.getString(key));
         List<MappingData> expiredMappingDataList = new ArrayList<>();
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
 
@@ -379,8 +424,13 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public MappingData getMapping(Eid src, Eid dst) {
         // NOTE: Currently we have two lookup algorithms implemented, which are configurable
+        IMappingService.LookupPolicy policy = ConfigIni.getInstance().getLookupPolicy();
+        LOG.debug("DAO: Looking up mapping for {}, source EID {} with policy {}",
+                LispAddressStringifier.getString(dst),
+                LispAddressStringifier.getString(src),
+                policy);
 
-        if (ConfigIni.getInstance().getLookupPolicy() == IMappingService.LookupPolicy.NB_AND_SB) {
+        if (policy == IMappingService.LookupPolicy.NB_AND_SB) {
             return getMappingNbSbIntersection(src, dst);
         } else {
             return getMappingNbFirst(src, dst);
@@ -470,6 +520,11 @@ public class MappingSystem implements IMappingSystem {
     }
 
     private void removeSbXtrIdSpecificMapping(Eid key, XtrId xtrId, MappingData mappingData) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Removing southbound mapping for EID {}, xTR-ID {}",
+                    LispAddressStringifier.getString(key),
+                    LispAddressStringifier.getString(xtrId));
+        }
         smc.removeMapping(key, xtrId);
         dsbe.removeXtrIdMapping(DSBEInputUtil.toXtrIdMapping(mappingData));
     }
@@ -480,7 +535,10 @@ public class MappingSystem implements IMappingSystem {
         }
 
         removeFromSbTimeoutService(key);
-        Set<Subscriber> subscribers = getSubscribers(key);
+        final Set<Subscriber> subscribers = getSubscribers(key);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Removing southbound mapping for EID {}", LispAddressStringifier.getString(key));
+        }
         smc.removeMapping(key);
         dsbe.removeMapping(DSBEInputUtil.toMapping(MappingOrigin.Southbound, key, mappingData));
         publishNotification(mappingData.getRecord(), null, subscribers, null, MappingChange.Removed);
@@ -598,7 +656,11 @@ public class MappingSystem implements IMappingSystem {
             dstSubscribers = getSubscribers(dstAddr);
             notifyChildren(dstAddr, mapping, mappingChange);
         }
-        publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+
+        // No reason to send a notification when no subscribers exist
+        if (subscribers != null || dstSubscribers != null) {
+            publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+        }
 
         notifyChildren(eid, mapping, mappingChange);
     }
@@ -618,7 +680,10 @@ public class MappingSystem implements IMappingSystem {
         childPrefixes.remove(eid);
         for (Eid prefix : childPrefixes) {
             Set<Subscriber> subscribers = getSubscribers(prefix);
-            publishNotification(mapping, prefix, subscribers, null, mappingChange);
+            // No reason to send a notification when no subscribers exist
+            if (subscribers != null) {
+                publishNotification(mapping, prefix, subscribers, null, mappingChange);
+            }
         }
     }
 
