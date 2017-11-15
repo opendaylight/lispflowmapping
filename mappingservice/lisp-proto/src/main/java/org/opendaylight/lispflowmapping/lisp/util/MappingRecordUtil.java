@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.util;
 
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -37,5 +38,35 @@ public final class MappingRecordUtil {
 
     public static boolean isPositiveMapping(MappingRecord mapping) {
         return !isNegativeMapping(mapping);
+    }
+
+    public static boolean mappingChanged(MappingRecord oldMapping, MappingRecord newMapping) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("mappingChanged(): oldMapping = {}  newMapping = {}", oldMapping, newMapping);
+        }
+        // We only check for fields we care about
+        // XXX: This code needs to be checked and updated when the YANG model for MappingRecord is modified
+        if (oldMapping == null && newMapping == null) {
+            return false;
+        } else if (oldMapping == null) {
+            LOG.trace("mappingChanged(): old mapping is null");
+            return true;
+        } else if (!Objects.equals(oldMapping.getEid(), newMapping.getEid())) {
+            LOG.trace("mappingChanged(): EID");
+            return true;
+        } else if (!Objects.equals(oldMapping.getLocatorRecord(), newMapping.getLocatorRecord())) {
+            LOG.trace("mappingChanged(): RLOC");
+            return true;
+        } else if (!Objects.equals(oldMapping.getAction(), newMapping.getAction())) {
+            LOG.trace("mappingChanged(): action");
+            return true;
+        } else if (!Objects.equals(oldMapping.getRecordTtl(), newMapping.getRecordTtl())) {
+            LOG.trace("mappingChanged(): TTL");
+            return true;
+        } else if (!Objects.equals(oldMapping.getMapVersion(), newMapping.getMapVersion())) {
+            LOG.trace("mappingChanged(): mapping version");
+            return true;
+        }
+        return false;
     }
 }

@@ -41,6 +41,7 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
@@ -166,6 +167,9 @@ public class MappingSystem implements IMappingSystem {
             return;
         }
 
+        // Save the old mapping for the key before we modify anything, so that we can detect changes later
+        final MappingRecord oldMapping = getMappingRecord(getMapping(key));
+
         if (origin == MappingOrigin.Southbound) {
             XtrId xtrId = mappingData.getXtrId();
             if (xtrId == null && mappingMerge && mappingData.isMergeEnabled()) {
@@ -187,12 +191,21 @@ public class MappingSystem implements IMappingSystem {
 
         tableMap.get(origin).addMapping(key, mappingData);
 
-        if (origin != MappingOrigin.Southbound) {
-            // If a NB mapping is added, we need to check if it's covering negative mappings in SB, and remove those
-            handleSbNegativeMappings(key);
-            // Notifications for SB changes are sent in the SB code itself, so this is called for non-SB additions only
+        // We need to check if the newly added mapping is covering negatives in SB, and remove those (with notification)
+        handleSbNegativeMappings(key);
+
+        MappingRecord newMapping = getMappingRecord(getMapping(key));
+
+        // Non-southbound origins are MD-SAL first, so they only get to call addMapping() if there is a change
+        // Southbound is different, so we need to check if there is a change in the mapping. This check takes into
+        // account policy as well
+        if (origin != MappingOrigin.Southbound || MappingRecordUtil.mappingChanged(oldMapping, newMapping)) {
             notifyChange(key, mappingData.getRecord(), changeType);
         }
+    }
+
+    private static MappingRecord getMappingRecord(MappingData mappingData) {
+        return (mappingData != null) ? mappingData.getRecord() : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -237,6 +250,9 @@ public class MappingSystem implements IMappingSystem {
             handleSbNegativeMapping(parentPrefix);
             return;
         }
+
+        // We don't want to remove a newly added negative mapping, so remove it from the child set
+        childPrefixes.remove(key);
 
         for (Eid prefix : childPrefixes) {
             handleSbNegativeMapping(prefix);
@@ -594,7 +610,11 @@ public class MappingSystem implements IMappingSystem {
             dstSubscribers = getSubscribers(dstAddr);
             notifyChildren(dstAddr, mapping, mappingChange);
         }
-        publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+
+        // No reason to send a notification when no subscribers exist
+        if (subscribers != null || dstSubscribers != null) {
+            publishNotification(mapping, eid, subscribers, dstSubscribers, mappingChange);
+        }
 
         notifyChildren(eid, mapping, mappingChange);
     }
@@ -614,7 +634,10 @@ public class MappingSystem implements IMappingSystem {
         childPrefixes.remove(eid);
         for (Eid prefix : childPrefixes) {
             Set<Subscriber> subscribers = getSubscribers(prefix);
-            publishNotification(mapping, prefix, subscribers, null, mappingChange);
+            // No reason to send a notification when no subscribers exist
+            if (subscribers != null) {
+                publishNotification(mapping, prefix, subscribers, null, mappingChange);
+            }
         }
     }
 

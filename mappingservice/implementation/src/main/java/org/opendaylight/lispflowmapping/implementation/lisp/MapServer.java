@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -22,7 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -113,7 +111,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
-        Set<Subscriber> subscribers = Sets.newConcurrentHashSet();
         MappingRecord oldMapping;
 
         if (merge) {
@@ -134,41 +131,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
             oldMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid));
             mapService.addMapping(MappingOrigin.Southbound, eid, getSiteId(mapRegister), mappingData);
-            if (oldMapping != null
-                    && MappingRecordUtil.isNegativeMapping(oldMapping)
-                    && !oldMapping.getEid().equals(eid)) {
-                if (subscriptionService) {
-                    // Here we save the subscribers of the OLD mapping before removing. We will add to this set the
-                    // subscribers of the NEW mapping below (since the EIDs are different, the result of
-                    // mappingChanged() will be true, and then send an SMR to all subscribers with the EID of the NEW
-                    // mapping only.
-                    Set<Subscriber> oldMappingSubscribers = mapService.getSubscribers(oldMapping.getEid());
-                    if (oldMappingSubscribers != null) {
-                        subscribers.addAll(oldMappingSubscribers);
-                        LoggingUtil.logSubscribers(LOG, oldMapping.getEid(), subscribers);
-                    }
-                }
-                mapService.removeMapping(MappingOrigin.Southbound, oldMapping.getEid());
-            }
-
-            if (subscriptionService) {
-                MappingRecord newMapping = merge
-                        ? getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid)) : mapping;
-
-                if (mappingChanged(oldMapping, newMapping)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Mapping update occured for {} SMRs will be sent for its subscribers.",
-                                LispAddressStringifier.getString(eid));
-                    }
-                    Set<Subscriber> newMappingSubscribers = mapService.getSubscribers(eid);
-                    if (oldMapping != null && !oldMapping.getEid().equals(eid)) {
-                        newMappingSubscribers = addParentSubscribers(eid, newMappingSubscribers);
-                    }
-                    if (newMappingSubscribers != null) {
-                        subscribers.addAll(newMappingSubscribers);
-                        LoggingUtil.logSubscribers(LOG, eid, subscribers);
-                    }
-                    handleSmr(eid, subscribers);
+            if (merge) {
+                MappingRecord newMapping = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound, eid));
+                if (MappingRecordUtil.mappingChanged(oldMapping, newMapping)) {
+                    // If there is a SB mapping change with merge on, Map-Notify will be sent to ALL xTRs, not jus the
+                    // one registering (merging is done in the MappingSystem code)
                     mappingUpdated = true;
                 }
             }
@@ -233,12 +200,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     @Override
     public void onMappingChanged(MappingChanged notification) {
-        LOG.trace("MappingChanged event of type: `{}'", notification.getChangeType());
         if (subscriptionService) {
             Eid eid = notification.getEid();
             if (eid == null) {
                 eid = notification.getMappingRecord().getEid();
             }
+            LOG.trace("MappingChanged event for {} of type: `{}'", LispAddressStringifier.getString(eid),
+                    notification.getChangeType());
             Set<Subscriber> subscribers = MSNotificationInputUtil.toSubscriberSet(notification.getSubscriberItem());
             LoggingUtil.logSubscribers(LOG, eid, subscribers);
             if (mapService.isMaster()) {
@@ -251,32 +219,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 }
             }
         }
-    }
-
-    private static boolean mappingChanged(MappingRecord oldMapping, MappingRecord newMapping) {
-        // We only check for fields we care about
-        // XXX: This code needs to be checked and updated when the YANG model for MappingRecord is modified
-        Preconditions.checkNotNull(newMapping, "The new mapping should never be null");
-        if (oldMapping == null) {
-            LOG.trace("mappingChanged(): old mapping is null");
-            return true;
-        } else if (!Objects.equals(oldMapping.getEid(), newMapping.getEid())) {
-            LOG.trace("mappingChanged(): EID");
-            return true;
-        } else if (!Objects.equals(oldMapping.getLocatorRecord(), newMapping.getLocatorRecord())) {
-            LOG.trace("mappingChanged(): RLOC");
-            return true;
-        } else if (!Objects.equals(oldMapping.getAction(), newMapping.getAction())) {
-            LOG.trace("mappingChanged(): action");
-            return true;
-        } else if (!Objects.equals(oldMapping.getRecordTtl(), newMapping.getRecordTtl())) {
-            LOG.trace("mappingChanged(): TTL");
-            return true;
-        } else if (!Objects.equals(oldMapping.getMapVersion(), newMapping.getMapVersion())) {
-            LOG.trace("mappingChanged(): mapping version");
-            return true;
-        }
-        return false;
     }
 
     private void handleSmr(Eid eid, Set<Subscriber> subscribers) {
