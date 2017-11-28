@@ -498,11 +498,17 @@ public class MappingSystem implements IMappingSystem {
 
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
-        if (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
-            return handleSbExpiredMapping(dst, xtrId, mappingData);
-        } else {
-            return mappingData;
+        while (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
+            // If the mappingData is expired, handleSbExpiredMapping() will run merge for it if merge is enabled,
+            // otherwise it will remove the expired mapping, returning null.
+            MappingData mergedMappingData = handleSbExpiredMapping(dst, xtrId, mappingData);
+            if (mergedMappingData != null) {
+                return mergedMappingData;
+            }
+            // If the expired mapping was removed, we look up the original query again
+            mappingData = (MappingData) smc.getMapping(dst, xtrId);
         }
+        return mappingData;
     }
 
     public MappingData handleSbExpiredMapping(Eid key, XtrId xtrId, MappingData mappingData) {
