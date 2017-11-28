@@ -502,7 +502,7 @@ public class MappingSystem implements IMappingSystem {
             LOG.debug("Removing mapping for EID {} from {}",
                     LispAddressStringifier.getString(key), origin);
         }
-        if (LOG.isTraceEnabled()) {
+        if (LOG.isTraceEnabled() && mapping != null) {
             LOG.trace(mapping.getString());
         }
 
