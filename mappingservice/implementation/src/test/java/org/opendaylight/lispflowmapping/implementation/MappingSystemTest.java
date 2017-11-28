@@ -170,7 +170,7 @@ public class MappingSystemTest {
         final MappingData mappingData = getDefaultMappingData();
         mappingData.setTimestamp(EXPIRED_DATE);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
-        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData, null);
 
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:" + IPV4_DST))
@@ -338,7 +338,7 @@ public class MappingSystemTest {
         sbMappingData.setTimestamp(EXPIRED_DATE);
 
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingData);
-        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData);
+        Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData, null);
 
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:" + IPV4_DST))
