@@ -43,6 +43,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_975acb81",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T19:40:11Z",
+      "side": 1,
+      "message": "We discussed to not remove the key here. Instead never call handleSbNegativeMapping() when a negative mapping is added.",
+      "parentUuid": "7a1969be_66ede38b",
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_26a64bc2",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
         "patchSetId": 15
@@ -84,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_979f6b03",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T19:40:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a1969be_c601373b",
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_c6a2d799",
         "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
         "patchSetId": 15
@@ -119,6 +155,24 @@
       "side": 1,
       "message": "Longest prefix match is equal or more specific, with the more specific preferred. Covering prefix is equal or less specific, again with the more specific preferred. This is different way of looking up a \"parent\".",
       "parentUuid": "7a1969be_c6a2d799",
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_77a46f57",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T19:40:11Z",
+      "side": 1,
+      "message": "So lets make that clear in documenation of method, even if prefix exists, this will return the strictly less specific, and not the prefix itself (so it is not longest prefix match)",
+      "parentUuid": "7a1969be_06e50fa8",
       "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
