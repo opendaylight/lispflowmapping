@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_66b5e3cc",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T03:49:30Z",
+      "side": 1,
+      "message": "this is only true in case of addMapping was called for key with a negative mapping. If it was called for positive mapping in NB, and as a result we get here, I am not sure if this is correct.",
+      "range": {
+        "startLine": 262,
+        "startChar": 7,
+        "endLine": 262,
+        "endChar": 34
+      },
+      "revId": "9b7afd1181bf764714083d47d688e3c4fdc6955b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_86fe1f6a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T03:49:30Z",
+      "side": 1,
+      "message": "not used anymore?",
+      "range": {
+        "startLine": 245,
+        "startChar": 3,
+        "endLine": 248,
+        "endChar": 31
+      },
+      "revId": "9b7afd1181bf764714083d47d688e3c4fdc6955b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
