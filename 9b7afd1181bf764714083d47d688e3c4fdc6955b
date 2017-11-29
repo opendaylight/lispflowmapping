@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "7a1969be_e6f8b34b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-11-29T06:18:56Z",
+      "side": 1,
+      "message": "Reply in the other patch. This here was a rebase error, as I moved it to the beginning of the method, will remove this occurrence.",
+      "parentUuid": "7a1969be_66b5e3cc",
+      "revId": "9b7afd1181bf764714083d47d688e3c4fdc6955b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a1969be_86fe1f6a",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 4
@@ -42,6 +60,24 @@
         "endLine": 248,
         "endChar": 31
       },
+      "revId": "9b7afd1181bf764714083d47d688e3c4fdc6955b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_469547e3",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-11-29T06:18:56Z",
+      "side": 1,
+      "message": "Indeed, will remove.",
+      "parentUuid": "7a1969be_86fe1f6a",
       "revId": "9b7afd1181bf764714083d47d688e3c4fdc6955b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
