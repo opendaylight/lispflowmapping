@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_46a1c7a8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T03:27:40Z",
+      "side": 1,
+      "message": "what if the key itself was added as negative in the past? what do you mean by newly added negative? Shouldnt this method be called only when new positive mapping is added to NB?",
+      "range": {
+        "startLine": 229,
+        "startChar": 29,
+        "endLine": 229,
+        "endChar": 32
+      },
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_26a64bc2",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingSystem.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T03:27:40Z",
+      "side": 1,
+      "message": "wouldnt this be equivalent of just looking up key in smc, and doing normal longest prefix match? from the longest prefix match we can walk down the tree and remove any node that is subprefix of key and is negative (this can be done inside radixtrie).",
+      "range": {
+        "startLine": 237,
+        "startChar": 31,
+        "endLine": 237,
+        "endChar": 63
+      },
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_c6a2d799",
+        "filename": "mappingservice/inmemorydb/src/main/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrie.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-11-29T03:27:40Z",
+      "side": 1,
+      "message": "How is this different than longest prefix match?",
+      "range": {
+        "startLine": 183,
+        "startChar": 7,
+        "endLine": 183,
+        "endChar": 103
+      },
+      "revId": "cbf18d3429c8efe45c17e271d62e7422e38f67c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
