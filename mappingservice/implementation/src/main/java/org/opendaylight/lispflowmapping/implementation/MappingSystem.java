@@ -243,23 +243,19 @@ public class MappingSystem implements IMappingSystem {
     private void handleSbNegativeMappings(Eid key) {
         Set<Eid> childPrefixes = getSubtree(MappingOrigin.Southbound, key);
 
-        LOG.trace("handleSbNegativeMappings(): subtree prefix set for EID {} (excluding the EID itself): {}",
+        LOG.trace("handleSbNegativeMappings(): subtree prefix set for EID {}: {}",
                 LispAddressStringifier.getString(key),
                 LispAddressStringifier.getString(childPrefixes));
-        if (childPrefixes == null || childPrefixes.isEmpty()) {
-            // The assumption here is that negative prefixes are well maintained and never overlapping.
-            // If we have children for the EID, no parent lookup should thus be necessary.
-            Eid parentPrefix = smc.getCoveringLessSpecific(key);
-            LOG.trace("handleSbNegativeMappings(): parent prefix for EID {}: {}",
-                    LispAddressStringifier.getString(key),
-                    LispAddressStringifier.getString(parentPrefix));
-            handleSbNegativeMapping(parentPrefix);
-            return;
-        }
 
         for (Eid prefix : childPrefixes) {
             handleSbNegativeMapping(prefix);
         }
+
+        Eid parentPrefix = smc.getCoveringLessSpecific(key);
+        LOG.trace("handleSbNegativeMappings(): parent prefix for EID {}: {}",
+                LispAddressStringifier.getString(key),
+                LispAddressStringifier.getString(parentPrefix));
+        handleSbNegativeMapping(parentPrefix);
     }
 
     private void handleSbNegativeMapping(Eid key) {
