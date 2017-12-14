@@ -13,8 +13,8 @@ package org.opendaylight.lispflowmapping.lisp.util;
  * @author Lorand Jakab
  *
  */
-public final class Constants {
-    public static final int INET6_ADDRSTRLEN = 46;
+public interface Constants {
+    int INET6_ADDRSTRLEN = 46;
 
     // TODO Move constants from other files that don't clearly belong there into this file.
 }

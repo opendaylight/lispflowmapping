@@ -18,8 +18,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
  * @author Lorand Jakab
  *
  */
-public class Stringifier {
+public final class Stringifier {
     private static final String NEW_LINE = System.lineSeparator();
+
+    private Stringifier() {
+    }
 
     public static String getSpacesAsString(int length) {
         return new String(new char[length]).replace("\0", " ");
