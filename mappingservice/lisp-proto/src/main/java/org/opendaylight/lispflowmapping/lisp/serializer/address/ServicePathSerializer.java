@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
@@ -28,7 +27,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
  * @author Lorand Jakab
  *
  */
-public class ServicePathSerializer extends LcafSerializer {
+public final class ServicePathSerializer extends LcafSerializer {
 
     private static final ServicePathSerializer INSTANCE = new ServicePathSerializer();
 
