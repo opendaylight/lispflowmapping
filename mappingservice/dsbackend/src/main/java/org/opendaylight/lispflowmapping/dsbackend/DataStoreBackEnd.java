@@ -263,6 +263,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
 
             public void onSuccess(Void result) {
+                LOG.trace("Successfully written data {} to path {} in datastore {}",
+                        data, addIID, logicalDatastoreType);
             }
 
             public void onFailure(Throwable throwable) {
@@ -297,6 +299,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
 
             public void onSuccess(Void result) {
+                LOG.trace("Successfully deleted path {} from datastore {}", deleteIID, logicalDatastoreType);
             }
 
             public void onFailure(Throwable throwable) {
