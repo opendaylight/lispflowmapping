@@ -1311,7 +1311,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
-        sleepForMilliseconds(100);
+        sleepForMilliseconds(500);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
@@ -1345,7 +1345,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void insertNBMapping(Eid eid, List<Rloc> rlocs) {
         MappingRecord record = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid, rlocs).build();
         mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
-        sleepForMilliseconds(100);
+        sleepForMilliseconds(500);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
@@ -1380,7 +1380,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Rloc rloc = LispAddressUtil.asIpv4Rloc(locator);
         MapRegister mr = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid, rloc).build();
         lms.handleMapRegister(mr);
-        sleepForMilliseconds(100);
+        sleepForMilliseconds(500);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
