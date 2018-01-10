@@ -2731,7 +2731,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         }
         */
 
-        sleepForSeconds(1);
+        sleepForSeconds(5);
     }
 
     private void cleanUP() {
