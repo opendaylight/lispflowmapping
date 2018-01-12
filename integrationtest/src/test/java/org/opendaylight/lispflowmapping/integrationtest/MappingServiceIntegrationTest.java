@@ -753,7 +753,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
-        sleepForMilliseconds(25);
+        sleepForMilliseconds(250);
         printMapCacheState();
     }
 
@@ -1089,7 +1089,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
 
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
@@ -1187,7 +1187,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(Eid eid, Rloc rloc1, Rloc rloc2)
             throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
         MapRegister mb = createMapRegister(eid, rloc1);
         MapNotify mapNotify = lms.handleMapRegister(mb).getLeft();
         MapRequest mr = createMapRequest(eid);
@@ -1229,7 +1229,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         lms.setShouldUseSmr(true);
         mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
 
         sendPacket(mapRegisterPacketWithNotify);
         receiveMapNotify();
@@ -1655,7 +1655,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void runPrefixTest(Eid registerEID, Eid matchedAddress, Eid unMatchedAddress)
             throws SocketTimeoutException {
         mapService.addAuthenticationKey(registerEID, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
 
         MapRegisterBuilder mapRegister = new MapRegisterBuilder();
         mapRegister.setWantMapNotify(true);
@@ -1820,7 +1820,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     // takes an address, packs it in a MapRegister and sends it
     private void registerAddress(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
         MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
         mapRegisterBuilder.setWantMapNotify(true);
         mapRegisterBuilder.setKeyId((short) 0);
@@ -1880,7 +1880,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     // MapReply
     private MapReply registerAddressAndQuery(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
         MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder();
         mapRegisterBuilder.setWantMapNotify(true);
         mapRegisterBuilder.setKeyId((short) 0);
@@ -2196,7 +2196,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         ConfigIni.getInstance().setSmrRetryCount(0);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(2);
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
         mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
