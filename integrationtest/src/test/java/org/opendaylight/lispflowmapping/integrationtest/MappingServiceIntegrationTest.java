@@ -153,6 +153,10 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+// NO-OP TEST COMMIT TO SEE IF CURRENT TIP OF stable/nitrogen NOW PASSES IT
+
+
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
