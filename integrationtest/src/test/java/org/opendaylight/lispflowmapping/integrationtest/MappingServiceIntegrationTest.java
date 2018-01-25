@@ -165,7 +165,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public static final String ODL = "org.opendaylight.controller";
     public static final String YANG = "org.opendaylight.yangtools";
-    private static final int MULTI_SITE_SLEEP_TIME = 2;
+    private static final int SLEEP_TIME = 2;
+    private static final int SHORT_SLEEP_TIME = 1;
     private static final int MAX_NOTIFICATION_RETRYS = 20;
     private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
 
@@ -200,6 +201,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
                 "log4j.logger.org.opendaylight.lispflowmapping",
                 LogLevel.TRACE.name());
+        Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
+                "log4j.logger.org.opendaylight.mdsal",
+                LogLevel.DEBUG.name());
         option = composite(option, super.getLoggingOption());
         return option;
     }
@@ -479,7 +483,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         final SocketReader reader1 = startSocketReader(subscriberSrcRloc1, 15000);
         final SocketReader reader2 = startSocketReader(subscriberSrcRloc2, 15000);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         /* add mapping */
         final MappingRecord mapping1 = new MappingRecordBuilder()
@@ -509,7 +513,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
-        sleepForSeconds(3);
+        sleepForSeconds(SLEEP_TIME);
         assertEquals(expectedSmrs1, requests1.size());
         assertEquals(expectedSmrs2, requests2.size());
         assertEquals((long) mapReply1.getNonce(), (long) requests1.get(0).getNonce());
@@ -626,7 +630,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         insertSBMappings(false, 1L, "10.0.0.0/32");
 
         restartSocket();
-        sleepForSeconds(2);
+        sleepForSeconds(SLEEP_TIME);
 
         MapReply mapReply = lms.handleMapRequest(newMapRequest(1L, "11.1.1.1/32"));
         Eid expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "11.0.0.0/8");
@@ -639,7 +643,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         insertNBMappings(1L, "192.167.0.0/16", "192.169.0.0/16");
 
         restartSocket();
-        sleepForSeconds(2);
+        sleepForSeconds(SLEEP_TIME);
 
         mapReply = lms.handleMapRequest(newMapRequest(1L, "192.168.0.1/32"));
         expectedNegativePrefix = LispAddressUtil.asIpv4PrefixBinaryEid(1L, "192.168.0.0/16");
@@ -1301,7 +1305,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         insertSBMappings(false, 1L, "1.1.32.0/19", "1.0.0.0/8");
 
         restartSocket();
-        sleepForSeconds(2);
+        sleepForSeconds(SLEEP_TIME);
     }
 
     private void insertNBMappings(long iid, String ... prefixes) {
@@ -1311,7 +1315,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
         }
-        sleepForMilliseconds(100);
+        sleepForSeconds(SHORT_SLEEP_TIME * prefixes.length);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
@@ -1345,7 +1349,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void insertNBMapping(Eid eid, List<Rloc> rlocs) {
         MappingRecord record = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid, rlocs).build();
         mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
-        sleepForMilliseconds(100);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
@@ -1380,7 +1384,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Rloc rloc = LispAddressUtil.asIpv4Rloc(locator);
         MapRegister mr = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid, rloc).build();
         lms.handleMapRegister(mr);
-        sleepForMilliseconds(100);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MappingServiceIntegrationTestUtil.printMapCacheState(mapService);
     }
 
@@ -1424,7 +1428,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.storeSouthboundMappings(false, SITE_A, SITE_B, SITE_C, SITE_D4, SITE_D5);
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
         multiSiteScenario.storeNorthMappingNegative(SITE_C_NEGATIVE, Action.Drop);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
         multiSiteScenario.assertPingFails(SITE_A, 1, SITE_C, 4);
@@ -1434,7 +1438,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 1) 192.0.2.5/32
         // 2) 192.0.1.1/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A, SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_C, 4);
         multiSiteScenario.assertPingWorks(SITE_B, 5, SITE_C, 4);
@@ -1447,7 +1451,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 3) 192.0.1.5/32
         // 4) 192.0.4.5/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1), SITE_A
                         .getHost(5),
                 SITE_D4.getHost(5));
@@ -1460,7 +1464,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 3) 192.0.1.5/32
         // 4) 192.0.4.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C_RLOC_10);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1),
                 SITE_A.getHost(5), SITE_D4.getHost(5));
         //way of testing ping - get RLOC for mapping src-dst and compare it with awaited value doesn't test
@@ -1474,7 +1478,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 3) 192.0.1.5/32
         // 4) 192.0.4.5/32
         multiSiteScenario.storeNorthMappingNegative(SITE_C, Action.Drop);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B.getHost(5), SITE_A.getHost(1),
                 SITE_A.getHost(5), SITE_D4.getHost(5));
         multiSiteScenario.assertPingFails(SITE_D4, 5, SITE_C, 4);
@@ -1490,7 +1494,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 4) 192.0.1.5/32
         // 5) 192.0.1.1/32
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A, SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
                 SITE_B.getHost(5), SITE_A.getHost(1), SITE_A.getHost(5));
 
@@ -1501,7 +1505,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 4) 192.0.1.5/32
         // 5) 192.0.1.1/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B, SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
                 SITE_B.getHost(5), SITE_A.getHost(1), SITE_A.getHost(5));
 
@@ -1517,7 +1521,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 4) 192.0.1.5/32
         // 5) 192.0.1.1/32
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B, SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
                 SITE_B.getHost(5), SITE_A.getHost(1), SITE_A.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
@@ -1532,7 +1536,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 4) 192.0.1.5/32
         // 5) 192.0.1.1/32
         multiSiteScenario.deleteNorthMappingNegative(SITE_C);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_D5.getHost(5), SITE_D4.getHost(5),
                 SITE_B.getHost(5), SITE_A.getHost(1), SITE_A.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_A, 5, SITE_B, 4);
@@ -1565,7 +1569,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_A_SB);
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_B_SB);
         multiSiteScenario.storeNorthMappingIpPrefix(SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
         multiSiteScenario.assertPingWorks(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
 
@@ -1574,14 +1578,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
 
         // following action should trigger generating of SMR messages:
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingNegative(SITE_C_SB, Action.Drop);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
 
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4, SITE_D_WP_50_2_SB);
@@ -1593,13 +1597,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
         multiSiteScenario.storeNorthMappingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
         multiSiteScenario.assertPingWorks(SITE_A_SB, 5, SITE_C_WP_50_2_SB, 4);
 
         //TEST CASE 4
         multiSiteScenario.storeNorthMappingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB, SITE_D_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         // following action should trigger generating of SMR messages:
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
@@ -1608,7 +1612,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         //TEST CASE 5
         multiSiteScenario.deleteSouthboundMappings(SITE_D_DELETE_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         // following action should trigger generating of SMR messages:
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
@@ -1618,14 +1622,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         //TEST CASE 6
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_A_SB, SITE_C_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         // following action should trigger generating of SMR messages:
         // 1) 192.0.2.5/32
         // 2) 192.0.1.5/32
         multiSiteScenario.checkSMR(socketReader, SITE_C.getEidPrefix(), SITE_B_SB.getHost(5), SITE_A_SB.getHost(5));
 
         multiSiteScenario.deleteNorthMapingSrcDst(SITE_B_SB, SITE_C_WP_50_2_SB);
-        sleepForSeconds(MULTI_SITE_SLEEP_TIME);
+        sleepForSeconds(SLEEP_TIME);
         multiSiteScenario.assertPingFails(SITE_B_SB, 5, SITE_C_WP_50_2_SB, 4);
 
         socketReader.stopReading();
@@ -1654,7 +1658,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), NULL_AUTH_KEY);
 
-        sleepForSeconds(2);
+        sleepForSeconds(SLEEP_TIME);
         sendPacket(mapRegisterPacketWithNotify);
         MapNotify reply = receiveMapNotify();
         assertEquals(7, reply.getNonce().longValue());
@@ -1690,7 +1694,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
         sendMapRequest(mapRequest);
@@ -1701,7 +1705,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
@@ -1769,7 +1773,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private MapReply sendMapRegisterTwiceWithDiffrentValues(Eid eid, Rloc rloc1, Rloc rloc2)
             throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MapRegister mb = createMapRegister(eid, rloc1);
         MapNotify mapNotify = lms.handleMapRegister(mb).getLeft();
         MapRequest mr = createMapRequest(eid);
@@ -1811,14 +1815,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         lms.setShouldUseSmr(true);
         mapService.addAuthenticationKey(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         sendPacket(mapRegisterPacketWithNotify);
         receiveMapNotify();
 
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         sendPacket(mapRequestPacket);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         mapRegisterPacketWithoutNotify[mapRegisterPacketWithoutNotify.length - 1] += 1;
         sendPacket(mapRegisterPacketWithoutNotify);
@@ -2236,7 +2240,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private void runPrefixTest(Eid registerEID, Eid matchedAddress, Eid unMatchedAddress)
             throws SocketTimeoutException {
         mapService.addAuthenticationKey(registerEID, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         MapRegisterBuilder mapRegister = new MapRegisterBuilder();
         mapRegister.setWantMapNotify(true);
@@ -2269,7 +2273,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegister.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MapRequestBuilder mapRequest = new MapRequestBuilder();
         mapRequest.setNonce((long) 4);
         mapRequest.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(ourAddress)).build());
@@ -2401,7 +2405,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     // takes an address, packs it in a MapRegister and sends it
     private void registerAddress(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
         sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
@@ -2436,7 +2440,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     // MapReply
     private MapReply registerAddressAndQuery(Eid eid) throws SocketTimeoutException {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
         LOG.trace("Sending Map-Register via socket: {}", mapRegister);
         sendMapRegister(mapRegister);
@@ -2444,7 +2448,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         LOG.trace("Received Map-Notify via socket: {}", mapNotify);
         assertEquals(8, mapNotify.getNonce().longValue());
         // wait for the notifications to propagate
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
         MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
         sendMapRequest(mapRequest);
         return receiveMapReply();
@@ -2713,7 +2717,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         ConfigIni.getInstance().setSmrRetryCount(0);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         MapRequest mapRequest = MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(eid).build();
         sendMapRequest(mapRequest);
@@ -2725,7 +2729,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
-        sleepForSeconds(1);
+        sleepForSeconds(SHORT_SLEEP_TIME);
 
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
@@ -2771,7 +2775,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         mapService.addMapping(MappingOrigin.Southbound, eid, MappingServiceIntegrationTestUtil.DEFAULT_SITE_ID,
                 new MappingData(mappingRecord, System.currentTimeMillis()));
-        sleepForSeconds(2);
+        sleepForSeconds(SLEEP_TIME);
 
         MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);
         assertNull(resultRecord);
