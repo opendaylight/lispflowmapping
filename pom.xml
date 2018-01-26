@@ -23,9 +23,7 @@
     <module>ui</module>
     <module>features</module>
     <module>lispflowmapping-karaf</module>
-    <!--
     <module>integrationtest</module>
-    -->
   </modules>
 
   <build>
