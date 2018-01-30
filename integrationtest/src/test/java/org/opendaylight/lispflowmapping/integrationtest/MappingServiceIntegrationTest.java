@@ -29,6 +29,7 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
 import com.google.common.collect.Lists;
@@ -209,6 +210,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Option option = editConfigurationFilePut(ORG_OPS4J_PAX_LOGGING_CFG,
                 "log4j.logger.org.opendaylight.lispflowmapping",
                 LogLevel.TRACE.name());
+        option = editConfigurationFileExtend(ORG_OPS4J_PAX_LOGGING_CFG,
+                "log4j.logger.org.opendaylight.mdsal",
+                LogLevel.DEBUG.name());
         option = composite(option, super.getLoggingOption());
         return option;
     }
