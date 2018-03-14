@@ -14,10 +14,6 @@
   <!-- Used by Sonar to set project name -->
   <name>lispflowmapping</name>
 
-  <prerequisites>
-    <maven>3.1.1</maven>
-  </prerequisites>
-
   <modules>
     <module>commons/parent</module>
     <module>commons/build_tools</module>
