@@ -3,9 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.opendaylight.lispflowmapping</groupId>
-    <artifactId>mappingservice-parent</artifactId>
-    <version>1.8.0-SNAPSHOT</version>
+    <groupId>org.opendaylight.mdsal</groupId>
+    <artifactId>binding-parent</artifactId>
+    <version>0.13.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
 
   <artifactId>mappingservice.neutron</artifactId>
@@ -16,6 +17,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.opendaylight.lispflowmapping</groupId>
+        <artifactId>lispflowmapping-artifacts</artifactId>
+        <version>1.8.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.opendaylight.netconf</groupId>
         <artifactId>netconf-artifacts</artifactId>
@@ -53,17 +61,16 @@
       <version>0.11.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.lispflowmapping</groupId>
-      <artifactId>common.unittest.tools</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.opendaylight.mdsal.model</groupId>
       <artifactId>yang-ext</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.honeycomb.vbd</groupId>
-      <artifactId>vbd-api</artifactId>
-      <version>1.4.0-SNAPSHOT</version>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>ietf-interfaces</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>iana-if-type-2014-05-08</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
@@ -79,6 +86,7 @@
     <dependency>
       <groupId>junit-addons</groupId>
       <artifactId>junit-addons</artifactId>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
