@@ -31,8 +31,6 @@
     <branding.version>2.0.2</branding.version>
     <build.suffix>1.0.0</build.suffix>
     <config.version>0.9.0-SNAPSHOT</config.version>
-    <dlux.loader.version>0.8.0-SNAPSHOT</dlux.loader.version>
-    <dlux.core.version>0.8.0-SNAPSHOT</dlux.core.version>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
     <lispflowmapping.version>1.8.0-SNAPSHOT</lispflowmapping.version>
     <mdsal.version>1.8.0-SNAPSHOT</mdsal.version>
