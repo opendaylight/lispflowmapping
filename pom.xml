@@ -26,9 +26,21 @@
     <module>mappingservice</module>
     <module>ui</module>
     <module>features</module>
-    <module>lispflowmapping-karaf</module>
     <module>integrationtest</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>karaf</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <modules>
+        <module>lispflowmapping-karaf</module>
+      </modules>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
