@@ -26,6 +26,7 @@
     <module>mappingservice</module>
     <module>ui</module>
     <module>features</module>
+    <module>integrationtest</module>
   </modules>
 
   <profiles>
@@ -37,7 +38,6 @@
 
       <modules>
         <module>lispflowmapping-karaf</module>
-        <module>integrationtest</module>
       </modules>
     </profile>
   </profiles>
