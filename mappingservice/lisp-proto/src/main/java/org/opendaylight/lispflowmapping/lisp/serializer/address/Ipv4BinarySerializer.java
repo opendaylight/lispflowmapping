@@ -110,7 +110,7 @@ public final class Ipv4BinarySerializer extends LispAddressSerializer {
     private static Ipv4Address deserializeDataNonBinary(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         buffer.get(ipBuffer);
-        return IetfInetUtil.INSTANCE.ipv4AddressFor(ipBuffer);
+        return new Ipv4Address(IetfInetUtil.INSTANCE.ipv4AddressFor(ipBuffer));
     }
 
     protected interface Length {
