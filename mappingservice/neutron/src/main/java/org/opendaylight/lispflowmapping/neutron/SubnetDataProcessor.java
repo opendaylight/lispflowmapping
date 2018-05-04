@@ -13,8 +13,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.subnets.Subnet;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
@@ -63,7 +65,7 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
                 return;
             }
             final AddKeyInput addKeyInput = LispUtil.buildAddKeyInput(eid, subnet.getUuid().getValue());
-            final Future<RpcResult<Void>> result = lfmdb.addKey(addKeyInput);
+            final Future<RpcResult<AddKeyOutput>> result = lfmdb.addKey(addKeyInput);
             final Boolean isSuccessful = result.get().isSuccessful();
 
             if (isSuccessful) {
@@ -107,7 +109,7 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
                 return;
             }
             final RemoveKeyInput removeKeyInput = LispUtil.buildRemoveKeyInput(eid);
-            final Future<RpcResult<Void>> result = lfmdb.removeKey(removeKeyInput);
+            final Future<RpcResult<RemoveKeyOutput>> result = lfmdb.removeKey(removeKeyInput);
             final Boolean isSuccessful = result.get().isSuccessful();
 
             if (isSuccessful) {

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.lispflowmapping.neutron;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,9 +24,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.subnets.Subnet;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
@@ -34,8 +37,6 @@ public class SubnetDataProcessorTest {
     private static ILispNeutronService iLispNeutronServiceMock = Mockito.mock(ILispNeutronService.class);
     private static Subnet subnet = Mockito.mock(Subnet.class);
     private OdlMappingserviceService odlMappingserviceServiceMock;
-    private Future<RpcResult<Void>> future;
-    private RpcResult<Void> rpcResult;
 
     private static SubnetDataProcessor subnetDataProcessor = new SubnetDataProcessor(iLispNeutronServiceMock);
 
@@ -49,8 +50,6 @@ public class SubnetDataProcessorTest {
     @SuppressWarnings("unchecked")
     public void init() {
         odlMappingserviceServiceMock = Mockito.mock(OdlMappingserviceService.class);
-        future = Mockito.mock(Future.class);
-        rpcResult = Mockito.mock(RpcResult.class);
     }
 
     /**
@@ -58,16 +57,21 @@ public class SubnetDataProcessorTest {
      */
     @Test
     public void createTest() throws ExecutionException, InterruptedException {
+        ListenableFuture<RpcResult<AddKeyOutput>> future = Mockito.mock(ListenableFuture.class);
+        RpcResult<AddKeyOutput> rpcResult = Mockito.mock(RpcResult.class);
+
         final MappingAuthkey mappingAuthkey = new MappingAuthkeyBuilder()
                 .setKeyString(UUID_STRING).setKeyType(1).build();
         final AddKeyInput addKeyInput = new AddKeyInputBuilder()
                 .setEid(EID).setMappingAuthkey(mappingAuthkey).build();
 
         commonStubbing();
+        Mockito.when(future.get()).thenReturn(rpcResult);
+        Mockito.when(rpcResult.isSuccessful()).thenReturn(true);
         Mockito.when(odlMappingserviceServiceMock.addKey(addKeyInput)).thenReturn(future);
 
         subnetDataProcessor.create(subnet);
-        assertEquals(true, rpcResult.isSuccessful());
+        assertTrue(rpcResult.isSuccessful());
     }
 
     /**
@@ -88,12 +92,17 @@ public class SubnetDataProcessorTest {
     @Test
     public void deleteTest() throws ExecutionException, InterruptedException {
         final RemoveKeyInput removeKeyInput = new RemoveKeyInputBuilder().setEid(EID).build();
+        ListenableFuture<RpcResult<RemoveKeyOutput>> future = Mockito.mock(ListenableFuture.class);
+        RpcResult<RemoveKeyOutput> rpcResult = Mockito.mock(RpcResult.class);
+
 
         commonStubbing();
+        Mockito.when(future.get()).thenReturn(rpcResult);
+        Mockito.when(rpcResult.isSuccessful()).thenReturn(true);
         Mockito.when(odlMappingserviceServiceMock.removeKey(removeKeyInput)).thenReturn(future);
 
         subnetDataProcessor.delete(subnet);
-        assertEquals(true, rpcResult.isSuccessful());
+        assertTrue(rpcResult.isSuccessful());
     }
 
     /**
@@ -108,11 +117,9 @@ public class SubnetDataProcessorTest {
         Mockito.verifyZeroInteractions(odlMappingserviceServiceMock);
     }
 
-    public void commonStubbing() throws ExecutionException, InterruptedException {
+    public void commonStubbing() {
         Mockito.when(subnet.getCidr()).thenReturn(IP_PREFIX);
         Mockito.when(iLispNeutronServiceMock.getMappingDbService()).thenReturn(odlMappingserviceServiceMock);
         Mockito.when(subnet.getUuid()).thenReturn(new Uuid(UUID_STRING));
-        Mockito.when(future.get()).thenReturn(rpcResult);
-        Mockito.when(rpcResult.isSuccessful()).thenReturn(true);
     }
 }

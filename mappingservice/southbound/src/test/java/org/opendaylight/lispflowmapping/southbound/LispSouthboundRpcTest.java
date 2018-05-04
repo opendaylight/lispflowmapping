@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.Lists;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,7 +37,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInput;
@@ -187,7 +191,8 @@ public class LispSouthboundRpcTest {
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(stats);
 
         // result
-        final ControlMessageStats resultStats = lispSouthboundRPC.getStats().get().getResult().getControlMessageStats();
+        final ControlMessageStats resultStats = lispSouthboundRPC.getStats(
+                Mockito.mock(GetStatsInput.class)).get().getResult().getControlMessageStats();
 
         assertEquals(stats.getRx()[0], (long) resultStats.getControlMessage().get(0).getRxCount());
         assertEquals(stats.getRx()[1], (long) resultStats.getControlMessage().get(1).getRxCount());
@@ -208,7 +213,8 @@ public class LispSouthboundRpcTest {
 
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(null);
 
-        final Future<RpcResult<GetStatsOutput>> resultFuture = lispSouthboundRPC.getStats();
+        final Future<RpcResult<GetStatsOutput>> resultFuture = lispSouthboundRPC.getStats(
+                Mockito.mock(GetStatsInput.class));
         final RpcResult<GetStatsOutput> rpcResult = resultFuture.get();
 
         assertEquals(RPC_RESULT_ERROR.isSuccessful(), rpcResult.isSuccessful());
@@ -224,7 +230,8 @@ public class LispSouthboundRpcTest {
         incrementAll(stats);
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(stats);
 
-        assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), lispSouthboundRPC.resetStats().get().isSuccessful());
+        assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), lispSouthboundRPC.resetStats(
+                Mockito.mock(ResetStatsInput.class)).get().isSuccessful());
 
         for (long rx : stats.getRx()) {
             assertEquals(0, rx);
@@ -240,8 +247,9 @@ public class LispSouthboundRpcTest {
 
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(null);
 
-        final Future<RpcResult<Void>> resultFuture = lispSouthboundRPC.resetStats();
-        final RpcResult<Void> rpcResult = resultFuture.get();
+        final Future<RpcResult<ResetStatsOutput>> resultFuture = lispSouthboundRPC.resetStats(
+                Mockito.mock(ResetStatsInput.class));
+        final RpcResult<ResetStatsOutput> rpcResult = resultFuture.get();
 
         assertEquals(RPC_RESULT_ERROR.isSuccessful(), rpcResult.isSuccessful());
         assertEquals(expectedMsg, rpcResult.getErrors().iterator().next().getMessage());
