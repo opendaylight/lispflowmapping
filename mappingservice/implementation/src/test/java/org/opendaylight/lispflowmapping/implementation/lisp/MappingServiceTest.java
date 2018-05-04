@@ -42,10 +42,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllKeysInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyOutput;
@@ -56,17 +62,26 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -120,7 +135,7 @@ public class MappingServiceTest {
         final RpcError error = rpc.getErrors().iterator().next();
 
         // result
-        final Future<RpcResult<Void>> result = mappingService.addKey(addKeyInput);
+        final Future<RpcResult<AddKeyOutput>> result = mappingService.addKey(addKeyInput);
         final RpcError errorResult = result.get().getErrors().iterator().next();
 
         assertEquals(1, result.get().getErrors().size());
@@ -143,12 +158,12 @@ public class MappingServiceTest {
         final AddKeyInput addKeyInput = new AddKeyInputBuilder().setEid(IPV4_EID).build();
         Mockito.when(mappingSystem.getAuthenticationKey(IPV4_EID)).thenReturn(null);
 
-        final Future<RpcResult<Void>> result = mappingService.addKey(addKeyInput);
+        final Future<RpcResult<AddKeyOutput>> result = mappingService.addKey(addKeyInput);
         Mockito.verify(dsbe).addAuthenticationKey(Mockito.any());
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new AddKeyOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -160,12 +175,12 @@ public class MappingServiceTest {
         final AddMappingInput addMappingInput = new AddMappingInputBuilder()
                 .setMappingRecord(mappingRecordBuilder.build()).build();
 
-        final Future<RpcResult<Void>> result = mappingService.addMapping(addMappingInput);
+        final Future<RpcResult<AddMappingOutput>> result = mappingService.addMapping(addMappingInput);
         Mockito.verify(dsbe).addMapping(RPCInputConvertorUtil.toMapping(addMappingInput));
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new AddMappingOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -276,12 +291,12 @@ public class MappingServiceTest {
     public void removeKeyTest() throws ExecutionException, InterruptedException {
         final RemoveKeyInput removeKeyInput = new RemoveKeyInputBuilder().setEid(IPV4_EID).build();
 
-        final Future<RpcResult<Void>> result = mappingService.removeKey(removeKeyInput);
+        final Future<RpcResult<RemoveKeyOutput>> result = mappingService.removeKey(removeKeyInput);
         Mockito.verify(dsbe).removeAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(removeKeyInput));
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new RemoveKeyOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -291,12 +306,12 @@ public class MappingServiceTest {
     public void removeMappingTest() throws ExecutionException, InterruptedException {
         final RemoveMappingInput removeMappingInput = new RemoveMappingInputBuilder().setEid(IPV4_EID).build();
 
-        final Future<RpcResult<Void>> result = mappingService.removeMapping(removeMappingInput);
+        final Future<RpcResult<RemoveMappingOutput>> result = mappingService.removeMapping(removeMappingInput);
         Mockito.verify(dsbe).removeMapping(RPCInputConvertorUtil.toMapping(removeMappingInput));
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new RemoveMappingOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -307,12 +322,12 @@ public class MappingServiceTest {
         final UpdateKeyInput updateKeyInput = new UpdateKeyInputBuilder().setEid(IPV4_EID).build();
         Mockito.when(mappingSystem.getAuthenticationKey(IPV4_EID)).thenReturn(MAPPING_AUTHKEY);
 
-        final Future<RpcResult<Void>> result = mappingService.updateKey(updateKeyInput);
+        final Future<RpcResult<UpdateKeyOutput>> result = mappingService.updateKey(updateKeyInput);
         Mockito.verify(dsbe).updateAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(updateKeyInput));
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new UpdateKeyOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -329,7 +344,7 @@ public class MappingServiceTest {
         final RpcError error = rpc.getErrors().iterator().next();
 
         // result
-        final Future<RpcResult<Void>> result = mappingService.updateKey(updateKeyInput);
+        final Future<RpcResult<UpdateKeyOutput>> result = mappingService.updateKey(updateKeyInput);
         final RpcError errorResult = result.get().getErrors().iterator().next();
 
         assertEquals(1, result.get().getErrors().size());
@@ -353,12 +368,12 @@ public class MappingServiceTest {
         final UpdateMappingInput updateMappingInput = new UpdateMappingInputBuilder()
                 .setMappingRecord(mappingRecord).build();
 
-        final Future<RpcResult<Void>> result = mappingService.updateMapping(updateMappingInput);
+        final Future<RpcResult<UpdateMappingOutput>> result = mappingService.updateMapping(updateMappingInput);
         Mockito.verify(dsbe).updateMapping(RPCInputConvertorUtil.toMapping(updateMappingInput));
 
         assertEquals(RPC_RESULT_SUCCESS.getErrors(), result.get().getErrors());
-        assertEquals(RPC_RESULT_SUCCESS.getResult(), result.get().getResult());
         assertEquals(RPC_RESULT_SUCCESS.isSuccessful(), result.get().isSuccessful());
+        assertEquals(new UpdateMappingOutputBuilder().build(), result.get().getResult());
     }
 
     /**
@@ -526,11 +541,11 @@ public class MappingServiceTest {
         assertNull(mappingService.getKeys(Mockito.mock(GetKeysInput.class)));
         assertNull(mappingService.addMappings(Mockito.mock(AddMappingsInput.class)));
         assertNull(mappingService.updateKeys(Mockito.mock(UpdateKeysInput.class)));
-        assertNull(mappingService.removeAllMappings());
-        assertNull(mappingService.getAllKeys());
+        assertNull(mappingService.removeAllMappings(Mockito.mock(RemoveAllMappingsInput.class)));
+        assertNull(mappingService.getAllKeys(Mockito.mock(GetAllKeysInput.class)));
         assertNull(mappingService.updateMappings(Mockito.mock(UpdateMappingsInput.class)));
         assertNull(mappingService.addKeys(Mockito.mock(AddKeysInput.class)));
-        assertNull(mappingService.getAllMappings());
+        assertNull(mappingService.getAllMappings(Mockito.mock(GetAllMappingsInput.class)));
     }
 
     private static MappingData getDefaultMappingData() {

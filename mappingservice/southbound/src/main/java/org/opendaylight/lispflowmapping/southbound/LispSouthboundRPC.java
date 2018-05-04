@@ -9,22 +9,35 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
+
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessageBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
@@ -55,7 +68,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
 
 
     @Override
-    public Future<RpcResult<Void>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
+    public ListenableFuture<RpcResult<SendMapNotifyOutput>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
         LOG.trace("sendMapNotify called!!");
         if (mapNotifyInput != null) {
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotifyInput.getMapNotify());
@@ -63,13 +76,14 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapNotify);
         } else {
             LOG.warn("MapNotify was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<SendMapNotifyOutput>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<SendMapNotifyOutput>success(
+                new SendMapNotifyOutputBuilder().build()).build());
     }
 
     @Override
-    public Future<RpcResult<Void>> sendMapReply(SendMapReplyInput mapReplyInput) {
+    public ListenableFuture<RpcResult<SendMapReplyOutput>> sendMapReply(SendMapReplyInput mapReplyInput) {
         LOG.trace("sendMapReply called!!");
         if (mapReplyInput != null) {
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReplyInput.getMapReply());
@@ -77,13 +91,14 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapReply);
         } else {
             LOG.warn("MapReply was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<SendMapReplyOutput>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<SendMapReplyOutput>success(
+                new SendMapReplyOutputBuilder().build()).build());
     }
 
     @Override
-    public Future<RpcResult<Void>> sendMapRequest(SendMapRequestInput mapRequestInput) {
+    public ListenableFuture<RpcResult<SendMapRequestOutput>> sendMapRequest(SendMapRequestInput mapRequestInput) {
         LOG.trace("sendMapRequest called!!");
         if (mapRequestInput != null) {
             ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequestInput.getMapRequest());
@@ -91,13 +106,14 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapRequest);
         } else {
             LOG.debug("MapRequest was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<SendMapRequestOutput>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<SendMapRequestOutput>success(
+                new SendMapRequestOutputBuilder().build()).build());
     }
 
     @Override
-    public Future<RpcResult<Void>> sendMapRegister(SendMapRegisterInput mapRegisterInput) {
+    public ListenableFuture<RpcResult<SendMapRegisterOutput>> sendMapRegister(SendMapRegisterInput mapRegisterInput) {
         LOG.trace("sendMapRegister called!!");
         if (mapRegisterInput != null) {
             ByteBuffer outBuffer = MapRegisterSerializer.getInstance().serialize(mapRegisterInput.getMapRegister());
@@ -105,13 +121,14 @@ public class LispSouthboundRPC implements OdlLispSbService {
                     MessageType.MapRegister);
         } else {
             LOG.debug("MapRegister was null");
-            return Futures.immediateFuture(RpcResultBuilder.<Void>failed().build());
+            return Futures.immediateFuture(RpcResultBuilder.<SendMapRegisterOutput>failed().build());
         }
-        return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
+        return Futures.immediateFuture(RpcResultBuilder.<SendMapRegisterOutput>success(
+                new SendMapRegisterOutputBuilder().build()).build());
     }
 
     @Override
-    public Future<RpcResult<GetStatsOutput>> getStats() {
+    public ListenableFuture<RpcResult<GetStatsOutput>> getStats(GetStatsInput input) {
         LOG.trace("getStats called!!");
 
         RpcResultBuilder<GetStatsOutput> rpcResultBuilder;
@@ -128,18 +145,19 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public Future<RpcResult<Void>> resetStats() {
+    public ListenableFuture<RpcResult<ResetStatsOutput>> resetStats(ResetStatsInput input) {
         LOG.trace("resetStats called!!");
 
         ConcurrentLispSouthboundStats stats = lispSbPlugin.getStats();
 
         if (stats == null) {
-            return Futures.immediateFuture(RpcResultBuilder.<Void>failed()
+            return Futures.immediateFuture(RpcResultBuilder.<ResetStatsOutput>failed()
                     .withError(RpcError.ErrorType.APPLICATION, "data-missing", "No stats found")
                     .build());
         } else {
             stats.resetStats();
-            return Futures.immediateFuture(RpcResultBuilder.<Void>success().build());
+            return Futures.immediateFuture(RpcResultBuilder.<ResetStatsOutput>success(
+                    new ResetStatsOutputBuilder().build()).build());
         }
     }
 
