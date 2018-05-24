@@ -485,7 +485,7 @@ public class MapResolverTest {
     private static List<ItrRloc> getDefaultItrRlocList() {
         final List<ItrRloc> itrRlocList = new ArrayList<>();
         final ItrRloc itrRloc = new ItrRlocBuilder()
-                .setKey(new ItrRlocKey(ITR_RLOC_KEY_STRING))
+                .withKey(new ItrRlocKey(ITR_RLOC_KEY_STRING))
                 .setItrRlocId(ITR_RLOC_ID_STRING)
                 .setRloc(RLOC_1).build();
         itrRlocList.add(itrRloc);
@@ -538,7 +538,7 @@ public class MapResolverTest {
                 .setRlocProbed(false)
                 .setRouted(true)
                 .setWeight((short) 0)
-                .setKey(LOCATOR_RECORD_KEY)
+                .withKey(LOCATOR_RECORD_KEY)
                 .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1));
     }
 

@@ -121,7 +121,7 @@ public class PortDataProcessorTest {
      * Stubbing common for all test methods.
      */
     public void commonStubbing() {
-        Mockito.when(portMock.getAugmentation(PortBindingExtension.class)).thenReturn(augmentationMock);
+        Mockito.when(portMock.augmentation(PortBindingExtension.class)).thenReturn(augmentationMock);
         Mockito.when(iLispNeutronServiceMock.getMappingDbService()).thenReturn(odlMappingserviceServiceMock);
         Mockito.when(portMock.getUuid()).thenReturn(new Uuid(PORT_UUID_1));
         Mockito.when(portMock.getFixedIps()).thenReturn(getDefaultListOfFixedIps());

@@ -179,12 +179,12 @@ public class LispAddressStringifierTest {
     private static final Hop HOP_1 = new HopBuilder()
             .setHopId("hop_1")
             .setAddress(SIMPLE_ADDRESS_1)
-            .setKey(new HopKey("hop_1"))
+            .withKey(new HopKey("hop_1"))
             .setLrsBits(new Hop.LrsBits(true, true, true)).build();
     private static final Hop HOP_2 = new HopBuilder()
             .setHopId("hop_2")
             .setAddress(SIMPLE_ADDRESS_2)
-            .setKey(new HopKey("hop_2"))
+            .withKey(new HopKey("hop_2"))
             .setLrsBits(new Hop.LrsBits(true, true, true)).build();
     private static final List<Hop> HOP_LIST = new ArrayList<>();
     private static final ExplicitLocatorPath EXPLICIT_LOCATOR_PATH = new ExplicitLocatorPathBuilder()

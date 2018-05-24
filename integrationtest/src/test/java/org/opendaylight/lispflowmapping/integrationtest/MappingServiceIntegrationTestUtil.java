@@ -518,7 +518,7 @@ final class MappingServiceIntegrationTestUtil {
 
         final List<ItrRloc> itrRlocList = new ArrayList<>();
         final ItrRloc itrRloc = new ItrRlocBuilder()
-                .setKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
+                .withKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
                 .setItrRlocId(LispAddressStringifier.getString(rloc))
                 .setRloc(rloc).build();
         itrRlocList.add(itrRloc);
@@ -576,7 +576,7 @@ final class MappingServiceIntegrationTestUtil {
     static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid, Rloc rloc) {
         return new MappingRecordItemBuilder()
                 .setMappingRecordItemId("mapping-record-item-id")
-                .setKey(new MappingRecordItemKey("mapping-record-item-key"))
+                .withKey(new MappingRecordItemKey("mapping-record-item-key"))
                 .setMappingRecord(getDefaultMappingRecordBuilder(eid, rloc).build());
     }
 
@@ -656,7 +656,7 @@ final class MappingServiceIntegrationTestUtil {
                 .setRlocProbed(false)
                 .setRouted(true)
                 .setWeight((short) 1)
-                .setKey(new LocatorRecordKey(LispAddressStringifier.getString(rloc)))
+                .withKey(new LocatorRecordKey(LispAddressStringifier.getString(rloc)))
                 .setRloc(rloc);
     }
 

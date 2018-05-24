@@ -105,7 +105,7 @@ public class VppNetconfConnectionProbe implements ClusteredDataTreeChangeListene
     }
 
     private NetconfNode getNodeAugmentation(Node node) {
-        NetconfNode netconfNode = node.getAugmentation(NetconfNode.class);
+        NetconfNode netconfNode = node.augmentation(NetconfNode.class);
         if (netconfNode == null) {
             return null;
         }

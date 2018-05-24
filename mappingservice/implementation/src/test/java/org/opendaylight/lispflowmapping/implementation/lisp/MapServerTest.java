@@ -372,7 +372,7 @@ public class MapServerTest {
     private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid) {
         return new MappingRecordItemBuilder()
                 .setMappingRecordItemId("mapping-record-item-id")
-                .setKey(new MappingRecordItemKey("mapping-record-item-key"))
+                .withKey(new MappingRecordItemKey("mapping-record-item-key"))
                 .setMappingRecord(getDefaultMappingRecordBuilder(eid).build());
     }
 

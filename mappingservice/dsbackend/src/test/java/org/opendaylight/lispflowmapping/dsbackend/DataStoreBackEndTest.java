@@ -331,7 +331,7 @@ public class DataStoreBackEndTest {
 
     private static AuthenticationKeyBuilder getDefaultAuthenticationKeyBuilder() {
         return new AuthenticationKeyBuilder()
-                .setKey(new AuthenticationKeyKey(new EidUri(DUMMY_URI)))
+                .withKey(new AuthenticationKeyKey(new EidUri(DUMMY_URI)))
                 .setEid(EID_IPV4_1)
                 .setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString("password").setKeyType(0).build());
     }
@@ -347,13 +347,13 @@ public class DataStoreBackEndTest {
                 .setMappingRecord(getDefaultMappingRecordBuilder().setEid(EID_IPV4_4).build()).build();
 
         final AuthenticationKey authenticationKey_1 = new AuthenticationKeyBuilder()
-                .setKey(new AuthenticationKeyKey(new EidUri("uri-1"))).build();
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-1"))).build();
         final AuthenticationKey authenticationKey_2 = new AuthenticationKeyBuilder()
-                .setKey(new AuthenticationKeyKey(new EidUri("uri-2"))).build();
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-2"))).build();
         final AuthenticationKey authenticationKey_3 = new AuthenticationKeyBuilder()
-                .setKey(new AuthenticationKeyKey(new EidUri("uri-3"))).build();
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-3"))).build();
         final AuthenticationKey authenticationKey_4 = new AuthenticationKeyBuilder()
-                .setKey(new AuthenticationKeyKey(new EidUri("uri-4"))).build();
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-4"))).build();
 
         final VirtualNetworkIdentifier vni_1 = new VirtualNetworkIdentifierBuilder()
                 .setVni(new VniUri("vni/uri/1"))

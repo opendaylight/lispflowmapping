@@ -25,7 +25,7 @@ public final class InfoUtil {
     }
 
     public static String topology(final Topology topology) {
-        return topology.getKey().getTopologyId().getValue();
+        return topology.key().getTopologyId().getValue();
     }
 
     public static String node(final KeyedInstanceIdentifier<Node, NodeKey> nodeIID) {

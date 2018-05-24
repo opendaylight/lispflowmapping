@@ -102,7 +102,7 @@ public class VppNodeReader {
 
     private Optional<Ipv4Address> readIpAddressFromInterface(Interface intf,
                                                                    KeyedInstanceIdentifier iiToVpp) {
-        Interface2 augIntf = intf.getAugmentation(Interface2.class);
+        Interface2 augIntf = intf.augmentation(Interface2.class);
 
         if (augIntf == null) {
             LOG.debug("Cannot get Interface2 augmentation for intf {}");

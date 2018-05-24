@@ -51,7 +51,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
 
         LOG.debug("Neutron Port Created : " + port.toString());
 
-        final String hostId = port.getAugmentation(PortBindingExtension.class).getHostId();
+        final String hostId = port.augmentation(PortBindingExtension.class).getHostId();
         if (hostId == null) {
             LOG.error("Adding new Neutron port to lisp mapping service failed. Port does not have a HostID. Port: {}",
                     port.toString());
@@ -88,7 +88,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
     @Override
     public void update(Port port) {
 
-        final String hostId = port.getAugmentation(PortBindingExtension.class).getHostId();
+        final String hostId = port.augmentation(PortBindingExtension.class).getHostId();
         if (hostId == null) {
             LOG.error("Updating port to lisp mapping service failed. Port does not have a HostID. Port: {}",
                     port.toString());
