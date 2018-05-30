@@ -30,10 +30,13 @@ import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenario
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_E_SB;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -136,6 +139,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
@@ -207,6 +211,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         return option;
     }
 
+    @Override
+    protected Option[] getAdditionalOptions() {
+        return new Option[] {
+                keepRuntimeFolder(),
+                configureConsole().ignoreLocalConsole().ignoreRemoteShell()
+        };
+    }
+
     @Test
     public void testLispFlowMappingFeatureLoad() {
         Assert.assertTrue(true);
@@ -221,6 +233,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     @Before
     public void before() throws Exception {
+        File paxExamDirectory = new File("target/exam/");
+        FileUtils.delete(paxExamDirectory);
+
         areWeReady();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         mapService.setMappingMerge(false);
