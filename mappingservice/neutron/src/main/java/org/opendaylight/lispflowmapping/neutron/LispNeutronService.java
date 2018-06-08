@@ -8,10 +8,6 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
@@ -21,19 +17,23 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.s
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LispNeutronService implements ILispNeutronService, BindingAwareProvider {
+public class LispNeutronService implements ILispNeutronService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);
     private IFlowMapping mappingService;
     private OdlMappingserviceService lfmDbService;
-    protected DataBroker broker;
+    private final DataBroker broker;
 
-    public LispNeutronService(IFlowMapping mappingService, BindingAwareBroker bindingAwareBroker) {
+    public LispNeutronService(IFlowMapping mappingService, DataBroker dataBroker,
+            OdlMappingserviceService odlMappingService) {
         this.mappingService = mappingService;
-        bindingAwareBroker.registerProvider(this);
+        this.broker = dataBroker;
+
+        HostInformationManager.getInstance().setOdlMappingserviceService(odlMappingService);
         LOG.info("LISP NEUTRON SERVICE has been registered");
     }
 
+    @Override
     public IFlowMapping getMappingService() {
         return this.mappingService;
     }
@@ -43,15 +43,8 @@ public class LispNeutronService implements ILispNeutronService, BindingAwareProv
         return this.lfmDbService;
     }
 
-    @Override
-    public void onSessionInitiated(ProviderContext session) {
+    public void init() {
         LOG.info("LFMDBSERVICE IS BEING FILLED! SESSION INITIATED");
-        RpcProviderRegistry rpcRegistry = session.getSALService(RpcProviderRegistry.class);
-        lfmDbService = rpcRegistry.getRpcService(OdlMappingserviceService.class);
-        broker = session.getSALService(DataBroker.class);
-
-        HostInformationManager.getInstance().setOdlMappingserviceService(lfmDbService);
-
         DelegatingDataTreeListener.initiateListener(Network.class, this, broker);
         DelegatingDataTreeListener.initiateListener(Subnet.class, this, broker);
         DelegatingDataTreeListener.initiateListener(Port.class, this, broker);

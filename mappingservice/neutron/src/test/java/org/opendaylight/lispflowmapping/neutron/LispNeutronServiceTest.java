@@ -12,31 +12,23 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 
 public class LispNeutronServiceTest {
-    private static BindingAwareBroker.ProviderContext session = Mockito.mock(BindingAwareBroker.ProviderContext.class);
-    private static RpcProviderRegistry rpcRegistry = Mockito.mock(RpcProviderRegistry.class);
+    private static OdlMappingserviceService odlMappingService = Mockito.mock(OdlMappingserviceService.class);
     private static DataBroker dataBroker = Mockito.mock(DataBroker.class);
-    private IFlowMapping mappingService = Mockito.mock(IFlowMapping.class);
-    private BindingAwareBroker bindingAwareBroker = Mockito.mock(BindingAwareBroker.class);
+    private final IFlowMapping mappingService = Mockito.mock(IFlowMapping.class);
 
-    private LispNeutronService lispNeutronService = new LispNeutronService(mappingService, bindingAwareBroker);
+    private final LispNeutronService lispNeutronService =
+            new LispNeutronService(mappingService, dataBroker, odlMappingService);
 
     /**
-     * Tests {@link LispNeutronService#onSessionInitiated} method.
+     * Tests {@link LispNeutronService#Init} method.
      */
     @Test
-    public void onSessionInitiatedTest() {
-        Mockito.when(session.getSALService(RpcProviderRegistry.class)).thenReturn(rpcRegistry);
-        Mockito.when(session.getSALService(DataBroker.class)).thenReturn(dataBroker);
-
-        lispNeutronService.onSessionInitiated(session);
-        Mockito.verify(rpcRegistry).getRpcService(OdlMappingserviceService.class);
-        Mockito.verify(session).getSALService(DataBroker.class);
+    public void onInit() {
+        lispNeutronService.init();
     }
 
     /**

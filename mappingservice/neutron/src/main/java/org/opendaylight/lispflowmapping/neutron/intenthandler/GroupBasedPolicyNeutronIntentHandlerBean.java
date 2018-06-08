@@ -9,8 +9,6 @@ package org.opendaylight.lispflowmapping.neutron.intenthandler;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.BindingAwareProvider;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.listener.service.VbridgeTopologyListenerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +22,20 @@ import org.slf4j.LoggerFactory;
  * registers and maintain listeners for getting updates of Neutron Topology
  * maintained by groupbasedpolicy and honeycomb vbd.
  */
-public class GroupBasedPolicyNeutronIntentHandlerBean implements AutoCloseable, BindingAwareProvider {
+public class GroupBasedPolicyNeutronIntentHandlerBean implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(GroupBasedPolicyNeutronIntentHandlerBean.class);
 
-    private DataBroker dataBroker;
-    private MountPointService mountService;
+    private final DataBroker dataBroker;
+    private final MountPointService mountService;
 
     private VbridgeTopologyListenerService vbridgeTopologyListenerService;
 
-    private IntentHandlerAsyncExecutorProvider intentHandlerAsyncExecutorProvider =
+    private final IntentHandlerAsyncExecutorProvider intentHandlerAsyncExecutorProvider =
             IntentHandlerAsyncExecutorProvider.getInstace();
 
-    public GroupBasedPolicyNeutronIntentHandlerBean(final BindingAwareBroker bindingAwareBroker) {
-        bindingAwareBroker.registerProvider(this);
+    public GroupBasedPolicyNeutronIntentHandlerBean(DataBroker dataBroker, MountPointService mountService) {
+        this.dataBroker = dataBroker;
+        this.mountService = mountService;
     }
 
 
@@ -46,11 +45,8 @@ public class GroupBasedPolicyNeutronIntentHandlerBean implements AutoCloseable, 
         intentHandlerAsyncExecutorProvider.close();
     }
 
-    @Override
-    public void onSessionInitiated(BindingAwareBroker.ProviderContext session) {
+    public void init() {
         LOG.info("LFM neutron handler service registered", this.getClass().getSimpleName());
-        dataBroker = session.getSALService(DataBroker.class);
-        mountService = session.getSALService(MountPointService.class);
         vbridgeTopologyListenerService = VbridgeTopologyListenerService.initialize(dataBroker, mountService);
     }
 }
