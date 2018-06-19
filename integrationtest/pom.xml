@@ -48,6 +48,15 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     -->
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>ignore-lispflowmapping-integrationtest</id>
+      <properties>
+        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <pluginManagement>
       <plugins>
