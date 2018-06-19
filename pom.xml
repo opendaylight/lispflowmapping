@@ -21,9 +21,21 @@
     <module>artifacts</module>
     <module>mappingservice</module>
     <module>features</module>
-    <module>lispflowmapping-karaf</module>
-    <module>integrationtest</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>lispflowmapping-integrationtest</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <modules>
+        <module>lispflowmapping-karaf</module>
+        <module>integrationtest</module>
+      </modules>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
