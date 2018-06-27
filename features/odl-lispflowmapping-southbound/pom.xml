@@ -46,6 +46,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
     </dependency>
     <dependency>
+      <groupId>org.opendaylight.odlparent</groupId>
+      <artifactId>odl-guava-23</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>odl-lispflowmapping-models</artifactId>
       <version>${project.version}</version>
