@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
@@ -32,13 +33,17 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4BinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -210,16 +215,19 @@ public class LispXtrSouthboundHandlerTest {
     }
 
     private static MapRequestBuilder getDefaultMapRequestBuilder() {
-        final ItrRloc itrRloc = new ItrRlocBuilder()
-                .setRloc(new RlocBuilder()
-                        .setAddressType(Ipv4BinaryAfi.class)
-                        .setAddress(new Ipv4BinaryBuilder()
-                                .setIpv4Binary(new Ipv4AddressBinary(new byte[]{127, 0, 0, 2})).build())
-                        .build())
+        final Rloc rloc = new RlocBuilder()
+                .setAddressType(Ipv4BinaryAfi.class)
+                .setAddress(new Ipv4BinaryBuilder()
+                        .setIpv4Binary(new Ipv4AddressBinary(new byte[]{127, 0, 0, 2})).build())
                 .build();
+        final ItrRloc itrRloc = new ItrRlocBuilder()
+                .withKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
+                .setRloc(rloc).build();
 
+        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_2 + IPV4_STRING_PREFIX);
         final EidItem eidItem = new EidItemBuilder()
-                .setEid(LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_2 + IPV4_STRING_PREFIX)).build();
+                .withKey(new EidItemKey(IPV4_STRING_2 + IPV4_STRING_PREFIX))
+                .setEid(eid).build();
 
         return new MapRequestBuilder()
                 .setItrRloc(Lists.newArrayList(itrRloc))

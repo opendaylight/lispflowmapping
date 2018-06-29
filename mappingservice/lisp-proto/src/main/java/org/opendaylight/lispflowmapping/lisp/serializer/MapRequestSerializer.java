@@ -15,17 +15,22 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,16 +152,20 @@ public final class MapRequestSerializer {
                 builder.setItrRloc(new ArrayList<ItrRloc>());
             }
             for (int i = 0; i < itrCount; i++) {
-                builder.getItrRloc().add(new ItrRlocBuilder().setRloc(
-                        LispAddressSerializer.getInstance().deserializeRloc(requestBuffer)).build());
+                Rloc rloc = LispAddressSerializer.getInstance().deserializeRloc(requestBuffer);
+                builder.getItrRloc().add(new ItrRlocBuilder()
+                        .withKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
+                        .setRloc(rloc).build());
             }
 
             if (builder.getEidItem() == null) {
                 builder.setEidItem(new ArrayList<EidItem>());
             }
             for (int i = 0; i < recordCount; i++) {
-                builder.getEidItem().add(new EidItemBuilder().setEid(
-                        EidRecordSerializer.getInstance().deserialize(requestBuffer)).build());
+                Eid eid = EidRecordSerializer.getInstance().deserialize(requestBuffer);
+                builder.getEidItem().add(new EidItemBuilder()
+                        .withKey(new EidItemKey(LispAddressStringifier.getString(eid)))
+                        .setEid(eid).build());
             }
             if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
                 try {

@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 
 /**
  * This class deals with serializing map notify from the java object to udp.
@@ -123,16 +124,21 @@ public final class MapNotifySerializer {
                 SiteId siteId = new SiteId(siteIdBuf);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);
+                int idx = 0;
                 for (MappingRecordBuilder mrb : mrbs) {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                            mrb.build()).build());
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                            .withKey(new MappingRecordItemKey(Integer.toString(idx)))
+                            .setMappingRecord(mrb.build()).build());
+                    idx++;
                 }
             } else {
                 for (int i = 0; i < recordCount; i++) {
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                            MappingRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                            .withKey(new MappingRecordItemKey(Integer.toString(i)))
+                            .setMappingRecord(MappingRecordSerializer.getInstance().deserialize(notifyBuffer))
+                            .build());
                 }
             }
 

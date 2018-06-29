@@ -23,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 
 /**
@@ -123,17 +124,22 @@ public final class MapRegisterSerializer {
                 SiteId siteId = new SiteId(siteIdBuf);
                 builder.setXtrId(xtrId);
                 builder.setSiteId(siteId);
+                int idx = 0;
                 for (MappingRecordBuilder mrb : mrbs) {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
                     mrb.setSourceRloc(LispAddressUtil.addressBinaryFromInet(sourceRloc));
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                            mrb.build()).build());
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                            .withKey(new MappingRecordItemKey(Integer.toString(idx)))
+                            .setMappingRecord(mrb.build()).build());
+                    idx++;
                 }
             } else {
                 for (int i = 0; i < recordCount; i++) {
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                            MappingRecordSerializer.getInstance().deserialize(registerBuffer)).build());
+                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                            .withKey(new MappingRecordItemKey(Integer.toString(i)))
+                            .setMappingRecord(MappingRecordSerializer.getInstance().deserialize(registerBuffer))
+                            .build());
                 }
             }
 
