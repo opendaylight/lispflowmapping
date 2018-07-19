@@ -24,7 +24,31 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
        build failure. Please do not modify this unless you have a good reason. -->
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.opendaylight.mdsal.model</groupId>
+        <artifactId>mdsal-model-artifacts</artifactId>
+        <version>0.13.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>odl-mdsal-model-rfc7224</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>odl-mdsal-model-rfc7277</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
     <dependency>
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>odl-neutron-service</artifactId>
