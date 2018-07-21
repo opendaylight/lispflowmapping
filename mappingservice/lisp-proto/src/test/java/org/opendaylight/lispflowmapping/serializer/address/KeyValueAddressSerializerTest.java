@@ -10,9 +10,7 @@ package org.opendaylight.lispflowmapping.serializer.address;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-
 import junitx.framework.ArrayAssert;
-
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -21,7 +19,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.KeyValueAddressLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.KeyValueAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.key.value.address.KeyValueAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -39,8 +36,8 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
         assertEquals(KeyValueAddressLcaf.class, address.getAddressType());
         KeyValueAddress srcDestAddress = (KeyValueAddress) address.getAddress();
 
-        assertEquals("17.34.51.68", String.valueOf(srcDestAddress.getKeyValueAddress().getKey().getValue()));
-        assertEquals("34.51.68.85", String.valueOf(srcDestAddress.getKeyValueAddress().getValue().getValue()));
+        assertEquals("17.34.51.68", srcDestAddress.getKeyValueAddress().getKey().stringValue());
+        assertEquals("34.51.68.85", srcDestAddress.getKeyValueAddress().getValue().stringValue());
     }
 
     @Test(expected = LispSerializationException.class)
@@ -66,10 +63,10 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
                 "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD"), null); // AFI=2,
         // IPv6
 
-        assertEquals("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd", String.valueOf(
-                ((KeyValueAddress) srcAddress.getAddress()).getKeyValueAddress().getKey().getValue()));
-        assertEquals("4433:2211:8877:6655:99aa:bbcc:aabb:ccdd", String.valueOf(
-                ((KeyValueAddress) srcAddress.getAddress()).getKeyValueAddress().getValue().getValue()));
+        assertEquals("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd",
+                ((KeyValueAddress) srcAddress.getAddress()).getKeyValueAddress().getKey().stringValue());
+        assertEquals("4433:2211:8877:6655:99aa:bbcc:aabb:ccdd",
+                ((KeyValueAddress) srcAddress.getAddress()).getKeyValueAddress().getValue().stringValue());
     }
 
     @Test
@@ -81,10 +78,9 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(KeyValueAddressLcaf.class);
         eb.setVirtualNetworkId(null);
-        eb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.KeyValueAddressBuilder()
-                .setKeyValueAddress(addressBuilder.build()).build());
+        eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+            .lisp.address.address.KeyValueAddressBuilder()
+            .setKeyValueAddress(addressBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eb.build()));
         LispAddressSerializer.getInstance().serialize(buf, eb.build());

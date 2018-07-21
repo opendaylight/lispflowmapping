@@ -432,7 +432,7 @@ public final class LispAddressUtil {
     public static Eid toIpPrefixEid(IpAddress addr, int vni) {
         // If you touch this, be sure that sfclisp compiles!
         int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
-        IpPrefix prefix = asIpPrefix(String.valueOf(addr.getValue()), mask);
+        IpPrefix prefix = asIpPrefix(addr.stringValue(), mask);
         // XXX getMapping rcp fails if VNI set to 0
         return toEidNoVni(prefix);
     }

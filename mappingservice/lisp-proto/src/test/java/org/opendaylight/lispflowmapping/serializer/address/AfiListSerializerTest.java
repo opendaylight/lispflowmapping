@@ -12,10 +12,8 @@ import static org.junit.Assert.assertEquals;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import junitx.framework.ArrayAssert;
 import junitx.framework.Assert;
-
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -23,7 +21,6 @@ import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.AfiList;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -44,8 +41,8 @@ public class AfiListSerializerTest extends BaseTestCase {
         List<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
         assertEquals(2, addressList.size());
 
-        assertEquals("170.187.204.221", String.valueOf(addressList.get(0).getValue()));
-        assertEquals("1122:3344:1122:3344:1122:3344:1122:3344", String.valueOf(addressList.get(1).getValue()));
+        assertEquals("170.187.204.221", addressList.get(0).stringValue());
+        assertEquals("1122:3344:1122:3344:1122:3344:1122:3344", addressList.get(1).stringValue());
     }
 
     @Test
@@ -77,7 +74,7 @@ public class AfiListSerializerTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         AfiListBuilder listBuilder = new AfiListBuilder();
-        List<SimpleAddress> addressList = new ArrayList<SimpleAddress>();
+        List<SimpleAddress> addressList = new ArrayList<>();
         addressList.add(SimpleAddressBuilder.getDefaultInstance("170.187.204.221"));
         addressList.add(SimpleAddressBuilder.getDefaultInstance("1122:3344:1122:3344:1122:3344:1122:3344"));
         listBuilder.setAddressList(addressList);
@@ -85,10 +82,9 @@ public class AfiListSerializerTest extends BaseTestCase {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(AfiListLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.AfiListBuilder()
-                .setAfiList(listBuilder.build()).build());
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+            .lisp.address.address.AfiListBuilder()
+            .setAfiList(listBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
@@ -102,16 +98,15 @@ public class AfiListSerializerTest extends BaseTestCase {
     @Test
     public void serialize__NoAddresses() throws Exception {
         AfiListBuilder listBuilder = new AfiListBuilder();
-        List<SimpleAddress> addressList = new ArrayList<SimpleAddress>();
+        List<SimpleAddress> addressList = new ArrayList<>();
         listBuilder.setAddressList(addressList);
 
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(AfiListLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.AfiListBuilder()
-                .setAfiList(listBuilder.build()).build());
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+            .lisp.address.address.AfiListBuilder()
+            .setAfiList(listBuilder.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());

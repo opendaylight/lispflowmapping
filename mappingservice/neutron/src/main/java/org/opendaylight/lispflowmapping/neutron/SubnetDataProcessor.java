@@ -56,7 +56,7 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
 
         // Determine the IANA code for the subnet IP version
         // Default is set to IPv4 for neutron subnets
-        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr().stringValue());
 
         try {
             final OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();
@@ -100,7 +100,7 @@ public class SubnetDataProcessor implements DataProcessor<Subnet> {
 
         // Determine the IANA code for the subnet IP version
         // Default is set to IPv4 for neutron subnets
-        final Eid eid = LispAddressUtil.asIpv4PrefixEid(String.valueOf(subnet.getCidr().getValue()));
+        final Eid eid = LispAddressUtil.asIpv4PrefixEid(subnet.getCidr().stringValue());
 
         try {
             final OdlMappingserviceService lfmdb = lispNeutronService.getMappingDbService();

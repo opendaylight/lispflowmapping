@@ -168,7 +168,7 @@ public final class MaskUtil {
     }
 
     private static IpPrefix normalizeIpPrefix(IpPrefix address) throws UnknownHostException {
-        String[] prefix = splitPrefix(String.valueOf(address.getValue()));
+        String[] prefix = splitPrefix(address.stringValue());
         short mask = Short.parseShort(prefix[1]);
 
         InetAddress normalizedAddress = normalizeIP(InetAddresses.forString(prefix[0]), mask);
