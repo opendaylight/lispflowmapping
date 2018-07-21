@@ -12,16 +12,13 @@ import static org.junit.Assert.assertEquals;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import junitx.framework.ArrayAssert;
-
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.explicit.locator.path.explicit.locator.path.Hop;
@@ -44,8 +41,8 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         List<Hop> hops = elp.getExplicitLocatorPath().getHop();
         assertEquals(2, hops.size());
 
-        assertEquals("170.187.204.221", String.valueOf(hops.get(0).getAddress().getValue()));
-        assertEquals("17.34.51.68", String.valueOf(hops.get(1).getAddress().getValue()));
+        assertEquals("170.187.204.221", hops.get(0).getAddress().stringValue());
+        assertEquals("17.34.51.68", hops.get(1).getAddress().stringValue());
     }
 
     @Test
@@ -61,11 +58,11 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         List<Hop> hops = elp.getExplicitLocatorPath().getHop();
         assertEquals(2, hops.size());
 
-        assertEquals("170.187.204.221", String.valueOf(hops.get(0).getAddress().getValue()));
+        assertEquals("170.187.204.221", hops.get(0).getAddress().stringValue());
         assertEquals(true, hops.get(0).getLrsBits().isLookup().booleanValue());
         assertEquals(false, hops.get(0).getLrsBits().isRlocProbe().booleanValue());
         assertEquals(true, hops.get(0).getLrsBits().isStrict().booleanValue());
-        assertEquals("17.34.51.68", String.valueOf(hops.get(1).getAddress().getValue()));
+        assertEquals("17.34.51.68", hops.get(1).getAddress().stringValue());
         assertEquals(false, hops.get(1).getLrsBits().isLookup().booleanValue());
         assertEquals(true, hops.get(1).getLrsBits().isRlocProbe().booleanValue());
         assertEquals(false, hops.get(1).getLrsBits().isStrict().booleanValue());
@@ -99,7 +96,7 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        List<Hop> hops = new ArrayList<Hop>();
+        List<Hop> hops = new ArrayList<>();
         hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("170.187.204.221")).build());
         hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("17.34.51.68")).build());
 
@@ -109,10 +106,9 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(ExplicitLocatorPathLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.ExplicitLocatorPathBuilder()
-                .setExplicitLocatorPath(elpb.build()).build());
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+            .lisp.address.address.ExplicitLocatorPathBuilder()
+            .setExplicitLocatorPath(elpb.build()).build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
@@ -128,9 +124,8 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(ExplicitLocatorPathLcaf.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress((Address)
-                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.ExplicitLocatorPathBuilder().build());
+        rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+            .lisp.address.address.ExplicitLocatorPathBuilder().build());
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());

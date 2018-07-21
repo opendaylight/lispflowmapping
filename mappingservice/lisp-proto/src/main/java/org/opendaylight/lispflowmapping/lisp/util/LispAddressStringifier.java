@@ -331,7 +331,7 @@ public final class LispAddressStringifier {
             if (needComma) {
                 sb.append(",");
             }
-            sb.append(a.getValue());
+            sb.append(a.stringValue());
             needComma = true;
         }
         sb.append("}");
@@ -400,16 +400,16 @@ public final class LispAddressStringifier {
         // AFI = 16387, LCAF Type 12, Source/Destination Key
         // Example rendering:
         //    192.0.2.1/32|192.0.2.2/32
-        return getPrefixString(dst, (new String(addr.getSourceDestKey().getSource().getValue()))
-                + "|" + getPrefixString(dst, new String(addr.getSourceDestKey().getDest().getValue())));
+        return getPrefixString(dst, addr.getSourceDestKey().getSource().stringValue()
+                + "|" + getPrefixString(dst, addr.getSourceDestKey().getDest().stringValue()));
     }
 
     protected static String getStringFromKeyValueAddress(Destination dst, KeyValueAddress addr) {
         // AFI = 16387, LCAF Type 15, Key/Value Address Pair
         // Example rendering:
         //    192.0.2.1=>192.0.2.2
-        return getPrefixString(dst, new String(addr.getKeyValueAddress().getKey().getValue())
-                + "=>" + getPrefixString(dst, new String(addr.getKeyValueAddress().getValue().getValue())));
+        return getPrefixString(dst, addr.getKeyValueAddress().getKey().stringValue()
+                + "=>" + getPrefixString(dst, addr.getKeyValueAddress().getValue().stringValue()));
     }
 
     protected static String getStringFromMac(Destination dst, Mac addr) {
