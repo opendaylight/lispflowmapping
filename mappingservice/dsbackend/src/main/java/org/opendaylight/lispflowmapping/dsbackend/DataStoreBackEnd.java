@@ -11,7 +11,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +25,7 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.mdsal.common.api.CommitInfo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -260,9 +260,9 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.put(logicalDatastoreType, addIID, data, true);
-        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
+        writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
 
-            public void onSuccess(Void result) {
+            public void onSuccess(CommitInfo result) {
             }
 
             public void onFailure(Throwable throwable) {
@@ -294,9 +294,9 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
-        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
+        writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
 
-            public void onSuccess(Void result) {
+            public void onSuccess(CommitInfo result) {
             }
 
             public void onFailure(Throwable throwable) {
