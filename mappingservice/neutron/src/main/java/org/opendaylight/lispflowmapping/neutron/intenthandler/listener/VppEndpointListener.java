@@ -157,7 +157,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
                     public KeyedInstanceIdentifier<Node, NodeKey> apply(@Nullable Void vd) {
                         return nodeIdToKeyedInstanceIdentifierMap.get(newOrModifiedNode.getNodeId()).iterator().next();
                     }
-                });
+                }, MoreExecutors.directExecutor());
     }
 
     private void processNodeOnConnection(final Node newOrModifiedNode) {
