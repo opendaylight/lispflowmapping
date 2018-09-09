@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9a6fdb5_970cfc26",
+        "filename": "docs/conf.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2018-09-09T16:30:31Z",
+      "side": 1,
+      "message": "Can you please capitalize as LISP Flow Mapping (we tried to used that consistently, since LISP is an acronym) ?",
+      "revId": "d2cc1b4a9054ff1e1cc6532a17c6db80236310f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "356aca40_3e7c2d89",
+        "filename": "docs/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2018-09-09T16:30:31Z",
+      "side": 1,
+      "message": "Same here.",
+      "revId": "d2cc1b4a9054ff1e1cc6532a17c6db80236310f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
