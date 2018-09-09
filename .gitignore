@@ -13,3 +13,7 @@
 .idea
 .checkstyle
 .DS_Store
+
+# Sphinx documentation
+.tox/
+docs/_build/
