@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c43ac95_70101d6e",
+        "filename": "docs/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2018-09-09T16:29:54Z",
+      "side": 1,
+      "message": "Can you please capitalize as LISP Flow Mapping (we tried to used that consistently, since LISP is an acronym) ?",
+      "revId": "3947fec7b1b6db39ca5f106e7a30f8bfd264d0dd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
