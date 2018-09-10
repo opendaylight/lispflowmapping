@@ -16,6 +16,24 @@
       "revId": "aa2097830360635ba0585f750e856d6e5ee0f964",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f1dce0a_ee205d99",
+        "filename": "docs/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2018-09-10T01:03:14Z",
+      "side": 1,
+      "message": "Sure, will update the patches.",
+      "parentUuid": "7dce4950_c4a7d9c6",
+      "revId": "aa2097830360635ba0585f750e856d6e5ee0f964",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
