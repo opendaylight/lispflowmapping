@@ -403,10 +403,9 @@ public class LispMappingServiceTest {
                 .setTimestamp(TIMESTAMP).build();
     }
 
-    class TransportAddressMatch extends ArgumentMatcher<SendMapNotifyInput> {
-        public boolean matches(Object sendMapNotify) {
-            final SendMapNotifyInput sendMapNotifyInput = (SendMapNotifyInput) sendMapNotify;
-            final TransportAddress notifyTransportAddress = sendMapNotifyInput.getTransportAddress();
+    class TransportAddressMatch implements ArgumentMatcher<SendMapNotifyInput> {
+        public boolean matches(SendMapNotifyInput sendMapNotify) {
+            final TransportAddress notifyTransportAddress = sendMapNotify.getTransportAddress();
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)
                     || TRANSPORT_ADDRESS_2.equals(notifyTransportAddress);
         }
