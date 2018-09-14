@@ -120,7 +120,6 @@ public class LispMappingServiceTest {
     public void handleMapRequestTest() {
         final MapRequest mapRequest = Mockito.mock(MapRequest.class);
         final MapReply mapReply = new MapReplyBuilder().build();
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapRequestMock.get()).thenReturn(null);
         Mockito.when(tlsMapReplyMock.get()).thenReturn(mapReply);
 
@@ -130,7 +129,7 @@ public class LispMappingServiceTest {
         Mockito.verify(tlsMapRequestMock).get();
         Mockito.verifyNoMoreInteractions(tlsMapRequestMock);
         Mockito.verify(mapResolverMock).handleMapRequest(mapRequest);
-        Mockito.verify(tlsMapReplyMock).set(Mockito.any(MapReply.class));
+        Mockito.verify(tlsMapReplyMock).set(Mockito.any());
         Mockito.verify(tlsMapReplyMock).get();
 
         assertEquals(result, mapReply);
@@ -147,7 +146,6 @@ public class LispMappingServiceTest {
                 .setMapRequest(pair.getLeft())
                 .setTransportAddress(pair.getRight());
 
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapRequestMock.get()).thenReturn(pair);
 
         assertNull(lispMappingService.handleMapRequest(mapRequest));
@@ -162,13 +160,11 @@ public class LispMappingServiceTest {
     public void handleMapRegisterTest() {
         final Pair<MapNotify, List<TransportAddress>> pairMock = Mockito.mock(Pair.class);
 
-        Mockito.when(mapRegisterMock.getMappingRecordItem())
-                .thenReturn(Lists.newArrayList(MAPPING_RECORD_ITEM_BUILDER.build()));
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(pairMock);
 
         lispMappingService.handleMapRegister(mapRegisterMock);
         Mockito.verify(mapServerMock).handleMapRegister(mapRegisterMock);
-        Mockito.verify(tlsMapNotifyMock).set(Mockito.any(MutablePair.class));
+        Mockito.verify(tlsMapNotifyMock).set(Mockito.any());
     }
 
     /**
@@ -182,8 +178,6 @@ public class LispMappingServiceTest {
         final AddMapping addMapping = Mockito.mock(AddMapping.class);
 
         Mockito.when(addMapping.getMapRegister()).thenReturn(mapRegister);
-        Mockito.when(mapRegister.getMappingRecordItem())
-                .thenReturn(Lists.newArrayList(MAPPING_RECORD_ITEM_BUILDER.build()));
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(getDefaultMapNotifyPair());
 
         lispMappingService.onAddMapping(addMapping);
@@ -202,8 +196,6 @@ public class LispMappingServiceTest {
         final MapNotify mapNotify = new MapNotifyBuilder().setKeyId((short) 1).build();
 
         Mockito.when(addMapping.getMapRegister()).thenReturn(mapRegister);
-        Mockito.when(mapRegister.getMappingRecordItem())
-                .thenReturn(Lists.newArrayList(MAPPING_RECORD_ITEM_BUILDER.build()));
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(new MutablePair<>(mapNotify, null));
         Mockito.when(addMapping.getTransportAddress()).thenReturn(TRANSPORT_ADDRESS_1);
 
@@ -230,7 +222,6 @@ public class LispMappingServiceTest {
 
         Mockito.when(requestMapping.getMapRequest()).thenReturn(mapRequest);
         Mockito.when(requestMapping.getTransportAddress()).thenReturn(TRANSPORT_ADDRESS_1);
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapReplyMock.get()).thenReturn(mapReply);
 
         // result
@@ -253,7 +244,6 @@ public class LispMappingServiceTest {
                     .maprequestnotification.MapRequest.class);
 
         Mockito.when(requestMapping.getMapRequest()).thenReturn(mapRequest);
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
         Mockito.when(tlsMapReplyMock.get()).thenReturn(null);
 
         lispMappingService.onRequestMapping(requestMapping);
@@ -403,10 +393,9 @@ public class LispMappingServiceTest {
                 .setTimestamp(TIMESTAMP).build();
     }
 
-    class TransportAddressMatch extends ArgumentMatcher<SendMapNotifyInput> {
-        public boolean matches(Object sendMapNotify) {
-            final SendMapNotifyInput sendMapNotifyInput = (SendMapNotifyInput) sendMapNotify;
-            final TransportAddress notifyTransportAddress = sendMapNotifyInput.getTransportAddress();
+    class TransportAddressMatch implements ArgumentMatcher<SendMapNotifyInput> {
+        public boolean matches(SendMapNotifyInput sendMapNotify) {
+            final TransportAddress notifyTransportAddress = sendMapNotify.getTransportAddress();
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)
                     || TRANSPORT_ADDRESS_2.equals(notifyTransportAddress);
         }
