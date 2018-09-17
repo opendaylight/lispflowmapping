@@ -188,11 +188,11 @@ public class HashMapDbTest {
                 new MappingEntry<Object>(mapKey2, mapValue2),
                 new MappingEntry<Object>(mapKey3, mapValue3));
 
-        Map mapResult = new HashMap<>();
         Map mapSample = new HashMap<>();
         mapSample.put(mapKey1, mapValue1);
         mapSample.put(mapKey2, mapValue2);
         mapSample.put(mapKey3, mapValue3);
+        Map mapResult = new HashMap<>();
         map.getAll((keyId, valueKey, value) -> {
             Assert.assertEquals(dbEntryKey, keyId);
             mapResult.put(valueKey, value);
