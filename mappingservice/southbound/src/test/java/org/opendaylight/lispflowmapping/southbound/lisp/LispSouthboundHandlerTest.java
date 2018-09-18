@@ -36,8 +36,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -118,22 +118,26 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @BeforeClass
     public static void initTests() {
         akdb = Mockito.mock(AuthKeyDb.class);
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("10.10.10.10/8"))))
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
+                "10.10.10.10/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "2610:d0:ffff:192:0:0:0:1/128"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"))))
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
+                "153.16.254.1/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("125.124.123.122/8",
-                new InstanceIdType(21L)))))
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
+                "125.124.123.122/8", new InstanceIdType(21L)))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asMacEid("0a:0b:0c:0d:0e:0f"))))
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asMacEid(
+                "0a:0b:0c:0d:0e:0f"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
-        Mockito.when(akdb.getAuthenticationKey(Matchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid("172.1.1.2/32"))))
+        Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
+                "172.1.1.2/32"))))
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
 
         akdl = Mockito.mock(AuthenticationKeyDataListener.class);

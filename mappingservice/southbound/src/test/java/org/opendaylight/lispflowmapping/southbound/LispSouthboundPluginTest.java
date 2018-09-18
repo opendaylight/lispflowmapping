@@ -24,7 +24,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -40,12 +39,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(NioDatagramChannel.class)
 public class LispSouthboundPluginTest {
 
     private static NioDatagramChannel channel;
@@ -79,8 +73,8 @@ public class LispSouthboundPluginTest {
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
 
-        channel = PowerMockito.mock(NioDatagramChannel.class);
-        xtrChannel = PowerMockito.mock(NioDatagramChannel.class);
+        channel = Mockito.mock(NioDatagramChannel.class);
+        xtrChannel = Mockito.mock(NioDatagramChannel.class);
         injectChannel();
         injectXtrChannel();
     }
