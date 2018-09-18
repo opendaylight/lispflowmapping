@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import com.google.common.collect.Lists;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.concurrent.Future;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -68,7 +68,15 @@ public class PortDataProcessorTest {
         augmentationMock = Mockito.mock(PortBindingExtension.class);
         future = Mockito.mock(Future.class);
         rpcResult = Mockito.mock(RpcResult.class);
-        Whitebox.setInternalState(portDataProcessor, "hostInformationManager", hostInformationManager);
+
+        try {
+            Field field = portDataProcessor.getClass().getDeclaredField("hostInformationManager");
+            field.setAccessible(true);
+            field.set(portDataProcessor, hostInformationManager);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set hostInformationManager", e);
+        }
+
         // common stubbing is called before invocation of each test
         commonStubbing();
     }
