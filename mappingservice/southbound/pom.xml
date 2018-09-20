@@ -66,13 +66,13 @@
       <artifactId>common.unittest.tools</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <!-- ODL Parent 4.0.0 only includes mockito-core. Based on
+           https://git.opendaylight.org/gerrit/#/c/76208/ it will be in 4.0.1,
+           so if that turns out to be true, the version should be removed
+           when moving to odlparent 4.0.1 -->
+      <version>2.20.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

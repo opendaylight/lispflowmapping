@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -172,8 +172,6 @@ public class MapServerTest {
     @Test
     public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_DATA_1);
-        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
-                .thenReturn(subscriberSetMock_1);
 
         mappingData.setMergeEnabled(false);
         mapServer.handleMapRegister(mapRegister);
@@ -261,8 +259,6 @@ public class MapServerTest {
                 .thenReturn(OLD_MAPPING_DATA_1)
                 .thenReturn(OLD_MAPPING_DATA_2)
                 .thenReturn(getDefaultMappingData(getDefaultMappingRecordBuilder().build()));
-        Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SUBSCRIBERS))
-                .thenReturn(subscriberSetMock_1);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_EID_1, SubKeys.SRC_RLOCS))
                 .thenReturn(DEFAULT_IP_ADDRESS_SET);
 
