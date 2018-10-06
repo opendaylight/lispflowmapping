@@ -8,7 +8,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 -->
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-lispflowmapping-southbound">
     <feature name="odl-lispflowmapping-southbound">
-        <feature version="[3.1.0,4)">odl-netty-4</feature>
-        <feature version="[3.1.0,4)">odl-guava-23</feature>
+        <feature version="[4,5)">odl-netty-4</feature>
+        <feature version="[4,5)">odl-guava</feature>
     </feature>
 </features>
