@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.opendaylight.mdsal</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>0.14.0-SNAPSHOT</version>
+    <version>3.0.1</version>
     <relativePath/>
   </parent>
 
@@ -67,16 +67,16 @@
       <artifactId>yang-ext</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>ietf-interfaces</artifactId>
+      <groupId>org.opendaylight.mdsal.binding.model.ietf</groupId>
+      <artifactId>rfc8343</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>iana-if-type-2014-05-08</artifactId>
+      <groupId>org.opendaylight.mdsal.binding.model.iana</groupId>
+      <artifactId>iana-if-type</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>ietf-ip-2014-06-16</artifactId>
+      <groupId>org.opendaylight.mdsal.binding.model.ietf</groupId>
+      <artifactId>rfc7277</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.opendaylight.mdsal</groupId>
       <artifactId>mdsal-singleton-common-api</artifactId>
-      <version>2.6.0-SNAPSHOT</version>
+      <version>3.0.1</version>
     </dependency>
 
     <!--Needed for testing-->
@@ -96,12 +96,32 @@
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>2.0.0-beta.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-support</artifactId>
+      <version>2.0.0-beta.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-core</artifactId>
+      <version>2.0.0-beta.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-reflect</artifactId>
+      <version>2.0.0-beta.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
+      <version>2.0.0-beta.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
