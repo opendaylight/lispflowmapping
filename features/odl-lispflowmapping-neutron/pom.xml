@@ -18,7 +18,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>odl-lispflowmapping-neutron</artifactId>
-  <version>1.8.1-SNAPSHOT</version>
+  <version>1.8.1</version>
   <packaging>feature</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
@@ -29,7 +29,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <dependency>
         <groupId>org.opendaylight.mdsal.model</groupId>
         <artifactId>mdsal-model-artifacts</artifactId>
-        <version>0.13.1-SNAPSHOT</version>
+        <version>0.13.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -52,21 +52,21 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>odl-neutron-service</artifactId>
-      <version>0.11.1-SNAPSHOT</version>
+      <version>0.11.1</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>odl-netconf-tcp</artifactId>
-      <version>1.5.1-SNAPSHOT</version>
+      <version>1.5.1</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>odl-netconf-clustered-topology</artifactId>
-      <version>1.5.1-SNAPSHOT</version>
+      <version>1.5.1</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
