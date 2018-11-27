@@ -17,8 +17,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -145,7 +145,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
             if (merge) {
-                Set<IpAddressBinary> notifyRlocs = new HashSet<IpAddressBinary>();
+                Set<IpAddressBinary> notifyRlocs = new LinkedHashSet<IpAddressBinary>();
                 List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
