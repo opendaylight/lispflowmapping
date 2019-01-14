@@ -56,6 +56,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
@@ -64,6 +65,7 @@ import org.slf4j.LoggerFactory;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
+@PowerMockIgnore({"javax.xml.datatype.*"}) // for Java 9+ compatibility, see https://github.com/powermock/powermock/issues/864
 @PrepareForTest({LoggerFactory.class})
 public class DataStoreBackEndTest {
 
