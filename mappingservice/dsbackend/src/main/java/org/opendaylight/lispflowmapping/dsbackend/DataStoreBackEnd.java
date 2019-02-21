@@ -7,25 +7,24 @@
  */
 package org.opendaylight.lispflowmapping.dsbackend;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.AsyncTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.binding.api.Transaction;
+import org.opendaylight.mdsal.binding.api.TransactionChain;
+import org.opendaylight.mdsal.binding.api.TransactionChainListener;
+import org.opendaylight.mdsal.binding.api.WriteTransaction;
+import org.opendaylight.mdsal.common.api.CommitInfo;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
@@ -51,8 +50,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier.create(MappingDatabase.class);
     private static final InstanceIdentifier<LastUpdated> LAST_UPDATED =
             InstanceIdentifier.create(MappingDatabase.class).child(LastUpdated.class);
-    private DataBroker broker;
-    private BindingTransactionChain txChain;
+    private final DataBroker broker;
+    private TransactionChain txChain;
 
     public DataStoreBackEnd(DataBroker broker) {
         this.broker = broker;
@@ -61,7 +60,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void createTransactionChain() {
         LOG.debug("Creating DataStoreBackEnd transaction chain...");
-        txChain = broker.createTransactionChain(this);
+        txChain = broker.createMergingTransactionChain(this);
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -193,7 +192,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     public List<Mapping> getAllMappings(LogicalDatastoreType logicalDataStore) {
         LOG.debug("MD-SAL: Get all mappings from {} datastore",
                 logicalDataStore == LogicalDatastoreType.CONFIGURATION ? "config" : "operational");
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        List<Mapping> mappings = new ArrayList<>();
         MappingDatabase mdb = readTransaction(DATABASE_ROOT, logicalDataStore);
 
         if (mdb != null && mdb.getVirtualNetworkIdentifier() != null) {
@@ -210,7 +209,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public List<AuthenticationKey> getAllAuthenticationKeys() {
         LOG.debug("MD-SAL: Get all authentication keys from datastore");
-        List<AuthenticationKey> authKeys = new ArrayList<AuthenticationKey>();
+        List<AuthenticationKey> authKeys = new ArrayList<>();
         MappingDatabase mdb = readTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION);
 
         if (mdb != null && mdb.getVirtualNetworkIdentifier() != null) {
@@ -260,11 +259,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.put(logicalDatastoreType, addIID, data, true);
-        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
+        writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
 
-            public void onSuccess(Void result) {
+            @Override
+            public void onSuccess(CommitInfo result) {
             }
 
+            @Override
             public void onFailure(Throwable throwable) {
                 LOG.error("Transaction failed:", throwable);
             }
@@ -273,17 +274,18 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
             InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
-        ReadOnlyTransaction readTx = txChain.newReadOnlyTransaction();
-        CheckedFuture<Optional<U>, ReadFailedException> readFuture = readTx.read(logicalDatastoreType, readIID);
-        readTx.close();
+        final ListenableFuture<Optional<U>> readFuture;
+        try (ReadTransaction readTx = txChain.newReadOnlyTransaction()) {
+            readFuture = readTx.read(logicalDatastoreType, readIID);
+        }
         try {
-            Optional<U> optionalDataObject = readFuture.checkedGet();
+            Optional<U> optionalDataObject = readFuture.get();
             if (optionalDataObject != null && optionalDataObject.isPresent()) {
                 return optionalDataObject.get();
             } else {
                 LOG.debug("{}: Failed to read", Thread.currentThread().getStackTrace()[1]);
             }
-        } catch (ReadFailedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             LOG.warn("Failed to ....", e);
         }
         return null;
@@ -294,24 +296,26 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
-        Futures.addCallback(writeTx.submit(), new FutureCallback<Void>() {
-
-            public void onSuccess(Void result) {
+        writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
+            @Override
+            public void onSuccess(CommitInfo result) {
             }
 
+            @Override
             public void onFailure(Throwable throwable) {
                 LOG.error("Transaction failed:", throwable);
             }
         }, MoreExecutors.directExecutor());
     }
 
-    public void onTransactionChainFailed(TransactionChain<?, ?> chain, AsyncTransaction<?, ?> transaction,
-            Throwable cause) {
+    @Override
+    public void onTransactionChainFailed(TransactionChain chain, Transaction transaction, Throwable cause) {
         LOG.error("Broken chain {} in DataStoreBackEnd, transaction {}, cause {}", chain, transaction.getIdentifier(),
                 cause);
     }
 
-    public void onTransactionChainSuccessful(TransactionChain<?, ?> chain) {
+    @Override
+    public void onTransactionChainSuccessful(TransactionChain chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
     }
 

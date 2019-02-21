@@ -8,12 +8,11 @@
 package org.opendaylight.lispflowmapping.neutron.intenthandler.listener.service;
 
 import javax.annotation.Nonnull;
-
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.listener.VbridgeTopologyListener;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.binding.api.MountPointService;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.vbridge.topology.rev160129.TopologyTypesVbridgeAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.vbridge.topology.rev160129.network.topology.topology.topology.types.VbridgeTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
@@ -35,7 +34,7 @@ public class VbridgeTopologyListenerService implements AutoCloseable {
     private boolean closed;
 
     private static final DataTreeIdentifier<VbridgeTopology> TREE_LISTENER_IDENTIFIER =
-            new DataTreeIdentifier<>(
+            DataTreeIdentifier.create(
                     LogicalDatastoreType.OPERATIONAL,
                     InstanceIdentifier.builder(NetworkTopology.class)
                             .child(Topology.class)

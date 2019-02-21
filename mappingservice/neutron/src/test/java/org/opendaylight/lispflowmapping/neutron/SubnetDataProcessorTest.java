@@ -9,9 +9,8 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.ExecutionException;
-
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,7 +46,6 @@ public class SubnetDataProcessorTest {
     private static final IpPrefix IP_PREFIX = new IpPrefix(new Ipv4Prefix(IPV4 + MASK));
 
     @Before
-    @SuppressWarnings("unchecked")
     public void init() {
         odlMappingserviceServiceMock = Mockito.mock(OdlMappingserviceService.class);
     }

@@ -16,17 +16,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.binding.api.DataTreeModification;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -76,7 +76,7 @@ public class MappingDataListenerTest {
 
         final InstanceIdentifier<Mapping> instanceIdentifierMock = Mockito.mock(InstanceIdentifier.class);
         final DataTreeIdentifier<Mapping> dataTreeIdentifier =
-                new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
+                DataTreeIdentifier.create(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
@@ -101,7 +101,6 @@ public class MappingDataListenerTest {
      * Tests {@link MappingDataListener#onDataTreeChanged} method with DELETE modification type from northbound.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_del);
         Mockito.when(mod_del.getDataBefore()).thenReturn(MAPPING_EID_1_NB);
@@ -114,7 +113,6 @@ public class MappingDataListenerTest {
      * Tests {@link MappingDataListener#onDataTreeChanged} method with DELETE modification type from southbound.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_SB() {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_del);
         Mockito.when(mod_del.getDataBefore()).thenReturn(MAPPING_EID_1_SB);
@@ -130,7 +128,6 @@ public class MappingDataListenerTest {
      */
     @Test
     @Ignore
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_subtreeModified);
         final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
@@ -150,7 +147,6 @@ public class MappingDataListenerTest {
      * southbound.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified_SB() {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_subtreeModified);
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(MAPPING_EID_2_SB);
@@ -165,7 +161,6 @@ public class MappingDataListenerTest {
      */
     @Test
     @Ignore
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_write_NB() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_write);
         final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
@@ -184,7 +179,6 @@ public class MappingDataListenerTest {
      * Tests {@link MappingDataListener#onDataTreeChanged} method with WRITE modification type from southbound.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_write_SB() {
         final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(change_write);
         Mockito.when(mod_write.getDataAfter()).thenReturn(MAPPING_EID_3_SB);
@@ -199,7 +193,6 @@ public class MappingDataListenerTest {
      */
     @Test
     @Ignore
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_multipleChanges() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes =
                 Lists.newArrayList(change_del, change_subtreeModified, change_write);

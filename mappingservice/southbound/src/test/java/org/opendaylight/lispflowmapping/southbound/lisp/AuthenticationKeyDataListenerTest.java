@@ -15,13 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.binding.api.DataTreeModification;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
@@ -70,7 +70,7 @@ public class AuthenticationKeyDataListenerTest {
     public void init() {
         final InstanceIdentifier<AuthenticationKey> instanceIdentifierMock = Mockito.mock(InstanceIdentifier.class);
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
-                new DataTreeIdentifier<>(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
+                DataTreeIdentifier.create(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
@@ -99,7 +99,6 @@ public class AuthenticationKeyDataListenerTest {
      * Tests {@link AuthenticationKeyDataListener#onDataTreeChanged} method with DELETE mod type, binary eid.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_BinaryEid() {
         Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_1);
 
@@ -111,7 +110,6 @@ public class AuthenticationKeyDataListenerTest {
      * Tests {@link AuthenticationKeyDataListener#onDataTreeChanged} method with DELETE mod type, Ipv4Prefix eid.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_delete_Ipv4PrefixEid() {
         Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_PREFIX);
 
@@ -123,7 +121,6 @@ public class AuthenticationKeyDataListenerTest {
      * Tests {@link AuthenticationKeyDataListener#onDataTreeChanged} method with SUBTREE_MODIFIED mod type.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_subtreeModified() {
         Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(AUTHENTICATION_KEY_2);
 
@@ -135,7 +132,6 @@ public class AuthenticationKeyDataListenerTest {
      * Tests {@link AuthenticationKeyDataListener#onDataTreeChanged} method with WRITE mod type.
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void onDataTreeChangedTest_write() {
         Mockito.when(mod_write.getDataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 

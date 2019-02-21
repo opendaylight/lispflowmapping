@@ -13,7 +13,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
@@ -27,6 +26,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
@@ -73,11 +73,9 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
-    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<MapReply>();
-    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify =
-            new ThreadLocal<Pair<MapNotify, List<TransportAddress>>>();
-    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest =
-            new ThreadLocal<Pair<MapRequest, TransportAddress>>();
+    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
+    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
+    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
     private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
@@ -101,6 +99,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return this.smr;
     }
 
+    @Override
     public void setShouldUseSmr(boolean shouldUseSmr) {
         this.smr = shouldUseSmr;
         if (mapServer != null) {
@@ -130,6 +129,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
     }
 
+    @Override
     public MapReply handleMapRequest(MapRequest request) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Retrieving mapping for {}",
@@ -151,6 +151,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         }
     }
 
+    @Override
     public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Adding mapping for {}",
@@ -201,7 +202,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
         if (mapReply != null) {
             SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
-            smrib.setMapReply((new MapReplyBuilder(mapReply).build()));
+            smrib.setMapReply(new MapReplyBuilder(mapReply).build());
             smrib.setTransportAddress(mapRequestNotification.getTransportAddress());
             getLispSB().sendMapReply(smrib.build());
         } else {
@@ -253,7 +254,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     @Override
     public void handleMapNotify(MapNotify notify, List<TransportAddress> rlocs) {
-        tlsMapNotify.set(new MutablePair<MapNotify, List<TransportAddress>>(notify, rlocs));
+        tlsMapNotify.set(new MutablePair<>(notify, rlocs));
     }
 
     @Override
@@ -273,7 +274,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     @Override
     public void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress) {
-        tlsMapRequest.set(new MutablePair<MapRequest, TransportAddress>(mapRequest, transportAddress));
+        tlsMapRequest.set(new MutablePair<>(mapRequest, transportAddress));
     }
 
     private void destroy() {

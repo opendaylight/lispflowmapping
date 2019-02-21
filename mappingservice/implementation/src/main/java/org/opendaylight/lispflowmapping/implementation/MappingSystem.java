@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.timebucket.implementation.TimeBucketMappingTimeoutService;
@@ -48,6 +46,8 @@ import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.lispflowmapping.mapcache.MultiTableMapCache;
 import org.opendaylight.lispflowmapping.mapcache.SimpleMapCache;
 import org.opendaylight.lispflowmapping.mapcache.lisp.LispMapCacheStringifier;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ExplicitLocatorPath;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.Ipv4;
@@ -88,19 +88,19 @@ public class MappingSystem implements IMappingSystem {
     private static final String AUTH_KEY_TABLE = "authentication";
     //private static final int TTL_RLOC_TIMED_OUT = 1;
     private static final int TTL_NO_RLOC_KNOWN = ConfigIni.getInstance().getNegativeMappingTTL();
-    private NotificationPublishService notificationPublishService;
+    private final NotificationPublishService notificationPublishService;
     private boolean mappingMerge;
-    private ILispDAO dao;
+    private final ILispDAO dao;
     private ILispDAO sdao;
     private ILispMapCache smc;
     private IMapCache pmc;
-    private ConcurrentHashMap<Eid, Set<Subscriber>> subscriberdb = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Eid, Set<Subscriber>> subscriberdb = new ConcurrentHashMap<>();
     private IAuthKeyDb akdb;
     private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
 
-    private ISouthBoundMappingTimeoutService sbMappingTimeoutService;
+    private final ISouthBoundMappingTimeoutService sbMappingTimeoutService;
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, NotificationPublishService nps, boolean mappingMerge) {
         this.dao = dao;
@@ -210,7 +210,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     private static MappingRecord getMappingRecord(MappingData mappingData) {
-        return (mappingData != null) ? mappingData.getRecord() : null;
+        return mappingData != null ? mappingData.getRecord() : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -329,6 +329,7 @@ public class MappingSystem implements IMappingSystem {
      * Since this method is only called when there is a hit in the southbound Map-Register cache, and that cache is
      * not used when merge is on, it's OK to ignore the effects of timestamp changes on merging for now.
      */
+    @Override
     public void refreshMappingRegistration(Eid key, XtrId xtrId, Long timestamp) {
 
         sbMappingTimeoutService.removeExpiredMappings();
