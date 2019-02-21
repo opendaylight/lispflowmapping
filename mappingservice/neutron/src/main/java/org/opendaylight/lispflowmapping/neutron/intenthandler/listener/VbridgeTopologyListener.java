@@ -8,18 +8,16 @@
 package org.opendaylight.lispflowmapping.neutron.intenthandler.listener;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
-
 import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
+import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataTreeModification;
+import org.opendaylight.mdsal.binding.api.MountPointService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.vbridge.topology.rev160129.network.topology.topology.topology.types.VbridgeTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.Topology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
@@ -33,8 +31,8 @@ import org.slf4j.LoggerFactory;
 public class VbridgeTopologyListener implements ClusteredDataTreeChangeListener<VbridgeTopology>, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(VbridgeTopologyListener.class);
 
-    private DataBroker dataBroker;
-    private MountPointService mountPointService;
+    private final DataBroker dataBroker;
+    private final MountPointService mountPointService;
 
     @GuardedBy("this")
     private final Map<TopologyKey, VppEndpointListener> domains = new ConcurrentHashMap<>();

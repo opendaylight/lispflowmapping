@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -26,9 +26,9 @@ public abstract class AbstractDataListener<T extends DataObject> implements Clus
     private ListenerRegistration<ClusteredDataTreeChangeListener<T>> operRegistration;
 
     void registerDataChangeListener() {
-        final DataTreeIdentifier<T> configDataTreeIdentifier = new DataTreeIdentifier<>(
+        final DataTreeIdentifier<T> configDataTreeIdentifier = DataTreeIdentifier.create(
                 LogicalDatastoreType.CONFIGURATION, path);
-        final DataTreeIdentifier<T> operDataTreeIdentifier = new DataTreeIdentifier<>(
+        final DataTreeIdentifier<T> operDataTreeIdentifier = DataTreeIdentifier.create(
                 LogicalDatastoreType.OPERATIONAL, path);
 
         configRegistration = broker.registerDataTreeChangeListener(configDataTreeIdentifier, this);

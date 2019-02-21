@@ -27,8 +27,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.util.MappingMergeUtil;
@@ -41,6 +39,8 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ExplicitLocatorPathLcaf;
@@ -259,7 +259,7 @@ public class MappingSystemTest {
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
-        final MappingData result = (MappingData) mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
+        final MappingData result = mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
         final Ipv4Binary ipv4Result = (Ipv4Binary) result.getRecord().getLocatorRecord().get(0).getRloc().getAddress();
         assertTrue(Arrays
                 .equals(InetAddress.getByName(IPV4_STRING_3).getAddress(), ipv4Result.getIpv4Binary().getValue()));

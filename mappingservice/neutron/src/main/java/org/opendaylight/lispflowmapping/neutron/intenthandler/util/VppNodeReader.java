@@ -7,17 +7,15 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.util;
 
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.exception.RlocNotFoundOnVppNode;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.MountPointService;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4AddressNoZone;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev140508.InterfacesState;
@@ -93,7 +91,7 @@ public class VppNodeReader {
 
             }
 
-            resultFuture.set(Optional.absent());
+            resultFuture.set(Optional.empty());
         } else {
             LOG.debug("Data broker for vpp {} is missing.", instanceIdentifierToVppNode);
         }
@@ -106,26 +104,26 @@ public class VppNodeReader {
 
         if (augIntf == null) {
             LOG.debug("Cannot get Interface2 augmentation for intf {}");
-            return Optional.absent();
+            return Optional.empty();
         }
 
         Ipv4 ipv4 = augIntf.getIpv4();
 
         if (ipv4 == null) {
             LOG.debug("Ipv4 address for interface {} on node {} is null!", augIntf, InfoUtil.node(iiToVpp));
-            return Optional.absent();
+            return Optional.empty();
         }
 
         final List<Address> addresses = ipv4.getAddress();
         if (addresses == null || addresses.isEmpty()) {
             LOG.debug("Ipv4 addresses list is empty for interface {} on node {}", augIntf, InfoUtil.node(iiToVpp));
-            return Optional.absent();
+            return Optional.empty();
         }
 
         final Ipv4AddressNoZone ip = addresses.iterator().next().getIp();
         if (ip == null) {
             LOG.debug("Ipv4AddressNoZone is null for node {}", InfoUtil.node(iiToVpp));
-            return Optional.absent();
+            return Optional.empty();
         }
 
         LOG.debug("Got ip address {} from interface {} on node {}", ip.getValue(), intf.getName(),

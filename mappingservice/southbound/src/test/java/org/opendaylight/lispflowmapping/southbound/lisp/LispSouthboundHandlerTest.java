@@ -39,7 +39,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -52,6 +51,7 @@ import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
+import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
@@ -114,7 +114,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         int LOCATOR = MapReplyIpv4SingleLocatorPos.LOCATOR + FIRST_LOCATOR_IPV4_LENGTH;
     }
 
-    @SuppressWarnings("unchecked")
     @BeforeClass
     public static void initTests() {
         akdb = Mockito.mock(AuthKeyDb.class);

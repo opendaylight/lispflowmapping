@@ -7,16 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.util;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.CheckedFuture;
-
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
@@ -44,7 +40,7 @@ public final class VppNetconfTrasaction {
         int retryCounter = RETRY_COUNT;
 
         while (retryCounter > 0) {
-            ReadOnlyTransaction readTransaction = dataBroker.newReadOnlyTransaction();
+            ReadTransaction readTransaction = dataBroker.newReadOnlyTransaction();
             try {
                 returnData = readTransaction(instanceIdentifier, datastoreType, readTransaction);
                 LOG.trace("Netconf READ transaction SUCCESSFUL. Data present: {}", returnData.isPresent());
@@ -62,17 +58,13 @@ public final class VppNetconfTrasaction {
             }
             retryCounter--;
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private static <T extends DataObject> Optional<T> readTransaction(InstanceIdentifier<T> instanceIdentifier,
                                                                       LogicalDatastoreType datastoreType,
-                                                                      ReadOnlyTransaction readTransaction)
+                                                                      ReadTransaction readTransaction)
             throws IllegalStateException, InterruptedException, ExecutionException {
-
-        CheckedFuture<Optional<T>, ReadFailedException> futureData =
-                readTransaction.read(datastoreType, instanceIdentifier);
-
-        return futureData.get();
+        return readTransaction.read(datastoreType, instanceIdentifier).get();
     }
 }
