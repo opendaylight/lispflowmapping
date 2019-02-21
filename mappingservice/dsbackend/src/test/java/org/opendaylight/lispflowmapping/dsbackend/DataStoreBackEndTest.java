@@ -9,11 +9,10 @@ package org.opendaylight.lispflowmapping.dsbackend;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.ArrayList;
+import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,16 +22,14 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.AsyncTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionChain;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.binding.api.Transaction;
+import org.opendaylight.mdsal.binding.api.TransactionChain;
+import org.opendaylight.mdsal.binding.api.WriteTransaction;
+import org.opendaylight.mdsal.common.api.CommitInfo;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
@@ -54,6 +51,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.mapping.XtrIdMappingKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierBuilder;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -72,7 +70,7 @@ public class DataStoreBackEndTest {
     @Captor private static ArgumentCaptor<InstanceIdentifier<AuthenticationKey>> iidCaptorAuthKey;
     @Captor private static ArgumentCaptor<InstanceIdentifier<Mapping>> iidCaptorMapping;
     @Captor private static ArgumentCaptor<InstanceIdentifier<XtrIdMapping>> iidCaptorXtrIdMapping;
-    @Mock private static BindingTransactionChain txChainMock;
+    @Mock private static TransactionChain txChainMock;
     @Mock private static WriteTransaction wTxMock;
     private static DataStoreBackEnd dataStoreBackEnd;
 
@@ -102,8 +100,7 @@ public class DataStoreBackEndTest {
         dataStoreBackEnd = PowerMockito.spy(new DataStoreBackEnd(brokerMock));
 
         Mockito.when(txChainMock.newWriteOnlyTransaction()).thenReturn(wTxMock);
-        Mockito.when(wTxMock.submit())
-                .thenReturn(Futures.<Void, TransactionCommitFailedException>immediateCheckedFuture(null));
+        Mockito.doReturn(CommitInfo.emptyFluentFuture()).when(wTxMock).commit();
     }
 
     /**
@@ -256,43 +253,31 @@ public class DataStoreBackEndTest {
      * Tests {@link DataStoreBackEnd#getAllMappings} method.
      */
     @Test
-    @SuppressWarnings("unchecked")
-    public void getAllMappingsTest() throws ReadFailedException {
-        final ReadOnlyTransaction rTxMock = Mockito.mock(ReadOnlyTransaction.class);
-        final CheckedFuture<Optional<MappingDatabase>, ReadFailedException> readFutureMock
-                = Mockito.mock(CheckedFuture.class);
-        final Optional<MappingDatabase> optionalMock = Mockito.mock(Optional.class);
+    public void getAllMappingsTest() {
+        final ReadTransaction rTxMock = Mockito.mock(ReadTransaction.class);
+        final FluentFuture<Optional<MappingDatabase>> readFutureMock = FluentFutures.immediateFluentFuture(
+            Optional.of(getDefaultMappingDatabase().build()));
 
         Mockito.when(txChainMock.newReadOnlyTransaction()).thenReturn(rTxMock);
         Mockito.when(rTxMock.read(LogicalDatastoreType.CONFIGURATION, DATABASE_ROOT)).thenReturn(readFutureMock);
         Mockito.when(rTxMock.read(LogicalDatastoreType.OPERATIONAL, DATABASE_ROOT)).thenReturn(readFutureMock);
-        Mockito.when(readFutureMock.checkedGet()).thenReturn(optionalMock);
-        Mockito.when(optionalMock.isPresent()).thenReturn(true);
-        Mockito.when(optionalMock.get()).thenReturn(getDefaultMappingDatabase().build());
 
         assertEquals(8, dataStoreBackEnd.getAllMappings().size());
-        Mockito.verify(optionalMock, Mockito.times(2)).get();
     }
 
     /**
      * Tests {@link DataStoreBackEnd#getAllAuthenticationKeys} method.
      */
     @Test
-    @SuppressWarnings("unchecked")
-    public void getAllAuthenticationKeysTest() throws ReadFailedException {
-        final ReadOnlyTransaction rTxMock = Mockito.mock(ReadOnlyTransaction.class);
-        final CheckedFuture<Optional<MappingDatabase>, ReadFailedException> readFutureMock
-                = Mockito.mock(CheckedFuture.class);
-        final Optional<MappingDatabase> optionalMock = Mockito.mock(Optional.class);
+    public void getAllAuthenticationKeysTest() {
+        final ReadTransaction rTxMock = Mockito.mock(ReadTransaction.class);
+        final FluentFuture<Optional<MappingDatabase>> readFutureMock = FluentFutures.immediateFluentFuture(
+            Optional.of(getDefaultMappingDatabase().build()));
 
         Mockito.when(txChainMock.newReadOnlyTransaction()).thenReturn(rTxMock);
         Mockito.when(rTxMock.read(LogicalDatastoreType.CONFIGURATION, DATABASE_ROOT)).thenReturn(readFutureMock);
-        Mockito.when(readFutureMock.checkedGet()).thenReturn(optionalMock);
-        Mockito.when(optionalMock.isPresent()).thenReturn(true);
-        Mockito.when(optionalMock.get()).thenReturn(getDefaultMappingDatabase().build());
 
         assertEquals(4, dataStoreBackEnd.getAllAuthenticationKeys().size());
-        Mockito.verify(optionalMock).get();
     }
 
     /**
@@ -310,7 +295,7 @@ public class DataStoreBackEndTest {
      */
     @Test
     public void onTransactionChainFailedTest() {
-        AsyncTransaction<?,?> asyncTransactionMock = Mockito.mock(AsyncTransaction.class);
+        Transaction asyncTransactionMock = Mockito.mock(Transaction.class);
         Mockito.when(asyncTransactionMock.getIdentifier()).thenReturn(new Object());
         dataStoreBackEnd.onTransactionChainFailed(Mockito.mock(TransactionChain.class), asyncTransactionMock,
                 Mockito.mock(Throwable.class));

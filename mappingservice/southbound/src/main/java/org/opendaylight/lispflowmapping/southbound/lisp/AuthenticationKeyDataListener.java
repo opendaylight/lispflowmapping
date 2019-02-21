@@ -10,15 +10,15 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
+import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.binding.api.DataTreeModification;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
@@ -40,8 +40,8 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
     private final AuthKeyDb akdb;
     private final DataBroker broker;
     private final InstanceIdentifier<AuthenticationKey> path;
-    private ListenerRegistration<ClusteredDataTreeChangeListener<AuthenticationKey>> registration;
-    private ConcurrentHashMap<Eid, Long> updatedEntries;
+    private final ListenerRegistration<ClusteredDataTreeChangeListener<AuthenticationKey>> registration;
+    private final ConcurrentHashMap<Eid, Long> updatedEntries;
 
     public AuthenticationKeyDataListener(final DataBroker broker, final AuthKeyDb akdb) {
         this.broker = broker;
@@ -49,7 +49,7 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
         this.path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
                 .child(AuthenticationKey.class);
         LOG.trace("Registering AuthenticationKey listener.");
-        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = new DataTreeIdentifier<>(
+        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = DataTreeIdentifier.create(
                 LogicalDatastoreType.CONFIGURATION, path);
         registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
         this.updatedEntries = new ConcurrentHashMap<>();

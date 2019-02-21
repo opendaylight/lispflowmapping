@@ -10,14 +10,14 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
-import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.mdsal.binding.api.DataTreeModification;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
@@ -43,7 +43,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
     private static final Logger LOG = LoggerFactory.getLogger(MappingDataListener.class);
     private IMappingSystem mapSystem;
     private NotificationPublishService notificationPublishService;
-    private boolean isMaster = false;
+    private final boolean isMaster = false;
 
     public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationPublishService nps) {
         setBroker(broker);
@@ -131,7 +131,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         }
 
         if (LispAddressUtil.addressNeedsConversionToBinary(originalRecord.getEid().getAddress())
-                || (originalLocators != null && convertedLocators != null)) {
+                || originalLocators != null && convertedLocators != null) {
             MappingRecordBuilder mrb = new MappingRecordBuilder(originalRecord);
             mrb.setEid(LispAddressUtil.convertToBinary(originalRecord.getEid()));
             if (convertedLocators != null) {
@@ -149,7 +149,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
                 lrb.setRloc(LispAddressUtil.convertToBinary(record.getRloc()));
                 if (convertedLocators == null) {
-                    convertedLocators = new ArrayList<LocatorRecord>();
+                    convertedLocators = new ArrayList<>();
                 }
                 convertedLocators.add(lrb.build());
             }

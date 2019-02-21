@@ -13,9 +13,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
@@ -27,6 +24,8 @@ import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -123,8 +122,8 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private final NotificationPublishService notificationPublishService;
 
     private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
-    private boolean iterateMask = true;
+    private final boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
+    private final boolean iterateMask = true;
     private boolean isMaster = false;
 
     public MappingService(final DataBroker broker,
@@ -576,7 +575,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         }
 
         if (LispAddressUtil.addressNeedsConversionFromBinary(originalRecord.getEid().getAddress())
-                || (originalLocators != null && convertedLocators != null)) {
+                || originalLocators != null && convertedLocators != null) {
             MappingRecordBuilder mrb = new MappingRecordBuilder(originalRecord);
             mrb.setEid(LispAddressUtil.convertFromBinary(originalRecord.getEid()));
             if (convertedLocators != null) {
@@ -594,7 +593,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
                 LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
                 lrb.setRloc(LispAddressUtil.convertFromBinary(record.getRloc()));
                 if (convertedLocators == null) {
-                    convertedLocators = new ArrayList<LocatorRecord>();
+                    convertedLocators = new ArrayList<>();
                 }
                 convertedLocators.add(lrb.build());
             }

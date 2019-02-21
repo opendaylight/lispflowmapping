@@ -24,12 +24,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -82,7 +82,7 @@ public class LispMappingServiceTest {
             ClusterSingletonServiceProvider.class);
 
     @InjectMocks
-    private LispMappingService lispMappingService = new LispMappingService(
+    private final LispMappingService lispMappingService = new LispMappingService(
             notificationService, mappingService, odlLispSbService, clusterSingletonService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
@@ -394,6 +394,7 @@ public class LispMappingServiceTest {
     }
 
     class TransportAddressMatch implements ArgumentMatcher<SendMapNotifyInput> {
+        @Override
         public boolean matches(SendMapNotifyInput sendMapNotify) {
             final TransportAddress notifyTransportAddress = sendMapNotify.getTransportAddress();
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)

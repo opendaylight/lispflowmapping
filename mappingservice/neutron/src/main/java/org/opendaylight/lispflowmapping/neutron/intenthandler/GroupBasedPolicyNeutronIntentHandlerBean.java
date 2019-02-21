@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler;
 
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.listener.service.VbridgeTopologyListenerService;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.MountPointService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

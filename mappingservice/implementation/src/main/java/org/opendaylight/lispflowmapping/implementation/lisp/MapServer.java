@@ -28,7 +28,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.BooleanUtils;
-import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
@@ -49,6 +48,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MapRequestUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
+import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -82,12 +82,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     private static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
-    private IMappingService mapService;
+    private final IMappingService mapService;
     private boolean subscriptionService;
-    private IMapNotifyHandler notifyHandler;
-    private NotificationService notificationService;
+    private final IMapNotifyHandler notifyHandler;
+    private final NotificationService notificationService;
     private ListenerRegistration<MapServer> mapServerListenerRegistration;
-    private SmrScheduler scheduler;
+    private final SmrScheduler scheduler;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
@@ -107,6 +107,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         this.subscriptionService = subscriptionService;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
@@ -145,8 +146,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;
             if (merge) {
-                Set<IpAddressBinary> notifyRlocs = new LinkedHashSet<IpAddressBinary>();
-                List<MappingRecordItem> mergedMappings = new ArrayList<MappingRecordItem>();
+                Set<IpAddressBinary> notifyRlocs = new LinkedHashSet<>();
+                List<MappingRecordItem> mergedMappings = new ArrayList<>();
                 for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound,
@@ -180,7 +181,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     private static List<TransportAddress> getTransportAddresses(Set<IpAddressBinary> addresses) {
-        List<TransportAddress> rlocs = new ArrayList<TransportAddress>();
+        List<TransportAddress> rlocs = new ArrayList<>();
         for (IpAddressBinary address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
             tab.setIpAddress(address);
@@ -191,11 +192,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     private static SiteId getSiteId(MapRegister mapRegister) {
-        return (mapRegister.getSiteId() != null) ? new SiteId(mapRegister.getSiteId()) : null;
+        return mapRegister.getSiteId() != null ? new SiteId(mapRegister.getSiteId()) : null;
     }
 
     private static MappingRecord getMappingRecord(MappingData mappingData) {
-        return (mappingData != null) ? mappingData.getRecord() : null;
+        return mappingData != null ? mappingData.getRecord() : null;
     }
 
     @Override
@@ -387,8 +388,8 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         }
 
         private final class CancellableRunnable implements Runnable {
-            private MapRequestBuilder mrb;
-            private Subscriber subscriber;
+            private final MapRequestBuilder mrb;
+            private final Subscriber subscriber;
             private int executionCount = 1;
 
             CancellableRunnable(MapRequestBuilder mrb, Subscriber subscriber) {
