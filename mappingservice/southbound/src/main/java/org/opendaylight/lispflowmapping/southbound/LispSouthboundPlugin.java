@@ -18,8 +18,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
@@ -36,8 +34,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -48,6 +44,8 @@ import org.opendaylight.lispflowmapping.southbound.lisp.LispSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.LispXtrSouthboundHandler;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
@@ -70,7 +68,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private volatile boolean isMaster = false;
     private volatile String bindingAddress;
     private AuthKeyDb akdb;
-    private MapRegisterCache mapRegisterCache = new MapRegisterCache();
+    private final MapRegisterCache mapRegisterCache = new MapRegisterCache();
     private boolean mapRegisterCacheEnabled;
     private long mapRegisterCacheTimeout;
 
@@ -78,19 +76,19 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private final ClusterSingletonServiceProvider clusterSingletonService;
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
-    private NotificationPublishService notificationPublishService;
+    private final NotificationPublishService notificationPublishService;
     private int numChannels = 1;
-    private Channel[] channel;
+    private final Channel[] channel;
     private Channel xtrChannel;
     private Class channelType;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
-    private ConcurrentLispSouthboundStats statistics = new ConcurrentLispSouthboundStats();
-    private Bootstrap bootstrap = new Bootstrap();
-    private Bootstrap xtrBootstrap = new Bootstrap();
-    private ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
+    private final ConcurrentLispSouthboundStats statistics = new ConcurrentLispSouthboundStats();
+    private final Bootstrap bootstrap = new Bootstrap();
+    private final Bootstrap xtrBootstrap = new Bootstrap();
+    private final ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup;
-    private DataBroker dataBroker;
+    private final DataBroker dataBroker;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
 
@@ -257,16 +255,13 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         if (LOG.isTraceEnabled()) {
             LOG.trace("Buffer:\n{}", ByteBufUtil.prettyHexDump(data));
         }
-        senderChannel.write(packet).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) {
-                if (future.isSuccess()) {
-                    LOG.trace("Success");
-                    statistics.incrementTx(packetType.getIntValue());
-                } else {
-                    LOG.warn("Failed to send packet");
-                    statistics.incrementTxErrors();
-                }
+        senderChannel.write(packet).addListener(future -> {
+            if (future.isSuccess()) {
+                LOG.trace("Success");
+                statistics.incrementTx(packetType.getIntValue());
+            } else {
+                LOG.warn("Failed to send packet");
+                statistics.incrementTxErrors();
             }
         });
         senderChannel.flush();
