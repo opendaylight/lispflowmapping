@@ -10,7 +10,7 @@ Locator/ID Separation Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Locator/ID Separation Protocol
-(LISP) <http://tools.ietf.org/html/rfc6830>`__ is a technology that
+(LISP) <https://tools.ietf.org/html/rfc6830>`__ is a technology that
 provides a flexible map-and-encap framework that can be used for overlay
 network applications such as data center network virtualization and
 Network Function Virtualization (NFV).
@@ -18,10 +18,10 @@ Network Function Virtualization (NFV).
 LISP provides the following name spaces:
 
 -  `Endpoint Identifiers
-   (EIDs) <http://tools.ietf.org/html/rfc6830#page-6>`__
+   (EIDs) <https://tools.ietf.org/html/rfc6830#page-6>`__
 
 -  `Routing Locators
-   (RLOCs) <http://tools.ietf.org/html/rfc6830#section-3>`__
+   (RLOCs) <https://tools.ietf.org/html/rfc6830#section-3>`__
 
 In a virtualization environment EIDs can be viewed as virtual address
 space and RLOCs can be viewed as physical network address space.
@@ -44,7 +44,7 @@ Flow Mapping project in OpenDaylight and how it can be used to enable
 advanced SDN and NFV use cases.
 
 LISP data plane Tunnel Routers are available at
-`OpenOverlayRouter.org <http://www.openoverlayrouter.org/>`__ in the open source community on
+`OpenOverlayRouter.org <https://www.openoverlayrouter.org/>`__ in the open source community on
 the following platforms:
 
 -  Linux
@@ -54,7 +54,7 @@ the following platforms:
 -  OpenWRT
 
 For more details and support for LISP data plane software please visit
-`the OOR web site <http://www.openoverlayrouter.org/>`__.
+`the OOR web site <https://www.openoverlayrouter.org/>`__.
 
 LISP Flow Mapping Service
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,12 +99,12 @@ A brief description of each module is as follows:
 -  **Map Server:** This module processes the adding or registration of
    authentication tokens (keys) and mappings. For a detailed
    specification of LISP Map Server, see
-   `LISP <http://tools.ietf.org/search/rfc6830>`__.
+   `LISP <https://tools.ietf.org/search/rfc6830>`__.
 
 -  **Map Resolver:** This module receives and processes the mapping
    lookup queries and provides the mappings to requester. For a detailed
    specification of LISP Map Server, see
-   `LISP <http://tools.ietf.org/search/rfc6830>`__.
+   `LISP <https://tools.ietf.org/search/rfc6830>`__.
 
 -  **RPC/RESTCONF:** This is the auto-generated RESTCONF-based
    northbound API. This module enables defining key-EID associations as
@@ -126,7 +126,7 @@ A brief description of each module is as follows:
 
 -  **LISP Southbound Plugin:** This plugin enables data plane devices
    that support LISP control plane protocol (see
-   `LISP <http://tools.ietf.org/search/rfc6830>`__) to register and
+   `LISP <https://tools.ietf.org/search/rfc6830>`__) to register and
    query mappings to the LISP Flow Mapping via the LISP control plane
    protocol.
 
@@ -150,7 +150,7 @@ the following properties that can be adjusted:
 
 **lisp.smr** (default: *true*)
     Enables/disables the `Solicit-Map-Request
-    (SMR) <http://tools.ietf.org/html/rfc6830#section-6.6.2>`__
+    (SMR) <https://tools.ietf.org/html/rfc6830#section-6.6.2>`__
     functionality. SMR is a method to notify changes in an EID-to-RLOC
     mapping to "subscribers". The LISP service considers all
     Map-Request’s source RLOC as a subscriber to the requested EID
@@ -195,7 +195,7 @@ Textual Conventions for LISP Address Formats
 
 In addition to the more common IPv4, IPv6 and MAC address data types,
 the LISP control plane supports arbitrary `Address Family
-Identifiers <http://www.iana.org/assignments/address-family-numbers>`__
+Identifiers <https://www.iana.org/assignments/address-family-numbers>`__
 assigned by IANA, and in addition to those the `LISP Canoncal Address
 Format (LCAF) <https://tools.ietf.org/html/draft-ietf-lisp-lcaf>`__.
 
@@ -335,7 +335,7 @@ Tutorials
 This section provides a tutorial demonstrating various features in this
 service. We have included tutorials using two forwarding platforms:
 
-1.  Using `Open Overlay Router (OOR) <https://github.com/OpenOverlayRouter/oor#overview>`__
+1.  Using `Open Overlay Router (OOR) <https://github.com/OpenOverlayRouter/oor/wiki>`__
 
 2.  Using `FD.io <https://wiki.fd.io/view/ONE>`__
 
@@ -367,7 +367,7 @@ Prerequisites
 
 -  **The Postman Chrome App**: the most convenient way to follow along
    this tutorial is to use the `Postman
-   App <https://www.getpostman.com/apps>`__
+   App <https://www.getpostman.com/downloads/>`__
    to edit and send the requests. The project git repository hosts a
    collection of the requests that are used in this tutorial in the
    ``resources/tutorial/OOR/Beryllium_Tutorial.json.postman_collection``
@@ -429,7 +429,8 @@ Mapping RPC REST API. This is so that you can see the actual request
 URLs and body content on the page.
 
 1.  Install and run the OpenDaylight distribution on the controller VM.
-    Please follow the general OpenDaylight Installation Guide
+    Please follow the general `OpenDaylight Installation Guide
+    <https://docs.opendaylight.org/en/latest/getting-started-guide/installing_opendaylight.html>`__
     for this step. Once the OpenDaylight controller is running install
     the *odl-lispflowmapping-msmr* feature from the Karaf CLI:
 
@@ -444,8 +445,8 @@ URLs and body content on the page.
 
 2.  Install OOR on the **client**, **server1**, **server2**, and
     **service-node** VMs following the installation instructions `from
-    the OOR README
-    file <https://github.com/OpenOverlayRouter/oor#software-prerequisites>`__.
+    the OOR README file
+    <https://github.com/OpenOverlayRouter/oor/blob/master/README.md>`__.
 
 3.  Configure the OOR installations from the previous step. Take a look
     at the ``oor.conf.example`` to get a general idea of the structure
@@ -656,7 +657,7 @@ URLs and body content on the page.
     With the default OpenDaylight configuration the failover should be
     near instantaneous (we observed 3 lost pings in the worst case),
     because of the LISP `Solicit-Map-Request (SMR)
-    mechanism <http://tools.ietf.org/html/rfc6830#section-6.6.2>`__ that
+    mechanism <https://tools.ietf.org/html/rfc6830#section-6.6.2>`__ that
     can ask a LISP data plane element to update its mapping for a
     certain EID (enabled by default). It is controlled by the
     ``lisp.smr`` variable in ``etc/custom.porperties``. When enabled,
@@ -872,7 +873,8 @@ Follow the instructions below sequentially.
        sudo apt-get install bridge-utils ethtool
 
 6.  Now, install and run OpenDaylight on the VM. Please follow the general
-    OpenDaylight Installation Guide for this step from :ref:`install_odl`.
+    `OpenDaylight Installation Guide
+    <https://docs.opendaylight.org/en/latest/getting-started-guide/installing_opendaylight.html>`__ for this step.
     Before running OpenDaylight, we need to change the configuration for RTR
     to work. Update ``etc/custom.properties`` with the ``lisp.elpPolicy`` to
     be replace.
@@ -1045,7 +1047,7 @@ Creating a LISP overlay with Cisco IOS-XE
 This section describes how to create a simple LISP overlay using the Cisco
 IOS-XE network operating system as the data plane software running on the
 `Cisco CSR 1000v Series Cloud Services Router
-<http://www.cisco.com/c/en/us/support/routers/cloud-services-router-1000v/model.html>`_.
+<https://www.cisco.com/c/en/us/support/routers/cloud-services-router-1000v/model.html>`_.
 
 Prerequisites
 ^^^^^^^^^^^^^
@@ -1054,7 +1056,7 @@ Prerequisites
    <https://www.opendaylight.org/downloads>`_
 
 -  `CSR1Kv image with Cisco IOS-XE version 03.13.00.S or later
-   <http://www.cisco.com/c/en/us/support/routers/cloud-services-router-1000v/model.html#~tab-downloads>`_;
+   <https://www.cisco.com/c/en/us/support/routers/cloud-services-router-1000v/model.html>`_;
    the instructions have been tested on version 03.15.00.S.
 
 -  **A virtualization platform** supported by CSR1Kv images (VMware ESXi,
@@ -1098,8 +1100,9 @@ Mapping RPC REST API. This is so that you can see the actual request
 URLs and body content on the page. The easy way is to just use Postman.
 
 1.  Install and run the OpenDaylight distribution on the controller VM.
-    Please follow the general OpenDaylight Installation Guide from
-    :ref:`install_odl` for this step. Once the OpenDaylight controller is
+    Please follow the general `OpenDaylight Installation Guide
+    <https://docs.opendaylight.org/en/latest/getting-started-guide/installing_opendaylight.html>`__
+    for this step. Once the OpenDaylight controller is
     running install the *odl-lispflowmapping-msmr* feature from the Karaf CLI:
 
     ::
@@ -1113,7 +1116,7 @@ URLs and body content on the page. The easy way is to just use Postman.
 
 2.  Create the **client** and **server** VMs following the installation
     instructions from the `CSR1Kv Configuration Guide
-    <http://www.cisco.com/c/en/us/td/docs/routers/csr1000/software/configuration/b_CSR1000v_Configuration_Guide.html>`_.
+    <https://www.cisco.com/c/en/us/td/docs/routers/csr1000/software/configuration/b_CSR1000v_Configuration_Guide.html>`_.
 
 3.  Define a key and EID prefix association in OpenDaylight using the RPC REST
     API for the **client** and **server** EIDs (1.1.1.1/32 and 2.2.2.2/32
@@ -1317,7 +1320,7 @@ page <https://wiki.opendaylight.org/view/Running_and_testing_an_OpenDaylight_Clu
 To turn on clustering in LISP Flow Mapping it is necessary:
 
 -  run script **deploy.py** script. This script is in
-   `integration-test <https://git.opendaylight.org/gerrit/integration/test>`__
+   `integration-test <https://git.opendaylight.org/gerrit/gitweb?p=integration/test.git;a=tree>`__
    project placed at *tools/clustering/cluster-deployer/deploy.py*. A
    whole deploy.py command can looks like:
 
