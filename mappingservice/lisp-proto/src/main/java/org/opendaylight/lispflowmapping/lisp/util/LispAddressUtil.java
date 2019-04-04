@@ -85,6 +85,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -764,7 +765,7 @@ public final class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(NoAddressAfi.class);
         builder.setVirtualNetworkId(null);
-        builder.setAddress(new NoAddressBuilder().setNoAddress(true).build());
+        builder.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
         return builder.build();
     }
 
