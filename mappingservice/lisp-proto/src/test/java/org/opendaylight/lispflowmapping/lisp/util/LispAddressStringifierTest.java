@@ -70,6 +70,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 public class LispAddressStringifierTest {
 
@@ -150,7 +151,7 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_AS_NUMBER = new EidBuilder().setAddress(AS_NUMBER_LISP_TYPE).build();
 
     // NoAddress
-    private static final NoAddress NO_ADDRESS = new NoAddressBuilder().setNoAddress(true).build();
+    private static final NoAddress NO_ADDRESS = new NoAddressBuilder().setNoAddress(Empty.getInstance()).build();
     private static final LispAddress LISP_NO_ADDRESS = new EidBuilder().setAddress(NO_ADDRESS).build();
 
     // AfiList

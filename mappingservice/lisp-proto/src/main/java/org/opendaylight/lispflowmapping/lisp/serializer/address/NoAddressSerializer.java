@@ -16,6 +16,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 public final class NoAddressSerializer extends LispAddressSerializer {
 
@@ -48,7 +49,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(NoAddressAfi.class);
         eb.setVirtualNetworkId(getVni(ctx));
-        eb.setAddress(new NoAddressBuilder().setNoAddress(true).build());
+        eb.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
         return eb.build();
     }
 
@@ -57,7 +58,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(NoAddressAfi.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress(new NoAddressBuilder().setNoAddress(true).build());
+        rb.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
         return rb.build();
     }
 

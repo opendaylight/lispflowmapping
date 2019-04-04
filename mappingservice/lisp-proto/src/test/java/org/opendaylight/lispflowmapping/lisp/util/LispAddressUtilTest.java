@@ -86,6 +86,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 public class LispAddressUtilTest {
 
@@ -1156,7 +1157,7 @@ public class LispAddressUtilTest {
     }
 
     /**
-     * Tests {@link LispAddressUtil#asSrcDstEid(String, String, int, int, int)} method.
+     * Tests {@link LispAddressUtil#asSrcDstEid(String, String, int, int, long)} method.
      */
     @Test
     public void asSrcDstEid_addressesAsString() {
@@ -1272,7 +1273,7 @@ public class LispAddressUtilTest {
         final Eid noAddressEid = LispAddressUtil.getNoAddressEid();
         assertEquals(NoAddressAfi.class, noAddressEid.getAddressType());
         assertNull(noAddressEid.getVirtualNetworkId());
-        assertTrue(((NoAddress) noAddressEid.getAddress()).isNoAddress());
+        assertEquals(((NoAddress) noAddressEid.getAddress()).getNoAddress(), Empty.getInstance());
     }
 
     /**
