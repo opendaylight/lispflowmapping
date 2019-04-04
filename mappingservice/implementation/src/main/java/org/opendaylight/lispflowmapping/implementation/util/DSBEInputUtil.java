@@ -9,10 +9,10 @@
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import com.google.common.base.Preconditions;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
