@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nonnull;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
@@ -44,7 +43,7 @@ public class VbridgeTopologyListener implements ClusteredDataTreeChangeListener<
     }
 
     @Override
-    public synchronized void onDataTreeChanged(@Nonnull Collection<DataTreeModification<VbridgeTopology>> changes) {
+    public synchronized void onDataTreeChanged(Collection<DataTreeModification<VbridgeTopology>> changes) {
         for (DataTreeModification<VbridgeTopology> topologyData : changes) {
             final KeyedInstanceIdentifier<Topology, TopologyKey> topologyInstanceIdentifier =
                     (KeyedInstanceIdentifier<Topology, TopologyKey>) topologyData

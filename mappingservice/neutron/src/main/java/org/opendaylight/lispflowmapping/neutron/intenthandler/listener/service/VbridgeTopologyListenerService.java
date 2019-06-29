@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.listener.service;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.listener.VbridgeTopologyListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
@@ -47,8 +47,8 @@ public class VbridgeTopologyListenerService implements AutoCloseable {
         this.closed = false;
     }
 
-    public static VbridgeTopologyListenerService initialize(@Nonnull final DataBroker dataBroker,
-                                                            @Nonnull final MountPointService mountPointService) {
+    public static VbridgeTopologyListenerService initialize(final @NonNull DataBroker dataBroker,
+                                                            final @NonNull MountPointService mountPointService) {
         final ListenerRegistration<VbridgeTopologyListener> reg =
                 dataBroker.registerDataTreeChangeListener(TREE_LISTENER_IDENTIFIER,
                         new VbridgeTopologyListener(dataBroker, mountPointService));

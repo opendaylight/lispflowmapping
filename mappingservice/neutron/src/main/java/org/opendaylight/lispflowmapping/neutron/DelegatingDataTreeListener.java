@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import com.google.common.base.Preconditions;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
@@ -52,7 +51,7 @@ public class DelegatingDataTreeListener<T extends DataObject> implements Cluster
     }
 
     @Override
-    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<T>> changes) {
+    public void onDataTreeChanged(Collection<DataTreeModification<T>> changes) {
         for (DataTreeModification<T> change : changes) {
             DataObjectModification<T> mod = change.getRootNode();
 

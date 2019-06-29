@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javax.annotation.Nonnull;
 import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
@@ -78,7 +77,7 @@ public class VppNetconfConnectionProbe implements ClusteredDataTreeChangeListene
     }
 
     @Override
-    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<Node>> changes) {
+    public void onDataTreeChanged(Collection<DataTreeModification<Node>> changes) {
         changes.forEach(modification -> {
             final DataObjectModification<Node> rootNode = modification.getRootNode();
             final Node node = rootNode.getDataAfter();

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.listener;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FutureCallback;
@@ -20,8 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.IntentHandlerAsyncExecutorProvider;
 import org.opendaylight.lispflowmapping.neutron.intenthandler.util.VppNetconfConnectionProbe;
@@ -85,7 +82,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
     }
 
     @Override
-    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<Topology>> changes) {
+    public void onDataTreeChanged(Collection<DataTreeModification<Topology>> changes) {
         for (DataTreeModification<Topology> change : changes) {
             final DataObjectModification<Topology> modification = change.getRootNode();
             ListenableFuture<Void> modificationTaskHandler;
@@ -106,7 +103,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
             }
             Futures.addCallback(modificationTaskHandler, new FutureCallback<Void>() {
                 @Override
-                public void onSuccess(@Nullable Void vd) {
+                public void onSuccess(Void vd) {
                     LOG.debug("VppEndpoint modification handled successfully!");
                 }
 
@@ -126,7 +123,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
             ListenableFuture<KeyedInstanceIdentifier<Node, NodeKey>> processingTask = processNode(newOrModifiedNode);
             Futures.addCallback(processingTask, new FutureCallback<KeyedInstanceIdentifier<Node, NodeKey>>() {
                 @Override
-                public void onSuccess(@Nullable KeyedInstanceIdentifier<Node, NodeKey> kiiToNode) {
+                public void onSuccess(KeyedInstanceIdentifier<Node, NodeKey> kiiToNode) {
                     hostInformationManager.addHostRelatedInfo(newOrModifiedNode.getNodeId().getValue(),
                             LispAddressUtil.toRloc(vppNodeReader.rlocIpOfNode(kiiToNode)));
                 }
@@ -149,13 +146,8 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
                 });
 
         return Futures.transform(probeVppNodeForConnection,
-                new Function<Void, KeyedInstanceIdentifier<Node, NodeKey>>() {
-                    @Nullable
-                    @Override
-                    public KeyedInstanceIdentifier<Node, NodeKey> apply(@Nullable Void vd) {
-                        return nodeIdToKeyedInstanceIdentifierMap.get(newOrModifiedNode.getNodeId()).iterator().next();
-                    }
-                }, MoreExecutors.directExecutor());
+                vd -> nodeIdToKeyedInstanceIdentifierMap.get(newOrModifiedNode.getNodeId()).iterator().next(),
+                MoreExecutors.directExecutor());
     }
 
     private void processNodeOnConnection(final Node newOrModifiedNode) {

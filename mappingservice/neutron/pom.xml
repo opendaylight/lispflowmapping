@@ -79,11 +79,6 @@
       <artifactId>mdsal-singleton-common-api</artifactId>
       <version>4.0.2</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
-      <optional>true</optional>
-    </dependency>
 
     <!--Needed for testing-->
     <dependency>
