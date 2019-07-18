@@ -5,19 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation.timebucket;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucket;
@@ -35,15 +32,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.powermock.reflect.Whitebox;
 
 /**
  * Created by Shakib Ahmed on 12/13/16.
  */
-
 @RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
 @PrepareForTest(TimeBucketWheel.class)
 public class TimeBucketWheelUnitTest {
 
