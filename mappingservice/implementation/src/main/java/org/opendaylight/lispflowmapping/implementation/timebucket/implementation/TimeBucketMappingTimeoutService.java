@@ -8,20 +8,17 @@
 
 package org.opendaylight.lispflowmapping.implementation.timebucket.implementation;
 
+import java.util.Date;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucketWheel;
 import org.opendaylight.lispflowmapping.implementation.timebucket.interfaces.ISouthBoundMappingTimeoutService;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Shakib Ahmed on 12/1/16.
  */
 public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeoutService {
-    private static final Logger LOG = LoggerFactory.getLogger(TimeBucketWheel.class);
-
     private final TimeBucketWheel timeBucketWheel;
 
     public TimeBucketMappingTimeoutService(int numberOfBucket, long mappingRecordValidityInMillis,
@@ -31,20 +28,12 @@ public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeou
 
     @Override
     public int addMapping(Eid key, MappingData mappingData) {
-        long timestamp = System.currentTimeMillis();
-        if (mappingData.getTimestamp() != null) {
-            timestamp = mappingData.getTimestamp().getTime();
-        }
-        return timeBucketWheel.add(key, mappingData, timestamp);
+        return timeBucketWheel.add(key, mappingData, getTimestamp(mappingData));
     }
 
     @Override
     public int refreshMapping(Eid key, MappingData newMappingData, int presentBucketId) {
-        long timestamp = System.currentTimeMillis();
-        if (newMappingData.getTimestamp() != null) {
-            timestamp = newMappingData.getTimestamp().getTime();
-        }
-        return timeBucketWheel.refreshMappping(key, newMappingData, timestamp, presentBucketId);
+        return timeBucketWheel.refreshMappping(key, newMappingData, getTimestamp(newMappingData), presentBucketId);
     }
 
     @Override
@@ -55,5 +44,10 @@ public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeou
     @Override
     public void removeExpiredMappings() {
         timeBucketWheel.clearExpiredMappingAndRotate();
+    }
+
+    private static long getTimestamp(MappingData mappingData) {
+        final Date stamp = mappingData.getTimestamp();
+        return stamp != null ? stamp.getTime() : System.currentTimeMillis();
     }
 }
