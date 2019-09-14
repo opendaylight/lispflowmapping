@@ -89,19 +89,6 @@ public abstract class BaseTestCase extends BaseExpectations {
         return inject(testedObject, new FieldData(field, member));
     }
 
-    protected Object injectStatic(Class<?> clazz, String memberName, Object member) throws Exception {
-        assertNotNull(clazz);
-        assertNotNull(memberName);
-        assertNotNull(member);
-
-        Field field = null;
-        for (Class<?> cls = clazz; (cls != null) && (field == null); cls = cls.getSuperclass()) {
-            field = cls.getDeclaredField(memberName);
-        }
-        assertNotNull("Couldn't find member '" + memberName + "' in " + clazz.getSimpleName(), field);
-        return inject(null, new FieldData(field, member));
-    }
-
     protected Object inject(Object testedObject, FieldData fieldData) {
         assertNotNull(fieldData.field);
         Field field = fieldData.field;
@@ -119,6 +106,19 @@ public abstract class BaseTestCase extends BaseExpectations {
             }
         }
         return null;
+    }
+
+    protected Object injectStatic(Class<?> clazz, String memberName, Object member) throws Exception {
+        assertNotNull(clazz);
+        assertNotNull(memberName);
+        assertNotNull(member);
+
+        Field field = null;
+        for (Class<?> cls = clazz; (cls != null) && (field == null); cls = cls.getSuperclass()) {
+            field = cls.getDeclaredField(memberName);
+        }
+        assertNotNull("Couldn't find member '" + memberName + "' in " + clazz.getSimpleName(), field);
+        return inject(null, new FieldData(field, member));
     }
 
     protected static final class FieldData {
