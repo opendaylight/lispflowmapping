@@ -130,7 +130,7 @@ public abstract class BaseExpectations extends Expectations {
         private String methodName;
         private Method method;
 
-        public MethodAction(Object testInstance, String methodName) {
+        MethodAction(Object testInstance, String methodName) {
             this.testInstance = testInstance;
             this.methodName = methodName;
             method = findMethod(testInstance.getClass());
@@ -177,7 +177,7 @@ public abstract class BaseExpectations extends Expectations {
         private final Object[] values;
         private int i = 0;
 
-        public ActionSequenceValue(Object... values) {
+        ActionSequenceValue(Object... values) {
             this.values = values;
         }
 
@@ -340,14 +340,14 @@ public abstract class BaseExpectations extends Expectations {
         };
     }
 
-    public class StringArrayMatcher extends BaseMatcher<String[]> {
+    public final class StringArrayMatcher extends BaseMatcher<String[]> {
         private final Object[] expected;
 
         /**
          * @param expected
          *            null are considered "any"
          */
-        private StringArrayMatcher(Object... expected) {
+        StringArrayMatcher(Object... expected) {
             this.expected = expected;
         }
 
