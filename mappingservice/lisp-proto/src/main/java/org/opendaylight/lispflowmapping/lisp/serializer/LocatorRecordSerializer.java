@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import java.nio.ByteBuffer;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -32,10 +34,10 @@ public final class LocatorRecordSerializer {
 
     protected LocatorRecord deserialize(ByteBuffer buffer) {
         LocatorRecordBuilder builder = new LocatorRecordBuilder();
-        builder.setPriority((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setWeight((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setMulticastPriority((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setMulticastWeight((short) ByteUtil.getUnsignedByte(buffer));
+        builder.setPriority(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
+        builder.setWeight(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
+        builder.setMulticastPriority(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
+        builder.setMulticastWeight(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
         byte flags = (byte) buffer.getShort();
         builder.setLocalLocator(ByteUtil.extractBit(flags, Flags.LOCAL_LOCATOR));
         builder.setRlocProbed(ByteUtil.extractBit(flags, Flags.RLOC_PROBED));
@@ -47,10 +49,10 @@ public final class LocatorRecordSerializer {
     }
 
     public void serialize(ByteBuffer replyBuffer, LocatorRecord record) {
-        replyBuffer.put((byte) NumberUtil.asShort(record.getPriority()));
-        replyBuffer.put((byte) NumberUtil.asShort(record.getWeight()));
-        replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastPriority()));
-        replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastWeight()));
+        replyBuffer.put((byte) NumberUtil.asShort(record.getPriority().toJava()));
+        replyBuffer.put((byte) NumberUtil.asShort(record.getWeight().toJava()));
+        replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastPriority().toJava()));
+        replyBuffer.put((byte) NumberUtil.asShort(record.getMulticastWeight().toJava()));
         replyBuffer.position(replyBuffer.position() + Length.UNUSED_FLAGS);
         replyBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(record.isLocalLocator()), Flags.LOCAL_LOCATOR)
                 | ByteUtil.boolToBit(BooleanUtils.isTrue(record.isRlocProbed()), Flags.RLOC_PROBED)

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import com.google.common.net.InetAddresses;
 import java.net.Inet4Address;
@@ -102,7 +103,8 @@ public class LispAddressUtilTest {
     private static final Long AS_NUMBER_TEST = 100L;
     private static final Long INSTANCE_ID_TYPE_VALUE_TEST = 121L;
     private static final Short INSTANCE_ID_TYPE_VALUE_SHORT_TEST = 122;
-    private static final InstanceIdType INSTANCE_ID_TYPE_TEST = new InstanceIdType(INSTANCE_ID_TYPE_VALUE_TEST);
+    private static final InstanceIdType INSTANCE_ID_TYPE_TEST = new InstanceIdType(
+            fromJava(INSTANCE_ID_TYPE_VALUE_TEST));
     private static final String INCORRECT_IP_ADDRESS_TEST = "incorrect ip address";
 
     private static final String MAC_ADDRESS_VALUE_TEST = "aa:bb:cc:dd:ee:ff";
@@ -124,10 +126,10 @@ public class LispAddressUtilTest {
     private static final Ipv4Prefix IPV4_ADDRESS_PREFIX_TEST = new Ipv4Prefix(IPV4_ADDRESS_PREFIX_VALUE_TEST);
     private static final Ipv4PrefixBinary IPV4_ADDRESS_PREFIX_BINARY_1 = new Ipv4PrefixBinaryBuilder()
             .setIpv4AddressBinary(new Ipv4AddressBinary(IPV4_ADDRESS_BYTES_A_TEST))
-            .setIpv4MaskLength(MASK_OK_TEST).build();
+            .setIpv4MaskLength(fromJava(MASK_OK_TEST)).build();
     private static final Ipv4PrefixBinary IPV4_ADDRESS_PREFIX_BINARY_2 = new Ipv4PrefixBinaryBuilder()
             .setIpv4AddressBinary(new Ipv4AddressBinary(IPV4_ADDRESS_BYTES_A_TEST))
-            .setIpv4MaskLength(MASK_OK_DEFAULT_IPV4_TEST).build();
+            .setIpv4MaskLength(fromJava(MASK_OK_DEFAULT_IPV4_TEST)).build();
     private static final IpPrefix IP_ADDRESS_PREFIX_WITH_IPV4_TEST = new IpPrefix(IPV4_ADDRESS_PREFIX_TEST);
     private static final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
             .address.address.Ipv4Prefix IPV4_PREFIX = new Ipv4PrefixBuilder()
@@ -178,10 +180,10 @@ public class LispAddressUtilTest {
     private static final IpAddress IP_ADDRESS_IPV6_TEST = new IpAddress(IPV6_ADDRESS_TEST);
     private static final Ipv6PrefixBinary IPV6_ADDRESS_PREFIX_BINARY_1 = new Ipv6PrefixBinaryBuilder()
             .setIpv6AddressBinary(new Ipv6AddressBinary(IPV6_ADDRESS_BYTES_A_TEST))
-            .setIpv6MaskLength(MASK_OK_TEST).build();
+            .setIpv6MaskLength(fromJava(MASK_OK_TEST)).build();
     private static final Ipv6PrefixBinary IPV6_ADDRESS_PREFIX_BINARY_2 = new Ipv6PrefixBinaryBuilder()
             .setIpv6AddressBinary(new Ipv6AddressBinary(IPV6_ADDRESS_BYTES_A_TEST))
-            .setIpv6MaskLength(MASK_OK_DEFAULT_IPV6_TEST).build();
+            .setIpv6MaskLength(fromJava(MASK_OK_DEFAULT_IPV6_TEST)).build();
     private static final Eid IPV6_ADDRESS_PREFIX_BINARY_EID_1 = new EidBuilder()
             .setAddress(IPV6_ADDRESS_PREFIX_BINARY_1)
             .setAddressType(Ipv6PrefixBinaryAfi.class)
@@ -289,7 +291,7 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromSimpleAddressTest_asNumber() {
-        final SimpleAddress simpleAddress = new SimpleAddress(new AsNumber(NUMBER_TEST));
+        final SimpleAddress simpleAddress = new SimpleAddress(new AsNumber(fromJava(NUMBER_TEST)));
         final Class<? extends LispAddressFamily> addressClass = LispAddressUtil.addressTypeFromSimpleAddress(
                 simpleAddress);
         assertEquals(AsNumberAfi.class, addressClass);
@@ -533,8 +535,8 @@ public class LispAddressUtilTest {
                 .address.service.path.ServicePathBuilder servicePathBuilder = new org.opendaylight.yang.gen.v1.urn.ietf
                 .params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
                 .address.service.path.ServicePathBuilder();
-        servicePathBuilder.setServiceIndex(SERVICE_INDEX_TEST);
-        servicePathBuilder.setServicePathId(new ServicePathIdType(DUMMY_SERVICE_PATH_ID_TYPE));
+        servicePathBuilder.setServiceIndex(fromJava(SERVICE_INDEX_TEST));
+        servicePathBuilder.setServicePathId(new ServicePathIdType(fromJava(DUMMY_SERVICE_PATH_ID_TYPE)));
 
         ServicePath expectedAddress = servicePathBuilder.build();
         final Address testedAddress = LispAddressUtil.addressFromServicePath(expectedAddress);
@@ -580,7 +582,7 @@ public class LispAddressUtilTest {
      */
     @Test
     public void addressFromAsNumberTest_withAdNumber() {
-        final AsNumber expectedAddress = new AsNumber(AS_NUMBER_TEST);
+        final AsNumber expectedAddress = new AsNumber(fromJava(AS_NUMBER_TEST));
         final Address testedAddress = LispAddressUtil.addressFromAsNumber(expectedAddress);
         assertTrue(testedAddress instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp
                 .address.types.rev151105.lisp.address.address.AsNumber);
@@ -862,7 +864,7 @@ public class LispAddressUtilTest {
         assertArrayEquals(IPV6_ADDRESS_BYTES_A_TEST, ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary
                 .getAddress()).getIpv6AddressBinary().getValue());
         assertEquals(expectedMask,
-                (short) ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary.getAddress()).getIpv6MaskLength());
+                (short) ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary.getAddress()).getIpv6MaskLength().toJava());
     }
 
     private void verifyToEidWithIpv4(final Eid eidFromIpv4, final boolean isVniChecked) {
@@ -930,7 +932,7 @@ public class LispAddressUtilTest {
         assertArrayEquals(IPV4_ADDRESS_BYTES_A_TEST,
                 ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4AddressBinary().getValue());
         assertEquals(expectedMask,
-                (short) ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4MaskLength());
+                (short) ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4MaskLength().toJava());
     }
 
     private void verifyToEidWithIpv6Binary(final Eid eidFromIpv6, final boolean isVniChecked) {
@@ -1248,10 +1250,10 @@ public class LispAddressUtilTest {
             assertFalse(locatorRecord.isLocalLocator());
             assertFalse(locatorRecord.isRlocProbed());
             assertTrue(locatorRecord.isRouted());
-            assertTrue(1 == locatorRecord.getWeight());
-            assertTrue(1 == locatorRecord.getPriority());
-            assertTrue(1 == locatorRecord.getMulticastWeight());
-            assertTrue(1 == locatorRecord.getMulticastPriority());
+            assertTrue(1 == locatorRecord.getWeight().toJava());
+            assertTrue(1 == locatorRecord.getPriority().toJava());
+            assertTrue(1 == locatorRecord.getMulticastWeight().toJava());
+            assertTrue(1 == locatorRecord.getMulticastPriority().toJava());
             assertEquals("SFC_LISP", locatorRecord.getLocatorId());
         }
     }
