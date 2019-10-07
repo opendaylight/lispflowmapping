@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import java.nio.ByteBuffer;
 
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
@@ -59,7 +61,7 @@ public final class ApplicationDataSerializer extends LcafSerializer {
         ApplicationData appData = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                 .rev151105.lisp.address.address.ApplicationData) lispAddress.getAddress()).getApplicationData();
         buffer.put(ByteUtil.partialIntToByteArray(NumberUtil.asInt(appData.getIpTos()), Length.TOC));
-        buffer.put((byte) NumberUtil.asShort(appData.getProtocol()));
+        buffer.put((byte) NumberUtil.asShort(appData.getProtocol().toJava()));
         if (appData.getLocalPortLow() != null) {
             buffer.putShort(NumberUtil.asShort(appData.getLocalPortLow().getValue().shortValue()));
         } else {
@@ -107,11 +109,11 @@ public final class ApplicationDataSerializer extends LcafSerializer {
         byte[] rawIPTos = new byte[3];
         buffer.get(rawIPTos);
         builder.setIpTos(ByteUtil.getPartialInt(rawIPTos));
-        builder.setProtocol((short) ByteUtil.getUnsignedByte(buffer));
-        builder.setLocalPortLow(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
-        builder.setLocalPortHigh(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
-        builder.setRemotePortLow(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
-        builder.setRemotePortHigh(new PortNumber(ByteUtil.asUnsignedShort(buffer.getShort())));
+        builder.setProtocol(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
+        builder.setLocalPortLow(new PortNumber(fromJava(ByteUtil.asUnsignedShort(buffer.getShort()))));
+        builder.setLocalPortHigh(new PortNumber(fromJava(ByteUtil.asUnsignedShort(buffer.getShort()))));
+        builder.setRemotePortLow(new PortNumber(fromJava(ByteUtil.asUnsignedShort(buffer.getShort()))));
+        builder.setRemotePortHigh(new PortNumber(fromJava(ByteUtil.asUnsignedShort(buffer.getShort()))));
         SimpleAddress address = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         builder.setAddress(address);
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105

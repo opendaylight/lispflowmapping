@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -130,7 +132,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(
                     LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
+            transportAddressBuilder.setPort(new PortNumber(fromJava(port)));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             lispSbPlugin.sendNotificationIfPossible(requestMappingBuilder.build());
         } catch (RuntimeException re) {
@@ -204,7 +206,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
                 transportAddressBuilder.setIpAddress(LispNotificationHelper.getIpAddressBinaryFromInetAddress(
                         sourceAddress));
-                transportAddressBuilder.setPort(new PortNumber(port));
+                transportAddressBuilder.setPort(new PortNumber(fromJava(port)));
                 addMappingBuilder.setTransportAddress(transportAddressBuilder.build());
                 lispSbPlugin.sendNotificationIfPossible(addMappingBuilder.build());
                 if (artificialEntry != null) {
@@ -310,7 +312,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                                   MapRegisterCacheValue mapRegisterValue) {
         if (mapRegisterValue.getMappingAuthkey().getKeyType() != null) {
             ByteBuffer outBuffer = transformMapRegisterToMapNotify(inBuffer);
-            if (mapRegisterValue.getMappingAuthkey().getKeyType() != 0) {
+            if (mapRegisterValue.getMappingAuthkey().getKeyType().toJava() != 0) {
                 outBuffer = calculateAndSetNewMAC(outBuffer, mapRegisterValue.getMappingAuthkey().getKeyString());
             }
             outBuffer.position(0);
@@ -406,7 +408,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper
                     .getIpAddressBinaryFromInetAddress(sourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
+            transportAddressBuilder.setPort(new PortNumber(fromJava(port)));
             gotMapNotifyBuilder.setTransportAddress(transportAddressBuilder.build());
             lispSbPlugin.sendNotificationIfPossible(gotMapNotifyBuilder.build());
         } catch (RuntimeException re) {
@@ -426,7 +428,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(LispNotificationHelper
                     .getIpAddressBinaryFromInetAddress(sourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(port));
+            transportAddressBuilder.setPort(new PortNumber(fromJava(port)));
             gotMapReplyBuilder.setTransportAddress(transportAddressBuilder.build());
             lispSbPlugin.sendNotificationIfPossible(gotMapReplyBuilder.build());
         } catch (RuntimeException re) {

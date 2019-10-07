@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,20 +209,20 @@ public class MappingMergeUtilTest {
     public void getCommonLocatorRecords_priorityCheck() {
         LocatorRecordBuilder nbLocatorRecordBuilder1 = new LocatorRecordBuilder()
                 .setRloc(IPV4_RLOC_1)
-                .setPriority((short) 1)
+                .setPriority(fromJava((short) 1))
                 .setLocatorId("NB-locator-id");
         LocatorRecordBuilder sbLocatorRecordBuilder1 = new LocatorRecordBuilder()
                 .setRloc(IPV4_RLOC_1)
-                .setPriority((short) 255)
+                .setPriority(fromJava((short) 255))
                 .setLocatorId("SB-locator-id");
 
         LocatorRecordBuilder nbLocatorRecordBuilder2 = new LocatorRecordBuilder()
                 .setRloc(IPV4_RLOC_2)
-                .setPriority((short) 1)
+                .setPriority(fromJava((short) 1))
                 .setLocatorId("NB-locator-id");
         LocatorRecordBuilder sbLocatorRecordBuilder2 = new LocatorRecordBuilder()
                 .setRloc(IPV4_RLOC_2)
-                .setPriority((short) 254)
+                .setPriority(fromJava((short) 254))
                 .setLocatorId("SB-locator-id");
 
         final MappingRecordBuilder nbMappingRecordBuilder = getDefaultMappingRecordBuilder();
@@ -245,11 +246,11 @@ public class MappingMergeUtilTest {
 
         assertEquals("NB-locator-id", resultLocator_1.getLocatorId());
         // priority changed to 255
-        assertEquals(255, (short) resultLocator_1.getPriority());
+        assertEquals(255, (short) resultLocator_1.getPriority().toJava());
 
         assertEquals("NB-locator-id", resultLocator_2.getLocatorId());
         // priority remains original
-        assertEquals(1, (short) resultLocator_2.getPriority());
+        assertEquals(1, (short) resultLocator_2.getPriority().toJava());
     }
 
     private static MappingData getDefaultMappingData() {

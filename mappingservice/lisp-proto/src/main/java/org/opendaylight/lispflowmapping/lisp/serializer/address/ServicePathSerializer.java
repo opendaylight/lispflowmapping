@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import java.nio.ByteBuffer;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -59,7 +61,7 @@ public final class ServicePathSerializer extends LcafSerializer {
         ServicePath sp = (ServicePath) lispAddress.getAddress();
         buffer.put(ByteUtil.partialIntToByteArray(NumberUtil.asInt(
                 sp.getServicePath().getServicePathId().getValue().intValue()), Length.SPI));
-        buffer.put((byte) NumberUtil.asShort(sp.getServicePath().getServiceIndex()));
+        buffer.put((byte) NumberUtil.asShort(sp.getServicePath().getServiceIndex().toJava()));
     }
 
     @Override
@@ -75,8 +77,8 @@ public final class ServicePathSerializer extends LcafSerializer {
         ServicePathBuilder spb = new ServicePathBuilder();
         byte[] spi = new byte[3];
         buffer.get(spi);
-        spb.setServicePathId(new ServicePathIdType((long) ByteUtil.getPartialInt(spi)));
-        spb.setServiceIndex((short) ByteUtil.getUnsignedByte(buffer));
+        spb.setServicePathId(new ServicePathIdType(fromJava((long) ByteUtil.getPartialInt(spi))));
+        spb.setServiceIndex(fromJava((short) ByteUtil.getUnsignedByte(buffer)));
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ServicePathBuilder().setServicePath(spb.build()).build();
     }

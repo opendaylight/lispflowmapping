@@ -367,7 +367,7 @@ public class MappingSystem implements IMappingSystem {
         }
 
         LocatorRecord locatorRecord = mappingData.getRecord().getLocatorRecord().get(0);
-        long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex();
+        long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex().toJava();
         int index = LispAddressUtil.STARTING_SERVICE_INDEX - (int) serviceIndex;
         Rloc rloc = locatorRecord.getRloc();
         if (rloc.getAddress() instanceof Ipv4 || rloc.getAddress() instanceof Ipv6) {
@@ -742,13 +742,13 @@ public class MappingSystem implements IMappingSystem {
     private static Eid getVirtualParent(Eid eid) {
         if (eid.getAddress() instanceof Ipv4PrefixBinary) {
             Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-            short parentPrefixLength = (short) (prefix.getIpv4MaskLength() - 1);
+            short parentPrefixLength = (short) (prefix.getIpv4MaskLength().toJava() - 1);
             byte[] parentPrefix = MaskUtil.normalizeByteArray(prefix.getIpv4AddressBinary().getValue(),
                     parentPrefixLength);
             return LispAddressUtil.asIpv4PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
         } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-            short parentPrefixLength = (short) (prefix.getIpv6MaskLength() - 1);
+            short parentPrefixLength = (short) (prefix.getIpv6MaskLength().toJava() - 1);
             byte[] parentPrefix = MaskUtil.normalizeByteArray(prefix.getIpv6AddressBinary().getValue(),
                     parentPrefixLength);
             return LispAddressUtil.asIpv6PrefixBinaryEid(eid, parentPrefix, parentPrefixLength);
