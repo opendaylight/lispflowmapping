@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
+import org.opendaylight.yangtools.yang.common.Uint8;
+
 public final class NumberUtil {
     // Utility class, should not be instantiated
     private NumberUtil() {
@@ -29,6 +31,13 @@ public final class NumberUtil {
     public static short asShort(Short number) {
         if (number != null) {
             return number;
+        }
+        return 0;
+    }
+
+    public static short asShort(Uint8 number) {
+        if (number != null) {
+            return number.toJava();
         }
         return 0;
     }

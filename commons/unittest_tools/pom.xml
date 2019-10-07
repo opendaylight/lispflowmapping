@@ -14,6 +14,11 @@
        build failure. Please do not modify this unless you have a good reason. -->
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
+  <properties>
+    <odlparent.checkstyle.enforce>false</odlparent.checkstyle.enforce>
+    <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

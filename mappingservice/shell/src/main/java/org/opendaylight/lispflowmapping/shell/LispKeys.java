@@ -33,10 +33,12 @@ public class LispKeys  extends OsgiCommandSupport {
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
-        if (debug) {
-            System.out.print(mappingServiceShell.printKeys());
-        } else {
-            System.out.print(mappingServiceShell.prettyPrintKeys());
+        if (mappingServiceShell != null) {
+            if (debug) {
+                System.out.print(mappingServiceShell.printKeys());
+            } else {
+                System.out.print(mappingServiceShell.prettyPrintKeys());
+            }
         }
         return null;
     }

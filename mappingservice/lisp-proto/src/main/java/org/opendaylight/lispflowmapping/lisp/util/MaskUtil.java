@@ -114,11 +114,11 @@ public final class MaskUtil {
         try {
             if (address instanceof Ipv4PrefixBinary) {
                 byte[] addr = ((Ipv4PrefixBinary) address).getIpv4AddressBinary().getValue();
-                short mask = ((Ipv4PrefixBinary) address).getIpv4MaskLength();
+                short mask = ((Ipv4PrefixBinary) address).getIpv4MaskLength().toJava();
                 return LispAddressUtil.asIpv4PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
             } else if (address instanceof Ipv6PrefixBinary) {
                 byte[] addr = ((Ipv6PrefixBinary) address).getIpv6AddressBinary().getValue();
-                short mask = ((Ipv6PrefixBinary) address).getIpv6MaskLength();
+                short mask = ((Ipv6PrefixBinary) address).getIpv6MaskLength().toJava();
                 return LispAddressUtil.asIpv6PrefixBinaryEid(eid, normalizeByteArray(addr, mask), mask);
             } else if (address instanceof Ipv4Prefix) {
                 String[] v4prefix = splitPrefix(((Ipv4Prefix)address).getIpv4Prefix().getValue());
@@ -141,8 +141,8 @@ public final class MaskUtil {
                 return normalizeSrcDst(eid);
             } else if (address instanceof ServicePath) {
                 // Build new Service Path eid with service index set to 0
-                long spi = ((ServicePath) address).getServicePath().getServicePathId().getValue();
-                long vni = eid.getVirtualNetworkId() != null ? eid.getVirtualNetworkId().getValue() : -1;
+                long spi = ((ServicePath) address).getServicePath().getServicePathId().getValue().toJava();
+                long vni = eid.getVirtualNetworkId() != null ? eid.getVirtualNetworkId().getValue().toJava() : -1;
                 return LispAddressUtil.asServicePathEid(vni, spi, (short)0);
             }
         } catch (UnknownHostException e) {
@@ -258,9 +258,9 @@ public final class MaskUtil {
         } else if (address instanceof InstanceId) {
             return getMaskForAddress(((InstanceId)address).getInstanceId().getAddress());
         } else if (address instanceof Ipv4PrefixBinary) {
-            return ((Ipv4PrefixBinary) address).getIpv4MaskLength();
+            return ((Ipv4PrefixBinary) address).getIpv4MaskLength().toJava();
         } else if (address instanceof Ipv6PrefixBinary) {
-            return ((Ipv6PrefixBinary) address).getIpv6MaskLength();
+            return ((Ipv6PrefixBinary) address).getIpv6MaskLength().toJava();
         }
         return -1;
     }
