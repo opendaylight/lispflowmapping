@@ -138,7 +138,7 @@ public final class LispAddressStringifier {
         Long vni = null;
 
         if (lispAddress.getVirtualNetworkId() != null) {
-            vni = lispAddress.getVirtualNetworkId().getValue();
+            vni = lispAddress.getVirtualNetworkId().getValue().toJava();
         }
 
         return getAddrString(dst, addr, vni);

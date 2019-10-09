@@ -239,7 +239,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
                                            final MessageType packetType) {
         InetAddress ip = getInetAddress(address);
-        handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue(), null);
+        handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue().toJava(), null);
     }
 
     public void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer,

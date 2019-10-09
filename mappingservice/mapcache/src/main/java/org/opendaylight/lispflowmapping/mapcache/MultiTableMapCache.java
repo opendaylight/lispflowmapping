@@ -39,7 +39,7 @@ public class MultiTableMapCache implements IMapCache {
         if (eid.getVirtualNetworkId() == null) {
             return 0;
         } else {
-            return eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue().toJava();
         }
     }
 
