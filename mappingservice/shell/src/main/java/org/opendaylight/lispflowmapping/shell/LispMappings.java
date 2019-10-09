@@ -29,10 +29,12 @@ public class LispMappings  extends OsgiCommandSupport {
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     protected Object doExecute() throws Exception {
-        if (debug) {
-            System.out.print(mappingServiceShell.printMappings());
-        } else {
-            System.out.print(mappingServiceShell.prettyPrintMappings());
+        if (mappingServiceShell != null) {
+            if (debug) {
+                System.out.print(mappingServiceShell.printMappings());
+            } else {
+                System.out.print(mappingServiceShell.prettyPrintMappings());
+            }
         }
         return null;
     }

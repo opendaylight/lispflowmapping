@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DataStoreBackEnd implements TransactionChainListener {
-    protected static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
     private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
             InstanceIdentifier.create(MappingDatabase.class);
     private static final InstanceIdentifier<LastUpdated> LAST_UPDATED =

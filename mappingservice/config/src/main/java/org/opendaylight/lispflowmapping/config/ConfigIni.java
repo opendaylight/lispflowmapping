@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public final class ConfigIni {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingMerge;
     private boolean smr;
     private String elpPolicy;
@@ -269,7 +269,7 @@ public final class ConfigIni {
         }
 
         try {
-            this.smrRetryCount = Integer.valueOf(str);
+            this.smrRetryCount = Integer.parseInt(str);
             LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
         } catch (NumberFormatException e) {
             LOG.debug("Configuration variable '{}' was not set correctly. SMR retry count "
@@ -297,7 +297,7 @@ public final class ConfigIni {
         }
 
         try {
-            this.smrTimeout = Long.valueOf(str);
+            this.smrTimeout = Long.parseLong(str);
             LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
         } catch (NumberFormatException e) {
             LOG.debug("Configuration variable '{}' was not set correctly. SMR timeout "
@@ -351,7 +351,7 @@ public final class ConfigIni {
         }
 
         try {
-            this.negativeMappingTTL = Integer.valueOf(str);
+            this.negativeMappingTTL = Integer.parseInt(str);
             LOG.debug("Setting configuration variable '{}' to '{}'", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
         } catch (NumberFormatException e) {
             LOG.debug("Configuration variable '{}' was not set correctly. Negative TTL "

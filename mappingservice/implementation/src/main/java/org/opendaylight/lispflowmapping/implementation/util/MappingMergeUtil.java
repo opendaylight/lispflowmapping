@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Date;
@@ -302,11 +304,11 @@ public final class MappingMergeUtil {
             if (sbLocatorMap.containsKey(nbRloc)) {
                 // common locator found. use the NB record as the common locator.
 
-                if (sbLocatorMap.get(nbRloc).getPriority() == (short) 255) {
+                if (sbLocatorMap.get(nbRloc).getPriority().toJava() == (short) 255) {
                     // if SB locator has p == 255 then common locator takes all NB fields except for p
                     // which must be set to 255
                     LocatorRecordBuilder lrb = new LocatorRecordBuilder(nbLocator);
-                    lrb.setPriority((short) 255);
+                    lrb.setPriority(fromJava((short) 255));
                     commonLocators.add(lrb.build());
                 } else {
                     commonLocators.add(nbLocator);
