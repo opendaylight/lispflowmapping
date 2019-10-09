@@ -49,10 +49,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             Eid eid = (Eid) key;
             if (eid.getAddress() instanceof Ipv4PrefixBinary) {
                 Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-                ip4Trie.insert(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength(), key);
+                ip4Trie.insert(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength().toJava(), key);
             } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
                 Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-                ip6Trie.insert(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength(), key);
+                ip6Trie.insert(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength().toJava(), key);
             }
         }
     }
@@ -85,10 +85,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     private RadixTrie<Object>.TrieNode lookupBestNode(Eid eid) {
         if (eid.getAddress() instanceof Ipv4PrefixBinary) {
             Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-            return ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            return ip4Trie.lookupBest(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength().toJava());
         } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-            return ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            return ip6Trie.lookupBest(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength().toJava());
         }
         return null;
     }
@@ -140,21 +140,23 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             switch (method) {
                 case COVERING:
                     node = ip4Trie.lookupCoveringLessSpecific(prefix.getIpv4AddressBinary().getValue(),
-                            prefix.getIpv4MaskLength());
+                            prefix.getIpv4MaskLength().toJava());
                     break;
                 case PARENT:
-                    node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+                    node = ip4Trie.lookupParent(prefix.getIpv4AddressBinary().getValue(),
+                            prefix.getIpv4MaskLength().toJava());
                     break;
                 case SIBLING:
-                    node = ip4Trie.lookupSibling(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+                    node = ip4Trie.lookupSibling(prefix.getIpv4AddressBinary().getValue(),
+                            prefix.getIpv4MaskLength().toJava());
                     break;
                 case VIRTUAL_PARENT_SIBLING:
                     node = ip4Trie.lookupVirtualParentSibling(prefix.getIpv4AddressBinary().getValue(),
-                            prefix.getIpv4MaskLength());
+                            prefix.getIpv4MaskLength().toJava());
                     break;
                 case WIDEST_NEGATIVE:
                     node = ip4Trie.lookupWidestNegative(prefix.getIpv4AddressBinary().getValue(),
-                            prefix.getIpv4MaskLength());
+                            prefix.getIpv4MaskLength().toJava());
                     break;
                 default:
                     node = null;
@@ -169,21 +171,23 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             switch (method) {
                 case COVERING:
                     node = ip6Trie.lookupCoveringLessSpecific(prefix.getIpv6AddressBinary().getValue(),
-                            prefix.getIpv6MaskLength());
+                            prefix.getIpv6MaskLength().toJava());
                     break;
                 case PARENT:
-                    node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+                    node = ip6Trie.lookupParent(prefix.getIpv6AddressBinary().getValue(),
+                            prefix.getIpv6MaskLength().toJava());
                     break;
                 case SIBLING:
-                    node = ip6Trie.lookupSibling(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+                    node = ip6Trie.lookupSibling(prefix.getIpv6AddressBinary().getValue(),
+                            prefix.getIpv6MaskLength().toJava());
                     break;
                 case VIRTUAL_PARENT_SIBLING:
                     node = ip6Trie.lookupVirtualParentSibling(prefix.getIpv6AddressBinary().getValue(),
-                            prefix.getIpv6MaskLength());
+                            prefix.getIpv6MaskLength().toJava());
                     break;
                 case WIDEST_NEGATIVE:
                     node = ip6Trie.lookupWidestNegative(prefix.getIpv6AddressBinary().getValue(),
-                            prefix.getIpv6MaskLength());
+                            prefix.getIpv6MaskLength().toJava());
                     break;
                 default:
                     node = null;
@@ -227,10 +231,12 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         Set<RadixTrie<Object>.TrieNode> nodes = null;
         if (key.getAddress() instanceof Ipv4PrefixBinary) {
             Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) key.getAddress();
-            nodes = ip4Trie.lookupSubtree(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+            nodes = ip4Trie.lookupSubtree(prefix.getIpv4AddressBinary().getValue(),
+                    prefix.getIpv4MaskLength().toJava());
         } else if (key.getAddress() instanceof Ipv6PrefixBinary) {
             Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) key.getAddress();
-            nodes = ip6Trie.lookupSubtree(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+            nodes = ip6Trie.lookupSubtree(prefix.getIpv6AddressBinary().getValue(),
+                    prefix.getIpv6MaskLength().toJava());
         }
         return nodesToEids(key, nodes);
     }
@@ -258,10 +264,10 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
             Eid eid = (Eid) key;
             if (eid.getAddress() instanceof Ipv4PrefixBinary) {
                 Ipv4PrefixBinary prefix = (Ipv4PrefixBinary) eid.getAddress();
-                ip4Trie.remove(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength());
+                ip4Trie.remove(prefix.getIpv4AddressBinary().getValue(), prefix.getIpv4MaskLength().toJava());
             } else if (eid.getAddress() instanceof Ipv6PrefixBinary) {
                 Ipv6PrefixBinary prefix = (Ipv6PrefixBinary) eid.getAddress();
-                ip6Trie.remove(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength());
+                ip6Trie.remove(prefix.getIpv6AddressBinary().getValue(), prefix.getIpv6MaskLength().toJava());
             }
         }
     }

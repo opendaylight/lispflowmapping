@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>5.0.2</version>
+    <version>6.0.0</version>
     <relativePath/>
   </parent>
 
@@ -39,7 +39,7 @@
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>mdsal-artifacts</artifactId>
-        <version>4.0.6</version>
+        <version>5.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -66,19 +66,6 @@
   </dependencyManagement>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <!-- Enforce odlparent checkstyle -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <configuration>
-            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-            <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>

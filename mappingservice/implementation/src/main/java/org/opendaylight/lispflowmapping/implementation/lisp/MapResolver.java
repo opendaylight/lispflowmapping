@@ -8,6 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
@@ -273,7 +275,7 @@ public class MapResolver implements IMapResolverAsync {
                 ExplicitLocatorPath teAddress = ((ExplicitLocatorPath) container.getAddress());
                 SimpleAddress nextHop = getNextELPHop(teAddress, itrRlocs);
                 if (nextHop != null) {
-                    java.lang.Short priority = record.getPriority();
+                    java.lang.Short priority = record.getPriority().toJava();
                     if (elpPolicy.equalsIgnoreCase("both")) {
                         recordBuilder.getLocatorRecord().add(
                                 new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
@@ -294,7 +296,7 @@ public class MapResolver implements IMapResolverAsync {
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
                                     .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
-                                    .setPriority(priority).setMulticastWeight(record.getMulticastWeight())
+                                    .setPriority(fromJava(priority)).setMulticastWeight(record.getMulticastWeight())
                                     .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                                     .setRloc(LispAddressUtil.toRloc(nextHop))
                                     .setLocatorId(record.getLocatorId()).build());

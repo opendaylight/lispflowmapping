@@ -73,7 +73,7 @@ public class PortDataProcessorTest {
             Field field = portDataProcessor.getClass().getDeclaredField("hostInformationManager");
             field.setAccessible(true);
             field.set(portDataProcessor, hostInformationManager);
-        } catch (Exception e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException("Unable to set hostInformationManager", e);
         }
 

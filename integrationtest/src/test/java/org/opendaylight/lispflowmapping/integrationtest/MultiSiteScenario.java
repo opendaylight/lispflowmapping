@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.lispflowmapping.integrationtest.MappingServiceIntegrationTest.ourAddress;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_A;
 import static org.opendaylight.lispflowmapping.integrationtest.MultiSiteScenarioUtil.SITE_D5;
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import com.google.common.net.InetAddresses;
 import java.nio.ByteBuffer;
@@ -78,7 +79,7 @@ class MultiSiteScenario {
     private final Boolean DEFAULT_ROUTED = true;
     private final byte[] DEFAULT_SITE_ID = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
 
-    private final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(fromJava(0)).build();
     private final IMappingService mapService;
     private final IFlowMapping lms;
 
@@ -261,10 +262,10 @@ class MultiSiteScenario {
         final LocatorRecordBuilder locatorRecordBuilder = new LocatorRecordBuilder();
         locatorRecordBuilder.setRloc(rloc);
         locatorRecordBuilder.setLocatorId(rlocStr);
-        locatorRecordBuilder.setPriority(priority);
-        locatorRecordBuilder.setWeight(weight);
-        locatorRecordBuilder.setMulticastPriority(DEFAULT_MULTICAST_PRIORITY);
-        locatorRecordBuilder.setMulticastWeight(DEFAULT_MULTICAST_WEIGHT);
+        locatorRecordBuilder.setPriority(fromJava(priority));
+        locatorRecordBuilder.setWeight(fromJava(weight));
+        locatorRecordBuilder.setMulticastPriority(fromJava(DEFAULT_MULTICAST_PRIORITY));
+        locatorRecordBuilder.setMulticastWeight(fromJava(DEFAULT_MULTICAST_WEIGHT));
         locatorRecordBuilder.setLocalLocator(DEFAULT_LOCAL_LOCATOR);
         locatorRecordBuilder.setRlocProbed(DEFAULT_RLOC_PROBED);
         locatorRecordBuilder.setRouted(DEFAULT_ROUTED);
@@ -345,14 +346,15 @@ class MultiSiteScenario {
                         return true;
                     }
 
-                    final boolean isWeightEquals = expectedTargetSite.getWeight() == locatorRecord.getWeight();
+                    final boolean isWeightEquals = expectedTargetSite.getWeight() == locatorRecord.getWeight().toJava();
                     if (isPossibleAssertPingResultImmediately(expectedPingWorks, isWeightEquals, "Weight isn't equal." +
                             "Expected value " + expectedTargetSite.getWeight() + ". Value from mapping" +
                             locatorRecord.getWeight() + ".")) {
                         return true;
                     }
 
-                    final boolean isPriorityEquals = expectedTargetSite.getPriority() == locatorRecord.getPriority();
+                    final boolean isPriorityEquals =
+                            expectedTargetSite.getPriority() == locatorRecord.getPriority().toJava();
                     if (isPossibleAssertPingResultImmediately(expectedPingWorks, isPriorityEquals, "Priority isn't " +
                             "equal. Expected value " + expectedTargetSite.getPriority() + ". Value from mapping" +
                             locatorRecord.getPriority() + ".")) {
@@ -449,7 +451,7 @@ class MultiSiteScenario {
         final Set<Eid> eids = new HashSet<>();
         for (String host : hosts) {
             eids.add(LispAddressUtil.asIpv4PrefixBinaryEid(host + "/" + IP_MASK,
-                    new InstanceIdType(MultiSiteScenarioUtil.VNI2)));
+                    new InstanceIdType(fromJava(MultiSiteScenarioUtil.VNI2))));
         }
         return eids;
     }
