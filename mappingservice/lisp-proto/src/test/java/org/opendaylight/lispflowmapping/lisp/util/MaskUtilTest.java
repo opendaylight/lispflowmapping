@@ -11,6 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -87,9 +88,9 @@ public class MaskUtilTest {
     private static final Ipv4AddressBinary IPV4_ADDRESS_BINARY = new Ipv4AddressBinary(ipv4ByteAddress);
     private static final Ipv6AddressBinary IPV6_ADDRESS_BINARY = new Ipv6AddressBinary(ipv6ByteAddress);
     private static final Ipv4PrefixBinary IPV4_PREFIX_BINARY = new Ipv4PrefixBinaryBuilder()
-            .setIpv4AddressBinary(IPV4_ADDRESS_BINARY).setIpv4MaskLength((short) 32).build();
+            .setIpv4AddressBinary(IPV4_ADDRESS_BINARY).setIpv4MaskLength(fromJava((short) 32)).build();
     private static final Ipv6PrefixBinary IPV6_PREFIX_BINARY = new Ipv6PrefixBinaryBuilder()
-            .setIpv6AddressBinary(IPV6_ADDRESS_BINARY).setIpv6MaskLength((short) 128).build();
+            .setIpv6AddressBinary(IPV6_ADDRESS_BINARY).setIpv6MaskLength(fromJava((short) 128)).build();
 
     private static final Address ADDRESS_IPV4 = new Ipv4Builder().setIpv4(IPV4_ADDRESS).build();
     private static final Address ADDRESS_IPV6 = new Ipv6Builder().setIpv6(new Ipv6Address(IPV6_STRING)).build();
@@ -146,7 +147,7 @@ public class MaskUtilTest {
 
         // expected result
         assertArrayEquals(ipv4ExpectedByteAddress, resultPrefix.getIpv4AddressBinary().getValue());
-        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength());
+        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength().toJava());
     }
 
     /**
@@ -160,7 +161,7 @@ public class MaskUtilTest {
 
         // expected result
         assertArrayEquals(ipv6ExpectedByteAddress, resultPrefix.getIpv6AddressBinary().getValue());
-        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength());
+        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength().toJava());
     }
 
     /**
@@ -224,7 +225,7 @@ public class MaskUtilTest {
         // expected result
         final byte[] expectedResult = Inet4Address.getByName("255.255.240.0").getAddress();
         assertArrayEquals(expectedResult, resultPrefix.getIpv4AddressBinary().getValue());
-        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength());
+        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength().toJava());
     }
 
     /**
@@ -239,7 +240,7 @@ public class MaskUtilTest {
         // expected result
         final byte[] expectedResult = Inet6Address.getByName("1111:2222:3333:4444:4000::").getAddress();
         assertArrayEquals(expectedResult, resultPrefix.getIpv6AddressBinary().getValue());
-        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength());
+        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength().toJava());
     }
 
     /**
@@ -427,9 +428,9 @@ public class MaskUtilTest {
         return new InstanceIdBuilder()
                 .setInstanceId(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                         .rev151105.lisp.address.address.instance.id.InstanceIdBuilder()
-                        .setIid(new InstanceIdType(1L))
+                        .setIid(new InstanceIdType(fromJava(1L)))
                         .setAddress(new SimpleAddress(new IpPrefix(IPV4_PREFIX)))
-                        .setMaskLength((short) 32).build())
+                        .setMaskLength(fromJava((short) 32)).build())
                 .build();
     }
 
@@ -437,7 +438,7 @@ public class MaskUtilTest {
         return new InstanceIdBuilder()
                 .setInstanceId(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                         .rev151105.lisp.address.address.instance.id.InstanceIdBuilder()
-                        .setIid(new InstanceIdType(1L))
+                        .setIid(new InstanceIdType(fromJava(1L)))
                         .setAddress(new SimpleAddress(new IpAddress(new Ipv4Address(IPV4_STRING_1)))).build())
                 .build();
     }
@@ -448,8 +449,8 @@ public class MaskUtilTest {
                 .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();
 
         return new ServicePathBuilder().setServicePath(servicePathBuilder
-                        .setServiceIndex((short) 1)
-                        .setServicePathId(new ServicePathIdType(1L)).build())
+                        .setServiceIndex(fromJava((short) 1))
+                        .setServicePathId(new ServicePathIdType(fromJava(1L))).build())
                 .build();
     }
 }

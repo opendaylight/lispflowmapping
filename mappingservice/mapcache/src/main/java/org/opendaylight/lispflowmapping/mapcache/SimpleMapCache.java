@@ -45,7 +45,7 @@ public class SimpleMapCache implements ILispMapCache {
         if (eid.getVirtualNetworkId() == null) {
             return 0;
         } else {
-            return eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue().toJava();
         }
     }
 
@@ -116,8 +116,7 @@ public class SimpleMapCache implements ILispMapCache {
 
     @Override
     public Object getMapping(Eid srcEid, Eid dstEid) {
-        final XtrId xtrId = null;
-        return getMapping(dstEid, xtrId);
+        return getMapping(dstEid, (XtrId) null);
     }
 
     @Override

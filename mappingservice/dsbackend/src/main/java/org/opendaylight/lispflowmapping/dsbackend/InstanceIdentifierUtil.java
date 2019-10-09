@@ -77,9 +77,9 @@ public final class InstanceIdentifierUtil {
     private static long getLispInstanceId(Eid eid) {
         Address address = eid.getAddress();
         if (address instanceof InstanceId) {
-            return ((InstanceId) address).getInstanceId().getIid().getValue();
+            return ((InstanceId) address).getInstanceId().getIid().getValue().toJava();
         } else if (eid.getVirtualNetworkId() != null) {
-            return eid.getVirtualNetworkId().getValue();
+            return eid.getVirtualNetworkId().getValue().toJava();
         }
         return 0L;
     }
