@@ -311,7 +311,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     @Override
     public void onTransactionChainFailed(TransactionChain chain, Transaction transaction, Throwable cause) {
         LOG.error("Broken chain {} in DataStoreBackEnd, transaction {}, cause {}", chain, transaction.getIdentifier(),
-                cause);
+                cause.getMessage());
     }
 
     @Override
