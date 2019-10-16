@@ -61,7 +61,7 @@ public class Subscriber {
     public Subscriber(Rloc srcRloc, Eid srcEid, int subscriberTtl, Date lastRequestDate) {
         super();
         this.data = new SubscriberDataBuilder().setRloc(srcRloc).setEid(srcEid).setTtl(subscriberTtl).build();
-        this.lastRequestDate = lastRequestDate;
+        this.lastRequestDate = new Date(lastRequestDate.getTime());
     }
 
     public SubscriberData getSubscriberData() {
@@ -77,11 +77,11 @@ public class Subscriber {
     }
 
     public Date getLastRequestDate() {
-        return lastRequestDate;
+        return new Date(lastRequestDate.getTime());
     }
 
     public void setLastRequestDate(Date lastRequestDate) {
-        this.lastRequestDate = lastRequestDate;
+        this.lastRequestDate = new Date(lastRequestDate.getTime());
     }
 
     public int getSubscriberTtl() {
