@@ -16,6 +16,23 @@
       "revId": "1d5ac2dd3aaa5b1ed6dded9d8841b3d69708a936",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_277094a4",
+        "filename": "mappingservice/neutron/src/main/resources/org/opendaylight/blueprint/neutron.xml",
+        "patchSetId": 13
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-20T14:50:53Z",
+      "side": 1,
+      "message": "The second service tag should not be needed, we\u0027re not implementing and exporting/providing BindingAwareProvider",
+      "revId": "1d5ac2dd3aaa5b1ed6dded9d8841b3d69708a936",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }

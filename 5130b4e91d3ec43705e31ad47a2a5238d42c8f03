@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_27f534ee",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessor.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-20T14:50:53Z",
+      "side": 0,
+      "message": "If there is no mapping, this will cause a NPE. We need to handle the case where there is no mapping.",
+      "revId": "5130b4e91d3ec43705e31ad47a2a5238d42c8f03",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
