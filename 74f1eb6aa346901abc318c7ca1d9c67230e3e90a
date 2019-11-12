@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_dfd610c5",
+        "filename": "test_changes.patch",
+        "patchSetId": 16
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-11-07T10:55:51Z",
+      "side": 1,
+      "message": "I assume this file was added by accident?",
+      "revId": "74f1eb6aa346901abc318c7ca1d9c67230e3e90a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
