@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_ae878fd6",
+        "filename": "mappingservice/neutron/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-11T15:08:52Z",
+      "side": 1,
+      "message": "Add version here, and remove from parent.",
+      "revId": "cda31688f56050fa8232f99d2a0fd2e80970ef34",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_8e7a8bef",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-11T15:08:52Z",
+      "side": 1,
+      "message": "Since no other bundle needs this artifact, it is ok to explicitly ist the version in child pom, and remove this from this pom.",
+      "revId": "cda31688f56050fa8232f99d2a0fd2e80970ef34",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

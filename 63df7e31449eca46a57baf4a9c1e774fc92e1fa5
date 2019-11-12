@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_ce8483d6",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-11T15:08:52Z",
+      "side": 0,
+      "message": "You can keep this removed, since we don\u0027t need it.",
+      "revId": "63df7e31449eca46a57baf4a9c1e774fc92e1fa5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
