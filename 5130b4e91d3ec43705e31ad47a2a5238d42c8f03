@@ -16,6 +16,24 @@
       "revId": "5130b4e91d3ec43705e31ad47a2a5238d42c8f03",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_82306ee9",
+        "filename": "mappingservice/neutron/src/main/java/org/opendaylight/lispflowmapping/neutron/PortDataProcessor.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-20T17:16:23Z",
+      "side": 0,
+      "message": "Actually, the NPE is still happening, it\u0027s the output variable that is null.",
+      "parentUuid": "9a561d44_a74f84bc",
+      "revId": "5130b4e91d3ec43705e31ad47a2a5238d42c8f03",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
