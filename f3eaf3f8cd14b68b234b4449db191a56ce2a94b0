@@ -16,6 +16,24 @@
       "revId": "f3eaf3f8cd14b68b234b4449db191a56ce2a94b0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_473abfe7",
+        "filename": "mappingservice/neutron/src/test/org/opendaylight/lispflowmapping/neutron/LispUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a561d44_dac99427",
+      "revId": "f3eaf3f8cd14b68b234b4449db191a56ce2a94b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
