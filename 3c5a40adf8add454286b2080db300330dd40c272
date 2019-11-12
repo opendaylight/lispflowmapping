@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_735b3ef6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "We need a shared variable for MapResolver and MapServer, we could create a setter here, but then we need to add it to IMapResolverAsync interface as well. I think the MapServer has to be notified that the MapResolver has received a smr-invoked request.",
+      "parentUuid": "7a6b29fe_754ce2c8",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_3556ea5c",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_d3dcd2e6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_3556ea5c",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_1553ee6b",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2016-08-26T15:38:42Z",
       "side": 1,
       "message": "This is not asynchronous, and we shouldn\u0027t have a sleep in handleSMR.",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_f3df4ed4",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "We could put it into mapServer.",
+      "parentUuid": "7a6b29fe_1553ee6b",
       "revId": "3c5a40adf8add454286b2080db300330dd40c272",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
