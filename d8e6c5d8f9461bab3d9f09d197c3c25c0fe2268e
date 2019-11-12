@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_f036a7e6",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapResolverUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Right...",
+      "parentUuid": "7a6b29fe_4beed4ed",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_cb14a4f7",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapResolverUtil.java",
         "patchSetId": 4
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_b0254fad",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_6b03d0b8",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_2bcef883",
         "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
         "patchSetId": 4
@@ -64,6 +100,24 @@
       "writtenOn": "2016-08-04T15:09:11Z",
       "side": 1,
       "message": "Can you please add a similar (the same?) description that we have for the source-rloc in the mapping-record-metadata?",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_d020cb9d",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Sure, Done.",
+      "parentUuid": "7a6b29fe_2bcef883",
       "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
