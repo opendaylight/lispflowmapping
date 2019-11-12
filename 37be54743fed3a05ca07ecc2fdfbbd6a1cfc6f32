@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_08097a31",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c85f8271",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_880aaad0",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "You could create a constant for the date, something like \"private static final Date TWO_DAYS_AGO \u003d new Date(System.currentTimeMillis() - 86400000L * 2);\"",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a3ffcf00",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "sure, makes sence... Done",
+      "parentUuid": "fa57193c_880aaad0",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e309c72d",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "ok, makes sence... but at least we need to set the key type, otherwise it throws NPE.",
+      "parentUuid": "fa57193c_480092aa",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_e89fe601",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -64,6 +118,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "I would leave the default as false, for now, and explicitly enable when testing merge related features, since the ODL default is also false. That way when we read a test, we know that the default was changed.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_2341ff39",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "understood, DONE",
+      "parentUuid": "fa57193c_e89fe601",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e3ca67a0",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Difference between newMapping and oldMapping is now a list of LocatorRecords... DONE",
+      "parentUuid": "fa57193c_c8bb0271",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_28b0be8a",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -98,6 +188,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "Same comment as in previous test. Actually all tests with OLD_MAPPING_RECORD have this problem.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c3cf63af",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_28b0be8a",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_23c45f91",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_28771ed6",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_e88366ca",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -132,6 +258,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_234bbf2c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_e88366ca",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e30f07e0",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "How else should I test for different EIDs?",
+      "parentUuid": "fa57193c_e83b66e9",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_c88822ea",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -166,6 +328,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c3464323",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c88822ea",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_833c4b95",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_286d5e33",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_086a1a1a",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -200,6 +398,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a337cfaf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_086a1a1a",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_43bb530e",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_68775603",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_487412fd",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_63be5701",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_487412fd",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_e85a4682",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
         "patchSetId": 10
@@ -251,6 +503,24 @@
       "writtenOn": "2016-04-26T11:51:02Z",
       "side": 1,
       "message": "Should not be set anymore, since it will be removed. The EID field should be a proper IPvXPrefix type, with prefix length included, and the serializer will make sure that the actual packet is set correctly.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_634bf759",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_e85a4682",
       "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
