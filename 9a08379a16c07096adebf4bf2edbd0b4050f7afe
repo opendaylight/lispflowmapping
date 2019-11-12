@@ -34,6 +34,24 @@
       "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_5777a402",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-04T07:54:10Z",
+      "side": 1,
+      "message": "Miro explained in an offline discussion that line coverage increases with this test, so we\u0027ll keep it as is.",
+      "parentUuid": "3a4c51b2_d76e1b96",
+      "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
