@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_754ce2c8",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T15:38:42Z",
+      "side": 1,
+      "message": "Can\u0027t we avoid modifying the MapResolver constructor?",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_3556ea5c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T15:38:42Z",
+      "side": 1,
+      "message": "e.printStackTrace() is not allowed, if you use \u0027LOG.error(\"errmsg\", e)\u0027 the stack trace will be printed.",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_1553ee6b",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-26T15:38:42Z",
+      "side": 1,
+      "message": "This is not asynchronous, and we shouldn\u0027t have a sleep in handleSMR.",
+      "revId": "3c5a40adf8add454286b2080db300330dd40c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
