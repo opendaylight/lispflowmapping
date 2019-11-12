@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_df639aaf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "What\u0027s the reason behind mocking this and stubbing the getDaoPairEntryBest() method?",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_d0d54744",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
