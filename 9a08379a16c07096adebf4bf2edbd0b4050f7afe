@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_3ab9282f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T11:16:42Z",
+      "side": 1,
+      "message": "Could we return a dummy object here, and assert for that?",
+      "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_d76e1b96",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-31T09:18:15Z",
+      "side": 1,
+      "message": "Since NORMALIZED_EID \u003d MaskUtil.normalize(EID_TEST), it is actually an IPv4Prefix, not IPv4. So even if we call getMapping with an Ipv4, the actual database lookup will use a normalized Ipv4Prefix. Let\u0027s discuss on Jabber if you think I misunderstood your intentions here.",
+      "parentUuid": "3a4c51b2_5c2b52eb",
+      "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
