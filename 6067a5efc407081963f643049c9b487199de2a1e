@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fafc7978_b646d721",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 29
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-27T02:53:24Z",
+      "side": 1,
+      "message": "This is always sending an SMR to the subscribers of the parent prefix. What we actually want is to send an SMR to the parent prefix subscribers ONLY when a more specific is added for the first time. So, in handleMapRequest if odlMapping\u003d\u003dnull we do findParentPrefix() then getSubscribers(parentPrefix) and send SMRs to those.",
+      "range": {
+        "startLine": 278,
+        "startChar": 4,
+        "endLine": 283,
+        "endChar": 13
+      },
+      "revId": "6067a5efc407081963f643049c9b487199de2a1e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_9631130e",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 29
@@ -14,6 +37,29 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "fafc7978_b646d721",
+      "revId": "6067a5efc407081963f643049c9b487199de2a1e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_164b632c",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 29
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-27T02:53:24Z",
+      "side": 1,
+      "message": "Is this used in this patch?!",
+      "range": {
+        "startLine": 762,
+        "startChar": 25,
+        "endLine": 762,
+        "endChar": 56
+      },
       "revId": "6067a5efc407081963f643049c9b487199de2a1e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
