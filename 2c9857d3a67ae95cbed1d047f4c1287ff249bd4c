@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_29a26fae",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_11235706",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_b179cbfe",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_2989cf26",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Right, that was the default value from IDEA, didn\u0027t notice that.",
+      "parentUuid": "ba51214e_b179cbfe",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba51214e_914f6792",
         "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2016-06-21T14:18:58Z",
       "side": 1,
       "message": "The variable name is misleading, I would expect the result to be of binary type, while it isn\u0027t. The rloc test methods use the correct convention.",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_e92077f9",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Right, I have exchanged fromBinary with toBinary.",
+      "parentUuid": "ba51214e_914f6792",
       "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -82,6 +136,24 @@
       "side": 1,
       "message": "OK.",
       "parentUuid": "ba51214e_c9f9334f",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c9f9334f",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "All calls to that method use the same prefix, so it seems to be redundant more or less, I just tried to stick to the pattern Jozef has established when the methods were written.",
+      "parentUuid": "ba51214e_b1638b19",
       "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
