@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_25811990",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListenerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-01T09:46:14Z",
+      "side": 1,
+      "message": "s/InstanceIdentifier/InstanceIdentifier\u003cMapping\u003e/",
+      "revId": "d06a3871555e60b37f1e1d9164869f674f45636d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_454fed92",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListenerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-01T09:46:14Z",
+      "side": 1,
+      "message": "s/DataTreeIdentifier/DataTreeIdentifier\u003cMapping\u003e/",
+      "revId": "d06a3871555e60b37f1e1d9164869f674f45636d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_a5440975",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/MappingDataListenerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-01T09:46:14Z",
+      "side": 1,
+      "message": "s/DataTreeIdentifier/DataTreeIdentifier\u003cMapping\u003e/",
+      "revId": "d06a3871555e60b37f1e1d9164869f674f45636d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
