@@ -1,0 +1,158 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_d30af924",
+        "filename": "integrationtest/src/test/java/org/opendaylight/lispflowmapping/integrationtest/MappingServiceIntegrationTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "If this is not WIP, this change and the \u0027@Ignore\u0027 annotations should be removed.",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_a99d4c0c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "The idea of this file is not just to add a fixed constant, which can be changed at compile time, but to also add support from reading a configuration file, so values can be changed a ODL start time.",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_536a69ee",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "s/message/Map-Request/",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_b36bfdef",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "We need to support both IPv4 and IPv6, sourceRloc can be Ipv6AddressBinary too. Why not just store IpAddressBinary in the SmrEvent, to avoid new object creation?",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_491f586c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "You can add \u0027, e\u0027 after the message, so that a full stack trace is printed, which helps with debugging.",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_847155aa",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "Could we avoid conversions everywhere? The source RLOC should already be in binary form.",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_04ed45b7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-14T10:00:41Z",
+      "side": 1,
+      "message": "Why not use the Rloc object itself as the key in the map instead of the Address? Or even better, the key should be an IpAddressBinary, since anything else shouldn\u0027t happen. And that\u0027s the same object that we have the SmrEvent. In fact, if we don\u0027t have an IpAddressBinary, we have a bug somewhere else, and we can\u0027t send the SMR.",
+      "parentUuid": "7a6b29fe_44961d40",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_092a808f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "s/request/Map-Request/\n\nAlso, you could add \u0027with nonce {} from subscriber {}\u0027 to have even more debug information when TRACE is on. Same below.",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_691a147e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-13T11:09:23Z",
+      "side": 1,
+      "message": "s/request/Map-Request/",
+      "revId": "794222cff43b1a14c2b3854385f9f0e15f7aec86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
