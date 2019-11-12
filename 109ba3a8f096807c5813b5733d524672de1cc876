@@ -53,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_7ff9aec7",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "EID_IPV4_PREFIX_SRC is not used, so let\u0027s just leave it null, to avoid confusion.\n\nAlso, getDaoPairEntryBest() is the code that is doing longest prefix match, so we should use something like 192.168.0.255/32 for destination, to really check if it is working. Same for the following tests.",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_d0d54744",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
@@ -65,6 +82,75 @@
       "side": 1,
       "message": "The main idea is that Map-Requests are typically for /32s. And in this case, the mapping that we store is 192.168.0.1/24, which is normalized to 192.168.0.0/24. So, by looking up 192.168.0.255/32, we check for multiple things working properly at one time.",
       "parentUuid": "fa57193c_15ba11de",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_70027b3f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T13:34:59Z",
+      "side": 1,
+      "message": "I guess I didn\u0027t explain things very well... EID_IPV4_PREFIX_DST was good as it was in all other places. I was suggesting that only for this particular getMapping call we use a different constant that would be 192.168.0.255/32, but everywhere else we keep 192.168.0.1/24.",
+      "parentUuid": "fa57193c_10ba1fde",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_ffbadedf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "s/mappin/mapping/",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_ff881e24",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "We should also check if expired xTR-ID entries are removed.",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_dfbf1acf",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "s/mappin/mapping/",
       "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
