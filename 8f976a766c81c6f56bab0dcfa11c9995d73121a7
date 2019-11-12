@@ -1,0 +1,226 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_2a5b8b88",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "I would rewrite this comment in all tests where appropriate as \"expected result\" since the actual result is determined separately below",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_0a604731",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Actually, this is not the same RLOC. Not sure what was the intention here?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_0ad7a7c2",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Well, the comment in the method does say that we expect locators to be ordered. And the ordering code just makes sure that the merged list is ordered to. So I would rewrite this test with current(RLOC1,RLOC3) and new(RLOC2,RLOC4) and then make sure that we get merged(RLOC1,RLOC2,RLOC3,RLOC4) and NOT merged(RLOC1,RLOC3,RLOC2,RLOC4).",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_364bf12c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-03T11:50:54Z",
+      "side": 1,
+      "message": "Ok, sounds good.",
+      "parentUuid": "fa57193c_c018eb86",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_250a9c21",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Should this be expanded a bit?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_050f9831",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Could you check if expiredMappings has the two XtrId values?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c52be080",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Try setting a different sourceRloc here for each",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_2521fc9f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Same comment as previous test, please check for expiredMappings.",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a534ecde",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Could we use ConfigIni.getInstance().getRegistrationValiditySb(), as the default may change in time?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_8531e8ee",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Isn\u0027t this basically the same as above?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e54d4474",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "Same comment about the constant as above",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_aae79b3f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "s/Iterator/Iterator\u003cLocatorRecord\u003e/",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_4ada3f79",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-29T14:41:20Z",
+      "side": 1,
+      "message": "You should rebase your patch, and remove this, since otherwise it won\u0027t build on top of current master.",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
