@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_1015fff0",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEndTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:17:13Z",
+      "side": 1,
+      "message": "This is now unneeded, please remove.",
+      "revId": "1728470d5f9984e3db12d91feca7f5ff4ebe84fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_70f9dbc7",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEndTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:17:13Z",
+      "side": 1,
+      "message": "This is now unneeded, please remove.",
+      "revId": "1728470d5f9984e3db12d91feca7f5ff4ebe84fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_50f657d8",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEndTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:17:13Z",
+      "side": 1,
+      "message": "This is now unneeded, please remove.",
+      "revId": "1728470d5f9984e3db12d91feca7f5ff4ebe84fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b00373b7",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEndTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:17:13Z",
+      "side": 1,
+      "message": "This is now unneeded, please remove.",
+      "revId": "1728470d5f9984e3db12d91feca7f5ff4ebe84fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9000efab",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mdsal/DataStoreBackEndTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:17:13Z",
+      "side": 1,
+      "message": "This is now unneeded, please remove.",
+      "revId": "1728470d5f9984e3db12d91feca7f5ff4ebe84fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
