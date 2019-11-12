@@ -52,6 +52,23 @@
       "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_7a829053",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-24T11:16:42Z",
+      "side": 1,
+      "message": "I think the two-argument normalize() should be sufficient. Is there a specific reason you use both calls?",
+      "revId": "9a08379a16c07096adebf4bf2edbd0b4050f7afe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
