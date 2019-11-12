@@ -60,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_c06daf9b",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "will do",
+      "parentUuid": "7a6b29fe_f6e363a1",
+      "range": {
+        "startLine": 45,
+        "startChar": 17,
+        "endLine": 45,
+        "endChar": 31
+      },
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_16cd3f31",
         "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
         "patchSetId": 2
@@ -95,6 +119,54 @@
       "side": 1,
       "message": "It\u0027s enough to just give Random a constant seed and the set that\u0027s generated is always the same.",
       "parentUuid": "7a6b29fe_ffc21333",
+      "range": {
+        "startLine": 66,
+        "startChar": 40,
+        "endLine": 66,
+        "endChar": 42
+      },
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_ffc21333",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "We could perhaps keep a randomly generated set of IPs in a separate file and run the test based on those IPs...",
+      "parentUuid": "7a6b29fe_16cd3f31",
+      "range": {
+        "startLine": 66,
+        "startChar": 40,
+        "endLine": 66,
+        "endChar": 42
+      },
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_e070ab75",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "good point",
+      "parentUuid": "7a6b29fe_a5d6c8c1",
       "range": {
         "startLine": 66,
         "startChar": 40,
