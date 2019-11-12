@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_bf3d3b2f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-04T10:37:10Z",
+      "side": 1,
+      "message": "s/radnom/random/ :)",
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_a09eb305",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-05T09:49:05Z",
+      "side": 1,
+      "message": "Do you want to do that in another patch, or will you update this one?",
+      "parentUuid": "7a6b29fe_c06daf9b",
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
