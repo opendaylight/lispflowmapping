@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_7596ed95",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_7f688eba",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_9fb6423c",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_b5e7e53f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_9fb6423c",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_df639aaf",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2016-05-09T15:42:10Z",
       "side": 1,
       "message": "What\u0027s the reason behind mocking this and stubbing the getDaoPairEntryBest() method?",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f5d31d36",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Regarding the daoEntryMock - I decided to mock it since it seemed unnecessary and a bit overcomplicated to build up a dummy object (had to stub 2 of its methods only). I simply chose the path of least resistance. In order to get that mock object I had to stub getDaoPairEntryBest method that returns it.",
+      "parentUuid": "fa57193c_df639aaf",
       "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -106,6 +160,60 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_10ba1fde",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_d0d54744",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_505bf753",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Ah, OK, now it should be good :\u003e",
+      "parentUuid": "fa57193c_70027b3f",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_15ba11de",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "EID_IPV4_PREFIX_SRC replaced with null.\nDoes it make any difference if destination has a mask of 24 or 32?",
+      "parentUuid": "fa57193c_7ff9aec7",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_ffbadedf",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
@@ -117,6 +225,24 @@
       "writtenOn": "2016-05-09T15:42:10Z",
       "side": 1,
       "message": "s/mappin/mapping/",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_75ceed84",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_ffbadedf",
       "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -140,6 +266,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_b577e501",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "I\u0027ve created a new test with expired Xtr mappings, but then nothing is merged, and nothing is added to the table...",
+      "parentUuid": "fa57193c_ff881e24",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_dfbf1acf",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
         "patchSetId": 5
@@ -151,6 +295,24 @@
       "writtenOn": "2016-05-09T15:42:10Z",
       "side": 1,
       "message": "s/mappin/mapping/",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_957461fe",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_dfbf1acf",
       "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
