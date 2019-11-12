@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_f851220f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-19T14:50:08Z",
+      "side": 1,
+      "message": "Please add your own signed-off-by here, since you also contributed to the patch, so you deserve credit ;)",
+      "revId": "d259f64e3510ce2809d372d81252ac1368a3e240",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
