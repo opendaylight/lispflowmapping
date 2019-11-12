@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_e142350f",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-12T13:25:05Z",
+      "side": 1,
+      "message": "The neutron service should have it\u0027s own independent blueprint wiring, and not depend on implementation\u0027s. This will make neutron a dependency for implementation, which we don\u0027t want.",
+      "revId": "6a477888a9fa9a7cf683e953d5baca68082ff4b5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_812ff9f5",
+        "filename": "mappingservice/implementation/src/main/resources/org/opendaylight/blueprint/mappingservice.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-12T13:59:42Z",
+      "side": 1,
+      "message": "What I mean is that the dependency should be the other way around, meaning neutron depends on mappingservice, not mappingservice depends on neutron. For that to happen, you need a blueprint in the neutron code base, and inject the IFlowMapping dependency for neutron to use. You don\u0027t need a new instance of MappingService, you just need a dependency declared on it.",
+      "parentUuid": "9a561d44_61dc6513",
+      "revId": "6a477888a9fa9a7cf683e953d5baca68082ff4b5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
