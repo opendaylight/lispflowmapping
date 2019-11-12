@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_dac99427",
+        "filename": "mappingservice/neutron/src/test/org/opendaylight/lispflowmapping/neutron/LispUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-07-25T20:10:46Z",
+      "side": 1,
+      "message": "imports don\u0027t count against the 120 character limit and should not be broken over several lines.",
+      "revId": "f3eaf3f8cd14b68b234b4449db191a56ce2a94b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
