@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_6395b83f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_844f3192",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_a30340b7",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-07T10:48:10Z",
       "side": 1,
       "message": "Could we check here for something like this? Mockito.verify(subscriberSetMock).add(SUBSCRIBER_RLOC_1);",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_83aa846e",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Yes, that was the intention, it has been left out by mistake.",
+      "parentUuid": "3a4c51b2_a30340b7",
       "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_a3ad008b",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_8300c4ab",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_e32c284d",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
         "patchSetId": 7
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_63cad850",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Src/Dst type tests the private fixIfNotSDRequest method.",
+      "parentUuid": "3a4c51b2_e32c284d",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_03e31408",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
         "patchSetId": 7
@@ -81,6 +153,24 @@
       "writtenOn": "2016-04-07T10:48:10Z",
       "side": 1,
       "message": "What about this line of code? It doesn\u0027t affect the test, but you can safely uncomment it.",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_83d8c41e",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Uncommented, done.",
+      "parentUuid": "3a4c51b2_03e31408",
       "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
