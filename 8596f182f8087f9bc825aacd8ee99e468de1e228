@@ -1,0 +1,39 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_7ab0cef4",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-20T13:43:25Z",
+      "side": 1,
+      "message": "Please add \".setKeyType(1)\" to make it more \"realistic\" and use all fields.",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c63dbfbd",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-21T08:38:56Z",
+      "side": 1,
+      "message": "It will not make any difference, especially not with this test, but I guess it\u0027s another place where my brain simple prefers the more \"realistic\" test :) even if not strictly necessary",
+      "parentUuid": "fa57193c_664dd372",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
