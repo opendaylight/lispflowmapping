@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_7ddc5646",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/ISmrNotify.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-02T19:54:05Z",
+      "side": 1,
+      "message": "I would probably rename this interface as ISmrNotificationListener, to follow the pattern of other classes in OpenDaylight.",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_9d233204",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
         "patchSetId": 13
@@ -98,6 +115,41 @@
       "writtenOn": "2016-10-02T19:54:05Z",
       "side": 1,
       "message": "I think using a variable like smrNotificationListener would make the code clearer.",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_5d0eba8c",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-02T19:54:05Z",
+      "side": 1,
+      "message": "I would use a more descriptive variable name here, like \u0027subscriberSmrFutureMap\u0027 :) Also, I know the executor is single threaded, but could there be a situation when we need support for multi-threading (and ConcurrentHashMap)?",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_4aed438e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-10-04T13:05:08Z",
+      "side": 1,
+      "message": "I guess we don\u0027t know in advance, but in general, you\u0027re right, it shouldn\u0027t be a problem to handle in a single thread. Let\u0027s just add a comment like \"Scheduling SMRs is done in a single thread. If a use case demands better performance, this may be revisited, and for multi-threading we will need ConcurrentHashMap here.\"",
+      "parentUuid": "7a6b29fe_aa2177fe",
       "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
