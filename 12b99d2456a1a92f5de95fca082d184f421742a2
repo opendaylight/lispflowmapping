@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_c45adc82",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "But then we would have only Ipv4BinaryAfi and Ipv6BinaryAfi that can be compared to the ItrRloc. Is that what we want? I used rloc-container to have other AFIs as well.",
+      "parentUuid": "7a6b29fe_6494a837",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_648dc831",
         "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
         "patchSetId": 1
