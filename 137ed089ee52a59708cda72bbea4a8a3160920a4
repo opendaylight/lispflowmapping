@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a42497e_85aaa1d2",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a42497e_32d83853",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a42497e_4d60c535",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-18T11:54:55Z",
       "side": 1,
       "message": "While reviewing this patch, I realized we have a bug in the normalization code. It would be a lot more useful to have non-normalized /24 prefixes for source/dest instead of addresses. That would catch the bug we have now: 5554",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_e5f8c5c6",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Ipv4Addresses replaced with Ipv4Prefixes.",
+      "parentUuid": "7a42497e_4d60c535",
       "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a42497e_05b6913d",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a42497e_92ddcc45",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a42497e_8d6e4dc8",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
         "patchSetId": 5
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "7a42497e_6582f553",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a42497e_8d6e4dc8",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a42497e_6d7301b2",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
         "patchSetId": 5
@@ -81,6 +153,24 @@
       "writtenOn": "2016-03-18T11:54:55Z",
       "side": 1,
       "message": "The srcKey variable is not used.",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_a57cfd73",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a42497e_6d7301b2",
       "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
