@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_ebc9ae5b",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/LispMappingServiceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-21T05:38:44Z",
+      "side": 1,
+      "message": "Actually, for this method it is not required.",
+      "revId": "bf78f28d10eb94c0399d55f33b21128ae806643d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_cbc66a49",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/LispMappingServiceTest.java",
         "patchSetId": 3
