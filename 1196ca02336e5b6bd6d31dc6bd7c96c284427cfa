@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_9c4fadbe",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_bddf0e68",
+      "revId": "1196ca02336e5b6bd6d31dc6bd7c96c284427cfa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_9dda1276",
         "filename": "mappingservice/pom.xml",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2016-09-30T19:39:32Z",
       "side": 1,
       "message": "I would move this just before the implementation. Maven picks the right order, but I still like to keep them more or less in dependency order.",
+      "revId": "1196ca02336e5b6bd6d31dc6bd7c96c284427cfa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_7c59f18d",
+        "filename": "mappingservice/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_9dda1276",
       "revId": "1196ca02336e5b6bd6d31dc6bd7c96c284427cfa",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
