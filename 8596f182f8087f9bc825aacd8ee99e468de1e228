@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_cb730ae6",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "sure, done",
+      "parentUuid": "fa57193c_7ab0cef4",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_ba78a62c",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
         "patchSetId": 3
@@ -66,6 +84,60 @@
       "side": 1,
       "message": "It will not make any difference, especially not with this test, but I guess it\u0027s another place where my brain simple prefers the more \"realistic\" test :) even if not strictly necessary",
       "parentUuid": "fa57193c_664dd372",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_664dd372",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "I see your point now. I didn\u0027t add the authKey to addKeyInput because I thought it\u0027s not needed. Do you think it would make any difference to this test? Surely I can add an mappingAuthkey to it.",
+      "parentUuid": "fa57193c_8b175251",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_eb240ec8",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Actually this tests the addKey method with non-null MappingAuthkey. A non-null MAPPING_AUTHKEY variable is returned at line 104",
+      "parentUuid": "fa57193c_ba78a62c",
+      "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c6649fe7",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MappingServiceMockitoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Sure, done",
+      "parentUuid": "fa57193c_c63dbfbd",
       "revId": "8596f182f8087f9bc825aacd8ee99e468de1e228",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
