@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a3f45e8_0081688f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "Replace EID_MAC with null.",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_c05dc04a",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "While this is valid, please use SubKeys.RECORD instead of SubKeys.LCAF_SRCDST here (and below), to follow convention.",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_e0543c23",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "s/SubKeys.LCAF_SRCDST/SubKeys.RECORD/",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_60402c57",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "s/SubKeys.LCAF_SRCDST/SubKeys.RECORD/",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_20362404",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "s/SubKeys.LCAF_SRCDST/SubKeys.RECORD/",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_803bb8ea",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "s/SubKeys.LCAF_SRCDST/SubKeys.RECORD/",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a3f45e8_002fa8a2",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-22T11:50:17Z",
+      "side": 1,
+      "message": "Same comment as above.",
+      "revId": "5d2a803f7c865b710627b22f66b21def828fe3f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
