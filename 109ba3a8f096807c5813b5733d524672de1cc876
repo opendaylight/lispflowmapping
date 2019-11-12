@@ -1,0 +1,56 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_7f688eba",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "If we have a string, we should also set the keyid to 1 or 2.",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9fb6423c",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-09T15:42:10Z",
+      "side": 1,
+      "message": "We should use a constant for 0L too throughout the file.",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d0d54744",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/SimpleMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-10T12:03:04Z",
+      "side": 1,
+      "message": "The main idea is that Map-Requests are typically for /32s. And in this case, the mapping that we store is 192.168.0.1/24, which is normalized to 192.168.0.0/24. So, by looking up 192.168.0.255/32, we check for multiple things working properly at one time.",
+      "parentUuid": "fa57193c_15ba11de",
+      "revId": "109ba3a8f096807c5813b5733d524672de1cc876",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
