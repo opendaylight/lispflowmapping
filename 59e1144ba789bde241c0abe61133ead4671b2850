@@ -16,6 +16,23 @@
       "revId": "59e1144ba789bde241c0abe61133ead4671b2850",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_0fa0648f",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-25T14:09:08Z",
+      "side": 1,
+      "message": "The method is already a bit complex, I would factor out the new part with the long class names to a private method at the bottom of the file, to keep the merging code more readable.",
+      "revId": "59e1144ba789bde241c0abe61133ead4671b2850",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
