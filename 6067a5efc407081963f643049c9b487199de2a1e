@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_76362f05",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 29
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-27T10:12:25Z",
+      "side": 1,
+      "message": "Hmmm, I thought it was when I looked at the patch, but maybe I modified something from what Miro initially implemented, and this is no longer needed. Removed.",
+      "parentUuid": "fafc7978_164b632c",
+      "revId": "6067a5efc407081963f643049c9b487199de2a1e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
