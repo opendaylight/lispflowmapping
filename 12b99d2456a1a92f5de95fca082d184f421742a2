@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_249c7069",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-03T14:12:50Z",
+      "side": 1,
+      "message": "This should be moved above the mapping-record-metadata.",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8488e423",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-03T14:12:50Z",
+      "side": 1,
+      "message": "This should be \u0027leaf source-rloc\u0027.",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_6494a837",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-03T14:12:50Z",
+      "side": 1,
+      "message": "Instead of rloc-container, this should use \u0027type inet-bin:ip-address-binary\u0027 (just copy the definition of source-rloc from mapping-record-metadata for consistency -  there are other reasons too.)",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_84c74412",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-03T14:55:03Z",
+      "side": 1,
+      "message": "Source-RLOC can only be IPv4 or IPv6, since that\u0027s what the host\u0027s IP stacks support.",
+      "parentUuid": "7a6b29fe_c45adc82",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_648dc831",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-03T14:12:50Z",
+      "side": 1,
+      "message": "This should be \u0027uses map-request-metadata-container\u0027, as commented above.",
+      "revId": "12b99d2456a1a92f5de95fca082d184f421742a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
