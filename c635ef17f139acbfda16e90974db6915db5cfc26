@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_f6e363a1",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-03T14:49:51Z",
+      "side": 1,
+      "message": "For completion, I\u0027d add a v6 branch as well.",
+      "range": {
+        "startLine": 45,
+        "startChar": 17,
+        "endLine": 45,
+        "endChar": 31
+      },
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_a09eb305",
         "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
         "patchSetId": 2
@@ -31,6 +54,53 @@
       "side": 1,
       "message": "Do you want to do that in another patch, or will you update this one?",
       "parentUuid": "7a6b29fe_c06daf9b",
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_16cd3f31",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-03T14:49:51Z",
+      "side": 1,
+      "message": "We should definitely do more intensive testing of the radix trie but this test is not reproducible. Even if it finds a bug we can\u0027t really figure out where the bug is and, worst yet, it can trigger failures for otherwise perfectly fine patches.\n\nIf we want to keep this as a tool for future intensive testing of code updates but also leverage it as a test with a bigger set of IPs then we should use a constant seed here.",
+      "range": {
+        "startLine": 66,
+        "startChar": 40,
+        "endLine": 66,
+        "endChar": 42
+      },
+      "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_a5d6c8c1",
+        "filename": "mappingservice/inmemorydb/src/test/java/org/opendaylight/lispflowmapping/inmemorydb/radixtrie/RadixTrieRandomIpTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-04T15:24:35Z",
+      "side": 1,
+      "message": "It\u0027s enough to just give Random a constant seed and the set that\u0027s generated is always the same.",
+      "parentUuid": "7a6b29fe_ffc21333",
+      "range": {
+        "startLine": 66,
+        "startChar": 40,
+        "endLine": 66,
+        "endChar": 42
+      },
       "revId": "c635ef17f139acbfda16e90974db6915db5cfc26",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
