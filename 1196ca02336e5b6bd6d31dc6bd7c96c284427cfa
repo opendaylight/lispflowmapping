@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_bddf0e68",
+        "filename": "mappingservice/config/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-09-30T19:39:32Z",
+      "side": 1,
+      "message": "Please add the \"Maven Site Configuration\" that we have in every other POM file here as well.",
+      "revId": "1196ca02336e5b6bd6d31dc6bd7c96c284427cfa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
