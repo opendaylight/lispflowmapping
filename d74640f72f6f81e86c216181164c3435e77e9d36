@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fafc7978_51a3329e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 654
+      },
+      "writtenOn": "2017-01-27T20:24:54Z",
+      "side": 1,
+      "message": "So thinking about this more,  a simple oldMapping\u003d\u003dnull is not correct either. We should compare the odlMapping Eid prefix with the newMapping eid (or just eid here in the  code). if the EIDs are different, we have to SMR the parent prefix. If the EIDs are the same, then a mapping for the same EID existed before and the subscribers are being notified. But if the EIDs are different, then a new EId prefix has been added to the radix tree, and its parent subscribers have to be notified.\nThis has implications for the negative prefix too. When a new prefix is added to the radix tree, if the prefix used to be negative before, the old negative prefix covering this has to be notified (SMR-ed as well). I guess this part will be covered in the continuation patch though. Thanks.",
+      "range": {
+        "startLine": 138,
+        "startChar": 20,
+        "endLine": 138,
+        "endChar": 45
+      },
+      "revId": "d74640f72f6f81e86c216181164c3435e77e9d36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_fd7317af",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 31
