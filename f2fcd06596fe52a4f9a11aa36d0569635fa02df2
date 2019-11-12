@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a682502_c173f5e5",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "As far as I can tell, this builds a set of subscribers from those of the negative parent prefixes of the eid. On the one hand, there may be several issues with the algorithm that are described lower, on the other, the whole logic may need a bit of improvement. Here are a list of things I think should be taken care of:\n\nFirst of all, if the eid overlaps a negative prefix either as a child or as a parent prefix, we should find that negative prefix and send SMRs. Second, once all SMRs are replied to, if no subscribers are left, then the subscribers list for the negative prefix can be removed (do we do this?). Thirdly, negative prefixes may widen with positive mapping removals, that should probably be taken care of as well. \n\nOne simplification would be to ignore the case when we add a positive parent to a negative child, under the assumption that such a wide positive prefix would probably overlap other positive prefixes and we don\u0027t support this. Still, in practice I believe this could occur if after the subscribers for the negative are created the right positives are removed. Going down this path is definitely simpler implementation wise because we won\u0027t need a radix trie for finding children. I\u0027ll let Vina and Lori decide if we want to support this or not :)\n\nIndependent of the decision, a thing worth considering is the addition of the negatives with subscribers to the radix trie, it would simplify detection of overlaps and even lookups. It may also help with the management logic in situations when the negative prefix widens after positive removals.",
+      "range": {
+        "startLine": 270,
+        "startChar": 32,
+        "endLine": 270,
+        "endChar": 60
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_01c16d2e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "I guess you just want to left shift by 8 (a byte) on each iteration, not more.",
+      "range": {
+        "startLine": 278,
+        "startChar": 39,
+        "endLine": 278,
+        "endChar": 42
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_41cc0536",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "Not entirely sure what\u0027s happening here. If the goal is to find the parent prefixes, this should probably be MaxMaskLength - i (i.e., for i \u003d 1, you shift 31 bits for ipv4).",
+      "range": {
+        "startLine": 284,
+        "startChar": 70,
+        "endLine": 284,
+        "endChar": 71
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_61ddc114",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "v4 specific",
+      "range": {
+        "startLine": 284,
+        "startChar": 49,
+        "endLine": 284,
+        "endChar": 66
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_a1d199cf",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "This should be in bytes, not bits.",
+      "range": {
+        "startLine": 285,
+        "startChar": 56,
+        "endLine": 285,
+        "endChar": 66
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_c1d775be",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "A way to optimize this would be to mask bits directly in the byte array, instead of recreating the byte array each time. And an optimization of this optimization would be to use the radix trie :)",
+      "range": {
+        "startLine": 286,
+        "startChar": 19,
+        "endLine": 286,
+        "endChar": 29
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_a144f974",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1966
+      },
+      "writtenOn": "2016-10-25T11:29:11Z",
+      "side": 1,
+      "message": "Do you need to continue after finding a negative parent with subscribers? If possible, I\u0027d like to avoid overlaps of negatives (see comment at the beginning of the method).",
+      "range": {
+        "startLine": 298,
+        "startChar": 34,
+        "endLine": 298,
+        "endChar": 40
+      },
+      "revId": "f2fcd06596fe52a4f9a11aa36d0569635fa02df2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
