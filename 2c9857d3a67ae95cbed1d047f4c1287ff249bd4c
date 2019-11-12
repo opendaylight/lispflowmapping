@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_11235706",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-21T14:18:58Z",
+      "side": 1,
+      "message": "Since MAC_ADDRESS_VALUE_TEST is defined above, you could use that instead of the literal",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b179cbfe",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-21T14:18:58Z",
+      "side": 1,
+      "message": "IPV_4 has the undescore in a weird place... I would either just use IPV4, or IP_4",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_914f6792",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-21T14:18:58Z",
+      "side": 1,
+      "message": "The variable name is misleading, I would expect the result to be of binary type, while it isn\u0027t. The rloc test methods use the correct convention.",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b1638b19",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-21T14:18:58Z",
+      "side": 1,
+      "message": "The addressType here seems redundant, since it\u0027s contained in the method name, and the first argument is casted to Ipv4Prefix. Is there an exceptional circumstance when you would specify an addressType different from Ipv4PrefixAfi.class?",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_e9587758",
+        "filename": "mappingservice/lisp-proto/src/test/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-06-22T16:32:20Z",
+      "side": 1,
+      "message": "OK.",
+      "parentUuid": "ba51214e_c9f9334f",
+      "revId": "2c9857d3a67ae95cbed1d047f4c1287ff249bd4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
