@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_a7e13bd2",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStatsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T12:44:17Z",
+      "side": 1,
+      "message": "Trailing space",
+      "revId": "7b0db805bd78554480b125b5d580898f9b66c6c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e7b4d3d2",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStatsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T12:44:17Z",
+      "side": 1,
+      "message": "Is there a word missing after with?",
+      "revId": "7b0db805bd78554480b125b5d580898f9b66c6c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c7deef10",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStatsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T12:44:17Z",
+      "side": 1,
+      "message": "Same here",
+      "revId": "7b0db805bd78554480b125b5d580898f9b66c6c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_07e907b8",
+        "filename": "mappingservice/southbound/src/test/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundStatsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-05-25T12:44:17Z",
+      "side": 1,
+      "message": "Trailing space",
+      "revId": "7b0db805bd78554480b125b5d580898f9b66c6c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
