@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_403fbb25",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_2a5b8b88",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_0a604731",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "Actually, this is not the same RLOC. Not sure what was the intention here?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_005b0388",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "It seems I should make better descriptions for this. \"same locator Rloc\" at newLocatorRecord_2 refers to an Rloc in currentLocatorRecord_2. Rlocs are the same, so we check that newLocalRecord_2 is used in the result since currentLocatorRecord_2 has LocalLocator set to false.",
+      "parentUuid": "fa57193c_0a604731",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_c018eb86",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "This method tests for unordered list, so the result is also unordered. I assume you wanted to change the method above this one.",
+      "parentUuid": "fa57193c_0ad7a7c2",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_250a9c21",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -82,6 +136,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "Should this be expanded a bit?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f3098b2d",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Sure, it should, sorry. DONE",
+      "parentUuid": "fa57193c_250a9c21",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -105,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_f3206b9d",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_050f9831",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_c52be080",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -116,6 +206,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "Try setting a different sourceRloc here for each",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d35c4728",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_c52be080",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -139,6 +247,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_3341433a",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_2521fc9f",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_a534ecde",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -150,6 +276,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "Could we use ConfigIni.getInstance().getRegistrationValiditySb(), as the default may change in time?",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b3a1d3ab",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_a534ecde",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -173,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_3395c340",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Actually both methods will throw a NPE but we call two different methods and they don\u0027t invoke each other when null is passed. Just wanted to explicitly test both of them with null.",
+      "parentUuid": "fa57193c_8531e8ee",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_e54d4474",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -184,6 +346,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "Same comment about the constant as above",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f3ab4b87",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_e54d4474",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -207,6 +387,24 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_13799f2f",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_aae79b3f",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa57193c_4ada3f79",
         "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
         "patchSetId": 7
@@ -218,6 +416,24 @@
       "writtenOn": "2016-04-29T14:41:20Z",
       "side": 1,
       "message": "You should rebase your patch, and remove this, since otherwise it won\u0027t build on top of current master.",
+      "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_93cc8f37",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/util/MappingMergeUtilTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa57193c_4ada3f79",
       "revId": "8f976a766c81c6f56bab0dcfa11c9995d73121a7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
