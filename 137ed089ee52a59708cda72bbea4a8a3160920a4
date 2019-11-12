@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a42497e_32d83853",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T11:54:55Z",
+      "side": 1,
+      "message": "This should be 2016 :)  Same for FlatMapCacheTest.java (I missed it there).",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_4d60c535",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T11:54:55Z",
+      "side": 1,
+      "message": "While reviewing this patch, I realized we have a bug in the normalization code. It would be a lot more useful to have non-normalized /24 prefixes for source/dest instead of addresses. That would catch the bug we have now: 5554",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_92ddcc45",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T11:54:55Z",
+      "side": 1,
+      "message": "Why not import one of SourceDestKeyBuilder classes? Also, please break lines at 120 characters, so that we can turn on the checkstyle rules from odlparent (where one of the requirements is the 120 character limit).",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_8d6e4dc8",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T11:54:55Z",
+      "side": 1,
+      "message": "The dstKey variable is not used, resulting in a warning. Please remove.",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_6d7301b2",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/mapcache/MultiTableMapCacheTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-03-18T11:54:55Z",
+      "side": 1,
+      "message": "The srcKey variable is not used.",
+      "revId": "137ed089ee52a59708cda72bbea4a8a3160920a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
