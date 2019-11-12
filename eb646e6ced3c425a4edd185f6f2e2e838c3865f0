@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_844f3192",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-07T10:48:10Z",
+      "side": 1,
+      "message": "You can add \"@SuppressWarnings(\"unchecked\")\" here to suppress the warning caused by line 81",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_a30340b7",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-07T10:48:10Z",
+      "side": 1,
+      "message": "Could we check here for something like this? Mockito.verify(subscriberSetMock).add(SUBSCRIBER_RLOC_1);",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_8300c4ab",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-07T10:48:10Z",
+      "side": 1,
+      "message": "s/subsribed/subscribed/",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_e32c284d",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-07T10:48:10Z",
+      "side": 1,
+      "message": "Is there a specific reason to use Src/Dst here instead of IPV4_PREFIX_EID2? (Maybe it increases coverage?)",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_03e31408",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolverMockitoTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-07T10:48:10Z",
+      "side": 1,
+      "message": "What about this line of code? It doesn\u0027t affect the test, but you can safely uncomment it.",
+      "revId": "eb646e6ced3c425a4edd185f6f2e2e838c3865f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
