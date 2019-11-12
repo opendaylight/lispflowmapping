@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_c85f8271",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "The above three should all be LispAddressUtil.asIpv4PrefixEid, with the appropriate prefix appended to the string. Except in the sourceEid field, IPvX Eid objects are almost always prefixes in practice.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_880aaad0",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "You could create a constant for the date, something like \"private static final Date TWO_DAYS_AGO \u003d new Date(System.currentTimeMillis() - 86400000L * 2);\"",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_480092aa",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "While the YANG model doesn\u0027t specify and enforce this, according to the LISP spec when key-id is 0, we don\u0027t have authentication, so a password doesn\u0027t make sense. This is another instance of my \"real-world\" fixation :) Since we\u0027re not checking authentication in the tests, you can remove the key string in this case.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e89fe601",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "I would leave the default as false, for now, and explicitly enable when testing merge related features, since the ODL default is also false. That way when we read a test, we know that the default was changed.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c8bb0271",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "Something like this should never happen. You\u0027re looking up 1.2.3.0, but getting back a mapping record for 1.2.4.0. What changes between an old mapping record and a new one is typically the RLOC set, but the key should stay the same (except for prefix normalization, but you\u0027re not using prefixes here).",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_28b0be8a",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "Same comment as in previous test. Actually all tests with OLD_MAPPING_RECORD have this problem.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_28771ed6",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "Please remove if not needed",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e88366ca",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e83b66e9",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "When you look up IPV4_EID, you can\u0027t return a MappingRecord with IPV4_EID_2",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_c88822ea",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_286d5e33",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_086a1a1a",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_68775603",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_487412fd",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "s/@SuppressWarnings(\"unchecked\")//@SuppressWarnings({ \"unchecked\", \"rawtypes\" })/",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_e85a4682",
+        "filename": "mappingservice/implementation/src/test/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServerMockitoTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-04-26T11:51:02Z",
+      "side": 1,
+      "message": "Should not be set anymore, since it will be removed. The EID field should be a proper IPvXPrefix type, with prefix length included, and the serializer will make sure that the actual packet is set correctly.",
+      "revId": "37be54743fed3a05ca07ecc2fdfbbd6a1cfc6f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
