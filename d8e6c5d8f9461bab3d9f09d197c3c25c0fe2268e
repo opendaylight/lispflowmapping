@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_4beed4ed",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapResolverUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-04T15:09:11Z",
+      "side": 1,
+      "message": "It seems a bit excessive to create a separate class for just this one small method, especially since it\u0027s only used in MapResolver.java (at least for now). We can keep it in MapResolver and factor out later if necessary.",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_cb14a4f7",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/util/MapResolverUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-04T15:09:11Z",
+      "side": 1,
+      "message": "Same as above.",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_6b03d0b8",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/util/LispAddressUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-04T15:09:11Z",
+      "side": 1,
+      "message": "Since this method is not generic in the sense that it returns IPv4 localhost for null input, I think at least we should add a JavaDoc describing that, and the reason behind it. While it was in the serializer, it was clear, but this class is a more generic \"library\".",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_2bcef883",
+        "filename": "mappingservice/lisp-proto/src/main/yang/odl-lisp-proto.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2016-08-04T15:09:11Z",
+      "side": 1,
+      "message": "Can you please add a similar (the same?) description that we have for the source-rloc in the mapping-record-metadata?",
+      "revId": "d8e6c5d8f9461bab3d9f09d197c3c25c0fe2268e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
