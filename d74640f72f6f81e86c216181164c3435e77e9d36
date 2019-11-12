@@ -1,0 +1,22 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_fd7317af",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 31
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2017-01-30T10:08:48Z",
+      "side": 1,
+      "message": "Done. As you mention, the negative prefix implications are dealt with in the continuation patch.",
+      "parentUuid": "fafc7978_51a3329e",
+      "revId": "d74640f72f6f81e86c216181164c3435e77e9d36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
