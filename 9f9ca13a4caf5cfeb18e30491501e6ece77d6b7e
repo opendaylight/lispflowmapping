@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_bf241b0f",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/dao/SmrEvent.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_3dd65e28",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_5ddfda39",
         "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IMapResolverAsync.java",
         "patchSetId": 13
@@ -30,6 +48,24 @@
       "writtenOn": "2016-10-02T19:54:05Z",
       "side": 1,
       "message": "setSmrNotificationListener(ISmrNotificationListener smrNotificationListener);",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_ff1e93ba",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/IMapResolverAsync.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_5ddfda39",
       "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_3f780bf8",
+        "filename": "mappingservice/api/src/main/java/org/opendaylight/lispflowmapping/interfaces/lisp/ISmrNotify.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "I agree.",
+      "parentUuid": "7a6b29fe_7ddc5646",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_9d233204",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
         "patchSetId": 13
@@ -64,6 +118,24 @@
       "writtenOn": "2016-10-02T19:54:05Z",
       "side": 1,
       "message": "I would rename smrRepetition to smrRetryCount everywhere.",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_3f176b56",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_9d233204",
       "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_1f1c2f77",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_ddfc8ab7",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_3d2f7e40",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
         "patchSetId": 13
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_2a51e70e",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/config/ConfigIni.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_3d2f7e40",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_1dd9e256",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
         "patchSetId": 13
@@ -115,6 +223,24 @@
       "writtenOn": "2016-10-02T19:54:05Z",
       "side": 1,
       "message": "I think using a variable like smrNotificationListener would make the code clearer.",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_2aed6726",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapResolver.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "True",
+      "parentUuid": "7a6b29fe_1dd9e256",
       "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -156,6 +282,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_aa2177fe",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "I think scheduling the SMRs is not a critical operation and scheduling them in a single thread will not affect the initial delay across all subscribers. It may take longer to schedule for a large amount of subscribers, but how many xTRs could be subscribed anyway?",
+      "parentUuid": "7a6b29fe_5d0eba8c",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_7d0bb67c",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 13
@@ -173,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_6a02bf70",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Sure.",
+      "parentUuid": "7a6b29fe_7d0bb67c",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_bd28aee2",
         "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
         "patchSetId": 13
@@ -184,6 +346,24 @@
       "writtenOn": "2016-10-02T19:54:05Z",
       "side": 1,
       "message": "I would add at the end \", ignoring\", so a debugging user know what action was taken in response to the event.",
+      "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_6a459f16",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/lisp/MapServer.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 5114
+      },
+      "writtenOn": "2019-11-12T19:49:46Z",
+      "side": 1,
+      "message": "Good point.",
+      "parentUuid": "7a6b29fe_bd28aee2",
       "revId": "9f9ca13a4caf5cfeb18e30491501e6ece77d6b7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
