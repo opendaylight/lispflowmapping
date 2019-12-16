@@ -32,10 +32,6 @@
       <artifactId>mappingservice.lisp-proto</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit-addons</groupId>
-      <artifactId>junit-addons</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.opendaylight.mdsal</groupId>
       <artifactId>mdsal-binding-api</artifactId>
     </dependency>
@@ -45,14 +41,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>junit-addons</groupId>
+      <artifactId>junit-addons</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
