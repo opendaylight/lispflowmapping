@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.factory.LispAddressSerializerFactory;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.AddressTypeMap;

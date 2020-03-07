@@ -8,11 +8,9 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import com.google.common.net.InetAddresses;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv4Serializer.Length;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * Class to (de)serialize IPv4 prefixes from/to byte[] representation.
  *
  * @author Lorand Jakab
- *
  */
 public final class Ipv4PrefixBinarySerializer extends LispAddressSerializer {
 

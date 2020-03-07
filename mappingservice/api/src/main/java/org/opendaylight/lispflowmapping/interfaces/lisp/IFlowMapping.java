@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.interfaces.lisp;
 
 import java.util.List;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
