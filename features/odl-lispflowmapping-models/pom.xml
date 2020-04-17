@@ -44,12 +44,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <classifier>features</classifier>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>odl-mdsal-model-draft-ietf-netmod-iana-afn-safi-00</artifactId>
-      <type>xml</type>
-      <classifier>features</classifier>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mappingservice.lisp-proto</artifactId>
       <version>${project.version}</version>
