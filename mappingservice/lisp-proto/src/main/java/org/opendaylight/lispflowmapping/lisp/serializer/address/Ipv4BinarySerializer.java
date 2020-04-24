@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Class to (de)serialize IPv4 addresses from/to byte[] representation.
  *
  * @author Lorand Jakab
- *
  */
 public final class Ipv4BinarySerializer extends LispAddressSerializer {
 

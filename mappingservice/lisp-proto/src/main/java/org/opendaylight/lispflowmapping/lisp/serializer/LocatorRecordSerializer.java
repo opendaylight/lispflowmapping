@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import java.nio.ByteBuffer;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -21,7 +20,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 
 public final class LocatorRecordSerializer {
-
     private static final LocatorRecordSerializer INSTANCE = new LocatorRecordSerializer();
 
     // Private constructor prevents instantiation from other classes

@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -30,7 +29,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 public final class ExplicitLocatorPathSerializer extends LcafSerializer {
-
     private static final ExplicitLocatorPathSerializer INSTANCE = new ExplicitLocatorPathSerializer();
 
     // Private constructor prevents instantiation from other classes

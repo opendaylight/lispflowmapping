@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.southbound;
 
 import com.google.common.util.concurrent.Futures;
@@ -13,7 +12,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -55,7 +53,6 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
-
 public class LispSouthboundRPC implements OdlLispSbService {
 
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);

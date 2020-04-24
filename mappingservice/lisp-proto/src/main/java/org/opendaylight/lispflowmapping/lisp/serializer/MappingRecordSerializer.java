@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -22,7 +21,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 
 public final class MappingRecordSerializer {
-
     private static final MappingRecordSerializer INSTANCE = new MappingRecordSerializer();
 
     // Private constructor prevents instantiation from other classes

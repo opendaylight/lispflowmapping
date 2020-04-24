@@ -10,9 +10,7 @@ package org.opendaylight.lispflowmapping.serializer.address;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-
 import junitx.framework.ArrayAssert;
-
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -27,7 +25,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
  * Test class for Service Path Serializer.
  *
  * @author Lorand Jakab
- *
  */
 public class ServicePathTest extends BaseTestCase {
 

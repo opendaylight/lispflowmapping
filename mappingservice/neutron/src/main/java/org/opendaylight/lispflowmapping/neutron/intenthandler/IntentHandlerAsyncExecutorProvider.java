@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.neutron.intenthandler;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-
 import java.util.concurrent.Executors;
 
 /**

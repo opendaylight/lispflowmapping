@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.lisp.serializer.address;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
@@ -28,7 +27,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 public final class ApplicationDataSerializer extends LcafSerializer {
-
     private static final ApplicationDataSerializer INSTANCE = new ApplicationDataSerializer();
 
     // Private constructor prevents instantiation from other classes

@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers;
 
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

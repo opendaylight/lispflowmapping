@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.neutron.mappingmanager;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.LispUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToPortDataMapper;

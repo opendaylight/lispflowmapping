@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.lisp.util;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
@@ -39,7 +38,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
  * This class contains static HashMaps of AFIs and LCAF types to LispAddressFamily identities.
  *
  * @author Lorand Jakab
- *
  */
 public final class AddressTypeMap {
     private static Map<Short, Class<? extends LispAddressFamily>> afiToAddressTypeMap;
