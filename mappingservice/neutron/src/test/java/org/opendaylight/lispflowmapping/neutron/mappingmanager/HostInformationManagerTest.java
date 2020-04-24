@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.neutron.mappingmanager;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -30,7 +29,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 /**
  * Created by Shakib Ahmed on 2/7/17.
  */
-
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
 @PrepareForTest(HostInformationManager.class)

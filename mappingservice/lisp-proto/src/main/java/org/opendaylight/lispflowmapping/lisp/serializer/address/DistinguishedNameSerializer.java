@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import java.nio.ByteBuffer;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.DistinguishedNameType;
@@ -22,7 +21,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 
 public final class DistinguishedNameSerializer extends LispAddressSerializer {
-
     private static final DistinguishedNameSerializer INSTANCE = new DistinguishedNameSerializer();
 
     // Private constructor prevents instantiation from other classes

@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

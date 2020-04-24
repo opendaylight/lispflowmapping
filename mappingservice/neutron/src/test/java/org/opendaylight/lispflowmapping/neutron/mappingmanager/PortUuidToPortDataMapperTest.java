@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.neutron.mappingmanager;
 
 import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import org.powermock.reflect.Whitebox;
 /**
  * Created by Shakib Ahmed on 2/7/17.
  */
-
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
 @PrepareForTest(PortUuidToPortDataMapper.class)

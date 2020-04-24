@@ -11,7 +11,6 @@ import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6Address;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * Class to (de)serialize IPv6 addresses from/to String representation.
  *
  * @author Lorand Jakab
- *
  */
 public final class Ipv6Serializer extends LispAddressSerializer {
 

@@ -11,7 +11,6 @@ import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
 import org.opendaylight.lispflowmapping.lisp.serializer.address.Ipv6Serializer.Length;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Class to (de)serialize IPv6 prefixes from/to String representation.
  *
  * @author Lorand Jakab
- *
  */
 public final class Ipv6PrefixSerializer extends LispAddressSerializer {
 

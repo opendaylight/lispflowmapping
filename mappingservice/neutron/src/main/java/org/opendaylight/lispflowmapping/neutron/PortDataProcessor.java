@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.neutron;
 
 import java.util.List;
-
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
@@ -28,9 +27,7 @@ import org.slf4j.LoggerFactory;
  * available this class shall be updated.
  *
  * @author Vina Ermagan
- *
  */
-
 public class PortDataProcessor implements DataProcessor<Port> {
     private static final Logger LOG = LoggerFactory.getLogger(PortDataProcessor.class);
 

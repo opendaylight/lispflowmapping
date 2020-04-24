@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers;
 
 import java.util.Collection;
 import java.util.HashMap;
-
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
 
 /**

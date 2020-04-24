@@ -5,15 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation.util;
 
 import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
-
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -35,7 +32,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
  * DataStoreBackEnd utilities.
  *
  * @author Florin Coras
- *
  */
 public final class DSBEInputUtil {
     // Utility class, should not be instantiated
