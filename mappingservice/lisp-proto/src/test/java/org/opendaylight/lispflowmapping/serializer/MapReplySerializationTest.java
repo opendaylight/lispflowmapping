@@ -11,7 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import junitx.framework.ArrayAssert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,13 +25,20 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class MapReplySerializationTest extends BaseTestCase {
+    private static final MappingRecordItemKey MR0 = new MappingRecordItemKey("0");
+    private static final MappingRecordItemKey MR1 = new MappingRecordItemKey("1");
+    private static final LocatorRecordKey LR0 = new LocatorRecordKey("0");
+    private static final LocatorRecordKey LR1 = new LocatorRecordKey("1");
 
     @Test
     @Ignore
@@ -44,10 +51,10 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void serialize__SomeFlags() throws Exception {
         MapReplyBuilder mr = new MapReplyBuilder();
-        mr.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mr.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
-        mr.getMappingRecordItem().add(
+        mr.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
         mr.setProbe(true);
         mr.setEchoNonceEnabled(false);
@@ -85,69 +92,70 @@ public class MapReplySerializationTest extends BaseTestCase {
                 + "00 02 00 01 00 02 00 03 "
                 + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
         assertEquals(2, mr.getNonce().longValue());
-        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(0)
+        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(MR0)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         // XXX Why here normalized and other cases not normalized?
-        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
+        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(MR1)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
-        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
-        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
-        assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
-        assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(2, mr.getMappingRecordItem().get(1).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(0).getMappingRecord()
+        assertEquals(false, mr.getMappingRecordItem().get(MR0).getMappingRecord().isAuthoritative());
+        assertEquals(true, mr.getMappingRecordItem().get(MR1).getMappingRecord().isAuthoritative());
+        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(MR0).getMappingRecord().getAction());
+        assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(MR1).getMappingRecord().getAction());
+        assertEquals(0, mr.getMappingRecordItem().get(MR0).getMappingRecord().getMapVersion().shortValue());
+        assertEquals(2, mr.getMappingRecordItem().get(MR1).getMappingRecord().getMapVersion().shortValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(MR0).getMappingRecord()
                 .getEid().getAddress()));
-        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(1).getMappingRecord()
+        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(MR1).getMappingRecord()
                 .getEid().getAddress()));
-        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getRecordTtl().byteValue());
-        assertEquals(0, mr.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().byteValue());
+        assertEquals(2, mr.getMappingRecordItem().get(MR0).getMappingRecord().getRecordTtl().byteValue());
+        assertEquals(0, mr.getMappingRecordItem().get(MR1).getMappingRecord().getRecordTtl().byteValue());
         assertArrayEquals(new byte[] {0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8},
-                ((Ipv6Binary) mr.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(1).getRloc().getAddress()).getIpv6Binary().getValue());
+                ((Ipv6Binary) mr.getMappingRecordItem().get(MR0).getMappingRecord()
+                .getLocatorRecord().get(LR1).getRloc().getAddress()).getIpv6Binary().getValue());
         assertArrayEquals(new byte[] {10, 10, 10, 10},
-                ((Ipv4Binary) mr.getMappingRecordItem().get(0).getMappingRecord()
-                .getLocatorRecord().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
-        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+                ((Ipv4Binary) mr.getMappingRecordItem().get(MR0).getMappingRecord()
+                .getLocatorRecord().get(LR0).getRloc().getAddress()).getIpv4Binary().getValue());
+        assertEquals(1, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .getPriority().byteValue());
-        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(2, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .getWeight().byteValue());
-        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(3, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .getMulticastPriority().byteValue());
-        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(4, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .getMulticastWeight().byteValue());
-        assertEquals(4, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(4, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .getPriority().byteValue());
-        assertEquals(3, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(3, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .getWeight().byteValue());
-        assertEquals(2, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(2, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .getMulticastPriority().byteValue());
-        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(1, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .getMulticastWeight().byteValue());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(true, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .isLocalLocator());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(true, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .isRlocProbed());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
+        assertEquals(false, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR0)
                 .isRouted());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(false, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .isLocalLocator());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
+        assertEquals(false, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
                 .isRlocProbed());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).isRouted());
+        assertEquals(true, mr.getMappingRecordItem().get(MR0).getMappingRecord().getLocatorRecord().get(LR1)
+                .isRouted());
     }
 
     @Test
     public void serialize__MultipleRecordsWithoutRLOCs() throws Exception {
         MapReplyBuilder mrBuilder = new MapReplyBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:8/128"));
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("8.2.4.5/32"));
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR1,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
@@ -169,32 +177,32 @@ public class MapReplySerializationTest extends BaseTestCase {
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("20 00 00 02 00 00 "
                 + "00 00 00 00 00 00 00 00 00 01 00 20 00 00 00 00 "
                 + "00 01 01 02 03 04 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
-        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(0)
+        assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(MR0)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         // XXX Why here normalized and other cases not normalized?
-        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
+        assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(MR1)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
-        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
-        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
-        assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
-        assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(2, mr.getMappingRecordItem().get(1).getMappingRecord().getMapVersion().shortValue());
-        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(0).getMappingRecord()
+        assertEquals(false, mr.getMappingRecordItem().get(MR0).getMappingRecord().isAuthoritative());
+        assertEquals(true, mr.getMappingRecordItem().get(MR1).getMappingRecord().isAuthoritative());
+        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(MR0).getMappingRecord().getAction());
+        assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(MR1).getMappingRecord().getAction());
+        assertEquals(0, mr.getMappingRecordItem().get(MR0).getMappingRecord().getMapVersion().shortValue());
+        assertEquals(2, mr.getMappingRecordItem().get(MR1).getMappingRecord().getMapVersion().shortValue());
+        assertEquals(32, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(MR0).getMappingRecord()
                 .getEid().getAddress()));
-        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(1).getMappingRecord()
+        assertEquals(16, MaskUtil.getMaskForAddress(mr.getMappingRecordItem().get(MR1).getMappingRecord()
                 .getEid().getAddress()));
-        assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getRecordTtl().byteValue());
-        assertEquals(0, mr.getMappingRecordItem().get(1).getMappingRecord().getRecordTtl().byteValue());
+        assertEquals(1, mr.getMappingRecordItem().get(MR0).getMappingRecord().getRecordTtl().byteValue());
+        assertEquals(0, mr.getMappingRecordItem().get(MR1).getMappingRecord().getRecordTtl().byteValue());
     }
 
     @Test
     public void serialize__EidRecordDefaultAction() throws Exception {
         MapReplyBuilder mrBuilder = new MapReplyBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
@@ -206,11 +214,11 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void serialize__EidRecordNullActionShouldTranslateToDefault() throws Exception {
         MapReplyBuilder mrBuilder = new MapReplyBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
         recordBuilder.setAction(null);
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
@@ -222,7 +230,7 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void serialize__EidRecordFields() throws Exception {
         MapReplyBuilder mrBuilder = new MapReplyBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
 
         MappingRecordBuilder eidToLocator1 = new MappingRecordBuilder();
         eidToLocator1.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
@@ -230,7 +238,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator1.setAction(Action.SendMapRequest);
         eidToLocator1.setAuthoritative(true);
         eidToLocator1.setMapVersion((short) 3072);
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(eidToLocator1.build()).build());
 
         MappingRecordBuilder eidToLocator2 = new MappingRecordBuilder();
@@ -239,7 +247,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator2.setAction(Action.Drop);
         eidToLocator2.setAuthoritative(false);
         eidToLocator2.setMapVersion((short) 29);
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR1,
                 new MappingRecordItemBuilder().setMappingRecord(eidToLocator2.build()).build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
@@ -264,35 +272,35 @@ public class MapReplySerializationTest extends BaseTestCase {
     @Test
     public void serialize__LocatorRecordFields() throws Exception {
         MapReplyBuilder mrBuilder = new MapReplyBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
 
         MappingRecordBuilder eidToLocatorBuilder = new MappingRecordBuilder();
         eidToLocatorBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
-        eidToLocatorBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        eidToLocatorBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
 
         LocatorRecordBuilder locatorBuilder1 = new LocatorRecordBuilder();
-        locatorBuilder1.setPriority((short) 0xF3);
-        locatorBuilder1.setWeight((short) 0xF6);
-        locatorBuilder1.setMulticastPriority((short) 0xA3);
-        locatorBuilder1.setMulticastWeight((short) 0x06);
+        locatorBuilder1.setPriority(Uint8.valueOf(0xF3));
+        locatorBuilder1.setWeight(Uint8.valueOf(0xF6));
+        locatorBuilder1.setMulticastPriority(Uint8.valueOf(0xA3));
+        locatorBuilder1.setMulticastWeight(Uint8.valueOf(0x06));
         locatorBuilder1.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.1"));
         locatorBuilder1.setLocalLocator(true);
         locatorBuilder1.setRlocProbed(true);
         locatorBuilder1.setRouted(true);
-        eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder1.build());
+        eidToLocatorBuilder.getLocatorRecord().put(LR0, locatorBuilder1.build());
 
         LocatorRecordBuilder locatorBuilder2 = new LocatorRecordBuilder();
-        locatorBuilder2.setPriority((short) 0x03);
-        locatorBuilder2.setWeight((short) 0x06);
-        locatorBuilder2.setMulticastPriority((short) 0x03);
-        locatorBuilder2.setMulticastWeight((short) 0xF1);
+        locatorBuilder2.setPriority(Uint8.valueOf(0x03));
+        locatorBuilder2.setWeight(Uint8.valueOf(0x06));
+        locatorBuilder2.setMulticastPriority(Uint8.valueOf(0x03));
+        locatorBuilder2.setMulticastWeight(Uint8.valueOf(0xF1));
         locatorBuilder2.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
         locatorBuilder2.setLocalLocator(false);
         locatorBuilder2.setRlocProbed(false);
         locatorBuilder2.setRouted(false);
-        eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder2.build());
+        eidToLocatorBuilder.getLocatorRecord().put(LR1, locatorBuilder2.build());
 
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(eidToLocatorBuilder.build()).build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());

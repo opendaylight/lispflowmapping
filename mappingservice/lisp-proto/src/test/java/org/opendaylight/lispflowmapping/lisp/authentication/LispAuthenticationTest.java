@@ -11,7 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -21,12 +21,15 @@ import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispAuthenticationTest extends BaseTestCase {
     private static final String PASSWORD = "password";
@@ -177,12 +180,12 @@ public class LispAuthenticationTest extends BaseTestCase {
     public void authenticate__MapNotifyNoAuthenticationData() throws Exception {
         MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder();
         mapNotifyBuilder.setKeyId((short) 0x0000);
-        mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mapNotifyBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder etlrBuilder = new MappingRecordBuilder();
-        etlrBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        etlrBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
         etlrBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("1.1.1.1/32"));
         etlrBuilder.setRecordTtl(55);
-        mapNotifyBuilder.getMappingRecordItem().add(
+        mapNotifyBuilder.getMappingRecordItem().put(new MappingRecordItemKey("0"),
                 new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
         final ByteBuffer serializedMapNotifyMsg = MapNotifySerializer.getInstance().serialize(mapNotifyBuilder.build());
         ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(serializedMapNotifyMsg,
@@ -192,7 +195,8 @@ public class LispAuthenticationTest extends BaseTestCase {
 
     private static boolean validate(MapRegister mapRegister, ByteBuffer byteBuffer, Eid eid, int keyId, String
             password) {
-        MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(keyId).setKeyString(password).build();
+        MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(keyId)).setKeyString(password)
+                .build();
         return LispAuthenticationUtil.validate(mapRegister,byteBuffer, eid, key);
     }
 }

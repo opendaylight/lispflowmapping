@@ -71,7 +71,7 @@ public final class Stringifier {
             mrsb.append(NEW_LINE);
             mrsb.append(indent);
             boolean first = true;
-            for (LocatorRecord record : mapping.getLocatorRecord()) {
+            for (LocatorRecord record : mapping.getLocatorRecord().values()) {
                 if (first) {
                     first = false;
                 } else {

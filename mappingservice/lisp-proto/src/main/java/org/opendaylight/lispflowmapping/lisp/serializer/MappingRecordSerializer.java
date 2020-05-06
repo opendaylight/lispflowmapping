@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -16,9 +16,11 @@ import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public final class MappingRecordSerializer {
     private static final MappingRecordSerializer INSTANCE = new MappingRecordSerializer();
@@ -39,7 +41,7 @@ public final class MappingRecordSerializer {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
         final byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
-        final short maskLength = ((short) ByteUtil.getUnsignedByte(buffer));
+        final Uint8 maskLength = (Uint8.valueOf(ByteUtil.getUnsignedByte(buffer)));
         final byte actionAndAuthoritative = buffer.get();
         Action act = Action.forValue(actionAndAuthoritative >> 5);
         if (act == null) {
@@ -53,9 +55,10 @@ public final class MappingRecordSerializer {
         LispAddressSerializerContext ctx = new LispAddressSerializerContext(maskLength);
         builder.setEid(LispAddressSerializer.getInstance().deserializeEid(buffer, ctx));
 
-        builder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        builder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
         for (int i = 0; i < locatorCount; i++) {
-            builder.getLocatorRecord().add(LocatorRecordSerializer.getInstance().deserialize(buffer));
+            builder.getLocatorRecord().put(new LocatorRecordKey(Integer.toString(i)),
+                    LocatorRecordSerializer.getInstance().deserialize(buffer));
         }
 
         return builder;
@@ -85,10 +88,8 @@ public final class MappingRecordSerializer {
             LispAddressSerializer.getInstance().serialize(replyBuffer, record.getEid());
         }
 
-        if (record.getLocatorRecord() != null) {
-            for (LocatorRecord locatorRecord : record.getLocatorRecord()) {
-                LocatorRecordSerializer.getInstance().serialize(replyBuffer, locatorRecord);
-            }
+        for (LocatorRecord locatorRecord : record.nonnullLocatorRecord().values()) {
+            LocatorRecordSerializer.getInstance().serialize(replyBuffer, locatorRecord);
         }
     }
 
@@ -97,10 +98,8 @@ public final class MappingRecordSerializer {
         if (record.getEid() != null) {
             size += LispAddressSerializer.getInstance().getAddressSize(record.getEid());
         }
-        if (record.getLocatorRecord() != null) {
-            for (LocatorRecord locatorRecord : record.getLocatorRecord()) {
-                size += LocatorRecordSerializer.getInstance().getSerializationSize(locatorRecord);
-            }
+        for (LocatorRecord locatorRecord : record.nonnullLocatorRecord().values()) {
+            size += LocatorRecordSerializer.getInstance().getSerializationSize(locatorRecord);
         }
         return size;
     }

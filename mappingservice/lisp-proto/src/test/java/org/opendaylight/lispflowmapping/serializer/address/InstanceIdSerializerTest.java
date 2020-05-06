@@ -18,6 +18,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
@@ -31,7 +32,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 "02 20 00 0A " + //
                 "00 BB CC DD " + // instance ID
                 "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
 
         assertEquals(Ipv4BinaryAfi.class, address.getAddressType());
         Ipv4Binary ipv4 = (Ipv4Binary) address.getAddress();
@@ -45,7 +46,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
         LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
                 "02 20 00 0A " + //
                 "AA BB "),
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
     }
 
     @Test(expected = LispSerializationException.class)
@@ -54,7 +55,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 "AA 20 00 0A " + // Type AA is unknown
                 "00 BB CC DD " + // instance ID
                 "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
     }
 
     @Test(expected = LispSerializationException.class)
@@ -63,7 +64,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 "02 20 00 0A " + // Type AA is unknown
                 "AA BB CC DD " + // instance ID
                 "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
     }
 
     @Test
@@ -72,7 +73,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 "02 20 00 0A " + //
                 "00 BB CC DD " + // instance ID
                 "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD"), // AFI=2,
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
         // IPv6
 
         assertArrayEquals(new byte[] {(byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44,

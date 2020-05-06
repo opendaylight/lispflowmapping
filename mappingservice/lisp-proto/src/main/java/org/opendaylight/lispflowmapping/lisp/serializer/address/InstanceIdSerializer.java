@@ -16,6 +16,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.InstanceId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public final class InstanceIdSerializer extends LcafSerializer {
     private static final int MAX_INSTANCE_ID = 16777216;
@@ -69,7 +70,7 @@ public final class InstanceIdSerializer extends LcafSerializer {
         if (instanceId > MAX_INSTANCE_ID) {
             throw new LispSerializationException("Instance ID is longer than 24 bits: " + instanceId);
         }
-        ctx.setVni(new InstanceIdType(instanceId));
+        ctx.setVni(new InstanceIdType(Uint32.valueOf(instanceId)));
         return LispAddressSerializer.getInstance().deserializeEid(buffer, ctx);
     }
 
