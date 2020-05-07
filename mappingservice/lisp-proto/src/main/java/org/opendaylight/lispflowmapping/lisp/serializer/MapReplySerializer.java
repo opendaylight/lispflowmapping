@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
@@ -17,6 +17,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 
 /**
@@ -36,7 +37,7 @@ public final class MapReplySerializer {
 
     public ByteBuffer serialize(MapReply mapReply) {
         int size = Length.HEADER_SIZE;
-        for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+        for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem().values()) {
             size += MappingRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord.getMappingRecord());
         }
 
@@ -55,7 +56,7 @@ public final class MapReplySerializer {
         }
         replyBuffer.putLong(NumberUtil.asLong(mapReply.getNonce()));
         if (mapReply.getMappingRecordItem() != null) {
-            for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+            for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem().values()) {
                 MappingRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord.getMappingRecord());
             }
         }
@@ -76,9 +77,10 @@ public final class MapReplySerializer {
         replyBuffer.getShort();
         int recordCount = ByteUtil.getUnsignedByte(replyBuffer);
         builder.setNonce(replyBuffer.getLong());
-        builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        builder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         for (int i = 0; i < recordCount; i++) {
-            builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+            builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(i)),
+                    new MappingRecordItemBuilder().setMappingRecord(
                     MappingRecordSerializer.getInstance().deserialize(replyBuffer)).build());
         }
 

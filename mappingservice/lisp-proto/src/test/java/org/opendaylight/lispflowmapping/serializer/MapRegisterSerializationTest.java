@@ -12,7 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
@@ -25,27 +25,36 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 
 public class MapRegisterSerializationTest extends BaseTestCase {
+    private static final MappingRecordItemKey MR0 = new MappingRecordItemKey("0");
+    private static final MappingRecordItemKey MR1 = new MappingRecordItemKey("1");
+    private static final MappingRecordItemKey MR2 = new MappingRecordItemKey("2");
+    private static final MappingRecordItemKey MR3 = new MappingRecordItemKey("3");
+    private static final LocatorRecordKey LR0 = new LocatorRecordKey("0");
+    private static final LocatorRecordKey LR1 = new LocatorRecordKey("1");
+    private static final LocatorRecordKey LR2 = new LocatorRecordKey("2");
 
     @Test
     public void serialize__Fields() throws Exception {
         MapRegisterBuilder mrBuilder = new MapRegisterBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
 
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32"));
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR1,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         mrBuilder.setNonce(6161616161L);
@@ -97,15 +106,15 @@ public class MapRegisterSerializationTest extends BaseTestCase {
     @Test
     public void serialize__deserialize() throws Exception {
         MapRegisterBuilder mrBuilder = new MapRegisterBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
 
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR0,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32"));
-        mrBuilder.getMappingRecordItem().add(
+        mrBuilder.getMappingRecordItem().put(MR1,
                 new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
 
         recordBuilder.setAction(Action.NoAction);
@@ -131,8 +140,8 @@ public class MapRegisterSerializationTest extends BaseTestCase {
     @Test
     public void serialize__NoAuthenticationData() throws Exception {
         MapRegisterBuilder mrBuilder = new MapRegisterBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
+        mrBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setRecordTtl(55)
                         .setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32")).build()).build());
         // mrBuilder.addEidToLocator(new EidToLocatorRecord().setPrefix(new
@@ -161,12 +170,12 @@ public class MapRegisterSerializationTest extends BaseTestCase {
     @Test
     public void serialize__NoPrefixInEidToLocator() throws Exception {
         MapRegisterBuilder mrBuilder = new MapRegisterBuilder();
-        mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+        mrBuilder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
+        mrBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().build()).build());
-        mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+        mrBuilder.getMappingRecordItem().put(MR1, new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setEid(null).build()).build());
-        mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
+        mrBuilder.getMappingRecordItem().put(MR2, new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build()).build());
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
@@ -253,14 +262,14 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         ), null);
 
         assertEquals(4, mr.getMappingRecordItem().size());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), mr.getMappingRecordItem().get(0)
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), mr.getMappingRecordItem().get(MR0)
                 .getMappingRecord().getEid());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("151.16.254.1/32"), mr.getMappingRecordItem().get(2)
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("151.16.254.1/32"), mr.getMappingRecordItem().get(MR2)
                 .getMappingRecord().getEid());
-        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.11"), mr.getMappingRecordItem().get(1)
-                .getMappingRecord().getLocatorRecord().get(0).getRloc());
-        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.13"), mr.getMappingRecordItem().get(3)
-                .getMappingRecord().getLocatorRecord().get(0).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.11"), mr.getMappingRecordItem().get(MR1)
+                .getMappingRecord().getLocatorRecord().get(LR0).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.13"), mr.getMappingRecordItem().get(MR3)
+                .getMappingRecord().getLocatorRecord().get(LR0).getRloc());
     }
 
     @Test
@@ -287,11 +296,11 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         ), null);
 
         assertEquals(1, mr.getMappingRecordItem().size());
-        MappingRecordItem eidToLocator = mr.getMappingRecordItem().get(0);
+        MappingRecordItem eidToLocator = mr.getMappingRecordItem().get(MR0);
         assertEquals(3, eidToLocator.getMappingRecord().getLocatorRecord().size());
-        LocatorRecord loc0 = eidToLocator.getMappingRecord().getLocatorRecord().get(0);
-        LocatorRecord loc1 = eidToLocator.getMappingRecord().getLocatorRecord().get(1);
-        LocatorRecord loc2 = eidToLocator.getMappingRecord().getLocatorRecord().get(2);
+        LocatorRecord loc0 = eidToLocator.getMappingRecord().getLocatorRecord().get(LR0);
+        LocatorRecord loc1 = eidToLocator.getMappingRecord().getLocatorRecord().get(LR1);
+        LocatorRecord loc2 = eidToLocator.getMappingRecord().getLocatorRecord().get(LR2);
         assertEquals((byte) 0x01, loc0.getPriority().byteValue());
         assertEquals((byte) 0x67, loc1.getPriority().byteValue());
         assertEquals((byte) 0x60, loc2.getPriority().byteValue());
@@ -354,10 +363,10 @@ public class MapRegisterSerializationTest extends BaseTestCase {
 
         assertEquals(4, mr.getMappingRecordItem().size());
 
-        final MappingRecord record0 = mr.getMappingRecordItem().get(0).getMappingRecord();
-        final MappingRecord record1 = mr.getMappingRecordItem().get(1).getMappingRecord();
-        final MappingRecord record2 = mr.getMappingRecordItem().get(2).getMappingRecord();
-        final MappingRecord record3 = mr.getMappingRecordItem().get(3).getMappingRecord();
+        final MappingRecord record0 = mr.getMappingRecordItem().get(MR0).getMappingRecord();
+        final MappingRecord record1 = mr.getMappingRecordItem().get(MR1).getMappingRecord();
+        final MappingRecord record2 = mr.getMappingRecordItem().get(MR2).getMappingRecord();
+        final MappingRecord record3 = mr.getMappingRecordItem().get(MR3).getMappingRecord();
 
         assertEquals(10, record0.getRecordTtl().intValue());
         assertEquals(13, record3.getRecordTtl().intValue());
@@ -391,7 +400,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
         assertEquals(1, mr.getMappingRecordItem().size());
-        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
+        assertEquals(Action.NoAction, mr.getMappingRecordItem().get(MR0).getMappingRecord().getAction());
     }
 
     @Test(expected = LispSerializationException.class)

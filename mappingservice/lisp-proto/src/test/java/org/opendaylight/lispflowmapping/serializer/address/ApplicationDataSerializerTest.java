@@ -25,6 +25,8 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.application.data.ApplicationDataBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class ApplicationDataSerializerTest extends BaseTestCase {
 
@@ -86,11 +88,11 @@ public class ApplicationDataSerializerTest extends BaseTestCase {
     public void serialize__Simple() throws Exception {
         ApplicationDataBuilder addressBuilder = new ApplicationDataBuilder();
         addressBuilder.setIpTos(ByteUtil.getPartialInt(new byte[] { (byte) 0xAA, (byte) 0xBB, (byte) 0xCC }));
-        addressBuilder.setProtocol((short) 0xDD);
-        addressBuilder.setLocalPortLow(new PortNumber(0xA6A1));
-        addressBuilder.setLocalPortHigh(new PortNumber(0xA6A2));
-        addressBuilder.setRemotePortLow(new PortNumber(0xFFDD));
-        addressBuilder.setRemotePortHigh(new PortNumber(0xFFDE));
+        addressBuilder.setProtocol(Uint8.valueOf(0xDD));
+        addressBuilder.setLocalPortLow(new PortNumber(Uint16.valueOf(0xA6A1)));
+        addressBuilder.setLocalPortHigh(new PortNumber(Uint16.valueOf(0xA6A2)));
+        addressBuilder.setRemotePortLow(new PortNumber(Uint16.valueOf(0xFFDD)));
+        addressBuilder.setRemotePortHigh(new PortNumber(Uint16.valueOf(0xFFDE)));
         addressBuilder.setAddress(new SimpleAddress(new IpAddress(new Ipv4Address("17.34.51.68"))));
 
         EidBuilder eb = new EidBuilder();
