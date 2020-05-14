@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -29,7 +29,7 @@ public final class MappingRecordUtil {
     }
 
     public static boolean isNegativeMapping(MappingRecord mapping) {
-        List<LocatorRecord> rlocs = mapping.getLocatorRecord();
+        Collection<LocatorRecord> rlocs = mapping.nonnullLocatorRecord().values();
         if (mapping.getAction() == LispMessage.NEGATIVE_MAPPING_ACTION && (rlocs == null || rlocs.isEmpty())) {
             return true;
         }

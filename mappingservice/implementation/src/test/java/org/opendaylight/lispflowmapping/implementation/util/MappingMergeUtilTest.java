@@ -13,9 +13,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
@@ -27,6 +27,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -60,6 +61,9 @@ public class MappingMergeUtilTest {
     private static final SiteId SITE_ID_1 = new SiteId(new byte[]{1, 1, 1, 1, 1, 1, 1, 1});
 
     private static final long REGISTRATION_VALIDITY = ConfigIni.getInstance().getRegistrationValiditySb();
+
+    private static final LocatorRecordKey LR0 =  new LocatorRecordKey("0");
+    private static final LocatorRecordKey LR1 =  new LocatorRecordKey("1");
 
     /**
      * Tests {@link MappingMergeUtil#mappingIsExpired} method.
@@ -183,7 +187,7 @@ public class MappingMergeUtilTest {
 
         // result
         MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
-        assertEquals(0, result.getRecord().getLocatorRecord().size());
+        assertTrue(result.getRecord().nonnullLocatorRecord().isEmpty());
     }
 
     /**
@@ -191,8 +195,10 @@ public class MappingMergeUtilTest {
      */
     @Test
     public void getCommonLocatorRecords_withNullLocatorRecords() {
-        MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(null).build();
-        MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(null).build();
+        MappingRecord nbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(
+                new LinkedHashMap<>()).build();
+        MappingRecord sbMappingRecord = getDefaultMappingRecordBuilder().setLocatorRecord(
+                new LinkedHashMap<>()).build();
         MappingData nbMappingData = getDefaultMappingData(nbMappingRecord);
         MappingData sbMappingData = getDefaultMappingData(sbMappingRecord);
 
@@ -226,19 +232,19 @@ public class MappingMergeUtilTest {
                 .setLocatorId("SB-locator-id");
 
         final MappingRecordBuilder nbMappingRecordBuilder = getDefaultMappingRecordBuilder();
-        nbMappingRecordBuilder.getLocatorRecord().add(nbLocatorRecordBuilder1.build());
-        nbMappingRecordBuilder.getLocatorRecord().add(nbLocatorRecordBuilder2.build());
+        nbMappingRecordBuilder.getLocatorRecord().put(LR0, nbLocatorRecordBuilder1.build());
+        nbMappingRecordBuilder.getLocatorRecord().put(LR1, nbLocatorRecordBuilder2.build());
 
         final MappingRecordBuilder sbMappingRecordBuilder = getDefaultMappingRecordBuilder();
-        sbMappingRecordBuilder.getLocatorRecord().add(sbLocatorRecordBuilder1.build());
-        sbMappingRecordBuilder.getLocatorRecord().add(sbLocatorRecordBuilder2.build());
+        sbMappingRecordBuilder.getLocatorRecord().put(LR0, sbLocatorRecordBuilder1.build());
+        sbMappingRecordBuilder.getLocatorRecord().put(LR1, sbLocatorRecordBuilder2.build());
 
         MappingData nbMappingData = getDefaultMappingData(nbMappingRecordBuilder.build());
         MappingData sbMappingData = getDefaultMappingData(sbMappingRecordBuilder.build());
 
         // result
         final MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
-        final Iterator<LocatorRecord> iterator = result.getRecord().getLocatorRecord().iterator();
+        final Iterator<LocatorRecord> iterator = result.getRecord().getLocatorRecord().values().iterator();
         final LocatorRecord resultLocator_1 = iterator.next();
         final LocatorRecord resultLocator_2 = iterator.next();
 
@@ -267,7 +273,7 @@ public class MappingMergeUtilTest {
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
         return new MappingRecordBuilder()
                 .setEid(IPV4_PREFIX_EID_1)
-                .setLocatorRecord(new ArrayList<>())
+                .setLocatorRecord(new LinkedHashMap<>())
                 .setRecordTtl(2)
                 .setAction(MappingRecord.Action.NativelyForward)
                 .setAuthoritative(true)

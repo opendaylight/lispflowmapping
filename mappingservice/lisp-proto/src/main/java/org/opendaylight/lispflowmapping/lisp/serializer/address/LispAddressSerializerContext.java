@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 /**
  * Class to pass around (de)serialization context information.
@@ -16,19 +17,19 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
  *
  */
 public class LispAddressSerializerContext {
-    public static final short MASK_LEN_MISSING = -1;
+    public static final Uint8 MASK_LEN_MISSING = Uint8.MAX_VALUE;
     private InstanceIdType vni;
-    private short maskLen;
+    private Uint8 maskLen;
 
     public LispAddressSerializerContext(InstanceIdType vni) {
         this(vni, MASK_LEN_MISSING);
     }
 
-    public LispAddressSerializerContext(short maskLen) {
+    public LispAddressSerializerContext(Uint8 maskLen) {
         this(null, maskLen);
     }
 
-    public LispAddressSerializerContext(InstanceIdType vni, short maskLength) {
+    public LispAddressSerializerContext(InstanceIdType vni, Uint8 maskLength) {
         this.vni = vni;
         this.maskLen = maskLength;
     }
@@ -41,11 +42,11 @@ public class LispAddressSerializerContext {
         this.vni = vni;
     }
 
-    short getMaskLen() {
+    Uint8 getMaskLen() {
         return maskLen;
     }
 
-    void setMaskLen(short maskLen) {
+    void setMaskLen(Uint8 maskLen) {
         this.maskLen = maskLen;
     }
 }

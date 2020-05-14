@@ -19,6 +19,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Prefix;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -35,7 +36,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
                 "00 00 10 18 " + // reserved + masks
                 "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
                 "00 01 22 33 44 55"),  // AFI=1, IP=0x22334455
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
 
         assertEquals(SourceDestKeyLcaf.class, address.getAddressType());
         SourceDestKey srcDestAddress = (SourceDestKey) address.getAddress();
@@ -51,7 +52,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
     public void deserialize__ShorterBuffer() throws Exception {
         LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
                 "02 20 00 0A " + //
-                "AA BB "), new LispAddressSerializerContext(null));
+                "AA BB "), new LispAddressSerializerContext((InstanceIdType) null));
     }
 
     @Test(expected = LispSerializationException.class)
@@ -61,7 +62,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
                 "00 00 CC DD " + // reserved + masks
                 "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
                 "00 01 22 33 44 55"),  // AFI=1, IP=0x22334455
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
     }
 
     @Test
@@ -71,7 +72,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
                 "00 00 78 78 " + // reserved + masks
                 "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD " + // AFI=2,
                 "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD"),  // AFI=2,
-                new LispAddressSerializerContext(null));
+                new LispAddressSerializerContext((InstanceIdType) null));
         // IPv6
 
         assertEquals("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd/120",

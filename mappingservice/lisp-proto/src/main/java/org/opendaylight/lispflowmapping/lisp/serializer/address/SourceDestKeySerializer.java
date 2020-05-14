@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public final class SourceDestKeySerializer extends LcafSerializer {
 
@@ -99,8 +100,8 @@ public final class SourceDestKeySerializer extends LcafSerializer {
         // reserved bytes
         buffer.getShort();
 
-        short srcMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
-        short dstMaskLength = (short) ByteUtil.getUnsignedByte(buffer);
+        Uint8 srcMaskLength = Uint8.valueOf(ByteUtil.getUnsignedByte(buffer));
+        Uint8 dstMaskLength = Uint8.valueOf(ByteUtil.getUnsignedByte(buffer));
         ctx.setMaskLen(srcMaskLength);
         SimpleAddress srcAddress = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         ctx.setMaskLen(dstMaskLength);

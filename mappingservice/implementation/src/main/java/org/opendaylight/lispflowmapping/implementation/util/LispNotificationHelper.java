@@ -34,6 +34,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
@@ -42,6 +43,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,19 +64,19 @@ public final class LispNotificationHelper {
         if (address instanceof Ipv4) {
             String ipv4 = ((Ipv4) address).getIpv4().getValue();
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv4).getAddress()));
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
         } else if (address instanceof Ipv6) {
             String ipv6 = ((Ipv6) address).getIpv6().getValue();
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv6).getAddress()));
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
         } else if (address instanceof Ipv4Binary) {
             Ipv4AddressBinary ipv6 = ((Ipv4Binary) address).getIpv4Binary();
             tab.setIpAddress(new IpAddressBinary(ipv6));
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
         } else if (address instanceof Ipv6Binary) {
             Ipv6AddressBinary ipv6 = ((Ipv6Binary) address).getIpv6Binary();
             tab.setIpAddress(new IpAddressBinary(ipv6));
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
         } else if (address instanceof KeyValueAddress) {
             SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();
             if (sa.getDistinguishedNameType() != null) {
@@ -83,7 +85,7 @@ public final class LispNotificationHelper {
                 int port = Integer.valueOf(it.next());
 
                 tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ip).getAddress()));
-                tab.setPort(new PortNumber(port));
+                tab.setPort(new PortNumber(Uint16.valueOf(port)));
             }
         } else if (address instanceof DistinguishedName) {
             DistinguishedName dname = (DistinguishedName) address;
@@ -92,7 +94,7 @@ public final class LispNotificationHelper {
             int port = Integer.valueOf(it.next());
 
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ip).getAddress()));
-            tab.setPort(new PortNumber(port));
+            tab.setPort(new PortNumber(Uint16.valueOf(port)));
         } else if (address instanceof ApplicationData) {
             ApplicationData appData = (ApplicationData) address;
             tab.setIpAddress(getIpAddressBinary(appData.getApplicationData().getAddress().getIpAddress()));
@@ -113,8 +115,8 @@ public final class LispNotificationHelper {
     public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
         List<Mapping> mappings = new ArrayList<Mapping>();
         for (int i = 0; i < mapRegisterNotification.getMapRegister().getMappingRecordItem().size(); i++) {
-            MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem().get(i)
-                    .getMappingRecord();
+            MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem()
+                    .get(new MappingRecordItemKey(Integer.toString(i))).getMappingRecord();
             MappingBuilder mb = new MappingBuilder();
             mb.setEidUri(new EidUri(LispAddressStringifier.getURIString(
                     record.getEid())));

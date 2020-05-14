@@ -7,11 +7,11 @@
  */
 package org.opendaylight.lispflowmapping.neutron;
 
-import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.junit.Before;
@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
@@ -37,6 +38,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.binding.rev150712.PortBindingExtension;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIps;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIpsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIpsKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
@@ -56,6 +58,7 @@ public class PortDataProcessorTest {
     private static final String IPV4 = "192.168.0.1";
     private static final Address ADDRESS = new DistinguishedNameBuilder()
             .setDistinguishedName(new DistinguishedNameType(HOST_ID_1)).build();
+    private static final String UUID_STRING = "123e4567-e89b-12d3-a456-426655440000";
 
     private PortDataProcessor portDataProcessor = new PortDataProcessor(iLispNeutronServiceMock);
 
@@ -89,9 +92,9 @@ public class PortDataProcessorTest {
                    IllegalAccessException, InvocationTargetException {
         portDataProcessor.create(portMock);
 
-        List<FixedIps> fixedIps = portMock.getFixedIps();
+        Map<FixedIpsKey, FixedIps> fixedIps = portMock.getFixedIps();
 
-        for (FixedIps ip : fixedIps) {
+        for (FixedIps ip : fixedIps.values()) {
             Mockito.verify(hostInformationManager).addHostRelatedInfo(HOST_ID_1,
                     getEid(portDataProcessor, portMock, ip));
         }
@@ -107,7 +110,7 @@ public class PortDataProcessorTest {
 
         portDataProcessor.create(portMock);
 
-        List<FixedIps> fixedIps = portMock.getFixedIps();
+        Map<FixedIpsKey, FixedIps> fixedIps = portMock.getFixedIps();
 
         Mockito.verifyZeroInteractions(hostInformationManager);
     }
@@ -144,13 +147,15 @@ public class PortDataProcessorTest {
     }
 
     private static MappingRecord getDefaultMappingRecord() {
-        return new MappingRecordBuilder().setLocatorRecord(Lists.newArrayList(getDefaultLocatorRecord())).build();
+        return new MappingRecordBuilder().setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>(Map.of(
+                new LocatorRecordKey("0"), getDefaultLocatorRecord()))).build();
     }
 
-    private static List<FixedIps> getDefaultListOfFixedIps() {
-        FixedIps fixedIps = new FixedIpsBuilder().setIpAddress(new IpAddress(new Ipv4Address(IPV4))).build();
+    private static Map<FixedIpsKey, FixedIps> getDefaultListOfFixedIps() {
+        IpAddress ipv4 = new IpAddress(new Ipv4Address(IPV4));
+        FixedIps fixedIps = new FixedIpsBuilder().setIpAddress(ipv4).build();
 
-        return Lists.newArrayList(fixedIps);
+        return new LinkedHashMap<>(Map.of(new FixedIpsKey(ipv4, new Uuid(UUID_STRING)), fixedIps));
     }
 
     private static Eid getEid(PortDataProcessor portDataProcessor, Port port, FixedIps ip)

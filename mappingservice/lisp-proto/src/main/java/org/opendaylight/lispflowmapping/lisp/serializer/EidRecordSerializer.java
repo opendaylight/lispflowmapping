@@ -12,6 +12,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public final class EidRecordSerializer {
     private static final EidRecordSerializer INSTANCE = new EidRecordSerializer();
@@ -26,7 +27,7 @@ public final class EidRecordSerializer {
 
     public Eid deserialize(ByteBuffer requestBuffer) {
         /* byte reserved = */requestBuffer.get();
-        short maskLength = (short) (ByteUtil.getUnsignedByte(requestBuffer));
+        Uint8 maskLength = Uint8.valueOf(ByteUtil.getUnsignedByte(requestBuffer));
         LispAddressSerializerContext ctx = new LispAddressSerializerContext(maskLength);
         return LispAddressSerializer.getInstance().deserializeEid(requestBuffer, ctx);
     }

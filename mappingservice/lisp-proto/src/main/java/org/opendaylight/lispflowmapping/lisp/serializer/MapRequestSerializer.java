@@ -9,13 +9,12 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.NumberUtil;
@@ -57,15 +56,11 @@ public final class MapRequestSerializer {
         } else {
             size += 2;
         }
-        if (mapRequest.getItrRloc() != null) {
-            for (ItrRloc address : mapRequest.getItrRloc()) {
-                size += LispAddressSerializer.getInstance().getAddressSize(address.getRloc());
-            }
+        for (ItrRloc address : mapRequest.nonnullItrRloc().values()) {
+            size += LispAddressSerializer.getInstance().getAddressSize(address.getRloc());
         }
-        if (mapRequest.getEidItem() != null) {
-            for (EidItem record : mapRequest.getEidItem()) {
-                size += 2 + LispAddressSerializer.getInstance().getAddressSize(record.getEid());
-            }
+        for (EidItem record : mapRequest.nonnullEidItem().values()) {
+            size += 2 + LispAddressSerializer.getInstance().getAddressSize(record.getEid());
         }
         ByteBuffer requestBuffer = ByteBuffer.allocate(size);
         requestBuffer.put((byte) ((byte) (MessageType.MapRequest.getIntValue() << 4)
@@ -97,17 +92,13 @@ public final class MapRequestSerializer {
         } else {
             requestBuffer.putShort((short) 0);
         }
-        if (mapRequest.getItrRloc() != null) {
-            for (ItrRloc address : mapRequest.getItrRloc()) {
-                LispAddressSerializer.getInstance().serialize(requestBuffer, address.getRloc());
-            }
+        for (ItrRloc address : mapRequest.nonnullItrRloc().values()) {
+            LispAddressSerializer.getInstance().serialize(requestBuffer, address.getRloc());
         }
-        if (mapRequest.getEidItem() != null) {
-            for (EidItem record : mapRequest.getEidItem()) {
-                requestBuffer.put((byte) 0);
-                requestBuffer.put((byte) MaskUtil.getMaskForAddress(record.getEid().getAddress()));
-                LispAddressSerializer.getInstance().serialize(requestBuffer, record.getEid());
-            }
+        for (EidItem record : mapRequest.nonnullEidItem().values()) {
+            requestBuffer.put((byte) 0);
+            requestBuffer.put((byte) MaskUtil.getMaskForAddress(record.getEid().getAddress()));
+            LispAddressSerializer.getInstance().serialize(requestBuffer, record.getEid());
         }
         if (mapRequest.getMapReply() != null) {
             ByteBuffer replyBuffer = ByteBuffer.allocate(MappingRecordSerializer.getInstance()
@@ -149,23 +140,21 @@ public final class MapRequestSerializer {
                     LispAddressSerializer.getInstance().deserializeEid(requestBuffer, ctx)).build());
 
             if (builder.getItrRloc() == null) {
-                builder.setItrRloc(new ArrayList<ItrRloc>());
+                builder.setItrRloc(new LinkedHashMap<ItrRlocKey, ItrRloc>());
             }
             for (int i = 0; i < itrCount; i++) {
                 Rloc rloc = LispAddressSerializer.getInstance().deserializeRloc(requestBuffer);
-                builder.getItrRloc().add(new ItrRlocBuilder()
-                        .withKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
-                        .setRloc(rloc).build());
+                builder.getItrRloc().put(new ItrRlocKey(Integer.toString(i)),
+                        new ItrRlocBuilder().setRloc(rloc).build());
             }
 
             if (builder.getEidItem() == null) {
-                builder.setEidItem(new ArrayList<EidItem>());
+                builder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
             }
             for (int i = 0; i < recordCount; i++) {
                 Eid eid = EidRecordSerializer.getInstance().deserialize(requestBuffer);
-                builder.getEidItem().add(new EidItemBuilder()
-                        .withKey(new EidItemKey(LispAddressStringifier.getString(eid)))
-                        .setEid(eid).build());
+                builder.getEidItem().put(new EidItemKey(Integer.toString(i)),
+                        new EidItemBuilder().setEid(eid).build());
             }
             if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
                 try {

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -21,6 +21,7 @@ import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
@@ -122,9 +123,9 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
     private static Mapping convertToBinaryIfNecessary(Mapping mapping) {
         MappingRecord originalRecord = mapping.getMappingRecord();
-        List<LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
+        Map<LocatorRecordKey, LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
 
-        List<LocatorRecord> convertedLocators = null;
+        Map<LocatorRecordKey, LocatorRecord> convertedLocators = null;
         if (originalLocators != null) {
             // If convertedLocators is non-null, while originalLocators is also non-null, conversion has been made
             convertedLocators = convertToBinaryIfNecessary(originalLocators);
@@ -142,16 +143,18 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         return mapping;
     }
 
-    private static List<LocatorRecord> convertToBinaryIfNecessary(List<LocatorRecord> originalLocators) {
-        List<LocatorRecord> convertedLocators = null;
-        for (LocatorRecord record : originalLocators) {
+    private static Map<LocatorRecordKey, LocatorRecord> convertToBinaryIfNecessary(Map<LocatorRecordKey,
+            LocatorRecord> originalLocators) {
+        Map<LocatorRecordKey, LocatorRecord> convertedLocators = null;
+        for (LocatorRecordKey key : originalLocators.keySet()) {
+            LocatorRecord record = originalLocators.get(key);
             if (LispAddressUtil.addressNeedsConversionToBinary(record.getRloc().getAddress())) {
                 LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
                 lrb.setRloc(LispAddressUtil.convertToBinary(record.getRloc()));
                 if (convertedLocators == null) {
-                    convertedLocators = new ArrayList<>();
+                    convertedLocators = new LinkedHashMap<>();
                 }
-                convertedLocators.add(lrb.build());
+                convertedLocators.put(key, lrb.build());
             }
         }
         if (convertedLocators != null) {
