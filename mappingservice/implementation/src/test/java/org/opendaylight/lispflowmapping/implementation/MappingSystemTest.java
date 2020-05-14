@@ -18,7 +18,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +63,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
@@ -73,6 +76,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -117,7 +123,7 @@ public class MappingSystemTest {
     private static final Hop HOP_3 = new HopBuilder().setHopId("hop-id-3").setAddress(SIMPLE_ADDR_3).build();
 
     private static final MappingAuthkeyBuilder MAPPING_AUTHKEY_BUILDER = new MappingAuthkeyBuilder()
-            .setKeyType(1).setKeyString("pass-1");
+            .setKeyType(Uint16.valueOf(1)).setKeyString("pass-1");
     private static final Rloc RLOC = LispAddressUtil.toRloc(new Ipv4Address(IPV4_STRING_2));
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
     private static final long REGISTRATION_VALIDITY = CONFIG_INI.getRegistrationValiditySb();
@@ -126,6 +132,9 @@ public class MappingSystemTest {
     private static final SiteId SITE_ID = new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7});
     private static final XtrId XTR_ID = new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7,
                                                                 8, 9, 10, 11, 12, 13, 14, 15});
+
+    private static final LocatorRecordKey LR0 =  new LocatorRecordKey("0");
+    private static final LocatorRecordKey LR1 =  new LocatorRecordKey("1");
 
     @Before
     public void init() throws Exception {
@@ -203,10 +212,9 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_multipleLocatorRecords() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        // set two locators
-                        getDefaultLocatorRecordBuilder().build(),
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build(),
+                        LR1, getDefaultLocatorRecordBuilder().build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -220,9 +228,8 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleIpv4LocatorRecord() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        // Ipv4 type Rloc
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -236,9 +243,9 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleELPLocatorRecord_IndexOutOfBounds() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder()
-                                .setRloc(getELPTypeRloc()).build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder()
+                                .setRloc(getELPTypeRloc()).build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH_INDEX_OOB)).thenReturn(mappingData);
 
@@ -253,14 +260,15 @@ public class MappingSystemTest {
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleELPLocatorRecord()
             throws UnknownHostException {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder()
-                                .setRloc(getELPTypeRloc()).build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder()
+                                .setRloc(getELPTypeRloc()).build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
         final MappingData result = mappingSystem.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH);
-        final Ipv4Binary ipv4Result = (Ipv4Binary) result.getRecord().getLocatorRecord().get(0).getRloc().getAddress();
+        final Ipv4Binary ipv4Result = (Ipv4Binary) result.getRecord().nonnullLocatorRecord()
+                .values().iterator().next().getRloc().getAddress();
         assertTrue(Arrays
                 .equals(InetAddress.getByName(IPV4_STRING_3).getAddress(), ipv4Result.getIpv4Binary().getValue()));
     }
@@ -272,9 +280,9 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_IpPrefixLocatorRecord() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder()
-                                .setRloc(getIpPrefixTypeRloc()).build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder()
+                                .setRloc(getIpPrefixTypeRloc()).build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -287,8 +295,8 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingData);
 
@@ -316,9 +324,8 @@ public class MappingSystemTest {
             IllegalAccessException {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        // Ipv4 type Rloc
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build()))).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_SERVICE_PATH)).thenReturn(mappingData);
 
@@ -335,9 +342,8 @@ public class MappingSystemTest {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        // Ipv4 type Rloc
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build()))).build();
         MappingData nbMappingData = getDefaultMappingData(mappingRecord);
         MappingData sbMappingData = getDefaultMappingData(mappingRecord);
         sbMappingData.setTimestamp(EXPIRED_DATE);
@@ -365,8 +371,8 @@ public class MappingSystemTest {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
-                        getDefaultLocatorRecordBuilder().build())).build();
+                .setLocatorRecord(new LinkedHashMap<>(Map.of(
+                        LR0, getDefaultLocatorRecordBuilder().build()))).build();
         final MappingData nbMappingData = getDefaultMappingData(mappingRecord);
         final MappingData sbMappingData = getDefaultMappingData(mappingRecord);
 
@@ -588,14 +594,13 @@ public class MappingSystemTest {
                 .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();
 
         return new ServicePathBuilder().setServicePath(servicePathBuilder
-                .setServiceIndex(index)
-                .setServicePathId(new ServicePathIdType(1L)).build())
+                .setServiceIndex(Uint8.valueOf(index))
+                .setServicePathId(new ServicePathIdType(Uint32.valueOf(1L))).build())
                 .build();
     }
 
     private static LocatorRecordBuilder getDefaultLocatorRecordBuilder() {
         return new LocatorRecordBuilder()
-                .setLocatorId("locator-id")
                 .setRloc(RLOC);
     }
 

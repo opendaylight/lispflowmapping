@@ -7,8 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
-import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
-
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,9 +31,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +83,7 @@ public final class MappingMergeUtil {
     }
 
     private static void mergeLocatorRecords(MappingRecordBuilder mrb, MappingRecord newRecord) {
-        List<LocatorRecord> locators = mrb.getLocatorRecord();
+        Map<LocatorRecordKey, LocatorRecord> locators = mrb.getLocatorRecord();
 
         // We assume locators are unique and sorted and don't show up several times (with different or identical
         // p/w/mp/mw), so we create a LinkedHashMap (which preserves order) of the locators from the existing merged
@@ -93,10 +93,10 @@ public final class MappingMergeUtil {
         // All locators to be added to the merge set are first stored in this list
         List<LocatorRecord> newLocatorList = new ArrayList<LocatorRecord>();
 
-        for (LocatorRecord locator : locators) {
+        for (LocatorRecord locator : locators.values()) {
             locatorMap.put(locator.getRloc(), locator);
         }
-        for (LocatorRecord newLocator : newRecord.getLocatorRecord()) {
+        for (LocatorRecord newLocator : newRecord.getLocatorRecord().values()) {
             Rloc newRloc = newLocator.getRloc();
             if (locatorMap.containsKey(newRloc)) {
                 // overlapping locator
@@ -112,31 +112,36 @@ public final class MappingMergeUtil {
 
         // Build new merged and sorted locator set if need be
         if (!newLocatorList.isEmpty()) {
-            List<LocatorRecord> mergedLocators = new ArrayList<LocatorRecord>();
+            Map<LocatorRecordKey, LocatorRecord> mergedLocators = new LinkedHashMap<>();
 
             int mlocIt = 0;
             int locIt = 0;
+            int idx = 0;
             while (mlocIt < newLocatorList.size() && locIt < locators.size()) {
                 int cmp = compareLocators(locators.get(locIt), newLocatorList.get(mlocIt));
                 if (cmp < 0) {
-                    mergedLocators.add(locators.get(locIt));
+                    mergedLocators.put(new LocatorRecordKey(Integer.toString(idx)), locators.get(locIt));
                     locIt++;
+                    idx++;
                 } else if (cmp > 0) {
-                    mergedLocators.add(newLocatorList.get(mlocIt));
+                    mergedLocators.put(new LocatorRecordKey(Integer.toString(idx)), newLocatorList.get(mlocIt));
                     mlocIt++;
+                    idx++;
                 } else {
                     // when a locator appears in both lists, keep the new (merged) one and skip the old
-                    mergedLocators.add(newLocatorList.get(mlocIt));
+                    mergedLocators.put(new LocatorRecordKey(Integer.toString(idx)), newLocatorList.get(mlocIt));
                     mlocIt++;
                     locIt++;
+                    idx++;
                 }
             }
             while (locIt < locators.size()) {
-                mergedLocators.add(locators.get(locIt));
+                mergedLocators.put(new LocatorRecordKey(Integer.toString(idx)), locators.get(locIt));
                 locIt++;
+                idx++;
             }
             while (mlocIt < newLocatorList.size()) {
-                mergedLocators.add(newLocatorList.get(mlocIt));
+                mergedLocators.put(new LocatorRecordKey(Integer.toString(idx)), newLocatorList.get(mlocIt));
                 mlocIt++;
             }
             mrb.setLocatorRecord(mergedLocators);
@@ -269,7 +274,7 @@ public final class MappingMergeUtil {
             }
         }
         // find and update locators intersection if not empty
-        List<LocatorRecord> commonLocators = getCommonLocatorRecords(nbMapping, sbMapping);
+        Map<LocatorRecordKey, LocatorRecord> commonLocators = getCommonLocatorRecords(nbMapping, sbMapping);
         if (commonLocators != null && !commonLocators.isEmpty()) {
             mrb.setLocatorRecord(commonLocators);
         }
@@ -277,7 +282,8 @@ public final class MappingMergeUtil {
         return mrb.build();
     }
 
-    private static List<LocatorRecord> getCommonLocatorRecords(MappingRecord nbMapping, MappingRecord sbMapping) {
+    private static Map<LocatorRecordKey, LocatorRecord> getCommonLocatorRecords(
+            MappingRecord nbMapping, MappingRecord sbMapping) {
         // This method updates the MappingRecord builder with the intersection of the locator records
         // from the two mappings. NB mapping records fields have precedence, only Priority is updated
         // from SB mapping if p is 255.
@@ -287,19 +293,20 @@ public final class MappingMergeUtil {
             return null;
         }
 
-        List<LocatorRecord> sbLocators = sbMapping.getLocatorRecord();
+        Map<LocatorRecordKey, LocatorRecord> sbLocators = sbMapping.getLocatorRecord();
 
         // We assume locators are unique and don't show up several times (with different or identical p/w/mp/mw),
         // so we create a HashMap of the locators from the SB mapping record, keyed by the Rloc
         Map<Rloc, LocatorRecord> sbLocatorMap = new HashMap<Rloc, LocatorRecord>();
-        for (LocatorRecord locator : sbLocators) {
+        for (LocatorRecord locator : sbLocators.values()) {
             sbLocatorMap.put(locator.getRloc(), locator);
         }
 
         // Gradually building final list of common locators, in order that they appear in NB Mapping
-        List<LocatorRecord> commonLocators = new ArrayList<LocatorRecord>();
+        Map<LocatorRecordKey, LocatorRecord> commonLocators = new LinkedHashMap<>();
 
-        for (LocatorRecord nbLocator : nbMapping.getLocatorRecord()) {
+        int idx = 0;
+        for (LocatorRecord nbLocator : nbMapping.getLocatorRecord().values()) {
             Rloc nbRloc = nbLocator.getRloc();
             if (sbLocatorMap.containsKey(nbRloc)) {
                 // common locator found. use the NB record as the common locator.
@@ -308,10 +315,12 @@ public final class MappingMergeUtil {
                     // if SB locator has p == 255 then common locator takes all NB fields except for p
                     // which must be set to 255
                     LocatorRecordBuilder lrb = new LocatorRecordBuilder(nbLocator);
-                    lrb.setPriority(fromJava((short) 255));
-                    commonLocators.add(lrb.build());
+                    lrb.setPriority(Uint8.valueOf(255));
+                    commonLocators.put(new LocatorRecordKey(Integer.toString(idx)), lrb.build());
+                    idx++;
                 } else {
-                    commonLocators.add(nbLocator);
+                    commonLocators.put(new LocatorRecordKey(Integer.toString(idx)), nbLocator);
+                    idx++;
                 }
             }
         }

@@ -7,12 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 
 public final class MapNotifyBuilderHelper {
     // Utility class, should not be instantiated
@@ -23,16 +24,18 @@ public final class MapNotifyBuilderHelper {
         setNonRecordFields(builder, mapRegister);
 
         if (builder.getMappingRecordItem() == null) {
-            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+            builder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
         }
 
-        for (MappingRecordItem eidToLocator : mapRegister.getMappingRecordItem()) {
-            builder.getMappingRecordItem().add(eidToLocator);
+        int idx = 0;
+        for (MappingRecordItem eidToLocator : mapRegister.getMappingRecordItem().values()) {
+            builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(idx)), eidToLocator);
+            idx++;
         }
     }
 
     public static void setFromMapRegisterAndMappingRecordItems(MapNotifyBuilder builder, MapRegister mapRegister,
-            List<MappingRecordItem> mappings) {
+            Map<MappingRecordItemKey, MappingRecordItem> mappings) {
         setNonRecordFields(builder, mapRegister);
         builder.setMappingRecordItem(mappings);
     }

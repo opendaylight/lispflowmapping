@@ -14,6 +14,8 @@ import com.google.common.collect.Lists;
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -41,6 +43,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregisternotification.MapRegisterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
@@ -49,6 +52,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispNotificationHelperTest {
 
@@ -87,6 +91,8 @@ public class LispNotificationHelperTest {
 
     private static final SiteId SITE_ID = new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7});
 
+    private static final MappingRecordItemKey MR0 = new MappingRecordItemKey("0");
+    private static final MappingRecordItemKey MR1 = new MappingRecordItemKey("1");
 
     /**
      * Tests {@link LispNotificationHelper#getTransportAddressFromRloc} method with Ipv4 type address.
@@ -95,7 +101,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv4Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV4));
     }
@@ -107,7 +113,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv6Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV6_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV6));
     }
@@ -119,7 +125,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv4AddressBinary() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV4_BINARY));
     }
@@ -131,7 +137,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv6AddressBinary() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV6_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV6_BINARY));
     }
@@ -143,7 +149,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withKeyValueAddress() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(PORT)).build();
+                .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_KEYVALUE_ADDRESS));
     }
@@ -155,7 +161,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withDistinguishedNameAddress() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(PORT)).build();
+                .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_DISTINGUISHED_NAME_ADDRESS));
     }
@@ -167,7 +173,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withApplicationDataIpv4Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(PORT)).build();
+                .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_APPLICATION_DATA_IPV4));
     }
@@ -179,7 +185,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withApplicationDataIpv6Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV6_BINARY))
-                .setPort(new PortNumber(PORT)).build();
+                .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_APPLICATION_DATA_IPV6));
     }
@@ -274,7 +280,7 @@ public class LispNotificationHelperTest {
                 .setApplicationData(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                         .rev151105.lisp.address.address.application.data.ApplicationDataBuilder()
                         .setAddress(new SimpleAddress(new IpAddress(ADDRESS_IPV4)))
-                        .setLocalPortLow(new PortNumber(PORT)).build())
+                        .setLocalPortLow(new PortNumber(Uint16.valueOf(PORT))).build())
                 .build();
     }
 
@@ -283,7 +289,7 @@ public class LispNotificationHelperTest {
                 .setApplicationData(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                         .rev151105.lisp.address.address.application.data.ApplicationDataBuilder()
                         .setAddress(new SimpleAddress(new IpAddress(ADDRESS_IPV6)))
-                        .setLocalPortLow(new PortNumber(PORT)).build())
+                        .setLocalPortLow(new PortNumber(Uint16.valueOf(PORT))).build())
                 .build();
     }
 
@@ -292,7 +298,7 @@ public class LispNotificationHelperTest {
                 .setApplicationData(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                         .rev151105.lisp.address.address.application.data.ApplicationDataBuilder()
                         .setAddress(new SimpleAddress(new IpPrefix(new Ipv4Prefix(IPV4_STRING + "/20"))))
-                        .setLocalPortLow(new PortNumber(PORT)).build())
+                        .setLocalPortLow(new PortNumber(Uint16.valueOf(PORT))).build())
                 .build();
     }
 
@@ -303,7 +309,8 @@ public class LispNotificationHelperTest {
                 .setMappingRecord(new MappingRecordBuilder().setEid(EID_IPV6).build()).build();
 
         final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder()
-                .setMappingRecordItem(Lists.newArrayList(mappingRecordItem_1, mappingRecordItem_2))
+                .setMappingRecordItem(new LinkedHashMap<>(Map.of(MR0, mappingRecordItem_1,
+                        MR1, mappingRecordItem_2)))
                 .setXtrSiteIdPresent(isXtrSiteIdPresent)
                 .setSiteId(SITE_ID);
 

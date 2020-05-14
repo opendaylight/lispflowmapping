@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -49,7 +50,7 @@ public final class MapRegisterSerializer {
         if (mapRegister.isXtrSiteIdPresent() != null && mapRegister.isXtrSiteIdPresent()) {
             size += Length.XTRID_SIZE + Length.SITEID_SIZE;
         }
-        for (MappingRecordItem eidToLocatorRecord : mapRegister.getMappingRecordItem()) {
+        for (MappingRecordItem eidToLocatorRecord : mapRegister.nonnullMappingRecordItem().values()) {
             size += MappingRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord.getMappingRecord());
         }
 
@@ -71,7 +72,7 @@ public final class MapRegisterSerializer {
         } else {
             registerBuffer.putShort((short) 0);
         }
-        for (MappingRecordItem eidToLocatorRecord : mapRegister.getMappingRecordItem()) {
+        for (MappingRecordItem eidToLocatorRecord : mapRegister.getMappingRecordItem().values()) {
             MappingRecordSerializer.getInstance().serialize(registerBuffer, eidToLocatorRecord.getMappingRecord());
         }
 
@@ -93,7 +94,7 @@ public final class MapRegisterSerializer {
             }
 
             MapRegisterBuilder builder = new MapRegisterBuilder();
-            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+            builder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
 
             boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
             builder.setProxyMapReply(ByteUtil.extractBit(typeAndFlags, Flags.PROXY));
@@ -129,17 +130,15 @@ public final class MapRegisterSerializer {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
                     mrb.setSourceRloc(LispAddressUtil.addressBinaryFromInet(sourceRloc));
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                            .withKey(new MappingRecordItemKey(Integer.toString(idx)))
-                            .setMappingRecord(mrb.build()).build());
+                    builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(idx)),
+                            new MappingRecordItemBuilder().setMappingRecord(mrb.build()).build());
                     idx++;
                 }
             } else {
                 for (int i = 0; i < recordCount; i++) {
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                            .withKey(new MappingRecordItemKey(Integer.toString(i)))
-                            .setMappingRecord(MappingRecordSerializer.getInstance().deserialize(registerBuffer))
-                            .build());
+                    builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(i)),
+                            new MappingRecordItemBuilder().setMappingRecord(
+                            MappingRecordSerializer.getInstance().deserialize(registerBuffer)).build());
                 }
             }
 

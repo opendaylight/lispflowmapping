@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,11 +64,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
@@ -75,6 +78,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +128,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             }
         }
 
-        for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
+        for (MappingRecordItem record : mapRegister.nonnullMappingRecordItem().values()) {
             MappingRecord mapping = record.getMappingRecord();
             Eid eid = mapping.getEid();
             MappingData mappingData = new MappingData(mapping, System.currentTimeMillis());
@@ -147,12 +152,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             List<TransportAddress> rlocs = null;
             if (merge) {
                 Set<IpAddressBinary> notifyRlocs = new LinkedHashSet<>();
-                List<MappingRecordItem> mergedMappings = new ArrayList<>();
-                for (MappingRecordItem record : mapRegister.getMappingRecordItem()) {
+                Map<MappingRecordItemKey, MappingRecordItem> mergedMappings = new LinkedHashMap<>();
+                for (MappingRecordItem record : mapRegister.nonnullMappingRecordItem().values()) {
                     MappingRecord mapping = record.getMappingRecord();
                     MappingRecord currentRecord = getMappingRecord(mapService.getMapping(MappingOrigin.Southbound,
                             mapping.getEid()));
-                    mergedMappings.add(new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
+                    mergedMappings.put(new MappingRecordItemKey("0"),
+                            new MappingRecordItemBuilder().setMappingRecord(currentRecord).build());
                     Set<IpAddressBinary> sourceRlocs = (Set<IpAddressBinary>) mapService.getData(
                             MappingOrigin.Southbound, mapping.getEid(), SubKeys.SRC_RLOCS);
                     if (sourceRlocs != null) {
@@ -167,10 +173,12 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             } else {
                 MapNotifyBuilderHelper.setFromMapRegister(builder, mapRegister);
             }
-            List<MappingRecordItem> mappings = builder.getMappingRecordItem();
-            if (mappings != null && mappings.get(0) != null && mappings.get(0).getMappingRecord() != null
-                    && mappings.get(0).getMappingRecord().getEid() != null) {
-                MappingAuthkey authkey = mapService.getAuthenticationKey(mappings.get(0).getMappingRecord().getEid());
+            Map<MappingRecordItemKey, MappingRecordItem> mappings = builder.getMappingRecordItem();
+            if (mappings != null && mappings.get(new MappingRecordItemKey("0")) != null
+                    && mappings.get(new MappingRecordItemKey("0")).getMappingRecord() != null
+                    && mappings.get(new MappingRecordItemKey("0")).getMappingRecord().getEid() != null) {
+                MappingAuthkey authkey = mapService.getAuthenticationKey(
+                        mappings.get(new MappingRecordItemKey("0")).getMappingRecord().getEid());
                 if (authkey != null) {
                     builder.setAuthenticationData(LispAuthenticationUtil.createAuthenticationData(builder.build(),
                             authkey.getKeyString()));
@@ -185,7 +193,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         for (IpAddressBinary address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
             tab.setIpAddress(address);
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
             rlocs.add(tab.build());
         }
         return rlocs;
@@ -276,7 +284,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     /**
      * Task scheduler is responsible for resending SMR messages to a subscriber (xTR)
-     * {@value ConfigIni#LISP_SMR_RETRY_COUNT} times, or until {@link ISmrNotificationListener#onSmrInvokedReceived}
+     * "lisp.smrRetryCount" times, or until {@link ISmrNotificationListener#onSmrInvokedReceived}
      * is triggered.
      */
     private class SmrScheduler {
@@ -379,10 +387,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             Address address = eid.getAddress();
             if (address instanceof Ipv4PrefixBinary) {
                 return new EidBuilder(eid).setAddress(new Ipv4PrefixBinaryBuilder((Ipv4PrefixBinary) address)
-                        .setIpv4MaskLength(MaskUtil.IPV4_MAX_MASK).build()).build();
+                        .setIpv4MaskLength(Uint8.valueOf(MaskUtil.IPV4_MAX_MASK)).build()).build();
             } else if (address instanceof Ipv6PrefixBinary) {
                 return new EidBuilder(eid).setAddress(new Ipv6PrefixBinaryBuilder((Ipv6PrefixBinary) address)
-                        .setIpv6MaskLength(MaskUtil.IPV6_MAX_MASK).build()).build();
+                        .setIpv6MaskLength(Uint8.valueOf(MaskUtil.IPV6_MAX_MASK)).build()).build();
             }
             return eid;
         }
@@ -408,8 +416,9 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     // a given mapping.
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
                         synchronized (mrb) {
-                            mrb.setEidItem(new ArrayList<EidItem>());
-                            mrb.getEidItem().add(new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
+                            mrb.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+                            mrb.getEidItem().put(new EidItemKey("0"),
+                                    new EidItemBuilder().setEid(subscriber.getSrcEid()).build());
                             notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Attempt #{} to send SMR to subscriber {} for EID {}",
