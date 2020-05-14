@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
@@ -18,13 +17,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
@@ -221,17 +221,15 @@ public class LispXtrSouthboundHandlerTest {
                         .setIpv4Binary(new Ipv4AddressBinary(new byte[]{127, 0, 0, 2})).build())
                 .build();
         final ItrRloc itrRloc = new ItrRlocBuilder()
-                .withKey(new ItrRlocKey(LispAddressStringifier.getString(rloc)))
                 .setRloc(rloc).build();
 
         final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_2 + IPV4_STRING_PREFIX);
         final EidItem eidItem = new EidItemBuilder()
-                .withKey(new EidItemKey(IPV4_STRING_2 + IPV4_STRING_PREFIX))
                 .setEid(eid).build();
 
         return new MapRequestBuilder()
-                .setItrRloc(Lists.newArrayList(itrRloc))
-                .setEidItem(Lists.newArrayList(eidItem))
+                .setItrRloc(new LinkedHashMap<>(Map.of(new ItrRlocKey("0"), itrRloc)))
+                .setEidItem(new LinkedHashMap<>(Map.of(new EidItemKey("0"), eidItem)))
                 .setNonce(NONCE)
                 .setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(IPV4_STRING_1)).build())
                 .setAuthoritative(false)

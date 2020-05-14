@@ -13,10 +13,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -46,12 +47,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapregistermessage.MapRegisterBuilder;
@@ -60,6 +61,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MapServerTest {
@@ -109,6 +111,9 @@ public class MapServerTest {
     private static final Rloc RLOC_5 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_5);
     private static final Rloc RLOC_6 = LispAddressUtil.asIpv4Rloc(IPV4_STRING_6);
 
+    private static final MappingRecordItemKey MR0 = new MappingRecordItemKey("0");
+    private static final LocatorRecordKey LR0 =  new LocatorRecordKey("0");
+
     private static final IpAddressBinary IPV4_BINARY_1 =
             new IpAddressBinary(new Ipv4AddressBinary(new byte[] {1, 2, 3, 0}));
     private static final IpAddressBinary IPV4_BINARY_2 =
@@ -140,16 +145,17 @@ public class MapServerTest {
 
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
             .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
+            .setKeyType(Uint16.valueOf(0)).build();
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
 
     private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder().setRloc(RLOC_1).build();
     private static final LocatorRecord LOCATOR_RECORD_2 = new LocatorRecordBuilder().setRloc(RLOC_2).build();
 
-    private static final MappingRecord OLD_MAPPING_RECORD_1 = getDefaultMappingRecordBuilder()
-            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
-    private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
-            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
+    private static final MappingRecord OLD_MAPPING_RECORD_1 = getDefaultMappingRecordBuilder().setLocatorRecord(
+            new LinkedHashMap<LocatorRecordKey, LocatorRecord>(Map.of(LR0, LOCATOR_RECORD_1))).build();
+    private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder().setLocatorRecord(
+            new LinkedHashMap<LocatorRecordKey, LocatorRecord>(Map.of(LR0, LOCATOR_RECORD_2))).build();
     private static final MappingData OLD_MAPPING_DATA_1 = new MappingData(OLD_MAPPING_RECORD_1);
     private static final MappingData OLD_MAPPING_DATA_2 = new MappingData(OLD_MAPPING_RECORD_2);
 
@@ -165,7 +171,7 @@ public class MapServerTest {
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_5);
         subscriberSetMock_3.add(SUBSCRIBER_RLOC_6);
         mapRegister = getDefaultMapRegisterBuilder().build();
-        mappingData = new MappingData(mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
+        mappingData = new MappingData(mapRegister.getMappingRecordItem().values().iterator().next().getMappingRecord(),
                 System.currentTimeMillis());
         setConfigIniMappingMergeField(false);
     }
@@ -195,8 +201,8 @@ public class MapServerTest {
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
                 .setMappingRecord(OLD_MAPPING_RECORD_1);
         final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister)
-                .setMappingRecordItem(new ArrayList<>());
-        mapNotifyBuilder.getMappingRecordItem().add(mappingRecordItemBuilder.build());
+                .setMappingRecordItem(new LinkedHashMap<>());
+        mapNotifyBuilder.getMappingRecordItem().put(MR0, mappingRecordItemBuilder.build());
 
         // no mapping changes
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1))
@@ -218,7 +224,7 @@ public class MapServerTest {
         setConfigIniMappingMergeField(true);
 
         mapRegister.getMappingRecordItem().clear();
-        mapRegister.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(IPV4_PREFIX_EID_1).build());
+        mapRegister.getMappingRecordItem().put(MR0, getDefaultMappingRecordItemBuilder(IPV4_PREFIX_EID_1).build());
 
         final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder()
                 // apply the change
@@ -266,8 +272,8 @@ public class MapServerTest {
         // result
         final List<TransportAddress> transportAddressList = getTransportAddressList();
         final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister);
-        mapNotifyBuilder.setMappingRecordItem(new ArrayList<>());
-        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+        mapNotifyBuilder.setMappingRecordItem(new LinkedHashMap<>());
+        mapNotifyBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder()
                 .setMappingRecord(getDefaultMappingRecordBuilder().build()).build());
 
         mapServer.handleMapRegister(mapRegister);
@@ -281,12 +287,7 @@ public class MapServerTest {
 
         // Input
         // Add a MappingRecord with SrcDestKey Eid Type
-        final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
-                .setMappingRecord(getDefaultMappingRecordBuilder().setEid(SOURCE_DEST_KEY_EID).build());
         final MapRegisterBuilder mapRegisterSrcDstBuilder = getDefaultMapRegisterBuilder();
-
-        final List<MappingRecordItem> list = mapRegisterSrcDstBuilder.getMappingRecordItem();
-        list.add(mappingRecordItemBuilder.build());
 
         // ------------- Stubbing for SourceDestKey type Eid mapping -------------------
 
@@ -323,19 +324,19 @@ public class MapServerTest {
         // for SrcDstKey mapping
         final ArgumentCaptor<MapRequest> captor_1 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_1.capture(), Mockito.eq(RLOC_2));
-        final Eid resultEid_1 = captor_1.getValue().getEidItem().iterator().next().getEid();
+        final Eid resultEid_1 = captor_1.getValue().getEidItem().values().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_2, resultEid_1);
 
         // for SrcDst destination mapping
         final ArgumentCaptor<MapRequest> captor_2 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(1)).handleSMR(captor_2.capture(), Mockito.eq(RLOC_4));
-        final Eid resultEid_2 = captor_2.getValue().getEidItem().iterator().next().getEid();
+        final Eid resultEid_2 = captor_2.getValue().getEidItem().values().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_4, resultEid_2);
 
         // for Ipv4 mapping
         final ArgumentCaptor<MapRequest> captor_3 = ArgumentCaptor.forClass(MapRequest.class);
         Mockito.verify(notifyHandler, Mockito.times(2)).handleSMR(captor_3.capture(), Mockito.eq(RLOC_6));
-        final Eid resultEid_3 = captor_3.getValue().getEidItem().iterator().next().getEid();
+        final Eid resultEid_3 = captor_3.getValue().getEidItem().values().iterator().next().getEid();
         assertEquals(IPV4_SOURCE_EID_6, resultEid_3);
     }
 
@@ -344,13 +345,13 @@ public class MapServerTest {
                 .setProxyMapReply(true)
                 .setWantMapNotify(true)
                 .setKeyId((short) 0)
-                .setMappingRecordItem(new ArrayList<>())
+                .setMappingRecordItem(new LinkedHashMap<>())
                 .setMergeEnabled(true)
                 .setNonce(1L)
                 .setSiteId(new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7}))
                 .setXtrId(new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}))
                 .setXtrSiteIdPresent(true);
-        mapRegisterBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
+        mapRegisterBuilder.getMappingRecordItem().put(MR0, getDefaultMappingRecordItemBuilder().build());
 
         return mapRegisterBuilder;
     }
@@ -381,7 +382,7 @@ public class MapServerTest {
         return new MappingRecordBuilder()
                 .setAction(MappingRecord.Action.NoAction)
                 .setAuthoritative(false)
-                .setLocatorRecord(new ArrayList<>())
+                .setLocatorRecord(new LinkedHashMap<>())
                 .setMapVersion((short) 0)
                 .setRecordTtl(60)
                 .setEid(eid);
@@ -395,9 +396,9 @@ public class MapServerTest {
                 .setNonce(mr.getNonce())
                 .setKeyId(mr.getKeyId())
                 .setMergeEnabled(mr.isMergeEnabled())
-                .setMappingRecordItem(new ArrayList<>())
+                .setMappingRecordItem(new LinkedHashMap<>())
                 .setAuthenticationData(new byte[]{});
-        mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
+        mapNotifyBuilder.getMappingRecordItem().put(MR0, getDefaultMappingRecordItemBuilder().build());
 
         return mapNotifyBuilder;
     }
@@ -416,11 +417,11 @@ public class MapServerTest {
     private static List<TransportAddress> getTransportAddressList() {
         TransportAddressBuilder transportAddressBuilder1 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_1)
-                .setPort(new PortNumber(LispMessage.PORT_NUM));
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
 
         TransportAddressBuilder transportAddressBuilder2 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_2)
-                .setPort(new PortNumber(LispMessage.PORT_NUM));
+                .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
 
         final List<TransportAddress> transportAddressList = Lists.newArrayList(
                 transportAddressBuilder1.build(),

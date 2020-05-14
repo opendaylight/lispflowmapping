@@ -25,9 +25,9 @@ import io.netty.channel.socket.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
@@ -62,8 +62,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadataBuilder;
@@ -76,8 +77,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class LispSouthboundHandlerTest extends BaseTestCase {
 
@@ -119,28 +123,28 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         akdb = Mockito.mock(AuthKeyDb.class);
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "10.10.10.10/8"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "2610:d0:ffff:192:0:0:0:1/128"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "153.16.254.1/32"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
-                "125.124.123.122/8", new InstanceIdType(21L)))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                "125.124.123.122/8", new InstanceIdType(Uint32.valueOf(21L))))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asMacEid(
                 "0a:0b:0c:0d:0e:0f"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "172.1.1.2/32"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.valueOf(1)).setKeyString("password").build());
 
         akdl = Mockito.mock(AuthenticationKeyDataListener.class);
-        Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyList(), Mockito.anyLong())).thenReturn(true);
+        Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyMap(), Mockito.anyLong())).thenReturn(true);
     }
 
     @Override
@@ -181,7 +185,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
                 + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 c0 a8 88 0a 00 20 "
                 + "0060   00 01 01 02 03 04");
         mapReplyBuilder = new MapReplyBuilder();
-        mapReplyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mapReplyBuilder.setMappingRecordItem(new LinkedHashMap<>());
         mapReplyBuilder.setNonce((long) 0);
         mapReplyBuilder.setEchoNonceEnabled(false);
         mapReplyBuilder.setProbe(true);
@@ -189,7 +193,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder = new MappingRecordBuilder();
         String ip = "0.0.0.0";
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid(ip + "/0"));
-        mappingRecordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        mappingRecordBuilder.setLocatorRecord(new LinkedHashMap<>());
         mappingRecordBuilder.setRecordTtl(10);
         mappingRecordBuilder.setMapVersion((short) 0);
         mappingRecordBuilder.setAction(Action.NativelyForward);
@@ -284,12 +288,15 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         handleMapRegisterPacket(mapRegisterPacket);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
 
-        List<MappingRecordItem> eidRecords = captor.getValue().getMapRegister().getMappingRecordItem();
+        Map<MappingRecordItemKey, MappingRecordItem> eidRecords = captor.getValue().getMapRegister()
+                .getMappingRecordItem();
         assertEquals(1, eidRecords.size());
-        MappingRecord eidRecord = eidRecords.get(0).getMappingRecord();
+        MappingRecord eidRecord = eidRecords.get(new MappingRecordItemKey("0")).getMappingRecord();
         assertEquals(2, eidRecord.getLocatorRecord().size());
-        assertEquals(LispAddressUtil.asIpv4Rloc("10.1.0.110"), eidRecord.getLocatorRecord().get(0).getRloc());
-        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.51"), eidRecord.getLocatorRecord().get(1).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("10.1.0.110"), eidRecord.getLocatorRecord().get(
+                new LocatorRecordKey("0")).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.51"), eidRecord.getLocatorRecord().get(
+                new LocatorRecordKey("1")).getRloc());
     }
 
     @Test
@@ -319,14 +326,15 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(mapRegisterPacket);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        MappingRecord eidToLocatorRecord =
-                captor.getValue().getMapRegister().getMappingRecordItem().get(0).getMappingRecord();
+        MappingRecord eidToLocatorRecord = captor.getValue().getMapRegister().getMappingRecordItem().get(
+                new MappingRecordItemKey("0")).getMappingRecord();
 
         assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:1/128"),
                 eidToLocatorRecord.getEid());
         assertEquals(Ipv6PrefixBinaryAfi.class, eidToLocatorRecord.getEid().getAddressType());
 
-        assertEquals(LispAddressUtil.asIpv4Rloc("10.0.58.156"), eidToLocatorRecord.getLocatorRecord().get(0).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("10.0.58.156"), eidToLocatorRecord.getLocatorRecord().get(
+                new LocatorRecordKey("0")).getRloc());
     }
 
     @Test
@@ -334,12 +342,13 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(mapRegisterPacket);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        MappingRecord eidToLocator =
-                captor.getValue().getMapRegister().getMappingRecordItem().get(0).getMappingRecord();
+        MappingRecord eidToLocator = captor.getValue().getMapRegister().getMappingRecordItem().get(
+                new MappingRecordItemKey("0")).getMappingRecord();
 
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("153.16.254.1/32"), eidToLocator.getEid());
         assertEquals(1, eidToLocator.getLocatorRecord().size());
-        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), eidToLocator.getLocatorRecord().get(0).getRloc());
+        assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), eidToLocator.getLocatorRecord().get(
+                new LocatorRecordKey("0")).getRloc());
     }
 
     @Test
@@ -614,7 +623,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         MapRegisterCacheMetadataBuilder cacheMetadataBld = new MapRegisterCacheMetadataBuilder();
         cacheMetadataBld.setTimestamp(System.currentTimeMillis() - (cacheRecordTimeouted ? CACHE_RECORD_TIMEOUT : 0L));
         cacheMetadataBld.setWantMapNotify(false);
-        cacheMetadataBld.setEidLispAddress(new ArrayList<>());
+        cacheMetadataBld.setEidLispAddress(new LinkedHashMap<>());
 
         MapRegisterCacheValueBuilder cacheValueBld = new MapRegisterCacheValueBuilder();
         cacheValueBld.setMapRegisterCacheMetadata(cacheMetadataBld.build());
@@ -669,10 +678,10 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
 
     private DatagramPacket lastMapNotifyPacket() {
         if (mapNotifyBuilder.getMappingRecordItem() == null) {
-            mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+            mapNotifyBuilder.setMappingRecordItem(new LinkedHashMap<>());
         }
-        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                mappingRecordBuilder.build()).build());
+        mapNotifyBuilder.getMappingRecordItem().put(new MappingRecordItemKey("0"),
+                new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder.build()).build());
         mapNotifyBuilder.setNonce((long) 0);
         mapNotifyBuilder.setKeyId((short) 0);
         mapNotifyBuilder.setAuthenticationData(new byte[0]);
@@ -716,9 +725,9 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         handleMapRequestAsByteArray(mapRequestPacket);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        List<EidItem> eids = captor.getValue().getMapRequest().getEidItem();
+        Map<EidItemKey, EidItem> eids = captor.getValue().getMapRequest().getEidItem();
         assertEquals(1, eids.size());
-        Eid lispAddress = eids.get(0).getEid();
+        Eid lispAddress = eids.get(new EidItemKey("0")).getEid();
         assertEquals(Ipv4PrefixBinaryAfi.class, lispAddress.getAddressType());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), lispAddress);
         assertEquals(0x3d8d2acd39c8d608L, captor.getValue().getMapRequest().getNonce().longValue());
@@ -757,7 +766,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         assertEquals(LispAddressUtil.asIpv6Eid("2610:d0:ffff:192:0:0:0:1"),
                 captor.getValue().getMapRequest().getSourceEid().getEid());
         assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:2/128"),
-                captor.getValue().getMapRequest().getEidItem().get(0).getEid());
+                captor.getValue().getMapRequest().getEidItem().get(new EidItemKey("0")).getEid());
     }
 
     @Ignore
@@ -862,7 +871,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Ignore
     public void mapReply__VerifyIPv6EidAndLocator() throws Exception {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:1/128"));
-        mappingRecordBuilder.getLocatorRecord().add(
+        mappingRecordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"),
                 new LocatorRecordBuilder().setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:2")).build());
 
         stubHandleRequest();
@@ -890,7 +899,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Ignore
     public void mapReply__WithNonRoutableSingleLocator() throws Exception {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
-        mappingRecordBuilder.getLocatorRecord().add(
+        mappingRecordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"),
                 new LocatorRecordBuilder().setRouted(false).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         stubHandleRequest();
 
@@ -902,7 +911,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Ignore
     public void mapReply__WithSingleLocator() throws Exception {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
-        mappingRecordBuilder.getLocatorRecord().add(
+        mappingRecordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"),
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         stubHandleRequest();
 
@@ -921,9 +930,9 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Test
     @Ignore
     public void mapReply__WithMultipleLocator() throws Exception {
-        mappingRecordBuilder.getLocatorRecord().add(
+        mappingRecordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"),
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
-        mappingRecordBuilder.getLocatorRecord().add(
+        mappingRecordBuilder.getLocatorRecord().put(new LocatorRecordKey("1"),
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1"))
                 .build());
         stubHandleRequest();

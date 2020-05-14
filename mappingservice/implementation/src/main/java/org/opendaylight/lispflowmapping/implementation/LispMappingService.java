@@ -45,9 +45,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadata;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestmessage.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
@@ -57,6 +59,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +136,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public MapReply handleMapRequest(MapRequest request) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Retrieving mapping for {}",
-                    LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
+                    LispAddressStringifier.getString(request.getEidItem().get(new EidItemKey("0")).getEid()));
         }
 
         tlsMapReply.set(null);
@@ -155,8 +158,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Adding mapping for {}",
-                    LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
-                            .getMappingRecord().getEid()));
+                    LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(
+                            new MappingRecordItemKey("0")).getMappingRecord().getEid()));
         }
 
         tlsMapNotify.set(null);
@@ -185,7 +188,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
                 sendMapNotify(mapNotify, tab.build());
             } else {
                 for (TransportAddress ta : rlocs) {
@@ -233,7 +236,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Override
     public void onMappingKeepAlive(MappingKeepAlive notification) {
         final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
-        for (EidLispAddress eidLispAddress : cacheMetadata.getEidLispAddress()) {
+        for (EidLispAddress eidLispAddress : cacheMetadata.nonnullEidLispAddress().values()) {
             final Eid eid = eidLispAddress.getEid();
             final XtrId xtrId = cacheMetadata.getXtrId();
             final Long timestamp = cacheMetadata.getTimestamp();
@@ -263,7 +266,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             LOG.debug("Sending SMR Map-Request to {} with Source-EID {} and EID Record {} (reversed)",
                     LispAddressStringifier.getString(subscriber),
                     LispAddressStringifier.getString(smrMapRequest.getSourceEid().getEid()),
-                    LispAddressStringifier.getString(smrMapRequest.getEidItem().get(0).getEid()));
+                    LispAddressStringifier.getString(smrMapRequest.getEidItem().get(new EidItemKey("0")).getEid()));
         }
         SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder();
         smrib.setMapRequest(new MapRequestBuilder(smrMapRequest).build());

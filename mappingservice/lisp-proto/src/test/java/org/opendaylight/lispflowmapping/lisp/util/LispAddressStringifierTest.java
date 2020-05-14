@@ -71,6 +71,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class LispAddressStringifierTest {
 
@@ -83,7 +86,7 @@ public class LispAddressStringifierTest {
     private static final Ipv4 IPV4 = new Ipv4Builder().setIpv4(IPV4_ADDRESS).build();
     private static final LispAddress LISP_IPV4 = new EidBuilder()
             .setAddress(IPV4)
-            .setVirtualNetworkId(new InstanceIdType(VNI)).build();
+            .setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(VNI))).build();
 
     // Ipv4Binary
     private static final byte[] IPV4_BYTES = new byte[]{(byte) 192, (byte) 168, 0, 1};
@@ -91,7 +94,7 @@ public class LispAddressStringifierTest {
     private static final Ipv4Binary IPV4_BINARY = new Ipv4BinaryBuilder().setIpv4Binary(IPV4_ADDRESS_BINARY).build();
     private static final LispAddress LISP_IPV4_BINARY = new EidBuilder()
             .setAddress(IPV4_BINARY)
-            .setVirtualNetworkId(new InstanceIdType(VNI)).build();
+            .setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(VNI))).build();
 
     // Ipv6
     private static final String IPV6_STRING = "1111:2222:3333:4444:5555:6666:7777:8888";
@@ -123,13 +126,13 @@ public class LispAddressStringifierTest {
     // Ipv4PrefixBinary
     private static final Ipv4PrefixBinary IPV4_PREFIX_BINARY = new Ipv4PrefixBinaryBuilder()
             .setIpv4AddressBinary(IPV4_ADDRESS_BINARY)
-            .setIpv4MaskLength((short) 24).build();
+            .setIpv4MaskLength(Uint8.valueOf(24)).build();
     private static final LispAddress LISP_IPV4_PREFIX_BINARY = new EidBuilder().setAddress(IPV4_PREFIX_BINARY).build();
 
     // Ipv6PrefixBinary
     private static final Ipv6PrefixBinary IPV6_PREFIX_BINARY = new Ipv6PrefixBinaryBuilder()
             .setIpv6AddressBinary(IPV6_ADDRESS_BINARY)
-            .setIpv6MaskLength((short) 24).build();
+            .setIpv6MaskLength(Uint8.valueOf(24)).build();
     private static final LispAddress LISP_IPV6_PREFIX_BINARY = new EidBuilder().setAddress(IPV6_PREFIX_BINARY).build();
 
     // Mac
@@ -145,7 +148,7 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_DISTINGUISHED_NAME = new EidBuilder().setAddress(DISTINGUISHED_NAME).build();
 
     // AsNumber
-    private static final AsNumber AS_NUMBER = new AsNumber(300L);
+    private static final AsNumber AS_NUMBER = new AsNumber(Uint32.valueOf(300L));
     private static final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
             .address.address.AsNumber AS_NUMBER_LISP_TYPE = new AsNumberBuilder().setAsNumber(AS_NUMBER).build();
     private static final LispAddress LISP_AS_NUMBER = new EidBuilder().setAddress(AS_NUMBER_LISP_TYPE).build();
@@ -169,11 +172,11 @@ public class LispAddressStringifierTest {
             .application.data.ApplicationDataBuilder()
             .setAddress(SIMPLE_ADDRESS_1)
             .setIpTos(0)
-            .setLocalPortHigh(new PortNumber(1234))
-            .setLocalPortLow(new PortNumber(1111))
-            .setProtocol((short)1)
-            .setRemotePortHigh(new PortNumber(9999))
-            .setRemotePortLow(new PortNumber(1000)).build()).build();
+            .setLocalPortHigh(new PortNumber(Uint16.valueOf(1234)))
+            .setLocalPortLow(new PortNumber(Uint16.valueOf(1111)))
+            .setProtocol(Uint8.valueOf(1))
+            .setRemotePortHigh(new PortNumber(Uint16.valueOf(9999)))
+            .setRemotePortLow(new PortNumber(Uint16.valueOf(1000))).build()).build();
     private static final LispAddress LISP_APPLICATION_DATA = new EidBuilder().setAddress(APPLICATION_DATA).build();
 
     // ExplicitLocatorPath
@@ -188,12 +191,6 @@ public class LispAddressStringifierTest {
             .withKey(new HopKey("hop_2"))
             .setLrsBits(new Hop.LrsBits(true, true, true)).build();
     private static final List<Hop> HOP_LIST = new ArrayList<>();
-    private static final ExplicitLocatorPath EXPLICIT_LOCATOR_PATH = new ExplicitLocatorPathBuilder()
-            .setExplicitLocatorPath(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
-                    .rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder().setHop(HOP_LIST)
-                    .build()).build();
-    private static final LispAddress LISP_EXPLICIT_LOCATOR_PATH = new EidBuilder().setAddress(EXPLICIT_LOCATOR_PATH)
-            .build();
 
     // SourceDestKey
     private static final SourceDestKey SOURCE_DEST_KEY = new SourceDestKeyBuilder().setSourceDestKey(new org
@@ -210,15 +207,15 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_KEY_VALUE_ADDRESS = new EidBuilder().setAddress(KEY_VALUE_ADDRESS).build();
 
     // ServicePath
-    private static final ServicePathIdType SERVICE_PATH_ID_TYPE = new ServicePathIdType(123L);
+    private static final ServicePathIdType SERVICE_PATH_ID_TYPE = new ServicePathIdType(Uint32.valueOf(123L));
     private static final ServicePath SERVICE_PATH = new ServicePathBuilder().setServicePath(new org.opendaylight.yang
             .gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path
-            .ServicePathBuilder().setServiceIndex((short) 1)
+            .ServicePathBuilder().setServiceIndex(Uint8.valueOf(1))
             .setServicePathId(SERVICE_PATH_ID_TYPE).build()).build();
     private static final LispAddress LISP_SERVICE_PATH = new EidBuilder().setAddress(SERVICE_PATH).build();
 
     // InstanceId with Ipv4
-    private static final InstanceIdType INSTANCE_ID_TYPE = new InstanceIdType(IID);
+    private static final InstanceIdType INSTANCE_ID_TYPE = new InstanceIdType(Uint32.valueOf(IID));
     private static final InstanceId INSTANCE_ID_IPV4 = new InstanceIdBuilder().setInstanceId(new org.opendaylight.yang
             .gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.instance.id
             .InstanceIdBuilder().setAddress(new SimpleAddress(new IpAddress(IPV4_ADDRESS)))
@@ -460,8 +457,14 @@ public class LispAddressStringifierTest {
     public void getStringTest_withExplicitLocatorPath() {
         HOP_LIST.add(HOP_1);
         HOP_LIST.add(HOP_2);
+        ExplicitLocatorPath elp = new ExplicitLocatorPathBuilder().setExplicitLocatorPath(
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
+                        .address.address.explicit.locator.path.ExplicitLocatorPathBuilder().setHop(HOP_LIST)
+                        .build()).build();
+        LispAddress lelp = new EidBuilder().setAddress(elp).build();
 
-        assertEquals(getStringFromExplicLocPath(), LispAddressStringifier.getString(LISP_EXPLICIT_LOCATOR_PATH));
+
+        assertEquals(getStringFromExplicLocPath(), LispAddressStringifier.getString(lelp));
     }
 
     private static String getStringFromSrcDstKey() {

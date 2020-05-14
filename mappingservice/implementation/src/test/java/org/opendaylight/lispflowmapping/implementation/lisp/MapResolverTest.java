@@ -9,9 +9,10 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -49,11 +50,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
@@ -63,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class MapResolverTest {
 
@@ -111,6 +115,16 @@ public class MapResolverTest {
     private static final Subscriber SUBSCRIBER_RLOC_1 = new Subscriber(RLOC_1,
             LispAddressUtil.asIpv4Eid(IPV4_SOURCE), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
 
+    private static final MappingRecordItemKey MR0 = new MappingRecordItemKey("0");
+    private static final MappingRecordItemKey MR1 = new MappingRecordItemKey("1");
+    private static final LocatorRecordKey LR0 =  new LocatorRecordKey("0");
+    private static final LocatorRecordKey LR1 =  new LocatorRecordKey("1");
+    private static final LocatorRecordKey LR2 =  new LocatorRecordKey("2");
+    private static final EidItemKey EI0 = new EidItemKey("0");
+    private static final EidItemKey EI1 = new EidItemKey("1");
+    private static final ItrRlocKey IR0 = new ItrRlocKey("0");
+    private static final ItrRlocKey IR1 = new ItrRlocKey("1");
+
     @Before
     @SuppressWarnings("unchecked")
     public void init() throws Exception {
@@ -130,7 +144,7 @@ public class MapResolverTest {
         // input mapping
         final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
@@ -138,8 +152,8 @@ public class MapResolverTest {
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(mappingRecordBuilder.build()).build());
+        mapReplyBuilder.getMappingRecordItem().put(MR0,
+                new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
@@ -164,8 +178,8 @@ public class MapResolverTest {
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(mappingRecordBuilder.build()).build());
+        mapReplyBuilder.getMappingRecordItem().put(MR0,
+                new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
@@ -179,7 +193,7 @@ public class MapResolverTest {
         // input mapping
         final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
@@ -190,8 +204,8 @@ public class MapResolverTest {
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                .setMappingRecord(mappingRecordBuilder.build()).build());
+        mapReplyBuilder.getMappingRecordItem().put(MR0,
+                new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
@@ -207,7 +221,7 @@ public class MapResolverTest {
         // input mapping
         final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
@@ -218,9 +232,9 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc = null
-        List<ItrRloc> itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
+        Map<ItrRlocKey, ItrRloc> itrRlocList = new LinkedHashMap<>();
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(MacAfi.class, null));
+        itrRlocList.put(new ItrRlocKey("1"), newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
 
         ArgumentCaptor<Subscriber> captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequestBuilder.setSourceRloc(null).setItrRloc(itrRlocList).build());
@@ -230,9 +244,9 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address = itrRloc address
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
+        itrRlocList = new LinkedHashMap<>();
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(MacAfi.class, null));
+        itrRlocList.put(new ItrRlocKey("1"), newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
 
         MapRequest mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
@@ -245,10 +259,10 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv4)
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
+        itrRlocList = new LinkedHashMap<>();
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(MacAfi.class, null));
+        itrRlocList.put(new ItrRlocKey("1"), newItrRloc(Ipv6Afi.class, IPV6_ADDRESS));
+        itrRlocList.put(new ItrRlocKey("2"), newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV6_ADDRESS_BINARY)
@@ -261,10 +275,10 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv6)
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
+        itrRlocList = new LinkedHashMap<>();
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(MacAfi.class, null));
+        itrRlocList.put(new ItrRlocKey("1"), newItrRloc(Ipv6Afi.class, IPV6_ADDRESS));
+        itrRlocList.put(new ItrRlocKey("2"), newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_2)
@@ -278,9 +292,9 @@ public class MapResolverTest {
         // ----------------------
         // with no common ip address nor Afi
         final Mac mac = new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build();
-        itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, mac),
-                newItrRloc(NoAddressAfi.class, Mockito.mock(NoAddress.class)));
+        itrRlocList = new LinkedHashMap<>();
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(MacAfi.class, null));
+        itrRlocList.put(new ItrRlocKey("0"), newItrRloc(NoAddressAfi.class, Mockito.mock(NoAddress.class)));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
@@ -301,7 +315,7 @@ public class MapResolverTest {
         // input mapping
         final LocatorRecordBuilder locatorRecordBuilder = getDefaultLocatorBuilder();
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder.build());
         MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_1))
@@ -309,7 +323,7 @@ public class MapResolverTest {
         Mockito.when(mapServiceMock.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SUBSCRIBERS))
                 .thenReturn(subscriberSetMock);
         Subscriber subscriberMock = new Subscriber(
-                mapRequestBuilder.getItrRloc().get(0).getRloc(),
+                mapRequestBuilder.getItrRloc().get(new ItrRlocKey("0")).getRloc(),
                 mapRequestBuilder.getSourceEid().getEid(), Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT);
         subscriberMock.setSubscriberTtlByRecordTtl(
                 mappingRecordBuilder.getRecordTtl());
@@ -318,7 +332,7 @@ public class MapResolverTest {
 
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+        mapReplyBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder()
                 .setMappingRecord(mappingRecordBuilder.build()).build());
 
         // check if a subscriber is re-instantiating when there already is one in the subscriber set
@@ -331,7 +345,7 @@ public class MapResolverTest {
 
         // verify that itrRloc is subscribed to dst address
         mappingRecordBuilder.setEid(SOURCE_DEST_KEY_EID);
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV4_PREFIX_EID_2).build());
+        mapRequestBuilder.getEidItem().put(EI0, new EidItemBuilder().setEid(IPV4_PREFIX_EID_2).build());
         mappingData = getDefaultMappingData(mappingRecordBuilder.build());
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(), IPV4_PREFIX_EID_2))
                 .thenReturn(mappingData);
@@ -360,31 +374,31 @@ public class MapResolverTest {
 
         // input mapping
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder_1.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR1, locatorRecordBuilder_2.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
+        mrb.getItrRloc().put(IR0, new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().put(IR1, new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
         Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
         // result
         final LocatorRecordBuilder locatorRecordBuilder_3 = getDefaultLocatorBuilder()
                 // priority increased by 1
-                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority((short) 1);
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority(Uint8.valueOf(1));
         final MappingRecordBuilder resultMappingRecordBuilder = getDefaultMappingRecordBuilder();
 
         // as Ipv4
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
+        resultMappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder_1.build());
         // as ELP
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
+        resultMappingRecordBuilder.getLocatorRecord().put(LR1, locatorRecordBuilder_2.build());
         // added to the result
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build());
+        resultMappingRecordBuilder.getLocatorRecord().put(LR2, locatorRecordBuilder_3.build());
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+        mapReplyBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder()
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
@@ -411,13 +425,13 @@ public class MapResolverTest {
 
         // input mapping
         final MappingRecordBuilder mappingRecordBuilder = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
-        mappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_2.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder_1.build());
+        mappingRecordBuilder.getLocatorRecord().put(LR1, locatorRecordBuilder_2.build());
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
+        mrb.getItrRloc().put(IR0, new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().put(IR1, new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
         Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
@@ -427,12 +441,12 @@ public class MapResolverTest {
         final MappingRecordBuilder resultMappingRecordBuilder = getDefaultMappingRecordBuilder();
 
         // as Ipv4
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_1.build());
+        resultMappingRecordBuilder.getLocatorRecord().put(LR0, locatorRecordBuilder_1.build());
         // added to the result
-        resultMappingRecordBuilder.getLocatorRecord().add(locatorRecordBuilder_3.build());
+        resultMappingRecordBuilder.getLocatorRecord().put(LR1, locatorRecordBuilder_3.build());
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
-        mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+        mapReplyBuilder.getMappingRecordItem().put(MR0, new MappingRecordItemBuilder()
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
@@ -445,7 +459,7 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withMultipleEids() {
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV6_PREFIX_EID).build());
+        mapRequestBuilder.getEidItem().put(EI1, new EidItemBuilder().setEid(IPV6_PREFIX_EID).build());
 
         final LocatorRecordBuilder locatorRecordBuilder_1 = getDefaultLocatorBuilder();
         final LocatorRecordBuilder locatorRecordBuilder_2 = getDefaultLocatorBuilder();
@@ -453,24 +467,24 @@ public class MapResolverTest {
 
         //input mapping
         final MappingRecordBuilder mappingRecordBuilder_1 = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder_1.getLocatorRecord().add(locatorRecordBuilder_1.build());
+        mappingRecordBuilder_1.getLocatorRecord().put(LR0, locatorRecordBuilder_1.build());
         final MappingData mappingData_1 = getDefaultMappingData(mappingRecordBuilder_1.build());
         final MappingRecordBuilder mappingRecordBuilder_2 = getDefaultMappingRecordBuilder();
-        mappingRecordBuilder_2.getLocatorRecord().add(locatorRecordBuilder_2.build());
+        mappingRecordBuilder_2.getLocatorRecord().put(LR1, locatorRecordBuilder_2.build());
         mappingRecordBuilder_2.setEid(IPV6_PREFIX_EID);
         final MappingData mappingData_2 = getDefaultMappingData(mappingRecordBuilder_2.build());
 
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(),
-                mapRequestBuilder.getEidItem().get(0).getEid())).thenReturn(mappingData_1);
+                mapRequestBuilder.getEidItem().get(EI0).getEid())).thenReturn(mappingData_1);
         Mockito.when(mapServiceMock.getMapping(mapRequestBuilder.getSourceEid().getEid(),
-                mapRequestBuilder.getEidItem().get(1).getEid())).thenReturn(mappingData_2);
+                mapRequestBuilder.getEidItem().get(EI1).getEid())).thenReturn(mappingData_2);
 
         //result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem()
-                .add(new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_1.build()).build());
+                .put(MR0, new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_1.build()).build());
         mapReplyBuilder.getMappingRecordItem()
-                .add(new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_2.build()).build());
+                .put(MR1, new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_2.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
@@ -482,13 +496,13 @@ public class MapResolverTest {
                 .setAddressType(clazz).build()).build();
     }
 
-    private static List<ItrRloc> getDefaultItrRlocList() {
-        final List<ItrRloc> itrRlocList = new ArrayList<>();
+    private static Map<ItrRlocKey, ItrRloc> getDefaultItrRlocList() {
+        final Map<ItrRlocKey, ItrRloc> itrRlocList = new LinkedHashMap<>();
         final ItrRloc itrRloc = new ItrRlocBuilder()
                 .withKey(new ItrRlocKey(ITR_RLOC_KEY_STRING))
                 .setItrRlocId(ITR_RLOC_ID_STRING)
                 .setRloc(RLOC_1).build();
-        itrRlocList.add(itrRloc);
+        itrRlocList.put(IR0, itrRloc);
 
         return itrRlocList;
     }
@@ -496,8 +510,8 @@ public class MapResolverTest {
     private static MapRequestBuilder getDefaultMapRequestBuilder() {
         MapRequestBuilder mrBuilder = new MapRequestBuilder()
                 .setAuthoritative(false)
-                .setEidItem(new ArrayList<>())
-                .setItrRloc(new ArrayList<>())
+                .setEidItem(new LinkedHashMap<>())
+                .setItrRloc(new LinkedHashMap<>())
                 .setMapDataPresent(true)
                 .setNonce((long) 0)
                 .setPitr(false)
@@ -507,7 +521,7 @@ public class MapResolverTest {
                 .setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(IPV4_SOURCE)).build())
                 .setItrRloc(getDefaultItrRlocList());
 
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV4_PREFIX_EID_1).build());
+        mrBuilder.getEidItem().put(EI0, new EidItemBuilder().setEid(IPV4_PREFIX_EID_1).build());
 
         return mrBuilder;
     }
@@ -523,7 +537,7 @@ public class MapResolverTest {
         return new MappingRecordBuilder()
                 .setAction(MappingRecord.Action.NoAction)
                 .setAuthoritative(false)
-                .setLocatorRecord(new ArrayList<>())
+                .setLocatorRecord(new LinkedHashMap<>())
                 .setMapVersion((short) 0)
                 .setRecordTtl(60)
                 .setEid(IPV4_PREFIX_EID_1);
@@ -532,12 +546,12 @@ public class MapResolverTest {
     private static LocatorRecordBuilder getDefaultLocatorBuilder() {
         return new LocatorRecordBuilder()
                 .setLocalLocator(false)
-                .setMulticastPriority((short) 0)
-                .setMulticastWeight((short) 0)
-                .setPriority((short) 0)
+                .setMulticastPriority(Uint8.valueOf(0))
+                .setMulticastWeight(Uint8.valueOf(0))
+                .setPriority(Uint8.valueOf(0))
                 .setRlocProbed(false)
                 .setRouted(true)
-                .setWeight((short) 0)
+                .setWeight(Uint8.valueOf(0))
                 .withKey(LOCATOR_RECORD_KEY)
                 .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1));
     }
@@ -548,6 +562,6 @@ public class MapResolverTest {
                 .setProbe(false)
                 .setSecurityEnabled(false)
                 .setNonce(mapRequestBuilder.getNonce())
-                .setMappingRecordItem(new ArrayList<>());
+                .setMappingRecordItem(new LinkedHashMap<>());
     }
 }

@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +65,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -358,7 +360,7 @@ public class MappingSystem implements IMappingSystem {
     private MappingData updateServicePathMappingRecord(MappingData mappingData, Eid eid) {
         // keep properties of original record
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mappingData.getRecord());
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
 
         // there should only be one locator record
         if (mappingData.getRecord().getLocatorRecord().size() != 1) {
@@ -366,7 +368,7 @@ public class MappingSystem implements IMappingSystem {
             return mappingData;
         }
 
-        LocatorRecord locatorRecord = mappingData.getRecord().getLocatorRecord().get(0);
+        LocatorRecord locatorRecord = mappingData.getRecord().getLocatorRecord().get(new LocatorRecordKey("0"));
         long serviceIndex = ((ServicePath) eid.getAddress()).getServicePath().getServiceIndex().toJava();
         int index = LispAddressUtil.STARTING_SERVICE_INDEX - (int) serviceIndex;
         Rloc rloc = locatorRecord.getRloc();
@@ -387,7 +389,7 @@ public class MappingSystem implements IMappingSystem {
             SimpleAddress nextHop = hops.get(index).getAddress();
             LocatorRecordBuilder lrb = new LocatorRecordBuilder(locatorRecord);
             lrb.setRloc(LispAddressUtil.toRloc(nextHop));
-            recordBuilder.getLocatorRecord().add(lrb.build());
+            recordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"), lrb.build());
             return new MappingData(recordBuilder.build());
         } else {
             LOG.warn("Nothing to do with ServicePath mapping record");

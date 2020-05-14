@@ -13,7 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -25,27 +25,36 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 
 public class MapRequestSerializationTest extends BaseTestCase {
+    private static final EidItemKey E0 = new EidItemKey("0");
+    private static final EidItemKey E1 = new EidItemKey("1");
+    private static final ItrRlocKey IR0 = new ItrRlocKey("0");
+    private static final ItrRlocKey IR1 = new ItrRlocKey("1");
+    private static final ItrRlocKey IR2 = new ItrRlocKey("2");
+    private static final LocatorRecordKey LR0 = new LocatorRecordKey("0");
 
     @Test
     public void prefix__NoPrefix() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
+        mrBuilder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+        mrBuilder.getEidItem().put(E0, new EidItemBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
 
 
-        assertEquals(NoAddressAfi.class, mrBuilder.getEidItem().get(0).getEid().getAddressType());
+        assertEquals(NoAddressAfi.class, mrBuilder.getEidItem().get(E0).getEid().getAddressType());
     }
 
     @Test
@@ -84,7 +93,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 01 c0 a8 38 66"), null);
         assertArrayEquals(new byte[] {1, 1, 1, 1},
                 ((Ipv4Binary) mr.getSourceEid().getEid().getAddress()).getIpv4Binary().getValue());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(E0).getEid());
 
     }
 
@@ -157,7 +166,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 20 00 01 01 02 03 04"), null);
 
         assertEquals(1, mr.getEidItem().size());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(E0).getEid());
     }
 
     @Test
@@ -175,7 +184,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         ), null);
 
         assertEquals(1, mr.getEidItem().size());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(E0).getEid());
         MappingRecord record = mr.getMapReply().getMappingRecord();
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), record.getEid());
         assertEquals(false, record.isAuthoritative());
@@ -184,21 +193,22 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(32, MaskUtil.getMaskForAddress(record.getEid().getAddress()));
         assertEquals(2, record.getRecordTtl().byteValue());
         assertArrayEquals(new byte[] {10, 10, 10, 10},
-                ((Ipv4Binary) record.getLocatorRecord().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
-        assertEquals(1, record.getLocatorRecord().get(0).getPriority().byteValue());
-        assertEquals(2, record.getLocatorRecord().get(0).getWeight().byteValue());
-        assertEquals(3, record.getLocatorRecord().get(0).getMulticastPriority().byteValue());
-        assertEquals(4, record.getLocatorRecord().get(0).getMulticastWeight().byteValue());
-        assertEquals(true, record.getLocatorRecord().get(0).isLocalLocator());
-        assertEquals(true, record.getLocatorRecord().get(0).isRlocProbed());
-        assertEquals(false, record.getLocatorRecord().get(0).isRouted());
+                ((Ipv4Binary) record.getLocatorRecord().get(LR0).getRloc().getAddress()).getIpv4Binary().getValue());
+        assertEquals(1, record.getLocatorRecord().get(LR0).getPriority().byteValue());
+        assertEquals(2, record.getLocatorRecord().get(LR0).getWeight().byteValue());
+        assertEquals(3, record.getLocatorRecord().get(LR0).getMulticastPriority().byteValue());
+        assertEquals(4, record.getLocatorRecord().get(LR0).getMulticastWeight().byteValue());
+        assertEquals(true, record.getLocatorRecord().get(LR0).isLocalLocator());
+        assertEquals(true, record.getLocatorRecord().get(LR0).isRlocProbed());
+        assertEquals(false, record.getLocatorRecord().get(LR0).isRouted());
     }
 
     @Test
     public void serialize__SingleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+        mrBuilder.getEidItem().put(E0,
+                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 01 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -214,16 +224,18 @@ public class MapRequestSerializationTest extends BaseTestCase {
                 + "00 80 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05"), null);
 
         assertEquals(2, mr.getEidItem().size());
-        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
-        assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("0:0:0:0:0:0:0:5/128"), mr.getEidItem().get(1).getEid());
+        assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(E0).getEid());
+        assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("0:0:0:0:0:0:0:5/128"), mr.getEidItem().get(E1).getEid());
     }
 
     @Test
     public void serialize__MultipleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("4.3.2.1/0")).build());
+        mrBuilder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+        mrBuilder.getEidItem().put(E0,
+                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.getEidItem().put(E1,
+                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("4.3.2.1/0")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 02 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04 00 00 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -240,14 +252,15 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         assertEquals(1, mr.getItrRloc().size());
         assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
-                ((Ipv4Binary) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
+                ((Ipv4Binary) mr.getItrRloc().get(IR0).getRloc().getAddress()).getIpv4Binary().getValue());
     }
 
     @Test
     public void serialize__SingleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.setItrRloc(new LinkedHashMap<ItrRlocKey, ItrRloc>());
+        mrBuilder.getItrRloc().put(IR0,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -256,9 +269,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
     @Test
     public void serialize__MultipleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
-        mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
+        mrBuilder.setItrRloc(new LinkedHashMap<ItrRlocKey, ItrRloc>());
+        mrBuilder.getItrRloc().put(IR0,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.getItrRloc().put(IR1,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
         ByteBuffer expected = hexToByteBuffer("10 00 01 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -277,11 +292,11 @@ public class MapRequestSerializationTest extends BaseTestCase {
 
         assertEquals(3, mr.getItrRloc().size());
         assertArrayEquals(new byte[] {(byte) 192, (byte) 168, (byte) 136, (byte) 10},
-                ((Ipv4Binary) mr.getItrRloc().get(0).getRloc().getAddress()).getIpv4Binary().getValue());
+                ((Ipv4Binary) mr.getItrRloc().get(IR0).getRloc().getAddress()).getIpv4Binary().getValue());
         assertArrayEquals(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                ((Ipv6Binary) mr.getItrRloc().get(1).getRloc().getAddress()).getIpv6Binary().getValue());
+                ((Ipv6Binary) mr.getItrRloc().get(IR1).getRloc().getAddress()).getIpv6Binary().getValue());
         assertArrayEquals(new byte[] {17, 34, 52, 86},
-                ((Ipv4Binary) mr.getItrRloc().get(2).getRloc().getAddress()).getIpv4Binary().getValue());
+                ((Ipv4Binary) mr.getItrRloc().get(IR2).getRloc().getAddress()).getIpv4Binary().getValue());
     }
 
     @Test
@@ -291,11 +306,14 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.setPitr(true);
         mrBuilder.setNonce((long) 13);
         mrBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1"))).build());
-        mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
-        mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.setItrRloc(new LinkedHashMap<ItrRlocKey, ItrRloc>());
+        mrBuilder.getItrRloc().put(IR0,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.getItrRloc().put(IR1,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mrBuilder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+        mrBuilder.getEidItem().put(E0,
+                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
         ByteBuffer expected = hexToByteBuffer("12 80 01 01 00 00 " //
                 + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 "
                 + "00 07 00 08 00 20 00 01 01 02 03 04");
@@ -311,22 +329,22 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapRequestBuilder.setNonce((long) 13);
         mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1")))
                 .build());
-        mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
-                .build());
-        mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8"))
-                .build());
-        mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
-                .build());
+        mapRequestBuilder.setItrRloc(new LinkedHashMap<ItrRlocKey, ItrRloc>());
+        mapRequestBuilder.getItrRloc().put(IR0,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mapRequestBuilder.getItrRloc().put(IR1,
+                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mapRequestBuilder.setEidItem(new LinkedHashMap<EidItemKey, EidItem>());
+        mapRequestBuilder.getEidItem().put(E0,
+                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
 
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/0"));
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
 
         LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
         locatorBuilder.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
-        recordBuilder.getLocatorRecord().add(locatorBuilder.build());
+        recordBuilder.getLocatorRecord().put(new LocatorRecordKey("0"), locatorBuilder.build());
 
         MapReplyBuilder mapreplyBuilder = new MapReplyBuilder();
         mapreplyBuilder.setMappingRecord(recordBuilder.build());

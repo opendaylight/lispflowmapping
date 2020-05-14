@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.lisp.serializer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -48,7 +49,7 @@ public final class MapNotifySerializer {
             size += org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE
                   + org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
         }
-        for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem()) {
+        for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem().values()) {
             size += MappingRecordSerializer.getInstance().getSerializationSize(mappingRecord.getMappingRecord());
         }
 
@@ -71,10 +72,8 @@ public final class MapNotifySerializer {
             replyBuffer.putShort((short) 0);
         }
 
-        if (mapNotify.getMappingRecordItem() != null) {
-            for (MappingRecordItem mappingRecord : mapNotify.getMappingRecordItem()) {
-                MappingRecordSerializer.getInstance().serialize(replyBuffer, mappingRecord.getMappingRecord());
-            }
+        for (MappingRecordItem mappingRecord : mapNotify.nonnullMappingRecordItem().values()) {
+            MappingRecordSerializer.getInstance().serialize(replyBuffer, mappingRecord.getMappingRecord());
         }
 
         if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
@@ -95,7 +94,7 @@ public final class MapNotifySerializer {
             }
 
             MapNotifyBuilder builder = new MapNotifyBuilder();
-            builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+            builder.setMappingRecordItem(new LinkedHashMap<MappingRecordItemKey, MappingRecordItem>());
 
             boolean xtrSiteIdPresent = ByteUtil.extractBit(typeAndFlags, Flags.XTRSITEID);
             builder.setXtrSiteIdPresent(xtrSiteIdPresent);
@@ -128,17 +127,15 @@ public final class MapNotifySerializer {
                 for (MappingRecordBuilder mrb : mrbs) {
                     mrb.setXtrId(xtrId);
                     mrb.setSiteId(siteId);
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                            .withKey(new MappingRecordItemKey(Integer.toString(idx)))
-                            .setMappingRecord(mrb.build()).build());
+                    builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(idx)),
+                            new MappingRecordItemBuilder().setMappingRecord(mrb.build()).build());
                     idx++;
                 }
             } else {
                 for (int i = 0; i < recordCount; i++) {
-                    builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
-                            .withKey(new MappingRecordItemKey(Integer.toString(i)))
-                            .setMappingRecord(MappingRecordSerializer.getInstance().deserialize(notifyBuffer))
-                            .build());
+                    builder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(i)),
+                            new MappingRecordItemBuilder().setMappingRecord(
+                                    MappingRecordSerializer.getInstance().deserialize(notifyBuffer)).build());
                 }
             }
 

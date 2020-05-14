@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.neutron;
 
-import java.util.List;
+import java.util.Map;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.HostInformationManager;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.PortData;
@@ -15,6 +15,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.binding.rev150712.PortBindingExtension;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIps;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIpsKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,10 +56,10 @@ public class PortDataProcessor implements DataProcessor<Port> {
             return;
         }
 
-        List<FixedIps> fixedIPs = port.getFixedIps();
+        Map<FixedIpsKey, FixedIps> fixedIPs = port.getFixedIps();
         if (fixedIPs != null && fixedIPs.size() > 0) {
             Eid eidAddress;
-            for (FixedIps ip : fixedIPs) {
+            for (FixedIps ip : fixedIPs.values()) {
 
                 // TODO Add check/support for IPv6.
                 // Get subnet for this port, based on v4 or v6 decide address
@@ -72,7 +73,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
         LOG.info("Neutron Port Created: Port name: "
                 + port.getName()
                 + " Port Fixed IP: "
-                + (port.getFixedIps() != null ? port.getFixedIps().get(0)
+                + (port.getFixedIps() != null ? port.getFixedIps().values().iterator().next()
                 : "No Fixed IP assigned"));
     }
 
@@ -92,10 +93,10 @@ public class PortDataProcessor implements DataProcessor<Port> {
             return;
         }
 
-        List<FixedIps> fixedIPs = port.getFixedIps();
+        Map<FixedIpsKey, FixedIps> fixedIPs = port.getFixedIps();
         if (fixedIPs != null && fixedIPs.size() > 0) {
             Eid eidAddress;
-            for (FixedIps ip : fixedIPs) {
+            for (FixedIps ip : fixedIPs.values()) {
 
                 eidAddress = getEid(port, ip);
 
@@ -107,7 +108,7 @@ public class PortDataProcessor implements DataProcessor<Port> {
         LOG.info("Neutron Port updated: Port name: "
                 + port.getName()
                 + " Port Fixed IP: "
-                + (port.getFixedIps() != null ? port.getFixedIps().get(0)
+                + (port.getFixedIps() != null ? port.getFixedIps().values().iterator().next()
                 : "No Fixed IP assigned"));
         LOG.debug("Neutron Port Updated : " + port.toString());
     }
@@ -119,15 +120,15 @@ public class PortDataProcessor implements DataProcessor<Port> {
         LOG.info("Neutron Port Deleted: Port name: "
                 + port.getName()
                 + " Port Fixed IP: "
-                + (port.getFixedIps() != null ? port.getFixedIps().get(0)
+                + (port.getFixedIps() != null ? port.getFixedIps().values().iterator().next()
                 : "No Fixed IP assigned"));
         LOG.debug("Neutron Port Deleted : " + port.toString());
 
-        List<FixedIps> fixedIPs = port.getFixedIps();
+        Map<FixedIpsKey, FixedIps> fixedIPs = port.getFixedIps();
         if (fixedIPs != null && fixedIPs.size() > 0) {
             Eid eidAddress;
 
-            for (FixedIps ip : fixedIPs) {
+            for (FixedIps ip : fixedIPs.values()) {
 
                 // TODO Add check/support for IPv6.
                 // Get subnet for this port, based on v4 or v6 decide address

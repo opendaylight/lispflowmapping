@@ -10,8 +10,8 @@ package org.opendaylight.lispflowmapping.implementation;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
@@ -566,9 +567,9 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     }
 
     private static MappingRecord convertFromBinaryIfNecessary(MappingRecord originalRecord) {
-        List<LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
+        Map<LocatorRecordKey, LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
 
-        List<LocatorRecord> convertedLocators = null;
+        Map<LocatorRecordKey, LocatorRecord> convertedLocators = null;
         if (originalLocators != null) {
             // If convertedLocators is non-null, while originalLocators is also non-null, conversion has been made
             convertedLocators = convertFromBinaryIfNecessary(originalLocators);
@@ -586,16 +587,18 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return originalRecord;
     }
 
-    private static List<LocatorRecord> convertFromBinaryIfNecessary(List<LocatorRecord> originalLocators) {
-        List<LocatorRecord> convertedLocators = null;
-        for (LocatorRecord record : originalLocators) {
+    private static Map<LocatorRecordKey, LocatorRecord> convertFromBinaryIfNecessary(Map<LocatorRecordKey,
+            LocatorRecord> originalLocators) {
+        Map<LocatorRecordKey, LocatorRecord> convertedLocators = null;
+        for (LocatorRecordKey key : originalLocators.keySet()) {
+            LocatorRecord record = originalLocators.get(key);
             if (LispAddressUtil.addressNeedsConversionFromBinary(record.getRloc().getAddress())) {
                 LocatorRecordBuilder lrb = new LocatorRecordBuilder(record);
                 lrb.setRloc(LispAddressUtil.convertFromBinary(record.getRloc()));
                 if (convertedLocators == null) {
-                    convertedLocators = new ArrayList<>();
+                    convertedLocators = new LinkedHashMap<>();
                 }
-                convertedLocators.add(lrb.build());
+                convertedLocators.put(key, lrb.build());
             }
         }
         if (convertedLocators != null) {

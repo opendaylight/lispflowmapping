@@ -12,8 +12,9 @@ import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
@@ -46,11 +47,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +93,9 @@ public class MapResolver implements IMapResolverAsync {
         if (request.isSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
             LOG.trace("Map-Request object: {}", request);
-            for (EidItem eidItem : request.getEidItem()) {
+            for (EidItem eidItem : request.nonnullEidItem().values()) {
                 final SmrEvent event = new SmrEvent(
-                        subscriberListFromItrRlocs(request.getItrRloc(), request.getSourceEid().getEid()),
+                        subscriberListFromItrRlocs(request.nonnullItrRloc(), request.getSourceEid().getEid()),
                         eidItem.getEid(),
                         request.getNonce());
                 smrNotificationListener.onSmrInvokedReceived(event);
@@ -106,11 +110,12 @@ public class MapResolver implements IMapResolverAsync {
         replyBuilder.setProbe(false);
         replyBuilder.setSecurityEnabled(false);
         replyBuilder.setNonce(request.getNonce());
-        replyBuilder.setMappingRecordItem(new ArrayList<>());
-        List<ItrRloc> itrRlocs = request.getItrRloc();
+        replyBuilder.setMappingRecordItem(new LinkedHashMap<>());
+        Map<ItrRlocKey, ItrRloc> itrRlocs = request.getItrRloc();
         final IpAddressBinary sourceRloc = request.getSourceRloc();
 
-        for (EidItem eidRecord : request.getEidItem()) {
+        int idx = 0;
+        for (EidItem eidRecord : request.nonnullEidItem().values()) {
             MappingData mappingData = mapService.getMapping(srcEid, eidRecord.getEid());
             MappingRecord mapping;
             if (mappingData == null) {
@@ -129,7 +134,9 @@ public class MapResolver implements IMapResolverAsync {
             }
             mapping = fixIfNotSDRequest(mapping, eidRecord.getEid());
             mapping = fixTtlIfSmrInvoked(request, mapping);
-            replyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(mapping).build());
+            replyBuilder.getMappingRecordItem().put(new MappingRecordItemKey(Integer.toString(idx)),
+                    new MappingRecordItemBuilder().setMappingRecord(mapping).build());
+            idx++;
         }
         requestHandler.handleMapReply(replyBuilder.build());
     }
@@ -158,9 +165,9 @@ public class MapResolver implements IMapResolverAsync {
         return true;
     }
 
-    private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
+    private Rloc resolveRloc(Map<ItrRlocKey, ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
         if (srcRloc == null) {
-            return itrRlocList.get(0).getRloc();
+            return itrRlocList.get(new ItrRlocKey("0")).getRloc();
         }
         byte[] srcRlocByte;
         if (srcRloc.getIpv4AddressBinary() != null) {
@@ -170,7 +177,7 @@ public class MapResolver implements IMapResolverAsync {
         }
 
         Rloc equalIpvRloc = null;
-        for (ItrRloc itrRloc : itrRlocList) {
+        for (ItrRloc itrRloc : itrRlocList.values()) {
             final Rloc rloc = itrRloc.getRloc();
             final byte[] itrRlocByte = LispAddressUtil.ipAddressToByteArray(rloc.getAddress());
 
@@ -187,7 +194,7 @@ public class MapResolver implements IMapResolverAsync {
             return equalIpvRloc;
         } else {
             // if none of the above, return the first Rloc
-            return itrRlocList.get(0).getRloc();
+            return itrRlocList.get(new ItrRlocKey("0")).getRloc();
         }
     }
 
@@ -225,13 +232,13 @@ public class MapResolver implements IMapResolverAsync {
         return mapping;
     }
 
-    private boolean locatorsNeedFixing(List<LocatorRecord> locatorRecords) {
+    private boolean locatorsNeedFixing(Map<LocatorRecordKey, LocatorRecord> locatorRecords) {
         // no locators - no fixing needed ;)
         if (locatorRecords == null) {
             return false;
         }
 
-        for (LocatorRecord record : locatorRecords) {
+        for (LocatorRecord record : locatorRecords.values()) {
             if (record.getRloc().getAddress() instanceof ExplicitLocatorPath) {
                 return true;
             }
@@ -240,13 +247,13 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     // Process locators according to configured policy
-    private MappingRecord updateLocators(MappingRecord mapping, List<ItrRloc> itrRlocs) {
+    private MappingRecord updateLocators(MappingRecord mapping, Map<ItrRlocKey, ItrRloc> itrRlocs) {
         // no fixing if elpPolicy is default
         if (elpPolicy.equalsIgnoreCase("default")) {
             return mapping;
         }
 
-        List<LocatorRecord> locatorRecords = mapping.getLocatorRecord();
+        Map<LocatorRecordKey, LocatorRecord> locatorRecords = mapping.getLocatorRecord();
 
         // if no updated is needed, just return the mapping
         if (!locatorsNeedFixing(locatorRecords)) {
@@ -254,21 +261,23 @@ public class MapResolver implements IMapResolverAsync {
         }
 
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mapping);
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new LinkedHashMap<LocatorRecordKey, LocatorRecord>());
         try {
-            for (LocatorRecord record : locatorRecords) {
+            int idx = 0;
+            for (LocatorRecord record : locatorRecords.values()) {
                 Rloc container = record.getRloc();
 
                 // For non-ELP RLOCs, or when ELP policy is default, or itrRlocs is null, just add the locator and be
                 // done
                 if ((!(container.getAddress() instanceof ExplicitLocatorPath))
                         || elpPolicy.equalsIgnoreCase("default") || itrRlocs == null) {
-                    recordBuilder.getLocatorRecord().add(
+                    recordBuilder.getLocatorRecord().put(new LocatorRecordKey(Integer.toString(idx)),
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
                                     .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
                                     .setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
                                     .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                                     .setRloc(container).setLocatorId(record.getLocatorId()).build());
+                    idx++;
                     continue;
                 }
 
@@ -277,7 +286,7 @@ public class MapResolver implements IMapResolverAsync {
                 if (nextHop != null) {
                     java.lang.Short priority = record.getPriority().toJava();
                     if (elpPolicy.equalsIgnoreCase("both")) {
-                        recordBuilder.getLocatorRecord().add(
+                        recordBuilder.getLocatorRecord().put(new LocatorRecordKey(Integer.toString(idx)),
                                 new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
                                         .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
                                         .setPriority(record.getPriority())
@@ -285,6 +294,7 @@ public class MapResolver implements IMapResolverAsync {
                                         .setMulticastPriority(record.getMulticastPriority())
                                         .setRouted(record.isRouted()).setRloc(container)
                                         .setLocatorId(record.getLocatorId()).build());
+                        idx++;
                         // Make the priority of the added simple locator lower so that ELP is used by default if
                         // the xTR understands ELP. Exclude 255, since that means don't use for unicast forwarding
                         // XXX Complex cases like several ELPs with different priorities are not handled
@@ -293,13 +303,14 @@ public class MapResolver implements IMapResolverAsync {
                         }
                     }
                     // Build and add the simple RLOC
-                    recordBuilder.getLocatorRecord().add(
+                    recordBuilder.getLocatorRecord().put(new LocatorRecordKey(Integer.toString(idx)),
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
                                     .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
                                     .setPriority(fromJava(priority)).setMulticastWeight(record.getMulticastWeight())
                                     .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
                                     .setRloc(LispAddressUtil.toRloc(nextHop))
                                     .setLocatorId(record.getLocatorId()).build());
+                    idx++;
                 }
             }
         } catch (ClassCastException cce) {
@@ -309,7 +320,7 @@ public class MapResolver implements IMapResolverAsync {
         return recordBuilder.build();
     }
 
-    private SimpleAddress getNextELPHop(ExplicitLocatorPath elp, List<ItrRloc> itrRlocs) {
+    private SimpleAddress getNextELPHop(ExplicitLocatorPath elp, Map<ItrRlocKey, ItrRloc> itrRlocs) {
         SimpleAddress nextHop = null;
         List<Hop> hops = elp.getExplicitLocatorPath().getHop();
 
@@ -318,7 +329,7 @@ public class MapResolver implements IMapResolverAsync {
             nextHop = hops.get(0).getAddress();
             for (Hop hop : hops) {
                 Address hopAddress = LispAddressUtil.addressFromSimpleAddress(hop.getAddress());
-                for (ItrRloc itrRloc : itrRlocs) {
+                for (ItrRloc itrRloc : itrRlocs.values()) {
                     if (itrRloc.getRloc().getAddress().equals(hopAddress)) {
                         int iterator = hops.indexOf(hop);
                         if (iterator < hops.size() - 1) {
@@ -333,9 +344,9 @@ public class MapResolver implements IMapResolverAsync {
         return nextHop;
     }
 
-    private static List<Subscriber> subscriberListFromItrRlocs(List<ItrRloc> itrRlocs, Eid srcEid) {
+    private static List<Subscriber> subscriberListFromItrRlocs(Map<ItrRlocKey, ItrRloc> itrRlocs, Eid srcEid) {
         List<Subscriber> subscriberList = Lists.newArrayList();
-        for (ItrRloc itrRloc : itrRlocs) {
+        for (ItrRloc itrRloc : itrRlocs.values()) {
             subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
         }
         return subscriberList;

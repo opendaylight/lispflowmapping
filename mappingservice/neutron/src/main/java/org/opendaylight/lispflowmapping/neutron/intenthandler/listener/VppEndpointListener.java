@@ -151,7 +151,7 @@ public class VppEndpointListener implements AutoCloseable, ClusteredDataTreeChan
     }
 
     private void processNodeOnConnection(final Node newOrModifiedNode) {
-        for (SupportingNode supportingNode : newOrModifiedNode.getSupportingNode()) {
+        for (SupportingNode supportingNode : newOrModifiedNode.nonnullSupportingNode().values()) {
             final NodeId nodeMount = supportingNode.getNodeRef();
             final VppNetconfConnectionProbe probe = new VppNetconfConnectionProbe(supportingNode.getNodeRef(),
                     dataBroker);

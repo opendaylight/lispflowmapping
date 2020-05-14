@@ -13,7 +13,9 @@ import static org.junit.Assert.assertNull;
 import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,11 +47,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Re
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadata;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadataBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
@@ -65,6 +70,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
@@ -105,13 +111,15 @@ public class LispMappingServiceTest {
 
     private static final TransportAddress TRANSPORT_ADDRESS_1 = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
-            .setPort(new PortNumber(9999)).build();
+            .setPort(new PortNumber(Uint16.valueOf(9999))).build();
     private static final TransportAddress TRANSPORT_ADDRESS_2 = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_2)))
-            .setPort(new PortNumber(8888)).build();
+            .setPort(new PortNumber(Uint16.valueOf(8888))).build();
     private static final TransportAddress TRANSPORT_ADDRESS = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
-            .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+            .setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM))).build();
+
+    private static final EidItemKey EI0 = new EidItemKey("0");
 
     /**
      * Tests {@link LispMappingService#handleMapRequest} method.
@@ -272,7 +280,8 @@ public class LispMappingServiceTest {
         final Rloc subscriber = LispAddressUtil.asIpv4Rloc(IPV4_STRING_1);
 
         Mockito.when(mapRequest.getSourceEid()).thenReturn(new SourceEidBuilder().setEid(IPV4_SOURCE_EID).build());
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
+        Mockito.when(mapRequest.getEidItem()).thenReturn(
+                new LinkedHashMap<EidItemKey, EidItem>(Map.of(EI0, EID_ITEM_BUILDER.build())));
 
         // result
         final SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder()
@@ -375,7 +384,7 @@ public class LispMappingServiceTest {
 
     private static Pair<MapRequest, TransportAddress> getDefaultMapRequestPair() {
         final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder()
-                .setEidItem(Lists.newArrayList(EID_ITEM_BUILDER.build()));
+                .setEidItem(new LinkedHashMap<EidItemKey, EidItem>(Map.of(EI0, EID_ITEM_BUILDER.build())));
 
         return new ImmutablePair<>(mapRequestBuilder.build(), TRANSPORT_ADDRESS_1);
     }
@@ -389,7 +398,9 @@ public class LispMappingServiceTest {
                 .setEid(IPV4_EID_2).build();
 
         return new MapRegisterCacheMetadataBuilder()
-                .setEidLispAddress(Lists.newArrayList(eidLispAddress_1, eidLispAddress_2))
+                .setEidLispAddress(new LinkedHashMap<EidLispAddressKey, EidLispAddress>(Map.of(
+                        new EidLispAddressKey("0"), eidLispAddress_1,
+                        new EidLispAddressKey("1"), eidLispAddress_2)))
                 .setTimestamp(TIMESTAMP).build();
     }
 
