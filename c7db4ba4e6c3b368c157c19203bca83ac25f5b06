@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48adab7c_8d8c7414",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/serializer/MapRequestSerializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-05-16T10:37:09Z",
+      "side": 1,
+      "message": "Hmm. does the order of items matter here?\n\nIf it does, itr-rloc should be \u0027ordered-by user\u0027 in .yang, which would turn it into a List in DTOs.",
+      "revId": "c7db4ba4e6c3b368c157c19203bca83ac25f5b06",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
