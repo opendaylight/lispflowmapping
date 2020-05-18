@@ -16,6 +16,24 @@
       "revId": "c7db4ba4e6c3b368c157c19203bca83ac25f5b06",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f5681b8_0664d0d0",
+        "filename": "mappingservice/lisp-proto/src/main/java/org/opendaylight/lispflowmapping/lisp/serializer/MapRequestSerializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2020-05-18T15:27:21Z",
+      "side": 1,
+      "message": "Yes, order matters. In fact, most of the places where I made changes order matters, because it describes packets, and the LISP RFC specifies how the list of EIDs/RLOCs need to be ordered. So I guess I just add ordered-by to all those list and thrown away most of my changes...",
+      "parentUuid": "48adab7c_8d8c7414",
+      "revId": "c7db4ba4e6c3b368c157c19203bca83ac25f5b06",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
     }
   ]
 }
