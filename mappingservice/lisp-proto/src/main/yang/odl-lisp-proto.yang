@@ -76,6 +76,7 @@ module odl-lisp-proto {
     grouping eid-list {
         list eid-item {
             key "eid-item-id";
+            ordered-by user;
             leaf eid-item-id {
                 type string;
             }
@@ -86,6 +87,7 @@ module odl-lisp-proto {
     grouping LocatorRecords {
         list LocatorRecord {
             key "locator-id";
+            ordered-by user;
             leaf locator-id {
                 type string;
             }
@@ -192,6 +194,7 @@ module odl-lisp-proto {
     grouping mapping-record-list {
         list mapping-record-item {
             key "mapping-record-item-id";
+            ordered-by user;
             leaf mapping-record-item-id {
                 type string;
             }
@@ -284,6 +287,7 @@ module odl-lisp-proto {
         }
         list itrRloc {
             key "itr-rloc-id";
+            ordered-by user;
             leaf itr-rloc-id {
                 type string;
             }

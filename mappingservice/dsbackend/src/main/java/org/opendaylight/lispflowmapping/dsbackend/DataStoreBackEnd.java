@@ -196,8 +196,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         MappingDatabase mdb = readTransaction(DATABASE_ROOT, logicalDataStore);
 
         if (mdb != null && mdb.getVirtualNetworkIdentifier() != null) {
-            for (VirtualNetworkIdentifier id : mdb.getVirtualNetworkIdentifier()) {
-                List<Mapping> ms = id.getMapping();
+            for (VirtualNetworkIdentifier id : mdb.nonnullVirtualNetworkIdentifier().values()) {
+                List<Mapping> ms = new ArrayList<>(id.nonnullMapping().values());
                 if (ms != null) {
                     mappings.addAll(ms);
                 }
@@ -213,8 +213,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         MappingDatabase mdb = readTransaction(DATABASE_ROOT, LogicalDatastoreType.CONFIGURATION);
 
         if (mdb != null && mdb.getVirtualNetworkIdentifier() != null) {
-            for (VirtualNetworkIdentifier id : mdb.getVirtualNetworkIdentifier()) {
-                List<AuthenticationKey> keys = id.getAuthenticationKey();
+            for (VirtualNetworkIdentifier id : mdb.nonnullVirtualNetworkIdentifier().values()) {
+                List<AuthenticationKey> keys = new ArrayList<>(id.nonnullAuthenticationKey().values());
                 if (keys != null) {
                     authKeys.addAll(keys);
                 }
@@ -258,7 +258,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
             InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
-        writeTx.put(logicalDatastoreType, addIID, data, true);
+        // TODO: is is a utility method, hence we do not have enough lifecycle knowledge to use plain put()
+        writeTx.mergeParentStructurePut(logicalDatastoreType, addIID, data);
         writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
 
             @Override

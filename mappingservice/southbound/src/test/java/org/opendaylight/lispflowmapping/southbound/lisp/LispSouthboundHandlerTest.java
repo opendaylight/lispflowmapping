@@ -140,7 +140,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
                 .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
 
         akdl = Mockito.mock(AuthenticationKeyDataListener.class);
-        Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyList(), Mockito.anyLong())).thenReturn(true);
+        Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyMap(), Mockito.anyLong())).thenReturn(true);
     }
 
     @Override

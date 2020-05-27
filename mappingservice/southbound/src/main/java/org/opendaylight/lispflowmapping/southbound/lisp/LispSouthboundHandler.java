@@ -18,8 +18,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +58,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.MapRegisterCacheMetadataBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValue;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.value.grouping.MapRegisterCacheValueBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
@@ -246,7 +247,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     private MapRegisterCacheValue refreshAuthKeyIfNecessary(MapRegisterCacheValue mapRegisterCacheValue) {
-        final List<EidLispAddress> eids = mapRegisterCacheValue.getMapRegisterCacheMetadata().getEidLispAddress();
+        final Map<EidLispAddressKey, EidLispAddress> eids = mapRegisterCacheValue.getMapRegisterCacheMetadata()
+                .getEidLispAddress();
 
         if (lispSbPlugin.getAuthenticationKeyDataListener().authKeysForEidsUnchanged(
                 eids, lispSbPlugin.getMapRegisterCacheTimeout())) {
@@ -291,10 +293,13 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     /**
      * Returns null if not all of eids have the same value of authentication key.
      */
-    private MappingAuthkey provideAuthenticateKey(final List<EidLispAddress> eidLispAddresses) {
+    private MappingAuthkey provideAuthenticateKey(final Map<EidLispAddressKey, EidLispAddress> eidLispAddresses) {
         MappingAuthkey firstAuthKey = null;
+        if (eidLispAddresses == null) {
+            return null;
+        }
         for (int i = 0; i < eidLispAddresses.size(); i++) {
-            final Eid eid = eidLispAddresses.get(i).getEid();
+            final Eid eid = eidLispAddresses.get(new EidLispAddressKey(Integer.toString(i))).getEid();
             if (i == 0) {
                 firstAuthKey = lispSbPlugin.getAkdb().getAuthenticationKey(eid);
             } else {
@@ -348,14 +353,15 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         return buffer;
     }
 
-    private List<EidLispAddress> provideEidPrefixesFromMessage(final MapRegister mapRegister) {
-        List<EidLispAddress> eidsResult = new ArrayList<>();
+    private Map<EidLispAddressKey, EidLispAddress> provideEidPrefixesFromMessage(final MapRegister mapRegister) {
+        Map<EidLispAddressKey, EidLispAddress> eidsResult = new LinkedHashMap<>();
+        int idx = 0;
         for (MappingRecordItem mappingRecordItem : mapRegister.getMappingRecordItem()) {
             final EidLispAddressBuilder eidLispAddressBuilder = new EidLispAddressBuilder();
             final Eid eid = mappingRecordItem.getMappingRecord().getEid();
             eidLispAddressBuilder.setEidLispAddressId(LispAddressStringifier.getString(eid));
             eidLispAddressBuilder.setEid(eid);
-            eidsResult.add(eidLispAddressBuilder.build());
+            eidsResult.put(new EidLispAddressKey(Integer.toString(idx)), eidLispAddressBuilder.build());
         }
         return eidsResult;
     }
