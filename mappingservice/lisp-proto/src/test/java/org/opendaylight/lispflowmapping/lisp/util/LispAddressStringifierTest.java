@@ -188,12 +188,6 @@ public class LispAddressStringifierTest {
             .withKey(new HopKey("hop_2"))
             .setLrsBits(new Hop.LrsBits(true, true, true)).build();
     private static final List<Hop> HOP_LIST = new ArrayList<>();
-    private static final ExplicitLocatorPath EXPLICIT_LOCATOR_PATH = new ExplicitLocatorPathBuilder()
-            .setExplicitLocatorPath(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
-                    .rev151105.lisp.address.address.explicit.locator.path.ExplicitLocatorPathBuilder().setHop(HOP_LIST)
-                    .build()).build();
-    private static final LispAddress LISP_EXPLICIT_LOCATOR_PATH = new EidBuilder().setAddress(EXPLICIT_LOCATOR_PATH)
-            .build();
 
     // SourceDestKey
     private static final SourceDestKey SOURCE_DEST_KEY = new SourceDestKeyBuilder().setSourceDestKey(new org
@@ -461,7 +455,12 @@ public class LispAddressStringifierTest {
         HOP_LIST.add(HOP_1);
         HOP_LIST.add(HOP_2);
 
-        assertEquals(getStringFromExplicLocPath(), LispAddressStringifier.getString(LISP_EXPLICIT_LOCATOR_PATH));
+        ExplicitLocatorPath elp = new ExplicitLocatorPathBuilder().setExplicitLocatorPath(
+                new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
+                        .address.address.explicit.locator.path.ExplicitLocatorPathBuilder().setHop(HOP_LIST)
+                        .build()).build();
+        LispAddress lelp = new EidBuilder().setAddress(elp).build();
+        assertEquals(getStringFromExplicLocPath(), LispAddressStringifier.getString(lelp));
     }
 
     private static String getStringFromSrcDstKey() {

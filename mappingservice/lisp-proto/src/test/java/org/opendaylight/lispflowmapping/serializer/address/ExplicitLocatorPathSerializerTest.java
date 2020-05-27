@@ -77,7 +77,7 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         ExplicitLocatorPath elp = (ExplicitLocatorPath) address.getAddress();
 
         List<Hop> hops = elp.getExplicitLocatorPath().getHop();
-        assertEquals(0, hops.size());
+        assertNull(hops);
     }
 
     @Test(expected = LispSerializationException.class)

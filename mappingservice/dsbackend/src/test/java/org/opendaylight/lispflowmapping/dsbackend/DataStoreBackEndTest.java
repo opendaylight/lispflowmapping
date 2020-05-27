@@ -9,9 +9,10 @@ package org.opendaylight.lispflowmapping.dsbackend;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FluentFuture;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.junit.Before;
@@ -51,8 +52,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.mapping.XtrIdMappingKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierKey;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -113,7 +116,7 @@ public class DataStoreBackEndTest {
 
         dataStoreBackEnd.addAuthenticationKey(authenticationKey);
         Mockito.verify(wTxMock).put(Mockito.eq(LogicalDatastoreType.CONFIGURATION), iidCaptorAuthKey.capture(),
-                Mockito.eq(authenticationKey), Mockito.eq(true));
+                Mockito.eq(authenticationKey));
 
         // result
         AuthenticationKeyKey result = iidCaptorAuthKey.getValue().firstKeyOf(AuthenticationKey.class);
@@ -131,7 +134,7 @@ public class DataStoreBackEndTest {
 
         dataStoreBackEnd.addMapping(mapping);
         Mockito.verify(wTxMock).put(Mockito.eq(LogicalDatastoreType.CONFIGURATION), iidCaptorMapping.capture(),
-                Mockito.eq(mapping), Mockito.eq(true));
+                Mockito.eq(mapping));
 
         // result
         MappingKey result = iidCaptorMapping.getValue().firstKeyOf(Mapping.class);
@@ -150,7 +153,7 @@ public class DataStoreBackEndTest {
 
         dataStoreBackEnd.addXtrIdMapping(xtrIdMapping);
         Mockito.verify(wTxMock).put(Mockito.eq(LogicalDatastoreType.OPERATIONAL), iidCaptorXtrIdMapping.capture(),
-                Mockito.eq(xtrIdMapping), Mockito.eq(true));
+                Mockito.eq(xtrIdMapping));
 
         // result
         XtrIdMappingKey xtrIdResult = iidCaptorXtrIdMapping.getValue().firstKeyOf(XtrIdMapping.class);
@@ -224,7 +227,7 @@ public class DataStoreBackEndTest {
 
         dataStoreBackEnd.updateAuthenticationKey(authenticationKey);
         Mockito.verify(wTxMock).put(Mockito.eq(LogicalDatastoreType.CONFIGURATION), iidCaptorAuthKey.capture(),
-                Mockito.eq(authenticationKey), Mockito.eq(true));
+                Mockito.eq(authenticationKey));
 
         // result
         AuthenticationKeyKey result = iidCaptorAuthKey.getValue().firstKeyOf(AuthenticationKey.class);
@@ -242,7 +245,7 @@ public class DataStoreBackEndTest {
 
         dataStoreBackEnd.updateMapping(mapping);
         Mockito.verify(wTxMock).put(Mockito.eq(LogicalDatastoreType.CONFIGURATION), iidCaptorMapping.capture(),
-                Mockito.eq(mapping), Mockito.eq(true));
+                Mockito.eq(mapping));
 
         // result
         MappingKey result = iidCaptorMapping.getValue().firstKeyOf(Mapping.class);
@@ -321,7 +324,8 @@ public class DataStoreBackEndTest {
         return new AuthenticationKeyBuilder()
                 .withKey(new AuthenticationKeyKey(new EidUri(DUMMY_URI)))
                 .setEid(EID_IPV4_1)
-                .setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString("password").setKeyType(0).build());
+                .setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString("password").setKeyType(Uint16.valueOf(0))
+                .build());
     }
 
     private static MappingDatabaseBuilder getDefaultMappingDatabase() {
@@ -334,6 +338,13 @@ public class DataStoreBackEndTest {
         final Mapping mapping_4 = new MappingBuilder()
                 .setMappingRecord(getDefaultMappingRecordBuilder().setEid(EID_IPV4_4).build()).build();
 
+        final Map<MappingKey, Mapping> mappingEntries_1 = new LinkedHashMap<>();
+        mappingEntries_1.put(new MappingKey(new EidUri("uri-1"), MappingOrigin.Northbound), mapping_1);
+        mappingEntries_1.put(new MappingKey(new EidUri("uri-2"), MappingOrigin.Northbound), mapping_2);
+        final Map<MappingKey, Mapping> mappingEntries_2 = new LinkedHashMap<>();
+        mappingEntries_2.put(new MappingKey(new EidUri("uri-3"), MappingOrigin.Northbound), mapping_3);
+        mappingEntries_2.put(new MappingKey(new EidUri("uri-4"), MappingOrigin.Northbound), mapping_4);
+
         final AuthenticationKey authenticationKey_1 = new AuthenticationKeyBuilder()
                 .withKey(new AuthenticationKeyKey(new EidUri("uri-1"))).build();
         final AuthenticationKey authenticationKey_2 = new AuthenticationKeyBuilder()
@@ -343,14 +354,26 @@ public class DataStoreBackEndTest {
         final AuthenticationKey authenticationKey_4 = new AuthenticationKeyBuilder()
                 .withKey(new AuthenticationKeyKey(new EidUri("uri-4"))).build();
 
+        final Map<AuthenticationKeyKey, AuthenticationKey> authKey_1 = new LinkedHashMap<>();
+        authKey_1.put(new AuthenticationKeyKey(new EidUri("uri-1")), authenticationKey_1);
+        authKey_1.put(new AuthenticationKeyKey(new EidUri("uri-2")), authenticationKey_2);
+        final Map<AuthenticationKeyKey, AuthenticationKey> authKey_2 = new LinkedHashMap<>();
+        authKey_2.put(new AuthenticationKeyKey(new EidUri("uri-3")), authenticationKey_3);
+        authKey_2.put(new AuthenticationKeyKey(new EidUri("uri-4")), authenticationKey_4);
+
         final VirtualNetworkIdentifier vni_1 = new VirtualNetworkIdentifierBuilder()
                 .setVni(new VniUri("vni/uri/1"))
-                .setMapping(Lists.newArrayList(mapping_1, mapping_2))
-                .setAuthenticationKey(Lists.newArrayList(authenticationKey_1, authenticationKey_2)).build();
+                .setMapping(mappingEntries_1)
+                .setAuthenticationKey(authKey_1).build();
         final VirtualNetworkIdentifier vni_2 = new VirtualNetworkIdentifierBuilder()
                 .setVni(new VniUri("vni/uri/2"))
-                .setMapping(Lists.newArrayList(mapping_3, mapping_4))
-                .setAuthenticationKey(Lists.newArrayList(authenticationKey_3, authenticationKey_4)).build();
-        return new MappingDatabaseBuilder().setVirtualNetworkIdentifier(Lists.newArrayList(vni_1, vni_2));
+                .setMapping(mappingEntries_2)
+                .setAuthenticationKey(authKey_2).build();
+
+        final Map<VirtualNetworkIdentifierKey, VirtualNetworkIdentifier> vniEntries = new LinkedHashMap<>();
+        vniEntries.put(new VirtualNetworkIdentifierKey(new VniUri("vni/uri/1")), vni_1);
+        vniEntries.put(new VirtualNetworkIdentifierKey(new VniUri("vni/uri/2")), vni_2);
+
+        return new MappingDatabaseBuilder().setVirtualNetworkIdentifier(vniEntries);
     }
 }
