@@ -183,7 +183,7 @@ public class MappingMergeUtilTest {
 
         // result
         MappingData result = MappingMergeUtil.computeNbSbIntersection(nbMappingData, sbMappingData);
-        assertEquals(0, result.getRecord().getLocatorRecord().size());
+        assertTrue(result.getRecord().nonnullLocatorRecord().isEmpty());
     }
 
     /**

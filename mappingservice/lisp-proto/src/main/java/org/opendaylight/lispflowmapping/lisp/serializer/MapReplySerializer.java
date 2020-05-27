@@ -36,7 +36,7 @@ public final class MapReplySerializer {
 
     public ByteBuffer serialize(MapReply mapReply) {
         int size = Length.HEADER_SIZE;
-        for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+        for (MappingRecordItem eidToLocatorRecord : mapReply.nonnullMappingRecordItem()) {
             size += MappingRecordSerializer.getInstance().getSerializationSize(eidToLocatorRecord.getMappingRecord());
         }
 
@@ -55,7 +55,7 @@ public final class MapReplySerializer {
         }
         replyBuffer.putLong(NumberUtil.asLong(mapReply.getNonce()));
         if (mapReply.getMappingRecordItem() != null) {
-            for (MappingRecordItem eidToLocatorRecord : mapReply.getMappingRecordItem()) {
+            for (MappingRecordItem eidToLocatorRecord : mapReply.nonnullMappingRecordItem()) {
                 MappingRecordSerializer.getInstance().serialize(replyBuffer, eidToLocatorRecord.getMappingRecord());
             }
         }

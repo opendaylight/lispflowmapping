@@ -8,7 +8,7 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
@@ -21,6 +21,7 @@ import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddress;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.metadata.container.map.register.cache.metadata.EidLispAddressKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
@@ -111,10 +112,10 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
      * @param timeout MapRegister cache timeout value
      * @return false if any of the EIDs in the eids list was updated in the last timout period, true otherwise
      */
-    public synchronized boolean authKeysForEidsUnchanged(List<EidLispAddress> eids, long timeout) {
+    public synchronized boolean authKeysForEidsUnchanged(Map<EidLispAddressKey, EidLispAddress> eids, long timeout) {
         boolean result = true;
         Long currentTime = System.currentTimeMillis();
-        for (EidLispAddress eidLispAddress : eids) {
+        for (EidLispAddress eidLispAddress : eids.values()) {
             Long updateTime = updatedEntries.get(eidLispAddress.getEid());
             if (updateTime != null) {
                 result = false;
