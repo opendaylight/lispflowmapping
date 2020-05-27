@@ -287,7 +287,7 @@ public final class MappingMergeUtil {
             return null;
         }
 
-        List<LocatorRecord> sbLocators = sbMapping.getLocatorRecord();
+        List<LocatorRecord> sbLocators = sbMapping.nonnullLocatorRecord();
 
         // We assume locators are unique and don't show up several times (with different or identical p/w/mp/mw),
         // so we create a HashMap of the locators from the SB mapping record, keyed by the Rloc

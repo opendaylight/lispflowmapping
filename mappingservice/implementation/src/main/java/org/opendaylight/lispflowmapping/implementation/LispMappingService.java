@@ -233,7 +233,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Override
     public void onMappingKeepAlive(MappingKeepAlive notification) {
         final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
-        for (EidLispAddress eidLispAddress : cacheMetadata.getEidLispAddress()) {
+        for (EidLispAddress eidLispAddress : cacheMetadata.nonnullEidLispAddress().values()) {
             final Eid eid = eidLispAddress.getEid();
             final XtrId xtrId = cacheMetadata.getXtrId();
             final Long timestamp = cacheMetadata.getTimestamp();

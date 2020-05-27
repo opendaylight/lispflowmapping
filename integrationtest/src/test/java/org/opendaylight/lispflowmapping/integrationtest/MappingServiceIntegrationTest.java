@@ -1707,7 +1707,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRequest(mapRequest);
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
+        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().nonnullLocatorRecord().size());
         MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
         sendMapRegister(mapRegister);
         MapNotify mapNotify = receiveMapNotify();
@@ -2304,7 +2304,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRequest.getEidItem().add(new EidItemBuilder().setEid(unMatchedAddress).build());
         sendMapRequest(mapRequest.build());
         mapReply = receiveMapReply();
-        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
+        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().nonnullLocatorRecord().size());
     }
 /*
     // This registers an IP with a MapRegister, then adds a password via the
@@ -2730,7 +2730,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendMapRequest(mapRequest);
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
-        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
+        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().nonnullLocatorRecord().size());
 
         MapRegister mapRegister = MappingServiceIntegrationTestUtil.getDefaultMapRegisterBuilder(eid).build();
         sendMapRegister(mapRegister);
@@ -2747,7 +2747,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         causeEntryToBeCleaned();
         sendMapRequest(mapRequest);
         mapReply = receiveMapReply();
-        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().size());
+        assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().nonnullLocatorRecord().size());
     }
 
     public void mapRequestMapRegisterAndMapRequestTestNativelyForwardTimeoutResponse() throws Exception {
