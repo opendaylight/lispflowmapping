@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42c59a1b_0d85b5f7",
+        "filename": "mappingservice/dsbackend/src/main/java/org/opendaylight/lispflowmapping/dsbackend/DataStoreBackEnd.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-05-31T18:05:22Z",
+      "side": 1,
+      "message": "alright, so this was the actual culprit for the IT failing",
+      "range": {
+        "startLine": 261,
+        "startChar": 16,
+        "endLine": 261,
+        "endChar": 19
+      },
+      "revId": "47f580027d1589fd71ebfc4608b998f50fbb9aff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
