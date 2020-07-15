@@ -1,0 +1,53 @@
+---
+project: 'lispflowmapping'
+project_creation_date: '2013-07-13'
+project_category: ''
+lifecycle_state: 'Incubation'
+project_lead: &odl_lispflowmapping_ptl
+    name: 'Lori Jakab'
+    email: 'lorand.jakab+odl@gmail.com'
+    company: 'Cisco'
+    id: 'ljakab'
+    timezone: 'Europe/Madrid'
+primary_contact: *odl_lispflowmapping_ptl
+issue_tracking:
+    type: 'jira'
+    url: 'https://jira.opendaylight.org/projects/'
+    key: 'lispflowmapping'
+mailing_list:
+    type: 'groups.io'
+    url: 'app-dev@lists.opendaylight.org'
+    tag: '[]'
+realtime_discussion:
+    type: 'irc'
+    server: 'freenode.net'
+    channel: '#opendaylight-lispflowmapping'
+meetings:
+    - type: 'gotomeeting+irc'
+      agenda: 'https://wiki.opendaylight.org'
+      url: ''
+      server: 'freenode.net'
+      channel: '#opendaylight-lispflowmapping'
+      repeats: ''
+      time: ''
+repositories:
+    - lispflowmapping
+committers:
+    - <<: *odl_lispflowmapping_ptl
+    - name: 'Florin Coras'
+      email: 'florin.coras@gmail.com'
+      company: 'Cisco'
+      id: 'florin.coras'
+      timezone: 'America/Los_Angeles'
+    - name: 'Vina Ermagan'
+      email: 'ermagan@gmail.com'
+      company: 'Google'
+      id: 'ermagan'
+      timezone: 'Unknown/Unknown'
+tsc:
+    # yamllint disable rule:line-length
+    approval: ''
+    changes:
+        - type: ''
+          name: ''
+          link: ''
