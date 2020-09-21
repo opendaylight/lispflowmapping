@@ -1,4 +1,5 @@
 # UUID                                                                         	Group Name
 #
+8a3f0f28b67efe736c01fc3e997fceedc174a21d                                       	saml/odl-gerrit-lispflowmapping-committers
 c9025ab9ddc1e3171919e085449f22c54f8f7b54                                       	GitHub Replication
 ldap:cn=odl-gerrit-lispflowmapping-committers,ou=Groups,dc=freestandards,dc=org	ldap/odl-gerrit-lispflowmapping-committers
