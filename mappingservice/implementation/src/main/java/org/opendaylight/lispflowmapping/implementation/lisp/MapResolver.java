@@ -5,13 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -58,23 +56,23 @@ import org.slf4j.LoggerFactory;
 public class MapResolver implements IMapResolverAsync {
     private static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
 
-    private IMappingService mapService;
+    private final IMappingService mapService;
     private boolean subscriptionService;
     private String elpPolicy;
-    private IMapRequestResultHandler requestHandler;
+    private final IMapRequestResultHandler requestHandler;
     private boolean authenticate = true;
     private ISmrNotificationListener smrNotificationListener;
     private static final int TTL_DELETE_MAPPING = 0;
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
                        IMapRequestResultHandler requestHandler) {
-        Preconditions.checkNotNull(mapService);
         this.subscriptionService = smr;
-        this.mapService = mapService;
+        this.mapService = requireNonNull(mapService);
         this.elpPolicy = elpPolicy;
         this.requestHandler = requestHandler;
     }
 
+    @Override
     public void handleMapRequest(MapRequest request) {
         LOG.trace("Map-Request received: {}", request);
         // SMRs and RLOC probes are directed towards xTRs and we're a Map-Resolver here, so ignore them
@@ -261,7 +259,7 @@ public class MapResolver implements IMapResolverAsync {
 
                 // For non-ELP RLOCs, or when ELP policy is default, or itrRlocs is null, just add the locator and be
                 // done
-                if ((!(container.getAddress() instanceof ExplicitLocatorPath))
+                if (!(container.getAddress() instanceof ExplicitLocatorPath)
                         || elpPolicy.equalsIgnoreCase("default") || itrRlocs == null) {
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
@@ -272,7 +270,7 @@ public class MapResolver implements IMapResolverAsync {
                     continue;
                 }
 
-                ExplicitLocatorPath teAddress = ((ExplicitLocatorPath) container.getAddress());
+                ExplicitLocatorPath teAddress = (ExplicitLocatorPath) container.getAddress();
                 SimpleAddress nextHop = getNextELPHop(teAddress, itrRlocs);
                 if (nextHop != null) {
                     java.lang.Short priority = record.getPriority().toJava();
@@ -334,7 +332,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     private static List<Subscriber> subscriberListFromItrRlocs(List<ItrRloc> itrRlocs, Eid srcEid) {
-        List<Subscriber> subscriberList = Lists.newArrayList();
+        List<Subscriber> subscriberList = new ArrayList<>();
         for (ItrRloc itrRloc : itrRlocs) {
             subscriberList.add(new Subscriber(itrRloc.getRloc(), srcEid, Subscriber.DEFAULT_SUBSCRIBER_TIMEOUT));
         }

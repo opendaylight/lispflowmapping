@@ -53,8 +53,10 @@ public class MapRequestUtilTest {
      */
     @Test
     public void selectItrRlocTest_Ipv4() {
-        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS).build());
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
+        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS)
+                .build()).setItrRlocId("foo");
+        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build()))
+                .build();
 
         // expected result
         InetAddress expectedResult = InetAddresses.forString(IPV4_STRING);
@@ -69,7 +71,8 @@ public class MapRequestUtilTest {
      */
     @Test
     public void selectItrRlocTest_Ipv6() {
-        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV6_ADDRESS).build());
+        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV6_ADDRESS).build())
+                .setItrRlocId("foo");
         final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
 
         // expected result
@@ -85,7 +88,7 @@ public class MapRequestUtilTest {
      */
     @Test
     public void selectItrRlocTest_Ipv4Binary() {
-        final ItrRlocBuilder itrRloc = new ItrRlocBuilder()
+        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS_BINARY).build());
         final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
 
@@ -102,7 +105,7 @@ public class MapRequestUtilTest {
      */
     @Test
     public void selectItrRlocTest_Ipv6Binary() {
-        final ItrRlocBuilder itrRloc = new ItrRlocBuilder()
+        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV6_ADDRESS_BINARY).build());
         final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
 
@@ -119,7 +122,7 @@ public class MapRequestUtilTest {
      */
     @Test
     public void selectItrRlocTest_Ipv4Prefix() {
-        final ItrRlocBuilder itrRloc = new ItrRlocBuilder()
+        final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS_PREFIX).build());
         final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
 

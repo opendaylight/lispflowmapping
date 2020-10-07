@@ -43,10 +43,12 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
 
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32"));
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         mrBuilder.setNonce(6161616161L);
         mrBuilder.setKeyId((short) 0x0001);
@@ -103,10 +105,12 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
 
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32"));
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         recordBuilder.setAction(Action.NoAction);
         recordBuilder.setMapVersion((short) 0);
@@ -134,7 +138,9 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
                 new MappingRecordBuilder().setRecordTtl(55)
-                        .setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32")).build()).build());
+                        .setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32")).build())
+                        .setMappingRecordItemId("xyzzy")
+                        .build());
         // mrBuilder.addEidToLocator(new EidToLocatorRecord().setPrefix(new
         // LispIpv4Address(1)).setRecordTtl(55));
 
@@ -163,11 +169,12 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         MapRegisterBuilder mrBuilder = new MapRegisterBuilder();
         mrBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().build()).build());
+                new MappingRecordBuilder().build()).setMappingRecordItemId("xyzzy").build());
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().setEid(null).build()).build());
+                new MappingRecordBuilder().setEid(null).build()).setMappingRecordItemId("xyzzy").build());
         mrBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build()).build());
+                new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build())
+                    .setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer bb = MapRegisterSerializer.getInstance().serialize(mrBuilder.build());
         bb.position(bb.position() + 16); // jump to first record prefix AFI

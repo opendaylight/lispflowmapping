@@ -183,7 +183,8 @@ public class LispAuthenticationTest extends BaseTestCase {
         etlrBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("1.1.1.1/32"));
         etlrBuilder.setRecordTtl(55);
         mapNotifyBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
         final ByteBuffer serializedMapNotifyMsg = MapNotifySerializer.getInstance().serialize(mapNotifyBuilder.build());
         ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(serializedMapNotifyMsg,
                 "password"));

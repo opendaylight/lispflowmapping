@@ -8,8 +8,8 @@
 
 package org.opendaylight.lispflowmapping.implementation.lisp;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -91,8 +92,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
-        Preconditions.checkNotNull(mapService);
-        this.mapService = mapService;
+        this.mapService = requireNonNull(mapService);
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
@@ -284,13 +284,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("smr-executor-%d").build();
         private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(cpuCores * 2, threadFactory);
-        private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = Maps.newConcurrentMap();
+        private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = new ConcurrentHashMap<>();
 
         void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
             final Eid srcEid = fixSrcEidMask(mrb.getSourceEid().getEid());
             cancelExistingFuturesForEid(srcEid);
 
-            final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = Maps.newConcurrentMap();
+            final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = new ConcurrentHashMap<>();
 
             // Using Iterator ensures that we don't get a ConcurrentModificationException when removing a Subscriber
             // from a Set.

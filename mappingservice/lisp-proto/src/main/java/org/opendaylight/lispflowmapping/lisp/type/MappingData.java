@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.lisp.type;
 
-import com.google.common.base.Optional;
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.Stringifier;
@@ -77,7 +76,7 @@ public class MappingData {
         if (record != null) {
             return Optional.of(MappingRecordUtil.isNegativeMapping(record));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -85,7 +84,7 @@ public class MappingData {
         if (record != null) {
             return Optional.of(MappingRecordUtil.isPositiveMapping(record));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 

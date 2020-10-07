@@ -7,7 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.listener;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,8 +40,8 @@ public class VbridgeTopologyListener implements ClusteredDataTreeChangeListener<
 
     public VbridgeTopologyListener(final DataBroker dataBroker,
                                    final MountPointService mountPointService) {
-        this.dataBroker = Preconditions.checkNotNull(dataBroker);
-        this.mountPointService = Preconditions.checkNotNull(mountPointService);
+        this.dataBroker = requireNonNull(dataBroker);
+        this.mountPointService = requireNonNull(mountPointService);
     }
 
     @Override
@@ -51,8 +53,7 @@ public class VbridgeTopologyListener implements ClusteredDataTreeChangeListener<
                                                                         .getRootIdentifier()
                                                                         .firstIdentifierOf(Topology.class);
 
-            Preconditions.checkArgument(!topologyInstanceIdentifier
-                    .isWildcarded(), "Wildcard topology %s is not supported",
+            checkArgument(!topologyInstanceIdentifier.isWildcarded(), "Wildcard topology %s is not supported",
                     topologyInstanceIdentifier);
 
             final DataObjectModification<VbridgeTopology> modification =  topologyData.getRootNode();

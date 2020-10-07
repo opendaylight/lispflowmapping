@@ -8,7 +8,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 -->
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-lispflowmapping-neutron">
     <feature name="odl-lispflowmapping-neutron">
-        <feature version="[6,7)">odl-mdsal-model-rfc7224</feature>
-        <feature version="[6,7)">odl-mdsal-model-rfc7277</feature>
+        <feature version="[7,8)">odl-mdsal-model-rfc7224</feature>
+        <feature version="[7,8)">odl-mdsal-model-rfc7277</feature>
     </feature>
 </features>
