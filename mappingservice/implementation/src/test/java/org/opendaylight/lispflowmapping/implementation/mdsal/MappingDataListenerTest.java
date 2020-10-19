@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
@@ -30,11 +31,13 @@ import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChange;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class MappingDataListenerTest {
@@ -236,6 +239,9 @@ public class MappingDataListenerTest {
 
     private static Mapping getDefaultMapping(Eid eid, MappingOrigin origin) {
         final MappingRecord record = new MappingRecordBuilder().setEid(eid).build();
-        return new MappingBuilder().setOrigin(origin).setMappingRecord(record).build();
+        return new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(eid)), origin))
+                .setOrigin(origin)
+                .setMappingRecord(record).build();
     }
 }

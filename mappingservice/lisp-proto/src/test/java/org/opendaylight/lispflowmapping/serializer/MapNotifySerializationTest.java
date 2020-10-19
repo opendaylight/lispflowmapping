@@ -38,11 +38,11 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(
                         new MappingRecordBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32")).build())
-                        .build());
+                                .setMappingRecordItemId("xyzzy").build());
         mnBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(
                         new MappingRecordBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32")).build())
-                        .build());
+                                .setMappingRecordItemId("xyzzy").build());
 
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
@@ -79,11 +79,11 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(
                         new MappingRecordBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32")).build())
-                        .build());
+                                .setMappingRecordItemId("xyzzy").build());
         mnBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(
                         new MappingRecordBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.73/32")).build())
-                        .build());
+                                .setMappingRecordItemId("xyzzy").build());
 
         mnBuilder.setNonce(6161616161L);
         mnBuilder.setKeyId((short) 0x0001);
@@ -137,7 +137,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.getMappingRecordItem().add(
                 new MappingRecordItemBuilder().setMappingRecord(
                         new MappingRecordBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"))
-                        .setRecordTtl(55).build()).build());
+                        .setRecordTtl(55).build()).setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
         bb.position(bb.position() + 14); // jump to AuthenticationDataLength
@@ -164,11 +164,12 @@ public class MapNotifySerializationTest extends BaseTestCase {
         MapNotifyBuilder mnBuilder = new MapNotifyBuilder();
         mnBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().build()).build());
+                new MappingRecordBuilder().build()).setMappingRecordItemId("xyzzy").build());
         mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().setEid(null).build()).build());
+                new MappingRecordBuilder().setEid(null).build()).setMappingRecordItemId("xyzzy").build());
         mnBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build()).build());
+                new MappingRecordBuilder().setEid(LispAddressUtil.getNoAddressEid()).build())
+                    .setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer bb = MapNotifySerializer.getInstance().serialize(mnBuilder.build());
         bb.position(bb.position() + 16); // jump to first record prefix AFI

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -39,8 +40,8 @@ public final class DSBEInputUtil {
     }
 
     public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingData mappingData) {
-        MappingRecord record = (mappingData != null) ? mappingData.getRecord() : null;
-        List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
+        MappingRecord record = mappingData != null ? mappingData.getRecord() : null;
+        List<SiteId> siteIds = siteId != null ? Arrays.asList(siteId) : null;
         return new MappingBuilder()
                     .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
                     .setOrigin(origin)
@@ -49,10 +50,10 @@ public final class DSBEInputUtil {
     }
 
     public static Mapping toMapping(MappingOrigin origin, Eid key, @Nullable MappingData mappingData) {
-        MappingRecord record = (mappingData != null) ? mappingData.getRecord() :
+        MappingRecord record = mappingData != null ? mappingData.getRecord() :
                                                         new MappingRecordBuilder().setEid(key).build();
-        SiteId siteId = (record != null) ? record.getSiteId() : null;
-        List<SiteId> siteIds = (siteId != null) ? Arrays.asList(siteId) : null;
+        SiteId siteId = record != null ? record.getSiteId() : null;
+        List<SiteId> siteIds = siteId != null ? Arrays.asList(siteId) : null;
         return new MappingBuilder()
                 .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
                 .setOrigin(origin)
@@ -69,9 +70,9 @@ public final class DSBEInputUtil {
     }
 
     public static XtrIdMapping toXtrIdMapping(MappingData mappingData) {
-        Preconditions.checkNotNull(mappingData);
+        requireNonNull(mappingData);
         MappingRecord record = mappingData.getRecord();
-        Preconditions.checkNotNull(mappingData.getRecord());
+        requireNonNull(mappingData.getRecord());
         return new XtrIdMappingBuilder()
                     .setXtrIdUri(new XtrIdUri(LispAddressStringifier.getURIString(record.getXtrId())))
                     .setMappingRecord(record).build();

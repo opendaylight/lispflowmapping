@@ -25,6 +25,7 @@ import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -49,11 +50,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.ItrRlocBuilder;
@@ -139,6 +142,7 @@ public class MapResolverTest {
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
                 .setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
@@ -165,6 +169,7 @@ public class MapResolverTest {
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
                 .setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
@@ -191,6 +196,7 @@ public class MapResolverTest {
         // result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
                 .setMappingRecord(mappingRecordBuilder.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
@@ -365,8 +371,12 @@ public class MapResolverTest {
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder()
+                .withKey(new ItrRlocKey(IPV4_STRING_1))
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder()
+                .withKey(new ItrRlocKey(IPV4_STRING_2))
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
         Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
@@ -385,6 +395,7 @@ public class MapResolverTest {
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
@@ -416,8 +427,12 @@ public class MapResolverTest {
         final MappingData mappingData = getDefaultMappingData(mappingRecordBuilder.build());
 
         final MapRequestBuilder mrb = getDefaultMapRequestBuilder();
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
-        mrb.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder()
+                .withKey(new ItrRlocKey(IPV4_STRING_1))
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_1)).build());
+        mrb.getItrRloc().add(new ItrRlocBuilder()
+                .withKey(new ItrRlocKey(IPV4_STRING_2))
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).build());
 
         Mockito.when(mapServiceMock.getMapping(mrb.getSourceEid().getEid(), IPV4_PREFIX_EID_1)).thenReturn(mappingData);
 
@@ -433,6 +448,7 @@ public class MapResolverTest {
 
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
                 .setMappingRecord(resultMappingRecordBuilder.build()).build());
 
         // invocation
@@ -445,7 +461,9 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withMultipleEids() {
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV6_PREFIX_EID).build());
+        mapRequestBuilder.getEidItem().add(new EidItemBuilder()
+                .withKey(new EidItemKey(LispAddressStringifier.getString(IPV6_PREFIX_EID)))
+                .setEid(IPV6_PREFIX_EID).build());
 
         final LocatorRecordBuilder locatorRecordBuilder_1 = getDefaultLocatorBuilder();
         final LocatorRecordBuilder locatorRecordBuilder_2 = getDefaultLocatorBuilder();
@@ -468,9 +486,13 @@ public class MapResolverTest {
         //result
         final MapReplyBuilder mapReplyBuilder = getDefaultMapReplyBuilder();
         mapReplyBuilder.getMappingRecordItem()
-                .add(new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_1.build()).build());
+                .add(new MappingRecordItemBuilder()
+                        .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
+                        .setMappingRecord(mappingRecordBuilder_1.build()).build());
         mapReplyBuilder.getMappingRecordItem()
-                .add(new MappingRecordItemBuilder().setMappingRecord(mappingRecordBuilder_2.build()).build());
+                .add(new MappingRecordItemBuilder()
+                        .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(IPV6_PREFIX_EID)))
+                        .setMappingRecord(mappingRecordBuilder_2.build()).build());
 
         mapResolver.handleMapRequest(mapRequestBuilder.build());
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
@@ -507,7 +529,9 @@ public class MapResolverTest {
                 .setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(IPV4_SOURCE)).build())
                 .setItrRloc(getDefaultItrRlocList());
 
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(IPV4_PREFIX_EID_1).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder()
+                .withKey(new EidItemKey(LispAddressStringifier.getString(IPV4_PREFIX_EID_1)))
+                .setEid(IPV4_PREFIX_EID_1).build());
 
         return mrBuilder;
     }

@@ -500,7 +500,8 @@ final class MappingServiceIntegrationTestUtil {
                 .setSourceEid(new SourceEidBuilder().setEid(DEFAULT_IPV4_EID).build())
                 .setItrRloc(getDefaultItrRlocList(DEFAULT_IPV4_ITR_RLOC));
 
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
+        mrBuilder.getEidItem()
+                .add(new EidItemBuilder().setEidItemId(LispAddressStringifier.getString(eid)).setEid(eid).build());
 
         return mrBuilder;
     }

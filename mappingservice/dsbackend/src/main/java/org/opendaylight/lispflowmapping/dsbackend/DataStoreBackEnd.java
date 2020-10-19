@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.dsbackend;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -91,8 +92,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     // This method assumes that it is only called for southbound originated Map-Registers
     public void addXtrIdMapping(XtrIdMapping mapping) {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
-        Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
-                + "contains an xTR-ID");
+        requireNonNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord contains an xTR-ID");
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Adding mapping for {}, xTR-ID {}",
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
@@ -129,8 +129,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void removeXtrIdMapping(XtrIdMapping mapping) {
         XtrId xtrId = mapping.getMappingRecord().getXtrId();
-        Preconditions.checkNotNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord "
-                + "contains an xTR-ID");
+        requireNonNull(xtrId, "Make sure you only call addXtrIdMapping when the MappingRecord contains an xTR-ID");
         if (LOG.isDebugEnabled()) {
             LOG.debug("MD-SAL: Removing mapping for {}, xTR-ID {}",
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);

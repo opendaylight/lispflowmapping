@@ -108,6 +108,7 @@ public class LispUtilTest {
 
     private static LocatorRecord getDefaultLocatorRecord() {
         return new LocatorRecordBuilder()
+                .setLocatorId("foo")
                 .setRloc(new RlocBuilder()
                         .setAddress(new Ipv4Builder()
                                 .setIpv4(new Ipv4Address(IPV4_2)).build()).build()).build();

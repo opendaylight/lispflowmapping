@@ -2265,6 +2265,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlr.setEid(registerEID);
         etlr.setRecordTtl(254);
         LocatorRecordBuilder record = new LocatorRecordBuilder();
+        record.setLocatorId("4.3.2.1");
         record.setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1"));
         record.setLocalLocator(false);
         record.setRlocProbed(false);
