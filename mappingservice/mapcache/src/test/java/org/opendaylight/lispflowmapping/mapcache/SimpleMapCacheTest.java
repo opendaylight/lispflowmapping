@@ -10,8 +10,8 @@ package org.opendaylight.lispflowmapping.mapcache;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.Lists;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import org.junit.Before;
@@ -412,7 +412,7 @@ public class SimpleMapCacheTest {
     private static MappingRecordBuilder getDefaultMappingRecordBuilder() {
         return new MappingRecordBuilder()
                 .setEid(EID_IPV4)
-                .setLocatorRecord(Lists.newArrayList())
+                .setLocatorRecord(new ArrayList<>())
                 .setTimestamp(Long.MAX_VALUE)
                 .setRecordTtl(10)
                 .setAction(MappingRecord.Action.NativelyForward)

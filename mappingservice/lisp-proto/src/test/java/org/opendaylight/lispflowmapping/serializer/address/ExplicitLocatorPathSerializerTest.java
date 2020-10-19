@@ -97,8 +97,10 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         List<Hop> hops = new ArrayList<>();
-        hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("170.187.204.221")).build());
-        hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("17.34.51.68")).build());
+        hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("170.187.204.221"))
+                .setHopId("hubba").build());
+        hops.add(new HopBuilder().setAddress(SimpleAddressBuilder.getDefaultInstance("17.34.51.68"))
+                .setHopId("bubba").build());
 
         ExplicitLocatorPathBuilder elpb = new ExplicitLocatorPathBuilder();
         elpb.setHop(hops);

@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class AuthKeyDbTest {
 
@@ -41,7 +42,7 @@ public class AuthKeyDbTest {
     private static final Eid NORMALIZED_EID_IPV4 = MaskUtil.normalize(EID_IPV4);
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
             .setKeyString("pass")
-            .setKeyType(1).build();
+            .setKeyType(Uint16.ONE).build();
 
     @Before
     public void init() {

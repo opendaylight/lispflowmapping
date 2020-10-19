@@ -152,7 +152,9 @@ public class PortDataProcessorTest {
 
     private static Map<FixedIpsKey, FixedIps> getDefaultListOfFixedIps() {
         IpAddress ipv4 = new IpAddress(new Ipv4Address(IPV4));
-        FixedIps fixedIps = new FixedIpsBuilder().setIpAddress(ipv4).build();
+        FixedIps fixedIps = new FixedIpsBuilder()
+                .withKey(new FixedIpsKey(ipv4, new Uuid(UUID_STRING)))
+                .setIpAddress(ipv4).build();
 
         return new LinkedHashMap<>(Map.of(new FixedIpsKey(ipv4, new Uuid(UUID_STRING)), fixedIps));
     }

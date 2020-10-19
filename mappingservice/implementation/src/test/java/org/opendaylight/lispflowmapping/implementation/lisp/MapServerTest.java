@@ -46,6 +46,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
@@ -143,8 +144,12 @@ public class MapServerTest {
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(0).build();
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
 
-    private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder().setRloc(RLOC_1).build();
-    private static final LocatorRecord LOCATOR_RECORD_2 = new LocatorRecordBuilder().setRloc(RLOC_2).build();
+    private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder()
+            .withKey(new LocatorRecordKey(IPV4_STRING_1))
+            .setRloc(RLOC_1).build();
+    private static final LocatorRecord LOCATOR_RECORD_2 = new LocatorRecordBuilder()
+            .withKey(new LocatorRecordKey(IPV4_STRING_2))
+            .setRloc(RLOC_2).build();
 
     private static final MappingRecord OLD_MAPPING_RECORD_1 = getDefaultMappingRecordBuilder()
             .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
@@ -193,6 +198,7 @@ public class MapServerTest {
         setConfigIniMappingMergeField(true);
 
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(IPV4_STRING_1))
                 .setMappingRecord(OLD_MAPPING_RECORD_1);
         final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister)
                 .setMappingRecordItem(new ArrayList<>());
@@ -268,6 +274,7 @@ public class MapServerTest {
         final MapNotifyBuilder mapNotifyBuilder = getDefaultMapNotifyBuilder(mapRegister);
         mapNotifyBuilder.setMappingRecordItem(new ArrayList<>());
         mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .withKey(new MappingRecordItemKey(IPV4_STRING_1))
                 .setMappingRecord(getDefaultMappingRecordBuilder().build()).build());
 
         mapServer.handleMapRegister(mapRegister);

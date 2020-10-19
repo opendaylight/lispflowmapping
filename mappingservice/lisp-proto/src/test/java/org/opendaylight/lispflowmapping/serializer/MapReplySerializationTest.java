@@ -48,7 +48,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
         mr.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
         mr.setProbe(true);
         mr.setEchoNonceEnabled(false);
 
@@ -144,11 +145,13 @@ public class MapReplySerializationTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:8/128"));
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("8.2.4.5/32"));
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
         assertEquals(2, packet.get(3));
@@ -195,7 +198,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build())
+                    .setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
 
@@ -211,7 +215,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/32"));
         recordBuilder.setAction(null);
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(recordBuilder.build())
+                    .setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
 
@@ -231,7 +236,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator1.setAuthoritative(true);
         eidToLocator1.setMapVersion((short) 3072);
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(eidToLocator1.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(eidToLocator1.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         MappingRecordBuilder eidToLocator2 = new MappingRecordBuilder();
         eidToLocator2.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.7/32"));
@@ -240,7 +246,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocator2.setAuthoritative(false);
         eidToLocator2.setMapVersion((short) 29);
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(eidToLocator2.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(eidToLocator2.build()).setMappingRecordItemId("xyzzy")
+                    .build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
 
@@ -279,6 +286,7 @@ public class MapReplySerializationTest extends BaseTestCase {
         locatorBuilder1.setLocalLocator(true);
         locatorBuilder1.setRlocProbed(true);
         locatorBuilder1.setRouted(true);
+        locatorBuilder1.setLocatorId("someId");
         eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder1.build());
 
         LocatorRecordBuilder locatorBuilder2 = new LocatorRecordBuilder();
@@ -290,10 +298,12 @@ public class MapReplySerializationTest extends BaseTestCase {
         locatorBuilder2.setLocalLocator(false);
         locatorBuilder2.setRlocProbed(false);
         locatorBuilder2.setRouted(false);
+        locatorBuilder2.setLocatorId("otherId");
         eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder2.build());
 
         mrBuilder.getMappingRecordItem().add(
-                new MappingRecordItemBuilder().setMappingRecord(eidToLocatorBuilder.build()).build());
+                new MappingRecordItemBuilder().setMappingRecord(eidToLocatorBuilder.build())
+                    .setMappingRecordItemId("xyzzy").build());
 
         ByteBuffer packet = MapReplySerializer.getInstance().serialize(mrBuilder.build());
 
