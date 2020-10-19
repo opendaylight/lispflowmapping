@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
@@ -166,7 +167,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
-        Preconditions.checkNotNull(input, "add-key RPC input must be not null!");
+        requireNonNull(input, "add-key RPC input must be not null!");
         LOG.trace("RPC received to add the following key: " + input.toString());
 
         RpcResultBuilder<AddKeyOutput> rpcResultBuilder;
@@ -188,7 +189,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
-        Preconditions.checkNotNull(input, "add-mapping RPC input must be not null!");
+        requireNonNull(input, "add-mapping RPC input must be not null!");
         LOG.trace("RPC received to add the following mapping: " + input.toString());
 
         dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
@@ -228,7 +229,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
-        Preconditions.checkNotNull(input, "get-key RPC input must be not null!");
+        requireNonNull(input, "get-key RPC input must be not null!");
         LOG.trace("RPC received to get the following key: " + input.toString());
 
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
@@ -248,7 +249,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
-        Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
+        requireNonNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: " + input.toString());
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
@@ -294,7 +295,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<GetMappingWithXtrIdOutput>> getMappingWithXtrId(GetMappingWithXtrIdInput input) {
-        Preconditions.checkNotNull(input, "get-mapping RPC input must be not null!");
+        requireNonNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: " + input.toString());
 
         RpcResultBuilder<GetMappingWithXtrIdOutput> rpcResultBuilder;
@@ -317,7 +318,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<RemoveKeyOutput>> removeKey(RemoveKeyInput input) {
-        Preconditions.checkNotNull(input, "remove-key RPC input must be not null!");
+        requireNonNull(input, "remove-key RPC input must be not null!");
         LOG.trace("RPC received to remove the following key: " + input.toString());
 
         RpcResultBuilder<RemoveKeyOutput> rpcResultBuilder;
@@ -331,7 +332,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<RemoveMappingOutput>> removeMapping(RemoveMappingInput input) {
-        Preconditions.checkNotNull(input, "remove-mapping RPC input must be not null!");
+        requireNonNull(input, "remove-mapping RPC input must be not null!");
         LOG.trace("RPC received to remove the following mapping: " + input.toString());
 
         RpcResultBuilder<RemoveMappingOutput> rpcResultBuilder;
@@ -353,7 +354,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
     @Override
     public ListenableFuture<RpcResult<UpdateKeyOutput>> updateKey(UpdateKeyInput input) {
-        Preconditions.checkNotNull(input, "update-key RPC input must be not null!");
+        requireNonNull(input, "update-key RPC input must be not null!");
         LOG.trace("RPC received to update the following key: " + input.toString());
 
         RpcResultBuilder<UpdateKeyOutput> rpcResultBuilder;
@@ -376,7 +377,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public ListenableFuture<RpcResult<UpdateMappingOutput>> updateMapping(UpdateMappingInput input) {
         LOG.trace("RPC received to update the following mapping: " + input.toString());
-        Preconditions.checkNotNull(input, "update-mapping RPC input must be not null!");
+        requireNonNull(input, "update-mapping RPC input must be not null!");
 
         RpcResultBuilder<UpdateMappingOutput> rpcResultBuilder;
 

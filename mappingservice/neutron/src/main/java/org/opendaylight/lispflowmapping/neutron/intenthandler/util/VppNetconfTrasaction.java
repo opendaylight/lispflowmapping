@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.neutron.intenthandler.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.mdsal.binding.api.DataBroker;
@@ -33,7 +34,7 @@ public final class VppNetconfTrasaction {
                                                                        LogicalDatastoreType datastoreType,
                                                                        InstanceIdentifier<T> instanceIdentifier) {
         LOG.trace("Started Netconf transaction on VPP Node");
-        Preconditions.checkNotNull(dataBroker);
+        requireNonNull(dataBroker);
 
         Optional<T> returnData;
 

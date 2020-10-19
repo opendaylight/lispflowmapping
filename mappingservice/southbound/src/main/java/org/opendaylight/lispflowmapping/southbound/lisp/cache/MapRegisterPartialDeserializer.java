@@ -7,11 +7,11 @@
  */
 package org.opendaylight.lispflowmapping.southbound.lisp.cache;
 
-import com.google.common.base.Optional;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
@@ -187,11 +187,11 @@ public final class MapRegisterPartialDeserializer {
             case LispCanonicalAddressFormat:
                 buffer.position(buffer.position() + NUM_OF_BYTES_FROM_EID_PREFIX_AFI_TO_LCAF_LENGTH);
                 final short lengthRawValue = buffer.getShort();
-                final int length = (int)(lengthRawValue & 0xFFFF);
+                final int length = lengthRawValue & 0xFFFF;
                 buffer.position(0);
                 return Optional.of(NUM_OF_BYTES_FROM_LCAF_RSVD1_TO_LCAF_LENGTH + length);
             default:
-                return Optional.absent();
+                return Optional.empty();
         }
     }
 

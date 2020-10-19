@@ -17,6 +17,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 
 /**
@@ -78,8 +79,10 @@ public final class MapReplySerializer {
         builder.setNonce(replyBuffer.getLong());
         builder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         for (int i = 0; i < recordCount; i++) {
-            builder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                    MappingRecordSerializer.getInstance().deserialize(replyBuffer)).build());
+            builder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                    .withKey(new MappingRecordItemKey(Integer.toString(i)))
+                    .setMappingRecord(MappingRecordSerializer.getInstance().deserialize(replyBuffer))
+                    .build());
         }
 
         return builder.build();

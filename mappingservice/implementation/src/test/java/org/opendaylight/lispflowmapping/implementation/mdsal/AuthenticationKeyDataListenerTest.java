@@ -22,9 +22,12 @@ import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class AuthenticationKeyDataListenerTest {
 
@@ -150,10 +153,11 @@ public class AuthenticationKeyDataListenerTest {
 
     private static AuthenticationKey getAuthenticationKey(Eid eid, String password) {
         return new AuthenticationKeyBuilder()
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-1")))
                 .setEid(eid)
                 .setMappingAuthkey(new MappingAuthkeyBuilder()
                         .setKeyString(password)
-                        .setKeyType(1).build())
+                        .setKeyType(Uint16.valueOf(1)).build())
                 .build();
     }
 }
