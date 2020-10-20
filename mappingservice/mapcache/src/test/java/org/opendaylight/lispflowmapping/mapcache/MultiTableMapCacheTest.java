@@ -14,8 +14,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Maps;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -309,7 +309,7 @@ public class MultiTableMapCacheTest {
     }
 
     private Map<String, Object> getEntry1() {
-        Map<String, Object> entry = Maps.newConcurrentMap();
+        Map<String, Object> entry = new ConcurrentHashMap<>();
         entry.put(SubKeys.RECORD, DUMMY_OBJECT);
         entry.put(SubKeys.LCAF_SRCDST, srcDstDaoMock);
 
@@ -317,7 +317,7 @@ public class MultiTableMapCacheTest {
     }
 
     private Map<String, Object> getEntry2() {
-        Map<String, Object> entry = Maps.newConcurrentMap();
+        Map<String, Object> entry = new ConcurrentHashMap<>();
         entry.put(SubKeys.RECORD, DUMMY_OBJECT_2);
 
         return entry;

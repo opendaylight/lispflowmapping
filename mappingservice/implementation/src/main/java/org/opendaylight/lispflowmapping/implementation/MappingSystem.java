@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation;
 
 import com.google.common.collect.Sets;
@@ -200,7 +199,7 @@ public class MappingSystem implements IMappingSystem {
         tableMap.get(origin).addMapping(key, mappingData);
 
         // We need to check if the newly added mapping is covering negatives in SB, and remove those (with notification)
-        if (mappingData.isPositive().or(true)) {
+        if (mappingData.isPositive().orElse(true)) {
             handleSbNegativeMappings(key);
         }
 
@@ -260,7 +259,7 @@ public class MappingSystem implements IMappingSystem {
 
     private void handleSbNegativeMapping(Eid key) {
         MappingData mappingData = getSbMappingWithExpiration(null, key, null);
-        if (mappingData != null && mappingData.isNegative().or(false)) {
+        if (mappingData != null && mappingData.isNegative().orElse(false)) {
             removeSbMapping(mappingData.getRecord().getEid(), mappingData);
         }
     }
@@ -632,7 +631,7 @@ public class MappingSystem implements IMappingSystem {
             removeFromSbTimeoutService(key);
         }
 
-        if (origin == MappingOrigin.Southbound && mapping != null && mapping.isPositive().or(false)) {
+        if (origin == MappingOrigin.Southbound && mapping != null && mapping.isPositive().orElse(false)) {
             mergeNegativePrefixes(key);
         } else {
             // mergeNegativePrefixes() above removes the mapping, so addNegativeMapping() will work correctly
@@ -712,7 +711,7 @@ public class MappingSystem implements IMappingSystem {
 
         Eid currentNode = smc.getSiblingPrefix(eid);
         MappingData mapping = (MappingData) smc.getMapping(null, currentNode);
-        if (mapping != null && mapping.isNegative().or(false)) {
+        if (mapping != null && mapping.isNegative().orElse(false)) {
             mergedMappings.put(currentNode, mapping);
         } else {
             return;
@@ -722,7 +721,7 @@ public class MappingSystem implements IMappingSystem {
         currentNode = smc.getVirtualParentSiblingPrefix(currentNode);
         while (currentNode != null) {
             mapping = (MappingData) smc.getMapping(null, currentNode);
-            if (mapping != null && mapping.isNegative().or(false)) {
+            if (mapping != null && mapping.isNegative().orElse(false)) {
                 mergedMappings.put(currentNode, mapping);
             } else {
                 break;

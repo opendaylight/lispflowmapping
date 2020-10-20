@@ -9,8 +9,8 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.bootstrap.Bootstrap;
@@ -268,7 +268,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     }
 
     private InetAddress getInetAddress(TransportAddress address) {
-        Preconditions.checkNotNull(address, "TransportAddress must not be null");
+        requireNonNull(address, "TransportAddress must not be null");
         IpAddressBinary ip = address.getIpAddress();
         try {
             if (ip.getIpv4AddressBinary() != null) {

@@ -23,6 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.ReadTransaction;
@@ -129,6 +130,8 @@ public class DataStoreBackEndTest {
     @Test
     public void addMappingTest() {
         final Mapping mapping = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_1)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().build())
                 .setOrigin(MappingOrigin.Northbound).build();
 
@@ -185,6 +188,8 @@ public class DataStoreBackEndTest {
     @Test
     public void removeMapping() {
         final Mapping mapping = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_1)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().build())
                 .setOrigin(MappingOrigin.Northbound).build();
 
@@ -240,6 +245,8 @@ public class DataStoreBackEndTest {
     @Test
     public void updateMappingTest() {
         final Mapping mapping = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_1)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().build())
                 .setOrigin(MappingOrigin.Northbound).build();
 
@@ -330,12 +337,20 @@ public class DataStoreBackEndTest {
 
     private static MappingDatabaseBuilder getDefaultMappingDatabase() {
         final Mapping mapping_1 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_1)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().build()).build();
         final Mapping mapping_2 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_2)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().setEid(EID_IPV4_2).build()).build();
         final Mapping mapping_3 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_3)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().setEid(EID_IPV4_3).build()).build();
         final Mapping mapping_4 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_4)),
+                        MappingOrigin.Northbound))
                 .setMappingRecord(getDefaultMappingRecordBuilder().setEid(EID_IPV4_4).build()).build();
 
         final Map<MappingKey, Mapping> mappingEntries_1 = new LinkedHashMap<>();

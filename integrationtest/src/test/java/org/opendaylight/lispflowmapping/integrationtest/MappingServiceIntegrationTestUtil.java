@@ -66,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -500,7 +501,8 @@ final class MappingServiceIntegrationTestUtil {
                 .setSourceEid(new SourceEidBuilder().setEid(DEFAULT_IPV4_EID).build())
                 .setItrRloc(getDefaultItrRlocList(DEFAULT_IPV4_ITR_RLOC));
 
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
+        mrBuilder.getEidItem()
+                .add(new EidItemBuilder().setEidItemId(LispAddressStringifier.getString(eid)).setEid(eid).build());
 
         return mrBuilder;
     }
@@ -575,8 +577,7 @@ final class MappingServiceIntegrationTestUtil {
      */
     static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid, Rloc rloc) {
         return new MappingRecordItemBuilder()
-                .setMappingRecordItemId("mapping-record-item-id")
-                .withKey(new MappingRecordItemKey("mapping-record-item-key"))
+                .withKey(new MappingRecordItemKey(LispAddressStringifier.getString(eid)))
                 .setMappingRecord(getDefaultMappingRecordBuilder(eid, rloc).build());
     }
 
@@ -650,12 +651,12 @@ final class MappingServiceIntegrationTestUtil {
 
         return new LocatorRecordBuilder()
                 .setLocalLocator(true)
-                .setMulticastPriority((short) 255)
-                .setMulticastWeight((short) 0)
-                .setPriority((short) 1)
+                .setMulticastPriority(Uint8.valueOf(255))
+                .setMulticastWeight(Uint8.valueOf(0))
+                .setPriority(Uint8.valueOf(1))
                 .setRlocProbed(false)
                 .setRouted(true)
-                .setWeight((short) 1)
+                .setWeight(Uint8.valueOf(1))
                 .withKey(new LocatorRecordKey(LispAddressStringifier.getString(rloc)))
                 .setRloc(rloc);
     }

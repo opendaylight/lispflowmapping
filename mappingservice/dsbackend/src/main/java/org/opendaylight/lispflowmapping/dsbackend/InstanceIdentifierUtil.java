@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.dsbackend;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.InstanceId;
@@ -41,7 +42,7 @@ public final class InstanceIdentifierUtil {
     }
 
     public static InstanceIdentifier<AuthenticationKey> createAuthenticationKeyIid(Eid eid) {
-        Preconditions.checkNotNull(eid, "Key needs and EID entry!");
+        requireNonNull(eid, "Key needs and EID entry!");
 
         VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
                 Long.toString(getLispInstanceId(eid))));
@@ -52,7 +53,7 @@ public final class InstanceIdentifierUtil {
     }
 
     public static InstanceIdentifier<Mapping> createMappingIid(Eid eid, MappingOrigin orig) {
-        Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
+        requireNonNull(eid, "Mapping needs an EID entry!");
 
         VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
                 Long.toString(getLispInstanceId(eid))));
@@ -62,8 +63,8 @@ public final class InstanceIdentifierUtil {
     }
 
     public static InstanceIdentifier<XtrIdMapping> createXtrIdMappingIid(Eid eid, MappingOrigin orig, XtrId xtrId) {
-        Preconditions.checkNotNull(eid, "Mapping needs an EID entry!");
-        Preconditions.checkNotNull(xtrId, "Mapping needs an xTR-ID entry!");
+        requireNonNull(eid, "Mapping needs an EID entry!");
+        requireNonNull(xtrId, "Mapping needs an xTR-ID entry!");
 
         VirtualNetworkIdentifierKey vniKey = new VirtualNetworkIdentifierKey(new VniUri(
                 Long.toString(getLispInstanceId(eid))));

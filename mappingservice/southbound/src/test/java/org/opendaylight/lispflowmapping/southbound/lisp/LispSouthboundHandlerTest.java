@@ -671,8 +671,9 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         if (mapNotifyBuilder.getMappingRecordItem() == null) {
             mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
         }
-        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(
-                mappingRecordBuilder.build()).build());
+        mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecordItemId("foo")
+                .setMappingRecord(mappingRecordBuilder.build()).build());
         mapNotifyBuilder.setNonce((long) 0);
         mapNotifyBuilder.setKeyId((short) 0);
         mapNotifyBuilder.setAuthenticationData(new byte[0]);

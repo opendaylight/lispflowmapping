@@ -38,6 +38,7 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
+import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -71,8 +72,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -452,21 +455,27 @@ public class MappingSystemTest {
     @Test
     public void restoreDaoFromDatastoreTest() {
         final Mapping mapping_1 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_1)),
+                        MappingOrigin.Northbound))
                 .setOrigin(MappingOrigin.Northbound)
                 .setMappingRecord(getDefaultMappingRecordBuilder()
                         .setEid(EID_IPV4_1).build()).build();
         final Mapping mapping_2 = new MappingBuilder()
+                .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(EID_IPV4_2)),
+                        MappingOrigin.Northbound))
                 .setOrigin(MappingOrigin.Northbound)
                 .setMappingRecord(getDefaultMappingRecordBuilder()
                         .setEid(EID_IPV4_2).build()).build();
 
         final MappingAuthkey mappingAuthkey_1 = MAPPING_AUTHKEY_BUILDER.build();
         final AuthenticationKey authenticationKey_1 = new AuthenticationKeyBuilder()
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-1")))
                 .setMappingAuthkey(mappingAuthkey_1)
                 .setEid(EID_IPV4_1).build();
 
         final MappingAuthkey mappingAuthkey_2 = MAPPING_AUTHKEY_BUILDER.setKeyString("pass-2").build();
         final AuthenticationKey authenticationKey_2 = new AuthenticationKeyBuilder()
+                .withKey(new AuthenticationKeyKey(new EidUri("uri-2")))
                 .setMappingAuthkey(mappingAuthkey_2)
                 .setEid(EID_IPV4_2).build();
 

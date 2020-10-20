@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.neutron;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
@@ -28,10 +29,10 @@ public class DelegatingDataTreeListener<T extends DataObject> implements Cluster
     private final DataProcessor<T> dataProcessor;
     private ListenerRegistration<ClusteredDataTreeChangeListener<T>> dataTreeChangeListenerRegistration;
 
-    public DelegatingDataTreeListener(DataProcessor<T> dataProcessor, DataBroker dataBroker, DataTreeIdentifier<T>
-            dataTreeIdentifier) {
-        Preconditions.checkNotNull(dataBroker, "Can not instantiate Listener! Broker is null!");
-        Preconditions.checkNotNull(dataTreeIdentifier, "DataTreeIndentifier can not be null!");
+    public DelegatingDataTreeListener(DataProcessor<T> dataProcessor, DataBroker dataBroker,
+            DataTreeIdentifier<T> dataTreeIdentifier) {
+        requireNonNull(dataBroker, "Can not instantiate Listener! Broker is null!");
+        requireNonNull(dataTreeIdentifier, "DataTreeIndentifier can not be null!");
         this.dataProcessor = dataProcessor;
         dataTreeChangeListenerRegistration = dataBroker.registerDataTreeChangeListener(dataTreeIdentifier ,this);
     }
