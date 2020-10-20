@@ -80,7 +80,9 @@ public final class MapRequestUtil {
 
         builder.setSourceEid(new SourceEidBuilder().setEid(srcEid).build());
         builder.setItrRloc(new ArrayList<ItrRloc>());
-        builder.getItrRloc().add(new ItrRlocBuilder().setRloc(itrRloc).build());
+        builder.getItrRloc().add(new ItrRlocBuilder()
+                .setItrRlocId(LispAddressStringifier.getString(itrRloc))
+                .setRloc(itrRloc).build());
         builder.setMapReply(null);
         builder.setNonce(new Random().nextLong());
 

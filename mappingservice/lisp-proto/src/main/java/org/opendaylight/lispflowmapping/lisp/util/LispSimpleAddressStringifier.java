@@ -7,7 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.lisp.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier.Destination;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 
@@ -28,7 +29,7 @@ public final class LispSimpleAddressStringifier {
     }
 
     public static String getString(Destination dst, SimpleAddress addr) {
-        Preconditions.checkNotNull(addr, "address should not be null");
+        requireNonNull(addr, "address should not be null");
 
         if (addr.getIpAddress() != null) {
             if (addr.getIpAddress().getIpv4Address() != null) {
@@ -45,7 +46,7 @@ public final class LispSimpleAddressStringifier {
         } else if (addr.getMacAddress() != null) {
             return addr.getMacAddress().getValue();
         } else if (addr.getDistinguishedNameType() != null) {
-            return (addr.getDistinguishedNameType().getValue());
+            return addr.getDistinguishedNameType().getValue();
         } else if (addr.getAsNumber() != null) {
             return "AS" + addr.getAsNumber().getValue();
         }
@@ -54,7 +55,7 @@ public final class LispSimpleAddressStringifier {
     }
 
     protected static String getURLPrefix(SimpleAddress addr) {
-        Preconditions.checkNotNull(addr, "address should not be null");
+        requireNonNull(addr, "address should not be null");
 
         if (addr.getIpAddress() != null) {
             if (addr.getIpAddress().getIpv4Address() != null) {

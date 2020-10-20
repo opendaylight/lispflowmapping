@@ -42,7 +42,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void prefix__NoPrefix() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.getNoAddressEid()).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.getNoAddressEid()).setEidItemId("bar")
+                .build());
 
 
         assertEquals(NoAddressAfi.class, mrBuilder.getEidItem().get(0).getEid().getAddressType());
@@ -198,7 +199,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__SingleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
+                .setEidItemId("bar").build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 01 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -222,8 +224,10 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__MultipleEidItem() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("4.3.2.1/0")).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
+                .setEidItemId("bar").build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("4.3.2.1/0"))
+                .setEidItemId("bar").build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 02 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 20 00 01 01 02 03 04 00 00 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -247,7 +251,8 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__SingleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
+                .setItrRlocId("foo").build());
         ByteBuffer expected = hexToByteBuffer("10 00 00 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -257,8 +262,10 @@ public class MapRequestSerializationTest extends BaseTestCase {
     public void serialize__MultipleItrRloc() throws Exception {
         MapRequestBuilder mrBuilder = new MapRequestBuilder();
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
+                .setItrRlocId("foo").build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1"))
+                .setItrRlocId("foo").build());
         ByteBuffer expected = hexToByteBuffer("10 00 01 00 00 00 " //
                 + "00 00 00 00 00 00 00 00 00 01 01 02 03 04 00 01 04 03 02 01");
         assertArrayEquals(expected.array(), MapRequestSerializer.getInstance().serialize(mrBuilder.build()).array());
@@ -290,12 +297,15 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.setProbe(true);
         mrBuilder.setPitr(true);
         mrBuilder.setNonce((long) 13);
-        mrBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1"))).build());
+        mrBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid("10.0.0.1")).build());
         mrBuilder.setItrRloc(new ArrayList<ItrRloc>());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4")).build());
-        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8")).build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
+            .setItrRlocId("foo").build());
+        mrBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8"))
+            .setItrRlocId("foo").build());
         mrBuilder.setEidItem(new ArrayList<EidItem>());
-        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32")).build());
+        mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
+                .setEidItemId("bar").build());
         ByteBuffer expected = hexToByteBuffer("12 80 01 01 00 00 " //
                 + "00 00 00 00 00 0D 00 01 0a 00 00 01 00 01 01 02 03 04 00 02 00 01 00 02 00 03 00 04 00 05 00 06 "
                 + "00 07 00 08 00 20 00 01 01 02 03 04");
@@ -309,22 +319,22 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mapRequestBuilder.setMapDataPresent(true);
         mapRequestBuilder.setPitr(true);
         mapRequestBuilder.setNonce((long) 13);
-        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(("10.0.0.1")))
+        mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid("10.0.0.1"))
                 .build());
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
         mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc("1.2.3.4"))
-                .build());
+                .setItrRlocId("foo").build());
         mapRequestBuilder.getItrRloc().add(new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv6Rloc("1:2:3:4:5:6:7:8"))
-                .build());
+                .setItrRlocId("foo").build());
         mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
         mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixEid("1.2.3.4/32"))
-                .build());
+                .setEidItemId("bar").build());
 
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder();
         recordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("0.0.0.1/0"));
         recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
 
-        LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
+        LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder().setLocatorId("baz");
         locatorBuilder.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
         recordBuilder.getLocatorRecord().add(locatorBuilder.build());
 

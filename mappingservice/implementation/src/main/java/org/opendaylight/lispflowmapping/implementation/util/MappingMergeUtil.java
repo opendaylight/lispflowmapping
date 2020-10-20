@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.implementation.util;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,10 +88,10 @@ public final class MappingMergeUtil {
         // We assume locators are unique and sorted and don't show up several times (with different or identical
         // p/w/mp/mw), so we create a LinkedHashMap (which preserves order) of the locators from the existing merged
         // record, keyed by the Rloc
-        Map<Rloc, LocatorRecord> locatorMap = new LinkedHashMap<Rloc, LocatorRecord>();
+        Map<Rloc, LocatorRecord> locatorMap = new LinkedHashMap<>();
 
         // All locators to be added to the merge set are first stored in this list
-        List<LocatorRecord> newLocatorList = new ArrayList<LocatorRecord>();
+        List<LocatorRecord> newLocatorList = new ArrayList<>();
 
         for (LocatorRecord locator : locators) {
             locatorMap.put(locator.getRloc(), locator);
@@ -112,7 +112,7 @@ public final class MappingMergeUtil {
 
         // Build new merged and sorted locator set if need be
         if (!newLocatorList.isEmpty()) {
-            List<LocatorRecord> mergedLocators = new ArrayList<LocatorRecord>();
+            List<LocatorRecord> mergedLocators = new ArrayList<>();
 
             int mlocIt = 0;
             int locIt = 0;
@@ -167,8 +167,8 @@ public final class MappingMergeUtil {
         XtrId xtrId = null;
         Long timestamp = Long.MAX_VALUE;
 
-        for (int i = 0; i < mappingDataList.size(); i++) {
-            MappingData mappingData = (MappingData) mappingDataList.get(i);
+        for (Object element : mappingDataList) {
+            MappingData mappingData = (MappingData) element;
             MappingRecord record = mappingData.getRecord();
 
             // Skip expired mappings and add them to a list to be returned to the caller
@@ -210,7 +210,7 @@ public final class MappingMergeUtil {
      * non-null arguments
      */
     public static boolean mappingIsExpired(MappingData mappingData) {
-        Preconditions.checkNotNull(mappingData, "mapping should not be null!");
+        requireNonNull(mappingData, "mapping should not be null!");
         if (mappingData.getTimestamp() != null) {
             return timestampIsExpired(mappingData.getTimestamp());
         }
@@ -218,13 +218,13 @@ public final class MappingMergeUtil {
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
-        Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
+        requireNonNull(timestamp, "timestamp should not be null!");
         return timestampIsExpired(timestamp.getTime());
     }
 
     private static boolean timestampIsExpired(Long timestamp) {
-        Preconditions.checkNotNull(timestamp, "timestamp should not be null!");
-        if ((System.currentTimeMillis() - timestamp) > ConfigIni.getInstance().getRegistrationValiditySb()) {
+        requireNonNull(timestamp, "timestamp should not be null!");
+        if (System.currentTimeMillis() - timestamp > ConfigIni.getInstance().getRegistrationValiditySb()) {
             return true;
         }
         return false;
@@ -291,13 +291,13 @@ public final class MappingMergeUtil {
 
         // We assume locators are unique and don't show up several times (with different or identical p/w/mp/mw),
         // so we create a HashMap of the locators from the SB mapping record, keyed by the Rloc
-        Map<Rloc, LocatorRecord> sbLocatorMap = new HashMap<Rloc, LocatorRecord>();
+        Map<Rloc, LocatorRecord> sbLocatorMap = new HashMap<>();
         for (LocatorRecord locator : sbLocators) {
             sbLocatorMap.put(locator.getRloc(), locator);
         }
 
         // Gradually building final list of common locators, in order that they appear in NB Mapping
-        List<LocatorRecord> commonLocators = new ArrayList<LocatorRecord>();
+        List<LocatorRecord> commonLocators = new ArrayList<>();
 
         for (LocatorRecord nbLocator : nbMapping.getLocatorRecord()) {
             Rloc nbRloc = nbLocator.getRloc();

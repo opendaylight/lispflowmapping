@@ -138,6 +138,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -580,11 +581,20 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final String prefix3 = "1.3.255.255/32";
 
         final MapRequest mapRequest = new MapRequestBuilder().setSmrInvoked(false).setEidItem(Lists.newArrayList(
-                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix1, iid))
+                new EidItemBuilder()
+                        .setEidItemId(LispAddressStringifier
+                                .getString(LispAddressUtil.asIpv4PrefixBinaryEid(prefix1, iid)))
+                        .setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix1, iid))
                         .build(),
-                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix2, iid))
+                new EidItemBuilder()
+                        .setEidItemId(LispAddressStringifier
+                                .getString(LispAddressUtil.asIpv4PrefixBinaryEid(prefix2, iid)))
+                        .setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix2, iid))
                         .build(),
-                new EidItemBuilder().setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix3, iid))
+                new EidItemBuilder()
+                        .setEidItemId(LispAddressStringifier
+                                .getString(LispAddressUtil.asIpv4PrefixBinaryEid(prefix3, iid)))
+                        .setEid(LispAddressUtil.asIpv4PrefixBinaryEid(prefix3, iid))
                         .build()))
                 .build();
         final MapReply mapReply = lms.handleMapRequest(mapRequest);
@@ -2265,18 +2275,21 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         etlr.setEid(registerEID);
         etlr.setRecordTtl(254);
         LocatorRecordBuilder record = new LocatorRecordBuilder();
+        record.setLocatorId("4.3.2.1");
         record.setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1"));
         record.setLocalLocator(false);
         record.setRlocProbed(false);
         record.setRouted(true);
-        record.setMulticastPriority((short) 0);
-        record.setMulticastWeight((short) 0);
-        record.setPriority((short) 0);
-        record.setWeight((short) 0);
+        record.setMulticastPriority(Uint8.valueOf(0));
+        record.setMulticastWeight(Uint8.valueOf(0));
+        record.setPriority(Uint8.valueOf(0));
+        record.setWeight(Uint8.valueOf(0));
         etlr.setLocatorRecord(new ArrayList<LocatorRecord>());
         etlr.getLocatorRecord().add(record.build());
         mapRegister.setMappingRecordItem(new ArrayList<MappingRecordItem>());
-        mapRegister.getMappingRecordItem().add(new MappingRecordItemBuilder().setMappingRecord(etlr.build()).build());
+        mapRegister.getMappingRecordItem().add(new MappingRecordItemBuilder()
+                .setMappingRecordItemId(LispAddressStringifier.getString(registerEID))
+                .setMappingRecord(etlr.build()).build());
         sendMapRegister(mapRegister.build());
         MapNotify mapNotify = receiveMapNotify();
         assertEquals(8, mapNotify.getNonce().longValue());
@@ -2291,17 +2304,22 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         mapRequest.setProbe(false);
         mapRequest.setSmr(false);
         mapRequest.setSmrInvoked(false);
-        mapRequest.getEidItem().add(new EidItemBuilder().setEid(matchedAddress).build());
+        mapRequest.getEidItem().add(new EidItemBuilder()
+                .setEidItemId(LispAddressStringifier.getString(matchedAddress))
+                .setEid(matchedAddress).build());
         mapRequest.setItrRloc(new ArrayList<ItrRloc>());
-        mapRequest.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
+        mapRequest.getItrRloc().add(new ItrRlocBuilder()
+                .setItrRlocId(ourAddress)
+                .setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
         sendMapRequest(mapRequest.build());
         MapReply mapReply = receiveMapReply();
         assertEquals(4, mapReply.getNonce().longValue());
         assertEquals(record.getRloc(), mapReply.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord()
                 .get(0).getRloc());
         mapRequest.setEidItem(new ArrayList<EidItem>());
-        mapRequest.getEidItem().add(new EidItemBuilder().setEid(unMatchedAddress).build());
+        mapRequest.getEidItem().add(new EidItemBuilder()
+                .setEidItemId(LispAddressStringifier.getString(unMatchedAddress))
+                .setEid(unMatchedAddress).build());
         sendMapRequest(mapRequest.build());
         mapReply = receiveMapReply();
         assertEquals(0, mapReply.getMappingRecordItem().get(0).getMappingRecord().nonnullLocatorRecord().size());
@@ -2423,7 +2441,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapRequestBuilder mapRequestBuilder = new MapRequestBuilder();
         mapRequestBuilder.setNonce((long) 4);
         mapRequestBuilder.setEidItem(new ArrayList<EidItem>());
-        mapRequestBuilder.getEidItem().add(new EidItemBuilder().setEid(eid).build());
+        mapRequestBuilder.getEidItem().add(new EidItemBuilder()
+                .setEidItemId(LispAddressStringifier.getString(eid))
+                .setEid(eid).build());
         mapRequestBuilder.setItrRloc(new ArrayList<ItrRloc>());
         if (srcEid != null) {
             mapRequestBuilder.setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(srcEid)).build());
@@ -2432,7 +2452,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                     .build());
         }
         mapRequestBuilder.getItrRloc().add(
-                new ItrRlocBuilder().setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
+                new ItrRlocBuilder()
+                        .setItrRlocId(ourAddress)
+                        .setRloc(LispAddressUtil.asIpv4Rloc(ourAddress)).build());
         mapRequestBuilder.setAuthoritative(false);
         mapRequestBuilder.setMapDataPresent(false);
         mapRequestBuilder.setPitr(false);
