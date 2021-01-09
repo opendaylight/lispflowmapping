@@ -185,7 +185,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
                 sendMapNotify(mapNotify, tab.build());
             } else {
                 for (TransportAddress ta : rlocs) {

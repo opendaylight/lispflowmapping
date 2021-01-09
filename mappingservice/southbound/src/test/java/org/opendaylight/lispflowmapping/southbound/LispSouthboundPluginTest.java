@@ -39,6 +39,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev16
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispSouthboundPluginTest {
 
@@ -59,10 +60,10 @@ public class LispSouthboundPluginTest {
     private static final IpAddressBinary IPV6_BINARY = new IpAddressBinary(new Ipv6AddressBinary(IPV6_BYTES));
     private static final TransportAddress TRANSPORT_ADDRESS_IPV4 = new TransportAddressBuilder()
             .setIpAddress(IPV4_BINARY)
-            .setPort(new PortNumber(PORT)).build();
+            .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
     private static final TransportAddress TRANSPORT_ADDRESS_IPV6 = new TransportAddressBuilder()
             .setIpAddress(IPV6_BINARY)
-            .setPort(new PortNumber(PORT)).build();
+            .setPort(new PortNumber(Uint16.valueOf(PORT))).build();
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {

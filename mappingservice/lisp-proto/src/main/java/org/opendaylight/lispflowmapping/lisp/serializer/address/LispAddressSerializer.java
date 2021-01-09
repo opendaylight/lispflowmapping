@@ -20,11 +20,12 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class LispAddressSerializer {
 
     private static final LispAddressSerializer INSTANCE = new LispAddressSerializer();
-    public static final InstanceIdType DEFAULT_VNI = new InstanceIdType(0L);
+    public static final InstanceIdType DEFAULT_VNI = new InstanceIdType(Uint32.ZERO);
 
     // Private constructor prevents instantiation from other classes
     protected LispAddressSerializer() {

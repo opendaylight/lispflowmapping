@@ -81,7 +81,6 @@
     <dependency>
       <groupId>org.opendaylight.mdsal</groupId>
       <artifactId>mdsal-singleton-common-api</artifactId>
-      <version>7.0.4</version>
     </dependency>
 
     <!--Needed for testing-->

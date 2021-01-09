@@ -25,6 +25,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,8 @@ public final class Ipv6PrefixBinarySerializer extends LispAddressSerializer {
         byte[] ipBuffer = new byte[16];
         buffer.get(ipBuffer);
         Ipv6PrefixBinary prefix = new Ipv6PrefixBinaryBuilder()
-                .setIpv6AddressBinary(new Ipv6AddressBinary(ipBuffer)).setIpv6MaskLength(ctx.getMaskLen()).build();
+                .setIpv6AddressBinary(new Ipv6AddressBinary(ipBuffer))
+                        .setIpv6MaskLength(Uint8.valueOf(ctx.getMaskLen())).build();
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(Ipv6PrefixBinaryAfi.class);
         eb.setVirtualNetworkId(getVni(ctx));

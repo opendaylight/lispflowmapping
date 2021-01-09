@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 public class HostIdToPortDataMapper {
     private static final Logger LOG = LoggerFactory.getLogger(HostIdToPortDataMapper.class);
 
-    private ConcurrentHashMap<String, PortUuidToPortDataMapper> mapper;
+    private final ConcurrentHashMap<String, PortUuidToPortDataMapper> mapper = new ConcurrentHashMap<>();
 
     public HostIdToPortDataMapper() {
-        mapper = new ConcurrentHashMap();
+
     }
 
     public synchronized void addMapping(String hostId, PortData portData) {

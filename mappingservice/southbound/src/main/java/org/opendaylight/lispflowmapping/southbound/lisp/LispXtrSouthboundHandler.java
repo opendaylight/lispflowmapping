@@ -41,9 +41,10 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         this.lispSbPlugin = lispSbPlugin;
     }
 
+    @Override
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = packet.content().nioBuffer();
-        Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
+        Object lispType = MessageType.forValue(ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4);
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer, packet.sender().getAddress());
@@ -69,7 +70,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(
                     LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
+            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUMBER));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             lispSbPlugin.sendNotificationIfPossible(requestMappingBuilder.build());
         } catch (RuntimeException re) {

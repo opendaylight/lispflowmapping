@@ -63,19 +63,19 @@ public final class LispNotificationHelper {
         if (address instanceof Ipv4) {
             String ipv4 = ((Ipv4) address).getIpv4().getValue();
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv4).getAddress()));
-            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
         } else if (address instanceof Ipv6) {
             String ipv6 = ((Ipv6) address).getIpv6().getValue();
             tab.setIpAddress(IpAddressBinaryBuilder.getDefaultInstance(InetAddresses.forString(ipv6).getAddress()));
-            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
         } else if (address instanceof Ipv4Binary) {
             Ipv4AddressBinary ipv6 = ((Ipv4Binary) address).getIpv4Binary();
             tab.setIpAddress(new IpAddressBinary(ipv6));
-            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
         } else if (address instanceof Ipv6Binary) {
             Ipv6AddressBinary ipv6 = ((Ipv6Binary) address).getIpv6Binary();
             tab.setIpAddress(new IpAddressBinary(ipv6));
-            tab.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
         } else if (address instanceof KeyValueAddress) {
             SimpleAddress sa = ((KeyValueAddress) address).getKeyValueAddress().getValue();
             if (sa.getDistinguishedNameType() != null) {

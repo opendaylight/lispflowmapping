@@ -23,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInputBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 /**
  * LispUtil class has util functions for building inputs for LISP service RPCs.
@@ -50,7 +51,7 @@ public final class LispUtil {
     public static AddKeyInput buildAddKeyInput(Eid eid, String net) {
         AddKeyInputBuilder kib = new AddKeyInputBuilder();
 
-        kib.setEid(eid).setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString(net).setKeyType(1).build());
+        kib.setEid(eid).setMappingAuthkey(new MappingAuthkeyBuilder().setKeyString(net).setKeyType(Uint16.ONE).build());
         return kib.build();
     }
 

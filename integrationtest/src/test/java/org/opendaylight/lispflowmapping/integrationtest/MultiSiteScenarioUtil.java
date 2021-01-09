@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.integrationtest;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
-
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 class MultiSiteScenarioUtil {
     private final static String COMMON_IPV4_PREFIX = "192.0.";
@@ -127,7 +127,7 @@ class MultiSiteScenarioUtil {
                     ,COMMON_IPV4_PREFIX + siteSpecificIpPart + HOST5
             };
             this.xtrId = new XtrId(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) siteId});
-            this.vni = new InstanceIdType(vni);
+            this.vni = new InstanceIdType(Uint32.valueOf(vni));
             this.rloc = rloc + "." + rloc + "." + rloc + "." + rloc;
             this.weight = weight;
             this.priority = priority;

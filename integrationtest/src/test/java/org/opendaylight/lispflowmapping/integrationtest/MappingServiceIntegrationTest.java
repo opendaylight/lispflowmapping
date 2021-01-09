@@ -138,6 +138,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Option;
@@ -171,7 +173,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public static final String YANG = "org.opendaylight.yangtools";
     private static final int MULTI_SITE_SLEEP_TIME = 2;
     private static final int MAX_NOTIFICATION_RETRYS = 20;
-    private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ZERO).build();
 
     // This is temporary, since the properties in the pom file are not picked up
     @Override
@@ -472,7 +474,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         long timeout = ConfigIni.getInstance().getSmrTimeout();
         ConfigIni.getInstance().setSmrRetryCount(5);
 
-        final InstanceIdType iid = new InstanceIdType(1L);
+        final InstanceIdType iid = new InstanceIdType(Uint32.ONE);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
         final Eid subscriberEid = LispAddressUtil.asIpv4Eid("2.2.2.2", 1L);
         final int expectedSmrs1 = 2;
@@ -575,7 +577,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void testMultipleMappings() throws UnknownHostException {
-        final InstanceIdType iid = new InstanceIdType(1L);
+        final InstanceIdType iid = new InstanceIdType(Uint32.ONE);
         final String prefix1 = "1.1.127.10/32"; // prefix from the intersection of NB and SB gaps
         final String prefix2 = "1.1.200.255/32"; // prefix with existing mapping in NB
         final String prefix3 = "1.3.255.255/32";
@@ -603,17 +605,17 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final String resultPrefix1 = "1.1.64.0";
         final Address resultNegMapping1 = new Ipv4PrefixBinaryBuilder()
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName(resultPrefix1).getAddress()))
-                .setIpv4MaskLength((short) 18).build();
+                .setIpv4MaskLength(Uint8.valueOf(18)).build();
 
         final String resultPrefix2 = "1.1.128.0";
         final Address resultMapping2 = new Ipv4PrefixBinaryBuilder()
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName(resultPrefix2).getAddress()))
-                .setIpv4MaskLength((short) 17).build();
+                .setIpv4MaskLength(Uint8.valueOf(17)).build();
 
         final String resultPrefix3 = "1.3.0.0";
         final Address resultNegMapping3 = new Ipv4PrefixBinaryBuilder()
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName(resultPrefix3).getAddress()))
-                .setIpv4MaskLength((short) 16).build();
+                .setIpv4MaskLength(Uint8.valueOf(16)).build();
 
         assertEquals(resultNegMapping1, mapReply.getMappingRecordItem().get(0).getMappingRecord().getEid()
                 .getAddress());
@@ -633,7 +635,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // expected negative mapping
         final Address resultNegMapping = new Ipv4PrefixBinaryBuilder()
                 .setIpv4AddressBinary(new Ipv4AddressBinary(InetAddress.getByName("1.1.64.0").getAddress()))
-                .setIpv4MaskLength((short) 18).build();
+                .setIpv4MaskLength(Uint8.valueOf(18)).build();
         assertEquals(resultNegMapping, mapReply.getMappingRecordItem().get(0).getMappingRecord().getEid()
                 .getAddress());
     }
@@ -1327,7 +1329,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void insertNBMappings(long iid, String ... prefixes) {
         LOG.debug("Adding Northbound mappings in VNI {} for prefixes: {}", iid, prefixes);
-        final InstanceIdType iiType = new InstanceIdType(iid);
+        final InstanceIdType iiType = new InstanceIdType(Uint32.valueOf(iid));
         for (String prefix : prefixes) {
             MappingRecord record = newMappingRecord(prefix, iiType);
             mapService.addMapping(MappingOrigin.Northbound, record.getEid(), null, new MappingData(record));
@@ -1371,14 +1373,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private void allowNullAuthenticationForAllIPv4(long iid) {
-        final InstanceIdType iiType = new InstanceIdType(iid);
+        final InstanceIdType iiType = new InstanceIdType(Uint32.valueOf(iid));
         Eid allIPs = LispAddressUtil.asIpv4PrefixBinaryEid("0.0.0.0/0", iiType);
         mapService.addAuthenticationKey(allIPs, NULL_AUTH_KEY);
     }
 
     private void insertSBMappings(boolean negative, long iid, String... prefixes) {
         LOG.debug("Adding Southbound mappings in VNI {} for prefixes: {}", iid, prefixes);
-        final InstanceIdType iiType = new InstanceIdType(iid);
+        final InstanceIdType iiType = new InstanceIdType(Uint32.valueOf(iid));
 
         for (String prefix : prefixes) {
             MappingRecord record;
@@ -1423,7 +1425,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     }
 
     private MapRequest newMapRequest(long iid, String prefix) {
-        final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, new InstanceIdType(iid));
+        final Eid prefixBinary = LispAddressUtil.asIpv4PrefixBinaryEid(prefix, new InstanceIdType(Uint32.valueOf(iid)));
         return MappingServiceIntegrationTestUtil.getDefaultMapRequestBuilder(prefixBinary).build();
     }
 
@@ -2629,7 +2631,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(Ipv4PrefixAfi.class);
-        eb.setVirtualNetworkId(new InstanceIdType((long) instanceId));
+        eb.setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(instanceId)));
         eb.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
                 .yang.ietf.inet.types.rev130715.Ipv4Prefix(ipString)).build());
 
@@ -2694,12 +2696,12 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public void registerAndQuery__ApplicationData() throws SocketTimeoutException {
         cleanUP();
         String ipString = "1.2.3.4";
-        short protocol = 1;
+        final Uint8 protocol = Uint8.ONE;
         int ipTOs = 2;
-        int localPortLow = 3;
-        int localPortHigh = 4;
-        int remotePortLow = 4;
-        int remotePortHigh = 5;
+        final Uint16 localPortLow = Uint16.valueOf(3);
+        final Uint16 localPortHigh = Uint16.valueOf(4);
+        final Uint16 remotePortLow = Uint16.valueOf(4);
+        final Uint16 remotePortHigh = Uint16.valueOf(5);
 
         ApplicationDataBuilder builder = new ApplicationDataBuilder();
         builder.setIpTos(ipTOs);
@@ -2724,16 +2726,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(ApplicationDataLcaf.class, receivedAddress.getAddressType());
 
         ApplicationData receivedApplicationDataAddress = (ApplicationData) receivedAddress.getAddress();
-        assertEquals(protocol, receivedApplicationDataAddress.getApplicationData().getProtocol().intValue());
+        assertEquals(protocol, receivedApplicationDataAddress.getApplicationData().getProtocol());
         assertEquals(ipTOs, receivedApplicationDataAddress.getApplicationData().getIpTos().intValue());
-        assertEquals(localPortLow, receivedApplicationDataAddress.getApplicationData().getLocalPortLow().getValue()
-                .intValue());
-        assertEquals(localPortHigh, receivedApplicationDataAddress.getApplicationData().getLocalPortHigh().getValue()
-                .intValue());
-        assertEquals(remotePortLow, receivedApplicationDataAddress.getApplicationData().getRemotePortLow().getValue()
-                .intValue());
-        assertEquals(remotePortHigh, receivedApplicationDataAddress.getApplicationData().getRemotePortHigh().getValue()
-                .intValue());
+        assertEquals(localPortLow, receivedApplicationDataAddress.getApplicationData().getLocalPortLow().getValue());
+        assertEquals(localPortHigh, receivedApplicationDataAddress.getApplicationData().getLocalPortHigh().getValue());
+        assertEquals(remotePortLow, receivedApplicationDataAddress.getApplicationData().getRemotePortLow().getValue());
+        assertEquals(remotePortHigh,
+                receivedApplicationDataAddress.getApplicationData().getRemotePortHigh().getValue());
 
         SimpleAddress ipAddressReceived = receivedApplicationDataAddress.getApplicationData().getAddress();
         assertEquals(ipString, ipAddressReceived.getIpAddress().getIpv4Address().getValue());
@@ -2797,7 +2796,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // mapping expires after 1 second
         ConfigIni.getInstance().setRegistrationValiditySb(1000L);
 
-        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32", new InstanceIdType(10L));
+        final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32", new InstanceIdType(Uint32.TEN));
         final MappingRecord mappingRecord = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid)
                 .setRecordTtl(1000).build();
 
@@ -2891,7 +2890,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
-                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
+                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(Uint16.valueOf(port))).build()).build());
         Rloc adLcaf = rb.build();
 
         LOG.info("testNonProxyOtherPort:" + LispAddressStringifier.getString(adLcaf));
@@ -2945,7 +2944,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
                 .setApplicationData(new ApplicationDataBuilder().setAddress(new SimpleAddress(new IpAddress(
-                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(port)).build()).build());
+                new Ipv4Address(rloc)))).setLocalPortLow(new PortNumber(Uint16.valueOf(port))).build()).build());
         Rloc adLcaf = rb.build();
 
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);

@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.neutron.mappingmanager;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.neutron.LispUtil;
 import org.opendaylight.lispflowmapping.neutron.mappingmanager.mappers.HostIdToPortDataMapper;
@@ -19,6 +20,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +31,17 @@ public class HostInformationManager {
     private static final Logger LOG = LoggerFactory.getLogger(HostInformationManager.class);
 
     private OdlMappingserviceService lfmDbService;
-    private HostIdToPortDataMapper hostIdToPortDataMapper;
-    private HostIdToRlocMapper hostIdToRlocMapper;
-    private NeutronTenantToVniMapper neutronTenantToVniMapper;
+    private final HostIdToPortDataMapper hostIdToPortDataMapper = new HostIdToPortDataMapper();
+    private final HostIdToRlocMapper hostIdToRlocMapper = new HostIdToRlocMapper();
+    private final NeutronTenantToVniMapper neutronTenantToVniMapper = new NeutronTenantToVniMapper();
 
     private static HostInformationManager instance;
 
     HostInformationManager() {
-        hostIdToPortDataMapper = new HostIdToPortDataMapper();
-        hostIdToRlocMapper = new HostIdToRlocMapper();
-        neutronTenantToVniMapper = new NeutronTenantToVniMapper();
+        // Hidden on purpose
     }
 
+    // FIXME: this is *slow*
     public static synchronized HostInformationManager getInstance() {
         if (instance == null) {
             instance = new HostInformationManager();
@@ -48,7 +49,7 @@ public class HostInformationManager {
         return instance;
     }
 
-    public long getInstanceId(String tenantUuid) {
+    public @NonNull Uint32 getInstanceId(String tenantUuid) {
         return neutronTenantToVniMapper.getVni(tenantUuid);
     }
 

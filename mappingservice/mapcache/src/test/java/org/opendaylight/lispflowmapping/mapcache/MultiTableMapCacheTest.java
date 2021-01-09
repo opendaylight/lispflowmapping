@@ -35,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class MultiTableMapCacheTest {
 
@@ -50,16 +51,18 @@ public class MultiTableMapCacheTest {
     private static final Ipv4Prefix IPV_4_PREFIX_DST = new Ipv4Prefix(IPV4_STRING_2);
     private static final long VNI = 100L;
 
-    private static final Eid EID_TEST = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
+    private static final Eid EID_TEST = new EidBuilder().setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(VNI)))
             .setAddress(new Ipv4Builder().setIpv4(new Ipv4Address("10.0.0.1")).build()).build();
-    private static final Eid EID_SOURCE_DEST_KEY_TYPE = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
+    private static final Eid EID_SOURCE_DEST_KEY_TYPE = new EidBuilder()
+            .setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(VNI)))
             .setAddress(new SourceDestKeyBuilder()
                     .setSourceDestKey(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp
                             .address.types.rev151105.lisp.address.address.source.dest.key.SourceDestKeyBuilder()
                             .setSource(new SimpleAddress(new IpPrefix(IPV_4_PREFIX_SRC)))
                             .setDest(new SimpleAddress(new IpPrefix(IPV_4_PREFIX_DST))).build()).build()).build();
     private static final Eid EID_IPV4_PREFIX_SRC = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1);
-    private static final Eid EID_IPV4_PREFIX_DST = new EidBuilder().setVirtualNetworkId(new InstanceIdType(VNI))
+    private static final Eid EID_IPV4_PREFIX_DST = new EidBuilder()
+            .setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(VNI)))
             .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV_4_PREFIX_DST).build()).build();
     private static final Eid NORMALIZED_SRCDST_EID = MaskUtil.normalize(EID_SOURCE_DEST_KEY_TYPE);
     private static final Eid NORMALIZED_PREFIX_SRC_EID = MaskUtil.normalize(EID_IPV4_PREFIX_SRC);
