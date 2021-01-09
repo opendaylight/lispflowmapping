@@ -29,6 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +42,10 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
         this.lispSbPlugin = lispSbPlugin;
     }
 
+    @Override
     public void handlePacket(DatagramPacket packet) {
         ByteBuffer inBuffer = packet.content().nioBuffer();
-        Object lispType = MessageType.forValue((int) (ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4));
+        Object lispType = MessageType.forValue(ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4);
         if (lispType == MessageType.MapRequest) {
             LOG.trace("Received packet of type MapRequest for xTR");
             handleMapRequest(inBuffer, packet.sender().getAddress());
@@ -69,7 +71,7 @@ public class LispXtrSouthboundHandler extends SimpleChannelInboundHandler<Datagr
             TransportAddressBuilder transportAddressBuilder = new TransportAddressBuilder();
             transportAddressBuilder.setIpAddress(
                     LispNotificationHelper.getIpAddressBinaryFromInetAddress(finalSourceAddress));
-            transportAddressBuilder.setPort(new PortNumber(LispMessage.PORT_NUM));
+            transportAddressBuilder.setPort(new PortNumber(Uint16.valueOf(LispMessage.PORT_NUM)));
             requestMappingBuilder.setTransportAddress(transportAddressBuilder.build());
             lispSbPlugin.sendNotificationIfPossible(requestMappingBuilder.build());
         } catch (RuntimeException re) {
