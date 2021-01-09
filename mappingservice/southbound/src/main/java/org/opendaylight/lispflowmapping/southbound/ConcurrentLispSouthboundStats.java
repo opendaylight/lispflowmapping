@@ -84,12 +84,8 @@ public class ConcurrentLispSouthboundStats {
         this.cacheMisses = incrementWithWrap(cacheMisses);
     }
 
-    private static synchronized long incrementWithWrap(long value) {
-        if (value == Long.MAX_VALUE) {
-            return 0;
-        } else {
-            return value + 1;
-        }
+    private static long incrementWithWrap(long value) {
+        return value == Long.MAX_VALUE ? 0 : value + 1;
     }
 
     // TODO move this method to the appropriate helper class if we start using MessageType in other places
