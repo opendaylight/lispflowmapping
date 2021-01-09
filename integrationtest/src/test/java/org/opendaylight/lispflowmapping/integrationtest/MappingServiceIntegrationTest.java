@@ -138,6 +138,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.ops4j.io.FileUtils;
 import org.ops4j.pax.exam.Option;
@@ -171,7 +173,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     public static final String YANG = "org.opendaylight.yangtools";
     private static final int MULTI_SITE_SLEEP_TIME = 2;
     private static final int MAX_NOTIFICATION_RETRYS = 20;
-    private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ZERO).build();
 
     // This is temporary, since the properties in the pom file are not picked up
     @Override
@@ -472,7 +474,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         long timeout = ConfigIni.getInstance().getSmrTimeout();
         ConfigIni.getInstance().setSmrRetryCount(5);
 
-        final InstanceIdType iid = new InstanceIdType(1L);
+        final InstanceIdType iid = new InstanceIdType(Uint32.ONE);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
         final Eid subscriberEid = LispAddressUtil.asIpv4Eid("2.2.2.2", 1L);
         final int expectedSmrs1 = 2;

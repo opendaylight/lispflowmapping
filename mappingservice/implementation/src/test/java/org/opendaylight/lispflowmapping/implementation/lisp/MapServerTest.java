@@ -61,6 +61,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rl
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MapServerTest {
@@ -141,7 +142,7 @@ public class MapServerTest {
 
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
             .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(0).build();
+    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ZERO).build();
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
 
     private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder()
@@ -423,11 +424,11 @@ public class MapServerTest {
     private static List<TransportAddress> getTransportAddressList() {
         TransportAddressBuilder transportAddressBuilder1 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_1)
-                .setPort(new PortNumber(LispMessage.PORT_NUM));
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER));
 
         TransportAddressBuilder transportAddressBuilder2 = new TransportAddressBuilder()
                 .setIpAddress(IPV4_BINARY_2)
-                .setPort(new PortNumber(LispMessage.PORT_NUM));
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER));
 
         final List<TransportAddress> transportAddressList = Lists.newArrayList(
                 transportAddressBuilder1.build(),

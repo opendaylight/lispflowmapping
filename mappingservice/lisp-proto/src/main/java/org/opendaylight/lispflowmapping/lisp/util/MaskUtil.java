@@ -31,13 +31,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class MaskUtil {
     private static final Logger LOG = LoggerFactory.getLogger(MaskUtil.class);
     public static final short IPV4_MAX_MASK = 32;
+    public static final Uint8 IPV4_MAX_MASK_UINT = Uint8.valueOf(IPV4_MAX_MASK);
     public static final short IPV6_MAX_MASK = 128;
+    public static final Uint8 IPV6_MAX_MASK_UINT = Uint8.valueOf(IPV6_MAX_MASK);
 
     // Utility class, should not be instantiated
     private MaskUtil() {
@@ -185,7 +188,7 @@ public final class MaskUtil {
             if (mask >= 8) {
                 byteRepresentation.put(i, (byte) (byteMask & byteRepresentation.get(i)));
             } else if (mask > 0) {
-                byteRepresentation.put(i, (byte) ((byte) (byteMask << (8 - mask)) & byteRepresentation.get(i)));
+                byteRepresentation.put(i, (byte) ((byte) (byteMask << 8 - mask) & byteRepresentation.get(i)));
             } else {
                 byteRepresentation.put(i, (byte) (0 & byteRepresentation.get(i)));
             }

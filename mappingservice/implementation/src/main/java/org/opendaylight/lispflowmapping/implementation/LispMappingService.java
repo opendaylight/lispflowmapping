@@ -57,6 +57,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,9 +74,9 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
-    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
+    private final ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
     private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
@@ -185,7 +186,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
                 sendMapNotify(mapNotify, tab.build());
             } else {
                 for (TransportAddress ta : rlocs) {
