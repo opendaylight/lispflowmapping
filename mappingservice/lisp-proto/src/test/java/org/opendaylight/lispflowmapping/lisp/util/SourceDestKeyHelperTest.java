@@ -25,6 +25,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class SourceDestKeyHelperTest {
 
@@ -47,7 +49,7 @@ public class SourceDestKeyHelperTest {
 
     private static final SimpleAddress SOURCE = new SimpleAddress(new IpPrefix(IPV4_PREFIX_SOURCE));
     private static final SimpleAddress DEST = new SimpleAddress(new IpPrefix(IPV4_PREFIX_DEST));
-    private static final InstanceIdType INSTANCE_ID = new InstanceIdType(100L);
+    private static final InstanceIdType INSTANCE_ID = new InstanceIdType(Uint32.valueOf(100));
     private static final Address SOURCE_DEST_KEY = getSourceDestKeyAddress(SOURCE, DEST);
     private static final Address IPV4_PREFIX = new Ipv4PrefixBuilder().setIpv4Prefix(IPV4_PREFIX_SOURCE).build();
     private static final Eid EID_IPV4_PREFIX_ADDRESS = new EidBuilder().setAddress(IPV4_PREFIX).build();
@@ -179,6 +181,9 @@ public class SourceDestKeyHelperTest {
     }
 
     private static Ipv4PrefixBinary getIpv4PrefixBinary(Ipv4AddressBinary ipv4AddressBinary, short mask) {
-        return new Ipv4PrefixBinaryBuilder().setIpv4AddressBinary(ipv4AddressBinary).setIpv4MaskLength(mask).build();
+        return new Ipv4PrefixBinaryBuilder()
+            .setIpv4AddressBinary(ipv4AddressBinary)
+            .setIpv4MaskLength(Uint8.valueOf(mask))
+            .build();
     }
 }

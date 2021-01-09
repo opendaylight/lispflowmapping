@@ -30,10 +30,10 @@ public class AfiListSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 18 " + //
-                "00 01 AA BB CC DD " + // IPv4
-                "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44")); // IPv6
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 18 "
+                + "00 01 AA BB CC DD " // IPv4
+                + "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44")); // IPv6
 
         assertEquals(AfiListLcaf.class, address.getAddressType());
         AfiList afiList = (AfiList) address.getAddress();
@@ -47,8 +47,8 @@ public class AfiListSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 00 "));
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 00 "));
 
         assertEquals(AfiListLcaf.class, address.getAddressType());
         AfiList afiList = (AfiList) address.getAddress();
@@ -59,16 +59,16 @@ public class AfiListSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 18 " + //
-                "00 01 AA BB CC DD " + // IPv4
-                "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 18 "
+                + "00 01 AA BB CC DD " // IPv4
+                + "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer2() throws Exception {
-        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 18 "));
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 18 "));
     }
 
     @Test
@@ -88,10 +88,10 @@ public class AfiListSerializerTest extends BaseTestCase {
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 18 " + //
-                "00 01 AA BB CC DD " + // IPv4
-                "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44");
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 18 "
+                + "00 01 AA BB CC DD " // IPv4
+                + "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 
@@ -110,8 +110,8 @@ public class AfiListSerializerTest extends BaseTestCase {
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 00");
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 

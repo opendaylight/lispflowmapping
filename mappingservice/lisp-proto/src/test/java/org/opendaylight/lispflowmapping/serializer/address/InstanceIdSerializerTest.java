@@ -27,10 +27,10 @@ public class InstanceIdSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + //
-                "00 BB CC DD " + // instance ID
-                "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
+        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A "
+                + "00 BB CC DD " // instance ID
+                + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
                 new LispAddressSerializerContext(null));
 
         assertEquals(Ipv4BinaryAfi.class, address.getAddressType());
@@ -42,36 +42,36 @@ public class InstanceIdSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + //
-                "AA BB "),
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A "
+                + "AA BB "),
                 new LispAddressSerializerContext(null));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "AA 20 00 0A " + // Type AA is unknown
-                "00 BB CC DD " + // instance ID
-                "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "AA 20 00 0A " // Type AA is unknown
+                + "00 BB CC DD " // instance ID
+                + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
                 new LispAddressSerializerContext(null));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__LongInstanceID() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + // Type AA is unknown
-                "AA BB CC DD " + // instance ID
-                "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A " // Type AA is unknown
+                + "AA BB CC DD " // instance ID
+                + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
                 new LispAddressSerializerContext(null));
     }
 
     @Test
     public void deserialize__Ipv6() throws Exception {
-        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + //
-                "00 BB CC DD " + // instance ID
-                "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD"), // AFI=2,
+        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A "
+                + "00 BB CC DD " // instance ID
+                + "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD"), // AFI=2,
                 new LispAddressSerializerContext(null));
         // IPv6
 
@@ -85,14 +85,14 @@ public class InstanceIdSerializerTest extends BaseTestCase {
 
     @Test
     public void serialize__Simple() throws Exception {
-        Eid eid = LispAddressUtil.asIpv4Eid("17.34.51.68", (long) 0x00020304);
+        Eid eid = LispAddressUtil.asIpv4Eid("17.34.51.68", 0x00020304L);
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eid));
         LispAddressSerializer.getInstance().serialize(buf, eid);
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + //
-                "00 02 03 04 " + // instance ID
-                "00 01 11 22 33 44");
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A "
+                + "00 02 03 04 " // instance ID
+                + "00 01 11 22 33 44");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 }

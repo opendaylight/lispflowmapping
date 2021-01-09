@@ -30,10 +30,10 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 10 " + //
-                "00 00 00 01 AA BB CC DD " + // IPv4
-                "00 00 00 01 11 22 33 44")); // IPv4
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 10 "
+                + "00 00 00 01 AA BB CC DD "   // IPv4
+                + "00 00 00 01 11 22 33 44")); // IPv4
 
         assertEquals(ExplicitLocatorPathLcaf.class, address.getAddressType());
         ExplicitLocatorPath elp = (ExplicitLocatorPath) address.getAddress();
@@ -47,10 +47,10 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__Bits() throws Exception {
-        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 10 " + //
-                "00 05 00 01 AA BB CC DD " + // IPv4
-                "00 02 00 01 11 22 33 44")); // IPv4
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 10 "
+                + "00 05 00 01 AA BB CC DD "   // IPv4
+                + "00 02 00 01 11 22 33 44")); // IPv4
 
         assertEquals(ExplicitLocatorPathLcaf.class, address.getAddressType());
         ExplicitLocatorPath elp = (ExplicitLocatorPath) address.getAddress();
@@ -70,8 +70,8 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__NoAddresses() throws Exception {
-        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 00 "));
+        Rloc address = LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 00 "));
 
         assertEquals(ExplicitLocatorPathLcaf.class, address.getAddressType());
         ExplicitLocatorPath elp = (ExplicitLocatorPath) address.getAddress();
@@ -82,16 +82,16 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 18 " + //
-                "00 01 AA BB CC DD " + // IPv4
-                "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 18 "
+                + "00 01 AA BB CC DD " // IPv4
+                + "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer2() throws Exception {
-        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 18 "));
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 18 "));
     }
 
     @Test
@@ -114,10 +114,10 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 10 " + //
-                "00 00 00 01 AA BB CC DD " + // IPv4
-                "00 00 00 01 11 22 33 44"); // IPv4
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 10 "
+                + "00 00 00 01 AA BB CC DD "  // IPv4
+                + "00 00 00 01 11 22 33 44"); // IPv4
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 
@@ -131,8 +131,8 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
 
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(rb.build()));
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "0A 00 00 00");
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "0A 00 00 00");
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 }

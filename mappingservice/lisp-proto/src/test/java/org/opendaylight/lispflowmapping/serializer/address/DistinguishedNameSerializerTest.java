@@ -51,9 +51,9 @@ public class DistinguishedNameSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__inList() throws Exception {
-        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 8 " + //
-                "00 11 64 61 76 69 64 00"), null);
+        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 8 "
+                + "00 11 64 61 76 69 64 00"), null);
 
         assertEquals(AfiListLcaf.class, address.getAddressType());
         assertEquals("david", ((AfiList) address.getAddress()).getAfiList().getAddressList().get(0)
@@ -63,15 +63,15 @@ public class DistinguishedNameSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 10 " + //
-                "00 11 64 61 76 69 64 00"), null);
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 10 "
+                + "00 11 64 61 76 69 64 00"), null);
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer2() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "01 00 00 18 "), null);
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "01 00 00 18 "), null);
     }
 
     @Test

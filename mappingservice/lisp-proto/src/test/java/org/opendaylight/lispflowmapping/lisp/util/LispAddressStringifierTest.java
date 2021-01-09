@@ -71,11 +71,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class LispAddressStringifierTest {
 
-    private static final long VNI = 100L;
-    private static final long IID = 200L;
+    private static final Uint32 VNI = Uint32.valueOf(100);
+    private static final Uint32 IID = Uint32.valueOf(200);
 
     // Ipv4
     private static final String IPV4_STRING = "192.168.0.1";
@@ -123,13 +126,13 @@ public class LispAddressStringifierTest {
     // Ipv4PrefixBinary
     private static final Ipv4PrefixBinary IPV4_PREFIX_BINARY = new Ipv4PrefixBinaryBuilder()
             .setIpv4AddressBinary(IPV4_ADDRESS_BINARY)
-            .setIpv4MaskLength((short) 24).build();
+            .setIpv4MaskLength(Uint8.valueOf(24)).build();
     private static final LispAddress LISP_IPV4_PREFIX_BINARY = new EidBuilder().setAddress(IPV4_PREFIX_BINARY).build();
 
     // Ipv6PrefixBinary
     private static final Ipv6PrefixBinary IPV6_PREFIX_BINARY = new Ipv6PrefixBinaryBuilder()
             .setIpv6AddressBinary(IPV6_ADDRESS_BINARY)
-            .setIpv6MaskLength((short) 24).build();
+            .setIpv6MaskLength(Uint8.valueOf(24)).build();
     private static final LispAddress LISP_IPV6_PREFIX_BINARY = new EidBuilder().setAddress(IPV6_PREFIX_BINARY).build();
 
     // Mac
@@ -145,7 +148,7 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_DISTINGUISHED_NAME = new EidBuilder().setAddress(DISTINGUISHED_NAME).build();
 
     // AsNumber
-    private static final AsNumber AS_NUMBER = new AsNumber(300L);
+    private static final AsNumber AS_NUMBER = new AsNumber(Uint32.valueOf(300));
     private static final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
             .address.address.AsNumber AS_NUMBER_LISP_TYPE = new AsNumberBuilder().setAsNumber(AS_NUMBER).build();
     private static final LispAddress LISP_AS_NUMBER = new EidBuilder().setAddress(AS_NUMBER_LISP_TYPE).build();
@@ -169,11 +172,11 @@ public class LispAddressStringifierTest {
             .application.data.ApplicationDataBuilder()
             .setAddress(SIMPLE_ADDRESS_1)
             .setIpTos(0)
-            .setLocalPortHigh(new PortNumber(1234))
-            .setLocalPortLow(new PortNumber(1111))
-            .setProtocol((short)1)
-            .setRemotePortHigh(new PortNumber(9999))
-            .setRemotePortLow(new PortNumber(1000)).build()).build();
+            .setLocalPortHigh(new PortNumber(Uint16.valueOf(1234)))
+            .setLocalPortLow(new PortNumber(Uint16.valueOf(1111)))
+            .setProtocol(Uint8.ONE)
+            .setRemotePortHigh(new PortNumber(Uint16.valueOf(9999)))
+            .setRemotePortLow(new PortNumber(Uint16.valueOf(1000))).build()).build();
     private static final LispAddress LISP_APPLICATION_DATA = new EidBuilder().setAddress(APPLICATION_DATA).build();
 
     // ExplicitLocatorPath
@@ -204,10 +207,10 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_KEY_VALUE_ADDRESS = new EidBuilder().setAddress(KEY_VALUE_ADDRESS).build();
 
     // ServicePath
-    private static final ServicePathIdType SERVICE_PATH_ID_TYPE = new ServicePathIdType(123L);
+    private static final ServicePathIdType SERVICE_PATH_ID_TYPE = new ServicePathIdType(Uint32.valueOf(123));
     private static final ServicePath SERVICE_PATH = new ServicePathBuilder().setServicePath(new org.opendaylight.yang
             .gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path
-            .ServicePathBuilder().setServiceIndex((short) 1)
+            .ServicePathBuilder().setServiceIndex(Uint8.ONE)
             .setServicePathId(SERVICE_PATH_ID_TYPE).build()).build();
     private static final LispAddress LISP_SERVICE_PATH = new EidBuilder().setAddress(SERVICE_PATH).build();
 

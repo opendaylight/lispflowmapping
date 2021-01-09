@@ -28,10 +28,10 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
 
     @Test
     public void deserialize__Simple() throws Exception {
-        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "0F 20 00 0C " + //
-                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
-                "00 01 22 33 44 55"), null); // AFI=1, IP=0x22334455
+        Eid address = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "0F 20 00 0C "
+                + "00 01 11 22 33 44 " // AFI=1, IP=0x11223344
+                + "00 01 22 33 44 55"), null); // AFI=1, IP=0x22334455
 
         assertEquals(KeyValueAddressLcaf.class, address.getAddressType());
         KeyValueAddress srcDestAddress = (KeyValueAddress) address.getAddress();
@@ -42,25 +42,25 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "02 20 00 0A " + //
-                "AA BB "), null);
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "02 20 00 0A "
+                + "AA BB "), null);
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "AA 20 00 0A " + // Type AA is unknown
-                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
-                "00 01 22 33 44 55"), null); // AFI=1, IP=0x22334455
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "AA 20 00 0A " // Type AA is unknown
+                + "00 01 11 22 33 44 " // AFI=1, IP=0x11223344
+                + "00 01 22 33 44 55"), null); // AFI=1, IP=0x22334455
     }
 
     @Test
     public void deserialize__Ipv6() throws Exception {
-        Eid srcAddress = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 " + //
-                "0F 20 00 24 " + //
-                "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD " + // AFI=2,
-                "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD"), null); // AFI=2,
+        Eid srcAddress = LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
+                + "0F 20 00 24 "
+                + "00 02 11 22 33 44 55 66 77 88 99 AA BB CC AA BB CC DD " // AFI=2,
+                + "00 02 44 33 22 11 88 77 66 55 99 AA BB CC AA BB CC DD"), null); // AFI=2,
         // IPv6
 
         assertEquals("1122:3344:5566:7788:99aa:bbcc:aabb:ccdd",
@@ -85,10 +85,10 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eb.build()));
         LispAddressSerializer.getInstance().serialize(buf, eb.build());
 
-        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 " + //
-                "0F 00 00 0C " + //
-                "00 01 11 22 33 44 " + // AFI=1, IP=0x11223344
-                "00 01 22 33 44 55"); // AFI=1, IP=0x22334455
+        ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
+                + "0F 00 00 0C "
+                + "00 01 11 22 33 44 "  // AFI=1, IP=0x11223344
+                + "00 01 22 33 44 55"); // AFI=1, IP=0x22334455
         ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
     }
 }

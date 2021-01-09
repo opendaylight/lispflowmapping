@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.DistinguishedName;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class LispSimpleAddressStringifierTest {
 
@@ -41,7 +42,7 @@ public class LispSimpleAddressStringifierTest {
 
     private static final DistinguishedNameType DISTINGUISHED_NAME = new DistinguishedNameType("distinguished_name");
 
-    private static final AsNumber AS_NUMBER = new AsNumber(1111L);
+    private static final AsNumber AS_NUMBER = new AsNumber(Uint32.valueOf(1111));
 
     /**
      * Tests {@link LispSimpleAddressStringifier#getString} with Ipv4Address.
