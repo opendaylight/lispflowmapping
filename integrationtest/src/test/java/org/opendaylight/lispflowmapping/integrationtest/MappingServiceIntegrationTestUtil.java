@@ -305,7 +305,7 @@ final class MappingServiceIntegrationTestUtil {
     static void assertNoMoreSMRs(DatagramSocket datagramSocket, IMappingService mappingService) {
         try {
             MapRequest mr = receiveMapRequest(datagramSocket, SHORT_SOCKET_TIMEOUT);
-            if (mr.isSmr()) {
+            if (mr.getSmr()) {
                 if (mappingService != null) {
                     printMapCacheState(mappingService);
                 }
@@ -379,7 +379,7 @@ final class MappingServiceIntegrationTestUtil {
             while (i < count) {
                 MapRequest mapRequest = receiveMapRequest(datagramSocket, DEFAULT_SOCKET_TIMEOUT);
                 LOG.trace("Solicit Map-Request: {}", mapRequest);
-                assertEquals(true, mapRequest.isSmr());
+                assertEquals(true, mapRequest.getSmr());
                 if (mapRequest.getEidItem().isEmpty()) {
                     fail("Empty SMR received (no EID record)!");
                 }

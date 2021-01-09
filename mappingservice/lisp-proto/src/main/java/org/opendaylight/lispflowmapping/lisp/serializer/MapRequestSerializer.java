@@ -69,18 +69,18 @@ public final class MapRequestSerializer {
         }
         ByteBuffer requestBuffer = ByteBuffer.allocate(size);
         requestBuffer.put((byte) ((byte) (MessageType.MapRequest.getIntValue() << 4)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isAuthoritative()), Flags.AUTHORITATIVE)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isMapDataPresent()), Flags.MAP_DATA_PRESENT)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isProbe()), Flags.PROBE) | ByteUtil.boolToBit(
-                BooleanUtils.isTrue(mapRequest.isSmr()), Flags.SMR)));
-        requestBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isPitr()), Flags.PITR)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.isSmrInvoked()), Flags.SMR_INVOKED)));
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.getAuthoritative()), Flags.AUTHORITATIVE)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.getMapDataPresent()), Flags.MAP_DATA_PRESENT)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.getProbe()), Flags.PROBE) | ByteUtil.boolToBit(
+                BooleanUtils.isTrue(mapRequest.getSmr()), Flags.SMR)));
+        requestBuffer.put((byte) (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.getPitr()), Flags.PITR)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRequest.getSmrInvoked()), Flags.SMR_INVOKED)));
         if (mapRequest.getItrRloc() != null) {
             int irc = mapRequest.getItrRloc().size();
             if (irc > 0) {
                 irc--;
             }
-            requestBuffer.put((byte) (irc));
+            requestBuffer.put((byte) irc);
         } else {
             requestBuffer.put((byte) 0);
 
@@ -167,7 +167,7 @@ public final class MapRequestSerializer {
                         .withKey(new EidItemKey(LispAddressStringifier.getString(eid)))
                         .setEid(eid).build());
             }
-            if (builder.isMapDataPresent() && requestBuffer.hasRemaining()) {
+            if (builder.getMapDataPresent() && requestBuffer.hasRemaining()) {
                 try {
                     builder.setMapReply(new org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105
                             .maprequest.MapReplyBuilder().setMappingRecord(

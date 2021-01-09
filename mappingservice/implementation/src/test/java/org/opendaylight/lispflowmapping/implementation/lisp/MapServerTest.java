@@ -396,12 +396,12 @@ public class MapServerTest {
 
     private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mr) {
         final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
-                .setXtrSiteIdPresent(mr.isXtrSiteIdPresent())
+                .setXtrSiteIdPresent(mr.getXtrSiteIdPresent())
                 .setSiteId(mr.getSiteId())
                 .setXtrId(mr.getXtrId())
                 .setNonce(mr.getNonce())
                 .setKeyId(mr.getKeyId())
-                .setMergeEnabled(mr.isMergeEnabled())
+                .setMergeEnabled(mr.getMergeEnabled())
                 .setMappingRecordItem(new ArrayList<>())
                 .setAuthenticationData(new byte[]{});
         mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());

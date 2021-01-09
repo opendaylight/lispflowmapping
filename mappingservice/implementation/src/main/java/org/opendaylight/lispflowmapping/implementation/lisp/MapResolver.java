@@ -78,15 +78,15 @@ public class MapResolver implements IMapResolverAsync {
     public void handleMapRequest(MapRequest request) {
         LOG.trace("Map-Request received: {}", request);
         // SMRs and RLOC probes are directed towards xTRs and we're a Map-Resolver here, so ignore them
-        if (request.isSmr() != null && request.isSmr()) {
+        if (request.getSmr() != null && request.getSmr()) {
             LOG.debug("Map-Resolver ignoring incoming SMR control message.");
             return;
         }
-        if (request.isProbe() != null && request.isProbe()) {
+        if (request.getProbe() != null && request.getProbe()) {
             LOG.debug("Map-Resolver ignoring incoming RLOC probe control message.");
             return;
         }
-        if (request.isSmrInvoked()) {
+        if (request.getSmrInvoked()) {
             LOG.debug("SMR-invoked request received.");
             LOG.trace("Map-Request object: {}", request);
             for (EidItem eidItem : request.getEidItem()) {
@@ -160,7 +160,7 @@ public class MapResolver implements IMapResolverAsync {
         return true;
     }
 
-    private Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
+    private static Rloc resolveRloc(List<ItrRloc> itrRlocList, IpAddressBinary srcRloc) {
         if (srcRloc == null) {
             return itrRlocList.get(0).getRloc();
         }
@@ -209,7 +209,7 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     // Fixes mapping if request was for simple dst EID but the matched mapping is a SourceDest
-    private MappingRecord fixIfNotSDRequest(MappingRecord mapping, Eid dstEid) {
+    private static MappingRecord fixIfNotSDRequest(MappingRecord mapping, Eid dstEid) {
         if (mapping.getEid().getAddress() instanceof SourceDestKey
                 && !(dstEid.getAddress() instanceof SourceDestKey)) {
             return new MappingRecordBuilder(mapping).setEid(
@@ -220,14 +220,14 @@ public class MapResolver implements IMapResolverAsync {
 
     // When an SMR-invoked Map-Request is asking for a mapping that is negative, it is most likely an attempt to delete
     // that mapping.
-    private MappingRecord fixTtlIfSmrInvoked(MapRequest request, MappingRecord mapping) {
-        if (request.isSmrInvoked() && MappingRecordUtil.isNegativeMapping(mapping)) {
+    private static MappingRecord fixTtlIfSmrInvoked(MapRequest request, MappingRecord mapping) {
+        if (request.getSmrInvoked() && MappingRecordUtil.isNegativeMapping(mapping)) {
             return new MappingRecordBuilder(mapping).setRecordTtl(TTL_DELETE_MAPPING).build();
         }
         return mapping;
     }
 
-    private boolean locatorsNeedFixing(List<LocatorRecord> locatorRecords) {
+    private static boolean locatorsNeedFixing(List<LocatorRecord> locatorRecords) {
         // no locators - no fixing needed ;)
         if (locatorRecords == null) {
             return false;
@@ -266,10 +266,10 @@ public class MapResolver implements IMapResolverAsync {
                 if (!(container.getAddress() instanceof ExplicitLocatorPath)
                         || elpPolicy.equalsIgnoreCase("default") || itrRlocs == null) {
                     recordBuilder.getLocatorRecord().add(
-                            new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
-                                    .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
+                            new LocatorRecordBuilder().setLocalLocator(record.getLocalLocator())
+                                    .setRlocProbed(record.getRlocProbed()).setWeight(record.getWeight())
                                     .setPriority(record.getPriority()).setMulticastWeight(record.getMulticastWeight())
-                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
+                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(record.getRouted())
                                     .setRloc(container).setLocatorId(record.getLocatorId()).build());
                     continue;
                 }
@@ -280,12 +280,12 @@ public class MapResolver implements IMapResolverAsync {
                     java.lang.Short priority = record.getPriority().toJava();
                     if (elpPolicy.equalsIgnoreCase("both")) {
                         recordBuilder.getLocatorRecord().add(
-                                new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
-                                        .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
+                                new LocatorRecordBuilder().setLocalLocator(record.getLocalLocator())
+                                        .setRlocProbed(record.getRlocProbed()).setWeight(record.getWeight())
                                         .setPriority(record.getPriority())
                                         .setMulticastWeight(record.getMulticastWeight())
                                         .setMulticastPriority(record.getMulticastPriority())
-                                        .setRouted(record.isRouted()).setRloc(container)
+                                        .setRouted(record.getRouted()).setRloc(container)
                                         .setLocatorId(record.getLocatorId()).build());
                         // Make the priority of the added simple locator lower so that ELP is used by default if
                         // the xTR understands ELP. Exclude 255, since that means don't use for unicast forwarding
@@ -296,10 +296,10 @@ public class MapResolver implements IMapResolverAsync {
                     }
                     // Build and add the simple RLOC
                     recordBuilder.getLocatorRecord().add(
-                            new LocatorRecordBuilder().setLocalLocator(record.isLocalLocator())
-                                    .setRlocProbed(record.isRlocProbed()).setWeight(record.getWeight())
+                            new LocatorRecordBuilder().setLocalLocator(record.getLocalLocator())
+                                    .setRlocProbed(record.getRlocProbed()).setWeight(record.getWeight())
                                     .setPriority(fromJava(priority)).setMulticastWeight(record.getMulticastWeight())
-                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(record.isRouted())
+                                    .setMulticastPriority(record.getMulticastPriority()).setRouted(record.getRouted())
                                     .setRloc(LispAddressUtil.toRloc(nextHop))
                                     .setLocatorId(record.getLocatorId()).build());
                 }
@@ -311,7 +311,7 @@ public class MapResolver implements IMapResolverAsync {
         return recordBuilder.build();
     }
 
-    private SimpleAddress getNextELPHop(ExplicitLocatorPath elp, List<ItrRloc> itrRlocs) {
+    private static SimpleAddress getNextELPHop(ExplicitLocatorPath elp, List<ItrRloc> itrRlocs) {
         SimpleAddress nextHop = null;
         List<Hop> hops = elp.getExplicitLocatorPath().getHop();
 

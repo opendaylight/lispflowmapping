@@ -338,7 +338,7 @@ class MultiSiteScenario {
             for (LocatorRecord locatorRecord : locatorRecords) {
                 if (expectedTargetSite.getRloc().equals(rlocToString(locatorRecord))) {
                     final byte[] ipv4AddressSrcDst = verifyIpv4Address(locatorRecord).getValue();
-                    final byte[] rloc = InetAddresses.forString((expectedTargetSite.getRloc())).getAddress();
+                    final byte[] rloc = InetAddresses.forString(expectedTargetSite.getRloc()).getAddress();
                     final boolean isRlocSrcDstEqual = Arrays.equals(ipv4AddressSrcDst, rloc);
                     if (isPossibleAssertPingResultImmediately(expectedPingWorks, isRlocSrcDstEqual, "Unexpected RLOC." +
                             "Expected value " + rloc + ". Real value " + ipv4AddressSrcDst +
@@ -477,7 +477,7 @@ class MultiSiteScenario {
         final SourceEid expectedSourceEid = prepareSourceEid(site);
         for(MapRequest mapRequest : mapRequests) {
             LOG.trace("Map-Request: {}", mapRequest);
-            assertTrue(mapRequest.isSmr());
+            assertTrue(mapRequest.getSmr());
             final SourceEid receivedSourceEid = mapRequest.getSourceEid();
             assertEquals(expectedSourceEid, receivedSourceEid);
             final List<EidItem> currentEidItems = mapRequest.getEidItem();

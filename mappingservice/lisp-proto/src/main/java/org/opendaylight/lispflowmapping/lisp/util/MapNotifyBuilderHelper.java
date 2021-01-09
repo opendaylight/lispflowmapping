@@ -40,9 +40,9 @@ public final class MapNotifyBuilderHelper {
     private static void setNonRecordFields(MapNotifyBuilder builder, MapRegister mapRegister) {
         builder.setNonce(mapRegister.getNonce());
         builder.setKeyId(mapRegister.getKeyId());
-        builder.setMergeEnabled(mapRegister.isMergeEnabled());
-        builder.setXtrSiteIdPresent(mapRegister.isXtrSiteIdPresent());
-        if (mapRegister.isXtrSiteIdPresent()) {
+        builder.setMergeEnabled(mapRegister.getMergeEnabled());
+        builder.setXtrSiteIdPresent(mapRegister.getXtrSiteIdPresent());
+        if (mapRegister.getXtrSiteIdPresent()) {
             builder.setXtrId(mapRegister.getXtrId());
             builder.setSiteId(mapRegister.getSiteId());
         }
