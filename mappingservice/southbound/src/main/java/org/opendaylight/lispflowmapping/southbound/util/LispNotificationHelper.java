@@ -36,19 +36,19 @@ public final class LispNotificationHelper {
 
     public static MapRequest convertMapRequest(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest mapRequest) {
-        return new MapRequestBuilder().setAuthoritative(mapRequest.isAuthoritative())
+        return new MapRequestBuilder().setAuthoritative(mapRequest.getAuthoritative())
                 .setEidItem(mapRequest.getEidItem()).setItrRloc(mapRequest.getItrRloc())
-                .setMapDataPresent(mapRequest.isMapDataPresent()).setMapReply(mapRequest.getMapReply())
-                .setNonce(mapRequest.getNonce()).setPitr(mapRequest.isPitr()).setProbe(mapRequest.isProbe())
-                .setSmr(mapRequest.isSmr()).setSmrInvoked(mapRequest.isSmrInvoked())
+                .setMapDataPresent(mapRequest.getMapDataPresent()).setMapReply(mapRequest.getMapReply())
+                .setNonce(mapRequest.getNonce()).setPitr(mapRequest.getPitr()).setProbe(mapRequest.getProbe())
+                .setSmr(mapRequest.getSmr()).setSmrInvoked(mapRequest.getSmrInvoked())
                 .setSourceEid(mapRequest.getSourceEid()).build();
     }
 
     public static MapReply convertMapReply(
             org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply mapReply) {
-        return new MapReplyBuilder().setEchoNonceEnabled(mapReply.isEchoNonceEnabled())
+        return new MapReplyBuilder().setEchoNonceEnabled(mapReply.getEchoNonceEnabled())
                 .setMappingRecordItem(mapReply.getMappingRecordItem()).setNonce(mapReply.getNonce())
-                .setProbe(mapReply.isProbe()).setSecurityEnabled(mapReply.isSecurityEnabled()).build();
+                .setProbe(mapReply.getProbe()).setSecurityEnabled(mapReply.getSecurityEnabled()).build();
     }
 
     public static IpAddressBinary getIpAddressBinaryFromInetAddress(InetAddress address) {

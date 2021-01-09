@@ -1845,7 +1845,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         sendPacket(mapRegisterPacketWithoutNotify);
 
         MapRequest smr = receiveMapRequest();
-        assertTrue(smr.isSmr());
+        assertTrue(smr.getSmr());
         Eid sourceEid = smr.getSourceEid().getEid();
         assertTrue(LispAddressUtil.asIpv4Eid("153.16.254.1").equals(sourceEid));
         Eid smrEid = smr.getEidItem().get(0).getEid();
@@ -2676,13 +2676,13 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Hop receivedHop1 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(0);
         Hop receivedHop2 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(1);
 
-        assertEquals(true, receivedHop1.getLrsBits().isLookup());
-        assertEquals(false, receivedHop1.getLrsBits().isRlocProbe());
-        assertEquals(true, receivedHop1.getLrsBits().isStrict());
+        assertEquals(true, receivedHop1.getLrsBits().getLookup());
+        assertEquals(false, receivedHop1.getLrsBits().getRlocProbe());
+        assertEquals(true, receivedHop1.getLrsBits().getStrict());
 
-        assertEquals(false, receivedHop2.getLrsBits().isLookup());
-        assertEquals(true, receivedHop2.getLrsBits().isRlocProbe());
-        assertEquals(false, receivedHop2.getLrsBits().isStrict());
+        assertEquals(false, receivedHop2.getLrsBits().getLookup());
+        assertEquals(true, receivedHop2.getLrsBits().getRlocProbe());
+        assertEquals(false, receivedHop2.getLrsBits().getStrict());
 
         assertNotNull(receivedHop1.getAddress().getIpAddress().getIpv4Address());
         assertNotNull(receivedHop2.getAddress().getMacAddress());

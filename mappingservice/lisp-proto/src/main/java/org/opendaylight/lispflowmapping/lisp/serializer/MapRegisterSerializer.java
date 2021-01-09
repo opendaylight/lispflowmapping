@@ -46,7 +46,7 @@ public final class MapRegisterSerializer {
         if (mapRegister.getAuthenticationData() != null) {
             size += mapRegister.getAuthenticationData().length;
         }
-        if (mapRegister.isXtrSiteIdPresent() != null && mapRegister.isXtrSiteIdPresent()) {
+        if (mapRegister.getXtrSiteIdPresent() != null && mapRegister.getXtrSiteIdPresent()) {
             size += Length.XTRID_SIZE + Length.SITEID_SIZE;
         }
         for (MappingRecordItem eidToLocatorRecord : mapRegister.getMappingRecordItem()) {
@@ -55,12 +55,12 @@ public final class MapRegisterSerializer {
 
         ByteBuffer registerBuffer = ByteBuffer.allocate(size);
         registerBuffer.put((byte) ((byte) (MessageType.MapRegister.getIntValue() << 4)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isProxyMapReply()), Flags.PROXY)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isXtrSiteIdPresent()), Flags.XTRSITEID)));
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.getProxyMapReply()), Flags.PROXY)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.getXtrSiteIdPresent()), Flags.XTRSITEID)));
         registerBuffer.position(registerBuffer.position() + Length.RES);
         registerBuffer.put((byte)
-                (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isMergeEnabled()), Flags.MERGE_ENABLED)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.isWantMapNotify()), Flags.WANT_MAP_NOTIFY)));
+                (ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.getMergeEnabled()), Flags.MERGE_ENABLED)
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapRegister.getWantMapNotify()), Flags.WANT_MAP_NOTIFY)));
         registerBuffer.put((byte) mapRegister.getMappingRecordItem().size());
         registerBuffer.putLong(NumberUtil.asLong(mapRegister.getNonce()));
         registerBuffer.putShort(NumberUtil.asShort(mapRegister.getKeyId()));
@@ -75,7 +75,7 @@ public final class MapRegisterSerializer {
             MappingRecordSerializer.getInstance().serialize(registerBuffer, eidToLocatorRecord.getMappingRecord());
         }
 
-        if (mapRegister.isXtrSiteIdPresent() != null && mapRegister.isXtrSiteIdPresent()) {
+        if (mapRegister.getXtrSiteIdPresent() != null && mapRegister.getXtrSiteIdPresent()) {
             registerBuffer.put(mapRegister.getXtrId().getValue());
             registerBuffer.put(mapRegister.getSiteId().getValue());
         }
@@ -112,7 +112,7 @@ public final class MapRegisterSerializer {
             builder.setAuthenticationData(authenticationData);
 
             if (xtrSiteIdPresent) {
-                List<MappingRecordBuilder> mrbs = new ArrayList<MappingRecordBuilder>();
+                List<MappingRecordBuilder> mrbs = new ArrayList<>();
                 for (int i = 0; i < recordCount; i++) {
                     mrbs.add(MappingRecordSerializer.getInstance().deserializeToBuilder(registerBuffer));
                 }

@@ -98,7 +98,7 @@ public final class Stringifier {
         int padLen = Math.max(2, Constants.INET6_ADDRSTRLEN + 2 - rloc.length());
         lrsb.append(rloc);
         lrsb.append(getSpacesAsString(padLen));
-        lrsb.append(locator.isRouted() ? "up        " : "no-route  ");
+        lrsb.append(locator.getRouted() ? "up        " : "no-route  ");
         lrsb.append(locator.getPriority().toString());
         lrsb.append('/');
         lrsb.append(locator.getWeight().toString());

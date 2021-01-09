@@ -205,8 +205,8 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(mr.isProxyMapReply());
-        assertTrue(mr.isWantMapNotify());
+        assertTrue(mr.getProxyMapReply());
+        assertTrue(mr.getWantMapNotify());
 
         assertEquals(1, mr.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mr.getNonce().longValue());
@@ -226,7 +226,7 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "90 87 20 65 9a b7 00 00 00 00 00 00 00 00 ");
         MapRegister mr = MapRegisterSerializer.getInstance().deserialize(bb, null);
 
-        assertTrue(mr.isXtrSiteIdPresent());
+        assertTrue(mr.getXtrSiteIdPresent());
 
         ArrayAssert.assertEquals(bb.array(), MapRegisterSerializer.getInstance().serialize(mr).array());
     }
@@ -315,17 +315,17 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         assertEquals((byte) 0x34, loc1.getMulticastWeight().byteValue());
         assertEquals((byte) 0xA4, loc2.getMulticastWeight().byteValue());
 
-        assertTrue(loc0.isLocalLocator());
-        assertFalse(loc1.isLocalLocator());
-        assertFalse(loc2.isLocalLocator());
+        assertTrue(loc0.getLocalLocator());
+        assertFalse(loc1.getLocalLocator());
+        assertFalse(loc2.getLocalLocator());
 
-        assertFalse(loc0.isRlocProbed());
-        assertTrue(loc1.isRlocProbed());
-        assertTrue(loc2.isRlocProbed());
+        assertFalse(loc0.getRlocProbed());
+        assertTrue(loc1.getRlocProbed());
+        assertTrue(loc2.getRlocProbed());
 
-        assertTrue(loc0.isRouted());
-        assertFalse(loc1.isRouted());
-        assertTrue(loc2.isRouted());
+        assertTrue(loc0.getRouted());
+        assertFalse(loc1.getRouted());
+        assertTrue(loc2.getRouted());
 
         assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), loc0.getRloc());
         assertEquals(LispAddressUtil.asIpv4Rloc("204.170.170.17"), loc1.getRloc());
@@ -377,10 +377,10 @@ public class MapRegisterSerializationTest extends BaseTestCase {
         assertEquals(Action.NoAction, record2.getAction());
         assertEquals(Action.NativelyForward, record3.getAction());
 
-        assertTrue(record0.isAuthoritative());
-        assertTrue(record1.isAuthoritative());
-        assertFalse(record2.isAuthoritative());
-        assertFalse(record3.isAuthoritative());
+        assertTrue(record0.getAuthoritative());
+        assertTrue(record1.getAuthoritative());
+        assertFalse(record2.getAuthoritative());
+        assertFalse(record3.getAuthoritative());
 
         assertEquals(0x000, record0.getMapVersion().shortValue());
         assertEquals(0x111, record1.getMapVersion().shortValue());
@@ -442,8 +442,8 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(mr.isProxyMapReply());
-        assertTrue(mr.isWantMapNotify());
+        assertTrue(mr.getProxyMapReply());
+        assertTrue(mr.getWantMapNotify());
 
         assertEquals(1, mr.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mr.getNonce().longValue());
@@ -476,8 +476,8 @@ public class MapRegisterSerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 " //
                 + "ff 00 00 05 00 01 c0 a8 88 0a"), null);
 
-        assertTrue(mr.isProxyMapReply());
-        assertTrue(mr.isWantMapNotify());
+        assertTrue(mr.getProxyMapReply());
+        assertTrue(mr.getWantMapNotify());
 
         assertEquals(1, mr.getMappingRecordItem().size());
         assertEquals(0xFFBB000000000000L, mr.getNonce().longValue());

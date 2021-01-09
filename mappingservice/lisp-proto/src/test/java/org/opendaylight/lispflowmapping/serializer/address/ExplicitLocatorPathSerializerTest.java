@@ -59,13 +59,13 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         assertEquals(2, hops.size());
 
         assertEquals("170.187.204.221", hops.get(0).getAddress().stringValue());
-        assertEquals(true, hops.get(0).getLrsBits().isLookup().booleanValue());
-        assertEquals(false, hops.get(0).getLrsBits().isRlocProbe().booleanValue());
-        assertEquals(true, hops.get(0).getLrsBits().isStrict().booleanValue());
+        assertEquals(true, hops.get(0).getLrsBits().getLookup().booleanValue());
+        assertEquals(false, hops.get(0).getLrsBits().getRlocProbe().booleanValue());
+        assertEquals(true, hops.get(0).getLrsBits().getStrict().booleanValue());
         assertEquals("17.34.51.68", hops.get(1).getAddress().stringValue());
-        assertEquals(false, hops.get(1).getLrsBits().isLookup().booleanValue());
-        assertEquals(true, hops.get(1).getLrsBits().isRlocProbe().booleanValue());
-        assertEquals(false, hops.get(1).getLrsBits().isStrict().booleanValue());
+        assertEquals(false, hops.get(1).getLrsBits().getLookup().booleanValue());
+        assertEquals(true, hops.get(1).getLrsBits().getRlocProbe().booleanValue());
+        assertEquals(false, hops.get(1).getLrsBits().getStrict().booleanValue());
     }
 
     @Test

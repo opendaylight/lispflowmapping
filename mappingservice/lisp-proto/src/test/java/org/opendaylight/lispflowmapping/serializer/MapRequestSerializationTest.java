@@ -54,26 +54,26 @@ public class MapRequestSerializationTest extends BaseTestCase {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"), null);
-        assertFalse(mr.isAuthoritative());
-        assertTrue(mr.isMapDataPresent());
-        assertTrue(mr.isProbe());
-        assertFalse(mr.isSmr());
+        assertFalse(mr.getAuthoritative());
+        assertTrue(mr.getMapDataPresent());
+        assertTrue(mr.getProbe());
+        assertFalse(mr.getSmr());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"), null);
-        assertTrue(mr.isAuthoritative());
-        assertFalse(mr.isMapDataPresent());
-        assertFalse(mr.isProbe());
-        assertTrue(mr.isSmr());
+        assertTrue(mr.getAuthoritative());
+        assertFalse(mr.getMapDataPresent());
+        assertFalse(mr.getProbe());
+        assertTrue(mr.getSmr());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("1C 00 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"), null);
-        assertTrue(mr.isAuthoritative());
-        assertTrue(mr.isMapDataPresent());
-        assertFalse(mr.isProbe());
-        assertFalse(mr.isSmr());
+        assertTrue(mr.getAuthoritative());
+        assertTrue(mr.getMapDataPresent());
+        assertFalse(mr.getProbe());
+        assertFalse(mr.getSmr());
     }
 
     @Test
@@ -140,14 +140,14 @@ public class MapRequestSerializationTest extends BaseTestCase {
         MapRequest mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("16 80 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"), null);
-        assertTrue(mr.isPitr());
-        assertFalse(mr.isSmrInvoked());
+        assertTrue(mr.getPitr());
+        assertFalse(mr.getSmrInvoked());
 
         mr = MapRequestSerializer.getInstance().deserialize(hexToByteBuffer("19 40 00 01 3d 8d "
                 + "2a cd 39 c8 d6 08 00 00 00 01 c0 a8 88 0a 00 20 "
                 + "00 01 01 02 03 04"), null);
-        assertFalse(mr.isPitr());
-        assertTrue(mr.isSmrInvoked());
+        assertFalse(mr.getPitr());
+        assertTrue(mr.getSmrInvoked());
     }
 
     @Test
@@ -179,7 +179,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), mr.getEidItem().get(0).getEid());
         MappingRecord record = mr.getMapReply().getMappingRecord();
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), record.getEid());
-        assertEquals(false, record.isAuthoritative());
+        assertEquals(false, record.getAuthoritative());
         assertEquals(Action.NoAction, record.getAction());
         assertEquals(0, record.getMapVersion().shortValue());
         assertEquals(32, MaskUtil.getMaskForAddress(record.getEid().getAddress()));
@@ -190,9 +190,9 @@ public class MapRequestSerializationTest extends BaseTestCase {
         assertEquals(2, record.getLocatorRecord().get(0).getWeight().byteValue());
         assertEquals(3, record.getLocatorRecord().get(0).getMulticastPriority().byteValue());
         assertEquals(4, record.getLocatorRecord().get(0).getMulticastWeight().byteValue());
-        assertEquals(true, record.getLocatorRecord().get(0).isLocalLocator());
-        assertEquals(true, record.getLocatorRecord().get(0).isRlocProbed());
-        assertEquals(false, record.getLocatorRecord().get(0).isRouted());
+        assertEquals(true, record.getLocatorRecord().get(0).getLocalLocator());
+        assertEquals(true, record.getLocatorRecord().get(0).getRlocProbed());
+        assertEquals(false, record.getLocatorRecord().get(0).getRouted());
     }
 
     @Test

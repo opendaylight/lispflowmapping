@@ -39,7 +39,7 @@ public final class MappingRecordSerializer {
         MappingRecordBuilder builder = new MappingRecordBuilder();
         builder.setRecordTtl(buffer.getInt());
         final byte locatorCount = (byte) ByteUtil.getUnsignedByte(buffer);
-        final short maskLength = ((short) ByteUtil.getUnsignedByte(buffer));
+        final short maskLength = (short) ByteUtil.getUnsignedByte(buffer);
         final byte actionAndAuthoritative = buffer.get();
         Action act = Action.forValue(actionAndAuthoritative >> 5);
         if (act == null) {
@@ -77,8 +77,8 @@ public final class MappingRecordSerializer {
         if (record.getAction() != null) {
             act = record.getAction();
         }
-        replyBuffer.put((byte) ((act.getIntValue() << 5)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(record.isAuthoritative()), Flags.AUTHORITATIVE)));
+        replyBuffer.put((byte) (act.getIntValue() << 5
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(record.getAuthoritative()), Flags.AUTHORITATIVE)));
         replyBuffer.position(replyBuffer.position() + Length.RESERVED);
         replyBuffer.putShort(NumberUtil.asShort(record.getMapVersion()));
         if (record.getEid() != null && record.getEid().getAddress() != null) {

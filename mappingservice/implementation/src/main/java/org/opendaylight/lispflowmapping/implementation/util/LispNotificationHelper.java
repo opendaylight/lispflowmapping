@@ -112,7 +112,7 @@ public final class LispNotificationHelper {
     }
 
     public static List<Mapping> getMapping(AddMapping mapRegisterNotification) {
-        List<Mapping> mappings = new ArrayList<Mapping>();
+        List<Mapping> mappings = new ArrayList<>();
         for (int i = 0; i < mapRegisterNotification.getMapRegister().getMappingRecordItem().size(); i++) {
             MappingRecord record = mapRegisterNotification.getMapRegister().getMappingRecordItem().get(i)
                     .getMappingRecord();
@@ -128,8 +128,8 @@ public final class LispNotificationHelper {
     }
 
     public static List<SiteId> getSiteId(MapRegister mapRegister) {
-        if (mapRegister.isXtrSiteIdPresent()) {
-            List<SiteId> siteIds = new ArrayList<SiteId>();
+        if (mapRegister.getXtrSiteIdPresent()) {
+            List<SiteId> siteIds = new ArrayList<>();
             SiteId siteId = new SiteId(mapRegister.getSiteId());
             siteIds.add(siteId);
             return siteIds;

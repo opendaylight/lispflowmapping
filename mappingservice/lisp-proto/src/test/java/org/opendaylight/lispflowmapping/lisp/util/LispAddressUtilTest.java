@@ -864,7 +864,7 @@ public class LispAddressUtilTest {
         assertArrayEquals(IPV6_ADDRESS_BYTES_A_TEST, ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary
                 .getAddress()).getIpv6AddressBinary().getValue());
         assertEquals(expectedMask,
-                (short) ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary.getAddress()).getIpv6MaskLength().toJava());
+                ((Ipv6PrefixBinary) eidFromIpv6PrefixBinary.getAddress()).getIpv6MaskLength().toJava());
     }
 
     private void verifyToEidWithIpv4(final Eid eidFromIpv4, final boolean isVniChecked) {
@@ -932,7 +932,7 @@ public class LispAddressUtilTest {
         assertArrayEquals(IPV4_ADDRESS_BYTES_A_TEST,
                 ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4AddressBinary().getValue());
         assertEquals(expectedMask,
-                (short) ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4MaskLength().toJava());
+                ((Ipv4PrefixBinary) eidFromIpv4PrefixBinary.getAddress()).getIpv4MaskLength().toJava());
     }
 
     private void verifyToEidWithIpv6Binary(final Eid eidFromIpv6, final boolean isVniChecked) {
@@ -1212,9 +1212,9 @@ public class LispAddressUtilTest {
 
         for (Hop hop : hops) {
             final Hop.LrsBits lrsBits = hop.getLrsBits();
-            assertFalse(lrsBits.isLookup());
-            assertFalse(lrsBits.isRlocProbe());
-            assertFalse(lrsBits.isStrict());
+            assertFalse(lrsBits.getLookup());
+            assertFalse(lrsBits.getRlocProbe());
+            assertFalse(lrsBits.getStrict());
 
             final IpAddress ipAddressFromHop = hop.getAddress().getIpAddress();
             assertNotNull(ipAddressFromHop);
@@ -1247,9 +1247,9 @@ public class LispAddressUtilTest {
         }
 
         for (LocatorRecord locatorRecord : locatorRecords) {
-            assertFalse(locatorRecord.isLocalLocator());
-            assertFalse(locatorRecord.isRlocProbed());
-            assertTrue(locatorRecord.isRouted());
+            assertFalse(locatorRecord.getLocalLocator());
+            assertFalse(locatorRecord.getRlocProbed());
+            assertTrue(locatorRecord.getRouted());
             assertTrue(1 == locatorRecord.getWeight().toJava());
             assertTrue(1 == locatorRecord.getPriority().toJava());
             assertTrue(1 == locatorRecord.getMulticastWeight().toJava());
