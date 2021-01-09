@@ -76,6 +76,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -120,7 +123,7 @@ public class MappingSystemTest {
     private static final Hop HOP_3 = new HopBuilder().setHopId("hop-id-3").setAddress(SIMPLE_ADDR_3).build();
 
     private static final MappingAuthkeyBuilder MAPPING_AUTHKEY_BUILDER = new MappingAuthkeyBuilder()
-            .setKeyType(1).setKeyString("pass-1");
+            .setKeyType(Uint16.ONE).setKeyString("pass-1");
     private static final Rloc RLOC = LispAddressUtil.toRloc(new Ipv4Address(IPV4_STRING_2));
     private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
     private static final long REGISTRATION_VALIDITY = CONFIG_INI.getRegistrationValiditySb();
@@ -597,8 +600,8 @@ public class MappingSystemTest {
                 .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();
 
         return new ServicePathBuilder().setServicePath(servicePathBuilder
-                .setServiceIndex(index)
-                .setServicePathId(new ServicePathIdType(1L)).build())
+                .setServiceIndex(Uint8.valueOf(index))
+                .setServicePathId(new ServicePathIdType(Uint32.ONE)).build())
                 .build();
     }
 

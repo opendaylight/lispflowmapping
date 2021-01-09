@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInputBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispUtilTest {
     private static final int RECORD_TTL = 1440;
@@ -67,7 +68,7 @@ public class LispUtilTest {
                 .setEid(EID)
                 .setMappingAuthkey(new MappingAuthkeyBuilder()
                         .setKeyString(KEY)
-                        .setKeyType(1).build()).build();
+                        .setKeyType(Uint16.ONE).build()).build();
         final AddKeyInput result = LispUtil.buildAddKeyInput(EID, KEY);
 
         assertEquals(expectedResult, result);

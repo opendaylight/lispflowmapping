@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.subnets.attributes.subnets.Subnet;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class SubnetDataProcessorTest {
 
@@ -59,7 +60,7 @@ public class SubnetDataProcessorTest {
         RpcResult<AddKeyOutput> rpcResult = Mockito.mock(RpcResult.class);
 
         final MappingAuthkey mappingAuthkey = new MappingAuthkeyBuilder()
-                .setKeyString(UUID_STRING).setKeyType(1).build();
+                .setKeyString(UUID_STRING).setKeyType(Uint16.ONE).build();
         final AddKeyInput addKeyInput = new AddKeyInputBuilder()
                 .setEid(EID).setMappingAuthkey(mappingAuthkey).build();
 

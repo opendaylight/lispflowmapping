@@ -27,6 +27,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispAuthenticationTest extends BaseTestCase {
     private static final String PASSWORD = "password";
@@ -53,7 +54,7 @@ public class LispAuthenticationTest extends BaseTestCase {
                         + "ff 00 00 05 00 01 c0 a8 88 0a");
         MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(byteBuffer, null);
 
-        assertFalse(validate(mapRegister, byteBuffer, EID, 1, PASSWORD));
+        assertFalse(validate(mapRegister, byteBuffer, EID, Uint16.ONE, PASSWORD));
     }
 
     @Test
@@ -75,8 +76,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "ff 00 00 05 00 01 c0 a8 88 0a");
         MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(byteBuffer, null);
 
-        assertTrue(validate(mapRegister, byteBuffer, EID, 1, PASSWORD));
-        assertFalse(validate(mapRegister, byteBuffer, EID, 1, WRONG_PASSWORD));
+        assertTrue(validate(mapRegister, byteBuffer, EID, Uint16.ONE, PASSWORD));
+        assertFalse(validate(mapRegister, byteBuffer, EID, Uint16.ONE, WRONG_PASSWORD));
     }
 
     @Test
@@ -104,8 +105,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                 .getInstance()
                 .deserialize(byteBuffer, null);
 
-        assertTrue(validate(mapRegister, byteBuffer, EID, 2, PASSWORD));
-        assertFalse(validate(mapRegister, byteBuffer, EID, 2, WRONG_PASSWORD));
+        assertTrue(validate(mapRegister, byteBuffer, EID, Uint16.TWO, PASSWORD));
+        assertFalse(validate(mapRegister, byteBuffer, EID, Uint16.TWO, WRONG_PASSWORD));
     }
 
     @Test
@@ -127,8 +128,8 @@ public class LispAuthenticationTest extends BaseTestCase {
                 + "ff 00 00 05 00 01 c0 a8 88 0a");
         MapRegister mapRegister = MapRegisterSerializer.getInstance().deserialize(byteBuffer, null);
 
-        assertTrue(validate(mapRegister, byteBuffer, EID, 0, PASSWORD));
-        assertTrue(validate(mapRegister, byteBuffer, EID, 0, WRONG_PASSWORD));
+        assertTrue(validate(mapRegister, byteBuffer, EID, Uint16.ZERO, PASSWORD));
+        assertTrue(validate(mapRegister, byteBuffer, EID, Uint16.ZERO, WRONG_PASSWORD));
     }
 
     // @Test
@@ -191,7 +192,7 @@ public class LispAuthenticationTest extends BaseTestCase {
 
     }
 
-    private static boolean validate(MapRegister mapRegister, ByteBuffer byteBuffer, Eid eid, int keyId, String
+    private static boolean validate(MapRegister mapRegister, ByteBuffer byteBuffer, Eid eid, Uint16 keyId, String
             password) {
         MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(keyId).setKeyString(password).build();
         return LispAuthenticationUtil.validate(mapRegister,byteBuffer, eid, key);

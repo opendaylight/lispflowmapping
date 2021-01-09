@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Xt
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecordBuilder;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class SimpleMapCacheTest {
 
@@ -49,7 +50,7 @@ public class SimpleMapCacheTest {
     private static final XtrId XTR_ID = new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
 
     private static final Eid EID_IPV4_PREFIX_1_VNI = LispAddressUtil
-            .asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING, new InstanceIdType(VNI_100));
+            .asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING, new InstanceIdType(Uint32.valueOf(VNI_100)));
     private static final Eid EID_IPV4_PREFIX_2 = LispAddressUtil
             .asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING);
     private static final Eid EID_IPV4_PREFIX_DST = LispAddressUtil

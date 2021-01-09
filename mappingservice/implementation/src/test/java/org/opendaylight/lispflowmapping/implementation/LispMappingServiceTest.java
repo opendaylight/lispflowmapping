@@ -65,6 +65,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.yang.binding.util.BindingMap;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
@@ -82,7 +84,7 @@ public class LispMappingServiceTest {
             ClusterSingletonServiceProvider.class);
 
     @InjectMocks
-    private LispMappingService lispMappingService = new LispMappingService(
+    private final LispMappingService lispMappingService = new LispMappingService(
             notificationService, mappingService, odlLispSbService, clusterSingletonService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
@@ -105,13 +107,13 @@ public class LispMappingServiceTest {
 
     private static final TransportAddress TRANSPORT_ADDRESS_1 = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
-            .setPort(new PortNumber(9999)).build();
+            .setPort(new PortNumber(Uint16.valueOf(9999))).build();
     private static final TransportAddress TRANSPORT_ADDRESS_2 = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_2)))
-            .setPort(new PortNumber(8888)).build();
+            .setPort(new PortNumber(Uint16.valueOf(8888))).build();
     private static final TransportAddress TRANSPORT_ADDRESS = new TransportAddressBuilder()
             .setIpAddress(new IpAddressBinary(new Ipv4AddressBinary(IPV4_BYTES_1)))
-            .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+            .setPort(new PortNumber(LispMessage.PORT_NUMBER)).build();
 
     /**
      * Tests {@link LispMappingService#handleMapRequest} method.
@@ -389,7 +391,7 @@ public class LispMappingServiceTest {
                 .setEid(IPV4_EID_2).build();
 
         return new MapRegisterCacheMetadataBuilder()
-                .setEidLispAddress(Lists.newArrayList(eidLispAddress_1, eidLispAddress_2))
+                .setEidLispAddress(BindingMap.ordered(eidLispAddress_1, eidLispAddress_2))
                 .setTimestamp(TIMESTAMP).build();
     }
 

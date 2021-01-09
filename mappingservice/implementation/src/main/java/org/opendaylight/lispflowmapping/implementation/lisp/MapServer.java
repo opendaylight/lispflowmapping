@@ -188,7 +188,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         for (IpAddressBinary address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
             tab.setIpAddress(address);
-            tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+            tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
             rlocs.add(tab.build());
         }
         return rlocs;
@@ -382,10 +382,10 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             Address address = eid.getAddress();
             if (address instanceof Ipv4PrefixBinary) {
                 return new EidBuilder(eid).setAddress(new Ipv4PrefixBinaryBuilder((Ipv4PrefixBinary) address)
-                        .setIpv4MaskLength(MaskUtil.IPV4_MAX_MASK).build()).build();
+                        .setIpv4MaskLength(MaskUtil.IPV4_MAX_MASK_UINT).build()).build();
             } else if (address instanceof Ipv6PrefixBinary) {
                 return new EidBuilder(eid).setAddress(new Ipv6PrefixBinaryBuilder((Ipv6PrefixBinary) address)
-                        .setIpv6MaskLength(MaskUtil.IPV6_MAX_MASK).build()).build();
+                        .setIpv6MaskLength(MaskUtil.IPV6_MAX_MASK_UINT).build()).build();
             }
             return eid;
         }

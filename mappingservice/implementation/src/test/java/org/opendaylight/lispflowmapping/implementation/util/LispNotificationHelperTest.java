@@ -50,6 +50,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class LispNotificationHelperTest {
 
@@ -63,7 +64,7 @@ public class LispNotificationHelperTest {
     private static final Ipv6AddressBinary ADDRESS_IPV6_BINARY = new Ipv6AddressBinary(InetAddresses
             .forString(IPV6_STRING).getAddress());
 
-    private static final int PORT = 9999;
+    private static final Uint16 PORT = Uint16.valueOf(9999);
     private static final DistinguishedNameType DISTINGUISHED_NAME_TYPE =
             new DistinguishedNameType(IPV4_STRING + ":" + PORT);
 
@@ -96,7 +97,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv4Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER)).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV4));
     }
@@ -108,7 +109,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv6Address() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV6_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER)).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV6));
     }
@@ -120,7 +121,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv4AddressBinary() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV4_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER)).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV4_BINARY));
     }
@@ -132,7 +133,7 @@ public class LispNotificationHelperTest {
     public void getTransportAddressFromRlocTest_withIpv6AddressBinary() {
         final TransportAddress result = new TransportAddressBuilder()
                 .setIpAddress(new IpAddressBinary(ADDRESS_IPV6_BINARY))
-                .setPort(new PortNumber(LispMessage.PORT_NUM)).build();
+                .setPort(new PortNumber(LispMessage.PORT_NUMBER)).build();
 
         assertEquals(result, LispNotificationHelper.getTransportAddressFromRloc(RLOC_IPV6_BINARY));
     }

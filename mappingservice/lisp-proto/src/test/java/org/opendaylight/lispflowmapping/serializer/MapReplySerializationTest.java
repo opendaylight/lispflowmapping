@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class MapReplySerializationTest extends BaseTestCase {
 
@@ -278,10 +279,10 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocatorBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
 
         LocatorRecordBuilder locatorBuilder1 = new LocatorRecordBuilder();
-        locatorBuilder1.setPriority((short) 0xF3);
-        locatorBuilder1.setWeight((short) 0xF6);
-        locatorBuilder1.setMulticastPriority((short) 0xA3);
-        locatorBuilder1.setMulticastWeight((short) 0x06);
+        locatorBuilder1.setPriority(Uint8.valueOf(0xF3));
+        locatorBuilder1.setWeight(Uint8.valueOf(0xF6));
+        locatorBuilder1.setMulticastPriority(Uint8.valueOf(0xA3));
+        locatorBuilder1.setMulticastWeight(Uint8.valueOf(0x06));
         locatorBuilder1.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.1"));
         locatorBuilder1.setLocalLocator(true);
         locatorBuilder1.setRlocProbed(true);
@@ -290,10 +291,10 @@ public class MapReplySerializationTest extends BaseTestCase {
         eidToLocatorBuilder.getLocatorRecord().add(locatorBuilder1.build());
 
         LocatorRecordBuilder locatorBuilder2 = new LocatorRecordBuilder();
-        locatorBuilder2.setPriority((short) 0x03);
-        locatorBuilder2.setWeight((short) 0x06);
-        locatorBuilder2.setMulticastPriority((short) 0x03);
-        locatorBuilder2.setMulticastWeight((short) 0xF1);
+        locatorBuilder2.setPriority(Uint8.valueOf(0x03));
+        locatorBuilder2.setWeight(Uint8.valueOf(0x06));
+        locatorBuilder2.setMulticastPriority(Uint8.valueOf(0x03));
+        locatorBuilder2.setMulticastWeight(Uint8.valueOf(0xF1));
         locatorBuilder2.setRloc(LispAddressUtil.asIpv4Rloc("0.0.0.2"));
         locatorBuilder2.setLocalLocator(false);
         locatorBuilder2.setRlocProbed(false);
