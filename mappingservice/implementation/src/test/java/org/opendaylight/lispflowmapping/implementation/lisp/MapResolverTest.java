@@ -66,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.RlocBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 public class MapResolverTest {
 
@@ -383,7 +384,7 @@ public class MapResolverTest {
         // result
         final LocatorRecordBuilder locatorRecordBuilder_3 = getDefaultLocatorBuilder()
                 // priority increased by 1
-                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority((short) 1);
+                .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_STRING_2)).setPriority(Uint8.ONE);
         final MappingRecordBuilder resultMappingRecordBuilder = getDefaultMappingRecordBuilder();
 
         // as Ipv4
@@ -556,12 +557,12 @@ public class MapResolverTest {
     private static LocatorRecordBuilder getDefaultLocatorBuilder() {
         return new LocatorRecordBuilder()
                 .setLocalLocator(false)
-                .setMulticastPriority((short) 0)
-                .setMulticastWeight((short) 0)
-                .setPriority((short) 0)
+                .setMulticastPriority(Uint8.ZERO)
+                .setMulticastWeight(Uint8.ZERO)
+                .setPriority(Uint8.ZERO)
                 .setRlocProbed(false)
                 .setRouted(true)
-                .setWeight((short) 0)
+                .setWeight(Uint8.ZERO)
                 .withKey(LOCATOR_RECORD_KEY)
                 .setRloc(LispAddressUtil.asIpv4Rloc(IPV4_RLOC_STRING_1));
     }

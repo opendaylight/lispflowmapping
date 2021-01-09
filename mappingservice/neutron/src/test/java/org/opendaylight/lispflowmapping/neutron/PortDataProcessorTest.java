@@ -41,6 +41,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.por
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.port.attributes.FixedIpsKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.ports.rev150712.ports.attributes.ports.Port;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class PortDataProcessorTest {
 
@@ -60,7 +61,7 @@ public class PortDataProcessorTest {
             .setDistinguishedName(new DistinguishedNameType(HOST_ID_1)).build();
     private static final String UUID_STRING = "123e4567-e89b-12d3-a456-426655440000";
 
-    private PortDataProcessor portDataProcessor = new PortDataProcessor(iLispNeutronServiceMock);
+    private final PortDataProcessor portDataProcessor = new PortDataProcessor(iLispNeutronServiceMock);
 
     @Before
     @SuppressWarnings("unchecked")
@@ -137,7 +138,7 @@ public class PortDataProcessorTest {
         Mockito.when(portMock.getFixedIps()).thenReturn(getDefaultListOfFixedIps());
         Mockito.when(portMock.getTenantId()).thenReturn(new Uuid(TENANT_1));
         Mockito.when(augmentationMock.getHostId()).thenReturn(HOST_ID_1);
-        Mockito.when(hostInformationManager.getInstanceId(TENANT_1)).thenReturn(1L);
+        Mockito.when(hostInformationManager.getInstanceId(TENANT_1)).thenReturn(Uint32.ONE);
     }
 
     private static LocatorRecord getDefaultLocatorRecord() {
@@ -162,7 +163,7 @@ public class PortDataProcessorTest {
     private static Eid getEid(PortDataProcessor portDataProcessor, Port port, FixedIps ip)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         try {
-            Method method = (portDataProcessor.getClass())
+            Method method = portDataProcessor.getClass()
                                 .getDeclaredMethod("getEid", Port.class, FixedIps.class);
             method.setAccessible(true);
             return (Eid) method.invoke(portDataProcessor, port, ip);

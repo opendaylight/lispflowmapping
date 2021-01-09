@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
@@ -78,6 +79,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class LispSouthboundHandlerTest extends BaseTestCase {
 
@@ -119,25 +122,25 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         akdb = Mockito.mock(AuthKeyDb.class);
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "10.10.10.10/8"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "2610:d0:ffff:192:0:0:0:1/128"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "153.16.254.1/32"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
-                "125.124.123.122/8", new InstanceIdType(21L)))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                "125.124.123.122/8", new InstanceIdType(Uint32.valueOf(21))))))
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asMacEid(
                 "0a:0b:0c:0d:0e:0f"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv6PrefixBinaryEid(
                 "f0f:f0f:f0f:f0f:f0f:f0f:f0f:f0f/8"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
         Mockito.when(akdb.getAuthenticationKey(ArgumentMatchers.eq(LispAddressUtil.asIpv4PrefixBinaryEid(
                 "172.1.1.2/32"))))
-                .thenReturn(new MappingAuthkeyBuilder().setKeyType(1).setKeyString("password").build());
+                .thenReturn(new MappingAuthkeyBuilder().setKeyType(Uint16.ONE).setKeyString("password").build());
 
         akdl = Mockito.mock(AuthenticationKeyDataListener.class);
         Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyMap(), Mockito.anyLong())).thenReturn(true);
@@ -614,7 +617,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         MapRegisterCacheMetadataBuilder cacheMetadataBld = new MapRegisterCacheMetadataBuilder();
         cacheMetadataBld.setTimestamp(System.currentTimeMillis() - (cacheRecordTimeouted ? CACHE_RECORD_TIMEOUT : 0L));
         cacheMetadataBld.setWantMapNotify(false);
-        cacheMetadataBld.setEidLispAddress(new ArrayList<>());
+        cacheMetadataBld.setEidLispAddress(Map.of());
 
         MapRegisterCacheValueBuilder cacheValueBld = new MapRegisterCacheValueBuilder();
         cacheValueBld.setMapRegisterCacheMetadata(cacheMetadataBld.build());

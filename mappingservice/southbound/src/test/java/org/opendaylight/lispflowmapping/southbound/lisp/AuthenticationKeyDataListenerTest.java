@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationKeyDataListenerTest {
@@ -59,7 +60,7 @@ public class AuthenticationKeyDataListenerTest {
     private static final Eid IPV4_PREFIX_EID = LispAddressUtil.asIpv4PrefixEid(IPV4_STRING_1 + MASK);
     private static final Eid IPV4_PREFIX_BINARY_EID = LispAddressUtil.asIpv4PrefixBinaryEid(IPV4_STRING_1 + MASK);
 
-    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(1)
+    private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ONE)
             .setKeyString("key").build();
 
     private static final AuthenticationKey AUTHENTICATION_KEY_1 = getAuthenticationKey(IPV4_BINARY_EID_1);

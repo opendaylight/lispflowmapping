@@ -73,9 +73,9 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
-    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
+    private final ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
     private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
@@ -185,7 +185,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             if (rlocs == null) {
                 TransportAddressBuilder tab = new TransportAddressBuilder();
                 tab.setIpAddress(mapRegisterNotification.getTransportAddress().getIpAddress());
-                tab.setPort(new PortNumber(LispMessage.PORT_NUM));
+                tab.setPort(new PortNumber(LispMessage.PORT_NUMBER));
                 sendMapNotify(mapNotify, tab.build());
             } else {
                 for (TransportAddress ta : rlocs) {

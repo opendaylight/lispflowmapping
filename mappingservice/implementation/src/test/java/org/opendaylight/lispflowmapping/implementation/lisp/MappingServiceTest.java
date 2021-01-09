@@ -86,6 +86,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MappingServiceTest {
@@ -110,7 +111,7 @@ public class MappingServiceTest {
     private static final RpcResult<Object> RPC_RESULT_SUCCESS = RpcResultBuilder.success().build();
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder()
             .setKeyString("password")
-            .setKeyType(1).build();
+            .setKeyType(Uint16.ONE).build();
     private static final SiteId SITE_ID = new SiteId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7});
     private static final XtrId XTR_ID = new XtrId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
     private static final MappingData DUMMY_MAPPING = new MappingData(null);
@@ -122,7 +123,7 @@ public class MappingServiceTest {
     public void addKeyTest() throws ExecutionException, InterruptedException {
         final MappingAuthkey mappingAuthkey = new MappingAuthkeyBuilder()
                 .setKeyString("dummy-password")
-                .setKeyType(2).build();
+                .setKeyType(Uint16.TWO).build();
         final AddKeyInput addKeyInput = new AddKeyInputBuilder()
                 .setMappingAuthkey(mappingAuthkey)
                 .setEid(IPV4_EID).build();

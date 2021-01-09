@@ -23,6 +23,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 public class AuthKeyDbTest {
 
@@ -34,7 +35,7 @@ public class AuthKeyDbTest {
     private static final String IPV4_PREFIX_STRING = "/24";
     private static final short MASK = 24;
     private static final long VNI_0 = 0L;
-    private static final long VNI_100 = 100L;
+    private static final Uint32 VNI_100 = Uint32.valueOf(100);
 
     private static final Eid EID_IPV4_PREFIX_1_VNI = LispAddressUtil
             .asIpv4PrefixEid(IPV4_STRING_1 + IPV4_PREFIX_STRING, new InstanceIdType(VNI_100));
@@ -68,7 +69,7 @@ public class AuthKeyDbTest {
      */
     @Test
     public void getAuthenticationKeyTest_withMaskableAddress() {
-        Mockito.when(daoMock.getSpecific(VNI_100, SubKeys.VNI)).thenReturn(tableMock);
+        Mockito.when(daoMock.getSpecific(VNI_100.toJava(), SubKeys.VNI)).thenReturn(tableMock);
         Mockito.when(tableMock.getSpecific(MaskUtil.normalize(EID_IPV4_PREFIX_1_VNI, MASK), SubKeys.AUTH_KEY))
                 .thenReturn(MAPPING_AUTHKEY);
 
