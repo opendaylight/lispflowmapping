@@ -378,16 +378,16 @@ public final class LispAddressStringifier {
             }
             sb.append(LispSimpleAddressStringifier.getString(dst, hop.getAddress()));
             LrsBits lrs = hop.getLrsBits();
-            if (lrs.isLookup() || lrs.isRlocProbe() || lrs.isStrict()) {
+            if (lrs.getLookup() || lrs.getRlocProbe() || lrs.getStrict()) {
                 sb.append("|");
             }
-            if (lrs.isLookup()) {
+            if (lrs.getLookup()) {
                 sb.append("l");
             }
-            if (lrs.isRlocProbe()) {
+            if (lrs.getRlocProbe()) {
                 sb.append("p");
             }
-            if (lrs.isStrict()) {
+            if (lrs.getStrict()) {
                 sb.append("s");
             }
             needArrow = true;

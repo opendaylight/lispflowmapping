@@ -74,9 +74,9 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
-    private boolean authenticationEnabled = ConfigIni.getInstance().isAuthEnabled();
+    private final boolean authenticationEnabled = ConfigIni.getInstance().isAuthEnabled();
     private final LispSouthboundPlugin lispSbPlugin;
-    private boolean isReadFromChannelEnabled = true;
+    private final boolean isReadFromChannelEnabled = true;
 
     private Channel channel;
 
@@ -84,6 +84,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         this.lispSbPlugin = lispSbPlugin;
     }
 
+    @Override
     public void handlePacket(DatagramPacket msg) {
         ByteBuffer inBuffer = msg.content().nioBuffer();
         int type = ByteUtil.getUnsignedByte(inBuffer, LispMessage.Pos.TYPE) >> 4;
@@ -105,7 +106,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
             LOG.trace("Received packet of type Map-Reply");
             handleMapReply(inBuffer, msg.sender().getAddress(), msg.sender().getPort());
         } else {
-            LOG.warn("Received unknown LISP control packet (type " + ((lispType != null) ? lispType : type) + ")");
+            LOG.warn("Received unknown LISP control packet (type " + (lispType != null ? lispType : type) + ")");
         }
     }
 
@@ -148,7 +149,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     private int extractEncapsulatedSourcePort(ByteBuffer inBuffer) {
         try {
             inBuffer.position(PacketHeader.Length.LISP_ENCAPSULATION);
-            int ipType = (inBuffer.get() >> 4);
+            int ipType = inBuffer.get() >> 4;
             if (ipType == 4) {
                 inBuffer.position(inBuffer.position() + PacketHeader.Length.IPV4 - 1);
             } else if (ipType == 6) {
@@ -186,7 +187,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                 cacheValue = refreshEntry(cacheKey);
                 if (cacheValue != null) {
                     lispSbPlugin.sendNotificationIfPossible(createMappingKeepAlive(cacheValue));
-                    if (cacheValue.getMapRegisterCacheMetadata().isWantMapNotify()) {
+                    if (cacheValue.getMapRegisterCacheMetadata().getWantMapNotify()) {
                         sendMapNotifyMsg(inBuffer, sourceAddress, port, cacheValue);
                     }
                 }
@@ -216,8 +217,8 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
                     cacheMetadataBldNew.setEidLispAddress(provideEidPrefixesFromMessage(mapRegister));
                     cacheMetadataBldNew.setXtrId(mapRegister.getXtrId());
                     cacheMetadataBldNew.setSiteId(mapRegister.getSiteId());
-                    cacheMetadataBldNew.setWantMapNotify(mapRegister.isWantMapNotify());
-                    cacheMetadataBldNew.setMergeEnabled(mapRegister.isMergeEnabled());
+                    cacheMetadataBldNew.setWantMapNotify(mapRegister.getWantMapNotify());
+                    cacheMetadataBldNew.setMergeEnabled(mapRegister.getMergeEnabled());
                     cacheMetadataBldNew.setTimestamp(System.currentTimeMillis());
 
                     final MapRegisterCacheValueBuilder cacheValueBldNew = new MapRegisterCacheValueBuilder();
@@ -342,7 +343,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         buffer.position(0);
         byte typeAndFlags = buffer.get(0);
         // Shift the xTR-ID present and built for an RTR bits to their correct position
-        byte flags = (byte) ((typeAndFlags << 2) & 0x0F);
+        byte flags = (byte) (typeAndFlags << 2 & 0x0F);
         // Set control message type to 4 (Map-Notify)
         byte type = 0x40;
         // Combine the nibbles

@@ -112,11 +112,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
-        boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.isMergeEnabled();
+        boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.getMergeEnabled();
         MappingRecord oldMapping;
 
         if (merge) {
-            if (!mapRegister.isXtrSiteIdPresent() || mapRegister.getXtrId() == null) {
+            if (!mapRegister.getXtrSiteIdPresent() || mapRegister.getXtrId() == null) {
                 LOG.error("Merge bit is set in Map-Register, but xTR-ID is not present. Will not merge.");
                 merge = false;
             } else if (Arrays.equals(mapRegister.getXtrId().getValue(), ALL_ZEROES_XTR_ID)) {
@@ -142,7 +142,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 }
             }
         }
-        if (BooleanUtils.isTrue(mapRegister.isWantMapNotify())) {
+        if (BooleanUtils.isTrue(mapRegister.getWantMapNotify())) {
             LOG.trace("MapRegister wants MapNotify");
             MapNotifyBuilder builder = new MapNotifyBuilder();
             List<TransportAddress> rlocs = null;

@@ -70,9 +70,9 @@ public class MapReplySerializationTest extends BaseTestCase {
 
         MapReply mr = MapReplySerializer.getInstance().deserialize(hexToByteBuffer("2A 00 00 00 00 00 "
                 + "00 00 00 00 00 00"));
-        assertEquals(true, mr.isProbe());
-        assertEquals(false, mr.isEchoNonceEnabled());
-        assertEquals(true, mr.isSecurityEnabled());
+        assertEquals(true, mr.getProbe());
+        assertEquals(false, mr.getEchoNonceEnabled());
+        assertEquals(true, mr.getSecurityEnabled());
     }
 
     @Test
@@ -85,14 +85,14 @@ public class MapReplySerializationTest extends BaseTestCase {
                 + "0a 0a 04 03 02 01 00 01 "
                 + "00 02 00 01 00 02 00 03 "
                 + "00 04 00 05 00 06 00 07 00 08 00 00 00 00 00 10 30 00 00 02 00 01 04 03 00 00"));
-        assertEquals(2, mr.getNonce().longValue());
+        assertEquals(2, mr.getNonce());
         assertArrayEquals(new byte[] {1, 2, 3, 4}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(0)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
         // XXX Why here normalized and other cases not normalized?
         assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
-        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
+        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getAuthoritative());
+        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().getAuthoritative());
         assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
         assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
         assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());
@@ -126,16 +126,16 @@ public class MapReplySerializationTest extends BaseTestCase {
         assertEquals(1, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
                 .getMulticastWeight().byteValue());
         assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
-                .isLocalLocator());
+                .getLocalLocator());
         assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
-                .isRlocProbed());
+                .getRlocProbed());
         assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(0)
-                .isRouted());
+                .getRouted());
         assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
-                .isLocalLocator());
+                .getLocalLocator());
         assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1)
-                .isRlocProbed());
-        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).isRouted());
+                .getRlocProbed());
+        assertEquals(true, mr.getMappingRecordItem().get(0).getMappingRecord().getLocatorRecord().get(1).getRouted());
     }
 
     @Test
@@ -177,8 +177,8 @@ public class MapReplySerializationTest extends BaseTestCase {
         // XXX Why here normalized and other cases not normalized?
         assertArrayEquals(new byte[] {4, 3, 0, 0}, ((Ipv4PrefixBinary) mr.getMappingRecordItem().get(1)
                 .getMappingRecord().getEid().getAddress()).getIpv4AddressBinary().getValue());
-        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().isAuthoritative());
-        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().isAuthoritative());
+        assertEquals(false, mr.getMappingRecordItem().get(0).getMappingRecord().getAuthoritative());
+        assertEquals(true, mr.getMappingRecordItem().get(1).getMappingRecord().getAuthoritative());
         assertEquals(Action.NoAction, mr.getMappingRecordItem().get(0).getMappingRecord().getAction());
         assertEquals(Action.NativelyForward, mr.getMappingRecordItem().get(1).getMappingRecord().getAction());
         assertEquals(0, mr.getMappingRecordItem().get(0).getMappingRecord().getMapVersion().shortValue());

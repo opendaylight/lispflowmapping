@@ -362,7 +362,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        assertFalse(captor.getValue().getMapRegister().isWantMapNotify());
+        assertFalse(captor.getValue().getMapRegister().getWantMapNotify());
     }
 
     @Test
@@ -379,7 +379,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        assertFalse(captor.getValue().getMapRegister().isWantMapNotify());
+        assertFalse(captor.getValue().getMapRegister().getWantMapNotify());
     }
 
     @Test
@@ -396,7 +396,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<AddMapping> captor = ArgumentCaptor.forClass(AddMapping.class);
         handleMapRegisterPacket(registerWithNonSetMBit);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        assertTrue(captor.getValue().getMapRegister().isWantMapNotify());
+        assertTrue(captor.getValue().getMapRegister().getWantMapNotify());
     }
 
     /**

@@ -69,9 +69,9 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
                 buffer.put((byte) 0);
                 if (hop.getLrsBits() != null) {
                     buffer.put((byte) (
-                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isLookup()), Flags.LOOKUP)
-                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isRlocProbe()), Flags.RLOC_PROBE)
-                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().isStrict()), Flags.STRICT)));
+                            ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().getLookup()), Flags.LOOKUP)
+                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().getRlocProbe()), Flags.RLOC_PROBE)
+                          | ByteUtil.boolToBit(BooleanUtils.isTrue(hop.getLrsBits().getStrict()), Flags.STRICT)));
                 } else {
                     buffer.put((byte) 0);
                 }
@@ -100,7 +100,7 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
     }
 
     private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
-        List<Hop> hops = new ArrayList<Hop>();
+        List<Hop> hops = new ArrayList<>();
         short length = lcafLength;
         while (length > 0) {
             byte flags = (byte) buffer.getShort();

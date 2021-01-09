@@ -121,10 +121,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 ));
 
 
-        assertTrue(mn.isXtrSiteIdPresent());
+        assertTrue(mn.getXtrSiteIdPresent());
 
         assertEquals(1, mn.getMappingRecordItem().size());
-        assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
+        assertEquals(0xFFBB000000000000L, mn.getNonce());
         assertEquals(0x0000, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = {};
         ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
@@ -264,17 +264,17 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals((byte) 0x34, loc1.getMulticastWeight().byteValue());
         assertEquals((byte) 0xA4, loc2.getMulticastWeight().byteValue());
 
-        assertTrue(loc0.isLocalLocator());
-        assertFalse(loc1.isLocalLocator());
-        assertFalse(loc2.isLocalLocator());
+        assertTrue(loc0.getLocalLocator());
+        assertFalse(loc1.getLocalLocator());
+        assertFalse(loc2.getLocalLocator());
 
-        assertFalse(loc0.isRlocProbed());
-        assertTrue(loc1.isRlocProbed());
-        assertTrue(loc2.isRlocProbed());
+        assertFalse(loc0.getRlocProbed());
+        assertTrue(loc1.getRlocProbed());
+        assertTrue(loc2.getRlocProbed());
 
-        assertTrue(loc0.isRouted());
-        assertFalse(loc1.isRouted());
-        assertTrue(loc2.isRouted());
+        assertTrue(loc0.getRouted());
+        assertFalse(loc1.getRouted());
+        assertTrue(loc2.getRouted());
 
         assertEquals(LispAddressUtil.asIpv4Rloc("192.168.136.10"), loc0.getRloc());
         assertEquals(LispAddressUtil.asIpv4Rloc("204.170.170.17"), loc1.getRloc());
@@ -326,10 +326,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(Action.NoAction, record2.getAction());
         assertEquals(Action.NativelyForward, record3.getAction());
 
-        assertTrue(record0.isAuthoritative());
-        assertTrue(record1.isAuthoritative());
-        assertFalse(record2.isAuthoritative());
-        assertFalse(record3.isAuthoritative());
+        assertTrue(record0.getAuthoritative());
+        assertTrue(record1.getAuthoritative());
+        assertFalse(record2.getAuthoritative());
+        assertFalse(record3.getAuthoritative());
 
         assertEquals(0x000, record0.getMapVersion().shortValue());
         assertEquals(0x111, record1.getMapVersion().shortValue());
@@ -388,10 +388,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
-        assertFalse(mn.isXtrSiteIdPresent());
+        assertFalse(mn.getXtrSiteIdPresent());
 
         assertEquals(1, mn.getMappingRecordItem().size());
-        assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
+        assertEquals((Long) 0xFFBB000000000000L, mn.getNonce());
         assertEquals(0x0001, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a,
             (byte) 0x20, (byte) 0xba, (byte) 0xd8, (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f,
@@ -419,10 +419,10 @@ public class MapNotifySerializationTest extends BaseTestCase {
                 + "00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "ff 00 00 05 00 01 c0 a8 88 0a"));
 
-        assertFalse(mn.isXtrSiteIdPresent());
+        assertFalse(mn.getXtrSiteIdPresent());
 
         assertEquals(1, mn.getMappingRecordItem().size());
-        assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
+        assertEquals((Long) 0xFFBB000000000000L, mn.getNonce());
         assertEquals(0x0002, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = { (byte) 0x70, (byte) 0x30, (byte) 0xd4, (byte) 0xc6, (byte) 0x10,
             (byte) 0x44, (byte) 0x0d, (byte) 0x83, (byte) 0xbe, (byte) 0x4d, (byte) 0xbf, (byte) 0xfd, (byte) 0xa9,

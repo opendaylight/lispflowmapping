@@ -61,7 +61,7 @@ public final class MappingMergeUtil {
         if (!mrb.getAction().equals(record.getAction())) {
             LOG.warn("Mapping merge operation: actions are different, which one is used is undefined");
         }
-        if (mrb.isAuthoritative() != record.isAuthoritative()) {
+        if (mrb.getAuthoritative() != record.getAuthoritative()) {
             LOG.warn("Mapping merge operation: authoritative status is different, which one is used is undefined");
         }
         if (!mrb.getEid().equals(record.getEid())) {
@@ -70,7 +70,7 @@ public final class MappingMergeUtil {
     }
 
     private static LocatorRecord mergeLocators(LocatorRecord existingLocator, LocatorRecord newLocator) {
-        if (existingLocator.isLocalLocator()) {
+        if (existingLocator.getLocalLocator()) {
             return existingLocator;
         }
         return newLocator;

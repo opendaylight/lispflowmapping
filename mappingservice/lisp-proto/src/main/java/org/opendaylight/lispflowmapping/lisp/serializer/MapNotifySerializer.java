@@ -44,7 +44,7 @@ public final class MapNotifySerializer {
         if (mapNotify.getAuthenticationData() != null) {
             size += mapNotify.getAuthenticationData().length;
         }
-        if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
+        if (mapNotify.getXtrSiteIdPresent() != null && mapNotify.getXtrSiteIdPresent()) {
             size += org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.XTRID_SIZE
                   + org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer.Length.SITEID_SIZE;
         }
@@ -54,9 +54,9 @@ public final class MapNotifySerializer {
 
         ByteBuffer replyBuffer = ByteBuffer.allocate(size);
         replyBuffer.put((byte) ((byte) (MessageType.MapNotify.getIntValue() << 4)
-                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isXtrSiteIdPresent()), Flags.XTRSITEID)));
+                | ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.getXtrSiteIdPresent()), Flags.XTRSITEID)));
         replyBuffer.position(replyBuffer.position() + Length.RES);
-        replyBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.isMergeEnabled()), Flags.MERGE_ENABLED));
+        replyBuffer.put(ByteUtil.boolToBit(BooleanUtils.isTrue(mapNotify.getMergeEnabled()), Flags.MERGE_ENABLED));
         if (mapNotify.getMappingRecordItem() != null) {
             replyBuffer.put((byte) mapNotify.getMappingRecordItem().size());
         } else {
@@ -77,7 +77,7 @@ public final class MapNotifySerializer {
             }
         }
 
-        if (mapNotify.isXtrSiteIdPresent() != null && mapNotify.isXtrSiteIdPresent()) {
+        if (mapNotifygetsXtrSiteIdPresent() != null && mapNotify.getXtrSiteIdPresent()) {
             replyBuffer.put(mapNotify.getXtrId().getValue());
             replyBuffer.put(mapNotify.getSiteId().getValue());
         }
@@ -112,7 +112,7 @@ public final class MapNotifySerializer {
             builder.setAuthenticationData(authenticationData);
 
             if (xtrSiteIdPresent) {
-                List<MappingRecordBuilder> mrbs = new ArrayList<MappingRecordBuilder>();
+                List<MappingRecordBuilder> mrbs = new ArrayList<>();
                 for (int i = 0; i < recordCount; i++) {
                     mrbs.add(MappingRecordSerializer.getInstance().deserializeToBuilder(notifyBuffer));
                 }
