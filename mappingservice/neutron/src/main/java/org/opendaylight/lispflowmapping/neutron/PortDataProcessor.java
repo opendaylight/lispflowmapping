@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Vina Ermagan
  */
+@Deprecated
 public class PortDataProcessor implements DataProcessor<Port> {
     private static final Logger LOG = LoggerFactory.getLogger(PortDataProcessor.class);
 

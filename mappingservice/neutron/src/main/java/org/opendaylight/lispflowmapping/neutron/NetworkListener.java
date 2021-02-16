@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * Implementation of a ClusteredDataTreeChangeListener that listens for northbound requests on a {@link Network}
  * subtree.
  */
+@Deprecated
 public class NetworkListener extends DelegatingDataTreeListener<Network> {
 
     private static final DataTreeIdentifier<Network> IDENTIFIER =

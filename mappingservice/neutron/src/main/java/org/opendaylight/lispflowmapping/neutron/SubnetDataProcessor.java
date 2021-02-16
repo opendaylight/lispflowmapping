@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author Vina Ermagan
  *
  */
+@Deprecated
 public class SubnetDataProcessor implements DataProcessor<Subnet> {
     private static final Logger LOG = LoggerFactory.getLogger(SubnetDataProcessor.class);
 //    private static final Integer SIX = Integer.valueOf(6);

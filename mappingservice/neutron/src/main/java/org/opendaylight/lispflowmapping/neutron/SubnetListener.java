@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 /**
  * Implementation of a ClusteredDataTreeChangeListener that listens for northbound requests on a {@link Subnet} subtree.
  */
+@Deprecated
 public class SubnetListener extends DelegatingDataTreeListener<Subnet> {
 
     private static final DataTreeIdentifier<Subnet> IDENTIFIER =

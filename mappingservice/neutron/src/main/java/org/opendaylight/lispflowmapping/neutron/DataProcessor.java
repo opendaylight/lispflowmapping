@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.neutron;
 
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
+@Deprecated
 public interface DataProcessor<T extends DataObject> {
 
     /**

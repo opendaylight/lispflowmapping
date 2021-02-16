@@ -17,6 +17,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.neutron.subnets.rev150712.s
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class LispNeutronService implements ILispNeutronService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LispNeutronService.class);

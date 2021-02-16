@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * LISP Service Implementation of creation and deletion of a Network.
  */
+@Deprecated
 public class NetworkDataProcessor implements DataProcessor<Network> {
     private static final Logger LOG = LoggerFactory.getLogger(NetworkDataProcessor.class);
     private volatile ILispNeutronService lispNeutronService;
