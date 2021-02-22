@@ -34,7 +34,6 @@
     <lispflowmapping.version>1.13.0-SNAPSHOT</lispflowmapping.version>
     <neutron.version>0.16.0-SNAPSHOT</neutron.version>
     <nsf.version>0.16.0-SNAPSHOT</nsf.version>
-    <restconf.version>1.13.0-SNAPSHOT</restconf.version>
     <sal.version>0.20.0-SNAPSHOT</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
