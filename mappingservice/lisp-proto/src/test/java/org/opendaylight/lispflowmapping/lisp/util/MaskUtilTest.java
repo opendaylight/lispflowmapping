@@ -147,7 +147,7 @@ public class MaskUtilTest {
 
         // expected result
         assertArrayEquals(ipv4ExpectedByteAddress, resultPrefix.getIpv4AddressBinary().getValue());
-        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength().toJava());
+        assertEquals(20, resultPrefix.getIpv4MaskLength().toJava());
     }
 
     /**
@@ -161,7 +161,7 @@ public class MaskUtilTest {
 
         // expected result
         assertArrayEquals(ipv6ExpectedByteAddress, resultPrefix.getIpv6AddressBinary().getValue());
-        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength().toJava());
+        assertEquals(66, resultPrefix.getIpv6MaskLength().toJava());
     }
 
     /**
@@ -225,7 +225,7 @@ public class MaskUtilTest {
         // expected result
         final byte[] expectedResult = Inet4Address.getByName("255.255.240.0").getAddress();
         assertArrayEquals(expectedResult, resultPrefix.getIpv4AddressBinary().getValue());
-        assertEquals((short) 20, (short) resultPrefix.getIpv4MaskLength().toJava());
+        assertEquals(20, resultPrefix.getIpv4MaskLength().toJava());
     }
 
     /**
@@ -240,7 +240,7 @@ public class MaskUtilTest {
         // expected result
         final byte[] expectedResult = Inet6Address.getByName("1111:2222:3333:4444:4000::").getAddress();
         assertArrayEquals(expectedResult, resultPrefix.getIpv6AddressBinary().getValue());
-        assertEquals((short) 66, (short) resultPrefix.getIpv6MaskLength().toJava());
+        assertEquals(66, resultPrefix.getIpv6MaskLength().toJava());
     }
 
     /**

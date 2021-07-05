@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.lisp.type;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.record.container.MappingRecord.Action;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecord.Action;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
 public interface LispMessage {

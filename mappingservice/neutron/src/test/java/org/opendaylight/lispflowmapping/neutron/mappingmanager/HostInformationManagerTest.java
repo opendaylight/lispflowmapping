@@ -34,7 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 @PrepareForTest(HostInformationManager.class)
 public class HostInformationManagerTest {
 
-    private OdlMappingserviceService lfmDbService = Mockito.mock(OdlMappingserviceService.class);
+    private final OdlMappingserviceService lfmDbService = Mockito.mock(OdlMappingserviceService.class);
 
     private static final String HOST_ID = "compute0";
 
