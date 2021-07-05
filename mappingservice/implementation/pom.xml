@@ -21,8 +21,7 @@
   <dependencies>
     <dependency>
       <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
+      <artifactId>osgi.core</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
