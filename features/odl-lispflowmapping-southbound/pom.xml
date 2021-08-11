@@ -18,7 +18,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>odl-lispflowmapping-southbound</artifactId>
-  <version>1.13.3-SNAPSHOT</version>
+  <version>1.13.4-SNAPSHOT</version>
   <packaging>feature</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
@@ -28,14 +28,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>odl-restconf</artifactId>
-      <version>1.13.3</version>
+      <version>1.13.4</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>odl-mdsal-broker</artifactId>
-      <version>3.0.9</version>
+      <version>3.0.10</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
