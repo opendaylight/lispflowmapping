@@ -30,7 +30,6 @@
     <module>config</module>
     <module>implementation</module>
     <module>southbound</module>
-    <module>neutron</module>
     <module>shell</module>
   </modules>
 

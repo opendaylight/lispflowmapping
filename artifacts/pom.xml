@@ -53,11 +53,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>mappingservice.neutron</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
         <artifactId>mappingservice.shell</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -123,13 +118,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>odl-lispflowmapping-mappingservice-shell</artifactId>
-        <version>${project.version}</version>
-        <classifier>features</classifier>
-        <type>xml</type>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>odl-lispflowmapping-neutron</artifactId>
         <version>${project.version}</version>
         <classifier>features</classifier>
         <type>xml</type>
