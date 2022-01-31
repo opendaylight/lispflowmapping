@@ -18,7 +18,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>odl-lispflowmapping-neutron</artifactId>
-  <version>1.13.5-SNAPSHOT</version>
+  <version>1.13.6-SNAPSHOT</version>
   <packaging>feature</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
@@ -52,7 +52,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.opendaylight.neutron</groupId>
       <artifactId>odl-neutron-service</artifactId>
-      <version>0.16.4-SNAPSHOT</version>
+      <version>0.16.5-SNAPSHOT</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
