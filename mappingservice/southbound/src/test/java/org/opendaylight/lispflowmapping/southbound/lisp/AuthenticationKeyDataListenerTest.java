@@ -154,7 +154,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(mod_nullModType.getModificationType()).thenReturn(null);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_nullModType));
-        Mockito.verifyZeroInteractions(akdbMock);
+        Mockito.verifyNoInteractions(akdbMock);
     }
 
     /**
