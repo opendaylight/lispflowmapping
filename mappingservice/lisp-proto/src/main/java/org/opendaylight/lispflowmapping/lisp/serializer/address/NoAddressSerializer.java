@@ -47,7 +47,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(NoAddressAfi.class);
         eb.setVirtualNetworkId(getVni(ctx));
-        eb.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
+        eb.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return eb.build();
     }
 
@@ -56,7 +56,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(NoAddressAfi.class);
         rb.setVirtualNetworkId(null);
-        rb.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
+        rb.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return rb.build();
     }
 

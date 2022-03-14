@@ -12,7 +12,9 @@ import static org.junit.Assert.assertNull;
 
 import com.google.common.io.BaseEncoding;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.AsNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -154,13 +156,14 @@ public class LispAddressStringifierTest {
     private static final LispAddress LISP_AS_NUMBER = new EidBuilder().setAddress(AS_NUMBER_LISP_TYPE).build();
 
     // NoAddress
-    private static final NoAddress NO_ADDRESS = new NoAddressBuilder().setNoAddress(Empty.getInstance()).build();
+    private static final NoAddress NO_ADDRESS = new NoAddressBuilder().setNoAddress(Empty.value()).build();
     private static final LispAddress LISP_NO_ADDRESS = new EidBuilder().setAddress(NO_ADDRESS).build();
 
     // AfiList
     private static final SimpleAddress SIMPLE_ADDRESS_1 = new SimpleAddress(new IpAddress(IPV4_ADDRESS));
     private static final SimpleAddress SIMPLE_ADDRESS_2 = new SimpleAddress(new IpAddress(IPV6_ADDRESS));
-    private static final List<SimpleAddress> ADDRESS_LIST = new ArrayList<>();
+    // FIXME: this is ugly as hell, this Set should be immutable
+    private static final Set<SimpleAddress> ADDRESS_LIST = new LinkedHashSet<>();
     private static final AfiList AFI_LIST = new AfiListBuilder().setAfiList(new org.opendaylight.yang.gen.v1.urn.ietf
             .params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.afi.list.AfiListBuilder()
             .setAddressList(ADDRESS_LIST).build()).build();

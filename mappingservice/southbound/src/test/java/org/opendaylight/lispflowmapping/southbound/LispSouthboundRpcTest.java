@@ -46,6 +46,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStats;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -59,7 +61,7 @@ public class LispSouthboundRpcTest {
     private static final RpcResult<Void> RPC_RESULT_FAILURE = RpcResultBuilder.<Void>failed().build();
     private static final RpcResult<Void> RPC_RESULT_SUCCESS = RpcResultBuilder.<Void>success().build();
     private static final RpcResult<GetStatsOutput> RPC_RESULT_ERROR = RpcResultBuilder.<GetStatsOutput>failed()
-            .withError(RpcError.ErrorType.APPLICATION, "data-missing", "No stats found").build();
+            .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, "No stats found").build();
 
     /**
      * Tests {@link LispSouthboundRPC#sendMapNotify} method.
@@ -88,7 +90,7 @@ public class LispSouthboundRpcTest {
         assertEquals(RPC_RESULT_FAILURE.isSuccessful(),
                 lispSouthboundRPC.sendMapNotify(null).get().isSuccessful());
 
-        Mockito.verifyZeroInteractions(lispSouthboundPlugin);
+        Mockito.verifyNoInteractions(lispSouthboundPlugin);
     }
 
     /**
@@ -118,7 +120,7 @@ public class LispSouthboundRpcTest {
         assertEquals(RPC_RESULT_FAILURE.isSuccessful(),
                 lispSouthboundRPC.sendMapReply(null).get().isSuccessful());
 
-        Mockito.verifyZeroInteractions(lispSouthboundPlugin);
+        Mockito.verifyNoInteractions(lispSouthboundPlugin);
     }
 
     /**
@@ -148,7 +150,7 @@ public class LispSouthboundRpcTest {
         assertEquals(RPC_RESULT_FAILURE.isSuccessful(),
                 lispSouthboundRPC.sendMapRequest(null).get().isSuccessful());
 
-        Mockito.verifyZeroInteractions(lispSouthboundPlugin);
+        Mockito.verifyNoInteractions(lispSouthboundPlugin);
     }
 
     /**
@@ -178,7 +180,7 @@ public class LispSouthboundRpcTest {
         assertEquals(RPC_RESULT_FAILURE.isSuccessful(),
                 lispSouthboundRPC.sendMapRegister(null).get().isSuccessful());
 
-        Mockito.verifyZeroInteractions(lispSouthboundPlugin);
+        Mockito.verifyNoInteractions(lispSouthboundPlugin);
     }
 
     /**

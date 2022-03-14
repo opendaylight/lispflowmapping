@@ -56,7 +56,7 @@ public class DistinguishedNameSerializerTest extends BaseTestCase {
                 + "00 11 64 61 76 69 64 00"), null);
 
         assertEquals(AfiListLcaf.class, address.getAddressType());
-        assertEquals("david", ((AfiList) address.getAddress()).getAfiList().getAddressList().get(0)
+        assertEquals("david", ((AfiList) address.getAddress()).getAfiList().getAddressList().iterator().next()
                 .getDistinguishedNameType().getValue());
 
     }

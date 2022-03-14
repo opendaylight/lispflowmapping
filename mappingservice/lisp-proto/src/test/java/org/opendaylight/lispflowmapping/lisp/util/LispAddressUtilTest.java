@@ -1275,7 +1275,7 @@ public class LispAddressUtilTest {
         final Eid noAddressEid = LispAddressUtil.getNoAddressEid();
         assertEquals(NoAddressAfi.class, noAddressEid.getAddressType());
         assertNull(noAddressEid.getVirtualNetworkId());
-        assertEquals(((NoAddress) noAddressEid.getAddress()).getNoAddress(), Empty.getInstance());
+        assertEquals(((NoAddress) noAddressEid.getAddress()).getNoAddress(), Empty.value());
     }
 
     /**

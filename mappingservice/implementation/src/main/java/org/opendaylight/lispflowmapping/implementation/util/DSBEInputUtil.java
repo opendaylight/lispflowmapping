@@ -10,8 +10,7 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import static java.util.Objects.requireNonNull;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -41,7 +40,7 @@ public final class DSBEInputUtil {
 
     public static Mapping toMapping(MappingOrigin origin, Eid key, SiteId siteId, MappingData mappingData) {
         MappingRecord record = mappingData != null ? mappingData.getRecord() : null;
-        List<SiteId> siteIds = siteId != null ? Arrays.asList(siteId) : null;
+        Set<SiteId> siteIds = siteId != null ? Set.of(siteId) : null;
         return new MappingBuilder()
                     .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
                     .setOrigin(origin)
@@ -53,7 +52,7 @@ public final class DSBEInputUtil {
         MappingRecord record = mappingData != null ? mappingData.getRecord() :
                                                         new MappingRecordBuilder().setEid(key).build();
         SiteId siteId = record != null ? record.getSiteId() : null;
-        List<SiteId> siteIds = siteId != null ? Arrays.asList(siteId) : null;
+        Set<SiteId> siteIds = siteId != null ? Set.of(siteId) : null;
         return new MappingBuilder()
                 .setEidUri(new EidUri(LispAddressStringifier.getURIString(key)))
                 .setOrigin(origin)

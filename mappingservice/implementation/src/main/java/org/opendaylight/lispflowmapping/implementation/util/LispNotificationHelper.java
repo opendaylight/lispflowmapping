@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
@@ -127,12 +128,9 @@ public final class LispNotificationHelper {
         return mappings;
     }
 
-    public static List<SiteId> getSiteId(MapRegister mapRegister) {
+    public static Set<SiteId> getSiteId(MapRegister mapRegister) {
         if (mapRegister.getXtrSiteIdPresent()) {
-            List<SiteId> siteIds = new ArrayList<>();
-            SiteId siteId = new SiteId(mapRegister.getSiteId());
-            siteIds.add(siteId);
-            return siteIds;
+            return Set.of(new SiteId(mapRegister.getSiteId()));
         } else {
             return null;
         }

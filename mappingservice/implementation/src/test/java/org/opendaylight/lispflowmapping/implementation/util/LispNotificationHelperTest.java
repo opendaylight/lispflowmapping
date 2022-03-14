@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -231,13 +232,13 @@ public class LispNotificationHelperTest {
                 .setMappingRecord(new MappingRecordBuilder().setEid(EID_IPV4).build())
                 .setEidUri(new EidUri("ipv4:" + IPV4_STRING))
                 .setOrigin(MappingOrigin.Southbound)
-                .setSiteId(Lists.newArrayList(SITE_ID));
+                .setSiteId(Set.of(SITE_ID));
 
         final MappingBuilder mappingBuilder_2 = new MappingBuilder()
                 .setMappingRecord(new MappingRecordBuilder().setEid(EID_IPV6).build())
                 .setEidUri(new EidUri("ipv6:" + IPV6_STRING))
                 .setOrigin(MappingOrigin.Southbound)
-                .setSiteId(Lists.newArrayList(SITE_ID));
+                .setSiteId(Set.of(SITE_ID));
 
         assertEquals(Lists.newArrayList(mappingBuilder_1.build(), mappingBuilder_2.build()),
                 LispNotificationHelper.getMapping(getDefaultAddMapping(true)));
@@ -298,7 +299,7 @@ public class LispNotificationHelperTest {
                 .build();
     }
 
-    private static AddMapping getDefaultAddMapping(boolean isXtrSiteIdPresent) {
+    private static AddMapping getDefaultAddMapping(final boolean isXtrSiteIdPresent) {
         final MappingRecordItem mappingRecordItem_1 = new MappingRecordItemBuilder()
                 .withKey(new MappingRecordItemKey(IPV4_STRING))
                 .setMappingRecord(new MappingRecordBuilder().setEid(EID_IPV4).build()).build();

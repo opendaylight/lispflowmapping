@@ -83,6 +83,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -130,7 +132,7 @@ public class MappingServiceTest {
         Mockito.when(mappingSystem.getAuthenticationKey(IPV4_EID)).thenReturn(MAPPING_AUTHKEY);
 
         // input
-        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(RpcError.ErrorType.PROTOCOL, "data-exists",
+        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(ErrorType.PROTOCOL, ErrorTag.DATA_EXISTS,
                 "Key already exists! Please use update-key if you want to change it.").build();
         // equals() not implemented int RpcError
         final RpcError error = rpc.getErrors().iterator().next();
@@ -211,7 +213,7 @@ public class MappingServiceTest {
         Mockito.when(mappingSystem.getAuthenticationKey(getKeyInput.getEid())).thenReturn(null);
 
         final RpcResult<Object> rpc = RpcResultBuilder.failed()
-                .withError(RpcError.ErrorType.APPLICATION, "data-missing", "Key was not found in the mapping database")
+                .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, "Key was not found in the mapping database")
                 .build();
         final RpcError error = rpc.getErrors().iterator().next();
 
@@ -245,7 +247,7 @@ public class MappingServiceTest {
         Mockito.when(mappingSystem.getMapping(getMappingInput.getEid())).thenReturn(mappingData);
 
         final RpcResult<GetMappingOutput> rpc = RpcResultBuilder
-                .success(new GetMappingOutputBuilder().setMappingRecord(nonBinaryMappingRecord)).build();
+                .success(new GetMappingOutputBuilder().setMappingRecord(nonBinaryMappingRecord).build()).build();
 
         //result
         final Future<RpcResult<GetMappingOutput>> result = mappingService.getMapping(getMappingInput);
@@ -265,8 +267,8 @@ public class MappingServiceTest {
         final GetMappingInput getMappingInput = new GetMappingInputBuilder().setEid(IPV4_EID).build();
         Mockito.when(mappingSystem.getMapping(getMappingInput.getEid())).thenReturn(null);
 
-        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(RpcError.ErrorType.APPLICATION,
-                "data-missing", "No mapping was found in the mapping database").build();
+        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING,
+                "No mapping was found in the mapping database").build();
         final RpcError error = rpc.getErrors().iterator().next();
 
         //result
@@ -340,7 +342,7 @@ public class MappingServiceTest {
         Mockito.when(mappingSystem.getAuthenticationKey(IPV4_EID)).thenReturn(null);
 
         // input
-        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(RpcError.ErrorType.PROTOCOL, "data-missing",
+        final RpcResult<Object> rpc = RpcResultBuilder.failed().withError(ErrorType.PROTOCOL, ErrorTag.DATA_MISSING,
                 "Key doesn't exist! Please use add-key if you want to create a new authentication key.").build();
         final RpcError error = rpc.getErrors().iterator().next();
 

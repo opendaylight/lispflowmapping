@@ -40,7 +40,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessageBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
-import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
@@ -134,7 +135,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
 
         if (stats == null) {
             rpcResultBuilder = RpcResultBuilder.<GetStatsOutput>failed()
-                    .withError(RpcError.ErrorType.APPLICATION, "data-missing", "No stats found");
+                    .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, "No stats found");
         } else {
             rpcResultBuilder = RpcResultBuilder.success(createGetStatsOutput(stats));
         }
@@ -149,7 +150,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
 
         if (stats == null) {
             return Futures.immediateFuture(RpcResultBuilder.<ResetStatsOutput>failed()
-                    .withError(RpcError.ErrorType.APPLICATION, "data-missing", "No stats found")
+                    .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, "No stats found")
                     .build());
         } else {
             stats.resetStats();

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.lispflowmapping.lisp.serializer.address;
 
+import com.google.common.collect.ImmutableSet;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import org.opendaylight.lispflowmapping.lisp.type.LispCanonicalAddressFormatEnum;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.AfiListLcaf;
@@ -42,8 +42,8 @@ public final class AfiListSerializer extends LcafSerializer {
     @Override
     protected short getLcafLength(LispAddress lispAddress) {
         short totalSize = 0;
-        AfiList afiList = (((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
-                .lisp.address.address.AfiList) lispAddress.getAddress()).getAfiList());
+        AfiList afiList = ((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
+                .lisp.address.address.AfiList) lispAddress.getAddress()).getAfiList();
         for (SimpleAddress address : afiList.getAddressList()) {
             totalSize += SimpleAddressSerializer.getInstance().getAddressSize(address);
         }
@@ -82,14 +82,21 @@ public final class AfiListSerializer extends LcafSerializer {
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
-        List<SimpleAddress> addresses = new ArrayList<SimpleAddress>();
-        short length = lcafLength;
-        while (length > 0) {
-            SimpleAddress address = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
-            length -= SimpleAddressSerializer.getInstance().getAddressSize(address);
-            addresses.add(address);
+    private static Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
+        final Set<SimpleAddress> addresses;
+        if (lcafLength > 0) {
+            ImmutableSet.Builder<SimpleAddress> builder = ImmutableSet.builderWithExpectedSize(lcafLength);
+            short length = lcafLength;
+            while (length > 0) {
+                SimpleAddress address = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
+                length -= SimpleAddressSerializer.getInstance().getAddressSize(address);
+                builder.add(address);
+            }
+            addresses = builder.build();
+        } else {
+            addresses = Set.of();
         }
+
         return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp
                 .address.address.AfiListBuilder().setAfiList(new AfiListBuilder().setAddressList(addresses).build())
                 .build();
