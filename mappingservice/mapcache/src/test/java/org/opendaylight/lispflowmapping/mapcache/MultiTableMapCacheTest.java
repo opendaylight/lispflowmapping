@@ -11,14 +11,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.MappingEntry;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -205,8 +204,8 @@ public class MultiTableMapCacheTest {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
 
         multiTableMapCache.removeMapping(EID_SOURCE_DEST_KEY_TYPE);
-        verifyZeroInteractions(tableDaoMock);
-        verifyZeroInteractions(dbMock);
+        verifyNoInteractions(tableDaoMock);
+        verifyNoInteractions(dbMock);
     }
 
     /**
@@ -300,7 +299,7 @@ public class MultiTableMapCacheTest {
         when(daoMock.getSpecific(VNI, SubKeys.VNI)).thenReturn(null);
         multiTableMapCache.removeData(EID_TEST, SubKeys.RECORD);
 
-        Mockito.verifyZeroInteractions(tableDaoMock);
+        verifyNoInteractions(tableDaoMock);
     }
 
     /**

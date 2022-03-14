@@ -324,10 +324,9 @@ public final class LispAddressStringifier {
         // AFI 16387, LCAF Type 1; Address List
         // Example rendering:
         //    {192.0.2.1,192.0.2.2,2001:db8::1}
-        List<SimpleAddress> addresses = addr.getAfiList().getAddressList();
         StringBuilder sb = new StringBuilder("{");
         boolean needComma = false;
-        for (SimpleAddress a : addresses) {
+        for (SimpleAddress a : addr.getAfiList().getAddressList()) {
             if (needComma) {
                 sb.append(",");
             }
