@@ -144,8 +144,8 @@ public class LispSouthboundPluginTest {
         injectField("bootstrap", BOOTSTRAP_MOCK);
         lispSouthboundPlugin.setLispAddress(ADDRESS_1);
 
-        Mockito.verifyZeroInteractions(BOOTSTRAP_MOCK);
-        Mockito.verifyZeroInteractions(channel);
+        Mockito.verifyNoInteractions(BOOTSTRAP_MOCK);
+        Mockito.verifyNoInteractions(channel);
     }
 
     /**
@@ -165,7 +165,7 @@ public class LispSouthboundPluginTest {
     public void shouldListenOnXtrPortTest_false() throws NoSuchFieldException, IllegalAccessException {
         lispSouthboundPlugin.shouldListenOnXtrPort(false);
 
-        Mockito.verifyZeroInteractions(xtrChannel);
+        Mockito.verifyNoInteractions(xtrChannel);
     }
 
     /**

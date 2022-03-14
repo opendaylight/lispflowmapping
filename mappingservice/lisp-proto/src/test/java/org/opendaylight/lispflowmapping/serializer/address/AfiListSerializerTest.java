@@ -9,9 +9,10 @@ package org.opendaylight.lispflowmapping.serializer.address;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.ImmutableSet;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 import junitx.framework.ArrayAssert;
 import junitx.framework.Assert;
 import org.junit.Test;
@@ -38,11 +39,12 @@ public class AfiListSerializerTest extends BaseTestCase {
         assertEquals(AfiListLcaf.class, address.getAddressType());
         AfiList afiList = (AfiList) address.getAddress();
 
-        List<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
+        Set<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
         assertEquals(2, addressList.size());
 
-        assertEquals("170.187.204.221", addressList.get(0).stringValue());
-        assertEquals("1122:3344:1122:3344:1122:3344:1122:3344", addressList.get(1).stringValue());
+        Iterator<SimpleAddress> it = addressList.iterator();
+        assertEquals("170.187.204.221", it.next().stringValue());
+        assertEquals("1122:3344:1122:3344:1122:3344:1122:3344", it.next().stringValue());
     }
 
     @Test
@@ -53,8 +55,7 @@ public class AfiListSerializerTest extends BaseTestCase {
         assertEquals(AfiListLcaf.class, address.getAddressType());
         AfiList afiList = (AfiList) address.getAddress();
 
-        List<SimpleAddress> addressList = afiList.getAfiList().getAddressList();
-        assertEquals(0, addressList.size());
+        assertEquals(Set.of(), afiList.getAfiList().getAddressList());
     }
 
     @Test(expected = LispSerializationException.class)
@@ -74,10 +75,9 @@ public class AfiListSerializerTest extends BaseTestCase {
     @Test
     public void serialize__Simple() throws Exception {
         AfiListBuilder listBuilder = new AfiListBuilder();
-        List<SimpleAddress> addressList = new ArrayList<>();
-        addressList.add(SimpleAddressBuilder.getDefaultInstance("170.187.204.221"));
-        addressList.add(SimpleAddressBuilder.getDefaultInstance("1122:3344:1122:3344:1122:3344:1122:3344"));
-        listBuilder.setAddressList(addressList);
+        listBuilder.setAddressList(ImmutableSet.of(
+            SimpleAddressBuilder.getDefaultInstance("170.187.204.221"),
+            SimpleAddressBuilder.getDefaultInstance("1122:3344:1122:3344:1122:3344:1122:3344")));
 
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(AfiListLcaf.class);
@@ -98,8 +98,7 @@ public class AfiListSerializerTest extends BaseTestCase {
     @Test
     public void serialize__NoAddresses() throws Exception {
         AfiListBuilder listBuilder = new AfiListBuilder();
-        List<SimpleAddress> addressList = new ArrayList<>();
-        listBuilder.setAddressList(addressList);
+        listBuilder.setAddressList(Set.of());
 
         RlocBuilder rb = new RlocBuilder();
         rb.setAddressType(AfiListLcaf.class);
@@ -120,17 +119,14 @@ public class AfiListSerializerTest extends BaseTestCase {
         final SimpleAddress ip1 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:1");
         final SimpleAddress ip2 = SimpleAddressBuilder.getDefaultInstance("0:0:0:0:0:0:0:2");
 
-        AfiListBuilder listBuilder = new AfiListBuilder().setAddressList(new ArrayList<SimpleAddress>());
+        AfiListBuilder listBuilder = new AfiListBuilder().setAddressList(Set.of(ip1));
 
-        listBuilder.getAddressList().add(ip1);
         final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address1 = listBuilder.build();
-        listBuilder.setAddressList(new ArrayList<SimpleAddress>());
-        listBuilder.getAddressList().add(ip1);
+        listBuilder.setAddressList(Set.of(ip1));
         final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address2 = listBuilder.build();
-        listBuilder.setAddressList(new ArrayList<SimpleAddress>());
-        listBuilder.getAddressList().add(ip2);
+        listBuilder.setAddressList(Set.of(ip2));
         final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
 
