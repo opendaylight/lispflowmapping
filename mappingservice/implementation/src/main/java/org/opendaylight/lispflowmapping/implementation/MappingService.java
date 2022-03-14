@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsOutput;
-import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
@@ -110,8 +110,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
-    private static final String NOT_FOUND_TAG = "data-missing";
-    private static final String DATA_EXISTS_TAG = "data-exists";
 
     private MappingSystem mappingSystem;
     private DataStoreBackEnd dsbe;
@@ -168,7 +166,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public ListenableFuture<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
         requireNonNull(input, "add-key RPC input must be not null!");
-        LOG.trace("RPC received to add the following key: " + input.toString());
+        LOG.trace("RPC received to add the following key: {}", input);
 
         RpcResultBuilder<AddKeyOutput> rpcResultBuilder;
 
@@ -177,20 +175,20 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (key != null) {
             String message = "Key already exists! Please use update-key if you want to change it.";
             rpcResultBuilder = RpcResultBuilder.<AddKeyOutput>failed()
-                    .withError(RpcError.ErrorType.PROTOCOL, DATA_EXISTS_TAG, message);
-            return Futures.immediateFuture(rpcResultBuilder.build());
+                    .withError(ErrorType.PROTOCOL, ErrorTag.DATA_EXISTS, message);
+            return rpcResultBuilder.buildFuture();
         }
 
         dsbe.addAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
         rpcResultBuilder = RpcResultBuilder.success(new AddKeyOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
     public ListenableFuture<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
         requireNonNull(input, "add-mapping RPC input must be not null!");
-        LOG.trace("RPC received to add the following mapping: " + input.toString());
+        LOG.trace("RPC received to add the following mapping: {}", input);
 
         dsbe.addMapping(RPCInputConvertorUtil.toMapping(input));
 
@@ -198,7 +196,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         rpcResultBuilder = RpcResultBuilder.success(new AddMappingOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
@@ -230,7 +228,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public ListenableFuture<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
         requireNonNull(input, "get-key RPC input must be not null!");
-        LOG.trace("RPC received to get the following key: " + input.toString());
+        LOG.trace("RPC received to get the following key: {}", input);
 
         RpcResultBuilder<GetKeyOutput> rpcResultBuilder;
 
@@ -239,18 +237,18 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (key == null) {
             String message = "Key was not found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetKeyOutput>failed()
-                    .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
+                    .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, message);
         } else {
-            rpcResultBuilder = RpcResultBuilder.success(new GetKeyOutputBuilder().setMappingAuthkey(key));
+            rpcResultBuilder = RpcResultBuilder.success(new GetKeyOutputBuilder().setMappingAuthkey(key).build());
         }
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
     public ListenableFuture<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
         requireNonNull(input, "get-mapping RPC input must be not null!");
-        LOG.trace("RPC received to get the following mapping: " + input.toString());
+        LOG.trace("RPC received to get the following mapping: {}", input);
 
         RpcResultBuilder<GetMappingOutput> rpcResultBuilder;
 
@@ -259,13 +257,14 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (reply == null) {
             String message = "No mapping was found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetMappingOutput>failed()
-                    .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
+                    .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, message);
         } else {
             final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply.getRecord());
-            rpcResultBuilder = RpcResultBuilder.success(new GetMappingOutputBuilder().setMappingRecord(convertedReply));
+            rpcResultBuilder = RpcResultBuilder.success(
+                new GetMappingOutputBuilder().setMappingRecord(convertedReply).build());
         }
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
@@ -296,7 +295,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public ListenableFuture<RpcResult<GetMappingWithXtrIdOutput>> getMappingWithXtrId(GetMappingWithXtrIdInput input) {
         requireNonNull(input, "get-mapping RPC input must be not null!");
-        LOG.trace("RPC received to get the following mapping: " + input.toString());
+        LOG.trace("RPC received to get the following mapping: {}", input);
 
         RpcResultBuilder<GetMappingWithXtrIdOutput> rpcResultBuilder;
 
@@ -306,20 +305,20 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (reply == null) {
             String message = "No mapping was found in the mapping database";
             rpcResultBuilder = RpcResultBuilder.<GetMappingWithXtrIdOutput>failed()
-                    .withError(RpcError.ErrorType.APPLICATION, NOT_FOUND_TAG, message);
+                    .withError(ErrorType.APPLICATION, ErrorTag.DATA_MISSING, message);
         } else {
             final MappingRecord convertedReply = convertFromBinaryIfNecessary(reply.getRecord());
             rpcResultBuilder = RpcResultBuilder.success(new GetMappingWithXtrIdOutputBuilder()
-                    .setMappingRecord(convertedReply));
+                    .setMappingRecord(convertedReply).build());
         }
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
     public ListenableFuture<RpcResult<RemoveKeyOutput>> removeKey(RemoveKeyInput input) {
         requireNonNull(input, "remove-key RPC input must be not null!");
-        LOG.trace("RPC received to remove the following key: " + input.toString());
+        LOG.trace("RPC received to remove the following key: {}", input);
 
         RpcResultBuilder<RemoveKeyOutput> rpcResultBuilder;
 
@@ -327,13 +326,13 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         rpcResultBuilder = RpcResultBuilder.success(new RemoveKeyOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
     public ListenableFuture<RpcResult<RemoveMappingOutput>> removeMapping(RemoveMappingInput input) {
         requireNonNull(input, "remove-mapping RPC input must be not null!");
-        LOG.trace("RPC received to remove the following mapping: " + input.toString());
+        LOG.trace("RPC received to remove the following mapping: {}", input);
 
         RpcResultBuilder<RemoveMappingOutput> rpcResultBuilder;
 
@@ -341,7 +340,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         rpcResultBuilder = RpcResultBuilder.success(new RemoveMappingOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
@@ -355,7 +354,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     @Override
     public ListenableFuture<RpcResult<UpdateKeyOutput>> updateKey(UpdateKeyInput input) {
         requireNonNull(input, "update-key RPC input must be not null!");
-        LOG.trace("RPC received to update the following key: " + input.toString());
+        LOG.trace("RPC received to update the following key: {}", input);
 
         RpcResultBuilder<UpdateKeyOutput> rpcResultBuilder;
 
@@ -364,19 +363,19 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         if (key == null) {
             String message = "Key doesn't exist! Please use add-key if you want to create a new authentication key.";
             rpcResultBuilder = RpcResultBuilder.<UpdateKeyOutput>failed()
-                    .withError(RpcError.ErrorType.PROTOCOL, NOT_FOUND_TAG, message);
-            return Futures.immediateFuture(rpcResultBuilder.build());
+                    .withError(ErrorType.PROTOCOL, ErrorTag.DATA_MISSING, message);
+            return rpcResultBuilder.buildFuture();
         }
 
         dsbe.updateAuthenticationKey(RPCInputConvertorUtil.toAuthenticationKey(input));
         rpcResultBuilder = RpcResultBuilder.success(new UpdateKeyOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
     public ListenableFuture<RpcResult<UpdateMappingOutput>> updateMapping(UpdateMappingInput input) {
-        LOG.trace("RPC received to update the following mapping: " + input.toString());
+        LOG.trace("RPC received to update the following mapping: {}", input);
         requireNonNull(input, "update-mapping RPC input must be not null!");
 
         RpcResultBuilder<UpdateMappingOutput> rpcResultBuilder;
@@ -385,7 +384,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         rpcResultBuilder = RpcResultBuilder.success(new UpdateMappingOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override
@@ -477,7 +476,7 @@ public class MappingService implements OdlMappingserviceService, IMappingService
 
         rpcResultBuilder = RpcResultBuilder.success(new RemoveAllOperationalContentOutputBuilder().build());
 
-        return Futures.immediateFuture(rpcResultBuilder.build());
+        return rpcResultBuilder.buildFuture();
     }
 
     @Override

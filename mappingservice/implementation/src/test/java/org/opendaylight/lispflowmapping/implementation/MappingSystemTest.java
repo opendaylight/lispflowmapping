@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -162,7 +163,7 @@ public class MappingSystemTest {
     /**
      * This method changes the lookup policy.
      */
-    private static void setLookupPolicy(IMappingService.LookupPolicy policy) throws NoSuchFieldException,
+    private static void setLookupPolicy(final IMappingService.LookupPolicy policy) throws NoSuchFieldException,
             IllegalAccessException {
         final Field lookupPolicy = ConfigIni.class.getDeclaredField("lookupPolicy");
         lookupPolicy.setAccessible(true);
@@ -182,7 +183,7 @@ public class MappingSystemTest {
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:" + IPV4_DST))
                 .setOrigin(MappingOrigin.Southbound)
-                .setSiteId(Lists.newArrayList(SITE_ID))
+                .setSiteId(Set.of(SITE_ID))
                 .setMappingRecord(mappingData.getRecord()).build();
 
         assertNull(mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -354,7 +355,7 @@ public class MappingSystemTest {
         final Mapping mapping = new MappingBuilder()
                 .setEidUri(new EidUri("ipv4:" + IPV4_DST))
                 .setOrigin(MappingOrigin.Southbound)
-                .setSiteId(Lists.newArrayList(SITE_ID))
+                .setSiteId(Set.of(SITE_ID))
                 .setMappingRecord(mappingRecord).build();
 
         assertEquals(nbMappingData, mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -594,7 +595,7 @@ public class MappingSystemTest {
                 .setEid(EID_IPV4_DST);
     }
 
-    private static ServicePath getDefaultServicePath(short index) {
+    private static ServicePath getDefaultServicePath(final short index) {
         org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address
                 .service.path.ServicePathBuilder servicePathBuilder = new org.opendaylight.yang.gen.v1.urn.ietf.params
                 .xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.service.path.ServicePathBuilder();

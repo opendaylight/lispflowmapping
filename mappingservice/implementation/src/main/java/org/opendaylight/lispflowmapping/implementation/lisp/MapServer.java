@@ -241,7 +241,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             return;
         }
         final MapRequestBuilder mrb = MapRequestUtil.prepareSMR(eid, LispAddressUtil.toRloc(getLocalAddress()));
-        LOG.trace("Built SMR packet template (EID field will be set later): " + mrb.build().toString());
+        LOG.trace("Built SMR packet template (EID field will be set later): {}", mrb.build());
 
         scheduler.scheduleSmrs(mrb, subscribers.iterator());
     }
@@ -251,7 +251,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface current = interfaces.nextElement();
-                LOG.trace("Interface " + current.toString());
+                LOG.trace("Interface {}", current);
                 if (!current.isUp() || current.isLoopback() || current.isVirtual()) {
                     continue;
                 }
@@ -300,7 +300,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             while (subscribers.hasNext()) {
                 Subscriber subscriber = subscribers.next();
                 if (subscriber.timedOut()) {
-                    LOG.debug("Lazy removing expired subscriber entry " + subscriber.getString());
+                    LOG.debug("Lazy removing expired subscriber entry {}", subscriber.getString());
                     subscribers.remove();
                 } else {
                     final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(

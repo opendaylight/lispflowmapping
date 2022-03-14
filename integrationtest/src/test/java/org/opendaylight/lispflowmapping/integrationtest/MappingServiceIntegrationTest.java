@@ -33,6 +33,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configure
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.io.File;
@@ -47,6 +48,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
@@ -505,9 +507,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final MapReply mapReply1 = lms.handleMapRequest(
                 new MapRequestBuilder(requests1.get(0))
                         .setSourceEid(new SourceEidBuilder().setEid(subscriberEid).build())
-                        .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
+                        .setItrRloc(List.of(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc1)).build()))
-                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
+                        .setEidItem(List.of(new EidItemBuilder().setEid(eid1).build()))
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
@@ -517,9 +519,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         final MapReply mapReply2 = lms.handleMapRequest(
                 new MapRequestBuilder(requests2.get(0))
                         .setSourceEid(new SourceEidBuilder().setEid(subscriberEid).build())
-                        .setItrRloc(Lists.newArrayList(new ItrRlocBuilder()
+                        .setItrRloc(List.of(new ItrRlocBuilder()
                                 .setRloc(LispAddressUtil.asIpv4Rloc(subscriberSrcRloc2)).build()))
-                        .setEidItem(Lists.newArrayList(new EidItemBuilder().setEid(eid1).build()))
+                        .setEidItem(List.of(new EidItemBuilder().setEid(eid1).build()))
                         .setSmrInvoked(true)
                         .setSmr(false).build());
 
@@ -554,7 +556,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
             LOG.error("Unknown address {}.", address, e);
         }
 
-        final List<MapRequest> requests = Lists.newArrayList();
+        final List<MapRequest> requests = new ArrayList<>();
         byte[][] buffers = reader.getBuffers(expectedSmrs);
         for (byte[] buf : buffers) {
             ByteBuffer packet = ByteBuffer.wrap(buf);
@@ -2595,11 +2597,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         String macString = "01:02:03:04:05:06";
         String ipString = "10.20.255.30";
-        List<SimpleAddress> addresses = new ArrayList<SimpleAddress>();
-        addresses.add(new SimpleAddress(new IpAddress(new Ipv4Address(ipString))));
-        addresses.add(new SimpleAddress(new MacAddress(macString)));
         AfiListBuilder listbuilder = new AfiListBuilder();
-        listbuilder.setAddressList(addresses);
+        listbuilder.setAddressList(ImmutableSet.of(
+                new SimpleAddress(new IpAddress(new Ipv4Address(ipString))),
+                new SimpleAddress(new MacAddress(macString))));
 
         EidBuilder eb = new EidBuilder();
         eb.setAddressType(AfiListLcaf.class);
@@ -2614,8 +2615,9 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         assertEquals(AfiListLcaf.class, receivedAddress.getAddressType());
 
         AfiList listAddrFromNetwork = (AfiList) receivedAddress.getAddress();
-        SimpleAddress receivedAddr1 = (SimpleAddress) listAddrFromNetwork.getAfiList().getAddressList().get(0);
-        SimpleAddress receivedAddr2 = (SimpleAddress) listAddrFromNetwork.getAfiList().getAddressList().get(1);
+        Iterator<SimpleAddress> addrList = listAddrFromNetwork.getAfiList().getAddressList().iterator();
+        SimpleAddress receivedAddr1 = addrList.next();
+        SimpleAddress receivedAddr2 = addrList.next();
 
         assertNotNull(receivedAddr1.getIpAddress().getIpv4Address());
         assertNotNull(receivedAddr2.getMacAddress());
@@ -2675,8 +2677,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         ExplicitLocatorPath receivedAddress = (ExplicitLocatorPath) reply.getMappingRecordItem().get(0)
                 .getMappingRecord().getEid().getAddress();
 
-        Hop receivedHop1 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(0);
-        Hop receivedHop2 = (Hop) receivedAddress.getExplicitLocatorPath().getHop().get(1);
+        Hop receivedHop1 = receivedAddress.getExplicitLocatorPath().getHop().get(0);
+        Hop receivedHop2 = receivedAddress.getExplicitLocatorPath().getHop().get(1);
 
         assertEquals(true, receivedHop1.getLrsBits().getLookup());
         assertEquals(false, receivedHop1.getLrsBits().getRlocProbe());

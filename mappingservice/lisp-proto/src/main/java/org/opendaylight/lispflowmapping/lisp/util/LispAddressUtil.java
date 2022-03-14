@@ -770,7 +770,7 @@ public final class LispAddressUtil {
         EidBuilder builder = new EidBuilder();
         builder.setAddressType(NoAddressAfi.class);
         builder.setVirtualNetworkId(null);
-        builder.setAddress(new NoAddressBuilder().setNoAddress(Empty.getInstance()).build());
+        builder.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return builder.build();
     }
 
