@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83e4401b_31e793ee",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 491
+      },
+      "writtenOn": "2022-04-07T14:48:51Z",
+      "side": 1,
+      "message": "I don\u0027t understand all the implications, but LGTM",
+      "revId": "05b68839ee9ea2f00ab066eac0c2128513cab270",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
