@@ -63,4 +63,21 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration combine.children="append">
+          <!-- FIXME: remove this declaration once powermock is gone -->
+            <argLine>
+                @{argLine}
+                --add-opens java.base/java.lang=ALL-UNNAMED
+                --add-opens java.base/java.util=ALL-UNNAMED
+                --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+            </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
