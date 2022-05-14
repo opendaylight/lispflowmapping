@@ -15,7 +15,7 @@
          for plugin configuration etc. -->
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>10.0.0</version>
+    <version>10.0.2</version>
     <relativePath/>
   </parent>
 
@@ -46,7 +46,7 @@
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>mdsal-artifacts</artifactId>
-        <version>9.0.2</version>
+        <version>9.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -68,7 +68,7 @@
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>controller-artifacts</artifactId>
-        <version>5.0.3</version>
+        <version>5.0.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
