@@ -64,7 +64,7 @@ public final class DistinguishedNameSerializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(DistinguishedNameAfi.class);
+        eb.setAddressType(DistinguishedNameAfi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(new DistinguishedNameBuilder().setDistinguishedName(deserializeData(buffer)).build());
         return eb.build();
@@ -73,7 +73,7 @@ public final class DistinguishedNameSerializer extends LispAddressSerializer {
     @Override
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(DistinguishedNameAfi.class);
+        rb.setAddressType(DistinguishedNameAfi.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new DistinguishedNameBuilder().setDistinguishedName(deserializeData(buffer)).build());
         return rb.build();
@@ -85,7 +85,7 @@ public final class DistinguishedNameSerializer extends LispAddressSerializer {
         return new SimpleAddress(deserializeData(buffer));
     }
 
-    private DistinguishedNameType deserializeData(ByteBuffer buffer) {
+    private static DistinguishedNameType deserializeData(ByteBuffer buffer) {
         StringBuilder sb = new StringBuilder();
         byte character = buffer.get();
         while (character != 0) {

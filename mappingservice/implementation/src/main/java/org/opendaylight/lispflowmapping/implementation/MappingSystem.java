@@ -103,7 +103,7 @@ public class MappingSystem implements IMappingSystem {
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, NotificationPublishService nps, boolean mappingMerge) {
         this.dao = dao;
-        this.notificationPublishService = nps;
+        notificationPublishService = nps;
         this.mappingMerge = mappingMerge;
         buildMapCaches();
 
@@ -113,7 +113,7 @@ public class MappingSystem implements IMappingSystem {
     }
 
     public void setDataStoreBackEnd(DataStoreBackEnd dataStoreBackEnd) {
-        this.dsbe = dataStoreBackEnd;
+        dsbe = dataStoreBackEnd;
     }
 
     @Override
@@ -308,8 +308,8 @@ public class MappingSystem implements IMappingSystem {
         recordBuilder.setAuthoritative(false);
         recordBuilder.setMapVersion((short) 0);
         recordBuilder.setEid(eid);
-        if (eid.getAddressType().equals(Ipv4PrefixBinaryAfi.class)
-                || eid.getAddressType().equals(Ipv6PrefixBinaryAfi.class)) {
+        if (Ipv4PrefixBinaryAfi.VALUE.equals(eid.getAddressType())
+                || Ipv6PrefixBinaryAfi.VALUE.equals(eid.getAddressType())) {
             Eid widestNegativePrefix = getWidestNegativePrefix(eid);
             if (widestNegativePrefix != null) {
                 recordBuilder.setEid(widestNegativePrefix);

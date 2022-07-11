@@ -45,8 +45,7 @@ public class MapRequestSerializationTest extends BaseTestCase {
         mrBuilder.getEidItem().add(new EidItemBuilder().setEid(LispAddressUtil.getNoAddressEid()).setEidItemId("bar")
                 .build());
 
-
-        assertEquals(NoAddressAfi.class, mrBuilder.getEidItem().get(0).getEid().getAddressType());
+        assertEquals(NoAddressAfi.VALUE, mrBuilder.getEidItem().get(0).getEid().getAddressType());
     }
 
     @Test

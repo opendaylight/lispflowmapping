@@ -1705,7 +1705,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         assertTrue(true);
         Eid addressFromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(MacAfi.class, addressFromNetwork.getAddressType());
+        assertEquals(MacAfi.VALUE, addressFromNetwork.getAddressType());
         String macAddressFromReply = ((Mac) addressFromNetwork.getAddress()).getMac().getValue();
 
         assertEquals(macAddress, macAddressFromReply);
@@ -2500,7 +2500,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         builder.setDest(new SimpleAddress(new MacAddress(macString)));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(SourceDestKeyLcaf.class);
+        eb.setAddressType(SourceDestKeyLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.SourceDestKeyBuilder().setSourceDestKey(builder.build()).build());
@@ -2508,7 +2508,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapReply reply = registerAddressAndQuery(eb.build());
 
         Eid fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(SourceDestKeyLcaf.class, fromNetwork.getAddressType());
+        assertEquals(SourceDestKeyLcaf.VALUE, fromNetwork.getAddressType());
         SourceDestKey sourceDestFromNetwork = (SourceDestKey) fromNetwork.getAddress();
 
         SimpleAddress receivedAddr1 = sourceDestFromNetwork.getSourceDestKey().getSource();
@@ -2539,7 +2539,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapReply reply = queryForAddress(srcDst, null);
 
         Eid fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(SourceDestKeyLcaf.class, fromNetwork.getAddressType());
+        assertEquals(SourceDestKeyLcaf.VALUE, fromNetwork.getAddressType());
         SourceDestKey sourceDestFromNetwork = (SourceDestKey) fromNetwork.getAddress();
 
         IpPrefix receivedAddr1 = sourceDestFromNetwork.getSourceDestKey().getSource().getIpPrefix();
@@ -2554,14 +2554,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         // srcEid/dstEid match
         reply = queryForAddress(LispAddressUtil.asIpv4PrefixBinaryEid("20.20.20.1/32"), "10.10.10.1");
         fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(Ipv4PrefixBinaryAfi.class, fromNetwork.getAddressType());
+        assertEquals(Ipv4PrefixBinaryAfi.VALUE, fromNetwork.getAddressType());
 
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
 
         // dstEid match only
         reply = queryForAddress(LispAddressUtil.asIpv4PrefixBinaryEid("20.20.20.1/32"), "1.2.3.4");
         fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(Ipv4PrefixBinaryAfi.class, fromNetwork.getAddressType());
+        assertEquals(Ipv4PrefixBinaryAfi.VALUE, fromNetwork.getAddressType());
 
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid(ipPrefix2), fromNetwork);
     }
@@ -2577,7 +2577,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapReply reply = registerAddressAndQuery(kv);
 
         Eid fromNetwork = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(KeyValueAddressLcaf.class, fromNetwork.getAddressType());
+        assertEquals(KeyValueAddressLcaf.VALUE, fromNetwork.getAddressType());
         KeyValueAddress keyValueFromNetwork = (KeyValueAddress) fromNetwork.getAddress();
 
         SimpleAddress receivedAddr1 = keyValueFromNetwork.getKeyValueAddress().getKey();
@@ -2603,7 +2603,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 new SimpleAddress(new MacAddress(macString))));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(AfiListLcaf.class);
+        eb.setAddressType(AfiListLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.AfiListBuilder().setAfiList(listbuilder.build()).build());
@@ -2612,7 +2612,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         Eid receivedAddress = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
 
-        assertEquals(AfiListLcaf.class, receivedAddress.getAddressType());
+        assertEquals(AfiListLcaf.VALUE, receivedAddress.getAddressType());
 
         AfiList listAddrFromNetwork = (AfiList) receivedAddress.getAddress();
         Iterator<SimpleAddress> addrList = listAddrFromNetwork.getAfiList().getAddressList().iterator();
@@ -2632,7 +2632,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         int instanceId = 6;
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(Ipv4PrefixAfi.class);
+        eb.setAddressType(Ipv4PrefixAfi.VALUE);
         eb.setVirtualNetworkId(new InstanceIdType(Uint32.valueOf(instanceId)));
         eb.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns
                 .yang.ietf.inet.types.rev130715.Ipv4Prefix(ipString)).build());
@@ -2640,7 +2640,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         MapReply reply = registerAddressAndQuery(eb.build());
 
         Eid receivedAddress = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
-        assertEquals(Ipv4PrefixAfi.class, receivedAddress.getAddressType());
+        assertEquals(Ipv4PrefixAfi.VALUE, receivedAddress.getAddressType());
 
         assertEquals(ipString, ((Ipv4Prefix) receivedAddress.getAddress()).getIpv4Prefix().getValue());
 
@@ -2664,14 +2664,14 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         elpBuilder.getHop().add(hop2);
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ExplicitLocatorPathLcaf.class);
+        eb.setAddressType(ExplicitLocatorPathLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ExplicitLocatorPathBuilder().setExplicitLocatorPath(elpBuilder.build()).build());
 
         MapReply reply = registerAddressAndQuery(eb.build());
 
-        assertEquals(ExplicitLocatorPathLcaf.class, reply.getMappingRecordItem().get(0).getMappingRecord().getEid()
+        assertEquals(ExplicitLocatorPathLcaf.VALUE, reply.getMappingRecordItem().get(0).getMappingRecord().getEid()
                 .getAddressType());
 
         ExplicitLocatorPath receivedAddress = (ExplicitLocatorPath) reply.getMappingRecordItem().get(0)
@@ -2715,7 +2715,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         builder.setAddress(new SimpleAddress(new IpAddress(new Ipv4Address(ipString))));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ApplicationDataLcaf.class);
+        eb.setAddressType(ApplicationDataLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder().setApplicationData(builder.build()).build());
@@ -2725,7 +2725,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         Eid receivedAddress = reply.getMappingRecordItem().get(0).getMappingRecord().getEid();
 
-        assertEquals(ApplicationDataLcaf.class, receivedAddress.getAddressType());
+        assertEquals(ApplicationDataLcaf.VALUE, receivedAddress.getAddressType());
 
         ApplicationData receivedApplicationDataAddress = (ApplicationData) receivedAddress.getAddress();
         assertEquals(protocol, receivedApplicationDataAddress.getApplicationData().getProtocol());
@@ -2887,7 +2887,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         int port = 4350;
 
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(ApplicationDataLcaf.class);
+        rb.setAddressType(ApplicationDataLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()
@@ -2941,7 +2941,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         int port = LispMessage.XTR_PORT_NUM;
 
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(ApplicationDataLcaf.class);
+        rb.setAddressType(ApplicationDataLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                 .lisp.address.address.ApplicationDataBuilder()

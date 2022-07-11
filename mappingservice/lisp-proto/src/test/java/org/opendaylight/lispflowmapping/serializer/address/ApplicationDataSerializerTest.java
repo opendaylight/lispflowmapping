@@ -39,7 +39,7 @@ public class ApplicationDataSerializerTest extends BaseTestCase {
                 + "FF DD FF DE " // remote port range
                 + "00 01 11 22 33 44"), null); // AFI=1, IP=0x11223344
 
-        assertEquals(ApplicationDataLcaf.class, address.getAddressType());
+        assertEquals(ApplicationDataLcaf.VALUE, address.getAddressType());
         ApplicationData appAddress = (ApplicationData) address.getAddress();
 
         assertEquals("17.34.51.68", appAddress.getApplicationData().getAddress().stringValue());
@@ -54,19 +54,22 @@ public class ApplicationDataSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "04 20 00 0A "
-                + "AA BB "), null);
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            04 20 00 0A \
+            AA BB \
+            """), null);
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "AA 20 00 12 " // Type AA is unknown
-                + "AA BB CC DD " // IPTOS & protocol
-                + "A6 A1 A6 A2 " // local port range
-                + "FF DD FF DE " // remote port range
-                + "00 01 11 22 33 44"), null); // AFI=1, IP=0x11223344
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            AA 20 00 12 \
+            AA BB CC DD \
+            A6 A1 A6 A2 \
+            FF DD FF DE \
+            00 01 11 22 33 44"""), null); // AFI=1, IP=0x11223344
     }
 
     @Test
@@ -96,7 +99,7 @@ public class ApplicationDataSerializerTest extends BaseTestCase {
             .setAddress(new SimpleAddress(new IpAddress(new Ipv4Address("17.34.51.68"))));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ApplicationDataLcaf.class);
+        eb.setAddressType(ApplicationDataLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.ApplicationDataBuilder()

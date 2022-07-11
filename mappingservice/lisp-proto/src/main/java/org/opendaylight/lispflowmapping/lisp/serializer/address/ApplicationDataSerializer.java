@@ -86,7 +86,7 @@ public final class ApplicationDataSerializer extends LcafSerializer {
     @Override
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ApplicationDataLcaf.class);
+        eb.setAddressType(ApplicationDataLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer, ctx));
         return eb.build();
@@ -96,13 +96,13 @@ public final class ApplicationDataSerializer extends LcafSerializer {
     protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
         RlocBuilder eb = new RlocBuilder();
-        eb.setAddressType(ApplicationDataLcaf.class);
+        eb.setAddressType(ApplicationDataLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(deserializeData(buffer, ctx));
         return eb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
+    private static Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         ApplicationDataBuilder builder = new ApplicationDataBuilder();
         byte[] rawIPTos = new byte[3];
         buffer.get(rawIPTos);

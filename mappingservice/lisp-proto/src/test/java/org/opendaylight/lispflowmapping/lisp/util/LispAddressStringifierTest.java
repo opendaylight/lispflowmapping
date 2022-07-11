@@ -407,7 +407,7 @@ public class LispAddressStringifierTest {
         assertEquals("{" + IPV4_STRING + "," + IPV6_STRING + "}", LispAddressStringifier.getString(LISP_AFI_LIST));
     }
 
-    private String getStringFromAppData(final ApplicationData appData) {
+    private static String getStringFromAppData(final ApplicationData appData) {
         StringBuilder sb = new StringBuilder();
         final org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
                 .address.application.data.ApplicationData applicationData = appData.getApplicationData();

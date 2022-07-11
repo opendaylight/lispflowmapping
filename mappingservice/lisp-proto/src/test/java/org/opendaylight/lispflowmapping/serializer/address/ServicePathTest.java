@@ -34,7 +34,7 @@ public class ServicePathTest extends BaseTestCase {
                 + "11 00 00 04 "
                 + "AA BB CC FF"),
                 new LispAddressSerializerContext(null));
-        assertEquals(ServicePathLcaf.class, address.getAddressType());
+        assertEquals(ServicePathLcaf.VALUE, address.getAddressType());
         ServicePath sp = (ServicePath) address.getAddress();
 
         assertEquals(ByteUtil.getPartialInt(new byte[] { (byte) 0xAA, (byte) 0xBB, (byte) 0xCC }),

@@ -62,7 +62,7 @@ public final class MacSerializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(MacAfi.class);
+        eb.setAddressType(MacAfi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(new MacBuilder().setMac(deserializeData(buffer)).build());
         return eb.build();
@@ -71,7 +71,7 @@ public final class MacSerializer extends LispAddressSerializer {
     @Override
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(MacAfi.class);
+        rb.setAddressType(MacAfi.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new MacBuilder().setMac(deserializeData(buffer)).build());
         return rb.build();
@@ -82,7 +82,7 @@ public final class MacSerializer extends LispAddressSerializer {
         return new SimpleAddress(deserializeData(buffer));
     }
 
-    private MacAddress deserializeData(ByteBuffer buffer) {
+    private static MacAddress deserializeData(ByteBuffer buffer) {
         byte[] macBuffer = new byte[6];
         buffer.get(macBuffer);
         return IetfYangUtil.INSTANCE.macAddressFor(macBuffer);
@@ -91,5 +91,4 @@ public final class MacSerializer extends LispAddressSerializer {
     private interface Length {
         int MAC = 6;
     }
-
 }

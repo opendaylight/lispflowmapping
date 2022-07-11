@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -28,6 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv4PrefixAfi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6Afi;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.Ipv6PrefixAfi;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.LispAddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SourceDestKeyLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
@@ -57,6 +59,10 @@ import org.slf4j.LoggerFactory;
 
 public class MapResolver implements IMapResolverAsync {
     private static final Logger LOG = LoggerFactory.getLogger(MapResolver.class);
+    private static final ImmutableSet<LispAddressFamily> IPV4_AFIS = ImmutableSet.of(Ipv4Afi.VALUE, Ipv4BinaryAfi.VALUE,
+        Ipv4PrefixAfi.VALUE, Ipv4PrefixBinaryAfi.VALUE);
+    private static final ImmutableSet<LispAddressFamily> IPV6_AFIS = ImmutableSet.of(Ipv6Afi.VALUE, Ipv6BinaryAfi.VALUE,
+        Ipv6PrefixAfi.VALUE, Ipv6PrefixBinaryAfi.VALUE);
 
     private final IMappingService mapService;
     private boolean subscriptionService;
@@ -68,7 +74,7 @@ public class MapResolver implements IMapResolverAsync {
 
     public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
                        IMapRequestResultHandler requestHandler) {
-        this.subscriptionService = smr;
+        subscriptionService = smr;
         this.mapService = requireNonNull(mapService);
         this.elpPolicy = elpPolicy;
         this.requestHandler = requestHandler;
@@ -138,16 +144,10 @@ public class MapResolver implements IMapResolverAsync {
 
     private static boolean isEqualIpVersion(IpAddressBinary srcRloc, Rloc rloc) {
         if (srcRloc.getIpv4AddressBinary() != null) {
-            if (rloc.getAddressType() == Ipv4Afi.class
-                    || rloc.getAddressType() == Ipv4BinaryAfi.class
-                    || rloc.getAddressType() == Ipv4PrefixAfi.class
-                    || rloc.getAddressType() == Ipv4PrefixBinaryAfi.class) {
+            if (IPV4_AFIS.contains(rloc.getAddressType())) {
                 return true;
             }
-        } else if (rloc.getAddressType() == Ipv6Afi.class
-                || rloc.getAddressType() == Ipv6BinaryAfi.class
-                || rloc.getAddressType() == Ipv6PrefixAfi.class
-                || rloc.getAddressType() == Ipv6PrefixBinaryAfi.class) {
+        } else if (IPV6_AFIS.contains(rloc.getAddressType())) {
             return true;
         }
         return false;
@@ -200,8 +200,8 @@ public class MapResolver implements IMapResolverAsync {
         // If the eid in the matched mapping is SourceDest and the requested eid IS NOT then we subscribe itrRloc only
         // to dst from the src/dst since that what's been requested. Note though that any updates to to the src/dst
         // mapping will be pushed to dst as well (see sendSMRs in MapServer)
-        if (mapEid.getAddressType().equals(SourceDestKeyLcaf.class)
-                && !reqEid.getAddressType().equals(SourceDestKeyLcaf.class)) {
+        if (SourceDestKeyLcaf.VALUE.equals(mapEid.getAddressType())
+                && !SourceDestKeyLcaf.VALUE.equals(reqEid.getAddressType())) {
             subscribedEid = SourceDestKeyHelper.getDstBinary(mapEid);
         }
 
@@ -355,7 +355,7 @@ public class MapResolver implements IMapResolverAsync {
 
     @Override
     public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        this.authenticate = shouldAuthenticate;
+        authenticate = shouldAuthenticate;
     }
 
     @Override

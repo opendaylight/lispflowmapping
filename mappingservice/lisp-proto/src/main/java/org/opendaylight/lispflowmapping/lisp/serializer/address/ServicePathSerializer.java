@@ -67,13 +67,13 @@ public final class ServicePathSerializer extends LcafSerializer {
     @Override
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ServicePathLcaf.class);
+        eb.setAddressType(ServicePathLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer));
         return eb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer) {
+    private static Address deserializeData(ByteBuffer buffer) {
         ServicePathBuilder spb = new ServicePathBuilder();
         byte[] spi = new byte[3];
         buffer.get(spi);

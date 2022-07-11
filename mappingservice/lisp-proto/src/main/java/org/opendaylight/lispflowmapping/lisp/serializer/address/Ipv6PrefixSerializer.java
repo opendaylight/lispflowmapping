@@ -83,7 +83,7 @@ public final class Ipv6PrefixSerializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(Ipv6PrefixAfi.class);
+        eb.setAddressType(Ipv6PrefixAfi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(deserializeData(buffer, ctx)).build());
         return eb.build();

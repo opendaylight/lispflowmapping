@@ -327,7 +327,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
 
         assertEquals(LispAddressUtil.asIpv6PrefixBinaryEid("2610:d0:ffff:192:0:0:0:1/128"),
                 eidToLocatorRecord.getEid());
-        assertEquals(Ipv6PrefixBinaryAfi.class, eidToLocatorRecord.getEid().getAddressType());
+        assertEquals(Ipv6PrefixBinaryAfi.VALUE, eidToLocatorRecord.getEid().getAddressType());
 
         assertEquals(LispAddressUtil.asIpv4Rloc("10.0.58.156"), eidToLocatorRecord.getLocatorRecord().get(0).getRloc());
     }
@@ -723,7 +723,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         List<EidItem> eids = captor.getValue().getMapRequest().getEidItem();
         assertEquals(1, eids.size());
         Eid lispAddress = eids.get(0).getEid();
-        assertEquals(Ipv4PrefixBinaryAfi.class, lispAddress.getAddressType());
+        assertEquals(Ipv4PrefixBinaryAfi.VALUE, lispAddress.getAddressType());
         assertEquals(LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32"), lispAddress);
         assertEquals(0x3d8d2acd39c8d608L, captor.getValue().getMapRequest().getNonce().longValue());
     }
@@ -811,7 +811,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         ArgumentCaptor<RequestMapping> captor = ArgumentCaptor.forClass(RequestMapping.class);
         handleMapRequestAsByteArray(mapRequestPacket);
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(captor.capture());
-        assertEquals(Ipv4BinaryAfi.class, captor.getValue().getMapRequest().getSourceEid().getEid().getAddressType());
+        assertEquals(Ipv4BinaryAfi.VALUE, captor.getValue().getMapRequest().getSourceEid().getEid().getAddressType());
 
     }
 
