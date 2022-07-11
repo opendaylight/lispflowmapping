@@ -92,8 +92,7 @@ public class LispAddressSerializer {
         }
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(lispAddress.getAddressType());
         if (serializer == null) {
-            throw new LispSerializationException("Unknown address type: "
-                    + lispAddress.getAddressType().getSimpleName());
+            throw new LispSerializationException("Unknown address type: " + lispAddress.getAddressType());
         }
         return size + serializer.getAddressSize(lispAddress);
     }
@@ -111,18 +110,17 @@ public class LispAddressSerializer {
         }
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(lispAddress.getAddressType());
         if (serializer == null) {
-            throw new LispSerializationException("Unknown address type: "
-                    + lispAddress.getAddressType().getSimpleName());
+            throw new LispSerializationException("Unknown address type: " + lispAddress.getAddressType());
         }
         short afi = serializer.getAfi();
         if (afi == (short) AddressFamily.LispCanonicalAddressFormat.getIntValue()) {
-            serializer =  LispAddressSerializerFactory.getSerializer(Lcaf.class);
+            serializer =  LispAddressSerializerFactory.getSerializer(Lcaf.VALUE);
         }
         buffer.putShort(afi);
         serializer.serializeData(buffer, lispAddress);
     }
 
-    private void serializeInstanceIdExtra(ByteBuffer buffer, LispAddress lispAddress) {
+    private static void serializeInstanceIdExtra(ByteBuffer buffer, LispAddress lispAddress) {
         buffer.putShort((short) AddressFamily.LispCanonicalAddressFormat.getIntValue());
         LcafSerializer.getInstance().serializeLCAFAddressHeaderForInstanceId(buffer, lispAddress);
         InstanceIdSerializer.getInstance().serializeNonLcafAddress(buffer, lispAddress);
@@ -141,7 +139,7 @@ public class LispAddressSerializer {
         if ((afi == 1 || afi == 2) && ctx.getMaskLen() != LispAddressSerializerContext.MASK_LEN_MISSING) {
             afi *= -1;
         }
-        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getAddressType(afi);
+        LispAddressFamily addressType = AddressTypeMap.getAddressType(afi);
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(addressType);
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI: " + afi);
@@ -156,7 +154,7 @@ public class LispAddressSerializer {
     @SuppressWarnings("checkstyle:IllegalCatch")
     public Rloc deserializeRloc(ByteBuffer buffer) {
         short afi = buffer.getShort();
-        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getAddressType(afi);
+        LispAddressFamily addressType = AddressTypeMap.getAddressType(afi);
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(addressType);
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI: " + afi);

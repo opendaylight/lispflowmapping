@@ -83,7 +83,7 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
     @Override
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ExplicitLocatorPathLcaf.class);
+        eb.setAddressType(ExplicitLocatorPathLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer, length, ctx));
         return eb.build();
@@ -93,13 +93,13 @@ public final class ExplicitLocatorPathSerializer extends LcafSerializer {
     protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(ExplicitLocatorPathLcaf.class);
+        rb.setAddressType(ExplicitLocatorPathLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(deserializeData(buffer, length, ctx));
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
+    private static Address deserializeData(ByteBuffer buffer, short lcafLength, LispAddressSerializerContext ctx) {
         List<Hop> hops = new ArrayList<>();
         short length = lcafLength;
         while (length > 0) {

@@ -1,7 +1,6 @@
 package org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105;
 
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefixBuilder;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IetfInetUtil;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.MacAddress;
 
 
@@ -40,7 +39,7 @@ public class SimpleAddressBuilder {
 
     private static SimpleAddress tryIpAddress(String defaultValue) {
         try {
-            SimpleAddress address = new SimpleAddress(IpAddressBuilder.getDefaultInstance(defaultValue));
+            SimpleAddress address = new SimpleAddress(IetfInetUtil.ipAddressFor(defaultValue));
             return address;
         } catch (IllegalArgumentException e) {
             return null;
@@ -49,7 +48,7 @@ public class SimpleAddressBuilder {
 
     private static SimpleAddress tryIpPrefix(String defaultValue) {
         try {
-            SimpleAddress address = new SimpleAddress(IpPrefixBuilder.getDefaultInstance(defaultValue));
+            SimpleAddress address = new SimpleAddress(IetfInetUtil.ipPrefixFor(defaultValue));
             return address;
         } catch (IllegalArgumentException e) {
             return null;

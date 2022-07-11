@@ -40,78 +40,78 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
  * @author Lorand Jakab
  */
 public final class AddressTypeMap {
-    private static Map<Short, Class<? extends LispAddressFamily>> afiToAddressTypeMap;
-    private static Map<Short, Class<? extends LispAddressFamily>> lcafToAddressTypeMap;
+    private static Map<Short, LispAddressFamily> afiToAddressTypeMap;
+    private static Map<Short, LispAddressFamily> lcafToAddressTypeMap;
 
     // Utility class, should not be instantiated
     private AddressTypeMap() {
     }
 
     private static void initializeAfiMap() {
-        afiToAddressTypeMap = new HashMap<Short, Class<? extends LispAddressFamily>>();
-        afiToAddressTypeMap.put((short) 0, NoAddressAfi.class);
-        afiToAddressTypeMap.put((short) AddressFamily.IpV4.getIntValue(), Ipv4BinaryAfi.class);
-        afiToAddressTypeMap.put((short) (AddressFamily.IpV4.getIntValue() * -1), Ipv4PrefixBinaryAfi.class);
-        afiToAddressTypeMap.put((short) AddressFamily.IpV6.getIntValue(), Ipv6BinaryAfi.class);
-        afiToAddressTypeMap.put((short) (AddressFamily.IpV6.getIntValue() * -1), Ipv6PrefixBinaryAfi.class);
-        afiToAddressTypeMap.put((short) AddressFamily.DistinguishedName.getIntValue(), DistinguishedNameAfi.class);
-        afiToAddressTypeMap.put((short) AddressFamily.AsNumber.getIntValue(), AsNumberAfi.class);
-        afiToAddressTypeMap.put((short) AddressFamily.LispCanonicalAddressFormat.getIntValue(), Lcaf.class);
-        afiToAddressTypeMap.put((short) AddressFamily._48BitMac.getIntValue(), MacAfi.class);
+        afiToAddressTypeMap = new HashMap<>();
+        afiToAddressTypeMap.put((short) 0, NoAddressAfi.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily.IpV4.getIntValue(), Ipv4BinaryAfi.VALUE);
+        afiToAddressTypeMap.put((short) (AddressFamily.IpV4.getIntValue() * -1), Ipv4PrefixBinaryAfi.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily.IpV6.getIntValue(), Ipv6BinaryAfi.VALUE);
+        afiToAddressTypeMap.put((short) (AddressFamily.IpV6.getIntValue() * -1), Ipv6PrefixBinaryAfi.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily.DistinguishedName.getIntValue(), DistinguishedNameAfi.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily.AsNumber.getIntValue(), AsNumberAfi.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily.LispCanonicalAddressFormat.getIntValue(), Lcaf.VALUE);
+        afiToAddressTypeMap.put((short) AddressFamily._48BitMac.getIntValue(), MacAfi.VALUE);
     }
 
     private static void initializeLcafMap() {
-        lcafToAddressTypeMap = new HashMap<Short, Class<? extends LispAddressFamily>>();
-        lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.LIST.getLispCode(), AfiListLcaf.class);
-        lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode(), InstanceIdLcaf.class);
+        lcafToAddressTypeMap = new HashMap<>();
+        lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.LIST.getLispCode(), AfiListLcaf.VALUE);
+        lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.SEGMENT.getLispCode(), InstanceIdLcaf.VALUE);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.APPLICATION_DATA.getLispCode(),
-                ApplicationDataLcaf.class);
+                ApplicationDataLcaf.VALUE);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.TRAFFIC_ENGINEERING.getLispCode(),
-                ExplicitLocatorPathLcaf.class);
+                ExplicitLocatorPathLcaf.VALUE);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.SOURCE_DEST.getLispCode(),
-                SourceDestKeyLcaf.class);
+                SourceDestKeyLcaf.VALUE);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.KEY_VALUE.getLispCode(),
-                KeyValueAddressLcaf.class);
+                KeyValueAddressLcaf.VALUE);
         lcafToAddressTypeMap.put((short) LispCanonicalAddressFormatEnum.SERVICE_PATH.getLispCode(),
-                ServicePathLcaf.class);
+                ServicePathLcaf.VALUE);
         // TODO
     }
 
-    public static Class<? extends LispAddressFamily> getAddressType(short afi) {
+    public static LispAddressFamily getAddressType(short afi) {
         if (afiToAddressTypeMap == null) {
             initializeAfiMap();
         }
         return afiToAddressTypeMap.get(afi);
     }
 
-    public static Class<? extends LispAddressFamily> getLcafType(short lcafType) {
+    public static LispAddressFamily getLcafType(short lcafType) {
         if (lcafToAddressTypeMap == null) {
             initializeLcafMap();
         }
         return lcafToAddressTypeMap.get(lcafType);
     }
 
-    public static Class<? extends LispAddressFamily> getSimpleAddressInnerType(SimpleAddress address) {
+    public static LispAddressFamily getSimpleAddressInnerType(SimpleAddress address) {
         if (address == null) {
             return null;
         } else if (address.getIpAddress() != null) {
             if (address.getIpAddress().getIpv4Address() != null) {
-                return Ipv4Afi.class;
+                return Ipv4Afi.VALUE;
             } else if (address.getIpAddress().getIpv6Address() != null) {
-                return Ipv6Afi.class;
+                return Ipv6Afi.VALUE;
             }
         } else if (address.getIpPrefix() != null) {
             if (address.getIpPrefix().getIpv4Prefix() != null) {
-                return Ipv4PrefixAfi.class;
+                return Ipv4PrefixAfi.VALUE;
             } else if (address.getIpPrefix().getIpv6Prefix() != null) {
-                return Ipv6PrefixAfi.class;
+                return Ipv6PrefixAfi.VALUE;
             }
         } else if (address.getMacAddress() != null) {
-            return MacAfi.class;
+            return MacAfi.VALUE;
         } else if (address.getAsNumber() != null) {
-            return AsNumberAfi.class;
+            return AsNumberAfi.VALUE;
         } else if (address.getDistinguishedNameType() != null) {
-            return DistinguishedNameAfi.class;
+            return DistinguishedNameAfi.VALUE;
         }
         return null;
     }
