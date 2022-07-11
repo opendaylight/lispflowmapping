@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.serializer.address;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -25,7 +24,7 @@ public class Ipv6SerializerTest extends BaseTestCase {
     public void constructor__Name() throws Exception {
         Rloc rloc = LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:0");
 
-        assertEquals(Ipv6BinaryAfi.class, rloc.getAddressType());
+        assertEquals(Ipv6BinaryAfi.VALUE, rloc.getAddressType());
         assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(rloc));
         assertArrayEquals(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 ((Ipv6Binary) rloc.getAddress()).getIpv6Binary().getValue());
@@ -35,7 +34,7 @@ public class Ipv6SerializerTest extends BaseTestCase {
     public void constructor__Buffer() throws Exception {
         Rloc rloc = LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1");
 
-        assertEquals(Ipv6BinaryAfi.class, rloc.getAddressType());
+        assertEquals(Ipv6BinaryAfi.VALUE, rloc.getAddressType());
         assertEquals(18, LispAddressSerializer.getInstance().getAddressSize(rloc));
         assertArrayEquals(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
                 ((Ipv6Binary) rloc.getAddress()).getIpv6Binary().getValue());

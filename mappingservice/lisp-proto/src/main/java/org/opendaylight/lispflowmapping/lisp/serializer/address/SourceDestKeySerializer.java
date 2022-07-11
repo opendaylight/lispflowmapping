@@ -79,7 +79,7 @@ public final class SourceDestKeySerializer extends LcafSerializer {
     @Override
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(SourceDestKeyLcaf.class);
+        eb.setAddressType(SourceDestKeyLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer, ctx));
         return eb.build();
@@ -89,13 +89,13 @@ public final class SourceDestKeySerializer extends LcafSerializer {
     protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(SourceDestKeyLcaf.class);
+        rb.setAddressType(SourceDestKeyLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(deserializeData(buffer, ctx));
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
+    private static Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         // reserved bytes
         buffer.getShort();
 

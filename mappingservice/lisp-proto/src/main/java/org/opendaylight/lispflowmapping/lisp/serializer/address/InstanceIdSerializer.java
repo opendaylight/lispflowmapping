@@ -59,7 +59,7 @@ public final class InstanceIdSerializer extends LcafSerializer {
         LispAddressSerializer.getInstance().serialize(buffer, lispAddress);
     }
 
-    protected void serializeNonLcafAddress(ByteBuffer buffer, LispAddress lispAddress) {
+    protected static void serializeNonLcafAddress(ByteBuffer buffer, LispAddress lispAddress) {
         buffer.putInt(lispAddress.getVirtualNetworkId().getValue().intValue());
     }
 

@@ -63,7 +63,7 @@ public class SourceDestKeyHelperTest {
         final Eid expectedResult = new EidBuilder()
                 .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV4_PREFIX_SOURCE).build())
                 .setVirtualNetworkId(INSTANCE_ID)
-                .setAddressType(Ipv4PrefixAfi.class).build();
+                .setAddressType(Ipv4PrefixAfi.VALUE).build();
         assertEquals(expectedResult, SourceDestKeyHelper.getSrc(EID_SOURCE_DEST_KEY));
     }
 
@@ -83,7 +83,7 @@ public class SourceDestKeyHelperTest {
         final Eid expectedResult = new EidBuilder()
                 .setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(IPV4_PREFIX_DEST).build())
                 .setVirtualNetworkId(INSTANCE_ID)
-                .setAddressType(Ipv4PrefixAfi.class).build();
+                .setAddressType(Ipv4PrefixAfi.VALUE).build();
         assertEquals(expectedResult, SourceDestKeyHelper.getDst(EID_SOURCE_DEST_KEY));
     }
 
@@ -103,7 +103,7 @@ public class SourceDestKeyHelperTest {
         final Eid expectedResult = new EidBuilder()
                 .setAddress(IPV4_SOURCE_PREFIX_BINARY)
                 .setVirtualNetworkId(INSTANCE_ID)
-                .setAddressType(Ipv4PrefixBinaryAfi.class).build();
+                .setAddressType(Ipv4PrefixBinaryAfi.VALUE).build();
         assertEquals(expectedResult, SourceDestKeyHelper.getSrcBinary(EID_SOURCE_DEST_KEY));
     }
 
@@ -123,7 +123,7 @@ public class SourceDestKeyHelperTest {
         final Eid expectedResult = new EidBuilder()
                 .setAddress(IPV4_DEST_PREFIX_BINARY)
                 .setVirtualNetworkId(INSTANCE_ID)
-                .setAddressType(Ipv4PrefixBinaryAfi.class).build();
+                .setAddressType(Ipv4PrefixBinaryAfi.VALUE).build();
         assertEquals(expectedResult, SourceDestKeyHelper.getDstBinary(EID_SOURCE_DEST_KEY));
     }
 
