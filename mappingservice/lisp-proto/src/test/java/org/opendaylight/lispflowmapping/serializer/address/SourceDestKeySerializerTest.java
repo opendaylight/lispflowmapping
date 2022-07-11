@@ -37,7 +37,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
                 + "00 01 22 33 44 55"), // AFI=1, IP=0x22334455
                 new LispAddressSerializerContext(null));
 
-        assertEquals(SourceDestKeyLcaf.class, address.getAddressType());
+        assertEquals(SourceDestKeyLcaf.VALUE, address.getAddressType());
         SourceDestKey srcDestAddress = (SourceDestKey) address.getAddress();
 
         assertEquals((byte) 0x10, MaskUtil.getMaskForAddress(srcDestAddress.getSourceDestKey().getSource()));
@@ -49,18 +49,21 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "02 20 00 0A "
-                + "AA BB "), new LispAddressSerializerContext(null));
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            02 20 00 0A \
+            AA BB \
+            """), new LispAddressSerializerContext(null));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "AA 20 00 0A " // Type AA is unknown
-                + "00 00 CC DD " // reserved + masks
-                + "00 01 11 22 33 44 "  // AFI=1, IP=0x11223344
-                + "00 01 22 33 44 55"), // AFI=1, IP=0x22334455
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            AA 20 00 0A \
+            00 00 CC DD \
+            00 01 11 22 33 44 \
+            00 01 22 33 44 55"""), // AFI=1, IP=0x22334455
                 new LispAddressSerializerContext(null));
     }
 
@@ -87,7 +90,7 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
         addressBuilder.setDest(new SimpleAddress(new IpPrefix(new Ipv4Prefix("34.51.68.85/16"))));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(SourceDestKeyLcaf.class);
+        eb.setAddressType(SourceDestKeyLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.SourceDestKeyBuilder()

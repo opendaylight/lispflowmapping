@@ -54,39 +54,39 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.typ
  * Factory for LispAddress (de)serializers.
  *
  * @author Lorand Jakab
- *
  */
 public final class LispAddressSerializerFactory {
-    private static Map<Class<? extends LispAddressFamily>, LispAddressSerializer> addressTypeToSerializerMap;
+    private static Map<LispAddressFamily, LispAddressSerializer> addressTypeToSerializerMap;
 
-    // Class should not be instantiated
     private LispAddressSerializerFactory() {
+        // Class should not be instantiated
     }
 
     private static void initializeMap() {
-        addressTypeToSerializerMap = new HashMap<Class<? extends LispAddressFamily>, LispAddressSerializer>();
-        addressTypeToSerializerMap.put(NoAddressAfi.class, NoAddressSerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv4Afi.class, Ipv4Serializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv4BinaryAfi.class, Ipv4BinarySerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv4PrefixAfi.class, Ipv4PrefixSerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv4PrefixBinaryAfi.class, Ipv4PrefixBinarySerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv6Afi.class, Ipv6Serializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv6BinaryAfi.class, Ipv6BinarySerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv6PrefixAfi.class, Ipv6PrefixSerializer.getInstance());
-        addressTypeToSerializerMap.put(Ipv6PrefixBinaryAfi.class, Ipv6PrefixBinarySerializer.getInstance());
-        addressTypeToSerializerMap.put(MacAfi.class, MacSerializer.getInstance());
-        addressTypeToSerializerMap.put(DistinguishedNameAfi.class, DistinguishedNameSerializer.getInstance());
-        addressTypeToSerializerMap.put(Lcaf.class, LcafSerializer.getInstance());
-        addressTypeToSerializerMap.put(AfiListLcaf.class, AfiListSerializer.getInstance());
-        addressTypeToSerializerMap.put(InstanceIdLcaf.class, InstanceIdSerializer.getInstance());
-        addressTypeToSerializerMap.put(ApplicationDataLcaf.class, ApplicationDataSerializer.getInstance());
-        addressTypeToSerializerMap.put(ExplicitLocatorPathLcaf.class, ExplicitLocatorPathSerializer.getInstance());
-        addressTypeToSerializerMap.put(SourceDestKeyLcaf.class, SourceDestKeySerializer.getInstance());
-        addressTypeToSerializerMap.put(KeyValueAddressLcaf.class, KeyValueAddressSerializer.getInstance());
-        addressTypeToSerializerMap.put(ServicePathLcaf.class, ServicePathSerializer.getInstance());
+        // FIXME: use ImmutabmeMap and static initialization
+        addressTypeToSerializerMap = new HashMap<>();
+        addressTypeToSerializerMap.put(NoAddressAfi.VALUE, NoAddressSerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv4Afi.VALUE, Ipv4Serializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv4BinaryAfi.VALUE, Ipv4BinarySerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv4PrefixAfi.VALUE, Ipv4PrefixSerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv4PrefixBinaryAfi.VALUE, Ipv4PrefixBinarySerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv6Afi.VALUE, Ipv6Serializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv6BinaryAfi.VALUE, Ipv6BinarySerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv6PrefixAfi.VALUE, Ipv6PrefixSerializer.getInstance());
+        addressTypeToSerializerMap.put(Ipv6PrefixBinaryAfi.VALUE, Ipv6PrefixBinarySerializer.getInstance());
+        addressTypeToSerializerMap.put(MacAfi.VALUE, MacSerializer.getInstance());
+        addressTypeToSerializerMap.put(DistinguishedNameAfi.VALUE, DistinguishedNameSerializer.getInstance());
+        addressTypeToSerializerMap.put(Lcaf.VALUE, LcafSerializer.getInstance());
+        addressTypeToSerializerMap.put(AfiListLcaf.VALUE, AfiListSerializer.getInstance());
+        addressTypeToSerializerMap.put(InstanceIdLcaf.VALUE, InstanceIdSerializer.getInstance());
+        addressTypeToSerializerMap.put(ApplicationDataLcaf.VALUE, ApplicationDataSerializer.getInstance());
+        addressTypeToSerializerMap.put(ExplicitLocatorPathLcaf.VALUE, ExplicitLocatorPathSerializer.getInstance());
+        addressTypeToSerializerMap.put(SourceDestKeyLcaf.VALUE, SourceDestKeySerializer.getInstance());
+        addressTypeToSerializerMap.put(KeyValueAddressLcaf.VALUE, KeyValueAddressSerializer.getInstance());
+        addressTypeToSerializerMap.put(ServicePathLcaf.VALUE, ServicePathSerializer.getInstance());
     }
 
-    public static LispAddressSerializer getSerializer(Class<? extends LispAddressFamily> clazz) {
+    public static LispAddressSerializer getSerializer(LispAddressFamily clazz) {
         if (addressTypeToSerializerMap == null) {
             initializeMap();
         }

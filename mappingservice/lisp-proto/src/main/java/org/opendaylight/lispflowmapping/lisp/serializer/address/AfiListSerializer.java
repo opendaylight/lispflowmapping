@@ -67,7 +67,7 @@ public final class AfiListSerializer extends LcafSerializer {
     @Override
     public Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(AfiListLcaf.class);
+        eb.setAddressType(AfiListLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer, length, ctx));
         return eb.build();
@@ -76,7 +76,7 @@ public final class AfiListSerializer extends LcafSerializer {
     @Override
     public Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(AfiListLcaf.class);
+        rb.setAddressType(AfiListLcaf.VALUE);
         rb.setVirtualNetworkId(getVni(ctx));
         rb.setAddress(deserializeData(buffer, length, ctx));
         return rb.build();

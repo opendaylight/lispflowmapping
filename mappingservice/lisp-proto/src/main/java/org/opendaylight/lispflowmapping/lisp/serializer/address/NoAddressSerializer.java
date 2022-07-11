@@ -45,7 +45,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(NoAddressAfi.class);
+        eb.setAddressType(NoAddressAfi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return eb.build();
@@ -54,7 +54,7 @@ public final class NoAddressSerializer extends LispAddressSerializer {
     @Override
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(NoAddressAfi.class);
+        rb.setAddressType(NoAddressAfi.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return rb.build();

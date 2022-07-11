@@ -53,7 +53,7 @@ public class SimpleAddressSerializer {
                 && ctx.getMaskLen() != LispAddressSerializerContext.MASK_LEN_MISSING) {
             afi *= -1;
         }
-        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getAddressType(afi);
+        LispAddressFamily addressType = AddressTypeMap.getAddressType(afi);
         LispAddressSerializer serializer = LispAddressSerializerFactory.getSerializer(addressType);
         if (serializer == null) {
             throw new LispSerializationException("Unknown AFI: " + afi);
