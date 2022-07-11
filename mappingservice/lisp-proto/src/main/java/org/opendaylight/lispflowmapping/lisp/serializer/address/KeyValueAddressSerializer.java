@@ -60,7 +60,7 @@ public final class KeyValueAddressSerializer extends LcafSerializer {
     @Override
     protected Eid deserializeLcafEidData(ByteBuffer buffer, byte res2, short length, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(KeyValueAddressLcaf.class);
+        eb.setAddressType(KeyValueAddressLcaf.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(deserializeData(buffer, ctx));
         return eb.build();
@@ -70,13 +70,13 @@ public final class KeyValueAddressSerializer extends LcafSerializer {
     protected Rloc deserializeLcafRlocData(ByteBuffer buffer, byte res2, short length,
             LispAddressSerializerContext ctx) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(KeyValueAddressLcaf.class);
+        rb.setAddressType(KeyValueAddressLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(deserializeData(buffer, ctx));
         return rb.build();
     }
 
-    private Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
+    private static Address deserializeData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         SimpleAddress keyAddress = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         SimpleAddress valueAddress = SimpleAddressSerializer.getInstance().deserialize(buffer, ctx);
         KeyValueAddressBuilder kvab = new KeyValueAddressBuilder();

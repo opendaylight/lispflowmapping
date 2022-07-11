@@ -86,7 +86,7 @@ public final class Ipv4PrefixBinarySerializer extends LispAddressSerializer {
                         .setIpv4MaskLength(Uint8.valueOf(ctx.getMaskLen()))
                         .build();
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(Ipv4PrefixBinaryAfi.class);
+        eb.setAddressType(Ipv4PrefixBinaryAfi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(prefix);
         return eb.build();

@@ -60,10 +60,11 @@ public class AfiListSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("40 03 00 00 "
-                + "01 00 00 18 "
-                + "00 01 AA BB CC DD " // IPv4
-                + "00 02 11 22 33 44 11 22 33 44 11 22 33 44"));
+        LispAddressSerializer.getInstance().deserializeRloc(hexToByteBuffer("""
+            40 03 00 00 \
+            01 00 00 18 \
+            00 01 AA BB CC DD \
+            00 02 11 22 33 44 11 22 33 44 11 22 33 44"""));
     }
 
     @Test(expected = LispSerializationException.class)
@@ -80,7 +81,7 @@ public class AfiListSerializerTest extends BaseTestCase {
             SimpleAddressBuilder.getDefaultInstance("1122:3344:1122:3344:1122:3344:1122:3344")));
 
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(AfiListLcaf.class);
+        rb.setAddressType(AfiListLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.AfiListBuilder()
@@ -101,7 +102,7 @@ public class AfiListSerializerTest extends BaseTestCase {
         listBuilder.setAddressList(Set.of());
 
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(AfiListLcaf.class);
+        rb.setAddressType(AfiListLcaf.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.AfiListBuilder()

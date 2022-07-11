@@ -42,17 +42,19 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "02 20 00 0A "
-                + "AA BB "), null);
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            02 20 00 0A \
+            AA BB """), null);
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "AA 20 00 0A " // Type AA is unknown
-                + "00 01 11 22 33 44 " // AFI=1, IP=0x11223344
-                + "00 01 22 33 44 55"), null); // AFI=1, IP=0x22334455
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            AA 20 00 0A \
+            00 01 11 22 33 44 \
+            00 01 22 33 44 55"""), null); // AFI=1, IP=0x22334455
     }
 
     @Test
@@ -76,7 +78,7 @@ public class KeyValueAddressSerializerTest extends BaseTestCase {
         addressBuilder.setValue(new SimpleAddress(new IpAddress(new Ipv4Address("34.51.68.85"))));
 
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(KeyValueAddressLcaf.class);
+        eb.setAddressType(KeyValueAddressLcaf.VALUE);
         eb.setVirtualNetworkId(null);
         eb.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.KeyValueAddressBuilder()
