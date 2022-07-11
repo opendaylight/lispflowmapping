@@ -105,17 +105,17 @@ public final class LispAddressUtil {
     private LispAddressUtil() {
     }
 
-    public static Class<? extends LispAddressFamily> addressTypeFromSimpleAddress(SimpleAddress address) {
+    public static LispAddressFamily addressTypeFromSimpleAddress(SimpleAddress address) {
         if (address.getIpAddress() != null) {
             return binaryAddressTypeFromIpAddress(address.getIpAddress());
         } else if (address.getIpPrefix() != null) {
             return addressTypeFromIpPrefix(address.getIpPrefix());
         } else if (address.getMacAddress() != null) {
-            return MacAfi.class;
+            return MacAfi.VALUE;
         } else if (address.getDistinguishedNameType() != null) {
-            return DistinguishedNameAfi.class;
+            return DistinguishedNameAfi.VALUE;
         } else if (address.getAsNumber() != null) {
-            return AsNumberAfi.class;
+            return AsNumberAfi.VALUE;
         }
         return null;
     }
@@ -146,53 +146,53 @@ public final class LispAddressUtil {
 
     public static Address addressFromInet(InetAddress address) {
         if (address instanceof Inet4Address) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv4Builder()
                     .setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address)).build();
         } else if (address instanceof Inet6Address) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv6Builder()
                     .setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address)).build();
         }
         return null;
     }
 
-    public static Class<? extends LispAddressFamily> binaryAddressTypeFromInet(InetAddress address) {
+    public static LispAddressFamily binaryAddressTypeFromInet(InetAddress address) {
         if (address instanceof Inet4Address) {
-            return Ipv4BinaryAfi.class;
+            return Ipv4BinaryAfi.VALUE;
         } else if (address instanceof Inet6Address) {
-            return Ipv6BinaryAfi.class;
+            return Ipv6BinaryAfi.VALUE;
         }
         return null;
     }
 
     public static Address binaryAddressFromInet(InetAddress address) {
         if (address instanceof Inet4Address) {
-            return (Address) new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(address.getAddress())).build();
+            return new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(address.getAddress())).build();
         } else if (address instanceof Inet6Address) {
-            return (Address) new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(address.getAddress())).build();
+            return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(address.getAddress())).build();
         }
         return null;
     }
 
-    public static Class<? extends LispAddressFamily> addressTypeFromIpAddress(IpAddress address) {
+    public static LispAddressFamily addressTypeFromIpAddress(IpAddress address) {
         if (address == null) {
             return null;
         } else if (address.getIpv4Address() != null) {
-            return Ipv4Afi.class;
+            return Ipv4Afi.VALUE;
         } else if (address.getIpv6Address() != null) {
-            return Ipv6Afi.class;
+            return Ipv6Afi.VALUE;
         }
         return null;
     }
 
-    public static Class<? extends LispAddressFamily> binaryAddressTypeFromIpAddress(IpAddress address) {
+    public static LispAddressFamily binaryAddressTypeFromIpAddress(IpAddress address) {
         if (address == null) {
             return null;
         } else if (address.getIpv4Address() != null) {
-            return Ipv4BinaryAfi.class;
+            return Ipv4BinaryAfi.VALUE;
         } else if (address.getIpv6Address() != null) {
-            return Ipv6BinaryAfi.class;
+            return Ipv6BinaryAfi.VALUE;
         }
         return null;
     }
@@ -201,10 +201,10 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else if (address.getIpv4Address() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv4Builder().setIpv4(address.getIpv4Address()).build();
         } else if (address.getIpv6Address() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv6Builder().setIpv6(address.getIpv6Address()).build();
         }
         return null;
@@ -215,22 +215,22 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else if (address.getIpv4Address() != null) {
-            return (Address) new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(
+            return new Ipv4BinaryBuilder().setIpv4Binary(new Ipv4AddressBinary(
                     InetAddresses.forString(address.getIpv4Address().getValue()).getAddress())).build();
         } else if (address.getIpv6Address() != null) {
-            return (Address) new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(
+            return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(
                     InetAddresses.forString(address.getIpv6Address().getValue()).getAddress())).build();
         }
         return null;
     }
 
-    public static Class<? extends LispAddressFamily> addressTypeFromIpPrefix(IpPrefix address) {
+    public static LispAddressFamily addressTypeFromIpPrefix(IpPrefix address) {
         if (address == null) {
             return null;
         } else if (address.getIpv4Prefix() != null) {
-            return Ipv4PrefixAfi.class;
+            return Ipv4PrefixAfi.VALUE;
         } else if (address.getIpv6Prefix() != null) {
-            return Ipv6PrefixAfi.class;
+            return Ipv6PrefixAfi.VALUE;
         }
         return null;
     }
@@ -239,10 +239,10 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else if (address.getIpv4Prefix() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv4PrefixBuilder().setIpv4Prefix(address.getIpv4Prefix()).build();
         } else if (address.getIpv6Prefix() != null) {
-            return (Address) new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
+            return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv6PrefixBuilder().setIpv6Prefix(address.getIpv6Prefix()).build();
         }
         return null;
@@ -252,7 +252,7 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else {
-            return (Address) new MacBuilder().setMac(address).build();
+            return new MacBuilder().setMac(address).build();
         }
     }
 
@@ -260,7 +260,7 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else {
-            return (Address) new ServicePathBuilder().setServicePath(address).build();
+            return new ServicePathBuilder().setServicePath(address).build();
         }
     }
 
@@ -268,7 +268,7 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else {
-            return (Address) new DistinguishedNameBuilder().setDistinguishedName(address).build();
+            return new DistinguishedNameBuilder().setDistinguishedName(address).build();
         }
     }
 
@@ -276,7 +276,7 @@ public final class LispAddressUtil {
         if (address == null) {
             return null;
         } else {
-            return (Address) new AsNumberBuilder().setAsNumber(address).build();
+            return new AsNumberBuilder().setAsNumber(address).build();
         }
     }
 
@@ -298,33 +298,33 @@ public final class LispAddressUtil {
 
     public static Rloc toRloc(Ipv4Address address) {
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(Ipv4Afi.class);
+        builder.setAddressType(Ipv4Afi.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) new Ipv4Builder().setIpv4(address).build());
+        builder.setAddress(new Ipv4Builder().setIpv4(address).build());
         return builder.build();
     }
 
     public static Rloc toRloc(Ipv4AddressBinary address) {
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(Ipv4BinaryAfi.class);
+        builder.setAddressType(Ipv4BinaryAfi.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) new Ipv4BinaryBuilder().setIpv4Binary(address).build());
+        builder.setAddress(new Ipv4BinaryBuilder().setIpv4Binary(address).build());
         return builder.build();
     }
 
     public static Rloc toRloc(Ipv6Address address) {
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(Ipv6Afi.class);
+        builder.setAddressType(Ipv6Afi.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) new Ipv6Builder().setIpv6(address).build());
+        builder.setAddress(new Ipv6Builder().setIpv6(address).build());
         return builder.build();
     }
 
     public static Rloc toRloc(Ipv6AddressBinary address) {
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(Ipv6BinaryAfi.class);
+        builder.setAddressType(Ipv6BinaryAfi.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) new Ipv6BinaryBuilder().setIpv6Binary(address).build());
+        builder.setAddress(new Ipv6BinaryBuilder().setIpv6Binary(address).build());
         return builder.build();
     }
 
@@ -338,41 +338,41 @@ public final class LispAddressUtil {
 
     public static Eid toEid(Ipv4Prefix prefix, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4PrefixAfi.class);
+        builder.setAddressType(Ipv4PrefixAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv4PrefixBuilder().setIpv4Prefix(prefix).build());
+        builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(prefix).build());
         return builder.build();
     }
 
     public static Eid toEid(Ipv4PrefixBinary prefix, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4PrefixBinaryAfi.class);
+        builder.setAddressType(Ipv4PrefixBinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) prefix);
+        builder.setAddress(prefix);
         return builder.build();
     }
 
     public static Eid toEid(Ipv6PrefixBinary prefix, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6PrefixBinaryAfi.class);
+        builder.setAddressType(Ipv6PrefixBinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) prefix);
+        builder.setAddress(prefix);
         return builder.build();
     }
 
     public static Eid toEid(Ipv4Address address, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4Afi.class);
+        builder.setAddressType(Ipv4Afi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv4Builder().setIpv4(address).build());
+        builder.setAddress(new Ipv4Builder().setIpv4(address).build());
         return builder.build();
     }
 
     public static Eid toEid(Ipv4AddressBinary address, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4BinaryAfi.class);
+        builder.setAddressType(Ipv4BinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv4BinaryBuilder().setIpv4Binary(address).build());
+        builder.setAddress(new Ipv4BinaryBuilder().setIpv4Binary(address).build());
         return builder.build();
     }
 
@@ -386,41 +386,41 @@ public final class LispAddressUtil {
 
     public static Eid toEid(Ipv6Address address, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6Afi.class);
+        builder.setAddressType(Ipv6Afi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv6Builder().setIpv6(address).build());
+        builder.setAddress(new Ipv6Builder().setIpv6(address).build());
         return builder.build();
     }
 
     public static Eid toEid(Ipv6AddressBinary address, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6BinaryAfi.class);
+        builder.setAddressType(Ipv6BinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv6BinaryBuilder().setIpv6Binary(address).build());
+        builder.setAddress(new Ipv6BinaryBuilder().setIpv6Binary(address).build());
         return builder.build();
     }
 
     public static Eid toEid(DistinguishedNameType dn, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(DistinguishedNameAfi.class);
+        builder.setAddressType(DistinguishedNameAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new DistinguishedNameBuilder().setDistinguishedName(dn).build());
+        builder.setAddress(new DistinguishedNameBuilder().setDistinguishedName(dn).build());
         return builder.build();
     }
 
     public static Eid toEid(MacAddress mac, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(MacAfi.class);
+        builder.setAddressType(MacAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new MacBuilder().setMac(mac).build());
+        builder.setAddress(new MacBuilder().setMac(mac).build());
         return builder.build();
     }
 
     public static Eid toEid(Ipv6Prefix prefix, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6PrefixAfi.class);
+        builder.setAddressType(Ipv6PrefixAfi.VALUE);
         builder.setVirtualNetworkId(vni);
-        builder.setAddress((Address) new Ipv6PrefixBuilder().setIpv6Prefix(prefix).build());
+        builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(prefix).build());
         return builder.build();
     }
 
@@ -434,7 +434,7 @@ public final class LispAddressUtil {
 
     public static Eid toIpPrefixEid(IpAddress addr, int vni) {
         // If you touch this, be sure that sfclisp compiles!
-        int mask = addressTypeFromIpAddress(addr) == Ipv4Afi.class ? 32 : 128;
+        int mask = Ipv4Afi.VALUE.equals(addressTypeFromIpAddress(addr)) ? 32 : 128;
         IpPrefix prefix = asIpPrefix(addr.stringValue(), mask);
         // XXX getMapping rcp fails if VNI set to 0
         return toEidNoVni(prefix);
@@ -463,7 +463,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv4PrefixEid(Eid eid, Inet4Address address, short mask) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4PrefixAfi.class);
+        builder.setAddressType(Ipv4PrefixAfi.VALUE);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(
                 IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
@@ -481,7 +481,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv4PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
         String address = MaskUtil.getPrefixAddress(prefix);
-        short mask = Short.valueOf(MaskUtil.getPrefixMask(prefix));
+        short mask = Short.parseShort(MaskUtil.getPrefixMask(prefix));
         byte[] ipv4 = InetAddresses.forString(address).getAddress();
         return toEid(new Ipv4PrefixBinaryBuilder().setIpv4AddressBinary(new Ipv4AddressBinary(ipv4))
                 .setIpv4MaskLength(fromJava(mask)).build(), iiType);
@@ -499,7 +499,7 @@ public final class LispAddressUtil {
         Preconditions.checkArgument(address.length == 4,
                 "asIpv4PrefixBinaryEid called with incorrect length byte array ({})", address.length);
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv4PrefixBinaryAfi.class);
+        builder.setAddressType(Ipv4PrefixBinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
         builder.setAddress(new Ipv4PrefixBinaryBuilder().setIpv4AddressBinary(new Ipv4AddressBinary(address))
                 .setIpv4MaskLength(fromJava(mask)).build());
@@ -534,7 +534,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv6PrefixEid(Eid eid, Inet6Address address, short mask) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6PrefixAfi.class);
+        builder.setAddressType(Ipv6PrefixAfi.VALUE);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(
                 IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
@@ -552,7 +552,7 @@ public final class LispAddressUtil {
 
     public static Eid asIpv6PrefixBinaryEid(final String prefix, final InstanceIdType iiType) {
         String address = MaskUtil.getPrefixAddress(prefix);
-        short mask = Short.valueOf(MaskUtil.getPrefixMask(prefix));
+        short mask = Short.parseShort(MaskUtil.getPrefixMask(prefix));
         byte[] ipv6 = InetAddresses.forString(address).getAddress();
         return toEid(new Ipv6PrefixBinaryBuilder().setIpv6AddressBinary(new Ipv6AddressBinary(ipv6))
                 .setIpv6MaskLength(fromJava(mask)).build(), iiType);
@@ -570,7 +570,7 @@ public final class LispAddressUtil {
         Preconditions.checkArgument(address.length == 16,
                 "asIpv6PrefixBinaryEid called with incorrect length byte array ({})", address.length);
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(Ipv6PrefixBinaryAfi.class);
+        builder.setAddressType(Ipv6PrefixBinaryAfi.VALUE);
         builder.setVirtualNetworkId(vni);
         builder.setAddress(new Ipv6PrefixBinaryBuilder().setIpv6AddressBinary(new Ipv6AddressBinary(address))
                 .setIpv6MaskLength(fromJava(mask)).build());
@@ -630,9 +630,9 @@ public final class LispAddressUtil {
 
     public static IpPrefix asIpPrefix(String addr, int mask) {
         int version = ipVersionFromString(addr);
-        if (version == 4 && (mask >= 0 && mask <= 32)) {
+        if (version == 4 && mask >= 0 && mask <= 32) {
             return new IpPrefix(new Ipv4Prefix(addr + "/" + mask));
-        } else if (version == 6 && (mask >= 0 && mask <= 128)) {
+        } else if (version == 6 && mask >= 0 && mask <= 128) {
             return new IpPrefix(new Ipv6Prefix(addr + "/" + mask));
         } else {
             return null;
@@ -641,7 +641,7 @@ public final class LispAddressUtil {
 
     public static Eid asServicePathEid(long vni, long servicePathId, short serviceIndex) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(ServicePathLcaf.class);
+        eb.setAddressType(ServicePathLcaf.VALUE);
         if (vni >= 0) {
             eb.setVirtualNetworkId(new InstanceIdType(fromJava(vni)));
         }
@@ -678,9 +678,9 @@ public final class LispAddressUtil {
                 .rev151105.lisp.address.address.KeyValueAddressBuilder()
                 .setKeyValueAddress(kvab.build()).build();
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(KeyValueAddressLcaf.class);
+        builder.setAddressType(KeyValueAddressLcaf.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) address);
+        builder.setAddress(address);
         return builder.build();
     }
 
@@ -692,9 +692,9 @@ public final class LispAddressUtil {
                 .rev151105.lisp.address.address.KeyValueAddressBuilder()
                 .setKeyValueAddress(kvab.build()).build();
         RlocBuilder builder = new RlocBuilder();
-        builder.setAddressType(KeyValueAddressLcaf.class);
+        builder.setAddressType(KeyValueAddressLcaf.VALUE);
         builder.setVirtualNetworkId(null);
-        builder.setAddress((Address) address);
+        builder.setAddress(address);
         return builder.build();
     }
 
@@ -711,8 +711,8 @@ public final class LispAddressUtil {
 
     public static Eid asSrcDstEid(String src, String dst, int smask, int dmask, long vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(SourceDestKeyLcaf.class);
-        builder.setVirtualNetworkId(new InstanceIdType(fromJava(Long.valueOf(vni))));
+        builder.setAddressType(SourceDestKeyLcaf.VALUE);
+        builder.setVirtualNetworkId(new InstanceIdType(fromJava(vni)));
         builder.setAddress(
                 new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
                         .lisp.address.address.SourceDestKeyBuilder()
@@ -723,7 +723,7 @@ public final class LispAddressUtil {
 
     public static Eid asSrcDstEid(SourceDestKey sd, InstanceIdType vni) {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(SourceDestKeyLcaf.class);
+        builder.setAddressType(SourceDestKeyLcaf.VALUE);
         builder.setVirtualNetworkId(vni);
         builder.setAddress(new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                 .rev151105.lisp.address.address.SourceDestKeyBuilder().setSourceDestKey(sd).build());
@@ -749,12 +749,12 @@ public final class LispAddressUtil {
 
         RlocBuilder teBuilder = new RlocBuilder();
         teBuilder.setAddress(elpBuilder.build());
-        teBuilder.setAddressType(ExplicitLocatorPathLcaf.class);
+        teBuilder.setAddressType(ExplicitLocatorPathLcaf.VALUE);
         return teBuilder.build();
     }
 
     public static List<LocatorRecord> asLocatorRecords(List<Rloc> locators) {
-        List<LocatorRecord> locatorRecords = new ArrayList<LocatorRecord>();
+        List<LocatorRecord> locatorRecords = new ArrayList<>();
         for (Rloc locator : locators) {
             LocatorRecordBuilder locatorBuilder = new LocatorRecordBuilder();
             locatorBuilder.setLocalLocator(false).setRlocProbed(false)
@@ -768,7 +768,7 @@ public final class LispAddressUtil {
 
     public static Eid getNoAddressEid() {
         EidBuilder builder = new EidBuilder();
-        builder.setAddressType(NoAddressAfi.class);
+        builder.setAddressType(NoAddressAfi.VALUE);
         builder.setVirtualNetworkId(null);
         builder.setAddress(new NoAddressBuilder().setNoAddress(Empty.value()).build());
         return builder.build();
@@ -816,31 +816,34 @@ public final class LispAddressUtil {
         return new Ipv6BinaryBuilder().setIpv6Binary(new Ipv6AddressBinary(addr)).build();
     }
 
-    private static Pair<Class<? extends LispAddressFamily>, Address> convertToBinary(Address addr) {
-        Address convAddr = null;
-        Class<? extends LispAddressFamily> convType = null;
+    private static Pair<LispAddressFamily, Address> convertToBinary(Address addr) {
+        final Address convAddr;
+        final LispAddressFamily convType;
         if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                 .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) {
             convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                     .lisp.address.types.rev151105.lisp.address.address.Ipv4Prefix) addr);
-            convType = Ipv4PrefixBinaryAfi.class;
+            convType = Ipv4PrefixBinaryAfi.VALUE;
         } else if (addr instanceof org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                 .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) {
             convAddr = convertToBinary((org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf
                     .lisp.address.types.rev151105.lisp.address.address.Ipv6Prefix) addr);
-            convType = Ipv6PrefixBinaryAfi.class;
+            convType = Ipv6PrefixBinaryAfi.VALUE;
         } else if (addr instanceof Ipv4) {
             convAddr = convertToBinary((Ipv4) addr);
-            convType = Ipv4BinaryAfi.class;
+            convType = Ipv4BinaryAfi.VALUE;
         } else if (addr instanceof Ipv6) {
             convAddr = convertToBinary((Ipv6) addr);
-            convType = Ipv6BinaryAfi.class;
+            convType = Ipv6BinaryAfi.VALUE;
+        } else {
+            convAddr = null;
+            convType = null;
         }
-        return new ImmutablePair<Class<? extends LispAddressFamily>, Address>(convType, convAddr);
+        return new ImmutablePair<>(convType, convAddr);
     }
 
     public static Eid convertToBinary(Eid eid) {
-        Pair<Class<? extends LispAddressFamily>, Address> converted = convertToBinary(eid.getAddress());
+        Pair<LispAddressFamily, Address> converted = convertToBinary(eid.getAddress());
         if (converted.getRight() == null) {
             return eid;
         }
@@ -851,7 +854,7 @@ public final class LispAddressUtil {
     }
 
     public static Rloc convertToBinary(Rloc rloc) {
-        Pair<Class<? extends LispAddressFamily>, Address> converted = convertToBinary(rloc.getAddress());
+        Pair<LispAddressFamily, Address> converted = convertToBinary(rloc.getAddress());
         if (converted.getRight() == null) {
             return rloc;
         }
@@ -914,27 +917,30 @@ public final class LispAddressUtil {
                 .build();
     }
 
-    private static Pair<Class<? extends LispAddressFamily>, Address> convertFromBinary(Address addr) {
-        Address convAddr = null;
-        Class<? extends LispAddressFamily> convType = null;
+    private static Pair<LispAddressFamily, Address> convertFromBinary(Address addr) {
+        final Address convAddr;
+        final LispAddressFamily convType;
         if (addr instanceof Ipv4PrefixBinary) {
             convAddr = convertFromBinary((Ipv4PrefixBinary) addr);
-            convType = Ipv4PrefixAfi.class;
+            convType = Ipv4PrefixAfi.VALUE;
         } else if (addr instanceof Ipv6PrefixBinary) {
             convAddr = convertFromBinary((Ipv6PrefixBinary) addr);
-            convType = Ipv6PrefixAfi.class;
+            convType = Ipv6PrefixAfi.VALUE;
         } else if (addr instanceof Ipv4Binary) {
             convAddr = convertFromBinary((Ipv4Binary) addr);
-            convType = Ipv4Afi.class;
+            convType = Ipv4Afi.VALUE;
         } else if (addr instanceof Ipv6Binary) {
             convAddr = convertFromBinary((Ipv6Binary) addr);
-            convType = Ipv6Afi.class;
+            convType = Ipv6Afi.VALUE;
+        } else {
+            convAddr = null;
+            convType = null;
         }
-        return new ImmutablePair<Class<? extends LispAddressFamily>, Address>(convType, convAddr);
+        return new ImmutablePair<>(convType, convAddr);
     }
 
     public static Eid convertFromBinary(Eid eid) {
-        Pair<Class<? extends LispAddressFamily>, Address> converted = convertFromBinary(eid.getAddress());
+        Pair<LispAddressFamily, Address> converted = convertFromBinary(eid.getAddress());
         if (converted.getRight() == null) {
             return eid;
         }
@@ -945,7 +951,7 @@ public final class LispAddressUtil {
     }
 
     public static Rloc convertFromBinary(Rloc rloc) {
-        Pair<Class<? extends LispAddressFamily>, Address> converted = convertFromBinary(rloc.getAddress());
+        Pair<LispAddressFamily, Address> converted = convertFromBinary(rloc.getAddress());
         if (converted.getRight() == null) {
             return rloc;
         }

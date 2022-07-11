@@ -216,7 +216,7 @@ public class LispXtrSouthboundHandlerTest {
 
     private static MapRequestBuilder getDefaultMapRequestBuilder() {
         final Rloc rloc = new RlocBuilder()
-                .setAddressType(Ipv4BinaryAfi.class)
+                .setAddressType(Ipv4BinaryAfi.VALUE)
                 .setAddress(new Ipv4BinaryBuilder()
                         .setIpv4Binary(new Ipv4AddressBinary(new byte[]{127, 0, 0, 2})).build())
                 .build();

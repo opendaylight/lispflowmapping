@@ -621,7 +621,7 @@ public class MappingSystemTest {
 
         return new RlocBuilder()
                 .setAddress(explicitLocatorPath)
-                .setAddressType(ExplicitLocatorPathLcaf.class).build();
+                .setAddressType(ExplicitLocatorPathLcaf.VALUE).build();
     }
 
     private static Rloc getIpPrefixTypeRloc() {
@@ -631,6 +631,6 @@ public class MappingSystemTest {
 
         return new RlocBuilder()
                 .setAddress(address)
-                .setAddressType(Ipv4PrefixAfi.class).build();
+                .setAddressType(Ipv4PrefixAfi.VALUE).build();
     }
 }

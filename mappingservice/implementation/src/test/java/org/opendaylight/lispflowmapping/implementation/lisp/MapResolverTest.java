@@ -226,8 +226,8 @@ public class MapResolverTest {
         // ----------------------
         // with sourceRloc = null
         List<ItrRloc> itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
+                newItrRloc(MacAfi.VALUE, null),
+                newItrRloc(Ipv4BinaryAfi.VALUE, IPV4_ADDRESS));
 
         ArgumentCaptor<Subscriber> captor = ArgumentCaptor.forClass(Subscriber.class);
         mapResolver.handleMapRequest(mapRequestBuilder.setSourceRloc(null).setItrRloc(itrRlocList).build());
@@ -238,8 +238,8 @@ public class MapResolverTest {
         // ----------------------
         // with sourceRloc address = itrRloc address
         itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv4BinaryAfi.class, IPV4_ADDRESS));
+                newItrRloc(MacAfi.VALUE, null),
+                newItrRloc(Ipv4BinaryAfi.VALUE, IPV4_ADDRESS));
 
         MapRequest mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
@@ -253,9 +253,9 @@ public class MapResolverTest {
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv4)
         itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
+                newItrRloc(MacAfi.VALUE, null),
+                newItrRloc(Ipv6Afi.VALUE, IPV6_ADDRESS),
+                newItrRloc(Ipv4Afi.VALUE, IPV4_ADDRESS));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV6_ADDRESS_BINARY)
@@ -269,9 +269,9 @@ public class MapResolverTest {
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv6)
         itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, null),
-                newItrRloc(Ipv6Afi.class, IPV6_ADDRESS),
-                newItrRloc(Ipv4Afi.class, IPV4_ADDRESS));
+                newItrRloc(MacAfi.VALUE, null),
+                newItrRloc(Ipv6Afi.VALUE, IPV6_ADDRESS),
+                newItrRloc(Ipv4Afi.VALUE, IPV4_ADDRESS));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_2)
@@ -286,8 +286,8 @@ public class MapResolverTest {
         // with no common ip address nor Afi
         final Mac mac = new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build();
         itrRlocList = Lists.newArrayList(
-                newItrRloc(MacAfi.class, mac),
-                newItrRloc(NoAddressAfi.class, Mockito.mock(NoAddress.class)));
+                newItrRloc(MacAfi.VALUE, mac),
+                newItrRloc(NoAddressAfi.VALUE, Mockito.mock(NoAddress.class)));
 
         mapRequest = mapRequestBuilder
                 .setSourceRloc(IPV4_ADDRESS_BINARY_1)
@@ -499,7 +499,7 @@ public class MapResolverTest {
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
     }
 
-    private static ItrRloc newItrRloc(Class<? extends LispAddressFamily> clazz, Address address) {
+    private static ItrRloc newItrRloc(LispAddressFamily clazz, Address address) {
         return new ItrRlocBuilder().setRloc(new RlocBuilder()
                 .setAddress(address)
                 .setAddressType(clazz).build()).build();

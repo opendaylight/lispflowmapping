@@ -41,6 +41,7 @@ public class LcafSerializer extends LispAddressSerializer {
         return Length.LCAF_HEADER;
     }
 
+    @Override
     protected short getLcafLength(LispAddress lispAddress) {
         throw new LispSerializationException("Unimplemented method");
     }
@@ -66,7 +67,7 @@ public class LcafSerializer extends LispAddressSerializer {
                 - LispAddressSerializer.getInstance().getInstanceIdExtraSize()));
     }
 
-    private void serializeLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress,
+    private static void serializeLCAFAddressHeader(ByteBuffer buffer, LispAddress lispAddress,
             LispAddressSerializer serializer) {
         // RES + Flags
         buffer.putShort((short) 0);
@@ -78,7 +79,7 @@ public class LcafSerializer extends LispAddressSerializer {
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lcafType = (byte) ByteUtil.getUnsignedByte(buffer);
-        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
+        LispAddressFamily addressType = AddressTypeMap.getLcafType(lcafType);
         // TODO move these to ctx to shorten the list of arguments
         byte res2 = buffer.get();
         short length = buffer.getShort();
@@ -89,7 +90,7 @@ public class LcafSerializer extends LispAddressSerializer {
         }
         // Reset the mask context here, since the general mask length field in mapping records doesn't apply to LCAF
         // address types; except for Instance ID, since we don't store it as an LCAF
-        if (ctx != null && addressType != InstanceIdLcaf.class) {
+        if (ctx != null && !InstanceIdLcaf.VALUE.equals(addressType)) {
             ctx.setMaskLen(LispAddressSerializerContext.MASK_LEN_MISSING);
         }
         return serializer.deserializeLcafEidData(buffer, res2, length, ctx);
@@ -99,7 +100,7 @@ public class LcafSerializer extends LispAddressSerializer {
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         buffer.position(buffer.position() + Length.RES + Length.FLAGS);
         byte lcafType = (byte) ByteUtil.getUnsignedByte(buffer);
-        Class<? extends LispAddressFamily> addressType = AddressTypeMap.getLcafType(lcafType);
+        LispAddressFamily addressType = AddressTypeMap.getLcafType(lcafType);
         byte res2 = buffer.get();
         short length = buffer.getShort();
 

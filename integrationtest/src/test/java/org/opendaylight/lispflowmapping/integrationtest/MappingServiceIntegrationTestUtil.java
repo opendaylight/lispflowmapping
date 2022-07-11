@@ -463,11 +463,11 @@ final class MappingServiceIntegrationTestUtil {
         if (address instanceof Ipv4PrefixBinary) {
             Ipv4Binary convertedEid = new Ipv4BinaryBuilder().setIpv4Binary(((Ipv4PrefixBinary) address)
                     .getIpv4AddressBinary()).build();
-            return eb.setAddress(convertedEid).setAddressType(Ipv4BinaryAfi.class).build();
+            return eb.setAddress(convertedEid).setAddressType(Ipv4BinaryAfi.VALUE).build();
         } else if (address instanceof Ipv6PrefixBinary) {
             Ipv6Binary convertedEid = new Ipv6BinaryBuilder().setIpv6Binary(((Ipv6PrefixBinary) address)
                     .getIpv6AddressBinary()).build();
-            return eb.setAddress(convertedEid).setAddressType(Ipv6BinaryAfi.class).build();
+            return eb.setAddress(convertedEid).setAddressType(Ipv6BinaryAfi.VALUE).build();
         }
         return eid;
     }

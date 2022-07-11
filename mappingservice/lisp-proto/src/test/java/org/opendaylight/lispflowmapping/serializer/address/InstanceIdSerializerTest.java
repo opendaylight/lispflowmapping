@@ -33,7 +33,7 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
                 new LispAddressSerializerContext(null));
 
-        assertEquals(Ipv4BinaryAfi.class, address.getAddressType());
+        assertEquals(Ipv4BinaryAfi.VALUE, address.getAddressType());
         Ipv4Binary ipv4 = (Ipv4Binary) address.getAddress();
 
         assertArrayEquals(new byte[] {0x11, 0x22, 0x33, 0x44}, ipv4.getIpv4Binary().getValue());
@@ -42,28 +42,31 @@ public class InstanceIdSerializerTest extends BaseTestCase {
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__ShorterBuffer() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "02 20 00 0A "
-                + "AA BB "),
-                new LispAddressSerializerContext(null));
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            02 20 00 0A \
+            AA BB \
+            """), new LispAddressSerializerContext(null));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__UnknownLCAFType() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "AA 20 00 0A " // Type AA is unknown
-                + "00 BB CC DD " // instance ID
-                + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
-                new LispAddressSerializerContext(null));
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            AA 20 00 0A \
+            00 BB CC DD \
+            00 01 11 22 33 44"""), // AFI=1, IP=0x11223344
+            new LispAddressSerializerContext(null));
     }
 
     @Test(expected = LispSerializationException.class)
     public void deserialize__LongInstanceID() throws Exception {
-        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("40 03 00 00 "
-                + "02 20 00 0A " // Type AA is unknown
-                + "AA BB CC DD " // instance ID
-                + "00 01 11 22 33 44"), // AFI=1, IP=0x11223344
-                new LispAddressSerializerContext(null));
+        LispAddressSerializer.getInstance().deserializeEid(hexToByteBuffer("""
+            40 03 00 00 \
+            02 20 00 0A \
+            AA BB CC DD \
+            00 01 11 22 33 44"""), // AFI=1, IP=0x11223344
+            new LispAddressSerializerContext(null));
     }
 
     @Test

@@ -74,7 +74,7 @@ public final class Ipv6Serializer extends LispAddressSerializer {
     @Override
     protected Eid deserializeEidData(ByteBuffer buffer, LispAddressSerializerContext ctx) {
         EidBuilder eb = new EidBuilder();
-        eb.setAddressType(Ipv6Afi.class);
+        eb.setAddressType(Ipv6Afi.VALUE);
         eb.setVirtualNetworkId(getVni(ctx));
         eb.setAddress(new Ipv6Builder().setIpv6(deserializeData(buffer)).build());
         return eb.build();
@@ -83,7 +83,7 @@ public final class Ipv6Serializer extends LispAddressSerializer {
     @Override
     protected Rloc deserializeRlocData(ByteBuffer buffer) {
         RlocBuilder rb = new RlocBuilder();
-        rb.setAddressType(Ipv6Afi.class);
+        rb.setAddressType(Ipv6Afi.VALUE);
         rb.setVirtualNetworkId(null);
         rb.setAddress(new Ipv6Builder().setIpv6(deserializeData(buffer)).build());
         return rb.build();
