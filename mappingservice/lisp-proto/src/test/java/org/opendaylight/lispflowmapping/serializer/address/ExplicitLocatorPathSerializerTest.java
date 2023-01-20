@@ -7,12 +7,14 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -55,17 +57,17 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         assertEquals(ExplicitLocatorPathLcaf.VALUE, address.getAddressType());
         ExplicitLocatorPath elp = (ExplicitLocatorPath) address.getAddress();
 
-        List<Hop> hops = elp.getExplicitLocatorPath().getHop();
+        List<Hop> hops = elp.getExplicitLocatorPath().nonnullHop();
         assertEquals(2, hops.size());
 
         assertEquals("170.187.204.221", hops.get(0).getAddress().stringValue());
-        assertEquals(true, hops.get(0).getLrsBits().getLookup().booleanValue());
-        assertEquals(false, hops.get(0).getLrsBits().getRlocProbe().booleanValue());
-        assertEquals(true, hops.get(0).getLrsBits().getStrict().booleanValue());
+        assertTrue(hops.get(0).getLrsBits().getLookup());
+        assertFalse(hops.get(0).getLrsBits().getRlocProbe());
+        assertTrue(hops.get(0).getLrsBits().getStrict());
         assertEquals("17.34.51.68", hops.get(1).getAddress().stringValue());
-        assertEquals(false, hops.get(1).getLrsBits().getLookup().booleanValue());
-        assertEquals(true, hops.get(1).getLrsBits().getRlocProbe().booleanValue());
-        assertEquals(false, hops.get(1).getLrsBits().getStrict().booleanValue());
+        assertFalse(hops.get(1).getLrsBits().getLookup());
+        assertTrue(hops.get(1).getLrsBits().getRlocProbe());
+        assertFalse(hops.get(1).getLrsBits().getStrict());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
                 + "0A 00 00 10 "
                 + "00 00 00 01 AA BB CC DD "  // IPv4
                 + "00 00 00 01 11 22 33 44"); // IPv4
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 
     @Test
@@ -134,6 +136,6 @@ public class ExplicitLocatorPathSerializerTest extends BaseTestCase {
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
                 + "0A 00 00 00");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }
