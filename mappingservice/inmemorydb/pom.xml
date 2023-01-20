@@ -24,5 +24,19 @@
       <artifactId>mappingservice.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.guicedee.services</groupId>
+      <artifactId>javax.inject</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
   </dependencies>
 </project>

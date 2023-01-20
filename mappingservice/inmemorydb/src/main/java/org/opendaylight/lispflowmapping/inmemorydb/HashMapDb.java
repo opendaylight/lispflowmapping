@@ -5,16 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.inmemorydb;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.inmemorydb.radixtrie.RadixTrie;
 import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.IRowVisitor;
@@ -23,18 +24,23 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
+@Component(service = ILispDAO.class, immediate = true, property = "type=default")
 public class HashMapDb implements ILispDAO, AutoCloseable {
-
     protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
-    private static final Object TABLES = (Object) "tables";
-    private ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<>();
+    private static final Object TABLES = "tables";
+
+    private final ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<>();
 
     // IPv4 and IPv6 radix tries used for longest prefix matching
-    private RadixTrie<Object> ip4Trie = new RadixTrie<>(32, true);
-    private RadixTrie<Object> ip6Trie = new RadixTrie<>(128, true);
+    private final RadixTrie<Object> ip4Trie = new RadixTrie<>(32, true);
+    private final RadixTrie<Object> ip6Trie = new RadixTrie<>(128, true);
 
     private enum GetPrefixMethods {
         PARENT,
@@ -42,6 +48,19 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
         VIRTUAL_PARENT_SIBLING,
         WIDEST_NEGATIVE,
         COVERING
+    }
+
+    @Inject
+    @Activate
+    public HashMapDb() {
+
+    }
+
+    @PreDestroy
+    @Deactivate
+    @Override
+    public void close() {
+        data.clear();
     }
 
     public void tryAddToIpTrie(Object key) {
@@ -243,7 +262,7 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
 
     private static Set<Eid> nodesToEids(Eid key, Set<RadixTrie<Object>.TrieNode> nodes) {
         if (nodes == null || nodes.isEmpty()) {
-            return Collections.emptySet();
+            return Set.of();
         }
 
         Set<Eid> children = new HashSet<>();
@@ -299,10 +318,6 @@ public class HashMapDb implements ILispDAO, AutoCloseable {
     public void removeAll() {
         ip4Trie.removeAll();
         ip6Trie.removeAll();
-        data.clear();
-    }
-
-    public void close() throws Exception {
         data.clear();
     }
 
