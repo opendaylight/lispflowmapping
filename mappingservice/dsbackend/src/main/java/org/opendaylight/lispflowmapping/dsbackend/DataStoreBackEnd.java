@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * Stores data coming from the mapping database RPCs into the MD-SAL datastore.
  *
  * @author Lorand Jakab
- *
  */
 public class DataStoreBackEnd implements TransactionChainListener {
     private static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
@@ -52,18 +51,15 @@ public class DataStoreBackEnd implements TransactionChainListener {
             InstanceIdentifier.create(MappingDatabase.class);
     private static final InstanceIdentifier<LastUpdated> LAST_UPDATED =
             InstanceIdentifier.create(MappingDatabase.class).child(LastUpdated.class);
-    private final DataBroker broker;
-    private TransactionChain txChain;
+
+    private final TransactionChain configTxChain;
+    private final TransactionChain operTxChain;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR", justification = "Non-final for mocking")
     public DataStoreBackEnd(DataBroker broker) {
-        this.broker = broker;
-        createTransactionChain();
-    }
-
-    public void createTransactionChain() {
         LOG.debug("Creating DataStoreBackEnd transaction chain...");
-        txChain = broker.createMergingTransactionChain(this);
+        configTxChain = broker.createMergingTransactionChain(this);
+        operTxChain = broker.createMergingTransactionChain(this);
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -256,9 +252,16 @@ public class DataStoreBackEnd implements TransactionChainListener {
                 : LogicalDatastoreType.CONFIGURATION;
     }
 
+    private TransactionChain getChain(LogicalDatastoreType logicalDatastoreType) {
+        return switch (logicalDatastoreType) {
+            case CONFIGURATION -> configTxChain;
+            case OPERATIONAL -> operTxChain;
+        };
+    }
+
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
             InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
-        WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
+        WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         // TODO: is is a utility method, hence we do not have enough lifecycle knowledge to use plain put()
         writeTx.mergeParentStructurePut(logicalDatastoreType, addIID, data);
         writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
@@ -277,7 +280,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
             InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
         final ListenableFuture<Optional<U>> readFuture;
-        try (ReadTransaction readTx = txChain.newReadOnlyTransaction()) {
+        try (ReadTransaction readTx = getChain(logicalDatastoreType).newReadOnlyTransaction()) {
             readFuture = readTx.read(logicalDatastoreType, readIID);
         }
         try {
@@ -295,8 +298,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void deleteTransaction(
             InstanceIdentifier<U> deleteIID, LogicalDatastoreType logicalDatastoreType, String errMsg) {
-
-        WriteTransaction writeTx = txChain.newWriteOnlyTransaction();
+        WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
         writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
             @Override
@@ -323,6 +325,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void closeTransactionChain() {
         LOG.debug("Closing DataStoreBackEnd transaction chain...");
-        txChain.close();
+        configTxChain.close();
+        operTxChain.close();
     }
 }
