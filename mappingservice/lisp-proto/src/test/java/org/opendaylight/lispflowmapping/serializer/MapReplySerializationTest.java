@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import junitx.framework.ArrayAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
@@ -162,7 +161,7 @@ public class MapReplySerializationTest extends BaseTestCase {
             0x08 };
         byte[] actual = new byte[16];
         packet.get(actual);
-        ArrayAssert.assertEquals(expected, actual);
+        assertArrayEquals(expected, actual);
 
         packet.position(packet.position() + 12); // EID in second record
         assertEquals(0x08020405, packet.getInt());

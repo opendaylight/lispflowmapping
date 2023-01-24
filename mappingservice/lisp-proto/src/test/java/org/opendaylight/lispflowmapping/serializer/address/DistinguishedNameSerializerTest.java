@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -94,6 +94,6 @@ public class DistinguishedNameSerializerTest extends BaseTestCase {
         ByteBuffer buf = ByteBuffer.allocate(LispAddressSerializer.getInstance().getAddressSize(eb.build()));
         LispAddressSerializer.getInstance().serialize(buf, eb.build());
         ByteBuffer expectedBuf = hexToByteBuffer("00 11 64 61 76 69 64 00");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }

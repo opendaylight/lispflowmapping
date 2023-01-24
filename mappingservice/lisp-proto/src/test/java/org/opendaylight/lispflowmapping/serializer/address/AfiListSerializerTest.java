@@ -7,14 +7,14 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import com.google.common.collect.ImmutableSet;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Set;
-import junitx.framework.ArrayAssert;
-import junitx.framework.Assert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -93,7 +93,7 @@ public class AfiListSerializerTest extends BaseTestCase {
                 + "01 00 00 18 "
                 + "00 01 AA BB CC DD " // IPv4
                 + "00 02 11 22 33 44 11 22 33 44 11 22 33 44 11 22 33 44");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class AfiListSerializerTest extends BaseTestCase {
         LispAddressSerializer.getInstance().serialize(buf, rb.build());
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
                 + "01 00 00 00");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class AfiListSerializerTest extends BaseTestCase {
                 .lisp.address.address.afi.list.AfiList address3 = listBuilder.build();
 
         assertEquals(address1, address2);
-        Assert.assertNotEquals(address2, address3);
-        Assert.assertNotEquals(address1, address3);
+        assertNotEquals(address2, address3);
+        assertNotEquals(address1, address3);
     }
 }

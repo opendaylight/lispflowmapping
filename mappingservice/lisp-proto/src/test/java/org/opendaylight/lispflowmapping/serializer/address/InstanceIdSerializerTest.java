@@ -11,7 +11,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -96,6 +95,6 @@ public class InstanceIdSerializerTest extends BaseTestCase {
                 + "02 20 00 0A "
                 + "00 02 03 04 " // instance ID
                 + "00 01 11 22 33 44");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }

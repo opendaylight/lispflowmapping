@@ -9,6 +9,7 @@
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import junitx.framework.ArrayAssert;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -704,8 +704,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
                 Arrays.copyOfRange(mapRegisterPacket, 36, mapRegisterPacket.length));
         byte[] notifyWithoutTypeWithOutAuthenticationData = ArrayUtils.addAll(Arrays.copyOfRange(result, 3, 16),
                 Arrays.copyOfRange(result, 36, result.length));
-        ArrayAssert.assertEquals(registerWithoutTypeWithoutAuthenticationData,
-                notifyWithoutTypeWithOutAuthenticationData);
+        assertArrayEquals(registerWithoutTypeWithoutAuthenticationData, notifyWithoutTypeWithOutAuthenticationData);
     }
 
     @Ignore
@@ -859,7 +858,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SingleLocatorPos.AFI_TYPE));
         byte[] expectedIpv6 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
-        ArrayAssert.assertEquals(expectedIpv6, Arrays.copyOfRange(result, 24, 40));
+        assertArrayEquals(expectedIpv6, Arrays.copyOfRange(result, 24, 40));
     }
 
     @Test
@@ -876,10 +875,10 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         assertEquals(64, result.length);
 
         byte[] expectedIpv6Eid = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-        ArrayAssert.assertEquals(expectedIpv6Eid, Arrays.copyOfRange(result, 24, 40));
+        assertArrayEquals(expectedIpv6Eid, Arrays.copyOfRange(result, 24, 40));
 
         byte[] expectedIpv6Rloc = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
-        ArrayAssert.assertEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, 48, 64));
+        assertArrayEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, 48, 64));
     }
 
     @Ignore
@@ -944,7 +943,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         assertEquals(AddressFamily.IpV6.getIntValue(), ByteUtil.getInt(result, MapReplyIpv4SecondLocatorPos.LOC_AFI));
 
         byte[] expectedIpv6Rloc = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-        ArrayAssert.assertEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR,
+        assertArrayEquals(expectedIpv6Rloc, Arrays.copyOfRange(result, MapReplyIpv4SecondLocatorPos.LOCATOR,
                 MapReplyIpv4SecondLocatorPos.LOCATOR + 16));
 
         assertEquals(0x01, result[MapReplyIpv4SecondLocatorPos.LOCATOR_RBIT] & 0x01);

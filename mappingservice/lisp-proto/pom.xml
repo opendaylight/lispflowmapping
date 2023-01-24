@@ -48,11 +48,5 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>junit-addons</groupId>
-      <artifactId>junit-addons</artifactId>
-      <version>1.4</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>

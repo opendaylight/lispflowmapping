@@ -7,13 +7,13 @@
  */
 package org.opendaylight.lispflowmapping.serializer;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -61,7 +61,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
 
         byte[] actualAuthenticationData = new byte[20];
         bb.get(actualAuthenticationData);
-        ArrayAssert.assertEquals(authenticationData, actualAuthenticationData);
+        assertArrayEquals(authenticationData, actualAuthenticationData);
 
         bb.position(bb.position() + 12); /* EID in first record */
         assertEquals(0x1, bb.getInt());
@@ -93,7 +93,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         mnBuilder.setAuthenticationData(authenticationData);
 
         MapNotify mn = mnBuilder.build();
-        ArrayAssert.assertEquals(MapNotifySerializer.getInstance().serialize(mn).array(),
+        assertArrayEquals(MapNotifySerializer.getInstance().serialize(mn).array(),
                 MapNotifySerializer.getInstance().serialize(MapNotifySerializer.getInstance()
                         .deserialize(MapNotifySerializer.getInstance().serialize(mn))).array());
 
@@ -127,7 +127,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         assertEquals(0xFFBB000000000000L, mn.getNonce().longValue());
         assertEquals(0x0000, mn.getKeyId().shortValue());
         byte[] expectedAuthenticationData = {};
-        ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
+        assertArrayEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 
     @Test
@@ -396,7 +396,7 @@ public class MapNotifySerializationTest extends BaseTestCase {
         byte[] expectedAuthenticationData = { (byte) 0x2c, (byte) 0x61, (byte) 0xb9, (byte) 0xc9, (byte) 0x9a,
             (byte) 0x20, (byte) 0xba, (byte) 0xd8, (byte) 0xf5, (byte) 0x40, (byte) 0xd3, (byte) 0x55, (byte) 0x6f,
             (byte) 0x5f, (byte) 0x6e, (byte) 0x5a, (byte) 0xb2, (byte) 0x0a, (byte) 0xbf, (byte) 0xb5 };
-        ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
+        assertArrayEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 
     @Test
@@ -429,6 +429,6 @@ public class MapNotifySerializationTest extends BaseTestCase {
             (byte) 0x8c, (byte) 0x57, (byte) 0x6d, (byte) 0x68, (byte) 0xa5, (byte) 0xbf, (byte) 0x32, (byte) 0x11,
             (byte) 0xc9, (byte) 0x7b, (byte) 0x58, (byte) 0xc4, (byte) 0xb9, (byte) 0x9f, (byte) 0x06, (byte) 0x11,
             (byte) 0x23, (byte) 0xb9, (byte) 0x38 };
-        ArrayAssert.assertEquals(expectedAuthenticationData, mn.getAuthenticationData());
+        assertArrayEquals(expectedAuthenticationData, mn.getAuthenticationData());
     }
 }

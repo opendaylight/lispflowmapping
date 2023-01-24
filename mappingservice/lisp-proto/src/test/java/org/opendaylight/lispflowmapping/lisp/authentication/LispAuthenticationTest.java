@@ -7,12 +7,12 @@
  */
 package org.opendaylight.lispflowmapping.lisp.authentication;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
@@ -187,13 +187,13 @@ public class LispAuthenticationTest extends BaseTestCase {
                 new MappingRecordItemBuilder().setMappingRecord(etlrBuilder.build()).setMappingRecordItemId("xyzzy")
                     .build());
         final ByteBuffer serializedMapNotifyMsg = MapNotifySerializer.getInstance().serialize(mapNotifyBuilder.build());
-        ArrayAssert.assertEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(serializedMapNotifyMsg,
+        assertArrayEquals(new byte[0], LispAuthenticationUtil.createAuthenticationData(serializedMapNotifyMsg,
                 "password"));
 
     }
 
-    private static boolean validate(MapRegister mapRegister, ByteBuffer byteBuffer, Eid eid, Uint16 keyId, String
-            password) {
+    private static boolean validate(final MapRegister mapRegister, final ByteBuffer byteBuffer, final Eid eid,
+            final Uint16 keyId, final String password) {
         MappingAuthkey key = new MappingAuthkeyBuilder().setKeyType(keyId).setKeyString(password).build();
         return LispAuthenticationUtil.validate(mapRegister,byteBuffer, eid, key);
     }

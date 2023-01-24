@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -51,6 +51,6 @@ public class ServicePathTest extends BaseTestCase {
         ByteBuffer expectedBuf = hexToByteBuffer("40 03 00 00 "
                 + "11 00 00 04 "
                 + "00 00 01 FF");
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }

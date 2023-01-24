@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
@@ -104,6 +104,6 @@ public class SourceDestKeySerializerTest extends BaseTestCase {
                 + "00 00 08 10 " // reserved + masks
                 + "00 01 11 22 33 44 "  // AFI=1, IP=0x11223344
                 + "00 01 22 33 44 55"); // AFI=1, IP=0x22334455
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }

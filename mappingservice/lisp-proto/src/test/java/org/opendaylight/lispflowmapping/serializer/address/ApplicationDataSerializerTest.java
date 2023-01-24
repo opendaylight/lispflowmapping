@@ -7,10 +7,10 @@
  */
 package org.opendaylight.lispflowmapping.serializer.address;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
-import junitx.framework.ArrayAssert;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
@@ -113,6 +113,6 @@ public class ApplicationDataSerializerTest extends BaseTestCase {
                 + "A6 A1 A6 A2 " // local port range
                 + "FF DD FF DE " // remote port range
                 + "00 01 11 22 33 44"); // AFI=1, IP=0x11223344
-        ArrayAssert.assertEquals(expectedBuf.array(), buf.array());
+        assertArrayEquals(expectedBuf.array(), buf.array());
     }
 }
