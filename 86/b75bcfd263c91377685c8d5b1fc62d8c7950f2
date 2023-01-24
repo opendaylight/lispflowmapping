@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng ODL
+Code-Review+1: Lori Jakab <lorand.jakab+odl@gmail.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Tue, 24 Jan 2023 18:25:56 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/c/lispflowmapping/+/104092
+Project: lispflowmapping
+Branch: refs/heads/master
