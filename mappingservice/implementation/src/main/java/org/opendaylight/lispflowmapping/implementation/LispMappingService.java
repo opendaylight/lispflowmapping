@@ -11,6 +11,8 @@ package org.opendaylight.lispflowmapping.implementation;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
@@ -27,6 +29,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
@@ -57,18 +60,24 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLi
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.concepts.Registration;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
+@Component(service = {IFlowMapping.class, IMapRequestResultHandler.class, IMapNotifyHandler.class},
+    immediate = true, property = "type=default")
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
         IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterSingletonService {
     private static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
     private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
             LISPFLOWMAPPING_ENTITY_NAME);
 
-
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
-    private final ClusterSingletonServiceProvider clusterSingletonService;
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
@@ -77,23 +86,22 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
-    private final OdlLispSbService lispSB;
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
 
-    private final IMappingService mapService;
-    private final NotificationService notificationService;
+    @Reference
+    private volatile IMappingService mapService;
+    @Reference
+    private volatile NotificationService notificationService;
+    @Reference
+    private volatile RpcProviderService rpcProviderService;
+    @Reference
+    private volatile OdlLispSbService lispSB;
+    @Reference
+    private volatile ClusterSingletonServiceProvider clusterSingletonService;
 
-    public LispMappingService(final NotificationService notificationService,
-            final IMappingService mappingService,
-            final OdlLispSbService odlLispService, final ClusterSingletonServiceProvider clusterSingletonService) {
-
-        this.notificationService = notificationService;
-        this.mapService = mappingService;
-        this.lispSB = odlLispService;
-        this.clusterSingletonService = clusterSingletonService;
-        LOG.debug("LispMappingService Module constructed!");
-    }
+    private Registration rpcRegistration;
+    private Registration listenerRegistration;
 
     public boolean shouldUseSmr() {
         return this.smr;
@@ -115,18 +123,16 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return this.notificationService;
     }
 
+    @Activate
     public void initialize() {
+        listenerRegistration = notificationService.registerNotificationListener(this);
+        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, lispSB);
+
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
         this.clusterSingletonService.registerClusterSingletonService(this);
         mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
         LOG.info("LISP (RFC6830) Mapping Service init finished");
-    }
-
-    public void basicInit() {
-        mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
-        mapServer = new MapServer(mapService, smr, this, notificationService);
-        mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
     }
 
     @Override
@@ -283,10 +289,14 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         mapServer = null;
     }
 
+    @Deactivate
+    @PreDestroy
     @Override
     public void close() throws Exception {
         destroy();
         clusterSingletonService.close();
+        rpcRegistration.close();
+        listenerRegistration.close();
     }
 
     @Override
@@ -307,3 +317,4 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return SERVICE_GROUP_IDENTIFIER;
     }
 }
+
