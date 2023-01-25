@@ -70,6 +70,21 @@
       <artifactId>mappingservice.inmemorydb</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- osgi annotations -->
+    <dependency>
+      <groupId>com.guicedee.services</groupId>
+      <artifactId>javax.inject</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.component.annotations</artifactId>
+    </dependency>
     <!-- needed for osgi console -->
     <dependency>
       <groupId>org.opendaylight.mdsal</groupId>

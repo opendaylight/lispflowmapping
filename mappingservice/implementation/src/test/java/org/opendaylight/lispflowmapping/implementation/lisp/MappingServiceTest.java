@@ -32,6 +32,7 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
@@ -83,6 +84,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcError;
@@ -97,15 +99,16 @@ public class MappingServiceTest {
     @Mock(name = "dsbe") private static DataStoreBackEnd dsbe;
     @Mock(name = "keyListener") private static AuthenticationKeyDataListener keyListener;
     @Mock(name = "mappingListener") private static MappingDataListener mappingListener;
+    @Mock(name = "rpcRegistration") private static Registration rpcRegistration;
 
     private final DataBroker dataBroker = Mockito.mock(DataBroker.class);
+    private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
     private final NotificationPublishService notificationPublishService = Mockito
             .mock(NotificationPublishService.class);
     private final ILispDAO lispDAO = Mockito.mock(ILispDAO.class);
 
     @InjectMocks
-    MappingService mappingService = new MappingService(dataBroker,
-            notificationPublishService, lispDAO);
+    MappingService mappingService = new MappingService();
 
     private static final String IPV4_STRING = "1.2.3.0";
     private static final Eid IPV4_EID = LispAddressUtil.asIpv4Eid(IPV4_STRING);
@@ -520,6 +523,7 @@ public class MappingServiceTest {
     @Test
     public void close() throws Exception {
         mappingService.close();
+        Mockito.verify(rpcRegistration).close();
         Mockito.verify(keyListener).closeDataChangeListener();
         Mockito.verify(mappingListener).closeDataChangeListener();
     }
