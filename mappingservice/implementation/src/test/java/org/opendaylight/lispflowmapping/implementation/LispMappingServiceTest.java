@@ -30,6 +30,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -65,6 +66,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.util.BindingMap;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
@@ -76,16 +78,18 @@ public class LispMappingServiceTest {
     @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
     @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
     @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
+    @Mock(name = "rpcRegistration") private static Registration rpcRegistration;
+    @Mock(name = "listenerRegistration") private static Registration listenerRegistration;
 
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
+    private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
     private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
             ClusterSingletonServiceProvider.class);
 
     @InjectMocks
-    private final LispMappingService lispMappingService = new LispMappingService(
-            notificationService, mappingService, odlLispSbService, clusterSingletonService);
+    private final LispMappingService lispMappingService = new LispMappingService();
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
@@ -340,7 +344,8 @@ public class LispMappingServiceTest {
     @Test
     public void closeTest() throws Exception {
         lispMappingService.close();
-
+        Mockito.verify(rpcRegistration).close();
+        Mockito.verify(listenerRegistration).close();
         assertNull(getField("mapResolver"));
         assertNull(getField("mapServer"));
     }
