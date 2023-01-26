@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.southbound;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -25,6 +24,7 @@ import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -34,6 +34,10 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -56,31 +60,58 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
+@Component(immediate = true, property = "type=default", configurationPid = "org.opendaylight.lispflowmapping",
+           service = { IConfigLispSouthboundPlugin.class, LispSouthboundPlugin.class })
+@Designate(ocd = LispSouthboundPlugin.Configuration.class)
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
+    @ObjectClassDefinition
+    public @interface Configuration {
+        @AttributeDefinition()
+        String bindingAddress() default DEFAULT_BINDING_ADDRESS;
+
+        @AttributeDefinition()
+        boolean mapRegisterCacheEnabled() default true;
+
+        @AttributeDefinition()
+        long mapRegisterCacheTimeout() default DEFAULT_MAP_REGISTER_CACHE_TIMEOUT;
+    }
+
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
-    public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
-            LISPFLOWMAPPING_ENTITY_NAME);
+    public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER =
+        ServiceGroupIdentifier.create(LISPFLOWMAPPING_ENTITY_NAME);
+
+    private static final String DEFAULT_BINDING_ADDRESS = "0.0.0.0";
+    private static final long DEFAULT_MAP_REGISTER_CACHE_TIMEOUT = 90000;
 
     private volatile boolean isMaster = false;
     private volatile String bindingAddress;
     private AuthKeyDb akdb;
     private final MapRegisterCache mapRegisterCache = new MapRegisterCache();
-    private boolean mapRegisterCacheEnabled;
-    private long mapRegisterCacheTimeout;
+    private final boolean mapRegisterCacheEnabled;
+    private final long mapRegisterCacheTimeout;
 
     private static Object startLock = new Object();
-    private final ClusterSingletonServiceProvider clusterSingletonService;
-    private LispSouthboundHandler lispSouthboundHandler;
-    private LispXtrSouthboundHandler lispXtrSouthboundHandler;
+
+    private final DataBroker dataBroker;
     private final NotificationPublishService notificationPublishService;
+    private final ClusterSingletonServiceProvider clusterSingletonService;
+
+    private LispSouthboundHandler lispSouthboundHandler;
     private int numChannels = 1;
     private final Channel[] channel;
     private Channel xtrChannel;
-    private Class channelType;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
     private volatile boolean listenOnXtrPort = false;
     private final ConcurrentLispSouthboundStats statistics = new ConcurrentLispSouthboundStats();
@@ -88,16 +119,39 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private final Bootstrap xtrBootstrap = new Bootstrap();
     private final ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup;
-    private final DataBroker dataBroker;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
 
+    @Inject
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
             final ClusterSingletonServiceProvider clusterSingletonService) {
+        this(dataBroker, notificationPublishService, clusterSingletonService, DEFAULT_BINDING_ADDRESS, true,
+            DEFAULT_MAP_REGISTER_CACHE_TIMEOUT);
+    }
+
+    @Activate
+    public LispSouthboundPlugin(@Reference final DataBroker dataBroker,
+            @Reference final NotificationPublishService notificationPublishService,
+            @Reference final ClusterSingletonServiceProvider clusterSingletonService,
+            final Configuration configuration) {
+        this(dataBroker, notificationPublishService, clusterSingletonService, configuration.bindingAddress(),
+            configuration.mapRegisterCacheEnabled(), configuration.mapRegisterCacheTimeout());
+        init();
+    }
+
+    public LispSouthboundPlugin(final DataBroker dataBroker,
+            final NotificationPublishService notificationPublishService,
+            final ClusterSingletonServiceProvider clusterSingletonService,
+            final String bindingAddress, final boolean mapRegisterCacheEnabled, final long mapRegisterCacheTimeout) {
+        LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
         this.clusterSingletonService = clusterSingletonService;
+        this.bindingAddress = bindingAddress;
+        this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
+        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
+
         if (Epoll.isAvailable()) {
             // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
             // utilization. In order to have some headroom, we reserve 3 cores for "other" tasks, and allow the
@@ -107,20 +161,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         channel = new Channel[numChannels];
     }
 
+    @PostConstruct
     public void init() {
-        LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         synchronized (startLock) {
-            this.akdb = new AuthKeyDb(new HashMapDb());
-            this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
-            this.dsbe = new DataStoreBackEnd(dataBroker);
+            akdb = new AuthKeyDb(new HashMapDb());
+            authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
+            dsbe = new DataStoreBackEnd(dataBroker);
             restoreDaoFromDatastore();
 
-            LispSouthboundHandler lsbh = new LispSouthboundHandler(this);
-            this.lispSouthboundHandler = lsbh;
-
-            LispXtrSouthboundHandler lxsbh = new LispXtrSouthboundHandler(this);
-            this.lispXtrSouthboundHandler = lxsbh;
-
+            final Class<? extends DatagramChannel> channelType;
             if (Epoll.isAvailable()) {
                 eventLoopGroup = new EpollEventLoopGroup(numChannels, threadFactory);
                 channelType = EpollDatagramChannel.class;
@@ -135,18 +184,20 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
             bootstrap.group(eventLoopGroup);
             bootstrap.channel(channelType);
-            bootstrap.handler(lsbh);
+            lispSouthboundHandler = new LispSouthboundHandler(this);
+            bootstrap.handler(lispSouthboundHandler);
 
             xtrBootstrap.group(eventLoopGroup);
             xtrBootstrap.channel(channelType);
-            xtrBootstrap.handler(lxsbh);
+            xtrBootstrap.handler(new LispXtrSouthboundHandler(this));
 
             start();
             startXtr();
 
             clusterSingletonService.registerClusterSingletonService(this);
-            LOG.info("LISP (RFC6830) Southbound Plugin is up!");
         }
+
+        LOG.info("LISP (RFC6830) Southbound Plugin is up!");
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
@@ -211,7 +262,6 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     private void unloadActions() {
         lispSouthboundHandler = null;
-        lispXtrSouthboundHandler = null;
 
         stop();
         stopXtr();
@@ -236,16 +286,16 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         }
     }
 
-    public void handleSerializedLispBuffer(TransportAddress address, ByteBuffer outBuffer,
+    public void handleSerializedLispBuffer(final TransportAddress address, final ByteBuffer outBuffer,
                                            final MessageType packetType) {
         InetAddress ip = getInetAddress(address);
         handleSerializedLispBuffer(ip, outBuffer, packetType, address.getPort().getValue().toJava(), null);
     }
 
-    public void handleSerializedLispBuffer(InetAddress address, ByteBuffer outBuffer,
+    public void handleSerializedLispBuffer(final InetAddress address, final ByteBuffer outBuffer,
             final MessageType packetType, final int portNumber, Channel senderChannel) {
         if (senderChannel == null) {
-            senderChannel = this.channel[0];
+            senderChannel = channel[0];
         }
         InetSocketAddress recipient = new InetSocketAddress(address, portNumber);
         outBuffer.position(0);
@@ -267,7 +317,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         senderChannel.flush();
     }
 
-    private InetAddress getInetAddress(TransportAddress address) {
+    private InetAddress getInetAddress(final TransportAddress address) {
         requireNonNull(address, "TransportAddress must not be null");
         IpAddressBinary ip = address.getIpAddress();
         try {
@@ -284,7 +334,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     @Override
     @SuppressWarnings("checkstyle:IllegalCatch")
-    public void setLispAddress(String address) {
+    public void setLispAddress(final String address) {
         synchronized (startLock) {
             if (bindingAddress.equals(address)) {
                 LOG.debug("Configured LISP binding address didn't change.");
@@ -304,7 +354,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     }
 
     @Override
-    public void shouldListenOnXtrPort(boolean shouldListenOnXtrPort) {
+    public void shouldListenOnXtrPort(final boolean shouldListenOnXtrPort) {
         listenOnXtrPort = shouldListenOnXtrPort;
         if (listenOnXtrPort) {
             restartXtr();
@@ -315,30 +365,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     }
 
     @Override
-    public void setXtrPort(int port) {
-        this.xtrPort = port;
+    public void setXtrPort(final int port) {
+        xtrPort = port;
         if (listenOnXtrPort) {
             restartXtr();
         }
     }
 
-    public void setMapRegisterCacheEnabled(final boolean mapRegisterCacheEnabled) {
-        this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
-        if (mapRegisterCacheEnabled) {
-            LOG.info("Enabling Map-Register cache");
-        } else {
-            LOG.info("Disabling Map-Register cache");
-        }
-    }
-
-    public void setMapRegisterCacheTimeout(long mapRegisterCacheTimeout) {
-        this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
-    }
-
-    public void setBindingAddress(String bindingAddress) {
-        this.bindingAddress = bindingAddress;
-    }
-
+    @Deactivate
+    @PreDestroy
     @Override
     public void close() throws Exception {
         eventLoopGroup.shutdownGracefully();
@@ -350,12 +385,12 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
     @Override
     public void instantiateServiceInstance() {
-        this.isMaster = true;
+        isMaster = true;
     }
 
     @Override
     public ListenableFuture<Void> closeServiceInstance() {
-        this.isMaster = false;
+        isMaster = false;
         return Futures.<Void>immediateFuture(null);
     }
 

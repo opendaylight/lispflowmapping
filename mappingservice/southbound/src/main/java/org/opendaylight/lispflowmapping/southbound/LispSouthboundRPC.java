@@ -12,10 +12,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutput;
@@ -40,10 +44,15 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessageBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,19 +63,30 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
+@Component(immediate = true, property = "type=default", service = OdlLispSbService.class)
+@Singleton
 public class LispSouthboundRPC implements OdlLispSbService {
-
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
+    private final Registration rpcRegistration;
 
-    public LispSouthboundRPC(LispSouthboundPlugin lispSbPlugin) {
+    @Inject
+    @Activate
+    public LispSouthboundRPC(final @Reference LispSouthboundPlugin lispSbPlugin,
+            final @Reference RpcProviderService rpcProviderService) {
         this.lispSbPlugin = lispSbPlugin;
+        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, this);
     }
 
+    @Deactivate
+    @PreDestroy
+    public void deactivate() {
+        rpcRegistration.close();
+    }
 
     @Override
-    public ListenableFuture<RpcResult<SendMapNotifyOutput>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
+    public ListenableFuture<RpcResult<SendMapNotifyOutput>> sendMapNotify(final SendMapNotifyInput mapNotifyInput) {
         LOG.trace("sendMapNotify called!!");
         if (mapNotifyInput != null) {
             ByteBuffer outBuffer = MapNotifySerializer.getInstance().serialize(mapNotifyInput.getMapNotify());
@@ -81,7 +101,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public ListenableFuture<RpcResult<SendMapReplyOutput>> sendMapReply(SendMapReplyInput mapReplyInput) {
+    public ListenableFuture<RpcResult<SendMapReplyOutput>> sendMapReply(final SendMapReplyInput mapReplyInput) {
         LOG.trace("sendMapReply called!!");
         if (mapReplyInput != null) {
             ByteBuffer outBuffer = MapReplySerializer.getInstance().serialize(mapReplyInput.getMapReply());
@@ -96,7 +116,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public ListenableFuture<RpcResult<SendMapRequestOutput>> sendMapRequest(SendMapRequestInput mapRequestInput) {
+    public ListenableFuture<RpcResult<SendMapRequestOutput>> sendMapRequest(final SendMapRequestInput mapRequestInput) {
         LOG.trace("sendMapRequest called!!");
         if (mapRequestInput != null) {
             ByteBuffer outBuffer = MapRequestSerializer.getInstance().serialize(mapRequestInput.getMapRequest());
@@ -111,7 +131,8 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public ListenableFuture<RpcResult<SendMapRegisterOutput>> sendMapRegister(SendMapRegisterInput mapRegisterInput) {
+    public ListenableFuture<RpcResult<SendMapRegisterOutput>> sendMapRegister(
+            final SendMapRegisterInput mapRegisterInput) {
         LOG.trace("sendMapRegister called!!");
         if (mapRegisterInput != null) {
             ByteBuffer outBuffer = MapRegisterSerializer.getInstance().serialize(mapRegisterInput.getMapRegister());
@@ -126,7 +147,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public ListenableFuture<RpcResult<GetStatsOutput>> getStats(GetStatsInput input) {
+    public ListenableFuture<RpcResult<GetStatsOutput>> getStats(final GetStatsInput input) {
         LOG.trace("getStats called!!");
 
         RpcResultBuilder<GetStatsOutput> rpcResultBuilder;
@@ -143,7 +164,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     }
 
     @Override
-    public ListenableFuture<RpcResult<ResetStatsOutput>> resetStats(ResetStatsInput input) {
+    public ListenableFuture<RpcResult<ResetStatsOutput>> resetStats(final ResetStatsInput input) {
         LOG.trace("resetStats called!!");
 
         ConcurrentLispSouthboundStats stats = lispSbPlugin.getStats();
@@ -159,7 +180,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
         }
     }
 
-    private static GetStatsOutput createGetStatsOutput(ConcurrentLispSouthboundStats stats) {
+    private static GetStatsOutput createGetStatsOutput(final ConcurrentLispSouthboundStats stats) {
         long[] rxStats = stats.getRx();
         long[] txStats = stats.getTx();
 
@@ -167,7 +188,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
         cmsb.setRxUnknown(stats.getRxUnknown());
         cmsb.setTxErrors(stats.getTxErrors());
 
-        List<ControlMessage> messages = new ArrayList<ControlMessage>();
+        List<ControlMessage> messages = new ArrayList<>();
         for (int i = 0; i <= ConcurrentLispSouthboundStats.MAX_LISP_TYPES; i++) {
             if (MessageType.forValue(i) == null) {
                 continue;

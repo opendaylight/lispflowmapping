@@ -70,9 +70,8 @@ public class LispSouthboundPluginTest {
         lispSouthboundPlugin = new LispSouthboundPlugin(
                 Mockito.mock(DataBroker.class),
                 Mockito.mock(NotificationPublishService.class),
-                Mockito.mock(ClusterSingletonServiceProvider.class));
-        lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
-        lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
+                Mockito.mock(ClusterSingletonServiceProvider.class),
+                ADDRESS_1, false, 0);
 
         channel = Mockito.mock(NioDatagramChannel.class);
         xtrChannel = Mockito.mock(NioDatagramChannel.class);
@@ -200,7 +199,6 @@ public class LispSouthboundPluginTest {
         Mockito.verify(elgMock).shutdownGracefully();
         Mockito.verify(handlerMock).close();
         assertNull(getField("lispSouthboundHandler"));
-        assertNull(getField("lispXtrSouthboundHandler"));
         Channel[] channels = getField("channel");
         assertNull(channels[0]);
     }
@@ -217,7 +215,7 @@ public class LispSouthboundPluginTest {
         xtrChannelField.set(lispSouthboundPlugin, xtrChannel);
     }
 
-    private static ByteBuffer parseHexString(String packet) {
+    private static ByteBuffer parseHexString(final String packet) {
         final String[] tokens = packet.split("\\s+");
         final ByteBuffer buffer = ByteBuffer.allocate(tokens.length);
         for (String token : tokens) {
@@ -227,14 +225,15 @@ public class LispSouthboundPluginTest {
         return buffer;
     }
 
-    private static <T> void injectField(String fieldName, T obj) throws NoSuchFieldException, IllegalAccessException {
+    private static <T> void injectField(final String fieldName, final T obj)
+            throws NoSuchFieldException, IllegalAccessException {
         Field field = LispSouthboundPlugin.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(lispSouthboundPlugin, obj);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    private static <T> T getField(final String fieldName) throws NoSuchFieldException, IllegalAccessException {
         Field field = LispSouthboundPlugin.class.getDeclaredField(fieldName);
         field.setAccessible(true);
 

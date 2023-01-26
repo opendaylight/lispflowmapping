@@ -22,6 +22,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -48,7 +49,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendM
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStats;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
-import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
@@ -56,6 +56,7 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 public class LispSouthboundRpcTest {
 
     @Mock LispSouthboundPlugin lispSouthboundPlugin;
+    @Mock RpcProviderService rpcProviderService;
     @InjectMocks LispSouthboundRPC lispSouthboundRPC;
 
     private static final RpcResult<Void> RPC_RESULT_FAILURE = RpcResultBuilder.<Void>failed().build();
@@ -211,7 +212,7 @@ public class LispSouthboundRpcTest {
      */
     @Test
     public void getStatsTest_withNullStats() throws ExecutionException, InterruptedException {
-        final String expectedMsg = ((RpcError) RPC_RESULT_ERROR.getErrors().iterator().next()).getMessage();
+        final String expectedMsg = RPC_RESULT_ERROR.getErrors().iterator().next().getMessage();
 
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(null);
 
@@ -245,7 +246,7 @@ public class LispSouthboundRpcTest {
      */
     @Test
     public void resetStatsTest_withNullStats() throws ExecutionException, InterruptedException {
-        final String expectedMsg = ((RpcError) RPC_RESULT_ERROR.getErrors().iterator().next()).getMessage();
+        final String expectedMsg = RPC_RESULT_ERROR.getErrors().iterator().next().getMessage();
 
         Mockito.when(lispSouthboundPlugin.getStats()).thenReturn(null);
 
@@ -278,7 +279,7 @@ public class LispSouthboundRpcTest {
                 .setMappingRecordItem(Lists.newArrayList(getDefaultMappingRecordItem()));
     }
 
-    private static void incrementAll(ConcurrentLispSouthboundStats stats) {
+    private static void incrementAll(final ConcurrentLispSouthboundStats stats) {
         for (MessageType type : MessageType.values()) {
             stats.incrementRx(type.getIntValue());
         }
