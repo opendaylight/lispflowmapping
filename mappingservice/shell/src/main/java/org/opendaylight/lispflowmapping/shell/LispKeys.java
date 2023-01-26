@@ -8,9 +8,11 @@
 
 package org.opendaylight.lispflowmapping.shell;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
@@ -19,11 +21,14 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
  * @author Lorand Jakab
  *
  */
+@Service
 @Command(scope = "mappingservice", name = "keys", description = "Print LISP authentication keys")
-public class LispKeys  extends OsgiCommandSupport {
+public class LispKeys implements Action {
+
     @Option(name = "-d", aliases = "--debug", description = "Debug output", required = false, multiValued = false)
     private boolean debug;
 
+    @Reference
     private IMappingServiceShell mappingServiceShell;
 
     /*
@@ -32,7 +37,7 @@ public class LispKeys  extends OsgiCommandSupport {
 
     @Override
     @SuppressWarnings("checkstyle:RegexpSinglelineJava")
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         if (mappingServiceShell != null) {
             if (debug) {
                 System.out.print(mappingServiceShell.printKeys());
@@ -41,9 +46,5 @@ public class LispKeys  extends OsgiCommandSupport {
             }
         }
         return null;
-    }
-
-    public void setMappingServiceShell(IMappingServiceShell mappingServiceShell) {
-        this.mappingServiceShell = mappingServiceShell;
     }
 }
