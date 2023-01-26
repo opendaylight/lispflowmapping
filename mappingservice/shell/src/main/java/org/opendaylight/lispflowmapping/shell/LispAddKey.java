@@ -8,8 +8,10 @@
 
 package org.opendaylight.lispflowmapping.shell;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 
 /**
@@ -18,20 +20,19 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
  * @author Lorand Jakab
  *
  */
+@Service
 @Command(scope = "mappingservice", name = "addkey", description = "Add an authentication key")
-public class LispAddKey  extends OsgiCommandSupport {
+public class LispAddKey implements Action {
+
+    @Reference
     private IMappingServiceShell mappingServiceShell;
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         if (mappingServiceShell != null) {
             mappingServiceShell.addDefaultKeyIPv4();
             mappingServiceShell.addDefaultKeyIPv6();
         }
         return null;
-    }
-
-    public void setMappingServiceShell(IMappingServiceShell mappingServiceShell) {
-        this.mappingServiceShell = mappingServiceShell;
     }
 }
