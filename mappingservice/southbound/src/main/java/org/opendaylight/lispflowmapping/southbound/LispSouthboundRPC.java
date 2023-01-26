@@ -12,10 +12,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutput;
@@ -40,10 +44,15 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.msg.stats.ControlMessageBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,16 +63,28 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
+@Component(immediate = true, property = "type=default", service = OdlLispSbService.class)
+@Singleton
 public class LispSouthboundRPC implements OdlLispSbService {
 
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
+    private final Registration rpcRegiatration;
 
-    public LispSouthboundRPC(LispSouthboundPlugin lispSbPlugin) {
+    @Inject
+    @Activate
+    public LispSouthboundRPC(final @Reference LispSouthboundPlugin lispSbPlugin,
+        final @Reference RpcProviderService rpcProviderService) {
         this.lispSbPlugin = lispSbPlugin;
+        this.rpcRegiatration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, this);
     }
 
+    @Deactivate
+    @PreDestroy
+    public void deactivate() {
+        rpcRegiatration.close();
+    }
 
     @Override
     public ListenableFuture<RpcResult<SendMapNotifyOutput>> sendMapNotify(SendMapNotifyInput mapNotifyInput) {
