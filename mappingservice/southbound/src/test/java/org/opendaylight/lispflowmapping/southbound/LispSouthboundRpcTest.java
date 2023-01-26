@@ -22,6 +22,7 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
@@ -56,6 +57,7 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 public class LispSouthboundRpcTest {
 
     @Mock LispSouthboundPlugin lispSouthboundPlugin;
+    @Mock RpcProviderService rpcServiceProvider;
     @InjectMocks LispSouthboundRPC lispSouthboundRPC;
 
     private static final RpcResult<Void> RPC_RESULT_FAILURE = RpcResultBuilder.<Void>failed().build();

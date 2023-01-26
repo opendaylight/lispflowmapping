@@ -34,6 +34,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -56,9 +59,24 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.AttributeType;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Component(immediate = true, property = "type=default", service = IConfigLispSouthboundPlugin.class,
+    configurationPid = "org.opendaylight.lispflowmapping", reference = {
+        @Reference(name = "dataBroker", service = DataBroker.class),
+        @Reference(name = "notificationPublishService", service = NotificationPublishService.class),
+        @Reference(name = " clusterSingletonService", service = ClusterSingletonServiceProvider.class)})
+@Designate(ocd = LispSouthboundPlugin.Config.class)
+@Singleton
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
@@ -92,6 +110,19 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
 
+    @ObjectClassDefinition
+    public @interface Config {
+        @AttributeDefinition(name = "bindingAddressProperty")
+        String bindingAddress() default "0.0.0.0";
+
+        @AttributeDefinition(name = "mapRegisterCacheEnabledProperty", type = AttributeType.BOOLEAN)
+        boolean mapRegisterCacheEnabled() default true;
+
+        @AttributeDefinition(name = "mapRegisterCacheTimeoutProperty", type = AttributeType.LONG)
+        long mapRegisterCacheTimeout() default 90000;
+    }
+
+    @Inject
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
             final ClusterSingletonServiceProvider clusterSingletonService) {
@@ -107,9 +138,15 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         channel = new Channel[numChannels];
     }
 
-    public void init() {
+    @Activate
+    public void init(final Config config) {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         synchronized (startLock) {
+
+            this.bindingAddress = config.bindingAddress();
+            this.mapRegisterCacheEnabled = config.mapRegisterCacheEnabled();
+            this.mapRegisterCacheTimeout = config.mapRegisterCacheTimeout();
+
             this.akdb = new AuthKeyDb(new HashMapDb());
             this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
             this.dsbe = new DataStoreBackEnd(dataBroker);
@@ -339,6 +376,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.bindingAddress = bindingAddress;
     }
 
+    @Deactivate
+    @PreDestroy
     @Override
     public void close() throws Exception {
         eventLoopGroup.shutdownGracefully();
