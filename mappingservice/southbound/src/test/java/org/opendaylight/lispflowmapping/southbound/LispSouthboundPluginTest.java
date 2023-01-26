@@ -67,17 +67,18 @@ public class LispSouthboundPluginTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
-        lispSouthboundPlugin = new LispSouthboundPlugin(
-                Mockito.mock(DataBroker.class),
-                Mockito.mock(NotificationPublishService.class),
-                Mockito.mock(ClusterSingletonServiceProvider.class));
+        lispSouthboundPlugin = new LispSouthboundPlugin();
+        injectField("dataBroker", Mockito.mock(DataBroker.class));
+        injectField("notificationPublishService", Mockito.mock(NotificationPublishService.class));
+        injectField("clusterSingletonService", Mockito.mock(ClusterSingletonServiceProvider.class));
+
         lispSouthboundPlugin.setBindingAddress(ADDRESS_1);
         lispSouthboundPlugin.setMapRegisterCacheEnabled(false);
 
         channel = Mockito.mock(NioDatagramChannel.class);
         xtrChannel = Mockito.mock(NioDatagramChannel.class);
-        injectChannel();
-        injectXtrChannel();
+        injectField("channel", new Channel[] { channel });
+        injectField("xtrChannel", xtrChannel);
     }
 
     /**
@@ -203,18 +204,6 @@ public class LispSouthboundPluginTest {
         assertNull(getField("lispXtrSouthboundHandler"));
         Channel[] channels = getField("channel");
         assertNull(channels[0]);
-    }
-
-    private static void injectChannel() throws NoSuchFieldException, IllegalAccessException {
-        final Field channelField = LispSouthboundPlugin.class.getDeclaredField("channel");
-        channelField.setAccessible(true);
-        channelField.set(lispSouthboundPlugin, new Channel[] { channel });
-    }
-
-    private static void injectXtrChannel() throws NoSuchFieldException, IllegalAccessException {
-        final Field xtrChannelField = LispSouthboundPlugin.class.getDeclaredField("xtrChannel");
-        xtrChannelField.setAccessible(true);
-        xtrChannelField.set(lispSouthboundPlugin, xtrChannel);
     }
 
     private static ByteBuffer parseHexString(String packet) {

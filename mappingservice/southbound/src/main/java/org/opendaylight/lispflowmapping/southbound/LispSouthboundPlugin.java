@@ -34,6 +34,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.inmemorydb.HashMapDb;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -56,9 +58,21 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.AttributeType;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Component(immediate = true, property = "type=default", configurationPid = "org.opendaylight.lispflowmapping",
+        service = {IConfigLispSouthboundPlugin.class, LispSouthboundPlugin.class})
+@Designate(ocd = LispSouthboundPlugin.Config.class)
+@Singleton
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
@@ -73,12 +87,18 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private long mapRegisterCacheTimeout;
 
     private static Object startLock = new Object();
-    private final ClusterSingletonServiceProvider clusterSingletonService;
+
+    @Reference
+    private volatile DataBroker dataBroker;
+    @Reference
+    private volatile NotificationPublishService notificationPublishService;
+    @Reference
+    private volatile ClusterSingletonServiceProvider clusterSingletonService;
+
     private LispSouthboundHandler lispSouthboundHandler;
     private LispXtrSouthboundHandler lispXtrSouthboundHandler;
-    private final NotificationPublishService notificationPublishService;
     private int numChannels = 1;
-    private final Channel[] channel;
+    private Channel[] channel;
     private Channel xtrChannel;
     private Class channelType;
     private volatile int xtrPort = LispMessage.XTR_PORT_NUM;
@@ -88,28 +108,38 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private final Bootstrap xtrBootstrap = new Bootstrap();
     private final ThreadFactory threadFactory = new DefaultThreadFactory("lisp-sb");
     private EventLoopGroup eventLoopGroup;
-    private final DataBroker dataBroker;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
 
-    public LispSouthboundPlugin(final DataBroker dataBroker,
-            final NotificationPublishService notificationPublishService,
-            final ClusterSingletonServiceProvider clusterSingletonService) {
-        this.dataBroker = dataBroker;
-        this.notificationPublishService = notificationPublishService;
-        this.clusterSingletonService = clusterSingletonService;
-        if (Epoll.isAvailable()) {
-            // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
-            // utilization. In order to have some headroom, we reserve 3 cores for "other" tasks, and allow the
-            // rest to be used for southbound packet processing, which is the most CPU intensive work done in lfm
-            numChannels = Math.max(1, Runtime.getRuntime().availableProcessors() - 3);
-        }
-        channel = new Channel[numChannels];
+    @ObjectClassDefinition
+    public @interface Config {
+        @AttributeDefinition(name = "bindingAddressProperty")
+        String bindingAddress() default "0.0.0.0";
+
+        @AttributeDefinition(name = "mapRegisterCacheEnabledProperty", type = AttributeType.BOOLEAN)
+        boolean mapRegisterCacheEnabled() default true;
+
+        @AttributeDefinition(name = "mapRegisterCacheTimeoutProperty", type = AttributeType.LONG)
+        long mapRegisterCacheTimeout() default 90000;
     }
 
-    public void init() {
+    @Activate
+    public void init(final Config config) {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         synchronized (startLock) {
+
+            this.bindingAddress = config.bindingAddress();
+            this.mapRegisterCacheEnabled = config.mapRegisterCacheEnabled();
+            this.mapRegisterCacheTimeout = config.mapRegisterCacheTimeout();
+
+            if (Epoll.isAvailable()) {
+                // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
+                // utilization. In order to have some headroom, we reserve 3 cores for "other" tasks, and allow the
+                // rest to be used for southbound packet processing, which is the most CPU intensive work done in lfm
+                this.numChannels = Math.max(1, Runtime.getRuntime().availableProcessors() - 3);
+            }
+            this.channel = new Channel[numChannels];
+
             this.akdb = new AuthKeyDb(new HashMapDb());
             this.authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBroker, akdb);
             this.dsbe = new DataStoreBackEnd(dataBroker);
@@ -339,6 +369,8 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.bindingAddress = bindingAddress;
     }
 
+    @Deactivate
+    @PreDestroy
     @Override
     public void close() throws Exception {
         eventLoopGroup.shutdownGracefully();
