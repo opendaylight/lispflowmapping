@@ -16,13 +16,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.framework</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <scope>provided</scope>
+      <artifactId>org.apache.karaf.shell.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.lispflowmapping</groupId>
@@ -45,5 +40,14 @@
       <url>${nexus.site.url}/${project.artifactId}/</url>
     </site>
   </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-services-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
