@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3db2667b_a2c3dfa8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-02-03T12:34:17Z",
+      "side": 1,
+      "message": "https://git.opendaylight.org/gerrit/c/lispflowmapping/+/104176 supersedes this",
+      "revId": "9b0bac348192bc15a0c9cf07bc44cfadb1c12dda",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
