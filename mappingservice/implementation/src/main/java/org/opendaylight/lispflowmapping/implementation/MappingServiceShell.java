@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServiceShell;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -16,6 +18,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.common.Uint16;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +30,16 @@ import org.slf4j.LoggerFactory;
  * @author Lorand Jakab
  *
  */
+@Singleton
+@Component(service = IMappingServiceShell.class, immediate = true, property = "type=default")
 public class MappingServiceShell implements IMappingServiceShell {
     protected static final Logger LOG = LoggerFactory.getLogger(MappingServiceShell.class);
 
     private final IMappingService mappingService;
 
-    public MappingServiceShell(final IMappingService mappingService) {
+    @Inject
+    @Activate
+    public MappingServiceShell(final @Reference IMappingService mappingService) {
         this.mappingService = mappingService;
     }
 

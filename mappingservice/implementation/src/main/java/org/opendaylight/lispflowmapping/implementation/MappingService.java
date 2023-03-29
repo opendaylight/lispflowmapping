@@ -13,6 +13,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.PreDestroy;
+import javax.inject.Singleton;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
@@ -26,6 +28,7 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -90,10 +93,15 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsOutput;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +116,8 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras
  *
  */
+@Component(service = IMappingService.class, immediate = true, property = "type=default")
+@Singleton
 public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
 
@@ -115,26 +125,21 @@ public class MappingService implements OdlMappingserviceService, IMappingService
     private DataStoreBackEnd dsbe;
     private AuthenticationKeyDataListener keyListener;
     private MappingDataListener mappingListener;
-    private final ILispDAO dao;
 
-    private final DataBroker dataBroker;
-    private final NotificationPublishService notificationPublishService;
+    @Reference
+    private volatile ILispDAO dao;
+    @Reference
+    private volatile DataBroker dataBroker;
+    @Reference
+    private volatile RpcProviderService rpcProviderService;
+    @Reference
+    private volatile NotificationPublishService notificationPublishService;
+    private Registration rpcRegistration;
 
     private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
     private final boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private final boolean iterateMask = true;
     private boolean isMaster = false;
-
-    public MappingService(final DataBroker broker,
-            final NotificationPublishService notificationPublishService,
-            final ILispDAO lispDAO) {
-        this.dataBroker = broker;
-        this.notificationPublishService = notificationPublishService;
-        this.dao = lispDAO;
-
-        LOG.debug("MappingService created!");
-    }
-
 
     @Override
     public void setMappingMerge(boolean mergeMapping) {
@@ -150,9 +155,12 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         ConfigIni.getInstance().setLookupPolicy(policy);
     }
 
+    @Activate
     public void initialize() {
         LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
+
+        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlMappingserviceService.class, this);
 
         mappingSystem = new MappingSystem(dao, iterateMask, notificationPublishService, mappingMergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
@@ -544,9 +552,12 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return mappingSystem.prettyPrintKeys();
     }
 
+    @PreDestroy
+    @Deactivate
     @Override
     public void close() throws Exception {
         LOG.info("Mapping Service is being destroyed!");
+        rpcRegistration.close();
         keyListener.closeDataChangeListener();
         mappingListener.closeDataChangeListener();
         mappingSystem.destroy();
