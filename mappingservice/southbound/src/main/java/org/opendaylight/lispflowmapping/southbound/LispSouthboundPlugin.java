@@ -317,7 +317,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         senderChannel.flush();
     }
 
-    private InetAddress getInetAddress(final TransportAddress address) {
+    private static InetAddress getInetAddress(final TransportAddress address) {
         requireNonNull(address, "TransportAddress must not be null");
         IpAddressBinary ip = address.getIpAddress();
         try {

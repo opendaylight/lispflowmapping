@@ -146,7 +146,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private int extractEncapsulatedSourcePort(ByteBuffer inBuffer) {
+    private static int extractEncapsulatedSourcePort(ByteBuffer inBuffer) {
         try {
             inBuffer.position(PacketHeader.Length.LISP_ENCAPSULATION);
             int ipType = inBuffer.get() >> 4;
@@ -285,7 +285,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         return null;
     }
 
-    private MappingKeepAlive createMappingKeepAlive(final MapRegisterCacheValue value) {
+    private static MappingKeepAlive createMappingKeepAlive(final MapRegisterCacheValue value) {
         MappingKeepAliveBuilder mappingKeepAliveBuilder = new MappingKeepAliveBuilder();
         mappingKeepAliveBuilder.setMapRegisterCacheMetadata(value.getMapRegisterCacheMetadata());
         return mappingKeepAliveBuilder.build();
@@ -332,14 +332,14 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     /**
      * Calculates new message authentication code (MAC) for notify message.
      */
-    private ByteBuffer calculateAndSetNewMAC(final ByteBuffer buffer, final String authKey) {
+    private static ByteBuffer calculateAndSetNewMAC(final ByteBuffer buffer, final String authKey) {
         final byte[] authenticationData = LispAuthenticationUtil.createAuthenticationData(buffer, authKey);
         buffer.position(ILispAuthentication.MAP_REGISTER_AND_NOTIFY_AUTHENTICATION_POSITION);
         buffer.put(authenticationData);
         return buffer;
     }
 
-    private ByteBuffer transformMapRegisterToMapNotify(final ByteBuffer buffer) {
+    private static ByteBuffer transformMapRegisterToMapNotify(final ByteBuffer buffer) {
         buffer.position(0);
         byte typeAndFlags = buffer.get(0);
         // Shift the xTR-ID present and built for an RTR bits to their correct position
@@ -354,7 +354,7 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
         return buffer;
     }
 
-    private Map<EidLispAddressKey, EidLispAddress> provideEidPrefixesFromMessage(final MapRegister mapRegister) {
+    private static Map<EidLispAddressKey, EidLispAddress> provideEidPrefixesFromMessage(final MapRegister mapRegister) {
         Map<EidLispAddressKey, EidLispAddress> eidsResult = new LinkedHashMap<>();
         int idx = 0;
         for (MappingRecordItem mappingRecordItem : mapRegister.getMappingRecordItem()) {
