@@ -21,7 +21,7 @@
 
   <groupId>org.opendaylight.lispflowmapping</groupId>
   <artifactId>lispflowmapping-commons</artifactId>
-  <version>1.17.1-SNAPSHOT</version>
+  <version>1.17.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
@@ -30,9 +30,9 @@
   <properties>
     <build.suffix>1.0.0</build.suffix>
     <forwardingrulesmanager.version>0.5.0</forwardingrulesmanager.version>
-    <lispflowmapping.version>1.17.1-SNAPSHOT</lispflowmapping.version>
-    <nsf.version>0.20.1-SNAPSHOT</nsf.version>
-    <sal.version>0.24.1-SNAPSHOT</sal.version>
+    <lispflowmapping.version>1.17.2-SNAPSHOT</lispflowmapping.version>
+    <nsf.version>0.20.2-SNAPSHOT</nsf.version>
+    <sal.version>0.24.2-SNAPSHOT</sal.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <statisticsmanager.version>0.5.0</statisticsmanager.version>
     <yang.src.path>src/main/yang</yang.src.path>
