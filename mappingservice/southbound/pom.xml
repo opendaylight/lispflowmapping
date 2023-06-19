@@ -16,6 +16,8 @@
 
   <properties>
     <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+    <!-- FIXME: needed to get cglib working -->
+    <jacoco.version>0.8.8</jacoco.version>
   </properties>
 
   <dependencies>
