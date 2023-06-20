@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.serializer.address;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Prefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.SimpleAddress;
@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.addres
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
 
-public class SourceDestKeySerializerTest extends BaseTestCase {
+public class SourceDestKeySerializerTest {
 
     @Test
     public void deserialize__Simple() throws Exception {

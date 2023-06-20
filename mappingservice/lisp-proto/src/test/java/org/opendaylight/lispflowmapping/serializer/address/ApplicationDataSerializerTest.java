@@ -9,13 +9,13 @@ package org.opendaylight.lispflowmapping.serializer.address;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.exception.LispSerializationException;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
@@ -28,7 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint8;
 
-public class ApplicationDataSerializerTest extends BaseTestCase {
+public class ApplicationDataSerializerTest {
 
     @Test
     public void deserialize__Simple() throws Exception {

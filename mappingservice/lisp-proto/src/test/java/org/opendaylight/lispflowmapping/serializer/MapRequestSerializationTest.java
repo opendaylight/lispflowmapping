@@ -11,6 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.NoAddressAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
@@ -36,7 +36,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequest.SourceEidBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.maprequestnotification.MapRequestBuilder;
 
-public class MapRequestSerializationTest extends BaseTestCase {
+public class MapRequestSerializationTest {
 
     @Test
     public void prefix__NoPrefix() throws Exception {

@@ -9,6 +9,9 @@ package org.opendaylight.lispflowmapping.serializer;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.opendaylight.lispflowmapping.TestUtils.assertHexEquals;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -17,7 +20,6 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4Binary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv6Binary;
@@ -31,7 +33,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
 import org.opendaylight.yangtools.yang.common.Uint8;
 
-public class MapReplySerializationTest extends BaseTestCase {
+public class MapReplySerializationTest {
 
     @Test
     @Ignore

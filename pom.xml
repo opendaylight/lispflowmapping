@@ -17,7 +17,6 @@
   <modules>
     <module>commons/parent</module>
     <module>commons/build_tools</module>
-    <module>commons/unittest_tools</module>
     <module>artifacts</module>
     <module>mappingservice</module>
     <module>features</module>
