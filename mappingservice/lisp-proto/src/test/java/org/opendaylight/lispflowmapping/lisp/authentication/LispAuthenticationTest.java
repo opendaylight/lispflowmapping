@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.lisp.authentication;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRegisterSerializer;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
@@ -29,7 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
-public class LispAuthenticationTest extends BaseTestCase {
+public class LispAuthenticationTest {
     private static final String PASSWORD = "password";
     private static final String WRONG_PASSWORD = "wrongPassword";
 

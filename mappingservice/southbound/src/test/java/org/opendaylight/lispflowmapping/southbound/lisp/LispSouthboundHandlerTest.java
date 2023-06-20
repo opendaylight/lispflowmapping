@@ -12,6 +12,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA1;
 import static org.opendaylight.lispflowmapping.southbound.lisp.MapRegisterCacheTestUtil.DATA2;
@@ -35,11 +36,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -51,8 +55,6 @@ import org.opendaylight.lispflowmapping.southbound.ConcurrentLispSouthboundStats
 import org.opendaylight.lispflowmapping.southbound.LispSouthboundPlugin;
 import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.southbound.lisp.exception.LispMalformedPacketException;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
-import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana.afn.safi.rev130704.AddressFamily;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.InstanceIdType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4BinaryAfi;
@@ -78,11 +80,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.list.MappingRecordItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapreplymessage.MapReplyBuilder;
-import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 
-public class LispSouthboundHandlerTest extends BaseTestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class LispSouthboundHandlerTest {
 
     private LispSouthboundHandler testedLispService;
     private byte[] mapRequestPacket;
@@ -91,8 +93,8 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     private MapReplyBuilder mapReplyBuilder;
     private MappingRecordBuilder mappingRecordBuilder;
     private MapRegisterCache mapRegisterCache;
+    @Mock
     private LispSouthboundPlugin mockLispSouthboundPlugin;
-    private LispSouthboundPlugin contextMockLispSouthboundPlugin;
     private static final long CACHE_RECORD_TIMEOUT = 90000;
 
     private static AuthKeyDb akdb;
@@ -146,17 +148,13 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         Mockito.when(akdl.authKeysForEidsUnchanged(Mockito.anyMap(), Mockito.anyLong())).thenReturn(true);
     }
 
-    @Override
+
     @Before
     public void before() throws Exception {
-        super.before();
-        mockLispSouthboundPlugin = Mockito.mock(LispSouthboundPlugin.class);
-        contextMockLispSouthboundPlugin = context.mock(LispSouthboundPlugin.class);
         Mockito.when(mockLispSouthboundPlugin.isMapRegisterCacheEnabled()).thenReturn(true);
         Mockito.when(mockLispSouthboundPlugin.getMapRegisterCacheTimeout()).thenReturn(CACHE_RECORD_TIMEOUT);
         mapRegisterCache = new MapRegisterCache();
         Mockito.when(mockLispSouthboundPlugin.getMapRegisterCache()).thenReturn(mapRegisterCache);
-        Mockito.when(mockLispSouthboundPlugin.getDataBroker()).thenReturn(Mockito.mock(DataBroker.class));
         Mockito.when(mockLispSouthboundPlugin.getAkdb()).thenReturn(akdb);
         Mockito.when(mockLispSouthboundPlugin.getAuthenticationKeyDataListener()).thenReturn(akdl);
         ConcurrentLispSouthboundStats lispSouthboundStats = new ConcurrentLispSouthboundStats();
@@ -820,8 +818,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
         mapReplyBuilder.setNonce(0x3d8d2acd39c8d608L);
 
-        stubHandleRequest();
-
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
 
         assertEquals(28, result.length);
@@ -843,8 +839,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Ignore
     public void mapReply_q_VerifyBasicIPv6() throws Exception {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv6PrefixEid("0:0:0:0:0:0:0:1/128"));
-
-        stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
 
@@ -868,8 +862,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder.getLocatorRecord().add(
                 new LocatorRecordBuilder().setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:2")).build());
 
-        stubHandleRequest();
-
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
 
         assertEquals(64, result.length);
@@ -884,8 +876,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
     @Ignore
     @Test
     public void mapReply__UseEncapsulatedUdpPort() throws Exception {
-        stubHandleRequest();
-
         assertEquals(LispMessage.PORT_NUM, handleMapRequestPacket(mapRequestPacket).recipient().getPort());
     }
 
@@ -895,7 +885,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
         mappingRecordBuilder.getLocatorRecord().add(
                 new LocatorRecordBuilder().setRouted(false).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
-        stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(0x00, result[MapReplyIpv4SingleLocatorPos.LOCATOR_RBIT] & 0x01);
@@ -907,7 +896,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid("10.0.20.200/32"));
         mappingRecordBuilder.getLocatorRecord().add(
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv4Rloc("4.3.2.1")).build());
-        stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(40, result.length);
@@ -929,7 +917,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         mappingRecordBuilder.getLocatorRecord().add(
                 new LocatorRecordBuilder().setRouted(true).setRloc(LispAddressUtil.asIpv6Rloc("0:0:0:0:0:0:0:1"))
                 .build());
-        stubHandleRequest();
 
         byte[] result = handleMapRequestAsByteArray(mapRequestPacket);
         assertEquals(64, result.length);
@@ -989,14 +976,6 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         Mockito.verify(mockLispSouthboundPlugin).sendNotificationIfPossible(Mockito.any(RequestMapping.class));
     }
 
-    private void stubHandleRequest() {
-        try {
-            allowing(contextMockLispSouthboundPlugin).sendNotificationIfPossible(wany(Notification.class));
-        } catch (InterruptedException e) {
-            LOG.debug("Interrupted", e);
-        }
-    }
-
     private byte[] handleMapRequestAsByteArray(byte[] inPacket) {
         handleMapRequestPacket(inPacket);
         return lastMapReplyPacket().content().array();
@@ -1038,7 +1017,7 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
         return null;
     }
 
-    private byte[] extractWSUdpByteArray(String wiresharkHex) {
+    private static byte[] extractWSUdpByteArray(String wiresharkHex) {
         final int headerLen = 42;
         byte[] res = new byte[1000];
         String[] split = wiresharkHex.split(" ");
@@ -1054,6 +1033,20 @@ public class LispSouthboundHandlerTest extends BaseTestCase {
             }
         }
         return Arrays.copyOf(res, counter - headerLen);
+    }
+
+    private static ByteBuffer hexToByteBuffer(String hex) {
+        String[] hexBytes = hex.split(" ");
+        ByteBuffer bb = ByteBuffer.allocate(hexBytes.length);
+        for (String hexByte : hexBytes) {
+            bb.put((byte) Integer.parseInt(hexByte, 16));
+        }
+        bb.clear();
+        return bb;
+    }
+
+    private static void assertHexEquals(byte expected, byte actual) {
+        assertEquals(String.format("0x%02X", expected), String.format("0x%02X", actual));
     }
 
     @Test(expected = LispMalformedPacketException.class)

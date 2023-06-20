@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.serializer.address;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.opendaylight.lispflowmapping.TestUtils.hexToByteBuffer;
 
 import java.nio.ByteBuffer;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSeria
 import org.opendaylight.lispflowmapping.lisp.serializer.address.LispAddressSerializerContext;
 import org.opendaylight.lispflowmapping.lisp.util.ByteUtil;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.lispflowmapping.tools.junit.BaseTestCase;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.ServicePathLcaf;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.ServicePath;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
  *
  * @author Lorand Jakab
  */
-public class ServicePathTest extends BaseTestCase {
+public class ServicePathTest {
 
     @Test
     public void deserialize__Simple() throws Exception {
