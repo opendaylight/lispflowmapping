@@ -148,11 +148,11 @@ public final class LispAddressUtil {
         if (address instanceof Inet4Address) {
             return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv4Builder()
-                    .setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address)).build();
+                    .setIpv4(IetfInetUtil.ipv4AddressFor(address)).build();
         } else if (address instanceof Inet6Address) {
             return new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types
                     .rev151105.lisp.address.address.Ipv6Builder()
-                    .setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address)).build();
+                    .setIpv6(IetfInetUtil.ipv6AddressFor(address)).build();
         }
         return null;
     }
@@ -454,7 +454,7 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv4PrefixEid(Ipv4Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(addr)), vni);
+        return toEid(new IpPrefix(IetfInetUtil.ipv4PrefixFor(addr)), vni);
     }
 
     public static Eid asIpv4PrefixEid(final String prefix, final InstanceIdType iiType) {
@@ -466,7 +466,7 @@ public final class LispAddressUtil {
         builder.setAddressType(Ipv4PrefixAfi.VALUE);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv4PrefixBuilder().setIpv4Prefix(
-                IetfInetUtil.INSTANCE.ipv4PrefixFor(address, mask)).build());
+                IetfInetUtil.ipv4PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -529,7 +529,7 @@ public final class LispAddressUtil {
     }
 
     public static Eid asIpv6PrefixEid(Ipv6Address addr, InstanceIdType vni) {
-        return toEid(new IpPrefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(addr)), vni);
+        return toEid(new IpPrefix(IetfInetUtil.ipv6PrefixFor(addr)), vni);
     }
 
     public static Eid asIpv6PrefixEid(Eid eid, Inet6Address address, short mask) {
@@ -537,7 +537,7 @@ public final class LispAddressUtil {
         builder.setAddressType(Ipv6PrefixAfi.VALUE);
         builder.setVirtualNetworkId(eid.getVirtualNetworkId());
         builder.setAddress(new Ipv6PrefixBuilder().setIpv6Prefix(
-                IetfInetUtil.INSTANCE.ipv6PrefixFor(address, mask)).build());
+                IetfInetUtil.ipv6PrefixFor(address, mask)).build());
         return builder.build();
     }
 
@@ -895,25 +895,25 @@ public final class LispAddressUtil {
 
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.Ipv4Prefix convertFromBinary(Ipv4PrefixBinary prefix) {
-        return new Ipv4PrefixBuilder().setIpv4Prefix(IetfInetUtil.INSTANCE.ipv4PrefixFor(
+        return new Ipv4PrefixBuilder().setIpv4Prefix(IetfInetUtil.ipv4PrefixFor(
                 prefix.getIpv4AddressBinary().getValue(),
                 prefix.getIpv4MaskLength().toJava())).build();
     }
 
     private static org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105
             .lisp.address.address.Ipv6Prefix convertFromBinary(Ipv6PrefixBinary prefix) {
-        return new Ipv6PrefixBuilder().setIpv6Prefix(IetfInetUtil.INSTANCE.ipv6PrefixFor(
+        return new Ipv6PrefixBuilder().setIpv6Prefix(IetfInetUtil.ipv6PrefixFor(
                 prefix.getIpv6AddressBinary().getValue(),
                 prefix.getIpv6MaskLength().toJava())).build();
     }
 
     private static Ipv4 convertFromBinary(Ipv4Binary address) {
-        return new Ipv4Builder().setIpv4(IetfInetUtil.INSTANCE.ipv4AddressFor(address.getIpv4Binary().getValue()))
+        return new Ipv4Builder().setIpv4(IetfInetUtil.ipv4AddressFor(address.getIpv4Binary().getValue()))
                 .build();
     }
 
     private static Ipv6 convertFromBinary(Ipv6Binary address) {
-        return new Ipv6Builder().setIpv6(IetfInetUtil.INSTANCE.ipv6AddressFor(address.getIpv6Binary().getValue()))
+        return new Ipv6Builder().setIpv6(IetfInetUtil.ipv6AddressFor(address.getIpv6Binary().getValue()))
                 .build();
     }
 
