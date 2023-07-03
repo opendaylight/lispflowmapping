@@ -51,12 +51,12 @@ public final class MacSerializer extends LispAddressSerializer {
     @Override
     protected void serializeData(ByteBuffer buffer, LispAddress lispAddress) {
         Mac mac = (Mac) lispAddress.getAddress();
-        buffer.put(IetfYangUtil.INSTANCE.macAddressBytes(mac.getMac()));
+        buffer.put(IetfYangUtil.macAddressBytes(mac.getMac()));
     }
 
     @Override
     protected void serializeData(ByteBuffer buffer, SimpleAddress simpleAddress) {
-        buffer.put(IetfYangUtil.INSTANCE.macAddressBytes(simpleAddress.getMacAddress()));
+        buffer.put(IetfYangUtil.macAddressBytes(simpleAddress.getMacAddress()));
     }
 
     @Override
@@ -85,7 +85,7 @@ public final class MacSerializer extends LispAddressSerializer {
     private static MacAddress deserializeData(ByteBuffer buffer) {
         byte[] macBuffer = new byte[6];
         buffer.get(macBuffer);
-        return IetfYangUtil.INSTANCE.macAddressFor(macBuffer);
+        return IetfYangUtil.macAddressFor(macBuffer);
     }
 
     private interface Length {

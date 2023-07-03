@@ -167,7 +167,7 @@ public final class MapRegisterPartialDeserializer {
         final int eidPrefixAfi = ByteUtil.getUnsignedShort(buffer, startPositionOfEidPrefixAFI);
         Optional<Integer> eidPrefixLengthOpt = resolveEidPrefixAfi(eidPrefixAfi, buffer);
         if (eidPrefixLengthOpt.isPresent()) {
-            final byte[] eidPrefix = new byte[eidPrefixLengthOpt.get()];
+            final byte[] eidPrefix = new byte[eidPrefixLengthOpt.orElseThrow()];
             final int startPositionOfEidPrefix = startPositionOfEidPrefixAFI + NUM_OF_BYTES_EID_PREFIX_AFI;
             buffer.position(startPositionOfEidPrefix);
             buffer.get(eidPrefix);

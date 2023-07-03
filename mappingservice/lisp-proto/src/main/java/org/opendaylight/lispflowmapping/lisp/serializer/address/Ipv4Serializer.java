@@ -105,7 +105,7 @@ public final class Ipv4Serializer extends LispAddressSerializer {
     private static Ipv4Address deserializeData(ByteBuffer buffer) {
         byte[] ipBuffer = new byte[4];
         buffer.get(ipBuffer);
-        return IetfInetUtil.INSTANCE.ipv4AddressFor(ipBuffer);
+        return IetfInetUtil.ipv4AddressFor(ipBuffer);
     }
 
     protected interface Length {
