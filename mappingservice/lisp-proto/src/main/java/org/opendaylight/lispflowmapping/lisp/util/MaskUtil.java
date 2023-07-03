@@ -173,7 +173,7 @@ public final class MaskUtil {
         short mask = Short.parseShort(prefix[1]);
 
         InetAddress normalizedAddress = normalizeIP(InetAddresses.forString(prefix[0]), mask);
-        return IetfInetUtil.INSTANCE.ipPrefixFor(normalizedAddress.getAddress(), mask);
+        return IetfInetUtil.ipPrefixFor(normalizedAddress.getAddress(), mask);
     }
 
     private static InetAddress normalizeIP(InetAddress address, int maskLength) throws UnknownHostException {
