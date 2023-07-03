@@ -286,7 +286,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
         try {
             Optional<U> optionalDataObject = readFuture.get();
             if (optionalDataObject != null && optionalDataObject.isPresent()) {
-                return optionalDataObject.get();
+                return optionalDataObject.orElseThrow();
             } else {
                 LOG.debug("{}: Failed to read", Thread.currentThread().getStackTrace()[1]);
             }
