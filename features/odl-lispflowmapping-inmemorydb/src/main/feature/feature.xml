@@ -9,6 +9,5 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-lispflowmapping-inmemorydb">
     <feature name="odl-lispflowmapping-inmemorydb">
         <feature version="[8,9)">odl-mdsal-broker</feature>
-        <feature version="[8,9)">odl-controller-blueprint</feature>
     </feature>
 </features>
