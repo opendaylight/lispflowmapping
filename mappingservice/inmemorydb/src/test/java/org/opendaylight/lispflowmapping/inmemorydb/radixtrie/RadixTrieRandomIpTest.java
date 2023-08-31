@@ -31,7 +31,7 @@ public class RadixTrieRandomIpTest {
     private static final int IPV4 = 4;
     private static final int IPV6 = 6;
 
-    private static class EIDEntry {
+    private static final class EIDEntry {
         InetAddress eid;
         int preflen;
     }
@@ -44,7 +44,7 @@ public class RadixTrieRandomIpTest {
 
     private void testRandomIpv4() throws UnknownHostException {
         RadixTrie<Integer>.TrieNode res;
-        radixTrie4 = new RadixTrie<Integer>(32);
+        radixTrie4 = new RadixTrie<>(32);
 
         // fill the list of EIDEntries
         generateRandomIPAddress(IPV4);
@@ -64,7 +64,7 @@ public class RadixTrieRandomIpTest {
 
     private void testRandomIpv6() throws UnknownHostException {
         RadixTrie<Integer>.TrieNode res;
-        radixTrie6 = new RadixTrie<Integer>(128);
+        radixTrie6 = new RadixTrie<>(128);
 
         // fill the list of EIDEntries
         generateRandomIPAddress(IPV6);
@@ -82,7 +82,7 @@ public class RadixTrieRandomIpTest {
         }
     }
 
-    private void generateRandomIPAddress(int version) throws UnknownHostException {
+    private void generateRandomIPAddress(final int version) throws UnknownHostException {
         final Random random = new Random(SEED);
         int preflen;
         final ByteBuffer b = ByteBuffer.allocate(4);
@@ -101,7 +101,7 @@ public class RadixTrieRandomIpTest {
                         preflen = 8;
                     }
                     mask = 0xffffffff;
-                    for (int j = 0; j < (32 - preflen); j++) {
+                    for (int j = 0; j < 32 - preflen; j++) {
                         mask = mask << 1 ;
                     }
 

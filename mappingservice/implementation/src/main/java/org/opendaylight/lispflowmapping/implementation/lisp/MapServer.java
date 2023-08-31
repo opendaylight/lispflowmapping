@@ -282,7 +282,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
      * {@value ConfigIni#LISP_SMR_RETRY_COUNT} times, or until {@link ISmrNotificationListener#onSmrInvokedReceived}
      * is triggered.
      */
-    private class SmrScheduler {
+    private final class SmrScheduler {
         final int cpuCores = Runtime.getRuntime().availableProcessors();
         private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("smr-executor-%d").build();
