@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,63 +38,85 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.lo
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.AddMappingsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetAllMappingsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingWithXtrIdOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.GetMappingsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllMappingsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllOperationalContent;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllOperationalContentInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllOperationalContentOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveAllOperationalContentOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.RemoveMappingsOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeys;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateKeysOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappings;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsOutput;
 import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -118,7 +141,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component(service = IMappingService.class, immediate = true, property = "type=default")
 @Singleton
-public class MappingService implements OdlMappingserviceService, IMappingService, AutoCloseable {
+public class MappingService implements IMappingService, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
 
     private MappingSystem mappingSystem;
@@ -160,7 +183,32 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         LOG.info("Mapping Service initializing...");
         dsbe = new DataStoreBackEnd(dataBroker);
 
-        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlMappingserviceService.class, this);
+        rpcRegistration = rpcProviderService.registerRpcImplementations(
+            ImmutableClassToInstanceMap.<Rpc<?, ?>>builder()
+                .put(AddKey.class, this::addKey)
+                .put(GetKey.class, this::getKey)
+                .put(UpdateKey.class, this::updateKey)
+                .put(RemoveKey.class, this::removeKey)
+                .put(AddMapping.class, this::addMapping)
+                .put(GetMapping.class, this::getMapping)
+                .put(GetMappingWithXtrId.class, this::getMappingWithXtrId)
+                .put(UpdateMapping.class, this::updateMapping)
+                .put(RemoveMapping.class, this::removeMapping)
+                .put(AddKeys.class, this::addKeys)
+                .put(GetKeys.class, this::getKeys)
+                .put(UpdateKeys.class, this::updateKeys)
+                .put(RemoveKeys.class, this::removeKeys)
+                .put(AddMappings.class, this::addMappings)
+                .put(GetMappings.class, this::getMappings)
+                .put(UpdateMappings.class, this::updateMappings)
+                .put(RemoveMappings.class, this::removeMappings)
+                .put(GetAllKeys.class, this::getAllKeys)
+                .put(GetAllMappings.class, this::getAllMappings)
+                .put(RemoveAllKeys.class, this::removeAllKeys)
+                .put(RemoveAllMappings.class, this::removeAllMappings)
+                .put(RemoveAllOperationalContent.class, this::removeAllOperationalContent)
+            .build()
+        );
 
         mappingSystem = new MappingSystem(dao, iterateMask, notificationPublishService, mappingMergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);
@@ -171,7 +219,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         LOG.info("Mapping Service loaded.");
     }
 
-    @Override
     public ListenableFuture<RpcResult<AddKeyOutput>> addKey(AddKeyInput input) {
         requireNonNull(input, "add-key RPC input must be not null!");
         LOG.trace("RPC received to add the following key: {}", input);
@@ -193,7 +240,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
         requireNonNull(input, "add-mapping RPC input must be not null!");
         LOG.trace("RPC received to add the following mapping: {}", input);
@@ -233,7 +279,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         mappingSystem.refreshMappingRegistration(key, xtrId, timestamp);
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetKeyOutput>> getKey(GetKeyInput input) {
         requireNonNull(input, "get-key RPC input must be not null!");
         LOG.trace("RPC received to get the following key: {}", input);
@@ -253,7 +298,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetMappingOutput>> getMapping(GetMappingInput input) {
         requireNonNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: {}", input);
@@ -300,7 +344,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return mappingSystem.getSubscribers(eid);
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetMappingWithXtrIdOutput>> getMappingWithXtrId(GetMappingWithXtrIdInput input) {
         requireNonNull(input, "get-mapping RPC input must be not null!");
         LOG.trace("RPC received to get the following mapping: {}", input);
@@ -323,7 +366,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveKeyOutput>> removeKey(RemoveKeyInput input) {
         requireNonNull(input, "remove-key RPC input must be not null!");
         LOG.trace("RPC received to remove the following key: {}", input);
@@ -337,7 +379,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveMappingOutput>> removeMapping(RemoveMappingInput input) {
         requireNonNull(input, "remove-mapping RPC input must be not null!");
         LOG.trace("RPC received to remove the following mapping: {}", input);
@@ -359,7 +400,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         dsbe.removeMapping(DSBEInputUtil.toMapping(origin, key));
     }
 
-    @Override
     public ListenableFuture<RpcResult<UpdateKeyOutput>> updateKey(UpdateKeyInput input) {
         requireNonNull(input, "update-key RPC input must be not null!");
         LOG.trace("RPC received to update the following key: {}", input);
@@ -381,7 +421,6 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<UpdateMappingOutput>> updateMapping(UpdateMappingInput input) {
         LOG.trace("RPC received to update the following mapping: {}", input);
         requireNonNull(input, "update-mapping RPC input must be not null!");
@@ -395,80 +434,67 @@ public class MappingService implements OdlMappingserviceService, IMappingService
         return rpcResultBuilder.buildFuture();
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveKeysOutput>> removeKeys(RemoveKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveMappingsOutput>> removeMappings(RemoveMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetKeysOutput>> getKeys(GetKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<AddMappingsOutput>> addMappings(AddMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<UpdateKeysOutput>> updateKeys(UpdateKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveAllMappingsOutput>> removeAllMappings(RemoveAllMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveAllKeysOutput>> removeAllKeys(RemoveAllKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetAllKeysOutput>> getAllKeys(GetAllKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<UpdateMappingsOutput>> updateMappings(UpdateMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<AddKeysOutput>> addKeys(AddKeysInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetAllMappingsOutput>> getAllMappings(GetAllMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<GetMappingsOutput>> getMappings(
             GetMappingsInput input) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public ListenableFuture<RpcResult<RemoveAllOperationalContentOutput>> removeAllOperationalContent(
             RemoveAllOperationalContentInput input) {
         RpcResultBuilder<RemoveAllOperationalContentOutput> rpcResultBuilder;
