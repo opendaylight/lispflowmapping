@@ -29,6 +29,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundRPC;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
@@ -57,7 +58,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInputBuilder;
@@ -91,7 +91,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private IMapServerAsync mapServer;
 
     private final IMappingService mapService;
-    private final OdlLispSbService lispSB;
+    private final LispSouthboundRPC lispSB;
     private final ClusterSingletonServiceProvider clusterSingletonService;
     private final RpcProviderService rpcProviderService;
     private final NotificationService notificationService;
@@ -101,19 +101,20 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Inject
     @Activate
     public LispMappingService(@Reference final IMappingService mappingService,
-            @Reference final OdlLispSbService odlLispService,
+            @Reference final LispSouthboundRPC lispSouthboundRPC,
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
             @Reference final RpcProviderService rpcProviderService,
             @Reference final NotificationService notificationService) {
         this.mapService = mappingService;
-        this.lispSB = odlLispService;
+        this.lispSB = lispSouthboundRPC;
         this.clusterSingletonService = clusterSingletonService;
         this.rpcProviderService = rpcProviderService;
         this.notificationService = notificationService;
 
         // initialize
         listenerRegistration = notificationService.registerNotificationListener(this);
-        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, lispSB);
+        final var rpcHandler = new LispSouthboundRPC(null, rpcProviderService);
+        rpcRegistration = rpcProviderService.registerRpcImplementations(rpcHandler.getRpcClassToInstanceMap());
 
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
@@ -256,7 +257,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         }
     }
 
-    private OdlLispSbService getLispSB() {
+    private LispSouthboundRPC getLispSB() {
         return lispSB;
     }
 

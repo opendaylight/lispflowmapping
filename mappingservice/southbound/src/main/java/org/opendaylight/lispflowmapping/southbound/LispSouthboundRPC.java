@@ -7,6 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.southbound;
 
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
@@ -21,22 +22,27 @@ import org.opendaylight.lispflowmapping.lisp.serializer.MapReplySerializer;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapRequestSerializer;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStats;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.GetStatsOutputBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStats;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ResetStatsOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRegisterOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapRequestOutputBuilder;
@@ -45,6 +51,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
 import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -63,9 +70,9 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
-@Component(immediate = true, property = "type=default", service = OdlLispSbService.class)
+@Component(immediate = true, property = "type=default", service = LispSouthboundRPC.class)
 @Singleton
-public class LispSouthboundRPC implements OdlLispSbService {
+public class LispSouthboundRPC {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);
 
     private final LispSouthboundPlugin lispSbPlugin;
@@ -76,7 +83,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
     public LispSouthboundRPC(final @Reference LispSouthboundPlugin lispSbPlugin,
             final @Reference RpcProviderService rpcProviderService) {
         this.lispSbPlugin = lispSbPlugin;
-        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, this);
+        rpcRegistration = rpcProviderService.registerRpcImplementations(getRpcClassToInstanceMap());
     }
 
     @Deactivate
@@ -85,7 +92,6 @@ public class LispSouthboundRPC implements OdlLispSbService {
         rpcRegistration.close();
     }
 
-    @Override
     public ListenableFuture<RpcResult<SendMapNotifyOutput>> sendMapNotify(final SendMapNotifyInput mapNotifyInput) {
         LOG.trace("sendMapNotify called!!");
         if (mapNotifyInput != null) {
@@ -100,7 +106,6 @@ public class LispSouthboundRPC implements OdlLispSbService {
                 new SendMapNotifyOutputBuilder().build()).build());
     }
 
-    @Override
     public ListenableFuture<RpcResult<SendMapReplyOutput>> sendMapReply(final SendMapReplyInput mapReplyInput) {
         LOG.trace("sendMapReply called!!");
         if (mapReplyInput != null) {
@@ -115,7 +120,6 @@ public class LispSouthboundRPC implements OdlLispSbService {
                 new SendMapReplyOutputBuilder().build()).build());
     }
 
-    @Override
     public ListenableFuture<RpcResult<SendMapRequestOutput>> sendMapRequest(final SendMapRequestInput mapRequestInput) {
         LOG.trace("sendMapRequest called!!");
         if (mapRequestInput != null) {
@@ -130,8 +134,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
                 new SendMapRequestOutputBuilder().build()).build());
     }
 
-    @Override
-    public ListenableFuture<RpcResult<SendMapRegisterOutput>> sendMapRegister(
+    ListenableFuture<RpcResult<SendMapRegisterOutput>> sendMapRegister(
             final SendMapRegisterInput mapRegisterInput) {
         LOG.trace("sendMapRegister called!!");
         if (mapRegisterInput != null) {
@@ -146,8 +149,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
                 new SendMapRegisterOutputBuilder().build()).build());
     }
 
-    @Override
-    public ListenableFuture<RpcResult<GetStatsOutput>> getStats(final GetStatsInput input) {
+    ListenableFuture<RpcResult<GetStatsOutput>> getStats(final GetStatsInput input) {
         LOG.trace("getStats called!!");
 
         RpcResultBuilder<GetStatsOutput> rpcResultBuilder;
@@ -163,8 +165,7 @@ public class LispSouthboundRPC implements OdlLispSbService {
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    @Override
-    public ListenableFuture<RpcResult<ResetStatsOutput>> resetStats(final ResetStatsInput input) {
+    ListenableFuture<RpcResult<ResetStatsOutput>> resetStats(final ResetStatsInput input) {
         LOG.trace("resetStats called!!");
 
         ConcurrentLispSouthboundStats stats = lispSbPlugin.getStats();
@@ -208,5 +209,16 @@ public class LispSouthboundRPC implements OdlLispSbService {
 
         return new GetStatsOutputBuilder().setControlMessageStats(cmsb.build())
                 .setMapRegisterCacheStats(mrcsb.build()).build();
+    }
+
+    public ImmutableClassToInstanceMap<Rpc<?, ?>> getRpcClassToInstanceMap() {
+        return ImmutableClassToInstanceMap.<Rpc<?, ?>>builder()
+            .put(SendMapRequest.class, this::sendMapRequest)
+            .put(SendMapReply.class, this::sendMapReply)
+            .put(SendMapRegister.class, this::sendMapRegister)
+            .put(SendMapNotify.class, this::sendMapNotify)
+            .put(GetStats.class, this::getStats)
+            .put(ResetStats.class, this::resetStats)
+            .build();
     }
 }
