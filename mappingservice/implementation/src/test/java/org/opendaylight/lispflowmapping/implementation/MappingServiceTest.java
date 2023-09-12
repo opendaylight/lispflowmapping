@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.lispflowmapping.implementation.lisp;
+package org.opendaylight.lispflowmapping.implementation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -20,8 +20,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
-import org.opendaylight.lispflowmapping.implementation.MappingService;
-import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
