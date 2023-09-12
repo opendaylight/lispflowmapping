@@ -29,6 +29,7 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
+import org.opendaylight.lispflowmapping.southbound.LispSouthboundRPC;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
@@ -61,7 +62,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.rloc.container.Rloc;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.OdlLispSbService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapNotifyInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.SendMapReplyInputBuilder;
@@ -84,13 +84,13 @@ public class LispMappingServiceTest {
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
-    private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
+    private final LispSouthboundRPC lispSouthboundRPC = Mockito.mock(LispSouthboundRPC.class);
     private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
             ClusterSingletonServiceProvider.class);
 
     @InjectMocks
     private final LispMappingService lispMappingService = new LispMappingService(
-            mappingService, odlLispSbService, clusterSingletonService, rpcProviderService, notificationService);
+            mappingService, lispSouthboundRPC, clusterSingletonService, rpcProviderService, notificationService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
@@ -156,7 +156,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapRequestMock.get()).thenReturn(pair);
 
         assertNull(lispMappingService.handleMapRequest(mapRequest));
-        Mockito.verify(odlLispSbService).sendMapRequest(smrib.build());
+        Mockito.verify(lispSouthboundRPC).sendMapRequest(smrib.build());
     }
 
     /**
@@ -188,7 +188,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapNotifyMock.get()).thenReturn(getDefaultMapNotifyPair());
 
         lispMappingService.onAddMapping(addMapping);
-        Mockito.verify(odlLispSbService, Mockito.times(2)).sendMapNotify(Mockito.argThat(new TransportAddressMatch()));
+        Mockito.verify(lispSouthboundRPC, Mockito.times(2)).sendMapNotify(Mockito.argThat(new TransportAddressMatch()));
     }
 
     /**
@@ -213,7 +213,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS);
 
         lispMappingService.onAddMapping(addMapping);
-        Mockito.verify(odlLispSbService).sendMapNotify(smnib.build());
+        Mockito.verify(lispSouthboundRPC).sendMapNotify(smnib.build());
     }
 
     /**
@@ -237,7 +237,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS_1);
 
         lispMappingService.onRequestMapping(requestMapping);
-        Mockito.verify(odlLispSbService).sendMapReply(smrib.build());
+        Mockito.verify(lispSouthboundRPC).sendMapReply(smrib.build());
     }
 
     /**
@@ -254,7 +254,7 @@ public class LispMappingServiceTest {
         Mockito.when(tlsMapReplyMock.get()).thenReturn(null);
 
         lispMappingService.onRequestMapping(requestMapping);
-        Mockito.verifyZeroInteractions(odlLispSbService);
+        Mockito.verifyZeroInteractions(lispSouthboundRPC);
     }
 
     /**
@@ -287,7 +287,7 @@ public class LispMappingServiceTest {
                 .setTransportAddress(TRANSPORT_ADDRESS);
 
         lispMappingService.handleSMR(mapRequest, subscriber);
-        Mockito.verify(odlLispSbService).sendMapRequest(smrib.build());
+        Mockito.verify(lispSouthboundRPC).sendMapRequest(smrib.build());
     }
 
     /**
