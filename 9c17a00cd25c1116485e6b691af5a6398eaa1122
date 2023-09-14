@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d8a7060_03459073",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundRPC.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-09-14T07:38:09Z",
+      "side": 1,
+      "message": "use self as a service definition so the component can be found by reference\n`..., service \u003d LispSouthboundRPC.class)`",
+      "revId": "9c17a00cd25c1116485e6b691af5a6398eaa1122",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
