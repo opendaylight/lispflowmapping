@@ -73,6 +73,7 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
+import org.opendaylight.mdsal.binding.api.NotificationService.Listener;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpPrefix;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
@@ -106,18 +107,11 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.Ipv4PrefixBinaryAfi;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.binary.address.types.rev160504.augmented.lisp.address.address.Ipv4PrefixBinaryBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapNotify;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRegister;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrRequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
@@ -167,7 +161,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private byte[] mapRegisterPacketWithoutNotify;
     String lispBindAddress = "127.0.0.1";
     static final String ourAddress = "127.0.0.2";
-    private Rloc locatorEid;
     private DatagramSocket socket;
     private byte[] mapRegisterPacketWithAuthenticationAndMapNotify;
 
@@ -2900,36 +2893,22 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     }
 
-    private class XtrRequestMappingListener implements OdlLispProtoListener {
+    private class XtrRequestMappingListener implements Listener<XtrRequestMapping> {
+        private final String eid;
+        private final MapRequest mapRequest;
 
-        @Override
-        public void onGotMapReply(GotMapReply notification) {
+        private XtrRequestMappingListener(String eid, MapRequest mapRequest) {
+            this.eid = eid;
+            this.mapRequest = mapRequest;
         }
 
         @Override
-        public void onAddMapping(AddMapping notification) {
+        public void onNotification(XtrRequestMapping notification) {
+            assertEquals(((Ipv4Prefix) mapRequest.getEidItem().get(0).getEid().getAddress())
+                .getIpv4Prefix().getValue(), eid);
+            notificationCalled = true;
+            LOG.warn("notification arrived");
         }
-
-        @Override
-        public void onXtrReplyMapping(XtrReplyMapping notification) {
-        }
-
-        @Override
-        public void onRequestMapping(RequestMapping notification) {
-        }
-
-        @Override
-        public void onGotMapNotify(GotMapNotify notification) {
-        }
-
-        @Override
-        public void onXtrRequestMapping(XtrRequestMapping notification) {
-        }
-
-        @Override
-        public void onMappingKeepAlive(MappingKeepAlive notification) {
-        }
-
     }
 
     public void testRecievingNonProxyOnXtrPort() throws SocketTimeoutException, SocketException, Throwable {
@@ -2950,17 +2929,10 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         Rloc adLcaf = rb.build();
 
         final MapRequest mapRequest = createNonProxyMapRequest(eid, adLcaf);
-        ((LispMappingService) lms).getNotificationService().registerNotificationListener(
-                new XtrRequestMappingListener() {
+        final var handler = new XtrRequestMappingListener(eid, mapRequest);
 
-            @Override
-            public void onXtrRequestMapping(XtrRequestMapping notification) {
-                assertEquals(((Ipv4Prefix) mapRequest.getEidItem().get(0).getEid().getAddress())
-                        .getIpv4Prefix().getValue(), eid);
-                notificationCalled = true;
-                LOG.warn("notification arrived");
-            }
-        });
+        ((LispMappingService) lms).getNotificationService().registerListener(XtrRequestMapping.class, handler);
+
         sendMapRequest(mapRequest, port);
         for (int i = 0; i < MAX_NOTIFICATION_RETRYS; i++) {
             if (notificationCalled) {
