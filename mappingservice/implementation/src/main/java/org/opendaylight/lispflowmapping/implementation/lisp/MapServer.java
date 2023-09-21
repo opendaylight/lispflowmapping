@@ -75,12 +75,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServerAsync, OdlMappingserviceListener, ISmrNotificationListener {
+public class MapServer implements IMapServerAsync, ISmrNotificationListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
@@ -88,7 +86,6 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     private boolean subscriptionService;
     private final IMapNotifyHandler notifyHandler;
     private final NotificationService notificationService;
-    private ListenerRegistration<MapServer> mapServerListenerRegistration;
     private final SmrScheduler scheduler;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
@@ -98,7 +95,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         this.notifyHandler = notifyHandler;
         this.notificationService = notificationService;
         if (notificationService != null) {
-            notificationService.registerNotificationListener(this);
+            notificationService.registerCompositeListener(
+                new NotificationService.CompositeListener(Set.of(
+                    new NotificationService.CompositeListener.Component<>(MappingChanged.class, this::onMappingChanged)
+                ))
+            );
         }
         scheduler = new SmrScheduler();
     }
@@ -202,8 +203,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return mappingData != null ? mappingData.getRecord() : null;
     }
 
-    @Override
-    public void onMappingChanged(MappingChanged notification) {
+    private void onMappingChanged(MappingChanged notification) {
         if (subscriptionService) {
             Eid eid = notification.getEid();
             if (eid == null) {
