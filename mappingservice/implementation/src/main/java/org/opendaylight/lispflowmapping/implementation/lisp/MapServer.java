@@ -50,6 +50,7 @@ import org.opendaylight.lispflowmapping.lisp.util.MappingRecordUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
 import org.opendaylight.lispflowmapping.lisp.util.SourceDestKeyHelper;
 import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.NotificationService.Listener;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address.address.SourceDestKey;
@@ -62,7 +63,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.EidBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItemBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapnotifymessage.MapNotifyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecord;
@@ -75,32 +75,32 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddressBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapServer implements IMapServerAsync, OdlMappingserviceListener, ISmrNotificationListener {
-
+public class MapServer implements IMapServerAsync, ISmrNotificationListener, Listener<MappingChanged>, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(MapServer.class);
     private static final byte[] ALL_ZEROES_XTR_ID = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0};
+
+    private final SmrScheduler scheduler = new SmrScheduler();
     private final IMappingService mapService;
-    private boolean subscriptionService;
     private final IMapNotifyHandler notifyHandler;
-    private final NotificationService notificationService;
-    private ListenerRegistration<MapServer> mapServerListenerRegistration;
-    private final SmrScheduler scheduler;
+    private final Registration listenerRegistration;
+
+    private boolean subscriptionService;
 
     public MapServer(IMappingService mapService, boolean subscriptionService,
                      IMapNotifyHandler notifyHandler, NotificationService notificationService) {
         this.mapService = requireNonNull(mapService);
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
-        this.notificationService = notificationService;
-        if (notificationService != null) {
-            notificationService.registerNotificationListener(this);
-        }
-        scheduler = new SmrScheduler();
+        listenerRegistration = notificationService.registerListener(MappingChanged.class, this);
+    }
+
+    @Override
+    public void close() {
+        listenerRegistration.close();
     }
 
     @Override
@@ -203,7 +203,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     @Override
-    public void onMappingChanged(MappingChanged notification) {
+    public void onNotification(MappingChanged notification) {
         if (subscriptionService) {
             Eid eid = notification.getEid();
             if (eid == null) {
@@ -411,7 +411,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     // a given mapping.
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
                         synchronized (mrb) {
-                            mrb.setEidItem(new ArrayList<EidItem>());
+                            mrb.setEidItem(new ArrayList<>());
                             mrb.getEidItem().add(new EidItemBuilder()
                                     .setEidItemId(LispAddressStringifier.getString(subscriber.getSrcEid()))
                                     .setEid(subscriber.getSrcEid()).build());

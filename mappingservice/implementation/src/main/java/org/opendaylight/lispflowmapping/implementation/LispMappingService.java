@@ -8,9 +8,11 @@
 
 package org.opendaylight.lispflowmapping.implementation;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,12 +26,12 @@ import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.lisp.ISmrNotificationListener;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.NotificationService.CompositeListener;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
@@ -43,7 +45,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Ma
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapReply;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MapRequest;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MappingKeepAlive;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.OdlLispProtoListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.XtrReplyMapping;
@@ -73,7 +74,7 @@ import org.slf4j.LoggerFactory;
 @Component(service = {IFlowMapping.class, IMapRequestResultHandler.class, IMapNotifyHandler.class},
         immediate = true, property = "type=default")
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
-        IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterSingletonService {
+        IMapNotifyHandler, AutoCloseable, ClusterSingletonService {
     private static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
     private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
             LISPFLOWMAPPING_ENTITY_NAME);
@@ -88,12 +89,11 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
     private IMapResolverAsync mapResolver;
-    private IMapServerAsync mapServer;
+    private MapServer mapServer;
 
     private final IMappingService mapService;
     private final OdlLispSbService lispSB;
     private final ClusterSingletonServiceProvider clusterSingletonService;
-    private final RpcProviderService rpcProviderService;
     private final NotificationService notificationService;
     private final Registration rpcRegistration;
     private final Registration listenerRegistration;
@@ -108,11 +108,17 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         this.mapService = mappingService;
         this.lispSB = odlLispService;
         this.clusterSingletonService = clusterSingletonService;
-        this.rpcProviderService = rpcProviderService;
         this.notificationService = notificationService;
 
         // initialize
-        listenerRegistration = notificationService.registerNotificationListener(this);
+        listenerRegistration = notificationService.registerCompositeListener(new CompositeListener(Set.of(
+                new CompositeListener.Component<>(AddMapping.class, this::onAddMapping),
+                new CompositeListener.Component<>(GotMapNotify.class, this::onGotMapNotify),
+                new CompositeListener.Component<>(RequestMapping.class, this::onRequestMapping),
+                new CompositeListener.Component<>(GotMapReply.class, this::onGotMapReply),
+                new CompositeListener.Component<>(XtrRequestMapping.class, this::onXtrRequestMapping),
+                new CompositeListener.Component<>(XtrReplyMapping.class, this::onXtrReplyMapping),
+                new CompositeListener.Component<>(MappingKeepAlive.class, this::onMappingKeepAlive))));
         rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, lispSB);
 
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
@@ -189,8 +195,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         getLispSB().sendMapNotify(smnib.build());
     }
 
-    @Override
-    public void onAddMapping(AddMapping mapRegisterNotification) {
+    @VisibleForTesting
+    void onAddMapping(AddMapping mapRegisterNotification) {
         Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
         if (result != null && result.getLeft() != null) {
             MapNotify mapNotify = result.getLeft();
@@ -210,8 +216,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         }
     }
 
-    @Override
-    public void onRequestMapping(RequestMapping mapRequestNotification) {
+    @VisibleForTesting
+    void onRequestMapping(RequestMapping mapRequestNotification) {
         MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
         if (mapReply != null) {
             SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
@@ -223,28 +229,28 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         }
     }
 
-    @Override
-    public void onGotMapReply(GotMapReply notification) {
+    @VisibleForTesting
+    void onGotMapReply(GotMapReply notification) {
         LOG.debug("Received GotMapReply notification, ignoring");
     }
 
-    @Override
-    public void onGotMapNotify(GotMapNotify notification) {
+    @VisibleForTesting
+    void onGotMapNotify(GotMapNotify notification) {
         LOG.debug("Received GotMapNotify notification, ignoring");
     }
 
-    @Override
-    public void onXtrRequestMapping(XtrRequestMapping notification) {
+    @VisibleForTesting
+    void onXtrRequestMapping(XtrRequestMapping notification) {
         LOG.debug("Received XtrRequestMapping notification, ignoring");
     }
 
-    @Override
-    public void onXtrReplyMapping(XtrReplyMapping notification) {
+    @VisibleForTesting
+    void onXtrReplyMapping(XtrReplyMapping notification) {
         LOG.debug("Received XtrReplyMapping notification, ignoring");
     }
 
-    @Override
-    public void onMappingKeepAlive(MappingKeepAlive notification) {
+    @VisibleForTesting
+    void onMappingKeepAlive(MappingKeepAlive notification) {
         final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
         for (EidLispAddress eidLispAddress : cacheMetadata.nonnullEidLispAddress().values()) {
             final Eid eid = eidLispAddress.getEid();
@@ -293,7 +299,10 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private void destroy() {
         LOG.info("LISP (RFC6830) Mapping Service is destroyed!");
         mapResolver = null;
-        mapServer = null;
+        if (mapServer != null) {
+            mapServer.close();
+            mapServer = null;
+        }
     }
 
     @Deactivate
@@ -324,4 +333,3 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return SERVICE_GROUP_IDENTIFIER;
     }
 }
-

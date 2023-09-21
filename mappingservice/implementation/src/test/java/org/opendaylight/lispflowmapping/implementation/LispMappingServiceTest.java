@@ -24,8 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
-import org.opendaylight.lispflowmapping.interfaces.lisp.IMapServerAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
@@ -73,7 +73,7 @@ import org.opendaylight.yangtools.yang.common.Uint16;
 @RunWith(MockitoJUnitRunner.class)
 public class LispMappingServiceTest {
     @Mock private static MapRegister mapRegisterMock;
-    @Mock(name = "mapServer") private static IMapServerAsync mapServerMock;
+    @Mock(name = "mapServer") private static MapServer mapServerMock;
     @Mock(name = "mapResolver") private static IMapResolverAsync mapResolverMock;
     @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
     @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
