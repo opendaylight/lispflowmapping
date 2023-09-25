@@ -1,0 +1,7 @@
+Code-Review+2: Robert Varga <nite@hq.sk>
+Verified+1: jenkins-releng ODL
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Mon, 25 Sep 2023 00:28:12 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/c/lispflowmapping/+/107965
+Project: lispflowmapping
+Branch: refs/heads/stable/potassium
