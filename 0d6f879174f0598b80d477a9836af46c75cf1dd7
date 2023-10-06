@@ -16,6 +16,40 @@
       "message": "All affected methods now have lowest possible visibility",
       "revId": "0d6f879174f0598b80d477a9836af46c75cf1dd7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77c13188_01eb3179",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/MappingService.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T10:01:25Z",
+      "side": 1,
+      "message": "@VisibleforTesting",
+      "revId": "0d6f879174f0598b80d477a9836af46c75cf1dd7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "383c2f00_d52448a9",
+        "filename": "mappingservice/southbound/src/main/java/org/opendaylight/lispflowmapping/southbound/LispSouthboundRPC.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T10:01:25Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "0d6f879174f0598b80d477a9836af46c75cf1dd7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
