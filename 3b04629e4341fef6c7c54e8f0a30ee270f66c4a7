@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8dd808ce_0ac83257",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad9cd500_a9e4888a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7be77599_406d808d",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3c028ee_1e0a2831",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "749c87f7_d41e7399",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1274baa2_37050cd1",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f783e57c_95b4688a",
+        "filename": "mappingservice/implementation/src/main/java/org/opendaylight/lispflowmapping/implementation/LispMappingService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 9255
+      },
+      "writtenOn": "2023-10-06T09:46:48Z",
+      "side": 1,
+      "message": "@VisibleForTesting",
+      "revId": "3b04629e4341fef6c7c54e8f0a30ee270f66c4a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
