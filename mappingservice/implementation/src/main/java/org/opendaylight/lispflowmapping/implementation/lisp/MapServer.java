@@ -76,7 +76,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.tr
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.OdlMappingserviceListener;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,11 +88,11 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     private boolean subscriptionService;
     private final IMapNotifyHandler notifyHandler;
     private final NotificationService notificationService;
-    private ListenerRegistration<MapServer> mapServerListenerRegistration;
+    private Registration mapServerListenerRegistration;
     private final SmrScheduler scheduler;
 
-    public MapServer(IMappingService mapService, boolean subscriptionService,
-                     IMapNotifyHandler notifyHandler, NotificationService notificationService) {
+    public MapServer(final IMappingService mapService, final boolean subscriptionService,
+                     final IMapNotifyHandler notifyHandler, final NotificationService notificationService) {
         this.mapService = requireNonNull(mapService);
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
@@ -104,13 +104,13 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     @Override
-    public void setSubscriptionService(boolean subscriptionService) {
+    public void setSubscriptionService(final boolean subscriptionService) {
         this.subscriptionService = subscriptionService;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void handleMapRegister(MapRegister mapRegister) {
+    public void handleMapRegister(final MapRegister mapRegister) {
         boolean mappingUpdated = false;
         boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.getMergeEnabled();
         MappingRecord oldMapping;
@@ -183,7 +183,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         }
     }
 
-    private static List<TransportAddress> getTransportAddresses(Set<IpAddressBinary> addresses) {
+    private static List<TransportAddress> getTransportAddresses(final Set<IpAddressBinary> addresses) {
         List<TransportAddress> rlocs = new ArrayList<>();
         for (IpAddressBinary address : addresses) {
             TransportAddressBuilder tab = new TransportAddressBuilder();
@@ -194,16 +194,16 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         return rlocs;
     }
 
-    private static SiteId getSiteId(MapRegister mapRegister) {
+    private static SiteId getSiteId(final MapRegister mapRegister) {
         return mapRegister.getSiteId() != null ? new SiteId(mapRegister.getSiteId()) : null;
     }
 
-    private static MappingRecord getMappingRecord(MappingData mappingData) {
+    private static MappingRecord getMappingRecord(final MappingData mappingData) {
         return mappingData != null ? mappingData.getRecord() : null;
     }
 
     @Override
-    public void onMappingChanged(MappingChanged notification) {
+    public void onMappingChanged(final MappingChanged notification) {
         if (subscriptionService) {
             Eid eid = notification.getEid();
             if (eid == null) {
@@ -225,7 +225,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         }
     }
 
-    private void handleSmr(Eid eid, Set<Subscriber> subscribers) {
+    private void handleSmr(final Eid eid, final Set<Subscriber> subscribers) {
         sendSmrs(eid, subscribers);
 
         // For SrcDst LCAF also send SMRs to Dst prefix
@@ -236,7 +236,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         }
     }
 
-    private void sendSmrs(Eid eid, Set<Subscriber> subscribers) {
+    private void sendSmrs(final Eid eid, final Set<Subscriber> subscribers) {
         if (subscribers == null) {
             return;
         }
@@ -273,7 +273,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
     }
 
     @Override
-    public void onSmrInvokedReceived(SmrEvent event) {
+    public void onSmrInvokedReceived(final SmrEvent event) {
         scheduler.smrReceived(event);
     }
 
@@ -289,7 +289,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
         private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(cpuCores * 2, threadFactory);
         private final Map<Eid, Map<Subscriber, ScheduledFuture<?>>> eidFutureMap = new ConcurrentHashMap<>();
 
-        void scheduleSmrs(MapRequestBuilder mrb, Iterator<Subscriber> subscribers) {
+        void scheduleSmrs(final MapRequestBuilder mrb, final Iterator<Subscriber> subscribers) {
             final Eid srcEid = fixSrcEidMask(mrb.getSourceEid().getEid());
             cancelExistingFuturesForEid(srcEid);
 
@@ -315,7 +315,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             eidFutureMap.put(srcEid, subscriberFutureMap);
         }
 
-        void smrReceived(SmrEvent event) {
+        void smrReceived(final SmrEvent event) {
             final List<Subscriber> subscriberList = event.getSubscriberList();
             for (Subscriber subscriber : subscriberList) {
                 if (LOG.isTraceEnabled()) {
@@ -346,22 +346,18 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     if (subscriberFutureMap.isEmpty()) {
                         eidFutureMap.remove(event.getEid());
                     }
-                } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("No outstanding SMR tasks for EID {}",
-                                LispAddressStringifier.getString(event.getEid()));
-                    }
+                } else if (LOG.isTraceEnabled()) {
+                    LOG.trace("No outstanding SMR tasks for EID {}",
+                            LispAddressStringifier.getString(event.getEid()));
                 }
             }
         }
 
-        private void cancelExistingFuturesForEid(Eid eid) {
+        private void cancelExistingFuturesForEid(final Eid eid) {
             synchronized (eidFutureMap) {
                 if (eidFutureMap.containsKey(eid)) {
                     final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(eid);
-                    Iterator<Subscriber> oldSubscribers = subscriberFutureMap.keySet().iterator();
-                    while (oldSubscribers.hasNext()) {
-                        Subscriber subscriber = oldSubscribers.next();
+                    for (Subscriber subscriber : subscriberFutureMap.keySet()) {
                         ScheduledFuture<?> subscriberFuture = subscriberFutureMap.get(subscriber);
                         subscriberFuture.cancel(true);
                     }
@@ -378,7 +374,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
          *
          * Since we store all prefixes as binary internally, we only care about and fix those address types.
          */
-        private Eid fixSrcEidMask(Eid eid) {
+        private Eid fixSrcEidMask(final Eid eid) {
             Address address = eid.getAddress();
             if (address instanceof Ipv4PrefixBinary) {
                 return new EidBuilder(eid).setAddress(new Ipv4PrefixBinaryBuilder((Ipv4PrefixBinary) address)
@@ -395,7 +391,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
             private final Subscriber subscriber;
             private int executionCount = 1;
 
-            CancellableRunnable(MapRequestBuilder mrb, Subscriber subscriber) {
+            CancellableRunnable(final MapRequestBuilder mrb, final Subscriber subscriber) {
                 this.mrb = mrb;
                 this.subscriber = subscriber;
             }
@@ -411,7 +407,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                     // a given mapping.
                     if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
                         synchronized (mrb) {
-                            mrb.setEidItem(new ArrayList<EidItem>());
+                            mrb.setEidItem(new ArrayList<>());
                             mrb.getEidItem().add(new EidItemBuilder()
                                     .setEidItemId(LispAddressStringifier.getString(subscriber.getSrcEid()))
                                     .setEid(subscriber.getSrcEid()).build());
@@ -437,7 +433,7 @@ public class MapServer implements IMapServerAsync, OdlMappingserviceListener, IS
                 executionCount++;
             }
 
-            private void cancelAndRemove(Subscriber sub, Eid eid) {
+            private void cancelAndRemove(final Subscriber sub, final Eid eid) {
                 final Map<Subscriber, ScheduledFuture<?>> subscriberFutureMap = eidFutureMap.get(eid);
                 if (subscriberFutureMap == null) {
                     LOG.warn("Couldn't find subscriber {} in SMR scheduler internal list", sub);

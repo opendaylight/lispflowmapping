@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
@@ -45,7 +44,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
     private NotificationPublishService notificationPublishService;
     private final boolean isMaster = false;
 
-    public MappingDataListener(DataBroker broker, IMappingSystem msmr, NotificationPublishService nps) {
+    public MappingDataListener(final DataBroker broker, final IMappingSystem msmr, final NotificationPublishService nps) {
         setBroker(broker);
         setMappingSystem(msmr);
         setNotificationProviderService(nps);
@@ -55,23 +54,23 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         registerDataChangeListener();
     }
 
-    public void setNotificationProviderService(NotificationPublishService nps) {
-        this.notificationPublishService = nps;
+    public void setNotificationProviderService(final NotificationPublishService nps) {
+        notificationPublishService = nps;
     }
 
-    void setMappingSystem(IMappingSystem msmr) {
-        this.mapSystem = msmr;
+    void setMappingSystem(final IMappingSystem msmr) {
+        mapSystem = msmr;
     }
 
     @Override
-    public void onDataTreeChanged(Collection<DataTreeModification<Mapping>> changes) {
+    public void onDataTreeChanged(final List<DataTreeModification<Mapping>> changes) {
         for (DataTreeModification<Mapping> change : changes) {
             final DataObjectModification<Mapping> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.getModificationType()) {
+            if (ModificationType.DELETE == mod.modificationType()) {
                 // Process deleted mappings
 
-                final Mapping mapping = mod.getDataBefore();
+                final Mapping mapping = mod.dataBefore();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
                 // before being persisted, except for cluster slaves
@@ -80,16 +79,16 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 }
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", mapping);
 
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
 
                 mapSystem.removeMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid());
 
-            } else if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType() || ModificationType.WRITE == mod
-                    .getModificationType()) {
-                final Mapping mapping = mod.getDataAfter();
+            } else if (ModificationType.SUBTREE_MODIFIED == mod.modificationType() || ModificationType.WRITE == mod
+                    .modificationType()) {
+                final Mapping mapping = mod.dataAfter();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
                 // before being persisted, except for cluster slaves XXX separate NB and SB to avoid ignoring
@@ -101,26 +100,26 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
                 Eid convertedEid = convertedMapping.getMappingRecord().getEid();
 
-                if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType()) {
+                if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
                     LOG.trace("Received update data");
-                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Key: {}", change.getRootPath().path());
                     LOG.trace("Value: {}", mapping);
                     mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
                 } else {
                     LOG.trace("Received write data");
-                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Key: {}", change.getRootPath().path());
                     LOG.trace("Value: {}", mapping);
                     mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
                 }
             } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
+                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
 
-    private static Mapping convertToBinaryIfNecessary(Mapping mapping) {
+    private static Mapping convertToBinaryIfNecessary(final Mapping mapping) {
         MappingRecord originalRecord = mapping.getMappingRecord();
         List<LocatorRecord> originalLocators = originalRecord.getLocatorRecord();
 
@@ -142,7 +141,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         return mapping;
     }
 
-    private static List<LocatorRecord> convertToBinaryIfNecessary(List<LocatorRecord> originalLocators) {
+    private static List<LocatorRecord> convertToBinaryIfNecessary(final List<LocatorRecord> originalLocators) {
         List<LocatorRecord> convertedLocators = null;
         for (LocatorRecord record : originalLocators) {
             if (LispAddressUtil.addressNeedsConversionToBinary(record.getRloc().getAddress())) {

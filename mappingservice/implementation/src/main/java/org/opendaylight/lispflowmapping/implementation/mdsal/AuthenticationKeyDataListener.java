@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import java.util.Collection;
+import java.util.List;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
@@ -33,7 +33,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
     private IMappingSystem mapSystem;
 
-    public AuthenticationKeyDataListener(DataBroker broker, IMappingSystem mapSystem) {
+    public AuthenticationKeyDataListener(final DataBroker broker, final IMappingSystem mapSystem) {
         setBroker(broker);
         setMappingSystem(mapSystem);
         setPath(InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
@@ -43,43 +43,43 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
     }
 
     @Override
-    public void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
+    public void onDataTreeChanged(final List<DataTreeModification<AuthenticationKey>> changes) {
         for (DataTreeModification<AuthenticationKey> change : changes) {
             final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.getModificationType()) {
-                final AuthenticationKey authKey = mod.getDataBefore();
+            if (ModificationType.DELETE == mod.modificationType()) {
+                final AuthenticationKey authKey = mod.dataBefore();
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", authKey);
 
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                 mapSystem.removeAuthenticationKey(convertedAuthKey.getEid());
-            } else if (ModificationType.WRITE == mod.getModificationType() || ModificationType.SUBTREE_MODIFIED == mod
-                    .getModificationType()) {
-                if (ModificationType.WRITE == mod.getModificationType()) {
+            } else if (ModificationType.WRITE == mod.modificationType()
+                    || ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
+                if (ModificationType.WRITE == mod.modificationType()) {
                     LOG.trace("Received created data");
                 } else {
                     LOG.trace("Received updated data");
                 }
                 // Process newly created or updated authentication keys
-                final AuthenticationKey authKey = mod.getDataAfter();
+                final AuthenticationKey authKey = mod.dataAfter();
 
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", authKey);
 
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                 mapSystem.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
             } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
+                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
 
-    private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
+    private static AuthenticationKey convertToBinaryIfNecessary(final AuthenticationKey authKey) {
         Eid originalEid = authKey.getEid();
         if (LispAddressUtil.addressNeedsConversionToBinary(originalEid.getAddress())) {
             AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder(authKey);
@@ -89,7 +89,7 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
         return authKey;
     }
 
-    void setMappingSystem(IMappingSystem msmr) {
-        this.mapSystem = msmr;
+    void setMappingSystem(final IMappingSystem msmr) {
+        mapSystem = msmr;
     }
 }

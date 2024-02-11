@@ -50,15 +50,16 @@ import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
-import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.transport.address.TransportAddress;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -90,7 +91,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
     public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER =
-        ServiceGroupIdentifier.create(LISPFLOWMAPPING_ENTITY_NAME);
+        new ServiceGroupIdentifier(LISPFLOWMAPPING_ENTITY_NAME);
 
     private static final String DEFAULT_BINDING_ADDRESS = "0.0.0.0";
     private static final long DEFAULT_MAP_REGISTER_CACHE_TIMEOUT = 90000;
@@ -121,6 +122,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private EventLoopGroup eventLoopGroup;
     private AuthenticationKeyDataListener authenticationKeyDataListener;
     private DataStoreBackEnd dsbe;
+    private Registration cssReg;
 
     @Inject
     public LispSouthboundPlugin(final DataBroker dataBroker,
@@ -194,7 +196,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             start();
             startXtr();
 
-            clusterSingletonService.registerClusterSingletonService(this);
+            cssReg = clusterSingletonService.registerClusterSingletonService(this);
         }
 
         LOG.info("LISP (RFC6830) Southbound Plugin is up!");
@@ -379,7 +381,9 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         eventLoopGroup.shutdownGracefully();
         lispSouthboundHandler.close();
         unloadActions();
-        clusterSingletonService.close();
+        if (cssReg != null) {
+            cssReg.close();
+        }
         dsbe.closeTransactionChain();
     }
 

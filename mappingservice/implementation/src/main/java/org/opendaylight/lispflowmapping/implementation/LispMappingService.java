@@ -31,9 +31,9 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
-import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
@@ -75,17 +75,17 @@ import org.slf4j.LoggerFactory;
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
         IMapNotifyHandler, OdlLispProtoListener, AutoCloseable, ClusterSingletonService {
     private static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
-    private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
-            LISPFLOWMAPPING_ENTITY_NAME);
+    private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER =
+        new ServiceGroupIdentifier(LISPFLOWMAPPING_ENTITY_NAME);
 
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
-    private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
-    private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
+    private final ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
+    private final ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
 
     private IMapResolverAsync mapResolver;
     private IMapServerAsync mapServer;
@@ -105,8 +105,8 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
             @Reference final RpcProviderService rpcProviderService,
             @Reference final NotificationService notificationService) {
-        this.mapService = mappingService;
-        this.lispSB = odlLispService;
+        mapService = mappingService;
+        lispSB = odlLispService;
         this.clusterSingletonService = clusterSingletonService;
         this.rpcProviderService = rpcProviderService;
         this.notificationService = notificationService;
@@ -123,12 +123,12 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     public boolean shouldUseSmr() {
-        return this.smr;
+        return smr;
     }
 
     @Override
-    public void setShouldUseSmr(boolean shouldUseSmr) {
-        this.smr = shouldUseSmr;
+    public void setShouldUseSmr(final boolean shouldUseSmr) {
+        smr = shouldUseSmr;
         if (mapServer != null) {
             mapServer.setSubscriptionService(shouldUseSmr);
         }
@@ -139,11 +139,11 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     public NotificationService getNotificationService() {
-        return this.notificationService;
+        return notificationService;
     }
 
     @Override
-    public MapReply handleMapRequest(MapRequest request) {
+    public MapReply handleMapRequest(final MapRequest request) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Retrieving mapping for {}",
                     LispAddressStringifier.getString(request.getEidItem().get(0).getEid()));
@@ -165,7 +165,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(MapRegister mapRegister) {
+    public Pair<MapNotify, List<TransportAddress>> handleMapRegister(final MapRegister mapRegister) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("LISP: Adding mapping for {}",
                     LispAddressStringifier.getString(mapRegister.getMappingRecordItem().get(0)
@@ -178,11 +178,11 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         return tlsMapNotify.get();
     }
 
-    public void setShouldAuthenticate(boolean shouldAuthenticate) {
-        this.mapResolver.setShouldAuthenticate(shouldAuthenticate);
+    public void setShouldAuthenticate(final boolean shouldAuthenticate) {
+        mapResolver.setShouldAuthenticate(shouldAuthenticate);
     }
 
-    private void sendMapNotify(MapNotify mapNotify, TransportAddress address) {
+    private void sendMapNotify(final MapNotify mapNotify, final TransportAddress address) {
         SendMapNotifyInputBuilder smnib = new SendMapNotifyInputBuilder();
         smnib.setMapNotify(new MapNotifyBuilder(mapNotify).build());
         smnib.setTransportAddress(address);
@@ -190,7 +190,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void onAddMapping(AddMapping mapRegisterNotification) {
+    public void onAddMapping(final AddMapping mapRegisterNotification) {
         Pair<MapNotify, List<TransportAddress>> result = handleMapRegister(mapRegisterNotification.getMapRegister());
         if (result != null && result.getLeft() != null) {
             MapNotify mapNotify = result.getLeft();
@@ -211,7 +211,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void onRequestMapping(RequestMapping mapRequestNotification) {
+    public void onRequestMapping(final RequestMapping mapRequestNotification) {
         MapReply mapReply = handleMapRequest(mapRequestNotification.getMapRequest());
         if (mapReply != null) {
             SendMapReplyInputBuilder smrib = new SendMapReplyInputBuilder();
@@ -224,27 +224,27 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void onGotMapReply(GotMapReply notification) {
+    public void onGotMapReply(final GotMapReply notification) {
         LOG.debug("Received GotMapReply notification, ignoring");
     }
 
     @Override
-    public void onGotMapNotify(GotMapNotify notification) {
+    public void onGotMapNotify(final GotMapNotify notification) {
         LOG.debug("Received GotMapNotify notification, ignoring");
     }
 
     @Override
-    public void onXtrRequestMapping(XtrRequestMapping notification) {
+    public void onXtrRequestMapping(final XtrRequestMapping notification) {
         LOG.debug("Received XtrRequestMapping notification, ignoring");
     }
 
     @Override
-    public void onXtrReplyMapping(XtrReplyMapping notification) {
+    public void onXtrReplyMapping(final XtrReplyMapping notification) {
         LOG.debug("Received XtrReplyMapping notification, ignoring");
     }
 
     @Override
-    public void onMappingKeepAlive(MappingKeepAlive notification) {
+    public void onMappingKeepAlive(final MappingKeepAlive notification) {
         final MapRegisterCacheMetadata cacheMetadata = notification.getMapRegisterCacheMetadata();
         for (EidLispAddress eidLispAddress : cacheMetadata.nonnullEidLispAddress().values()) {
             final Eid eid = eidLispAddress.getEid();
@@ -261,17 +261,17 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void handleMapReply(MapReply reply) {
+    public void handleMapReply(final MapReply reply) {
         tlsMapReply.set(reply);
     }
 
     @Override
-    public void handleMapNotify(MapNotify notify, List<TransportAddress> rlocs) {
+    public void handleMapNotify(final MapNotify notify, final List<TransportAddress> rlocs) {
         tlsMapNotify.set(new MutablePair<>(notify, rlocs));
     }
 
     @Override
-    public void handleSMR(MapRequest smrMapRequest, Rloc subscriber) {
+    public void handleSMR(final MapRequest smrMapRequest, final Rloc subscriber) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending SMR Map-Request to {} with Source-EID {} and EID Record {} (reversed)",
                     LispAddressStringifier.getString(subscriber),
@@ -286,7 +286,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     }
 
     @Override
-    public void handleNonProxyMapRequest(MapRequest mapRequest, TransportAddress transportAddress) {
+    public void handleNonProxyMapRequest(final MapRequest mapRequest, final TransportAddress transportAddress) {
         tlsMapRequest.set(new MutablePair<>(mapRequest, transportAddress));
     }
 

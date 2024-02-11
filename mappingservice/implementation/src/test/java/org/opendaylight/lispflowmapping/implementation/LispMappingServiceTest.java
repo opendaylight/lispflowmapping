@@ -31,7 +31,7 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -379,7 +379,7 @@ public class LispMappingServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    private <T> T getField(final String fieldName) throws NoSuchFieldException, IllegalAccessException {
         final Field field = LispMappingService.class.getDeclaredField(fieldName);
         field.setAccessible(true);
 
@@ -413,7 +413,7 @@ public class LispMappingServiceTest {
 
     class TransportAddressMatch implements ArgumentMatcher<SendMapNotifyInput> {
         @Override
-        public boolean matches(SendMapNotifyInput sendMapNotify) {
+        public boolean matches(final SendMapNotifyInput sendMapNotify) {
             final TransportAddress notifyTransportAddress = sendMapNotify.getTransportAddress();
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)
                     || TRANSPORT_ADDRESS_2.equals(notifyTransportAddress);

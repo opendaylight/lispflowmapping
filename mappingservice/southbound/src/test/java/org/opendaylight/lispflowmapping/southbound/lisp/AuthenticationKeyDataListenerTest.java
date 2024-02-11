@@ -29,7 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
@@ -38,8 +38,7 @@ public class AuthenticationKeyDataListenerTest {
 
     @Mock(name = "akdb") private static AuthKeyDb akdbMock;
     @Mock(name = "broker") private static DataBroker brokerMock;
-    @Mock(name = "registration") private static ListenerRegistration<AuthenticationKeyDataListener>
-            registrationMock;
+    @Mock(name = "registration") private static Registration registrationMock;
     @InjectMocks private static AuthenticationKeyDataListener authenticationKeyDataListener;
 
     private static DataTreeModification<AuthenticationKey> change_del;
@@ -73,7 +72,7 @@ public class AuthenticationKeyDataListenerTest {
     public void init() {
         final InstanceIdentifier<AuthenticationKey> instanceIdentifierMock = Mockito.mock(InstanceIdentifier.class);
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
-                DataTreeIdentifier.create(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
+                DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
@@ -88,12 +87,12 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
         Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
-        Mockito.when(mod_del.getModificationType()).thenReturn(DataObjectModification.ModificationType.DELETE);
-        Mockito.when(mod_subtreeModified.getModificationType())
+        Mockito.when(mod_del.modificationType()).thenReturn(DataObjectModification.ModificationType.DELETE);
+        Mockito.when(mod_subtreeModified.modificationType())
                 .thenReturn(DataObjectModification.ModificationType.SUBTREE_MODIFIED);
-        Mockito.when(mod_write.getModificationType()).thenReturn(DataObjectModification.ModificationType.WRITE);
+        Mockito.when(mod_write.modificationType()).thenReturn(DataObjectModification.ModificationType.WRITE);
 
-        Mockito.when(brokerMock.registerDataTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
+        Mockito.when(brokerMock.registerTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
                 Mockito.any(AuthenticationKeyDataListener.class))).thenReturn(registrationMock);
         authenticationKeyDataListener = new AuthenticationKeyDataListener(brokerMock, akdbMock);
     }
@@ -103,7 +102,7 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_delete_BinaryEid() {
-        Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_1);
+        Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_1);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
         Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_BINARY_EID_1);
@@ -114,7 +113,7 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_delete_Ipv4PrefixEid() {
-        Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_PREFIX);
+        Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_PREFIX);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
         Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_PREFIX_BINARY_EID);
@@ -125,7 +124,7 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_subtreeModified() {
-        Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(AUTHENTICATION_KEY_2);
+        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(AUTHENTICATION_KEY_2);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_subtreeModified));
         Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_2, MAPPING_AUTHKEY);
@@ -136,7 +135,7 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_write() {
-        Mockito.when(mod_write.getDataAfter()).thenReturn(AUTHENTICATION_KEY_3);
+        Mockito.when(mod_write.dataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_write));
         Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_3, MAPPING_AUTHKEY);
@@ -151,7 +150,7 @@ public class AuthenticationKeyDataListenerTest {
         final DataTreeModification<AuthenticationKey> change_nullModType = Mockito.mock(DataTreeModification.class);
         final DataObjectModification mod_nullModType = Mockito.mock(DataObjectModification.class);
         Mockito.when(change_nullModType.getRootNode()).thenReturn(mod_nullModType);
-        Mockito.when(mod_nullModType.getModificationType()).thenReturn(null);
+        Mockito.when(mod_nullModType.modificationType()).thenReturn(null);
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_nullModType));
         Mockito.verifyNoInteractions(akdbMock);
@@ -166,7 +165,7 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.verify(registrationMock).close();
     }
 
-    private static AuthenticationKey getAuthenticationKey(Eid eid) {
+    private static AuthenticationKey getAuthenticationKey(final Eid eid) {
         return new AuthenticationKeyBuilder()
                 .withKey(new AuthenticationKeyKey(new EidUri("uri-1")))
                 .setEid(eid)
