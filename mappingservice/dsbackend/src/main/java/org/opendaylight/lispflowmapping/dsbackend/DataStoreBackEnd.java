@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.dsbackend;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -21,9 +22,7 @@ import java.util.concurrent.ExecutionException;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.ReadTransaction;
-import org.opendaylight.mdsal.binding.api.Transaction;
 import org.opendaylight.mdsal.binding.api.TransactionChain;
-import org.opendaylight.mdsal.binding.api.TransactionChainListener;
 import org.opendaylight.mdsal.binding.api.WriteTransaction;
 import org.opendaylight.mdsal.common.api.CommitInfo;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -36,7 +35,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.LastUpdated;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.LastUpdatedBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lorand Jakab
  */
-public class DataStoreBackEnd implements TransactionChainListener {
+public class DataStoreBackEnd {
     private static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
     private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
             InstanceIdentifier.create(MappingDatabase.class);
@@ -58,8 +59,30 @@ public class DataStoreBackEnd implements TransactionChainListener {
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR", justification = "Non-final for mocking")
     public DataStoreBackEnd(DataBroker broker) {
         LOG.debug("Creating DataStoreBackEnd transaction chain...");
-        configTxChain = broker.createMergingTransactionChain(this);
-        operTxChain = broker.createMergingTransactionChain(this);
+        configTxChain = broker.createMergingTransactionChain();
+        operTxChain = broker.createMergingTransactionChain();
+        configTxChain.addCallback(new FutureCallback<Empty>() {
+            @Override
+            public void onSuccess(Empty result) {
+                onTransactionChainSuccessful(configTxChain);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                onTransactionChainFailed(configTxChain, cause);
+            }
+        });
+        operTxChain.addCallback(new FutureCallback<Empty>() {
+            @Override
+            public void onSuccess(Empty result) {
+                onTransactionChainSuccessful(operTxChain);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                onTransactionChainFailed(operTxChain, cause);
+            }
+        });
     }
 
     public void addAuthenticationKey(AuthenticationKey authenticationKey) {
@@ -223,7 +246,7 @@ public class DataStoreBackEnd implements TransactionChainListener {
 
     public void saveLastUpdateTimestamp() {
         Long timestamp = System.currentTimeMillis();
-        LOG.debug("MD-SAL: Saving last update timestamp to operational datastore: {}", new Date(timestamp).toString());
+        LOG.debug("MD-SAL: Saving last update timestamp to operational datastore: {}", new Date(timestamp));
         writePutTransaction(LAST_UPDATED, new LastUpdatedBuilder().setLastUpdated(timestamp).build(),
                 LogicalDatastoreType.OPERATIONAL, "Couldn't save last update timestamp to operational datastore");
     }
@@ -259,15 +282,15 @@ public class DataStoreBackEnd implements TransactionChainListener {
         };
     }
 
-    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void writePutTransaction(
-            InstanceIdentifier<U> addIID, U data, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+    private <U extends DataObject> void writePutTransaction(InstanceIdentifier<U> addIID, U data,
+            LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         // TODO: is is a utility method, hence we do not have enough lifecycle knowledge to use plain put()
         writeTx.mergeParentStructurePut(logicalDatastoreType, addIID, data);
         writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
-
             @Override
             public void onSuccess(CommitInfo result) {
+                // No-op
             }
 
             @Override
@@ -277,8 +300,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         }, MoreExecutors.directExecutor());
     }
 
-    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> U readTransaction(
-            InstanceIdentifier<U> readIID, LogicalDatastoreType logicalDatastoreType) {
+    private <U extends DataObject> U readTransaction(InstanceIdentifier<U> readIID,
+            LogicalDatastoreType logicalDatastoreType) {
         final ListenableFuture<Optional<U>> readFuture;
         try (ReadTransaction readTx = getChain(logicalDatastoreType).newReadOnlyTransaction()) {
             readFuture = readTx.read(logicalDatastoreType, readIID);
@@ -296,8 +319,8 @@ public class DataStoreBackEnd implements TransactionChainListener {
         return null;
     }
 
-    private <U extends org.opendaylight.yangtools.yang.binding.DataObject> void deleteTransaction(
-            InstanceIdentifier<U> deleteIID, LogicalDatastoreType logicalDatastoreType, String errMsg) {
+    private <U extends DataObject> void deleteTransaction(InstanceIdentifier<U> deleteIID,
+            LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
         writeTx.commit().addCallback(new FutureCallback<CommitInfo>() {
@@ -312,14 +335,13 @@ public class DataStoreBackEnd implements TransactionChainListener {
         }, MoreExecutors.directExecutor());
     }
 
-    @Override
-    public void onTransactionChainFailed(TransactionChain chain, Transaction transaction, Throwable cause) {
-        LOG.error("Broken chain {} in DataStoreBackEnd, transaction {}, cause {}", chain, transaction.getIdentifier(),
-                cause.getMessage());
+    @VisibleForTesting
+    void onTransactionChainFailed(TransactionChain chain, Throwable cause) {
+        LOG.error("Broken chain {} in DataStoreBackEnd, cause {}", chain, cause.getMessage());
     }
 
-    @Override
-    public void onTransactionChainSuccessful(TransactionChain chain) {
+    @VisibleForTesting
+    void onTransactionChainSuccessful(TransactionChain chain) {
         LOG.info("DataStoreBackEnd closed successfully, chain {}", chain);
     }
 
