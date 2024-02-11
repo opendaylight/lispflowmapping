@@ -30,8 +30,8 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.NotificationService;
-import org.opendaylight.mdsal.binding.api.RpcConsumerRegistry;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.binding.api.RpcService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.Ipv4AddressBinary;
@@ -87,7 +87,7 @@ public class LispMappingServiceTest {
     @Mock(name = "sendMapNotify") private static SendMapNotify sendMapNotify;
 
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
-    private final RpcConsumerRegistry rpcService = Mockito.mock(RpcConsumerRegistry.class);
+    private final RpcService rpcService = Mockito.mock(RpcService.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
             ClusterSingletonServiceProvider.class);
