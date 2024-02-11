@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
@@ -64,14 +63,14 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
     }
 
     @Override
-    public void onDataTreeChanged(Collection<DataTreeModification<Mapping>> changes) {
+    public void onDataTreeChanged(List<DataTreeModification<Mapping>> changes) {
         for (DataTreeModification<Mapping> change : changes) {
             final DataObjectModification<Mapping> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.getModificationType()) {
+            if (ModificationType.DELETE == mod.modificationType()) {
                 // Process deleted mappings
 
-                final Mapping mapping = mod.getDataBefore();
+                final Mapping mapping = mod.dataBefore();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
                 // before being persisted, except for cluster slaves
@@ -80,16 +79,16 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 }
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", mapping);
 
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
 
                 mapSystem.removeMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid());
 
-            } else if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType() || ModificationType.WRITE == mod
-                    .getModificationType()) {
-                final Mapping mapping = mod.getDataAfter();
+            } else if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()
+                       || ModificationType.WRITE == mod.modificationType()) {
+                final Mapping mapping = mod.dataAfter();
 
                 // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
                 // before being persisted, except for cluster slaves XXX separate NB and SB to avoid ignoring
@@ -101,21 +100,21 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                 final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
                 Eid convertedEid = convertedMapping.getMappingRecord().getEid();
 
-                if (ModificationType.SUBTREE_MODIFIED == mod.getModificationType()) {
+                if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
                     LOG.trace("Received update data");
-                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Key: {}", change.getRootPath().path());
                     LOG.trace("Value: {}", mapping);
                     mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
                 } else {
                     LOG.trace("Received write data");
-                    LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                    LOG.trace("Key: {}", change.getRootPath().path());
                     LOG.trace("Value: {}", mapping);
                     mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
                 }
             } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
+                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }

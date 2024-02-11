@@ -9,6 +9,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-lispflowmapping-models">
     <feature name="odl-lispflowmapping-models">
         <feature version="[13,14)">odl-apache-commons-lang3</feature>
-        <feature version="[12,13)">odl-mdsal-model-rfc6991</feature>
+        <feature version="[13,14)">odl-mdsal-model-rfc6991</feature>
     </feature>
 </features>

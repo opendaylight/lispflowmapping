@@ -7,15 +7,15 @@
  */
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
-import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
 import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,25 +35,22 @@ import org.slf4j.LoggerFactory;
  * DataListener for all AuthenticationKey modification events.
  *
  */
-public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeListener<AuthenticationKey> {
+public class AuthenticationKeyDataListener implements DataTreeChangeListener<AuthenticationKey> {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
 
     private final AuthKeyDb akdb;
-    private final DataBroker broker;
     private final InstanceIdentifier<AuthenticationKey> path;
-    private final ListenerRegistration<ClusteredDataTreeChangeListener<AuthenticationKey>> registration;
+    private final Registration registration;
     private final ConcurrentHashMap<Eid, Long> updatedEntries;
 
     public AuthenticationKeyDataListener(final DataBroker broker, final AuthKeyDb akdb) {
-        this.broker = broker;
         this.akdb = akdb;
-        this.path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
+        path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
                 .child(AuthenticationKey.class);
         LOG.trace("Registering AuthenticationKey listener.");
-        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = DataTreeIdentifier.create(
-                LogicalDatastoreType.CONFIGURATION, path);
-        registration = broker.registerDataTreeChangeListener(dataTreeIdentifier, this);
-        this.updatedEntries = new ConcurrentHashMap<>();
+        registration = broker.registerTreeChangeListener(
+            DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, path), this);
+        updatedEntries = new ConcurrentHashMap<>();
     }
 
     public void closeDataChangeListener() {
@@ -61,32 +58,32 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
     }
 
     @Override
-    public synchronized void onDataTreeChanged(Collection<DataTreeModification<AuthenticationKey>> changes) {
+    public synchronized void onDataTreeChanged(final List<DataTreeModification<AuthenticationKey>> changes) {
         for (DataTreeModification<AuthenticationKey> change : changes) {
             final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.getModificationType()) {
-                final AuthenticationKey authKey = mod.getDataBefore();
+            if (ModificationType.DELETE == mod.modificationType()) {
+                final AuthenticationKey authKey = mod.dataBefore();
 
                 LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", authKey);
 
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                 akdb.removeAuthenticationKey(convertedAuthKey.getEid());
                 updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
-            } else if (ModificationType.WRITE == mod.getModificationType() || ModificationType.SUBTREE_MODIFIED == mod
-                    .getModificationType()) {
-                if (ModificationType.WRITE == mod.getModificationType()) {
+            } else if (ModificationType.WRITE == mod.modificationType()
+                    || ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
+                if (ModificationType.WRITE == mod.modificationType()) {
                     LOG.trace("Received created data");
                 } else {
                     LOG.trace("Received updated data");
                 }
                 // Process newly created or updated authentication keys
-                final AuthenticationKey authKey = mod.getDataAfter();
+                final AuthenticationKey authKey = mod.dataAfter();
 
-                LOG.trace("Key: {}", change.getRootPath().getRootIdentifier());
+                LOG.trace("Key: {}", change.getRootPath().path());
                 LOG.trace("Value: {}", authKey);
 
                 final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
@@ -94,7 +91,7 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
                 akdb.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
                 updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
             } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.getModificationType());
+                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
@@ -112,7 +109,8 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
      * @param timeout MapRegister cache timeout value
      * @return false if any of the EIDs in the eids list was updated in the last timout period, true otherwise
      */
-    public synchronized boolean authKeysForEidsUnchanged(Map<EidLispAddressKey, EidLispAddress> eids, long timeout) {
+    public synchronized boolean authKeysForEidsUnchanged(final Map<EidLispAddressKey, EidLispAddress> eids,
+            final long timeout) {
         boolean result = true;
         Long currentTime = System.currentTimeMillis();
         for (EidLispAddress eidLispAddress : eids.values()) {
@@ -127,7 +125,7 @@ public class AuthenticationKeyDataListener implements ClusteredDataTreeChangeLis
         return result;
     }
 
-    private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
+    private static AuthenticationKey convertToBinaryIfNecessary(final AuthenticationKey authKey) {
         Eid originalEid = authKey.getEid();
         if (LispAddressUtil.addressNeedsConversionToBinary(originalEid.getAddress())) {
             AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder(authKey);
