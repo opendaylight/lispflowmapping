@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +22,11 @@ import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
@@ -58,9 +59,10 @@ public class AuthenticationKeyDataListenerTest {
         iMappingSystemMock = Mockito.mock(IMappingSystem.class);
         authenticationKeyDataListener = new AuthenticationKeyDataListener(dataBrokerMock, iMappingSystemMock);
 
-        final InstanceIdentifier<AuthenticationKey> instanceIdentifierMock = Mockito.mock(InstanceIdentifier.class);
-        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
-                DataTreeIdentifier.create(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
+        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = DataTreeIdentifier.of(
+            LogicalDatastoreType.CONFIGURATION,
+            InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
+                .child(AuthenticationKey.class));
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
@@ -75,9 +77,9 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
         Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
-        Mockito.when(mod_del.getModificationType()).thenReturn(ModificationType.DELETE);
-        Mockito.when(mod_subtreeModified.getModificationType()).thenReturn(ModificationType.SUBTREE_MODIFIED);
-        Mockito.when(mod_write.getModificationType()).thenReturn(ModificationType.WRITE);
+        Mockito.when(mod_del.modificationType()).thenReturn(ModificationType.DELETE);
+        Mockito.when(mod_subtreeModified.modificationType()).thenReturn(ModificationType.SUBTREE_MODIFIED);
+        Mockito.when(mod_write.modificationType()).thenReturn(ModificationType.WRITE);
     }
 
     /**
@@ -85,10 +87,9 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_delete() {
-        final List<DataTreeModification<AuthenticationKey>> changes = Lists.newArrayList(change_del);
-        Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_1);
+        Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_1);
 
-        authenticationKeyDataListener.onDataTreeChanged(changes);
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_del));
         Mockito.verify(iMappingSystemMock).removeAuthenticationKey(IPV4_EID_1);
     }
 
@@ -97,10 +98,9 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_write() {
-        final List<DataTreeModification<AuthenticationKey>> changes = Lists.newArrayList(change_write);
-        Mockito.when(mod_write.getDataAfter()).thenReturn(AUTHENTICATION_KEY_2);
+        Mockito.when(mod_write.dataAfter()).thenReturn(AUTHENTICATION_KEY_2);
 
-        authenticationKeyDataListener.onDataTreeChanged(changes);
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_write));
         Mockito.verify(iMappingSystemMock).addAuthenticationKey(IPV4_EID_2, AUTHENTICATION_KEY_2.getMappingAuthkey());
     }
 
@@ -109,10 +109,9 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_subtreeModified() {
-        final List<DataTreeModification<AuthenticationKey>> changes = Lists.newArrayList(change_subtreeModified);
-        Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(AUTHENTICATION_KEY_3);
+        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 
-        authenticationKeyDataListener.onDataTreeChanged(changes);
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_subtreeModified));
         Mockito.verify(iMappingSystemMock).addAuthenticationKey(IPV4_EID_3, AUTHENTICATION_KEY_3.getMappingAuthkey());
     }
 
@@ -121,14 +120,11 @@ public class AuthenticationKeyDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_multipleModTypes() {
-        final List<DataTreeModification<AuthenticationKey>> changes =
-                Lists.newArrayList(change_del, change_write, change_subtreeModified);
+        Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_1);
+        Mockito.when(mod_write.dataAfter()).thenReturn(AUTHENTICATION_KEY_2);
+        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 
-        Mockito.when(mod_del.getDataBefore()).thenReturn(AUTHENTICATION_KEY_1);
-        Mockito.when(mod_write.getDataAfter()).thenReturn(AUTHENTICATION_KEY_2);
-        Mockito.when(mod_subtreeModified.getDataAfter()).thenReturn(AUTHENTICATION_KEY_3);
-
-        authenticationKeyDataListener.onDataTreeChanged(changes);
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_del, change_write, change_subtreeModified));
         Mockito.verify(iMappingSystemMock).removeAuthenticationKey(IPV4_EID_1);
         Mockito.verify(iMappingSystemMock).addAuthenticationKey(IPV4_EID_2, AUTHENTICATION_KEY_2.getMappingAuthkey());
         Mockito.verify(iMappingSystemMock).addAuthenticationKey(IPV4_EID_3, AUTHENTICATION_KEY_3.getMappingAuthkey());
@@ -142,12 +138,11 @@ public class AuthenticationKeyDataListenerTest {
     public void onDataTreeChangedTest_noModType() {
         final DataTreeModification<AuthenticationKey> changeNoModType = Mockito.mock(DataTreeModification.class);
         final DataObjectModification<AuthenticationKey> modNoType = Mockito.mock(DataObjectModification.class);
-        final List<DataTreeModification<AuthenticationKey>> changes = Lists.newArrayList(changeNoModType);
 
         Mockito.when(changeNoModType.getRootNode()).thenReturn(modNoType);
-        Mockito.when(modNoType.getModificationType()).thenReturn(null);
+        Mockito.when(modNoType.modificationType()).thenReturn(null);
 
-        authenticationKeyDataListener.onDataTreeChanged(changes);
+        authenticationKeyDataListener.onDataTreeChanged(List.of(changeNoModType));
         Mockito.verifyZeroInteractions(iMappingSystemMock);
     }
 
