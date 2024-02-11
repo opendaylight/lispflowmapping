@@ -27,7 +27,6 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.ReadTransaction;
-import org.opendaylight.mdsal.binding.api.Transaction;
 import org.opendaylight.mdsal.binding.api.TransactionChain;
 import org.opendaylight.mdsal.binding.api.WriteTransaction;
 import org.opendaylight.mdsal.common.api.CommitInfo;
@@ -100,7 +99,7 @@ public class DataStoreBackEndTest {
         PowerMockito.when(LoggerFactory.getLogger(DataStoreBackEnd.class))
                 .thenReturn(logMock);
         Mockito.when(logMock.isDebugEnabled()).thenReturn(true);
-        Mockito.when(brokerMock.createMergingTransactionChain(Mockito.any(DataStoreBackEnd.class)))
+        Mockito.when(brokerMock.createMergingTransactionChain())
                 .thenReturn(txChainMock);
         dataStoreBackEnd = PowerMockito.spy(new DataStoreBackEnd(brokerMock));
 
@@ -306,10 +305,7 @@ public class DataStoreBackEndTest {
      */
     @Test
     public void onTransactionChainFailedTest() {
-        Transaction asyncTransactionMock = Mockito.mock(Transaction.class);
-        Mockito.when(asyncTransactionMock.getIdentifier()).thenReturn(new Object());
-        dataStoreBackEnd.onTransactionChainFailed(Mockito.mock(TransactionChain.class), asyncTransactionMock,
-                Mockito.mock(Throwable.class));
+        dataStoreBackEnd.onTransactionChainFailed(Mockito.mock(TransactionChain.class), Mockito.mock(Throwable.class));
     }
 
     /**

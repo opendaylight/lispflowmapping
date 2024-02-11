@@ -31,10 +31,10 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.NotificationService.CompositeListener;
-import org.opendaylight.mdsal.binding.api.RpcConsumerRegistry;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
-import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
+import org.opendaylight.mdsal.binding.api.RpcService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.AddMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.GotMapNotify;
@@ -76,9 +76,8 @@ import org.slf4j.LoggerFactory;
         immediate = true, property = "type=default")
 public class LispMappingService implements IFlowMapping, IMapRequestResultHandler,
         IMapNotifyHandler, AutoCloseable, ClusterSingletonService {
-    private static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
-    private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER = ServiceGroupIdentifier.create(
-            LISPFLOWMAPPING_ENTITY_NAME);
+    private static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER =
+        new ServiceGroupIdentifier("lispflowmapping");
 
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
@@ -104,7 +103,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Activate
     public LispMappingService(@Reference final IMappingService mappingService,
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
-            @Reference final RpcConsumerRegistry rpcService, @Reference final NotificationService notificationService) {
+            @Reference final RpcService rpcService, @Reference final NotificationService notificationService) {
         this.mapService = mappingService;
         sendMapRequest = rpcService.getRpc(SendMapRequest.class);
         sendMapReply = rpcService.getRpc(SendMapReply.class);

@@ -50,9 +50,9 @@ import org.opendaylight.lispflowmapping.southbound.lisp.cache.MapRegisterCache;
 import org.opendaylight.lispflowmapping.type.sbplugin.IConfigLispSouthboundPlugin;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
-import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
-import org.opendaylight.mdsal.singleton.common.api.ServiceGroupIdentifier;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.api.ServiceGroupIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.MessageType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -91,7 +91,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
     public static final String LISPFLOWMAPPING_ENTITY_NAME = "lispflowmapping";
     public static final ServiceGroupIdentifier SERVICE_GROUP_IDENTIFIER =
-        ServiceGroupIdentifier.create(LISPFLOWMAPPING_ENTITY_NAME);
+        new ServiceGroupIdentifier(LISPFLOWMAPPING_ENTITY_NAME);
 
     private static final String DEFAULT_BINDING_ADDRESS = "0.0.0.0";
     private static final long DEFAULT_MAP_REGISTER_CACHE_TIMEOUT = 90000;
