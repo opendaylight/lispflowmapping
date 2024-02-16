@@ -97,6 +97,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private final NotificationService notificationService;
     private final Registration rpcRegistration;
     private final Registration listenerRegistration;
+    private final Registration cssRegistration;
 
     @Inject
     @Activate
@@ -123,7 +124,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
-        clusterSingletonService.registerClusterSingletonService(this);
+        cssRegistration = clusterSingletonService.registerClusterSingletonService(this);
         mapResolver.setSmrNotificationListener((ISmrNotificationListener) mapServer);
         LOG.info("LISP (RFC6830) Mapping Service initialized");
     }
@@ -310,6 +311,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Override
     public void close() throws Exception {
         destroy();
+        cssRegistration.close();
         clusterSingletonService.close();
         rpcRegistration.close();
         listenerRegistration.close();

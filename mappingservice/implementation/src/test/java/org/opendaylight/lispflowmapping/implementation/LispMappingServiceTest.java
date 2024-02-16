@@ -80,6 +80,7 @@ public class LispMappingServiceTest {
     @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
     @Mock private static Registration rpcRegistration;
     @Mock(name = "listenerRegistration") private static Registration listenerRegistration;
+    @Mock(name = "cssRegistration") private static Registration cssRegistration;
 
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
@@ -346,10 +347,11 @@ public class LispMappingServiceTest {
     public void closeTest() throws Exception {
         setMock("rpcRegistration", rpcRegistration);
         setMock("listenerRegistration", listenerRegistration);
+        setMock("cssRegistration", cssRegistration);
         lispMappingService.close();
         Mockito.verify(rpcRegistration).close();
         Mockito.verify(listenerRegistration).close();
-        Mockito.verify(clusterSingletonService).close();
+        Mockito.verify(cssRegistration).close();
         assertNull(getField("mapResolver"));
         assertNull(getField("mapServer"));
     }
