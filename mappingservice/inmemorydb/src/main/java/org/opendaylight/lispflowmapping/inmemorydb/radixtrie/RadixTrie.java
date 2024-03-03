@@ -17,6 +17,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -744,18 +745,17 @@ public class RadixTrie<T> {
                 TrieNode last = lastNodeVisited;
                 if (current != null && (current.left != null || current.right != null)) {
                     return true;
-                } else {
-                    Iterator<TrieNode> it = stack.iterator();
-                    while (it.hasNext()) {
-                        peekNode = it.next();
-                        if (peekNode.right != null && !peekNode.right.equals(last)) {
-                            return true;
-                        } else {
-                            last = peekNode;
-                            if (peekNode.prefix != null) {
-                                return true;
-                            }
-                        }
+                }
+                Iterator<TrieNode> it = stack.iterator();
+                while (it.hasNext()) {
+                    peekNode = it.next();
+                    if (peekNode.right != null && !peekNode.right.equals(last)) {
+                        return true;
+                    }
+
+                    last = peekNode;
+                    if (peekNode.prefix != null) {
+                        return true;
                     }
                 }
                 return false;
@@ -782,7 +782,7 @@ public class RadixTrie<T> {
                         }
                     }
                 }
-                return null;
+                throw new NoSuchElementException();
             }
         }
     }

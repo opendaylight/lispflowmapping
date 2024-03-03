@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 @Component(service = ILispDAO.class, immediate = true, property = "type=default")
 public class HashMapDb implements ILispDAO, AutoCloseable {
-    protected static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HashMapDb.class);
     private static final Object TABLES = "tables";
 
     private final ConcurrentMap<Object, ConcurrentMap<String, Object>> data = new ConcurrentHashMap<>();
