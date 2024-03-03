@@ -96,7 +96,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private SendMapNotify sendMapNotify;
 
     private final IMappingService mapService;
-    private final ClusterSingletonServiceProvider clusterSingletonService;
     private final NotificationService notificationService;
     private final Registration listenerRegistration;
     private final Registration cssRegistration;
@@ -110,7 +109,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         sendMapRequest = rpcService.getRpc(SendMapRequest.class);
         sendMapReply = rpcService.getRpc(SendMapReply.class);
         sendMapNotify = rpcService.getRpc(SendMapNotify.class);
-        this.clusterSingletonService = clusterSingletonService;
         this.notificationService = notificationService;
 
         // initialize
@@ -307,7 +305,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     public void close() throws Exception {
         destroy();
         cssRegistration.close();
-        clusterSingletonService.close();
         listenerRegistration.close();
     }
 
