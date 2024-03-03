@@ -30,6 +30,7 @@ import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingServic
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.RpcConsumerRegistry;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.PortNumber;
@@ -78,20 +79,20 @@ public class LispMappingServiceTest {
     @Mock(name = "tlsMapReply") private static ThreadLocal<MapReply> tlsMapReplyMock;
     @Mock(name = "tlsMapNotify") private static ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotifyMock;
     @Mock(name = "tlsMapRequest") private static ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequestMock;
-    @Mock private static Registration rpcRegistration;
     @Mock(name = "listenerRegistration") private static Registration listenerRegistration;
     @Mock(name = "cssRegistration") private static Registration cssRegistration;
+    @Mock(name = "lispSB") private static OdlLispSbService odlLispSbService;
 
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
+    private final RpcConsumerRegistry rpcService = Mockito.mock(RpcConsumerRegistry.class);
     private final IMappingService mappingService = Mockito.mock(IMappingService.class);
-    private final OdlLispSbService odlLispSbService = Mockito.mock(OdlLispSbService.class);
     private final ClusterSingletonServiceProvider clusterSingletonService = Mockito.mock(
             ClusterSingletonServiceProvider.class);
 
     @InjectMocks
     private final LispMappingService lispMappingService = new LispMappingService(
-            mappingService, odlLispSbService, clusterSingletonService, rpcProviderService, notificationService);
+            mappingService, clusterSingletonService, rpcService, rpcProviderService, notificationService);
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
@@ -345,11 +346,9 @@ public class LispMappingServiceTest {
      */
     @Test
     public void closeTest() throws Exception {
-        setMock("rpcRegistration", rpcRegistration);
         setMock("listenerRegistration", listenerRegistration);
         setMock("cssRegistration", cssRegistration);
         lispMappingService.close();
-        Mockito.verify(rpcRegistration).close();
         Mockito.verify(listenerRegistration).close();
         Mockito.verify(cssRegistration).close();
         assertNull(getField("mapResolver"));
@@ -381,7 +380,7 @@ public class LispMappingServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    private <T> T getField(final String fieldName) throws NoSuchFieldException, IllegalAccessException {
         final Field field = LispMappingService.class.getDeclaredField(fieldName);
         field.setAccessible(true);
 
@@ -415,7 +414,7 @@ public class LispMappingServiceTest {
 
     class TransportAddressMatch implements ArgumentMatcher<SendMapNotifyInput> {
         @Override
-        public boolean matches(SendMapNotifyInput sendMapNotify) {
+        public boolean matches(final SendMapNotifyInput sendMapNotify) {
             final TransportAddress notifyTransportAddress = sendMapNotify.getTransportAddress();
             return TRANSPORT_ADDRESS_1.equals(notifyTransportAddress)
                     || TRANSPORT_ADDRESS_2.equals(notifyTransportAddress);

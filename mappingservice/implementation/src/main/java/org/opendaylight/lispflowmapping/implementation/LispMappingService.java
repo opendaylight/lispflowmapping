@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -32,6 +31,7 @@ import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.mdsal.binding.api.NotificationService;
 import org.opendaylight.mdsal.binding.api.NotificationService.CompositeListener;
+import org.opendaylight.mdsal.binding.api.RpcConsumerRegistry;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
@@ -84,30 +84,28 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
     private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
+    // These are non-final for testing
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
     private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
     private ThreadLocal<Pair<MapRequest, TransportAddress>> tlsMapRequest = new ThreadLocal<>();
-
     private IMapResolverAsync mapResolver;
     private MapServer mapServer;
+    private OdlLispSbService lispSB;
 
     private final IMappingService mapService;
-    private final OdlLispSbService lispSB;
     private final ClusterSingletonServiceProvider clusterSingletonService;
     private final NotificationService notificationService;
-    private final Registration rpcRegistration;
     private final Registration listenerRegistration;
     private final Registration cssRegistration;
 
     @Inject
     @Activate
     public LispMappingService(@Reference final IMappingService mappingService,
-            @Reference final OdlLispSbService odlLispService,
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
-            @Reference final RpcProviderService rpcProviderService,
+            @Reference final RpcConsumerRegistry rpcService, @Reference final RpcProviderService rpcProviderService,
             @Reference final NotificationService notificationService) {
         this.mapService = mappingService;
-        this.lispSB = odlLispService;
+        this.lispSB = rpcService.getRpcService(OdlLispSbService.class);
         this.clusterSingletonService = clusterSingletonService;
         this.notificationService = notificationService;
 
@@ -120,7 +118,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
                 new CompositeListener.Component<>(XtrRequestMapping.class, this::onXtrRequestMapping),
                 new CompositeListener.Component<>(XtrReplyMapping.class, this::onXtrReplyMapping),
                 new CompositeListener.Component<>(MappingKeepAlive.class, this::onMappingKeepAlive))));
-        rpcRegistration = rpcProviderService.registerRpcImplementation(OdlLispSbService.class, lispSB);
 
         mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
         mapServer = new MapServer(mapService, smr, this, notificationService);
@@ -313,7 +310,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
         destroy();
         cssRegistration.close();
         clusterSingletonService.close();
-        rpcRegistration.close();
         listenerRegistration.close();
     }
 
