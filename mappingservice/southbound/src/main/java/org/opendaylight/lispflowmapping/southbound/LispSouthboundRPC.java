@@ -63,8 +63,8 @@ import org.slf4j.LoggerFactory;
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
-@Component(immediate = true, property = "type=default", service = OdlLispSbService.class)
 @Singleton
+@Component(service = { })
 public class LispSouthboundRPC implements OdlLispSbService {
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundRPC.class);
 
