@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.implementation;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +116,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsOutput;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -185,31 +183,28 @@ public class MappingService implements IMappingService, AutoCloseable {
         dsbe = new DataStoreBackEnd(dataBroker);
 
         rpcRegistration = rpcProviderService.registerRpcImplementations(
-            ImmutableClassToInstanceMap.<Rpc<?, ?>>builder()
-                .put(AddKey.class, this::addKey)
-                .put(GetKey.class, this::getKey)
-                .put(UpdateKey.class, this::updateKey)
-                .put(RemoveKey.class, this::removeKey)
-                .put(AddMapping.class, this::addMapping)
-                .put(GetMapping.class, this::getMapping)
-                .put(GetMappingWithXtrId.class, this::getMappingWithXtrId)
-                .put(UpdateMapping.class, this::updateMapping)
-                .put(RemoveMapping.class, this::removeMapping)
-                .put(AddKeys.class, this::addKeys)
-                .put(GetKeys.class, this::getKeys)
-                .put(UpdateKeys.class, this::updateKeys)
-                .put(RemoveKeys.class, this::removeKeys)
-                .put(AddMappings.class, this::addMappings)
-                .put(GetMappings.class, this::getMappings)
-                .put(UpdateMappings.class, this::updateMappings)
-                .put(RemoveMappings.class, this::removeMappings)
-                .put(GetAllKeys.class, this::getAllKeys)
-                .put(GetAllMappings.class, this::getAllMappings)
-                .put(RemoveAllKeys.class, this::removeAllKeys)
-                .put(RemoveAllMappings.class, this::removeAllMappings)
-                .put(RemoveAllOperationalContent.class, this::removeAllOperationalContent)
-                .build()
-        );
+            (AddKey) this::addKey,
+            (GetKey) this::getKey,
+            (UpdateKey) this::updateKey,
+            (RemoveKey) this::removeKey,
+            (AddMapping) this::addMapping,
+            (GetMapping) this::getMapping,
+            (GetMappingWithXtrId) this::getMappingWithXtrId,
+            (UpdateMapping) this::updateMapping,
+            (RemoveMapping) this::removeMapping,
+            (AddKeys) this::addKeys,
+            (GetKeys) this::getKeys,
+            (UpdateKeys) this::updateKeys,
+            (RemoveKeys) this::removeKeys,
+            (AddMappings) this::addMappings,
+            (GetMappings) this::getMappings,
+            (UpdateMappings) this::updateMappings,
+            (RemoveMappings) this::removeMappings,
+            (GetAllKeys) this::getAllKeys,
+            (GetAllMappings) this::getAllMappings,
+            (RemoveAllKeys) this::removeAllKeys,
+            (RemoveAllMappings) this::removeAllMappings,
+            (RemoveAllOperationalContent) this::removeAllOperationalContent);
 
         mappingSystem = new MappingSystem(dao, iterateMask, notificationPublishService, mappingMergePolicy);
         mappingSystem.setDataStoreBackEnd(dsbe);

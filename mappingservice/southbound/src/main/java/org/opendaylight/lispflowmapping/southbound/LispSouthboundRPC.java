@@ -8,7 +8,6 @@
 package org.opendaylight.lispflowmapping.southbound;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.nio.ByteBuffer;
@@ -52,7 +51,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.ctrl.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.ControlMessageStatsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.sb.rev150904.get.stats.output.MapRegisterCacheStatsBuilder;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -84,14 +82,13 @@ public class LispSouthboundRPC {
     public LispSouthboundRPC(final @Reference LispSouthboundPlugin lispSbPlugin,
             final @Reference RpcProviderService rpcProviderService) {
         this.lispSbPlugin = lispSbPlugin;
-        rpcRegistration = rpcProviderService.registerRpcImplementations(ImmutableClassToInstanceMap.<Rpc<?, ?>>builder()
-            .put(SendMapRequest.class, this::sendMapRequest)
-            .put(SendMapReply.class, this::sendMapReply)
-            .put(SendMapRegister.class, this::sendMapRegister)
-            .put(SendMapNotify.class, this::sendMapNotify)
-            .put(GetStats.class, this::getStats)
-            .put(ResetStats.class, this::resetStats)
-            .build());
+        rpcRegistration = rpcProviderService.registerRpcImplementations(
+            (SendMapRequest) this::sendMapRequest,
+            (SendMapReply) this::sendMapReply,
+            (SendMapRegister) this::sendMapRegister,
+            (SendMapNotify) this::sendMapNotify,
+            (GetStats) this::getStats,
+            (ResetStats) this::resetStats);
     }
 
     @Deactivate
