@@ -103,7 +103,7 @@ public final class MapNotifySerializer {
             notifyBuffer.position(notifyBuffer.position() + Length.RES);
             builder.setMergeEnabled(ByteUtil.extractBit(notifyBuffer.get(), Flags.MERGE_ENABLED));
 
-            byte recordCount = (byte) ByteUtil.getUnsignedByte(notifyBuffer);
+            final byte recordCount = (byte) ByteUtil.getUnsignedByte(notifyBuffer);
             builder.setNonce(notifyBuffer.getLong());
             builder.setKeyId(notifyBuffer.getShort());
             short authenticationLength = notifyBuffer.getShort();

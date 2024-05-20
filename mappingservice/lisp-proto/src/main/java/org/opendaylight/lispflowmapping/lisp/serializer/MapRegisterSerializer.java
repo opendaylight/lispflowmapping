@@ -103,7 +103,7 @@ public final class MapRegisterSerializer {
             byte mergeAndMapReply = registerBuffer.get();
             builder.setWantMapNotify(ByteUtil.extractBit(mergeAndMapReply, Flags.WANT_MAP_NOTIFY));
             builder.setMergeEnabled(ByteUtil.extractBit(mergeAndMapReply, Flags.MERGE_ENABLED));
-            byte recordCount = (byte) ByteUtil.getUnsignedByte(registerBuffer);
+            final byte recordCount = (byte) ByteUtil.getUnsignedByte(registerBuffer);
             builder.setNonce(registerBuffer.getLong());
             builder.setKeyId(registerBuffer.getShort());
             short authenticationLength = registerBuffer.getShort();
