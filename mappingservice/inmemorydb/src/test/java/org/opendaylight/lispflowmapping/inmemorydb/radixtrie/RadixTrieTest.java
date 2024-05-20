@@ -193,8 +193,6 @@ public class RadixTrieTest {
      */
     @Test
     public void testIterator() {
-        RadixTrie<Integer>.TrieNode res;
-
         addIp4Addresses(radixTrie4);
 
         radixTrie4.remove(IP4_BYTES5, 24);
@@ -206,7 +204,7 @@ public class RadixTrieTest {
 
         int iterator = 0;
         while (it.hasNext()) {
-            res = it.next();
+            final var res = it.next();
             assertTrue(Arrays.equals(res.prefix(), itPrefixList4.get(iterator)));
             assertTrue(res.prefixLength() == itPreflenList4.get(iterator));
             iterator++;

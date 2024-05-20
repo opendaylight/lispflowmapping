@@ -43,7 +43,6 @@ public class RadixTrieRandomIpTest {
     }
 
     private void testRandomIpv4() throws UnknownHostException {
-        RadixTrie<Integer>.TrieNode res;
         radixTrie4 = new RadixTrie<>(32);
 
         // fill the list of EIDEntries
@@ -55,7 +54,7 @@ public class RadixTrieRandomIpTest {
         }
 
         for (EIDEntry eid : ipv4Pref) {
-            res = radixTrie4.lookupBest(eid.eid.getAddress(), eid.preflen);
+            final var res = radixTrie4.lookupBest(eid.eid.getAddress(), eid.preflen);
             if (res == null) {
                 Assert.fail("Result is null");
             }
@@ -63,7 +62,6 @@ public class RadixTrieRandomIpTest {
     }
 
     private void testRandomIpv6() throws UnknownHostException {
-        RadixTrie<Integer>.TrieNode res;
         radixTrie6 = new RadixTrie<>(128);
 
         // fill the list of EIDEntries
@@ -75,7 +73,7 @@ public class RadixTrieRandomIpTest {
         }
 
         for (EIDEntry eid : ipv6Pref) {
-            res = radixTrie6.lookupBest(eid.eid.getAddress(), eid.preflen);
+            final var res = radixTrie6.lookupBest(eid.eid.getAddress(), eid.preflen);
             if (res == null) {
                 Assert.fail("Result is null");
             }
