@@ -123,7 +123,7 @@ public class LispAddressSerializer {
     private static void serializeInstanceIdExtra(ByteBuffer buffer, LispAddress lispAddress) {
         buffer.putShort((short) AddressFamily.LispCanonicalAddressFormat.getIntValue());
         LcafSerializer.getInstance().serializeLCAFAddressHeaderForInstanceId(buffer, lispAddress);
-        InstanceIdSerializer.getInstance().serializeNonLcafAddress(buffer, lispAddress);
+        InstanceIdSerializer.serializeNonLcafAddress(buffer, lispAddress);
     }
 
     int getInstanceIdExtraSize() {
