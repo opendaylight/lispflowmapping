@@ -26,9 +26,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -70,9 +72,11 @@ public class AuthenticationKeyDataListenerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void init() {
-        final InstanceIdentifier<AuthenticationKey> instanceIdentifierMock = Mockito.mock(InstanceIdentifier.class);
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
-                DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, instanceIdentifierMock);
+            DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.builder(MappingDatabase.class)
+                .child(VirtualNetworkIdentifier.class)
+                .child(AuthenticationKey.class)
+                .build());
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
