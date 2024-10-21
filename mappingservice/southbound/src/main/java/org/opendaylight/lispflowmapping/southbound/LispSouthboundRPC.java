@@ -65,7 +65,6 @@ import org.slf4j.LoggerFactory;
 /**
  * This class holds all RPCs methods for LispSouthbound Plugin.
  *
- * <p>
  * @author Florin Coras (fcoras@cisco.com)
  * @author Lorand Jakab (lojakab@cisco.com)
  */
