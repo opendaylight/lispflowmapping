@@ -107,6 +107,18 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+              <!-- Needed because of the mockito override above -->
+              <argLine>@{argLine}</argLine>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <!--
       Maven Site Configuration
 
