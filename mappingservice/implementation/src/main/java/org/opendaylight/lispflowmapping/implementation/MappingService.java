@@ -159,7 +159,6 @@ public class MappingService implements IMappingService, AutoCloseable {
     private Registration rpcRegistration;
 
     private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private final boolean notificationPolicy = ConfigIni.getInstance().smrIsSet();
     private final boolean iterateMask = true;
     private boolean isMaster = false;
 
