@@ -25,7 +25,6 @@ public final class ConfigIni {
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
-    private boolean authEnabled;
     private int negativeMappingTTL;
     private int numberOfBucketsInTimeBucketWheel;
 
@@ -46,7 +45,6 @@ public final class ConfigIni {
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
     private static final String LISP_SMR_RETRY_COUNT = "lisp.smrRetryCount";
     private static final String LISP_SMR_TIMEOUT = "lisp.smrTimeout";
-    private static final String LISP_AUTH_ENABLED = "lisp.authEnabled";
     private static final String LISP_NEGATIVE_MAPPING_TTL = "lisp.negativeMappingTTL";
 
     // SB Map Register validity period in milliseconds. Default is 3.3 minutes.
@@ -84,7 +82,6 @@ public final class ConfigIni {
         initRegisterValiditySb(context);
         initSmrRetryCount(context);
         initSmrTimeout(context);
-        initAuthEnabled(context);
         initNegativeMappingTTL(context);
         initBucketNumber();
     }
@@ -298,32 +295,6 @@ public final class ConfigIni {
         }
     }
 
-    private void initAuthEnabled(BundleContext context) {
-        // set the default value first
-        this.authEnabled = true;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_AUTH_ENABLED);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_AUTH_ENABLED);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_AUTH_ENABLED);
-                return;
-            }
-        }
-
-        if (str.trim().equalsIgnoreCase("false")) {
-            this.authEnabled = false;
-            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_AUTH_ENABLED);
-        } else {
-            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_AUTH_ENABLED);
-        }
-    }
-
     private void initNegativeMappingTTL(BundleContext context) {
         // set the default value first
         this.negativeMappingTTL = DEFAULT_NEGATIVE_MAPPING_TTL;
@@ -421,15 +392,6 @@ public final class ConfigIni {
 
     public long getSmrTimeout() {
         return this.smrTimeout;
-    }
-
-    public boolean isAuthEnabled() {
-        return this.authEnabled;
-    }
-
-    public void setAuthEnabled(boolean authEnabled) {
-        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_AUTH_ENABLED, authEnabled);
-        this.authEnabled = authEnabled;
     }
 
     public void setNegativeMappingTTL(int negativeMappingTTL) {
