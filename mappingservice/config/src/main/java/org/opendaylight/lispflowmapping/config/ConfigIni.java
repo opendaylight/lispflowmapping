@@ -89,23 +89,16 @@ public final class ConfigIni {
         initBucketNumber();
     }
 
-    private String bundleStateToString(int state) {
-        switch (state) {
-            case Bundle.ACTIVE:
-                return "Active";
-            case Bundle.INSTALLED:
-                return "Installed";
-            case Bundle.RESOLVED:
-                return "Resolved";
-            case Bundle.STARTING:
-                return "Starting";
-            case Bundle.STOPPING:
-                return "Stopping";
-            case Bundle.UNINSTALLED:
-                return "Uninstalled";
-            default:
-                return "_Unknown_";
-        }
+    private static String bundleStateToString(int state) {
+        return switch (state) {
+            case Bundle.ACTIVE -> "Active";
+            case Bundle.INSTALLED -> "Installed";
+            case Bundle.RESOLVED -> "Resolved";
+            case Bundle.STARTING -> "Starting";
+            case Bundle.STOPPING -> "Stopping";
+            case Bundle.UNINSTALLED -> "Uninstalled";
+            default -> "_Unknown_";
+        };
     }
 
     private void initRegisterValiditySb(BundleContext context) {
