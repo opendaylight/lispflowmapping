@@ -7,21 +7,31 @@
  */
 package org.opendaylight.lispflowmapping.config;
 
+import static java.util.Objects.requireNonNull;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IGenericMapResolver.ExplicitLocatorPathPolicy;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
-import org.osgi.framework.Bundle;
+import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService.LookupPolicy;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
+@Component(service = ConfigIni.class)
 public final class ConfigIni {
-
     private static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
+
+    private final ExplicitLocatorPathPolicy elpPolicy;
+
     private boolean mappingMerge;
     private boolean smr;
-    private ExplicitLocatorPathPolicy elpPolicy;
-    private IMappingService.LookupPolicy lookupPolicy;
+    private LookupPolicy lookupPolicy;
     private long registrationValiditySb;
     private long smrTimeout;
     private int smrRetryCount;
@@ -37,8 +47,8 @@ public final class ConfigIni {
      * [0] https://git.opendaylight.org/gerrit/gitweb?p=odlparent.git;a=blob;f=karaf/opendaylight-karaf-resources/src/main/resources/etc/custom.properties
      * [1] https://git.opendaylight.org/gerrit/gitweb?p=docs.git;a=blob;f=docs/user-guide/lisp-flow-mapping-user-guide.rst
      */
-    private static final String LISP_LOOKUP_POLICY = "lisp.lookupPolicy";
     private static final String LISP_MAPPING_MERGE = "lisp.mappingMerge";
+    private static final String LISP_LOOKUP_POLICY = "lisp.lookupPolicy";
     private static final String LISP_SMR = "lisp.smr";
     private static final String LISP_ELP_POLICY = "lisp.elpPolicy";
     private static final String LISP_REGISTER_VALIDITY_SB = "lisp.registerValiditySb";
@@ -51,272 +61,127 @@ public final class ConfigIni {
     private static final long DEFAULT_SMR_TIMEOUT = 3000L;
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
     private static final int DEFAULT_NEGATIVE_MAPPING_TTL = 15;
-    private static final ConfigIni INSTANCE = new ConfigIni();
 
-    private ConfigIni() {
-        Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-        BundleContext context = null;
-        if (bundle != null) {
-            context = bundle.getBundleContext();
-            if (context == null) {
-                LOG.warn("Couldn't get the BundleContext needed for reading the properties in the configuration file, "
-                        + "bundle state is '{}'", bundleStateToString(bundle.getState()));
+    public ConfigIni(boolean mappingMerge, boolean smr, ExplicitLocatorPathPolicy elpPolicy,
+            LookupPolicy lookupPolicy, long registrationValidityMillis, int smrRetryCount, long smrTimeoutMillis,
+            int negativeMappingTtl) {
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_MAPPING_MERGE, mappingMerge);
+        this.mappingMerge = mappingMerge;
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR, smr);
+        this.smr = smr;
+        LOG.debug("Setting configuration variable '{}' to {}", LISP_ELP_POLICY, switch (elpPolicy) {
+            case BOTH -> "'both' (keep ELP, add next hop)";
+            case DEFAULT -> "'default' (ELP only)";
+            case REPLACE -> "'replace' (next hop only)";
+        });
+        this.elpPolicy = elpPolicy;
+        LOG.debug("Setting configuration variable '{}' to {}", LISP_LOOKUP_POLICY, switch (lookupPolicy) {
+            case NB_AND_SB -> "'northboundAndSouthbound' (Southbound is always looked up and can filter Northbound if "
+                + "intersection is not empty)";
+            case NB_FIRST -> "'northboundFirst' (Southbound is only looked up if Northbound is empty)";
+        });
+        this.lookupPolicy = lookupPolicy;
+        LOG.debug("Setting configuration variable '{}' to {}ms", LISP_REGISTER_VALIDITY_SB,
+            registrationValidityMillis);
+        setRegistrationValiditySb(registrationValidityMillis);
+        LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
+        this.smrRetryCount = smrRetryCount;
+        LOG.debug("Setting configuration variable '{}' to {}ms'", LISP_SMR_TIMEOUT, smrTimeoutMillis);
+        smrTimeout = smrTimeoutMillis;
+        LOG.debug("Setting configuration variable '{}' to {} minuts", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTtl);
+        this.negativeMappingTTL = negativeMappingTtl;
+    }
+
+    private ConfigIni(String mappingMerge, String smr, String elpPolicy, String lookupPolicy,
+           String registrationValidity, String smrRetryCount, String smrTimeout, String negativeMappingTtl) {
+        this(
+            mappingMerge != null && mappingMerge.trim().equalsIgnoreCase("true"),
+            smr == null || !smr.trim().equalsIgnoreCase("false"),
+            parseElpPolicy(elpPolicy), parseLookupPolicy(lookupPolicy),
+            parseRegistrationValidity(registrationValidity), parseSmrRetryCount(smrRetryCount),
+            parseSmrTimeout(smrTimeout), parseNegativeMappingTtl(negativeMappingTtl));
+    }
+
+    @Inject
+    public ConfigIni() {
+        this(System.getProperty(LISP_MAPPING_MERGE), System.getProperty(LISP_SMR),
+            System.getProperty(LISP_ELP_POLICY), System.getProperty(LISP_LOOKUP_POLICY),
+            System.getProperty(LISP_REGISTER_VALIDITY_SB), System.getProperty(LISP_SMR_RETRY_COUNT),
+            System.getProperty(LISP_SMR_TIMEOUT), System.getProperty(LISP_NEGATIVE_MAPPING_TTL));
+    }
+
+    @Activate
+    public ConfigIni(BundleContext context) {
+        this(context.getProperty(LISP_MAPPING_MERGE), context.getProperty(LISP_SMR),
+            context.getProperty(LISP_ELP_POLICY), context.getProperty(LISP_LOOKUP_POLICY),
+            context.getProperty(LISP_REGISTER_VALIDITY_SB), context.getProperty(LISP_SMR_RETRY_COUNT),
+            context.getProperty(LISP_SMR_TIMEOUT), context.getProperty(LISP_NEGATIVE_MAPPING_TTL));
+    }
+
+    private static @NonNull ExplicitLocatorPathPolicy parseElpPolicy(@Nullable String str) {
+        if (str != null) {
+            final var trimmed = str.trim();
+            if (trimmed.equalsIgnoreCase("both")) {
+                return ExplicitLocatorPathPolicy.BOTH;
             }
-        } else {
-            LOG.warn("Couldn't get the Bundle object needed for reading the properties in the configuration file, "
-                    + "using built-in defaults");
-        }
-
-        initConfigs(context);
-    }
-
-    private void initConfigs(BundleContext context) {
-        initMappingMerge(context);
-        initSmr(context);
-        initElpPolicy(context);
-        initLookupPolicy(context);
-        initRegisterValiditySb(context);
-        initSmrRetryCount(context);
-        initSmrTimeout(context);
-        initNegativeMappingTTL(context);
-    }
-
-    private static String bundleStateToString(int state) {
-        return switch (state) {
-            case Bundle.ACTIVE -> "Active";
-            case Bundle.INSTALLED -> "Installed";
-            case Bundle.RESOLVED -> "Resolved";
-            case Bundle.STARTING -> "Starting";
-            case Bundle.STOPPING -> "Stopping";
-            case Bundle.UNINSTALLED -> "Uninstalled";
-            default -> "_Unknown_";
-        };
-    }
-
-    private void initRegisterValiditySb(BundleContext context) {
-        // set the default value first
-        this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_REGISTER_VALIDITY_SB);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_REGISTER_VALIDITY_SB);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '3.33 minutes' ",
-                        LISP_REGISTER_VALIDITY_SB);
-                return;
-            }
-        }
-
-        try {
-            final long regValidity = Long.parseLong(str.trim());
-            setRegistrationValiditySb(regValidity);
-        } catch (NumberFormatException e) {
-            this.registrationValiditySb = MIN_REGISTRATION_VALIDITY_SB;
-            LOG.debug("Configuration variable 'registerValiditySb' was not set correctly. Registration validity for"
-                    + "South Bound Map Registers is set to default value of 3.3 minutes");
-        }
-    }
-
-    private void initLookupPolicy(BundleContext context) {
-        // set the default value first
-        this.lookupPolicy = IMappingService.LookupPolicy.NB_FIRST;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_LOOKUP_POLICY);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_LOOKUP_POLICY);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'northboundFirst' "
-                        + "(Southbound is only looked up if Northbound is empty) ", LISP_LOOKUP_POLICY);
-                return;
+            if (trimmed.equalsIgnoreCase("replace")) {
+                return ExplicitLocatorPathPolicy.REPLACE;
             }
         }
-
-        if (str.trim().equalsIgnoreCase("northboundAndSouthbound")) {
-            this.lookupPolicy = IMappingService.LookupPolicy.NB_AND_SB;
-            LOG.debug("Setting configuration variable '{}' to 'northboundAndSouthbound' (Southbound is always "
-                    + "looked up and can filter Northbound if intersection is not empty)", LISP_LOOKUP_POLICY);
-        } else {
-            LOG.debug("Setting configuration variable '{}' to 'northboundFirst' (Southbound is only looked up "
-                    + "if Northbound is empty)", LISP_LOOKUP_POLICY);
-        }
+        return ExplicitLocatorPathPolicy.DEFAULT;
     }
 
-    private void initMappingMerge(BundleContext context) {
-        // set the default value first
-        this.mappingMerge = false;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_MAPPING_MERGE);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_MAPPING_MERGE);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'false'",
-                        LISP_MAPPING_MERGE);
-                return;
-            }
-        }
-
-        if (str.trim().equalsIgnoreCase("true")) {
-            this.mappingMerge = true;
-            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_MAPPING_MERGE);
-        } else {
-            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_MAPPING_MERGE);
-        }
+    private static @NonNull LookupPolicy parseLookupPolicy(@Nullable String str) {
+        return str != null && str.trim().equalsIgnoreCase("northboundAndSouthbound") ? LookupPolicy.NB_AND_SB
+            : LookupPolicy.NB_FIRST;
     }
 
-    private void initSmr(BundleContext context) {
-        // set the default value first
-        this.smr = true;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'true'", LISP_SMR);
-                return;
+    private static int parseNegativeMappingTtl(@Nullable String str) {
+        if (str != null) {
+            try {
+                return Integer.parseInt(str.trim());
+            } catch (NumberFormatException e) {
+                LOG.warn("Configuration variable '{}' was not set correctly, using default value of {} minutes",
+                    LISP_NEGATIVE_MAPPING_TTL, DEFAULT_NEGATIVE_MAPPING_TTL, e);
             }
         }
-
-        if (str.trim().equalsIgnoreCase("false")) {
-            this.smr = false;
-            LOG.debug("Setting configuration variable '{}' to 'false'", LISP_SMR);
-        } else {
-            LOG.debug("Setting configuration variable '{}' to 'true'", LISP_SMR);
-        }
+        return DEFAULT_NEGATIVE_MAPPING_TTL;
     }
 
-    private void initElpPolicy(BundleContext context) {
-        // set the default value first
-        this.elpPolicy = ExplicitLocatorPathPolicy.DEFAULT;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_ELP_POLICY);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_ELP_POLICY);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: 'default' (ELP only)",
-                        LISP_ELP_POLICY);
-                return;
+    private static long parseRegistrationValidity(@Nullable String str) {
+        if (str != null) {
+            try {
+                return Long.parseLong(str.trim());
+            } catch (NumberFormatException e) {
+                LOG.warn("Configuration variable '{}' was not set correctly, using default value of 3.33 minutes",
+                    LISP_REGISTER_VALIDITY_SB, e);
             }
         }
-
-        str = str.trim();
-        if (str.equalsIgnoreCase("both")) {
-            this.elpPolicy = ExplicitLocatorPathPolicy.BOTH;
-            LOG.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
-        } else if (str.equalsIgnoreCase("replace")) {
-            this.elpPolicy = ExplicitLocatorPathPolicy.REPLACE;
-            LOG.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
-        } else {
-            LOG.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
-        }
+        return MIN_REGISTRATION_VALIDITY_SB;
     }
 
-    private void initSmrRetryCount(BundleContext context) {
-        // set the default value first
-        this.smrRetryCount = DEFAULT_SMR_RETRY_COUNT;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR_RETRY_COUNT);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR_RETRY_COUNT);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_RETRY_COUNT,
-                        smrRetryCount);
-                return;
+    private static int parseSmrRetryCount(@Nullable String str) {
+        if (str != null) {
+            try {
+                return Integer.parseInt(str.trim());
+            } catch (NumberFormatException e) {
+                LOG.warn("Configuration variable '{}' was not set correctly, using default value of {}",
+                    LISP_SMR_RETRY_COUNT, DEFAULT_SMR_RETRY_COUNT, e);
             }
         }
-
-        try {
-            this.smrRetryCount = Integer.parseInt(str);
-            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_RETRY_COUNT, smrRetryCount);
-        } catch (NumberFormatException e) {
-            LOG.debug("Configuration variable '{}' was not set correctly. SMR retry count "
-                    + "is set to default value ({})", LISP_SMR_RETRY_COUNT, smrRetryCount);
-        }
+        return DEFAULT_SMR_RETRY_COUNT;
     }
 
-    private void initSmrTimeout(BundleContext context) {
-        // set the default value first
-        this.smrTimeout = DEFAULT_SMR_TIMEOUT;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_SMR_TIMEOUT);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_SMR_TIMEOUT);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'", LISP_SMR_TIMEOUT,
-                        smrTimeout);
-                return;
+    private static long parseSmrTimeout(@Nullable String str) {
+        if (str != null) {
+            try {
+                return Long.parseLong(str.trim());
+            } catch (NumberFormatException e) {
+                LOG.warn("Configuration variable '{}' was not set correctly, using default value of {}",
+                    LISP_SMR_TIMEOUT, DEFAULT_SMR_TIMEOUT, e);
             }
         }
-
-        try {
-            this.smrTimeout = Long.parseLong(str);
-            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_SMR_TIMEOUT, smrTimeout);
-        } catch (NumberFormatException e) {
-            LOG.debug("Configuration variable '{}' was not set correctly. SMR timeout "
-                    + "is set to default value ({})", LISP_SMR_TIMEOUT, smrTimeout);
-        }
-    }
-
-    private void initNegativeMappingTTL(BundleContext context) {
-        // set the default value first
-        this.negativeMappingTTL = DEFAULT_NEGATIVE_MAPPING_TTL;
-
-        String str = null;
-
-        if (context != null) {
-            str = context.getProperty(LISP_NEGATIVE_MAPPING_TTL);
-        }
-
-        if (str == null) {
-            str = System.getProperty(LISP_NEGATIVE_MAPPING_TTL);
-            if (str == null) {
-                LOG.debug("Configuration variable '{}' is unset. Setting to default value: '{}'",
-                        LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
-                return;
-            }
-        }
-
-        try {
-            this.negativeMappingTTL = Integer.parseInt(str);
-            LOG.debug("Setting configuration variable '{}' to '{}'", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
-        } catch (NumberFormatException e) {
-            LOG.debug("Configuration variable '{}' was not set correctly. Negative TTL "
-                    + "is set to default value ({} minutes)", LISP_NEGATIVE_MAPPING_TTL, negativeMappingTTL);
-        }
+        return DEFAULT_SMR_TIMEOUT;
     }
 
     public boolean mappingMergeIsSet() {
@@ -361,7 +226,7 @@ public final class ConfigIni {
     }
 
     public void setLookupPolicy(IMappingService.LookupPolicy lookupPolicy) {
-        this.lookupPolicy = lookupPolicy;
+        this.lookupPolicy = requireNonNull(lookupPolicy);
     }
 
     public void setSmrRetryCount(int smrRetryCount) {
@@ -389,9 +254,5 @@ public final class ConfigIni {
 
     public int getNegativeMappingTTL() {
         return this.negativeMappingTTL;
-    }
-
-    public static ConfigIni getInstance() {
-        return INSTANCE;
     }
 }

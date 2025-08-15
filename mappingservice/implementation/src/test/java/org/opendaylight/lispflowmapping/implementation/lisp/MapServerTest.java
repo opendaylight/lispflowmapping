@@ -142,7 +142,6 @@ public class MapServerTest {
     private static final Eid SOURCE_DEST_KEY_EID = LispAddressUtil
             .asSrcDstEid(IPV4_STRING_1, IPV4_STRING_2, MASK, MASK, VNI);
     private static final MappingAuthkey MAPPING_AUTHKEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ZERO).build();
-    private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
 
     private static final LocatorRecord LOCATOR_RECORD_1 = new LocatorRecordBuilder()
             .withKey(new LocatorRecordKey(IPV4_STRING_1))
@@ -160,6 +159,8 @@ public class MapServerTest {
 
     private static final Set<IpAddressBinary> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
 
+    private final ConfigIni config = new ConfigIni();
+
     @Before
     public void init() {
         mapServer = new MapServer(mapService, true, notifyHandler, notificationService);
@@ -172,7 +173,7 @@ public class MapServerTest {
         mapRegister = getDefaultMapRegisterBuilder().build();
         mappingData = new MappingData(mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
                 System.currentTimeMillis());
-        CONFIG_INI.setMappingMerge(false);
+        config.setMappingMerge(false);
     }
 
     @Test
@@ -195,7 +196,7 @@ public class MapServerTest {
 
     @Test
     public void handleMapRegisterTest_MappingMergeTrue() {
-        CONFIG_INI.setMappingMerge(true);
+        config.setMappingMerge(true);
 
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
                 .withKey(new MappingRecordItemKey(IPV4_STRING_1))
@@ -221,7 +222,7 @@ public class MapServerTest {
     @Test
     @Ignore
     public void handleMapRegisterTest_findNegativeSubscribers() {
-        CONFIG_INI.setMappingMerge(true);
+        config.setMappingMerge(true);
 
         mapRegister.getMappingRecordItem().clear();
         mapRegister.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(IPV4_PREFIX_EID_1).build());
@@ -258,7 +259,7 @@ public class MapServerTest {
 
     @Test
     public void handleMapRegisterTest_verifyTransportAddresses() {
-        CONFIG_INI.setMappingMerge(true);
+        config.setMappingMerge(true);
 
         // input
         Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
@@ -284,7 +285,7 @@ public class MapServerTest {
     @Test
     @Ignore
     public void handleMapRegisterTest_withTwoMappingRecords() {
-        CONFIG_INI.setMappingMerge(true);
+        config.setMappingMerge(true);
 
         // Input
         // Add a MappingRecord with SrcDestKey Eid Type
