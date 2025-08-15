@@ -107,9 +107,8 @@ public class MappingSystem implements IMappingSystem {
         this.mappingMerge = mappingMerge;
         buildMapCaches();
 
-        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(ConfigIni.getInstance()
-                .getNumberOfBucketsInTimeBucketWheel(), ConfigIni.getInstance().getRegistrationValiditySb(),
-                this);
+        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(
+            ConfigIni.getInstance().getRegistrationValiditySb(), this);
     }
 
     public void setDataStoreBackEnd(DataStoreBackEnd dataStoreBackEnd) {
