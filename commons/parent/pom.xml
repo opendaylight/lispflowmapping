@@ -28,7 +28,6 @@
   <name>ODL :: lispflowmapping :: ${project.artifactId}</name>
 
   <properties>
-    <lispflowmapping.version>1.22.0-SNAPSHOT</lispflowmapping.version>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     <yang.src.path>src/main/yang</yang.src.path>
   </properties>
