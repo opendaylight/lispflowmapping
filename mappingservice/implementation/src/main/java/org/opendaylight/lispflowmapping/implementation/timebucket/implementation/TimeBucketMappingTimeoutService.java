@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.lispflowmapping.implementation.timebucket.implementation;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucketWheel;
 import org.opendaylight.lispflowmapping.implementation.timebucket.interfaces.ISouthBoundMappingTimeoutService;
@@ -21,9 +21,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.ei
 public class TimeBucketMappingTimeoutService implements ISouthBoundMappingTimeoutService {
     private final TimeBucketWheel timeBucketWheel;
 
-    public TimeBucketMappingTimeoutService(int numberOfBucket, long mappingRecordValidityInMillis,
-                                           MappingSystem mappingSystem) {
-        timeBucketWheel = new TimeBucketWheel(numberOfBucket, mappingRecordValidityInMillis, mappingSystem);
+    public TimeBucketMappingTimeoutService(long mappingRecordValidityInMillis, MappingSystem mappingSystem) {
+        // one bucket should contain mapping of approximate 1 min time frame, but we need at least two buckets
+        final var numberOfBuckets = (int) (TimeUnit.MILLISECONDS.toMinutes(mappingRecordValidityInMillis) + 1);
+        timeBucketWheel = new TimeBucketWheel(Math.max(numberOfBuckets, 2), mappingRecordValidityInMillis,
+            mappingSystem);
     }
 
     @Override
