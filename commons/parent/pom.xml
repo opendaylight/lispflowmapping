@@ -108,11 +108,6 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.config</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
         <artifactId>ui-lispflowmapping</artifactId>
         <version>${lispflowmapping.version}</version>
       </dependency>
