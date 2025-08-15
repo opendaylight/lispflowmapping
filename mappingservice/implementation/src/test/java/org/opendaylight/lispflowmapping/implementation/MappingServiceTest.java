@@ -13,9 +13,10 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -24,12 +25,9 @@ import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDa
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
 import org.opendaylight.lispflowmapping.implementation.util.DSBEInputUtil;
 import org.opendaylight.lispflowmapping.implementation.util.RPCInputConvertorUtil;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
-import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.NotificationPublishService;
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.SiteId;
@@ -82,6 +80,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.UpdateMappingsInput;
+import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
@@ -92,22 +91,6 @@ import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MappingServiceTest {
-
-    @Mock(name = "mappingSystem") private static MappingSystem mappingSystem;
-    @Mock(name = "dsbe") private static DataStoreBackEnd dsbe;
-    @Mock(name = "keyListener") private static AuthenticationKeyDataListener keyListener;
-    @Mock(name = "mappingListener") private static MappingDataListener mappingListener;
-    @Mock(name = "rpcRegistration") private static Registration rpcRegistration;
-
-    private final DataBroker dataBroker = Mockito.mock(DataBroker.class);
-    private final RpcProviderService rpcProviderService = Mockito.mock(RpcProviderService.class);
-    private final NotificationPublishService notificationPublishService = Mockito
-            .mock(NotificationPublishService.class);
-    private final ILispDAO lispDAO = Mockito.mock(ILispDAO.class);
-
-    @InjectMocks
-    MappingService mappingService = new MappingService();
-
     private static final String IPV4_STRING = "1.2.3.0";
     private static final Eid IPV4_EID = LispAddressUtil.asIpv4Eid(IPV4_STRING);
 
@@ -118,6 +101,29 @@ public class MappingServiceTest {
     private static final SiteId SITE_ID = new SiteId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7});
     private static final XtrId XTR_ID = new XtrId(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
     private static final MappingData DUMMY_MAPPING = new MappingData(null);
+
+    @Mock
+    private MappingSystem mappingSystem;
+    @Mock
+    private DataStoreBackEnd dsbe;
+    @Mock
+    private AuthenticationKeyDataListener keyListener;
+    @Mock
+    private MappingDataListener mappingListener;
+    @Mock
+    private RpcProviderService rpcProviderService;
+    @Mock
+    private Registration rpcRegistration;
+
+    private MappingService mappingService;
+
+    @Before
+    public void before() {
+        Mockito.doReturn(rpcRegistration).when(rpcProviderService)
+            .registerRpcImplementations(ArgumentMatchers.<Rpc<?, ?>>any());
+        mappingService = new MappingService(mappingSystem, dsbe, keyListener, mappingListener, rpcProviderService,
+            false);
+    }
 
     /**
      * Tests {@link MappingService#addKey} method.

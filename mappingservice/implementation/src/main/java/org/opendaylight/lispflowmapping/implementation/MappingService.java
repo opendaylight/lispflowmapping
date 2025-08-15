@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
@@ -136,50 +138,75 @@ import org.slf4j.LoggerFactory;
  *
  * @author Lorand Jakab
  * @author Florin Coras
- *
  */
-@Component(service = IMappingService.class, immediate = true, property = "type=default")
 @Singleton
+@Component(service = IMappingService.class, immediate = true, property = "type=default")
+// Non-final for mocking
 public class MappingService implements IMappingService, AutoCloseable {
-    private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
+    @NonNullByDefault
+    private record Intermediate(
+            MappingSystem mappingSystem,
+            DataStoreBackEnd dsbe,
+            AuthenticationKeyDataListener keyListener,
+            MappingDataListener mappingListener,
+            boolean mappingMergePolicy) {
+        Intermediate {
+            requireNonNull(mappingSystem);
+            requireNonNull(dsbe);
+            requireNonNull(keyListener);
+            requireNonNull(mappingListener);
+        }
 
-    private MappingSystem mappingSystem;
-    private DataStoreBackEnd dsbe;
-    private AuthenticationKeyDataListener keyListener;
-    private MappingDataListener mappingListener;
+        static Intermediate of(DataBroker dataBroker, NotificationPublishService notificationPublishService,
+                ILispDAO dao, boolean mappingMergePolicy) {
+            LOG.info("Mapping Service initializing...");
 
-    @Reference
-    private volatile ILispDAO dao;
-    @Reference
-    private volatile DataBroker dataBroker;
-    @Reference
-    private volatile RpcProviderService rpcProviderService;
-    @Reference
-    private volatile NotificationPublishService notificationPublishService;
-    private Registration rpcRegistration;
+            final var dsbe = new DataStoreBackEnd(dataBroker);
+            final var mappingSystem = new MappingSystem(dao, true, notificationPublishService,
+                mappingMergePolicy);
+            mappingSystem.setDataStoreBackEnd(dsbe);
+            mappingSystem.initialize();
+            final var keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
+            final var mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
 
-    private boolean mappingMergePolicy = ConfigIni.getInstance().mappingMergeIsSet();
-    private final boolean iterateMask = true;
-    private boolean isMaster = false;
-
-    @Override
-    public void setMappingMerge(boolean mergeMapping) {
-        this.mappingMergePolicy = mergeMapping;
-        if (mappingSystem != null) {
-            mappingSystem.setMappingMerge(mergeMapping);
-            ConfigIni.getInstance().setMappingMerge(mappingMergePolicy);
+            return new Intermediate(mappingSystem, dsbe, keyListener, mappingListener, mappingMergePolicy);
         }
     }
 
-    @Override
-    public void setLookupPolicy(IMappingService.LookupPolicy policy) {
-        ConfigIni.getInstance().setLookupPolicy(policy);
+    private static final Logger LOG = LoggerFactory.getLogger(MappingService.class);
+
+    private final MappingSystem mappingSystem;
+    private final DataStoreBackEnd dsbe;
+    private final AuthenticationKeyDataListener keyListener;
+    private final MappingDataListener mappingListener;
+    private final Registration rpcRegistration;
+
+    private boolean mappingMergePolicy;
+    private boolean isMaster = false;
+
+    @Inject
+    @Activate
+    public MappingService(@Reference DataBroker dataBroker, @Reference RpcProviderService rpcProviderService,
+            @Reference NotificationPublishService notificationPublishService, @Reference ILispDAO dao) {
+        this(requireNonNull(rpcProviderService), Intermediate.of(
+            requireNonNull(dataBroker), requireNonNull(notificationPublishService), requireNonNull(dao),
+            ConfigIni.getInstance().mappingMergeIsSet()));
     }
 
-    @Activate
-    public void initialize() {
-        LOG.info("Mapping Service initializing...");
-        dsbe = new DataStoreBackEnd(dataBroker);
+    // Weird compatibility dance
+    private MappingService(RpcProviderService rpcProviderService, Intermediate inter) {
+        this(inter.mappingSystem, inter.dsbe, inter.keyListener, inter.mappingListener, rpcProviderService,
+            inter.mappingMergePolicy);
+    }
+
+    @VisibleForTesting
+    MappingService(MappingSystem mappingSystem, DataStoreBackEnd dsbe, AuthenticationKeyDataListener keyListener,
+            MappingDataListener mappingListener, RpcProviderService rpcProviderService, boolean mappingMergePolicy) {
+        this.mappingSystem = requireNonNull(mappingSystem);
+        this.dsbe = requireNonNull(dsbe);
+        this.keyListener = requireNonNull(keyListener);
+        this.mappingListener = requireNonNull(mappingListener);
+        this.mappingMergePolicy = mappingMergePolicy;
 
         rpcRegistration = rpcProviderService.registerRpcImplementations(
             (AddKey) this::addKey,
@@ -205,13 +232,21 @@ public class MappingService implements IMappingService, AutoCloseable {
             (RemoveAllMappings) this::removeAllMappings,
             (RemoveAllOperationalContent) this::removeAllOperationalContent);
 
-        mappingSystem = new MappingSystem(dao, iterateMask, notificationPublishService, mappingMergePolicy);
-        mappingSystem.setDataStoreBackEnd(dsbe);
-        mappingSystem.initialize();
-
-        keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
-        mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
         LOG.info("Mapping Service loaded.");
+    }
+
+    @Override
+    public void setMappingMerge(boolean mergeMapping) {
+        this.mappingMergePolicy = mergeMapping;
+        if (mappingSystem != null) {
+            mappingSystem.setMappingMerge(mergeMapping);
+            ConfigIni.getInstance().setMappingMerge(mappingMergePolicy);
+        }
+    }
+
+    @Override
+    public void setLookupPolicy(IMappingService.LookupPolicy policy) {
+        ConfigIni.getInstance().setLookupPolicy(policy);
     }
 
     @VisibleForTesting
@@ -234,6 +269,17 @@ public class MappingService implements IMappingService, AutoCloseable {
         rpcResultBuilder = RpcResultBuilder.success(new AddKeyOutputBuilder().build());
 
         return rpcResultBuilder.buildFuture();
+    }
+
+    @PreDestroy
+    @Deactivate
+    @Override
+    public void close() throws Exception {
+        LOG.info("Mapping Service is being destroyed!");
+        rpcRegistration.close();
+        keyListener.closeDataChangeListener();
+        mappingListener.closeDataChangeListener();
+        mappingSystem.destroy();
     }
 
     ListenableFuture<RpcResult<AddMappingOutput>> addMapping(AddMappingInput input) {
@@ -572,17 +618,6 @@ public class MappingService implements IMappingService, AutoCloseable {
     @Override
     public String prettyPrintKeys() {
         return mappingSystem.prettyPrintKeys();
-    }
-
-    @PreDestroy
-    @Deactivate
-    @Override
-    public void close() throws Exception {
-        LOG.info("Mapping Service is being destroyed!");
-        rpcRegistration.close();
-        keyListener.closeDataChangeListener();
-        mappingListener.closeDataChangeListener();
-        mappingSystem.destroy();
     }
 
     @Override
