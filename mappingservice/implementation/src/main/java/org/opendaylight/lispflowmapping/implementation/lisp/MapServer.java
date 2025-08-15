@@ -87,13 +87,15 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
     private final IMappingService mapService;
     private final IMapNotifyHandler notifyHandler;
     private final Registration listenerRegistration;
+    private final ConfigIni config;
 
     private boolean subscriptionService;
 
-    public MapServer(IMappingService mapService, boolean subscriptionService,
-                     IMapNotifyHandler notifyHandler, NotificationService notificationService) {
+    public MapServer(IMappingService mapService, ConfigIni config, IMapNotifyHandler notifyHandler,
+            NotificationService notificationService) {
         this.mapService = requireNonNull(mapService);
-        this.subscriptionService = subscriptionService;
+        this.config = requireNonNull(config);
+        this.subscriptionService = config.smrIsSet();
         this.notifyHandler = notifyHandler;
         listenerRegistration = notificationService.registerListener(MappingChanged.class, this);
     }
@@ -112,7 +114,7 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
-        boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.getMergeEnabled();
+        boolean merge = config.mappingMergeIsSet() && mapRegister.getMergeEnabled();
         MappingRecord oldMapping;
 
         if (merge) {
@@ -303,9 +305,8 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
                     LOG.debug("Lazy removing expired subscriber entry {}", subscriber.getString());
                     subscribers.remove();
                 } else {
-                    final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
-                            mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
-                    subscriberFutureMap.put(subscriber, future);
+                    subscriberFutureMap.put(subscriber, executor.scheduleAtFixedRate(new CancellableRunnable(
+                        mrb, subscriber), 0L, config.getSmrTimeout(), TimeUnit.MILLISECONDS));
                 }
             }
 
@@ -409,25 +410,23 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
                     // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked
                     // Map-Request. To ensure consistent behavior it is set to the value used to originally request
                     // a given mapping.
-                    if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
-                        synchronized (mrb) {
-                            mrb.setEidItem(new ArrayList<>());
-                            mrb.getEidItem().add(new EidItemBuilder()
-                                    .setEidItemId(LispAddressStringifier.getString(subscriber.getSrcEid()))
-                                    .setEid(subscriber.getSrcEid()).build());
-                            notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Attempt #{} to send SMR to subscriber {} for EID {}",
-                                        executionCount,
-                                        subscriber.getString(),
-                                        LispAddressStringifier.getString(mrb.getSourceEid().getEid()));
-                            }
-                        }
-                    } else {
+                    if (executionCount > config.getSmrRetryCount()) {
                         LOG.trace("Cancelling execution of a SMR Map-Request after {} failed attempts.",
-                                executionCount - 1);
+                            executionCount - 1);
                         cancelAndRemove(subscriber, srcEid);
                         return;
+                    }
+
+                    synchronized (mrb) {
+                        mrb.setEidItem(new ArrayList<>());
+                        mrb.getEidItem().add(new EidItemBuilder()
+                            .setEidItemId(LispAddressStringifier.getString(subscriber.getSrcEid()))
+                            .setEid(subscriber.getSrcEid()).build());
+                        notifyHandler.handleSMR(mrb.build(), subscriber.getSrcRloc());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Attempt #{} to send SMR to subscriber {} for EID {}", executionCount,
+                                subscriber, LispAddressStringifier.getString(mrb.getSourceEid().getEid()));
+                        }
                     }
                 } catch (Exception e) {
                     LOG.error("Errors encountered while handling SMR:", e);

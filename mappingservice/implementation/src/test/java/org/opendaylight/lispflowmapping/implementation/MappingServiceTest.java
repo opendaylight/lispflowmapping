@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.mdsal.AuthenticationKeyDataListener;
 import org.opendaylight.lispflowmapping.implementation.mdsal.MappingDataListener;
@@ -115,6 +116,8 @@ public class MappingServiceTest {
     @Mock
     private Registration rpcRegistration;
 
+    private final ConfigIni config = new ConfigIni();
+
     private MappingService mappingService;
 
     @Before
@@ -122,7 +125,7 @@ public class MappingServiceTest {
         Mockito.doReturn(rpcRegistration).when(rpcProviderService)
             .registerRpcImplementations(ArgumentMatchers.<Rpc<?, ?>>any());
         mappingService = new MappingService(mappingSystem, dsbe, keyListener, mappingListener, rpcProviderService,
-            false);
+            config);
     }
 
     /**

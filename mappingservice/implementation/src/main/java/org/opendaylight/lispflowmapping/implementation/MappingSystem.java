@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.timebucket.implementation.TimeBucketMappingTimeoutService;
@@ -34,7 +35,6 @@ import org.opendaylight.lispflowmapping.interfaces.mapcache.IAuthKeyDb;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.ILispMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMapCache;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
-import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -91,8 +91,7 @@ public class MappingSystem implements IMappingSystem {
     private final ILispDAO dao;
     private final NotificationPublishService notificationPublishService;
     private final ISouthBoundMappingTimeoutService sbMappingTimeoutService;
-    private final @NonNull Integer ttlNoRlocKnown;
-    // private final @NonNull Integer ttlRlocTimedOut;
+    private final ConfigIni config;
 
     private boolean mappingMerge;
     private ILispDAO sdao;
@@ -102,14 +101,11 @@ public class MappingSystem implements IMappingSystem {
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
 
-    public MappingSystem(ILispDAO dao, boolean iterateMask, NotificationPublishService nps, boolean mappingMerge) {
+    public MappingSystem(ILispDAO dao, boolean iterateMask, NotificationPublishService nps, ConfigIni config) {
         this.dao = dao;
         notificationPublishService = nps;
-        this.mappingMerge = mappingMerge;
-
-        final var config = ConfigIni.getInstance();
-        ttlNoRlocKnown = config.getNegativeMappingTTL();
-        // ttlRlocTimedOut = 1;
+        this.config = requireNonNull(config);
+        mappingMerge = config.mappingMergeIsSet();
 
         buildMapCaches();
 
@@ -321,9 +317,9 @@ public class MappingSystem implements IMappingSystem {
         }
         recordBuilder.setAction(LispMessage.NEGATIVE_MAPPING_ACTION);
         //if (getAuthenticationKey(eid) != null) {
-        //    recordBuilder.setRecordTtl(ttlRlocTimedOut);
+        //    recordBuilder.setRecordTtl(1);
         //} else {
-        recordBuilder.setRecordTtl(ttlNoRlocKnown);
+        recordBuilder.setRecordTtl(config.getNegativeMappingTTL());
         //}
         return recordBuilder.build();
     }
@@ -404,7 +400,7 @@ public class MappingSystem implements IMappingSystem {
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
 
         MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
-                expiredMappingDataList, sourceRlocs, ConfigIni.getInstance().getRegistrationValiditySb());
+                expiredMappingDataList, sourceRlocs, config.getRegistrationValiditySb());
 
         for (MappingData mappingData : expiredMappingDataList) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
@@ -423,17 +419,18 @@ public class MappingSystem implements IMappingSystem {
     @Override
     public MappingData getMapping(Eid src, Eid dst) {
         // NOTE: Currently we have two lookup algorithms implemented, which are configurable
-        IMappingService.LookupPolicy policy = ConfigIni.getInstance().getLookupPolicy();
-        LOG.debug("DAO: Looking up mapping for {}, source EID {} with policy {}",
+        final var policy = config.getLookupPolicy();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("DAO: Looking up mapping for {}, source EID {} with policy {}",
                 LispAddressStringifier.getString(dst),
                 LispAddressStringifier.getString(src),
                 policy);
-
-        if (policy == IMappingService.LookupPolicy.NB_AND_SB) {
-            return getMappingNbSbIntersection(src, dst);
-        } else {
-            return getMappingNbFirst(src, dst);
         }
+
+        return switch (policy) {
+            case NB_AND_SB -> getMappingNbSbIntersection(src, dst);
+            case NB_FIRST -> getMappingNbFirst(src, dst);
+        };
     }
 
     @Override
@@ -499,7 +496,7 @@ public class MappingSystem implements IMappingSystem {
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
         while (mappingData != null
-            && MappingMergeUtil.mappingIsExpired(mappingData, ConfigIni.getInstance().getRegistrationValiditySb())) {
+            && MappingMergeUtil.mappingIsExpired(mappingData, config.getRegistrationValiditySb())) {
             // If the mappingData is expired, handleSbExpiredMapping() will run merge for it if merge is enabled,
             // otherwise it will remove the expired mapping, returning null.
             MappingData mergedMappingData = handleSbExpiredMapping(dst, xtrId, mappingData);
@@ -888,7 +885,7 @@ public class MappingSystem implements IMappingSystem {
          */
         Long lastUpdateTimestamp = dsbe.getLastUpdateTimestamp();
         if (lastUpdateTimestamp != null
-            && System.currentTimeMillis() - lastUpdateTimestamp > ConfigIni.getInstance().getRegistrationValiditySb()) {
+            && System.currentTimeMillis() - lastUpdateTimestamp > config.getRegistrationValiditySb()) {
             LOG.warn("Restore threshold passed, not restoring operational datastore into DAO");
         } else {
             mappings.addAll(dsbe.getAllMappings(LogicalDatastoreType.OPERATIONAL));

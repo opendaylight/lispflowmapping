@@ -149,7 +149,7 @@ public class MappingService implements IMappingService, AutoCloseable {
             DataStoreBackEnd dsbe,
             AuthenticationKeyDataListener keyListener,
             MappingDataListener mappingListener,
-            boolean mappingMergePolicy) {
+            ConfigIni config) {
         Intermediate {
             requireNonNull(mappingSystem);
             requireNonNull(dsbe);
@@ -158,18 +158,17 @@ public class MappingService implements IMappingService, AutoCloseable {
         }
 
         static Intermediate of(DataBroker dataBroker, NotificationPublishService notificationPublishService,
-                ILispDAO dao, boolean mappingMergePolicy) {
+                ILispDAO dao, ConfigIni config) {
             LOG.info("Mapping Service initializing...");
 
             final var dsbe = new DataStoreBackEnd(dataBroker);
-            final var mappingSystem = new MappingSystem(dao, true, notificationPublishService,
-                mappingMergePolicy);
+            final var mappingSystem = new MappingSystem(dao, true, notificationPublishService, config);
             mappingSystem.setDataStoreBackEnd(dsbe);
             mappingSystem.initialize();
             final var keyListener = new AuthenticationKeyDataListener(dataBroker, mappingSystem);
             final var mappingListener = new MappingDataListener(dataBroker, mappingSystem, notificationPublishService);
 
-            return new Intermediate(mappingSystem, dsbe, keyListener, mappingListener, mappingMergePolicy);
+            return new Intermediate(mappingSystem, dsbe, keyListener, mappingListener, config);
         }
     }
 
@@ -180,6 +179,7 @@ public class MappingService implements IMappingService, AutoCloseable {
     private final AuthenticationKeyDataListener keyListener;
     private final MappingDataListener mappingListener;
     private final Registration rpcRegistration;
+    private final ConfigIni config;
 
     private boolean mappingMergePolicy;
     private boolean isMaster = false;
@@ -187,26 +187,28 @@ public class MappingService implements IMappingService, AutoCloseable {
     @Inject
     @Activate
     public MappingService(@Reference DataBroker dataBroker, @Reference RpcProviderService rpcProviderService,
-            @Reference NotificationPublishService notificationPublishService, @Reference ILispDAO dao) {
+            @Reference NotificationPublishService notificationPublishService, @Reference ILispDAO dao,
+            @Reference ConfigIni config) {
         this(requireNonNull(rpcProviderService), Intermediate.of(
             requireNonNull(dataBroker), requireNonNull(notificationPublishService), requireNonNull(dao),
-            ConfigIni.getInstance().mappingMergeIsSet()));
+            requireNonNull(config)));
     }
 
     // Weird compatibility dance
     private MappingService(RpcProviderService rpcProviderService, Intermediate inter) {
         this(inter.mappingSystem, inter.dsbe, inter.keyListener, inter.mappingListener, rpcProviderService,
-            inter.mappingMergePolicy);
+            inter.config);
     }
 
     @VisibleForTesting
     MappingService(MappingSystem mappingSystem, DataStoreBackEnd dsbe, AuthenticationKeyDataListener keyListener,
-            MappingDataListener mappingListener, RpcProviderService rpcProviderService, boolean mappingMergePolicy) {
+            MappingDataListener mappingListener, RpcProviderService rpcProviderService, ConfigIni config) {
         this.mappingSystem = requireNonNull(mappingSystem);
         this.dsbe = requireNonNull(dsbe);
         this.keyListener = requireNonNull(keyListener);
         this.mappingListener = requireNonNull(mappingListener);
-        this.mappingMergePolicy = mappingMergePolicy;
+        this.config = requireNonNull(config);
+        this.mappingMergePolicy = config.mappingMergeIsSet();
 
         rpcRegistration = rpcProviderService.registerRpcImplementations(
             (AddKey) this::addKey,
@@ -240,13 +242,13 @@ public class MappingService implements IMappingService, AutoCloseable {
         this.mappingMergePolicy = mergeMapping;
         if (mappingSystem != null) {
             mappingSystem.setMappingMerge(mergeMapping);
-            ConfigIni.getInstance().setMappingMerge(mappingMergePolicy);
+            config.setMappingMerge(mappingMergePolicy);
         }
     }
 
     @Override
     public void setLookupPolicy(IMappingService.LookupPolicy policy) {
-        ConfigIni.getInstance().setLookupPolicy(policy);
+        config.setLookupPolicy(policy);
     }
 
     @VisibleForTesting
