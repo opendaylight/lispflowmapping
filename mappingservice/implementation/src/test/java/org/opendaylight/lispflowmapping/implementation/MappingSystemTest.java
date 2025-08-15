@@ -126,13 +126,11 @@ public class MappingSystemTest {
     private static final MappingAuthkeyBuilder MAPPING_AUTHKEY_BUILDER = new MappingAuthkeyBuilder()
             .setKeyType(Uint16.ONE).setKeyString("pass-1");
     private static final Rloc RLOC = LispAddressUtil.toRloc(new Ipv4Address(IPV4_STRING_2));
-    private static final ConfigIni CONFIG_INI = ConfigIni.getInstance();
-    private static final long REGISTRATION_VALIDITY = CONFIG_INI.getRegistrationValiditySb();
-    private static final Date EXPIRED_DATE = new Date(System.currentTimeMillis() - (REGISTRATION_VALIDITY + 1L));
     private static final Object DUMMY_OBJECT = "dummy-object";
     private static final SiteId SITE_ID = new SiteId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7});
-    private static final XtrId XTR_ID = new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7,
-                                                                8, 9, 10, 11, 12, 13, 14, 15});
+    private static final XtrId XTR_ID = new XtrId(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15});
+
+    private final ConfigIni config = new ConfigIni();
 
     @Before
     public void init() throws Exception {
@@ -140,7 +138,7 @@ public class MappingSystemTest {
         Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
 
         injectMocks();
-        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
+        config.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
     }
 
     /**
@@ -166,7 +164,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withNullExpiredNbMapping() {
         final MappingData mappingData = getDefaultMappingData();
-        mappingData.setTimestamp(EXPIRED_DATE);
+        mappingData.setTimestamp(new Date(System.currentTimeMillis() - config.getRegistrationValiditySb() - 1));
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(mappingData, null);
 
@@ -297,7 +295,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbSbIntersection_withNullNbMapping() {
-        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+        config.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
 
         assertNull(mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -309,7 +307,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbSbIntersection_withServicePathDestinationAddress() {
-        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+        config.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         // Ipv4 type Rloc
@@ -326,7 +324,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbSbIntersection_withSbNull() {
-        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+        config.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
@@ -334,7 +332,7 @@ public class MappingSystemTest {
                         getDefaultLocatorRecordBuilder().build())).build();
         MappingData nbMappingData = getDefaultMappingData(mappingRecord);
         MappingData sbMappingData = getDefaultMappingData(mappingRecord);
-        sbMappingData.setTimestamp(EXPIRED_DATE);
+        sbMappingData.setTimestamp(new Date(System.currentTimeMillis() - config.getRegistrationValiditySb() - 1));
 
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(nbMappingData);
         Mockito.when(smcMock.getMapping(EID_IPV4_DST, (XtrId) null)).thenReturn(sbMappingData, null);
@@ -355,7 +353,7 @@ public class MappingSystemTest {
      */
     @Test
     public void getMappingTest_NbSbIntersection_mergeMappings() {
-        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+        config.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
