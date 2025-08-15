@@ -66,11 +66,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <artifactId>mappingservice.lisp-proto</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>mappingservice.config</artifactId>
-        <version>${project.version}</version>
-      </dependency>
 
       <!-- Features -->
       <dependency>
