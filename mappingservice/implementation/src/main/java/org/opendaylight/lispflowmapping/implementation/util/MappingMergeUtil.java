@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.lisp.util.MaskUtil;
@@ -162,7 +161,7 @@ public final class MappingMergeUtil {
     }
 
     public static MappingData mergeXtrIdMappings(List<Object> mappingDataList, List<MappingData> expiredMappingDataList,
-            Set<IpAddressBinary> sourceRlocs) {
+            Set<IpAddressBinary> sourceRlocs, long registrationValidityMillis) {
         MappingRecordBuilder mrb = null;
         XtrId xtrId = null;
         Long timestamp = Long.MAX_VALUE;
@@ -172,7 +171,7 @@ public final class MappingMergeUtil {
             MappingRecord record = mappingData.getRecord();
 
             // Skip expired mappings and add them to a list to be returned to the caller
-            if (timestampIsExpired(mappingData.getTimestamp())) {
+            if (timestampIsExpired(mappingData.getTimestamp(), registrationValidityMillis)) {
                 expiredMappingDataList.add(mappingData);
                 continue;
             }
@@ -209,15 +208,15 @@ public final class MappingMergeUtil {
      * decide based on that to return true or false, so the calling function should do that and only call these with
      * non-null arguments
      */
-    public static boolean mappingIsExpired(MappingData mappingData) {
+    public static boolean mappingIsExpired(MappingData mappingData, long registrationValidityMillis) {
         requireNonNull(mappingData, "mapping should not be null!");
         final var timestamp = mappingData.getTimestamp();
-        return timestamp != null && timestampIsExpired(timestamp);
+        return timestamp != null && timestampIsExpired(timestamp, registrationValidityMillis);
     }
 
-    public static boolean timestampIsExpired(Date timestamp) {
+    public static boolean timestampIsExpired(Date timestamp, long registrationValidityMillis) {
         requireNonNull(timestamp, "timestamp should not be null!");
-        return System.currentTimeMillis() - timestamp.getTime() > ConfigIni.getInstance().getRegistrationValiditySb();
+        return System.currentTimeMillis() - timestamp.getTime() > registrationValidityMillis;
     }
 
     public static MappingData computeNbSbIntersection(MappingData nbMappingData, MappingData sbMappingData) {
