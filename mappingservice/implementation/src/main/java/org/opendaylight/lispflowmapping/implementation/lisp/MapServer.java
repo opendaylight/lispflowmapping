@@ -29,6 +29,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.BooleanUtils;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.util.LoggingUtil;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
@@ -87,14 +88,16 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
     private final IMappingService mapService;
     private final IMapNotifyHandler notifyHandler;
     private final Registration listenerRegistration;
+    private final ConfigIni config;
 
     private boolean subscriptionService;
 
-    public MapServer(IMappingService mapService, boolean subscriptionService,
-                     IMapNotifyHandler notifyHandler, NotificationService notificationService) {
+    public MapServer(IMappingService mapService, boolean subscriptionService, IMapNotifyHandler notifyHandler,
+            NotificationService notificationService, ConfigIni config) {
         this.mapService = requireNonNull(mapService);
         this.subscriptionService = subscriptionService;
         this.notifyHandler = notifyHandler;
+        this.config = requireNonNull(config);
         listenerRegistration = notificationService.registerListener(MappingChanged.class, this);
     }
 
@@ -112,7 +115,7 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
     @SuppressWarnings("unchecked")
     public void handleMapRegister(MapRegister mapRegister) {
         boolean mappingUpdated = false;
-        boolean merge = ConfigIni.getInstance().mappingMergeIsSet() && mapRegister.getMergeEnabled();
+        boolean merge = config.mappingMergeIsSet() && mapRegister.getMergeEnabled();
         MappingRecord oldMapping;
 
         if (merge) {
@@ -303,9 +306,8 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
                     LOG.debug("Lazy removing expired subscriber entry {}", subscriber.getString());
                     subscribers.remove();
                 } else {
-                    final ScheduledFuture<?> future = executor.scheduleAtFixedRate(new CancellableRunnable(
-                            mrb, subscriber), 0L, ConfigIni.getInstance().getSmrTimeout(), TimeUnit.MILLISECONDS);
-                    subscriberFutureMap.put(subscriber, future);
+                    subscriberFutureMap.put(subscriber, executor.scheduleAtFixedRate(new CancellableRunnable(
+                        mrb, subscriber), 0L, config.getSmrTimeout(), TimeUnit.MILLISECONDS));
                 }
             }
 
@@ -409,7 +411,7 @@ public class MapServer implements IMapServerAsync, ISmrNotificationListener, Lis
                     // The address stored in the SMR's EID record is used as Source EID in the SMR-invoked
                     // Map-Request. To ensure consistent behavior it is set to the value used to originally request
                     // a given mapping.
-                    if (executionCount <= ConfigIni.getInstance().getSmrRetryCount()) {
+                    if (executionCount <= config.getSmrRetryCount()) {
                         synchronized (mrb) {
                             mrb.setEidItem(new ArrayList<>());
                             mrb.getEidItem().add(new EidItemBuilder()

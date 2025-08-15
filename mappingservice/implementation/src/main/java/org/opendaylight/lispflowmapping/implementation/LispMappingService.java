@@ -7,6 +7,8 @@
  */
 package org.opendaylight.lispflowmapping.implementation;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -81,9 +83,6 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
 
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
-    private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
-    private volatile ExplicitLocatorPathPolicy elpPolicy = ConfigIni.getInstance().getElpPolicy();
-
     // These are non-final for testing
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();
     private ThreadLocal<Pair<MapNotify, List<TransportAddress>>> tlsMapNotify = new ThreadLocal<>();
@@ -94,6 +93,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private SendMapReply sendMapReply;
     private SendMapNotify sendMapNotify;
 
+    private final ConfigIni config;
     private final IMappingService mapService;
     private final NotificationService notificationService;
     private final Registration listenerRegistration;
@@ -103,12 +103,14 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     @Activate
     public LispMappingService(@Reference final IMappingService mappingService,
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
-            @Reference final RpcService rpcService, @Reference final NotificationService notificationService) {
+            @Reference final RpcService rpcService, @Reference final NotificationService notificationService,
+            @Reference final ConfigIni config) {
         this.mapService = mappingService;
         sendMapRequest = rpcService.getRpc(SendMapRequest.class);
         sendMapReply = rpcService.getRpc(SendMapReply.class);
         sendMapNotify = rpcService.getRpc(SendMapNotify.class);
         this.notificationService = notificationService;
+        this.config = requireNonNull(config);
 
         // initialize
         listenerRegistration = notificationService.registerCompositeListener(new CompositeListener(Set.of(
@@ -119,27 +121,26 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
                 new CompositeListener.Component<>(XtrRequestMapping.class, this::onXtrRequestMapping),
                 new CompositeListener.Component<>(XtrReplyMapping.class, this::onXtrReplyMapping),
                 new CompositeListener.Component<>(MappingKeepAlive.class, this::onMappingKeepAlive))));
-        mapResolver = new MapResolver(mapService, smr, elpPolicy, this);
-        mapServer = new MapServer(mapService, smr, this, notificationService);
+        mapResolver = new MapResolver(mapService, config.smrIsSet(), config.getElpPolicy(), this);
+        mapServer = new MapServer(mapService, config.smrIsSet(), this, notificationService);
         cssRegistration = clusterSingletonService.registerClusterSingletonService(this);
         mapResolver.setSmrNotificationListener(mapServer);
         LOG.info("LISP (RFC6830) Mapping Service initialized");
     }
 
     public boolean shouldUseSmr() {
-        return this.smr;
+        return config.smrIsSet();
     }
 
     @Override
     public void setShouldUseSmr(boolean shouldUseSmr) {
-        this.smr = shouldUseSmr;
+        config.setSmr(shouldUseSmr);
         if (mapServer != null) {
             mapServer.setSubscriptionService(shouldUseSmr);
         }
         if (mapResolver != null) {
             mapResolver.setSubscriptionService(shouldUseSmr);
         }
-        ConfigIni.getInstance().setSmr(shouldUseSmr);
     }
 
     public NotificationService getNotificationService() {

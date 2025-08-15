@@ -24,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapResolverAsync;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
@@ -94,7 +95,8 @@ public class LispMappingServiceTest {
 
     @InjectMocks
     private final LispMappingService lispMappingService = new LispMappingService(
-            mappingService, clusterSingletonService, rpcService, notificationService);
+            mappingService, clusterSingletonService, rpcService, notificationService,
+            new ConfigIni());
 
     private static final byte[] IPV4_BYTES_1 =       new byte[] {1, 2, 3, 0};
     private static final byte[] IPV4_BYTES_2 =       new byte[] {1, 2, 4, 0};
