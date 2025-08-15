@@ -18,7 +18,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
@@ -122,8 +121,7 @@ public class MapResolverTest {
         mapServiceMock = Mockito.mock(MappingService.class, "mapService");
         subscriberSetMock = Mockito.mock(Set.class);
         lispMappingServiceMock = Mockito.mock(LispMappingService.class, "requestHandler");
-        mapResolver = new MapResolver(mapServiceMock, true, ConfigIni.getInstance().getElpPolicy(),
-                lispMappingServiceMock);
+        mapResolver = new MapResolver(mapServiceMock, true, ExplicitLocatorPathPolicy.DEFAULT, lispMappingServiceMock);
         mapRequestBuilder = getDefaultMapRequestBuilder();
     }
 
