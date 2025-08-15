@@ -8,6 +8,7 @@
 package org.opendaylight.lispflowmapping.config;
 
 import java.util.concurrent.TimeUnit;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ExplicitLocatorPathPolicy;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -20,7 +21,7 @@ public final class ConfigIni {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigIni.class);
     private boolean mappingMerge;
     private boolean smr;
-    private String elpPolicy;
+    private ExplicitLocatorPathPolicy elpPolicy;
     private IMappingService.LookupPolicy lookupPolicy;
     private long registrationValiditySb;
     private long smrTimeout;
@@ -211,7 +212,7 @@ public final class ConfigIni {
 
     private void initElpPolicy(BundleContext context) {
         // set the default value first
-        this.elpPolicy = "default";
+        this.elpPolicy = ExplicitLocatorPathPolicy.DEFAULT;
 
         String str = null;
 
@@ -228,11 +229,12 @@ public final class ConfigIni {
             }
         }
 
-        if (str.trim().equalsIgnoreCase("both")) {
-            this.elpPolicy = "both";
+        str = str.trim();
+        if (str.equalsIgnoreCase("both")) {
+            this.elpPolicy = ExplicitLocatorPathPolicy.BOTH;
             LOG.debug("Setting configuration variable '{}' to 'both' (keep ELP, add next hop)", LISP_ELP_POLICY);
-        } else if (str.trim().equalsIgnoreCase("replace")) {
-            this.elpPolicy = "replace";
+        } else if (str.equalsIgnoreCase("replace")) {
+            this.elpPolicy = ExplicitLocatorPathPolicy.REPLACE;
             LOG.debug("Setting configuration variable '{}' to 'replace' (next hop only)", LISP_ELP_POLICY);
         } else {
             LOG.debug("Setting configuration variable '{}' to 'default' (ELP only)", LISP_ELP_POLICY);
@@ -348,7 +350,7 @@ public final class ConfigIni {
         this.smr = smr;
     }
 
-    public String getElpPolicy() {
+    public ExplicitLocatorPathPolicy getElpPolicy() {
         return elpPolicy;
     }
 

@@ -21,6 +21,7 @@ import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapResolver;
 import org.opendaylight.lispflowmapping.implementation.lisp.MapServer;
 import org.opendaylight.lispflowmapping.implementation.util.LispNotificationHelper;
+import org.opendaylight.lispflowmapping.interfaces.lisp.ExplicitLocatorPathPolicy;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IFlowMapping;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapNotifyHandler;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IMapRequestResultHandler;
@@ -82,7 +83,7 @@ public class LispMappingService implements IFlowMapping, IMapRequestResultHandle
     private static final Logger LOG = LoggerFactory.getLogger(LispMappingService.class);
 
     private volatile boolean smr = ConfigIni.getInstance().smrIsSet();
-    private volatile String elpPolicy = ConfigIni.getInstance().getElpPolicy();
+    private volatile ExplicitLocatorPathPolicy elpPolicy = ConfigIni.getInstance().getElpPolicy();
 
     // These are non-final for testing
     private ThreadLocal<MapReply> tlsMapReply = new ThreadLocal<>();

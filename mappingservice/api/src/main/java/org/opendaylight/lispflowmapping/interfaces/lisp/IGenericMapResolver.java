@@ -34,5 +34,5 @@ public interface IGenericMapResolver {
      * @param elpPolicy
      *            ELP policy
      */
-    void setElpPolicy(String elpPolicy);
+    void setElpPolicy(ExplicitLocatorPathPolicy elpPolicy);
 }
