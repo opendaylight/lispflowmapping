@@ -54,8 +54,6 @@ public final class ConfigIni {
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
     private static final int DEFAULT_NEGATIVE_MAPPING_TTL = 15;
     private static final int MIN_NUMBER_OF_BUCKETS_IN_TIME_BUCKET_WHEEL = 2;
-    private static final int TIMEOUT_TOLERANCE_MULTIPLIER_IN_TIME_BUCKET_WHEEL = 2;
-
     private static final ConfigIni INSTANCE = new ConfigIni();
 
     private ConfigIni() {
@@ -406,11 +404,6 @@ public final class ConfigIni {
     public int getNumberOfBucketsInTimeBucketWheel() {
         return numberOfBucketsInTimeBucketWheel;
     }
-
-    public long  getMaximumTimeoutTolerance() {
-        return TIMEOUT_TOLERANCE_MULTIPLIER_IN_TIME_BUCKET_WHEEL * getRegistrationValiditySb();
-    }
-
     public static ConfigIni getInstance() {
         return INSTANCE;
     }
