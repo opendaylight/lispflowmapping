@@ -170,6 +170,23 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
     private static final int MAX_NOTIFICATION_RETRYS = 20;
     private static final MappingAuthkey NULL_AUTH_KEY = new MappingAuthkeyBuilder().setKeyType(Uint16.ZERO).build();
 
+    @Inject
+    private BundleContext bc;
+    //private HttpURLConnection connection;
+    protected static boolean notificationCalled;
+
+    @Inject @Filter(timeout=60000)
+    private IFlowMapping lms;
+
+    @Inject @Filter(timeout=60000)
+    private IMappingService mapService;
+
+    @Inject @Filter(timeout=10000)
+    private IConfigLispSouthboundPlugin configLispPlugin;
+
+    @Inject @Filter(timeout=60000)
+    private ConfigIni config;
+
     // This is temporary, since the properties in the pom file are not picked up
     @Override
     public String getKarafDistro() {
@@ -230,7 +247,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         areWeReady();
         mapService.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
         mapService.setMappingMerge(false);
-        ConfigIni.getInstance().setSmrRetryCount(1);
+        config.setSmrRetryCount(1);
 
         socket = MappingServiceIntegrationTestUtil.initSocket(LispMessage.PORT_NUM);
 
@@ -324,20 +341,6 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
                 + "0050   00 0a 01 20 10 00 00 00 00 01 99 10 fe 01 01 64 "
                 + "0060   ff 00 00 05 00 01 c0 a8 88 0a");
     }
-
-    @Inject
-    private BundleContext bc;
-    //private HttpURLConnection connection;
-    protected static boolean notificationCalled;
-
-    @Inject @Filter(timeout=60000)
-    private IFlowMapping lms;
-
-    @Inject @Filter(timeout=60000)
-    private IMappingService mapService;
-
-    @Inject @Filter(timeout=10000)
-    private IConfigLispSouthboundPlugin configLispPlugin;
 
     @Test
     public void testSimpleUsage() throws Exception {
@@ -466,8 +469,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     private void testRepeatedSmr() throws SocketTimeoutException, UnknownHostException {
         cleanUP();
-        long timeout = ConfigIni.getInstance().getSmrTimeout();
-        ConfigIni.getInstance().setSmrRetryCount(5);
+        long timeout = config.getSmrTimeout();
+        config.setSmrRetryCount(5);
 
         final InstanceIdType iid = new InstanceIdType(Uint32.ONE);
         final Eid eid1 = LispAddressUtil.asIpv4Eid("1.1.1.1", 1L);
@@ -1429,8 +1432,8 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
      */
     public void testMultiSiteScenarioA() throws IOException {
         cleanUP();
-        ConfigIni.getInstance().setSmrRetryCount(1);
-        ConfigIni.getInstance().setSmrTimeout(30000L);
+        config.setSmrRetryCount(1);
+        config.setSmrTimeout(30000L);
 
         final MultiSiteScenario multiSiteScenario = new MultiSiteScenario(mapService, lms);
         multiSiteScenario.setCommonAuthentication();
@@ -2737,7 +2740,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
     public void mapRequestMapRegisterAndMapRequestTestTimeout() throws SocketTimeoutException {
         cleanUP();
-        ConfigIni.getInstance().setSmrRetryCount(0);
+        config.setSmrRetryCount(0);
         Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32");
         mapService.addAuthenticationKey(eid, NULL_AUTH_KEY);
         sleepForSeconds(1);
@@ -2789,7 +2792,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
         cleanUP();
         mapService.setMappingMerge(true);
         // mapping expires after 1 second
-        ConfigIni.getInstance().setRegistrationValiditySb(1000L);
+        config.setRegistrationValiditySb(1000L);
 
         final Eid eid = LispAddressUtil.asIpv4PrefixBinaryEid("1.2.3.4/32", new InstanceIdType(Uint32.TEN));
         final MappingRecord mappingRecord = MappingServiceIntegrationTestUtil.getDefaultMappingRecordBuilder(eid)
@@ -2802,7 +2805,7 @@ public class MappingServiceIntegrationTest extends AbstractMdsalTestBase {
 
         MappingRecord resultRecord = (MappingRecord) mapService.getMapping(MappingOrigin.Southbound, eid);
         assertNull(resultRecord);
-        ConfigIni.getInstance().setRegistrationValiditySb(ConfigIni.getInstance().getDefaultRegistrationValiditySb());
+        config.setRegistrationValiditySb(config.getDefaultRegistrationValiditySb());
     }
 
     private void testTTLAfterClean(MapRequest mapRequest) throws SocketTimeoutException {
