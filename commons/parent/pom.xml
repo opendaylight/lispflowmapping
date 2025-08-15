@@ -35,8 +35,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- NOTE: The "Type" jar is considered default. You only need to specify
-                 the type when it is something other than jar. -->
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>mdsal-artifacts</artifactId>
@@ -53,61 +51,14 @@
       </dependency>
       <dependency>
         <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>common.build.tools</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>lispflowmapping-code-commons</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>lispflowmapping-commons</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.api</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.implementation</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.inmemorydb</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.northbound</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.shell</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.southbound</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>mappingservice.lisp-proto</artifactId>
-        <version>${lispflowmapping.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opendaylight.lispflowmapping</groupId>
-        <artifactId>ui-lispflowmapping</artifactId>
-        <version>${lispflowmapping.version}</version>
+        <artifactId>lispflowmapping-artifacts</artifactId>
+        <version>1.22.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <build>
     <pluginManagement>
       <plugins>
