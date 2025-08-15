@@ -7,7 +7,6 @@
  */
 package org.opendaylight.lispflowmapping.config;
 
-import java.util.concurrent.TimeUnit;
 import org.opendaylight.lispflowmapping.interfaces.lisp.IGenericMapResolver.ExplicitLocatorPathPolicy;
 import org.opendaylight.lispflowmapping.interfaces.mappingservice.IMappingService;
 import org.osgi.framework.Bundle;
@@ -27,7 +26,6 @@ public final class ConfigIni {
     private long smrTimeout;
     private int smrRetryCount;
     private int negativeMappingTTL;
-    private int numberOfBucketsInTimeBucketWheel;
 
     /*
      * XXX  When configuration options are added or removed, they should also be added/removed in the karaf
@@ -53,7 +51,6 @@ public final class ConfigIni {
     private static final long DEFAULT_SMR_TIMEOUT = 3000L;
     private static final int DEFAULT_SMR_RETRY_COUNT = 5;
     private static final int DEFAULT_NEGATIVE_MAPPING_TTL = 15;
-    private static final int MIN_NUMBER_OF_BUCKETS_IN_TIME_BUCKET_WHEEL = 2;
     private static final ConfigIni INSTANCE = new ConfigIni();
 
     private ConfigIni() {
@@ -82,7 +79,6 @@ public final class ConfigIni {
         initSmrRetryCount(context);
         initSmrTimeout(context);
         initNegativeMappingTTL(context);
-        initBucketNumber();
     }
 
     private static String bundleStateToString(int state) {
@@ -323,14 +319,6 @@ public final class ConfigIni {
         }
     }
 
-    //one bucket should contain mapping of approximate 1 min time frame
-    private void initBucketNumber() {
-        numberOfBucketsInTimeBucketWheel = (int) (TimeUnit.MILLISECONDS.toMinutes(getRegistrationValiditySb()) + 1);
-
-        numberOfBucketsInTimeBucketWheel = Math.max(numberOfBucketsInTimeBucketWheel,
-                MIN_NUMBER_OF_BUCKETS_IN_TIME_BUCKET_WHEEL);
-    }
-
     public boolean mappingMergeIsSet() {
         return mappingMerge;
     }
@@ -401,10 +389,6 @@ public final class ConfigIni {
 
     public int getNegativeMappingTTL() {
         return this.negativeMappingTTL;
-    }
-
-    public int getNumberOfBucketsInTimeBucketWheel() {
-        return numberOfBucketsInTimeBucketWheel;
     }
 
     public static ConfigIni getInstance() {
