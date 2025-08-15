@@ -10,6 +10,7 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.common.UintConversions.fromJava;
 
@@ -68,29 +69,28 @@ public class MappingMergeUtilTest {
     public void mappingIsExpiredTest() {
         long timestamp = new Date().getTime();
         MappingData mappingData = getDefaultMappingData();
-        mappingData.setTimestamp(new Date(timestamp - (REGISTRATION_VALIDITY + 1L)));
-        assertTrue(MappingMergeUtil.mappingIsExpired(mappingData));
+        mappingData.setTimestamp(new Date(timestamp - 2));
+        assertTrue(MappingMergeUtil.mappingIsExpired(mappingData, 1));
         mappingData.setTimestamp(new Date(timestamp));
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData));
+        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData, 1));
         mappingData.setTimestamp(null);
-        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData));
+        assertFalse(MappingMergeUtil.mappingIsExpired(mappingData, 1));
     }
 
     /**
      * Tests {@link MappingMergeUtil#mappingIsExpired} method, throws NPE.
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void mappingIsExpiredTest_throwsNPE() {
-        MappingMergeUtil.mappingIsExpired(null);
+        assertThrows(NullPointerException.class, () -> MappingMergeUtil.mappingIsExpired(null, 0));
     }
 
     /**
      * Tests {@link MappingMergeUtil#timestampIsExpired} method, throws NPE.
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void timestampIsExpiredTest_withDate_throwsNPE() {
-        Date date = null;
-        MappingMergeUtil.timestampIsExpired(date);
+        assertThrows(NullPointerException.class, () -> MappingMergeUtil.timestampIsExpired(null, 0));
     }
 
     /**
@@ -99,8 +99,8 @@ public class MappingMergeUtilTest {
     @Test
     public void timestampIsExpiredTest_withDate() {
         long timestamp = new Date().getTime();
-        assertTrue(MappingMergeUtil.timestampIsExpired(new Date(timestamp - (REGISTRATION_VALIDITY + 1L))));
-        assertFalse(MappingMergeUtil.timestampIsExpired(new Date(timestamp)));
+        assertTrue(MappingMergeUtil.timestampIsExpired(new Date(timestamp - 2), 1));
+        assertFalse(MappingMergeUtil.timestampIsExpired(new Date(timestamp), 1));
     }
 
     /**

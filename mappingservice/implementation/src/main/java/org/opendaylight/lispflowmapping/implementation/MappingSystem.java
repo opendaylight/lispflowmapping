@@ -361,7 +361,7 @@ public class MappingSystem implements IMappingSystem {
     private MappingData updateServicePathMappingRecord(MappingData mappingData, Eid eid) {
         // keep properties of original record
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mappingData.getRecord());
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new ArrayList<>());
 
         // there should only be one locator record
         if (mappingData.getRecord().getLocatorRecord().size() != 1) {
@@ -404,7 +404,7 @@ public class MappingSystem implements IMappingSystem {
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
 
         MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
-                expiredMappingDataList, sourceRlocs);
+                expiredMappingDataList, sourceRlocs, ConfigIni.getInstance().getRegistrationValiditySb());
 
         for (MappingData mappingData : expiredMappingDataList) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
@@ -498,7 +498,8 @@ public class MappingSystem implements IMappingSystem {
 
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
-        while (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
+        while (mappingData != null
+            && MappingMergeUtil.mappingIsExpired(mappingData, ConfigIni.getInstance().getRegistrationValiditySb())) {
             // If the mappingData is expired, handleSbExpiredMapping() will run merge for it if merge is enabled,
             // otherwise it will remove the expired mapping, returning null.
             MappingData mergedMappingData = handleSbExpiredMapping(dst, xtrId, mappingData);
@@ -886,8 +887,8 @@ public class MappingSystem implements IMappingSystem {
          * the below code block that didn't seem to work though.
          */
         Long lastUpdateTimestamp = dsbe.getLastUpdateTimestamp();
-        if (lastUpdateTimestamp != null && System.currentTimeMillis() - lastUpdateTimestamp
-                > ConfigIni.getInstance().getRegistrationValiditySb()) {
+        if (lastUpdateTimestamp != null
+            && System.currentTimeMillis() - lastUpdateTimestamp > ConfigIni.getInstance().getRegistrationValiditySb()) {
             LOG.warn("Restore threshold passed, not restoring operational datastore into DAO");
         } else {
             mappings.addAll(dsbe.getAllMappings(LogicalDatastoreType.OPERATIONAL));
