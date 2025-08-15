@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.dsbackend.DataStoreBackEnd;
 import org.opendaylight.lispflowmapping.implementation.timebucket.implementation.TimeBucketMappingTimeoutService;
@@ -84,31 +85,35 @@ import org.slf4j.LoggerFactory;
  */
 public class MappingSystem implements IMappingSystem {
     private static final Logger LOG = LoggerFactory.getLogger(MappingSystem.class);
-    private static final String AUTH_KEY_TABLE = "authentication";
-    //private static final int TTL_RLOC_TIMED_OUT = 1;
-    private static final int TTL_NO_RLOC_KNOWN = ConfigIni.getInstance().getNegativeMappingTTL();
-    private final NotificationPublishService notificationPublishService;
-    private boolean mappingMerge;
+
+    private final ConcurrentHashMap<Eid, Set<Subscriber>> subscriberdb = new ConcurrentHashMap<>();
+    private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private final ILispDAO dao;
+    private final NotificationPublishService notificationPublishService;
+    private final ISouthBoundMappingTimeoutService sbMappingTimeoutService;
+    private final @NonNull Integer ttlNoRlocKnown;
+    // private final @NonNull Integer ttlRlocTimedOut;
+
+    private boolean mappingMerge;
     private ILispDAO sdao;
     private ILispMapCache smc;
     private IMapCache pmc;
-    private final ConcurrentHashMap<Eid, Set<Subscriber>> subscriberdb = new ConcurrentHashMap<>();
     private IAuthKeyDb akdb;
-    private final EnumMap<MappingOrigin, IMapCache> tableMap = new EnumMap<>(MappingOrigin.class);
     private DataStoreBackEnd dsbe;
     private boolean isMaster = false;
-
-    private final ISouthBoundMappingTimeoutService sbMappingTimeoutService;
 
     public MappingSystem(ILispDAO dao, boolean iterateMask, NotificationPublishService nps, boolean mappingMerge) {
         this.dao = dao;
         notificationPublishService = nps;
         this.mappingMerge = mappingMerge;
+
+        final var config = ConfigIni.getInstance();
+        ttlNoRlocKnown = config.getNegativeMappingTTL();
+        // ttlRlocTimedOut = 1;
+
         buildMapCaches();
 
-        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(
-            ConfigIni.getInstance().getRegistrationValiditySb(), this);
+        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(config.getRegistrationValiditySb(), this);
     }
 
     public void setDataStoreBackEnd(DataStoreBackEnd dataStoreBackEnd) {
@@ -141,7 +146,7 @@ public class MappingSystem implements IMappingSystem {
         sdao = dao.putTable(MappingOrigin.Southbound.toString());
         pmc = new MultiTableMapCache(dao.putTable(MappingOrigin.Northbound.toString()));
         smc = new SimpleMapCache(sdao);
-        akdb = new AuthKeyDb(dao.putTable(AUTH_KEY_TABLE));
+        akdb = new AuthKeyDb(dao.putTable("authentication"));
         tableMap.put(MappingOrigin.Northbound, pmc);
         tableMap.put(MappingOrigin.Southbound, smc);
     }
@@ -316,9 +321,9 @@ public class MappingSystem implements IMappingSystem {
         }
         recordBuilder.setAction(LispMessage.NEGATIVE_MAPPING_ACTION);
         //if (getAuthenticationKey(eid) != null) {
-        //    recordBuilder.setRecordTtl(TTL_RLOC_TIMED_OUT);
+        //    recordBuilder.setRecordTtl(ttlRlocTimedOut);
         //} else {
-        recordBuilder.setRecordTtl(TTL_NO_RLOC_KNOWN);
+        recordBuilder.setRecordTtl(ttlNoRlocKnown);
         //}
         return recordBuilder.build();
     }
