@@ -68,7 +68,6 @@ public class MapResolver implements IMapResolverAsync {
     private boolean subscriptionService;
     private String elpPolicy;
     private final IMapRequestResultHandler requestHandler;
-    private boolean authenticate = true;
     private ISmrNotificationListener smrNotificationListener;
     private static final int TTL_DELETE_MAPPING = 0;
 
