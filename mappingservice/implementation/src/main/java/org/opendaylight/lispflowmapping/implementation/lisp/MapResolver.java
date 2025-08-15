@@ -66,17 +66,17 @@ public class MapResolver implements IMapResolverAsync {
 
     private final IMappingService mapService;
     private boolean subscriptionService;
-    private String elpPolicy;
+    private ExplicitLocatorPathPolicy elpPolicy;
     private final IMapRequestResultHandler requestHandler;
     private boolean authenticate = true;
     private ISmrNotificationListener smrNotificationListener;
     private static final int TTL_DELETE_MAPPING = 0;
 
-    public MapResolver(IMappingService mapService, boolean smr, String elpPolicy,
+    public MapResolver(IMappingService mapService, boolean smr, ExplicitLocatorPathPolicy elpPolicy,
                        IMapRequestResultHandler requestHandler) {
         subscriptionService = smr;
         this.mapService = requireNonNull(mapService);
-        this.elpPolicy = elpPolicy;
+        this.elpPolicy = requireNonNull(elpPolicy);
         this.requestHandler = requestHandler;
     }
 
@@ -229,8 +229,8 @@ public class MapResolver implements IMapResolverAsync {
 
     // Process locators according to configured policy
     private MappingRecord updateLocators(MappingRecord mapping, List<ItrRloc> itrRlocs) {
-        // no fixing if elpPolicy is default
-        if (elpPolicy.equalsIgnoreCase("default")) {
+        // no fixing if ELP policy is default
+        if (elpPolicy == ExplicitLocatorPathPolicy.DEFAULT) {
             return mapping;
         }
 
@@ -243,15 +243,13 @@ public class MapResolver implements IMapResolverAsync {
         }
 
         MappingRecordBuilder recordBuilder = new MappingRecordBuilder(mapping);
-        recordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        recordBuilder.setLocatorRecord(new ArrayList<>());
         try {
             for (LocatorRecord record : locatorRecords) {
                 Rloc container = record.getRloc();
 
-                // For non-ELP RLOCs, or when ELP policy is default, or itrRlocs is null, just add the locator and be
-                // done
-                if (!(container.getAddress() instanceof ExplicitLocatorPath)
-                        || elpPolicy.equalsIgnoreCase("default") || itrRlocs == null) {
+                // For non-ELP RLOCs or itrRlocs is null, just add the locator and be done
+                if (!(container.getAddress() instanceof ExplicitLocatorPath) || itrRlocs == null) {
                     recordBuilder.getLocatorRecord().add(
                             new LocatorRecordBuilder().setLocalLocator(record.getLocalLocator())
                                     .setRlocProbed(record.getRlocProbed()).setWeight(record.getWeight())
@@ -264,8 +262,8 @@ public class MapResolver implements IMapResolverAsync {
                 ExplicitLocatorPath teAddress = (ExplicitLocatorPath) container.getAddress();
                 SimpleAddress nextHop = getNextELPHop(teAddress, itrRlocs);
                 if (nextHop != null) {
-                    java.lang.Short priority = record.getPriority().toJava();
-                    if (elpPolicy.equalsIgnoreCase("both")) {
+                    short priority = record.getPriority().toJava();
+                    if (elpPolicy == ExplicitLocatorPathPolicy.BOTH) {
                         recordBuilder.getLocatorRecord().add(
                                 new LocatorRecordBuilder().setLocalLocator(record.getLocalLocator())
                                         .setRlocProbed(record.getRlocProbed()).setWeight(record.getWeight())
@@ -336,8 +334,8 @@ public class MapResolver implements IMapResolverAsync {
     }
 
     @Override
-    public void setElpPolicy(String elpPolicy) {
-        this.elpPolicy = elpPolicy;
+    public void setElpPolicy(ExplicitLocatorPathPolicy elpPolicy) {
+        this.elpPolicy = requireNonNull(elpPolicy);
     }
 
     @Override
