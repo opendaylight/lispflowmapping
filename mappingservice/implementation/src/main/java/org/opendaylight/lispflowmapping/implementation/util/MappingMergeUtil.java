@@ -211,27 +211,16 @@ public final class MappingMergeUtil {
      */
     public static boolean mappingIsExpired(MappingData mappingData) {
         requireNonNull(mappingData, "mapping should not be null!");
-        if (mappingData.getTimestamp() != null) {
-            return timestampIsExpired(mappingData.getTimestamp());
-        }
-        return false;
+        final var timestamp = mappingData.getTimestamp();
+        return timestamp != null && timestampIsExpired(timestamp);
     }
 
     public static boolean timestampIsExpired(Date timestamp) {
         requireNonNull(timestamp, "timestamp should not be null!");
-        return timestampIsExpired(timestamp.getTime());
+        return System.currentTimeMillis() - timestamp.getTime() > ConfigIni.getInstance().getRegistrationValiditySb();
     }
 
-    private static boolean timestampIsExpired(Long timestamp) {
-        requireNonNull(timestamp, "timestamp should not be null!");
-        if (System.currentTimeMillis() - timestamp > ConfigIni.getInstance().getRegistrationValiditySb()) {
-            return true;
-        }
-        return false;
-    }
-
-    public static MappingData computeNbSbIntersection(MappingData nbMappingData,
-            MappingData sbMappingData) {
+    public static MappingData computeNbSbIntersection(MappingData nbMappingData, MappingData sbMappingData) {
         return new MappingData(computeNbSbIntersection(nbMappingData.getRecord(), sbMappingData.getRecord()));
     }
 
