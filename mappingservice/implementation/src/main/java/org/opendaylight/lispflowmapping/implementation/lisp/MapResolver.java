@@ -228,20 +228,6 @@ public class MapResolver implements IMapResolverAsync {
         return mapping;
     }
 
-    private static boolean locatorsNeedFixing(List<LocatorRecord> locatorRecords) {
-        // no locators - no fixing needed ;)
-        if (locatorRecords == null) {
-            return false;
-        }
-
-        for (LocatorRecord record : locatorRecords) {
-            if (record.getRloc().getAddress() instanceof ExplicitLocatorPath) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Process locators according to configured policy
     private MappingRecord updateLocators(MappingRecord mapping, List<ItrRloc> itrRlocs) {
         // no fixing if ELP policy is default
@@ -252,7 +238,8 @@ public class MapResolver implements IMapResolverAsync {
         List<LocatorRecord> locatorRecords = mapping.getLocatorRecord();
 
         // if no updated is needed, just return the mapping
-        if (!locatorsNeedFixing(locatorRecords)) {
+        if (locatorRecords == null || locatorRecords.stream().noneMatch(
+                record -> record.getRloc().getAddress() instanceof ExplicitLocatorPath)) {
             return mapping;
         }
 
