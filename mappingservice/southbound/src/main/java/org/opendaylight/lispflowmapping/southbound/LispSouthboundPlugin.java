@@ -78,14 +78,17 @@ import org.slf4j.LoggerFactory;
 public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCloseable, ClusterSingletonService {
     @ObjectClassDefinition
     public @interface Configuration {
-        @AttributeDefinition()
+        @AttributeDefinition
         String bindingAddress() default DEFAULT_BINDING_ADDRESS;
 
-        @AttributeDefinition()
+        @AttributeDefinition
         boolean mapRegisterCacheEnabled() default true;
 
-        @AttributeDefinition()
+        @AttributeDefinition
         long mapRegisterCacheTimeout() default DEFAULT_MAP_REGISTER_CACHE_TIMEOUT;
+
+        @AttributeDefinition
+        boolean authenticationEnabled() default true;
     }
 
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundPlugin.class);
@@ -102,6 +105,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
     private final MapRegisterCache mapRegisterCache = new MapRegisterCache();
     private final boolean mapRegisterCacheEnabled;
     private final long mapRegisterCacheTimeout;
+    private final boolean authenticationEnabled;
 
     private static Object startLock = new Object();
 
@@ -129,7 +133,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             final NotificationPublishService notificationPublishService,
             final ClusterSingletonServiceProvider clusterSingletonService) {
         this(dataBroker, notificationPublishService, clusterSingletonService, DEFAULT_BINDING_ADDRESS, true,
-            DEFAULT_MAP_REGISTER_CACHE_TIMEOUT);
+            DEFAULT_MAP_REGISTER_CACHE_TIMEOUT, true);
     }
 
     @Activate
@@ -138,14 +142,16 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
             @Reference final ClusterSingletonServiceProvider clusterSingletonService,
             final Configuration configuration) {
         this(dataBroker, notificationPublishService, clusterSingletonService, configuration.bindingAddress(),
-            configuration.mapRegisterCacheEnabled(), configuration.mapRegisterCacheTimeout());
+            configuration.mapRegisterCacheEnabled(), configuration.mapRegisterCacheTimeout(),
+            configuration.authenticationEnabled());
         init();
     }
 
     public LispSouthboundPlugin(final DataBroker dataBroker,
             final NotificationPublishService notificationPublishService,
             final ClusterSingletonServiceProvider clusterSingletonService,
-            final String bindingAddress, final boolean mapRegisterCacheEnabled, final long mapRegisterCacheTimeout) {
+            final String bindingAddress, final boolean mapRegisterCacheEnabled, final long mapRegisterCacheTimeout,
+            final boolean authenticationEnabled) {
         LOG.info("LISP (RFC6830) Southbound Plugin is initializing...");
         this.dataBroker = dataBroker;
         this.notificationPublishService = notificationPublishService;
@@ -153,6 +159,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
         this.bindingAddress = bindingAddress;
         this.mapRegisterCacheEnabled = mapRegisterCacheEnabled;
         this.mapRegisterCacheTimeout = mapRegisterCacheTimeout;
+        this.authenticationEnabled = authenticationEnabled;
 
         if (Epoll.isAvailable()) {
             // When lispflowmapping is under heavy load, there are usually two threads nearing 100% CPU core
@@ -186,7 +193,7 @@ public class LispSouthboundPlugin implements IConfigLispSouthboundPlugin, AutoCl
 
             bootstrap.group(eventLoopGroup);
             bootstrap.channel(channelType);
-            lispSouthboundHandler = new LispSouthboundHandler(this);
+            lispSouthboundHandler = new LispSouthboundHandler(this, authenticationEnabled);
             bootstrap.handler(lispSouthboundHandler);
 
             xtrBootstrap.group(eventLoopGroup);
