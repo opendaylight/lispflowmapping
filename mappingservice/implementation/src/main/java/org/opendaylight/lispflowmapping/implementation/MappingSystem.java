@@ -91,6 +91,7 @@ public class MappingSystem implements IMappingSystem {
     private final ILispDAO dao;
     private final NotificationPublishService notificationPublishService;
     private final ISouthBoundMappingTimeoutService sbMappingTimeoutService;
+    private final long registrationValidityMillis;
     private final @NonNull Integer ttlNoRlocKnown;
     // private final @NonNull Integer ttlRlocTimedOut;
 
@@ -108,12 +109,13 @@ public class MappingSystem implements IMappingSystem {
         this.mappingMerge = mappingMerge;
 
         final var config = ConfigIni.getInstance();
+        registrationValidityMillis = config.getRegistrationValiditySb();
         ttlNoRlocKnown = config.getNegativeMappingTTL();
         // ttlRlocTimedOut = 1;
 
         buildMapCaches();
 
-        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(config.getRegistrationValiditySb(), this);
+        sbMappingTimeoutService = new TimeBucketMappingTimeoutService(registrationValidityMillis, this);
     }
 
     public void setDataStoreBackEnd(DataStoreBackEnd dataStoreBackEnd) {
@@ -404,7 +406,7 @@ public class MappingSystem implements IMappingSystem {
         Set<IpAddressBinary> sourceRlocs = new HashSet<>();
 
         MappingData mergedMappingData = MappingMergeUtil.mergeXtrIdMappings(smc.getAllXtrIdMappings(key),
-                expiredMappingDataList, sourceRlocs);
+                expiredMappingDataList, sourceRlocs, registrationValidityMillis);
 
         for (MappingData mappingData : expiredMappingDataList) {
             removeSbXtrIdSpecificMapping(key, mappingData.getXtrId(), mappingData);
@@ -498,7 +500,7 @@ public class MappingSystem implements IMappingSystem {
 
     private MappingData getSbMappingWithExpiration(Eid src, Eid dst, XtrId xtrId) {
         MappingData mappingData = (MappingData) smc.getMapping(dst, xtrId);
-        while (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData)) {
+        while (mappingData != null && MappingMergeUtil.mappingIsExpired(mappingData, registrationValidityMillis)) {
             // If the mappingData is expired, handleSbExpiredMapping() will run merge for it if merge is enabled,
             // otherwise it will remove the expired mapping, returning null.
             MappingData mergedMappingData = handleSbExpiredMapping(dst, xtrId, mappingData);
@@ -886,8 +888,8 @@ public class MappingSystem implements IMappingSystem {
          * the below code block that didn't seem to work though.
          */
         Long lastUpdateTimestamp = dsbe.getLastUpdateTimestamp();
-        if (lastUpdateTimestamp != null && System.currentTimeMillis() - lastUpdateTimestamp
-                > ConfigIni.getInstance().getRegistrationValiditySb()) {
+        if (lastUpdateTimestamp != null
+            && System.currentTimeMillis() - lastUpdateTimestamp > registrationValidityMillis) {
             LOG.warn("Restore threshold passed, not restoring operational datastore into DAO");
         } else {
             mappings.addAll(dsbe.getAllMappings(LogicalDatastoreType.OPERATIONAL));
