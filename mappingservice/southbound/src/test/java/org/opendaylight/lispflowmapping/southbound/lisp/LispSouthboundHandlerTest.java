@@ -159,7 +159,7 @@ public class LispSouthboundHandlerTest {
         Mockito.when(mockLispSouthboundPlugin.getAuthenticationKeyDataListener()).thenReturn(akdl);
         ConcurrentLispSouthboundStats lispSouthboundStats = new ConcurrentLispSouthboundStats();
         Mockito.when(mockLispSouthboundPlugin.getStats()).thenReturn(lispSouthboundStats);
-        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin);
+        testedLispService = new LispSouthboundHandler(mockLispSouthboundPlugin, true);
 
         // SRC: 127.0.0.1:58560 to 127.0.0.1:4342
         // LISP(Type = 8 - Encapsulated)

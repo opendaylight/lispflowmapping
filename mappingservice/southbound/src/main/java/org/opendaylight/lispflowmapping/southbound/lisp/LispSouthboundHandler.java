@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.lisp.authentication.ILispAuthentication;
 import org.opendaylight.lispflowmapping.lisp.authentication.LispAuthenticationUtil;
 import org.opendaylight.lispflowmapping.lisp.serializer.MapNotifySerializer;
@@ -74,14 +73,15 @@ public class LispSouthboundHandler extends SimpleChannelInboundHandler<DatagramP
     protected static final Logger LOG = LoggerFactory.getLogger(LispSouthboundHandler.class);
 
     //TODO: think whether this field can be accessed through mappingservice or some other configuration parameter
-    private final boolean authenticationEnabled = ConfigIni.getInstance().isAuthEnabled();
+    private final boolean authenticationEnabled;
     private final LispSouthboundPlugin lispSbPlugin;
     private final boolean isReadFromChannelEnabled = true;
 
     private Channel channel;
 
-    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin) {
+    public LispSouthboundHandler(LispSouthboundPlugin lispSbPlugin, boolean authenticationEnabled) {
         this.lispSbPlugin = lispSbPlugin;
+        this.authenticationEnabled = authenticationEnabled;
     }
 
     @Override

@@ -71,7 +71,7 @@ public class LispSouthboundPluginTest {
                 Mockito.mock(DataBroker.class),
                 Mockito.mock(NotificationPublishService.class),
                 Mockito.mock(ClusterSingletonServiceProvider.class),
-                ADDRESS_1, false, 0);
+                ADDRESS_1, false, 0, true);
 
         channel = Mockito.mock(NioDatagramChannel.class);
         xtrChannel = Mockito.mock(NioDatagramChannel.class);
