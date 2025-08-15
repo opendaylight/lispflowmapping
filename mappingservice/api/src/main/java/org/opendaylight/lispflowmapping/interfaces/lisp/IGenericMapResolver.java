@@ -12,6 +12,29 @@ package org.opendaylight.lispflowmapping.interfaces.lisp;
  */
 public interface IGenericMapResolver {
     /**
+     * Enumeration of methods of how to build a Map-Reply southbound message from a mapping containing an Explicit
+     * Locator Path (ELP) RLOC. It is used for compatibility with dataplane devices that don’t understand the ELP LCAF
+     * format.
+     */
+    enum ExplicitLocatorPathPolicy {
+        /**
+         * Do not alter the mapping, returning all RLOCs unmodified.
+         */
+        DEFAULT,
+        /**
+         * Add a new RLOC to the mapping, with a lower priority than the ELP, that is the next hop in the service chain.
+         * To determine the next hop, it searches the source RLOC of the Map-Request in the ELP, and chooses the next
+         * hop, if it exists, otherwise it chooses the first hop.
+         */
+        BOTH,
+        /**
+         * Add a new RLOC using the same algorithm as {@link #BOTH}, but using the origin priority of the ELP RLOC,
+         * which is removed from the mapping.
+         */
+        REPLACE,
+    }
+
+    /**
      * Configure MapResolver to use authentication.
      *
      * @param shouldAuthenticate
@@ -34,5 +57,5 @@ public interface IGenericMapResolver {
      * @param elpPolicy
      *            ELP policy
      */
-    void setElpPolicy(String elpPolicy);
+    void setElpPolicy(ExplicitLocatorPathPolicy elpPolicy);
 }

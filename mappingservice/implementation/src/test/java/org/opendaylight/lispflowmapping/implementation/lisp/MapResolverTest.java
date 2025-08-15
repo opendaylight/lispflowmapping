@@ -23,6 +23,7 @@ import org.opendaylight.lispflowmapping.implementation.LispMappingService;
 import org.opendaylight.lispflowmapping.implementation.MappingService;
 import org.opendaylight.lispflowmapping.interfaces.dao.SubKeys;
 import org.opendaylight.lispflowmapping.interfaces.dao.Subscriber;
+import org.opendaylight.lispflowmapping.interfaces.lisp.IGenericMapResolver.ExplicitLocatorPathPolicy;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
@@ -353,7 +354,7 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withBothPolicy() {
-        mapResolver = new MapResolver(mapServiceMock, true, "both", lispMappingServiceMock);
+        mapResolver = new MapResolver(mapServiceMock, true, ExplicitLocatorPathPolicy.BOTH, lispMappingServiceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
         // hop 1
@@ -409,7 +410,7 @@ public class MapResolverTest {
      */
     @Test
     public void handleMapRequest_withReplacePolicy() {
-        mapResolver = new MapResolver(mapServiceMock, true, "replace", lispMappingServiceMock);
+        mapResolver = new MapResolver(mapServiceMock, true, ExplicitLocatorPathPolicy.REPLACE, lispMappingServiceMock);
 
         final List<IpAddress> ipAddressList = new ArrayList<>();
         // hop 1
@@ -499,7 +500,7 @@ public class MapResolverTest {
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
     }
 
-    private static ItrRloc newItrRloc(LispAddressFamily clazz, Address address) {
+    private static ItrRloc newItrRloc(final LispAddressFamily clazz, final Address address) {
         return new ItrRlocBuilder().setRloc(new RlocBuilder()
                 .setAddress(address)
                 .setAddressType(clazz).build()).build();
