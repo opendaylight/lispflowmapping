@@ -15,11 +15,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opendaylight.lispflowmapping.config.ConfigIni;
 import org.opendaylight.lispflowmapping.implementation.MappingSystem;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucket;
 import org.opendaylight.lispflowmapping.implementation.timebucket.containers.TimeBucketWheel;
-import org.opendaylight.lispflowmapping.interfaces.dao.ILispDAO;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.inet.binary.types.rev160303.IpAddressBinary;
@@ -60,9 +58,6 @@ public class TimeBucketWheelUnitTest {
 
     private static final SiteId SITE_ID_1 = new SiteId(new byte[]{1, 1, 1, 1, 1, 1, 1, 1});
 
-    private static final long REGISTRATION_VALIDITY = ConfigIni.getInstance().getRegistrationValiditySb();
-
-    private static ILispDAO daoMock = Mockito.mock(ILispDAO.class);
     private static MappingSystem mappingSystem = Mockito.mock(MappingSystem.class);
 
     /**
