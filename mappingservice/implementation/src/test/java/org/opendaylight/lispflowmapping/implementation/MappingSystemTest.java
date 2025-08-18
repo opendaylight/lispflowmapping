@@ -140,7 +140,7 @@ public class MappingSystemTest {
         Mockito.when(tableMapMock.get(MappingOrigin.Northbound)).thenReturn(pmcMock);
 
         injectMocks();
-        setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
+        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_FIRST);
     }
 
     /**
@@ -158,16 +158,6 @@ public class MappingSystemTest {
         final Field tableMapField = MappingSystem.class.getDeclaredField("tableMap");
         tableMapField.setAccessible(true);
         tableMapField.set(mappingSystem, tableMapMock);
-    }
-
-    /**
-     * This method changes the lookup policy.
-     */
-    private static void setLookupPolicy(final IMappingService.LookupPolicy policy) throws NoSuchFieldException,
-            IllegalAccessException {
-        final Field lookupPolicy = ConfigIni.class.getDeclaredField("lookupPolicy");
-        lookupPolicy.setAccessible(true);
-        lookupPolicy.set(CONFIG_INI, policy);
     }
 
     /**
@@ -306,9 +296,8 @@ public class MappingSystemTest {
      * Tests {@link MappingSystem#getMapping} method, northbound and southbound intersection.
      */
     @Test
-    public void getMappingTest_NbSbIntersection_withNullNbMapping() throws NoSuchFieldException,
-            IllegalAccessException {
-        setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+    public void getMappingTest_NbSbIntersection_withNullNbMapping() {
+        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(null);
 
         assertNull(mappingSystem.getMapping(EID_IPV4_SRC, EID_IPV4_DST));
@@ -319,9 +308,8 @@ public class MappingSystemTest {
      * address and single Ipv4 type locator record. Returns the original mapping.
      */
     @Test
-    public void getMappingTest_NbSbIntersection_withServicePathDestinationAddress() throws NoSuchFieldException,
-            IllegalAccessException {
-        setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+    public void getMappingTest_NbSbIntersection_withServicePathDestinationAddress() {
+        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
                         // Ipv4 type Rloc
@@ -337,9 +325,8 @@ public class MappingSystemTest {
      * locator, southbound null. Returns the original mapping.
      */
     @Test
-    public void getMappingTest_NbSbIntersection_withSbNull() throws NoSuchFieldException,
-            IllegalAccessException {
-        setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+    public void getMappingTest_NbSbIntersection_withSbNull() {
+        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
@@ -367,9 +354,8 @@ public class MappingSystemTest {
      * locator, southbound non-null. Returns the merged mapping.
      */
     @Test
-    public void getMappingTest_NbSbIntersection_mergeMappings() throws NoSuchFieldException,
-            IllegalAccessException {
-        setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
+    public void getMappingTest_NbSbIntersection_mergeMappings() {
+        CONFIG_INI.setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
                 .setLocatorRecord(Lists.newArrayList(
