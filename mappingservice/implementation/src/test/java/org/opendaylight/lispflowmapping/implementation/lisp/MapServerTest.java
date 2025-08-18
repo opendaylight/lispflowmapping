@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -162,7 +161,7 @@ public class MapServerTest {
     private static final Set<IpAddressBinary> DEFAULT_IP_ADDRESS_SET = getDefaultIpAddressSet();
 
     @Before
-    public void init() throws NoSuchFieldException, IllegalAccessException  {
+    public void init() {
         mapServer = new MapServer(mapService, true, notifyHandler, notificationService);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_1);
         subscriberSetMock_1.add(SUBSCRIBER_RLOC_2);
@@ -173,11 +172,11 @@ public class MapServerTest {
         mapRegister = getDefaultMapRegisterBuilder().build();
         mappingData = new MappingData(mapRegister.getMappingRecordItem().iterator().next().getMappingRecord(),
                 System.currentTimeMillis());
-        setConfigIniMappingMergeField(false);
+        CONFIG_INI.setMappingMerge(false);
     }
 
     @Test
-    public void handleMapRegisterTest_MappingMergeFalse() throws NoSuchFieldException, IllegalAccessException {
+    public void handleMapRegisterTest_MappingMergeFalse() {
         Mockito.when(mapService.getMapping(MappingOrigin.Southbound, IPV4_EID_1)).thenReturn(OLD_MAPPING_DATA_1);
 
         mappingData.setMergeEnabled(false);
@@ -195,8 +194,8 @@ public class MapServerTest {
     }
 
     @Test
-    public void handleMapRegisterTest_MappingMergeTrue() throws NoSuchFieldException, IllegalAccessException {
-        setConfigIniMappingMergeField(true);
+    public void handleMapRegisterTest_MappingMergeTrue() {
+        CONFIG_INI.setMappingMerge(true);
 
         final MappingRecordItemBuilder mappingRecordItemBuilder = new MappingRecordItemBuilder()
                 .withKey(new MappingRecordItemKey(IPV4_STRING_1))
@@ -221,8 +220,8 @@ public class MapServerTest {
 
     @Test
     @Ignore
-    public void handleMapRegisterTest_findNegativeSubscribers() throws NoSuchFieldException, IllegalAccessException {
-        setConfigIniMappingMergeField(true);
+    public void handleMapRegisterTest_findNegativeSubscribers() {
+        CONFIG_INI.setMappingMerge(true);
 
         mapRegister.getMappingRecordItem().clear();
         mapRegister.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder(IPV4_PREFIX_EID_1).build());
@@ -258,8 +257,8 @@ public class MapServerTest {
     }
 
     @Test
-    public void handleMapRegisterTest_verifyTransportAddresses() throws NoSuchFieldException, IllegalAccessException {
-        setConfigIniMappingMergeField(true);
+    public void handleMapRegisterTest_verifyTransportAddresses() {
+        CONFIG_INI.setMappingMerge(true);
 
         // input
         Mockito.when(mapService.getAuthenticationKey(IPV4_EID_1)).thenReturn(MAPPING_AUTHKEY);
@@ -284,8 +283,8 @@ public class MapServerTest {
 
     @Test
     @Ignore
-    public void handleMapRegisterTest_withTwoMappingRecords() throws NoSuchFieldException, IllegalAccessException {
-        setConfigIniMappingMergeField(true);
+    public void handleMapRegisterTest_withTwoMappingRecords() {
+        CONFIG_INI.setMappingMerge(true);
 
         // Input
         // Add a MappingRecord with SrcDestKey Eid Type
@@ -408,13 +407,6 @@ public class MapServerTest {
         mapNotifyBuilder.getMappingRecordItem().add(getDefaultMappingRecordItemBuilder().build());
 
         return mapNotifyBuilder;
-    }
-
-    private static void setConfigIniMappingMergeField(boolean value) throws NoSuchFieldException,
-            IllegalAccessException {
-        final Field mappingMergeField = CONFIG_INI.getClass().getDeclaredField("mappingMerge");
-        mappingMergeField.setAccessible(true);
-        mappingMergeField.setBoolean(CONFIG_INI, value);
     }
 
     private static Set<IpAddressBinary> getDefaultIpAddressSet() {
