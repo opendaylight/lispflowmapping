@@ -25,16 +25,6 @@
   </modules>
 
   <build>
-    <pluginManagement>
-      <plugins>
-          <plugin>
-          <!-- Downgrade javadoc plugin, as 3.1.0+ breaks with maven.compiler.release=11 + javadoc:aggregate -->
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
 <!--       <plugin>
         In this project we want to automatically sort all poms, thus we
