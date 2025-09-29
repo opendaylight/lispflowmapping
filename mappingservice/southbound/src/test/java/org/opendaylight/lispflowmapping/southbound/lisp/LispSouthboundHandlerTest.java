@@ -65,7 +65,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.Me
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.RequestMapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.list.EidItem;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.locatorrecords.LocatorRecordBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.map.register.cache.key.container.MapRegisterCacheKeyBuilder;
@@ -182,7 +181,7 @@ public class LispSouthboundHandlerTest {
                 + "0050   2a cd 39 c8 d6 08 00 01 01 02 03 04 00 01 c0 a8 88 0a 00 20 "
                 + "0060   00 01 01 02 03 04");
         mapReplyBuilder = new MapReplyBuilder();
-        mapReplyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+        mapReplyBuilder.setMappingRecordItem(new ArrayList<>());
         mapReplyBuilder.setNonce((long) 0);
         mapReplyBuilder.setEchoNonceEnabled(false);
         mapReplyBuilder.setProbe(true);
@@ -190,7 +189,7 @@ public class LispSouthboundHandlerTest {
         mappingRecordBuilder = new MappingRecordBuilder();
         String ip = "0.0.0.0";
         mappingRecordBuilder.setEid(LispAddressUtil.asIpv4PrefixEid(ip + "/0"));
-        mappingRecordBuilder.setLocatorRecord(new ArrayList<LocatorRecord>());
+        mappingRecordBuilder.setLocatorRecord(new ArrayList<>());
         mappingRecordBuilder.setRecordTtl(10);
         mappingRecordBuilder.setMapVersion((short) 0);
         mappingRecordBuilder.setAction(Action.NativelyForward);
@@ -670,7 +669,7 @@ public class LispSouthboundHandlerTest {
 
     private DatagramPacket lastMapNotifyPacket() {
         if (mapNotifyBuilder.getMappingRecordItem() == null) {
-            mapNotifyBuilder.setMappingRecordItem(new ArrayList<MappingRecordItem>());
+            mapNotifyBuilder.setMappingRecordItem(new ArrayList<>());
         }
         mapNotifyBuilder.getMappingRecordItem().add(new MappingRecordItemBuilder()
                 .setMappingRecordItemId("foo")
