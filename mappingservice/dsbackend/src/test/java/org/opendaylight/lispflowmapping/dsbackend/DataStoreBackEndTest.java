@@ -53,8 +53,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierKey;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -70,9 +70,9 @@ import org.slf4j.LoggerFactory;
 @PrepareForTest({LoggerFactory.class})
 public class DataStoreBackEndTest {
 
-    @Captor private static ArgumentCaptor<InstanceIdentifier<AuthenticationKey>> iidCaptorAuthKey;
-    @Captor private static ArgumentCaptor<InstanceIdentifier<Mapping>> iidCaptorMapping;
-    @Captor private static ArgumentCaptor<InstanceIdentifier<XtrIdMapping>> iidCaptorXtrIdMapping;
+    @Captor private static ArgumentCaptor<DataObjectIdentifier<AuthenticationKey>> iidCaptorAuthKey;
+    @Captor private static ArgumentCaptor<DataObjectIdentifier<Mapping>> iidCaptorMapping;
+    @Captor private static ArgumentCaptor<DataObjectIdentifier<XtrIdMapping>> iidCaptorXtrIdMapping;
     @Mock private static TransactionChain txChainMock;
     @Mock private static WriteTransaction wTxMock;
     private static DataStoreBackEnd dataStoreBackEnd;
@@ -87,8 +87,8 @@ public class DataStoreBackEndTest {
     private static final Eid EID_IPV4_3 = LispAddressUtil.asIpv4Eid(IPV4_STRING_3);
     private static final Eid EID_IPV4_4 = LispAddressUtil.asIpv4Eid(IPV4_STRING_4);
     private static final byte[] XTR_ID = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
-            InstanceIdentifier.create(MappingDatabase.class);
+    private static final DataObjectIdentifier<MappingDatabase> DATABASE_ROOT =
+        DataObjectIdentifier.builder(MappingDatabase.class).build();
 
     @Before
     public void init() {

@@ -36,7 +36,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.LastUpdatedBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
  */
 public class DataStoreBackEnd {
     private static final Logger LOG = LoggerFactory.getLogger(DataStoreBackEnd.class);
-    private static final InstanceIdentifier<MappingDatabase> DATABASE_ROOT =
-            InstanceIdentifier.create(MappingDatabase.class);
-    private static final InstanceIdentifier<LastUpdated> LAST_UPDATED =
-            InstanceIdentifier.create(MappingDatabase.class).child(LastUpdated.class);
+    private static final DataObjectIdentifier<MappingDatabase> DATABASE_ROOT =
+        DataObjectIdentifier.builder(MappingDatabase.class).build();
+    private static final DataObjectIdentifier<LastUpdated> LAST_UPDATED =
+        DataObjectIdentifier.builder(MappingDatabase.class).child(LastUpdated.class).build();
 
     private final TransactionChain configTxChain;
     private final TransactionChain operTxChain;
@@ -92,8 +92,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(authenticationKey.getEid()));
         }
 
-        InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getEid());
+        final var path = InstanceIdentifierUtil.createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
                 "Adding authentication key to MD-SAL datastore failed");
     }
@@ -104,7 +103,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
         }
 
-        InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
+        final var path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         writePutTransaction(path, mapping, getDestinationDatastore(mapping),
                 "Adding mapping to MD-SAL datastore failed");
@@ -119,7 +118,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
         }
 
-        InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
+        final var path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
         writePutTransaction(path, mapping, LogicalDatastoreType.OPERATIONAL,
                 "Adding xTR-ID mapping to MD-SAL datastore failed");
@@ -131,8 +130,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(authenticationKey.getEid()));
         }
 
-        InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getEid());
+        final var path = InstanceIdentifierUtil.createAuthenticationKeyIid(authenticationKey.getEid());
         deleteTransaction(path, LogicalDatastoreType.CONFIGURATION,
                 "Deleting authentication key from MD-SAL datastore failed");
     }
@@ -143,7 +141,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
         }
 
-        InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
+        final var path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         deleteTransaction(path, getDestinationDatastore(mapping), "Deleting mapping from MD-SAL datastore failed");
     }
@@ -156,7 +154,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()), xtrId);
         }
 
-        InstanceIdentifier<XtrIdMapping> path = InstanceIdentifierUtil
+        final var path = InstanceIdentifierUtil
                 .createXtrIdMappingIid(mapping.getMappingRecord().getEid(), MappingOrigin.Southbound, xtrId);
         deleteTransaction(path, LogicalDatastoreType.OPERATIONAL,
                 "Deleting xTR-ID mapping from MD-SAL datastore failed");
@@ -185,8 +183,7 @@ public class DataStoreBackEnd {
                     authenticationKey.getMappingAuthkey().getKeyString());
         }
 
-        InstanceIdentifier<AuthenticationKey> path = InstanceIdentifierUtil
-                .createAuthenticationKeyIid(authenticationKey.getEid());
+        final var path = InstanceIdentifierUtil.createAuthenticationKeyIid(authenticationKey.getEid());
         writePutTransaction(path, authenticationKey, LogicalDatastoreType.CONFIGURATION,
                 "Updating authentication key in MD-SAL datastore failed");
     }
@@ -197,7 +194,7 @@ public class DataStoreBackEnd {
                     LispAddressStringifier.getString(mapping.getMappingRecord().getEid()));
         }
 
-        InstanceIdentifier<Mapping> path = InstanceIdentifierUtil
+        final var path = InstanceIdentifierUtil
                 .createMappingIid(mapping.getMappingRecord().getEid(), mapping.getOrigin());
         writePutTransaction(path, mapping, getDestinationDatastore(mapping),
                 "Updating mapping in MD-SAL datastore failed");
@@ -282,7 +279,7 @@ public class DataStoreBackEnd {
         };
     }
 
-    private <U extends DataObject> void writePutTransaction(InstanceIdentifier<U> addIID, U data,
+    private <U extends DataObject> void writePutTransaction(DataObjectIdentifier<U> addIID, U data,
             LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         // TODO: is is a utility method, hence we do not have enough lifecycle knowledge to use plain put()
@@ -300,7 +297,7 @@ public class DataStoreBackEnd {
         }, MoreExecutors.directExecutor());
     }
 
-    private <U extends DataObject> U readTransaction(InstanceIdentifier<U> readIID,
+    private <U extends DataObject> U readTransaction(DataObjectIdentifier<U> readIID,
             LogicalDatastoreType logicalDatastoreType) {
         final ListenableFuture<Optional<U>> readFuture;
         try (ReadTransaction readTx = getChain(logicalDatastoreType).newReadOnlyTransaction()) {
@@ -319,7 +316,7 @@ public class DataStoreBackEnd {
         return null;
     }
 
-    private <U extends DataObject> void deleteTransaction(InstanceIdentifier<U> deleteIID,
+    private <U extends DataObject> void deleteTransaction(DataObjectIdentifier<U> deleteIID,
             LogicalDatastoreType logicalDatastoreType, String errMsg) {
         WriteTransaction writeTx = getChain(logicalDatastoreType).newWriteOnlyTransaction();
         writeTx.delete(logicalDatastoreType, deleteIID);
