@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.opendaylight.mdsal</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>14.0.18</version>
+    <version>15.0.2</version>
     <relativePath/>
   </parent>
 
@@ -32,7 +32,7 @@
       <artifactId>yang-ext</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.binding.model.ietf</groupId>
+      <groupId>org.opendaylight.ietf.model</groupId>
       <artifactId>rfc6991-ietf-inet-types</artifactId>
     </dependency>
   </dependencies>

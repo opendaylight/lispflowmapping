@@ -14,7 +14,6 @@ import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
-import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -59,36 +58,32 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
         for (DataTreeModification<AuthenticationKey> change : changes) {
             final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.modificationType()) {
-                final AuthenticationKey authKey = mod.dataBefore();
+            switch (mod.modificationType()) {
+                case DELETE -> {
+                    final AuthenticationKey authKey = mod.dataBefore();
 
-                LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().path());
-                LOG.trace("Value: {}", authKey);
+                    LOG.trace("Received deleted data");
+                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Value: {}", authKey);
 
-                final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
+                    final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
-                akdb.removeAuthenticationKey(convertedAuthKey.getEid());
-                updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
-            } else if (ModificationType.WRITE == mod.modificationType()
-                    || ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
-                if (ModificationType.WRITE == mod.modificationType()) {
-                    LOG.trace("Received created data");
-                } else {
-                    LOG.trace("Received updated data");
+                    akdb.removeAuthenticationKey(convertedAuthKey.getEid());
+                    updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
                 }
-                // Process newly created or updated authentication keys
-                final AuthenticationKey authKey = mod.dataAfter();
+                case SUBTREE_MODIFIED, WRITE -> {
+                    // Process newly created or updated authentication keys
+                    final AuthenticationKey authKey = mod.dataAfter();
 
-                LOG.trace("Key: {}", change.getRootPath().path());
-                LOG.trace("Value: {}", authKey);
+                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Value: {}", authKey);
 
-                final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
+                    final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
-                akdb.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
-                updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
-            } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
+                    akdb.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
+                    updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
+                }
+                default -> LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }

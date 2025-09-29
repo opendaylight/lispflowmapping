@@ -67,54 +67,54 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         for (DataTreeModification<Mapping> change : changes) {
             final DataObjectModification<Mapping> mod = change.getRootNode();
 
-            if (ModificationType.DELETE == mod.modificationType()) {
-                // Process deleted mappings
+            switch (mod.modificationType()) {
+                case DELETE -> {
+                    // Process deleted mappings
 
-                final Mapping mapping = mod.dataBefore();
+                    final Mapping mapping = mod.dataBefore();
 
-                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted, except for cluster slaves
-                if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
-                    continue;
-                }
+                    // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                    // before being persisted, except for cluster slaves
+                    if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
+                        continue;
+                    }
 
-                LOG.trace("Received deleted data");
-                LOG.trace("Key: {}", change.getRootPath().path());
-                LOG.trace("Value: {}", mapping);
-
-                final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
-
-                mapSystem.removeMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid());
-
-            } else if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()
-                       || ModificationType.WRITE == mod.modificationType()) {
-                final Mapping mapping = mod.dataAfter();
-
-                // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
-                // before being persisted, except for cluster slaves XXX separate NB and SB to avoid ignoring
-                // SB notifications
-                if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
-                    continue;
-                }
-
-                final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
-                Eid convertedEid = convertedMapping.getMappingRecord().getEid();
-
-                if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
-                    LOG.trace("Received update data");
+                    LOG.trace("Received deleted data");
                     LOG.trace("Key: {}", change.getRootPath().path());
                     LOG.trace("Value: {}", mapping);
-                    mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
-                            new MappingData(convertedMapping.getMappingRecord()));
-                } else {
-                    LOG.trace("Received write data");
-                    LOG.trace("Key: {}", change.getRootPath().path());
-                    LOG.trace("Value: {}", mapping);
-                    mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
-                            new MappingData(convertedMapping.getMappingRecord()));
+
+                    final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
+
+                    mapSystem.removeMapping(convertedMapping.getOrigin(), convertedMapping.getMappingRecord().getEid());
                 }
-            } else {
-                LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
+                case SUBTREE_MODIFIED, WRITE -> {
+                    final Mapping mapping = mod.dataAfter();
+
+                    // Only treat mapping changes caused by Northbound, since Southbound changes are already handled
+                    // before being persisted, except for cluster slaves XXX separate NB and SB to avoid ignoring
+                    // SB notifications
+                    if (mapping.getOrigin() == MappingOrigin.Southbound && mapSystem.isMaster()) {
+                        continue;
+                    }
+
+                    final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
+                    Eid convertedEid = convertedMapping.getMappingRecord().getEid();
+
+                    if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
+                        LOG.trace("Received update data");
+                        LOG.trace("Key: {}", change.getRootPath().path());
+                        LOG.trace("Value: {}", mapping);
+                        mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
+                            new MappingData(convertedMapping.getMappingRecord()));
+                    } else {
+                        LOG.trace("Received write data");
+                        LOG.trace("Key: {}", change.getRootPath().path());
+                        LOG.trace("Value: {}", mapping);
+                        mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
+                            new MappingData(convertedMapping.getMappingRecord()));
+                    }
+                }
+                default -> LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
