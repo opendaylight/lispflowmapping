@@ -18,7 +18,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectDeleted;
+import org.opendaylight.mdsal.binding.api.DataObjectModified;
+import org.opendaylight.mdsal.binding.api.DataObjectWritten;
 import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -46,9 +48,9 @@ public class AuthenticationKeyDataListenerTest {
     private static DataTreeModification<AuthenticationKey> change_del;
     private static DataTreeModification<AuthenticationKey> change_subtreeModified;
     private static DataTreeModification<AuthenticationKey> change_write;
-    private static DataObjectModification<AuthenticationKey> mod_del;
-    private static DataObjectModification<AuthenticationKey> mod_subtreeModified;
-    private static DataObjectModification<AuthenticationKey> mod_write;
+    private static DataObjectDeleted<AuthenticationKey> mod_del;
+    private static DataObjectModified<AuthenticationKey> mod_subtreeModified;
+    private static DataObjectWritten<AuthenticationKey> mod_write;
 
     private static final String IPV4_STRING_1 = "192.168.0.1";
     private static final String IPV4_STRING_2 = "192.168.0.2";
@@ -70,7 +72,6 @@ public class AuthenticationKeyDataListenerTest {
     private static final AuthenticationKey AUTHENTICATION_KEY_PREFIX = getAuthenticationKey(IPV4_PREFIX_EID);
 
     @Before
-    @SuppressWarnings("unchecked")
     public void init() {
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
             DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.builder(MappingDatabase.class)
@@ -81,9 +82,9 @@ public class AuthenticationKeyDataListenerTest {
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
         change_write = Mockito.mock(DataTreeModification.class);
-        mod_del = Mockito.mock(DataObjectModification.class);
-        mod_subtreeModified = Mockito.mock(DataObjectModification.class);
-        mod_write = Mockito.mock(DataObjectModification.class);
+        mod_del = Mockito.spy(DataObjectDeleted.class);
+        mod_subtreeModified = Mockito.spy(DataObjectModified.class);
+        mod_write = Mockito.spy(DataObjectWritten.class);
 
         Mockito.when(change_del.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_del.getRootNode()).thenReturn(mod_del);
@@ -91,10 +92,6 @@ public class AuthenticationKeyDataListenerTest {
         Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
         Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
-        Mockito.when(mod_del.modificationType()).thenReturn(DataObjectModification.ModificationType.DELETE);
-        Mockito.when(mod_subtreeModified.modificationType())
-                .thenReturn(DataObjectModification.ModificationType.SUBTREE_MODIFIED);
-        Mockito.when(mod_write.modificationType()).thenReturn(DataObjectModification.ModificationType.WRITE);
 
         Mockito.when(brokerMock.registerTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
                 Mockito.any(AuthenticationKeyDataListener.class))).thenReturn(registrationMock);
@@ -143,21 +140,6 @@ public class AuthenticationKeyDataListenerTest {
 
         authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_write));
         Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_3, MAPPING_AUTHKEY);
-    }
-
-    /**
-     * Tests {@link AuthenticationKeyDataListener#onDataTreeChanged} method with null mod type.
-     */
-    @Test
-    @SuppressWarnings("unchecked")
-    public void onDataTreeChangedTest_nullModType() {
-        final DataTreeModification<AuthenticationKey> change_nullModType = Mockito.mock(DataTreeModification.class);
-        final DataObjectModification mod_nullModType = Mockito.mock(DataObjectModification.class);
-        Mockito.when(change_nullModType.getRootNode()).thenReturn(mod_nullModType);
-        Mockito.when(mod_nullModType.modificationType()).thenReturn(null);
-
-        authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_nullModType));
-        Mockito.verifyNoInteractions(akdbMock);
     }
 
     /**
