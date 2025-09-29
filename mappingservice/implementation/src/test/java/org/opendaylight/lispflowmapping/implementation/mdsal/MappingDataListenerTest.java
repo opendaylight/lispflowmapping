@@ -22,8 +22,9 @@ import org.opendaylight.lispflowmapping.lisp.type.MappingData;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressStringifier;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataObjectModification;
-import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.mdsal.binding.api.DataObjectDeleted;
+import org.opendaylight.mdsal.binding.api.DataObjectModified;
+import org.opendaylight.mdsal.binding.api.DataObjectWritten;
 import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
@@ -49,9 +50,9 @@ public class MappingDataListenerTest {
     private static DataTreeModification<Mapping> change_del;
     private static DataTreeModification<Mapping> change_subtreeModified;
     private static DataTreeModification<Mapping> change_write;
-    private static DataObjectModification<Mapping> mod_del;
-    private static DataObjectModification<Mapping> mod_subtreeModified;
-    private static DataObjectModification<Mapping> mod_write;
+    private static DataObjectDeleted<Mapping> mod_del;
+    private static DataObjectModified<Mapping> mod_subtreeModified;
+    private static DataObjectWritten<Mapping> mod_write;
 
     private static MappingDataListener mappingDataListener;
 
@@ -70,7 +71,6 @@ public class MappingDataListenerTest {
     private static final Mapping MAPPING_EID_3_SB = getDefaultMapping(IPV4_EID_3, MappingOrigin.Southbound);
 
     @Before
-    @SuppressWarnings("unchecked")
     public void init() {
         final DataBroker dataBrokerMock = Mockito.mock(DataBroker.class);
         iMappingSystemMock = Mockito.mock(IMappingSystem.class);
@@ -87,9 +87,9 @@ public class MappingDataListenerTest {
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
         change_write = Mockito.mock(DataTreeModification.class);
-        mod_del = Mockito.mock(DataObjectModification.class);
-        mod_subtreeModified = Mockito.mock(DataObjectModification.class);
-        mod_write = Mockito.mock(DataObjectModification.class);
+        mod_del = Mockito.spy(DataObjectDeleted.class);
+        mod_subtreeModified = Mockito.spy(DataObjectModified.class);
+        mod_write = Mockito.spy(DataObjectWritten.class);
 
         Mockito.when(change_del.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_del.getRootNode()).thenReturn(mod_del);
@@ -97,9 +97,6 @@ public class MappingDataListenerTest {
         Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
         Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
-        Mockito.when(mod_del.modificationType()).thenReturn(ModificationType.DELETE);
-        Mockito.when(mod_subtreeModified.modificationType()).thenReturn(ModificationType.SUBTREE_MODIFIED);
-        Mockito.when(mod_write.modificationType()).thenReturn(ModificationType.WRITE);
         Mockito.when(iMappingSystemMock.isMaster()).thenReturn(true);
     }
 
@@ -220,26 +217,7 @@ public class MappingDataListenerTest {
         Mockito.verifyNoMoreInteractions(notificationPublishServiceMock);
     }
 
-    /**
-     * Tests {@link MappingDataListener#onDataTreeChanged} method with no modification type.
-     */
-    @Test
-    @SuppressWarnings("unchecked")
-    public void onDataTreeChangedTest_noModType() {
-        final DataTreeModification<Mapping> changeNoModType = Mockito.mock(DataTreeModification.class);
-        final DataObjectModification<Mapping> modNoType = Mockito.mock(DataObjectModification.class);
-        final List<DataTreeModification<Mapping>> changes = Lists.newArrayList(changeNoModType);
-
-        Mockito.when(changeNoModType.getRootNode()).thenReturn(modNoType);
-        Mockito.when(modNoType.modificationType()).thenReturn(null);
-
-        mappingDataListener.onDataTreeChanged(changes);
-
-        Mockito.verifyZeroInteractions(iMappingSystemMock);
-        Mockito.verifyZeroInteractions(notificationPublishServiceMock);
-    }
-
-    private static Mapping getDefaultMapping(Eid eid, MappingOrigin origin) {
+    private static Mapping getDefaultMapping(final Eid eid, final MappingOrigin origin) {
         final MappingRecord record = new MappingRecordBuilder().setEid(eid).build();
         return new MappingBuilder()
                 .withKey(new MappingKey(new EidUri(LispAddressStringifier.getURIString(eid)), origin))
