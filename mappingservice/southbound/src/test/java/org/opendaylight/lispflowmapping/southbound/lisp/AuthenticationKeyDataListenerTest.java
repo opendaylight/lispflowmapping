@@ -96,7 +96,7 @@ public class AuthenticationKeyDataListenerTest {
                 .thenReturn(DataObjectModification.ModificationType.SUBTREE_MODIFIED);
         Mockito.when(mod_write.modificationType()).thenReturn(DataObjectModification.ModificationType.WRITE);
 
-        Mockito.when(brokerMock.registerTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
+        Mockito.when(brokerMock.registerTreeChangeListener(Mockito.any(), Mockito.any(),
                 Mockito.any(AuthenticationKeyDataListener.class))).thenReturn(registrationMock);
         authenticationKeyDataListener = new AuthenticationKeyDataListener(brokerMock, akdbMock);
     }

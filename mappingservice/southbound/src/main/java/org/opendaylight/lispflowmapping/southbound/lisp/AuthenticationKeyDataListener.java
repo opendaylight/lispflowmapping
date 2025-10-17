@@ -16,7 +16,6 @@ import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectModification;
 import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
 import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
-import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
@@ -26,8 +25,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,19 +37,17 @@ import org.slf4j.LoggerFactory;
 public class AuthenticationKeyDataListener implements DataTreeChangeListener<AuthenticationKey> {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationKeyDataListener.class);
 
+    private final ConcurrentHashMap<Eid, Long> updatedEntries = new ConcurrentHashMap<>();
     private final AuthKeyDb akdb;
-    private final InstanceIdentifier<AuthenticationKey> path;
     private final Registration registration;
-    private final ConcurrentHashMap<Eid, Long> updatedEntries;
 
     public AuthenticationKeyDataListener(final DataBroker broker, final AuthKeyDb akdb) {
         this.akdb = akdb;
-        path = InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
-                .child(AuthenticationKey.class);
         LOG.trace("Registering AuthenticationKey listener.");
-        registration = broker.registerTreeChangeListener(
-            DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, path), this);
-        updatedEntries = new ConcurrentHashMap<>();
+        registration = broker.registerTreeChangeListener(LogicalDatastoreType.CONFIGURATION,
+            DataObjectReference.builder(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
+                .child(AuthenticationKey.class)
+                .build(), this);
     }
 
     public void closeDataChangeListener() {
