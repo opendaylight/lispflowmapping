@@ -13,7 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.lispflowmapping.mapcache.AuthKeyDb;
 import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectDeleted;
+import org.opendaylight.mdsal.binding.api.DataObjectModification.WithDataAfter;
 import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
@@ -55,15 +56,13 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
 
     @Override
     public synchronized void onDataTreeChanged(final List<DataTreeModification<AuthenticationKey>> changes) {
-        for (DataTreeModification<AuthenticationKey> change : changes) {
-            final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
-
-            switch (mod.modificationType()) {
-                case DELETE -> {
-                    final AuthenticationKey authKey = mod.dataBefore();
+        for (var change : changes) {
+            switch (change.getRootNode()) {
+                case DataObjectDeleted<AuthenticationKey> deleted -> {
+                    final AuthenticationKey authKey = deleted.dataBefore();
 
                     LOG.trace("Received deleted data");
-                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Key: {}", change.path());
                     LOG.trace("Value: {}", authKey);
 
                     final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
@@ -71,11 +70,11 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
                     akdb.removeAuthenticationKey(convertedAuthKey.getEid());
                     updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
                 }
-                case SUBTREE_MODIFIED, WRITE -> {
+                case WithDataAfter<AuthenticationKey> present -> {
                     // Process newly created or updated authentication keys
-                    final AuthenticationKey authKey = mod.dataAfter();
+                    final AuthenticationKey authKey = present.dataAfter();
 
-                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Key: {}", change.path());
                     LOG.trace("Value: {}", authKey);
 
                     final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
@@ -83,7 +82,6 @@ public class AuthenticationKeyDataListener implements DataTreeChangeListener<Aut
                     akdb.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
                     updatedEntries.put(convertedAuthKey.getEid(), System.currentTimeMillis());
                 }
-                default -> LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
