@@ -11,7 +11,8 @@ import java.util.List;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.util.LispAddressUtil;
 import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataObjectModification;
+import org.opendaylight.mdsal.binding.api.DataObjectDeleted;
+import org.opendaylight.mdsal.binding.api.DataObjectModification.WithDataAfter;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
@@ -43,33 +44,30 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
 
     @Override
     public void onDataTreeChanged(List<DataTreeModification<AuthenticationKey>> changes) {
-        for (DataTreeModification<AuthenticationKey> change : changes) {
-            final DataObjectModification<AuthenticationKey> mod = change.getRootNode();
-
-            switch (mod.modificationType()) {
-                case DELETE -> {
-                    final AuthenticationKey authKey = mod.dataBefore();
+        for (var change : changes) {
+            switch (change.getRootNode()) {
+                case DataObjectDeleted<AuthenticationKey> deleted -> {
+                    final AuthenticationKey authKey = deleted.dataBefore();
 
                     LOG.trace("Received deleted data");
-                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Key: {}", change.path());
                     LOG.trace("Value: {}", authKey);
 
                     final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                     mapSystem.removeAuthenticationKey(convertedAuthKey.getEid());
                 }
-                case SUBTREE_MODIFIED, WRITE -> {
+                case WithDataAfter<AuthenticationKey> present -> {
                     // Process newly created or updated authentication keys
-                    final AuthenticationKey authKey = mod.dataAfter();
+                    final AuthenticationKey authKey = present.dataAfter();
 
-                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Key: {}", change.path());
                     LOG.trace("Value: {}", authKey);
 
                     final AuthenticationKey convertedAuthKey = convertToBinaryIfNecessary(authKey);
 
                     mapSystem.addAuthenticationKey(convertedAuthKey.getEid(), convertedAuthKey.getMappingAuthkey());
                 }
-                default -> LOG.warn("Ignoring unhandled modification type {}", mod.modificationType());
             }
         }
     }
@@ -77,9 +75,9 @@ public class AuthenticationKeyDataListener extends AbstractDataListener<Authenti
     private static AuthenticationKey convertToBinaryIfNecessary(AuthenticationKey authKey) {
         Eid originalEid = authKey.getEid();
         if (LispAddressUtil.addressNeedsConversionToBinary(originalEid.getAddress())) {
-            AuthenticationKeyBuilder akb = new AuthenticationKeyBuilder(authKey);
-            akb.setEid(LispAddressUtil.convertToBinary(originalEid));
-            return akb.build();
+            return new AuthenticationKeyBuilder(authKey)
+                .setEid(LispAddressUtil.convertToBinary(originalEid))
+                .build();
         }
         return authKey;
     }

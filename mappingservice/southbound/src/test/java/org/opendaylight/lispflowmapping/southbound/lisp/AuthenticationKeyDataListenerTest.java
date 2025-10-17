@@ -23,18 +23,14 @@ import org.opendaylight.mdsal.binding.api.DataObjectModified;
 import org.opendaylight.mdsal.binding.api.DataObjectWritten;
 import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
-import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping.authkey.container.MappingAuthkeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.EidUri;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,12 +69,6 @@ public class AuthenticationKeyDataListenerTest {
 
     @Before
     public void init() {
-        final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier =
-            DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.builder(MappingDatabase.class)
-                .child(VirtualNetworkIdentifier.class)
-                .child(AuthenticationKey.class)
-                .build());
-
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
         change_write = Mockito.mock(DataTreeModification.class);
@@ -86,11 +76,8 @@ public class AuthenticationKeyDataListenerTest {
         mod_subtreeModified = Mockito.spy(DataObjectModified.class);
         mod_write = Mockito.spy(DataObjectWritten.class);
 
-        Mockito.when(change_del.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_del.getRootNode()).thenReturn(mod_del);
-        Mockito.when(change_subtreeModified.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
-        Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
         Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
 
         Mockito.when(brokerMock.registerTreeChangeListener(Mockito.any(DataTreeIdentifier.class),
