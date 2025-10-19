@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.opendaylight.lispflowmapping</groupId>
     <artifactId>mappingservice-parent</artifactId>
-    <version>1.21.1-SNAPSHOT</version>
+    <version>1.21.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>mappingservice.dsbackend</artifactId>
