@@ -1,19 +1,18 @@
 .miss {
-	background-color: red;
+    background-color: red;
 }
 .nrel {
-	background-color: gray;
+    background-color: gray;
 }
 .part {
-	background-color: yellow;
+    background-color: yellow;
 }
 .known {
-	background-color: cyan;
+    background-color: cyan;
 }
 .impl {
-	background-color: green;
+    background-color: green;
 }
 .arch {
-	background-color: blue;
+    background-color: blue;
 }
-

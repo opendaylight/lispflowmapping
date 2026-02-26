@@ -48,9 +48,9 @@ rloc-probing {
 }
 
 # Encapsulated Map-Requests are sent to this Map-Resolver
-# You can define several Map-Resolvers, seprated by comma. Encapsulated 
+# You can define several Map-Resolvers, seprated by comma. Encapsulated
 # Map-Request messages will be sent to only one.
-#   address: IPv4 or IPv6 address of the map-resolver  
+#   address: IPv4 or IPv6 address of the map-resolver
 
 map-resolver        = {
     192.168.16.11
