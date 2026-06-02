@@ -79,19 +79,19 @@ ifconfig odl 6.0.3.100/24
 ethtool --offload  odl rx off tx off
 
 sudo ${VPP_LITE_BIN} \
-  unix { log /tmp/vpp1.log cli-listen \
+  unix '{' log /tmp/vpp1.log cli-listen \
          localhost:5002 full-coredump \
-         exec ${VPP_LITE_CONF}/vpp1.config } \
-  api-trace { on } api-segment {prefix xtr1}
+         exec ${VPP_LITE_CONF}/vpp1.config '}' \
+  api-trace '{' on '}' api-segment '{' prefix xtr1 '}'
 
 sudo ${VPP_LITE_BIN} \
-  unix { log /tmp/vpp2.log cli-listen \
+  unix '{' log /tmp/vpp2.log cli-listen \
          localhost:5003 full-coredump \
-         exec ${VPP_LITE_CONF}/vpp2.config } \
-  api-trace { on } api-segment {prefix xtr2}
+         exec ${VPP_LITE_CONF}/vpp2.config '}' \
+  api-trace '{' on '}' api-segment '{' prefix xtr2 '}'
 
 sudo ${VPP_LITE_BIN} \
-  unix { log /tmp/rtr.log cli-listen \
+  unix '{' log /tmp/rtr.log cli-listen \
          localhost:5004 full-coredump \
-         exec ${VPP_LITE_CONF}/rtr.config } \
-  api-trace { on } api-segment {prefix rtr}
+         exec ${VPP_LITE_CONF}/rtr.config '}' \
+  api-trace '{' on '}' api-segment '{' prefix rtr '}'
