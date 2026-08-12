@@ -10,9 +10,9 @@ package org.opendaylight.lispflowmapping.lisp.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.Lists;
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Prefix;
@@ -55,8 +55,7 @@ public class MapRequestUtilTest {
     public void selectItrRlocTest_Ipv4() {
         final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS)
                 .build()).setItrRlocId("foo");
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build()))
-                .build();
+        final MapRequest request = new MapRequestBuilder().setItrRloc(List.of(itrRloc.build())).build();
 
         // expected result
         InetAddress expectedResult = InetAddresses.forString(IPV4_STRING);
@@ -73,7 +72,7 @@ public class MapRequestUtilTest {
     public void selectItrRlocTest_Ipv6() {
         final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setRloc(new RlocBuilder().setAddress(IPV6_ADDRESS).build())
                 .setItrRlocId("foo");
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
+        final MapRequest request = new MapRequestBuilder().setItrRloc(List.of(itrRloc.build())).build();
 
         // expected result
         InetAddress expectedResult = InetAddresses.forString(IPV6_STRING);
@@ -90,7 +89,7 @@ public class MapRequestUtilTest {
     public void selectItrRlocTest_Ipv4Binary() {
         final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS_BINARY).build());
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
+        final MapRequest request = new MapRequestBuilder().setItrRloc(List.of(itrRloc.build())).build();
 
         // expected result
         InetAddress expectedResult = InetAddresses.forString(IPV4_STRING);
@@ -107,7 +106,7 @@ public class MapRequestUtilTest {
     public void selectItrRlocTest_Ipv6Binary() {
         final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV6_ADDRESS_BINARY).build());
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
+        final MapRequest request = new MapRequestBuilder().setItrRloc(List.of(itrRloc.build())).build();
 
         // expected result
         InetAddress expectedResult = InetAddresses.forString(IPV6_STRING);
@@ -124,7 +123,7 @@ public class MapRequestUtilTest {
     public void selectItrRlocTest_Ipv4Prefix() {
         final ItrRlocBuilder itrRloc = new ItrRlocBuilder().setItrRlocId("foo")
                 .setRloc(new RlocBuilder().setAddress(IPV4_ADDRESS_PREFIX).build());
-        final MapRequest request = new MapRequestBuilder().setItrRloc(Lists.newArrayList(itrRloc.build())).build();
+        final MapRequest request = new MapRequestBuilder().setItrRloc(List.of(itrRloc.build())).build();
 
         assertNull(MapRequestUtil.selectItrRloc(request));
     }

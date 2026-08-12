@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.util.concurrent.FluentFuture;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.bind.DatatypeConverter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -161,7 +161,7 @@ public class DataStoreBackEndTest {
         XtrIdMappingKey xtrIdResult = iidCaptorXtrIdMapping.getValue().firstKeyOf(XtrIdMapping.class);
         MappingKey mappingResult = iidCaptorXtrIdMapping.getValue().firstKeyOf(Mapping.class);
 
-        assertEquals(DatatypeConverter.printHexBinary(XTR_ID), xtrIdResult.getXtrIdUri().getValue());
+        assertEquals(HexFormat.of().withUpperCase().formatHex(XTR_ID), xtrIdResult.getXtrIdUri().getValue());
         assertEquals(MappingOrigin.Southbound, mappingResult.getOrigin());
         assertEquals("ipv4:" + IPV4_STRING_1, mappingResult.getEidUri().getValue());
     }
@@ -217,7 +217,7 @@ public class DataStoreBackEndTest {
         XtrIdMappingKey xtrIdResult = iidCaptorXtrIdMapping.getValue().firstKeyOf(XtrIdMapping.class);
         MappingKey mappingResult = iidCaptorXtrIdMapping.getValue().firstKeyOf(Mapping.class);
 
-        assertEquals(DatatypeConverter.printHexBinary(XTR_ID), xtrIdResult.getXtrIdUri().getValue());
+        assertEquals(HexFormat.of().withUpperCase().formatHex(XTR_ID), xtrIdResult.getXtrIdUri().getValue());
         assertEquals(MappingOrigin.Southbound, mappingResult.getOrigin());
         assertEquals("ipv4:" + IPV4_STRING_1, mappingResult.getEidUri().getValue());
     }

@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -225,7 +224,7 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc = null
-        List<ItrRloc> itrRlocList = Lists.newArrayList(
+        List<ItrRloc> itrRlocList = List.of(
                 newItrRloc(MacAfi.VALUE, null),
                 newItrRloc(Ipv4BinaryAfi.VALUE, IPV4_ADDRESS));
 
@@ -237,7 +236,7 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address = itrRloc address
-        itrRlocList = Lists.newArrayList(
+        itrRlocList = List.of(
                 newItrRloc(MacAfi.VALUE, null),
                 newItrRloc(Ipv4BinaryAfi.VALUE, IPV4_ADDRESS));
 
@@ -252,7 +251,7 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv4)
-        itrRlocList = Lists.newArrayList(
+        itrRlocList = List.of(
                 newItrRloc(MacAfi.VALUE, null),
                 newItrRloc(Ipv6Afi.VALUE, IPV6_ADDRESS),
                 newItrRloc(Ipv4Afi.VALUE, IPV4_ADDRESS));
@@ -268,7 +267,7 @@ public class MapResolverTest {
 
         // ----------------------
         // with sourceRloc address Afi = itrRloc address Afi (for Ipv6)
-        itrRlocList = Lists.newArrayList(
+        itrRlocList = List.of(
                 newItrRloc(MacAfi.VALUE, null),
                 newItrRloc(Ipv6Afi.VALUE, IPV6_ADDRESS),
                 newItrRloc(Ipv4Afi.VALUE, IPV4_ADDRESS));
@@ -285,7 +284,7 @@ public class MapResolverTest {
         // ----------------------
         // with no common ip address nor Afi
         final Mac mac = new MacBuilder().setMac(new MacAddress("aa:bb:cc:dd:ee:ff")).build();
-        itrRlocList = Lists.newArrayList(
+        itrRlocList = List.of(
                 newItrRloc(MacAfi.VALUE, mac),
                 newItrRloc(NoAddressAfi.VALUE, Mockito.mock(NoAddress.class)));
 
@@ -499,7 +498,7 @@ public class MapResolverTest {
         Mockito.verify(lispMappingServiceMock).handleMapReply(mapReplyBuilder.build());
     }
 
-    private static ItrRloc newItrRloc(LispAddressFamily clazz, Address address) {
+    private static ItrRloc newItrRloc(final LispAddressFamily clazz, final Address address) {
         return new ItrRlocBuilder().setRloc(new RlocBuilder()
                 .setAddress(address)
                 .setAddressType(clazz).build()).build();

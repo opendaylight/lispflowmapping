@@ -10,10 +10,10 @@ package org.opendaylight.lispflowmapping.implementation.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.Lists;
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.lispflowmapping.lisp.type.LispMessage;
@@ -240,7 +240,7 @@ public class LispNotificationHelperTest {
                 .setOrigin(MappingOrigin.Southbound)
                 .setSiteId(Set.of(SITE_ID));
 
-        assertEquals(Lists.newArrayList(mappingBuilder_1.build(), mappingBuilder_2.build()),
+        assertEquals(List.of(mappingBuilder_1.build(), mappingBuilder_2.build()),
                 LispNotificationHelper.getMapping(getDefaultAddMapping(true)));
     }
 
@@ -259,7 +259,7 @@ public class LispNotificationHelperTest {
                 .setEidUri(new EidUri("ipv6:" + IPV6_STRING))
                 .setOrigin(MappingOrigin.Southbound);
 
-        assertEquals(Lists.newArrayList(mappingBuilder_1.build(), mappingBuilder_2.build()),
+        assertEquals(List.of(mappingBuilder_1.build(), mappingBuilder_2.build()),
                 LispNotificationHelper.getMapping(getDefaultAddMapping(false)));
     }
 
@@ -308,7 +308,7 @@ public class LispNotificationHelperTest {
                 .setMappingRecord(new MappingRecordBuilder().setEid(EID_IPV6).build()).build();
 
         final MapRegisterBuilder mapRegisterBuilder = new MapRegisterBuilder()
-                .setMappingRecordItem(Lists.newArrayList(mappingRecordItem_1, mappingRecordItem_2))
+                .setMappingRecordItem(List.of(mappingRecordItem_1, mappingRecordItem_2))
                 .setXtrSiteIdPresent(isXtrSiteIdPresent)
                 .setSiteId(SITE_ID);
 

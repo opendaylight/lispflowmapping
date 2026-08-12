@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
@@ -210,7 +210,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_multipleLocatorRecords() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         // set two locators
                         getDefaultLocatorRecordBuilder().build(),
                         getDefaultLocatorRecordBuilder().build())).build();
@@ -227,7 +227,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleIpv4LocatorRecord() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         // Ipv4 type Rloc
                         getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
@@ -243,7 +243,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleELPLocatorRecord_IndexOutOfBounds() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
@@ -260,7 +260,7 @@ public class MappingSystemTest {
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_singleELPLocatorRecord()
             throws UnknownHostException {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getELPTypeRloc()).build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
@@ -279,7 +279,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst_withServicePathDestinationAddress_IpPrefixLocatorRecord() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         getDefaultLocatorRecordBuilder()
                                 .setRloc(getIpPrefixTypeRloc()).build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
@@ -294,7 +294,7 @@ public class MappingSystemTest {
     @Test
     public void getMappingTest_NbFirst() {
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
         Mockito.when(pmcMock.getMapping(EID_IPV4_SRC, EID_IPV4_DST)).thenReturn(mappingData);
@@ -323,7 +323,7 @@ public class MappingSystemTest {
             IllegalAccessException {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         // Ipv4 type Rloc
                         getDefaultLocatorRecordBuilder().build())).build();
         final MappingData mappingData = getDefaultMappingData(mappingRecord);
@@ -342,7 +342,7 @@ public class MappingSystemTest {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         // Ipv4 type Rloc
                         getDefaultLocatorRecordBuilder().build())).build();
         MappingData nbMappingData = getDefaultMappingData(mappingRecord);
@@ -372,7 +372,7 @@ public class MappingSystemTest {
         setLookupPolicy(IMappingService.LookupPolicy.NB_AND_SB);
 
         final MappingRecord mappingRecord = getDefaultMappingRecordBuilder()
-                .setLocatorRecord(Lists.newArrayList(
+                .setLocatorRecord(List.of(
                         getDefaultLocatorRecordBuilder().build())).build();
         final MappingData nbMappingData = getDefaultMappingData(mappingRecord);
         final MappingData sbMappingData = getDefaultMappingData(mappingRecord);
@@ -483,8 +483,8 @@ public class MappingSystemTest {
                 .setMappingAuthkey(mappingAuthkey_2)
                 .setEid(EID_IPV4_2).build();
 
-        final List<Mapping> mappings = Lists.newArrayList(mapping_1, mapping_2);
-        final List<AuthenticationKey> authenticationKeys = Lists.newArrayList(authenticationKey_1, authenticationKey_2);
+        final List<Mapping> mappings = new ArrayList<>(Arrays.asList(mapping_1, mapping_2));
+        final List<AuthenticationKey> authenticationKeys = List.of(authenticationKey_1, authenticationKey_2);
 
         Mockito.when(dsbeMock.getLastUpdateTimestamp()).thenReturn(System.currentTimeMillis());
         Mockito.when(dsbeMock.getAllMappings(LogicalDatastoreType.CONFIGURATION)).thenReturn(mappings);
@@ -617,7 +617,7 @@ public class MappingSystemTest {
         final ExplicitLocatorPath explicitLocatorPath = new ExplicitLocatorPathBuilder().setExplicitLocatorPath(new org
                 .opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.lisp.address.types.rev151105.lisp.address
                 .address.explicit.locator.path.ExplicitLocatorPathBuilder()
-                .setHop(Lists.newArrayList(HOP_1, HOP_2, HOP_3)).build()).build();
+                .setHop(List.of(HOP_1, HOP_2, HOP_3)).build()).build();
 
         return new RlocBuilder()
                 .setAddress(explicitLocatorPath)
