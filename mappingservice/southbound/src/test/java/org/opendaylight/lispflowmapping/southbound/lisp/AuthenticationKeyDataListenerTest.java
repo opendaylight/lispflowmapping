@@ -7,7 +7,7 @@
  */
 package org.opendaylight.lispflowmapping.southbound.lisp;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,7 +91,7 @@ public class AuthenticationKeyDataListenerTest {
     public void onDataTreeChangedTest_delete_BinaryEid() {
         Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_1);
 
-        authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_del));
         Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_BINARY_EID_1);
     }
 
@@ -102,7 +102,7 @@ public class AuthenticationKeyDataListenerTest {
     public void onDataTreeChangedTest_delete_Ipv4PrefixEid() {
         Mockito.when(mod_del.dataBefore()).thenReturn(AUTHENTICATION_KEY_PREFIX);
 
-        authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_del));
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_del));
         Mockito.verify(akdbMock).removeAuthenticationKey(IPV4_PREFIX_BINARY_EID);
     }
 
@@ -113,7 +113,7 @@ public class AuthenticationKeyDataListenerTest {
     public void onDataTreeChangedTest_subtreeModified() {
         Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(AUTHENTICATION_KEY_2);
 
-        authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_subtreeModified));
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_subtreeModified));
         Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_2, MAPPING_AUTHKEY);
     }
 
@@ -124,7 +124,7 @@ public class AuthenticationKeyDataListenerTest {
     public void onDataTreeChangedTest_write() {
         Mockito.when(mod_write.dataAfter()).thenReturn(AUTHENTICATION_KEY_3);
 
-        authenticationKeyDataListener.onDataTreeChanged(Lists.newArrayList(change_write));
+        authenticationKeyDataListener.onDataTreeChanged(List.of(change_write));
         Mockito.verify(akdbMock).addAuthenticationKey(IPV4_BINARY_EID_3, MAPPING_AUTHKEY);
     }
 
