@@ -9,7 +9,7 @@ package org.opendaylight.lispflowmapping.southbound;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.junit.Test;
@@ -266,17 +266,17 @@ public class LispSouthboundRpcTest {
 
     private static MapNotifyBuilder getDefaultMapNotifyBuilder() {
         return new MapNotifyBuilder()
-                .setMappingRecordItem(Lists.newArrayList(getDefaultMappingRecordItem()));
+                .setMappingRecordItem(List.of(getDefaultMappingRecordItem()));
     }
 
     private static MapReplyBuilder getDefaultMapReplyBuilder() {
         return new MapReplyBuilder()
-                .setMappingRecordItem(Lists.newArrayList(getDefaultMappingRecordItem()));
+                .setMappingRecordItem(List.of(getDefaultMappingRecordItem()));
     }
 
     private static MapRegisterBuilder getDefaultMapRegisterBuilder() {
         return new MapRegisterBuilder()
-                .setMappingRecordItem(Lists.newArrayList(getDefaultMappingRecordItem()));
+                .setMappingRecordItem(List.of(getDefaultMappingRecordItem()));
     }
 
     private static void incrementAll(final ConcurrentLispSouthboundStats stats) {

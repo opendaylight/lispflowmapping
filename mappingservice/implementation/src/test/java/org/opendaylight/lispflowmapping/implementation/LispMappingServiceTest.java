@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.implementation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -286,7 +285,7 @@ public class LispMappingServiceTest {
         final Rloc subscriber = LispAddressUtil.asIpv4Rloc(IPV4_STRING_1);
 
         Mockito.when(mapRequest.getSourceEid()).thenReturn(new SourceEidBuilder().setEid(IPV4_SOURCE_EID).build());
-        Mockito.when(mapRequest.getEidItem()).thenReturn(Lists.newArrayList(EID_ITEM_BUILDER.build()));
+        Mockito.when(mapRequest.getEidItem()).thenReturn(List.of(EID_ITEM_BUILDER.build()));
 
         // result
         final SendMapRequestInputBuilder smrib = new SendMapRequestInputBuilder()
@@ -394,12 +393,12 @@ public class LispMappingServiceTest {
 
     private static Pair<MapNotify, List<TransportAddress>> getDefaultMapNotifyPair() {
         final MapNotify mapNotify = new MapNotifyBuilder().setKeyId((short) 1).build();
-        return new MutablePair<>(mapNotify, Lists.newArrayList(TRANSPORT_ADDRESS_1, TRANSPORT_ADDRESS_2));
+        return new MutablePair<>(mapNotify, List.of(TRANSPORT_ADDRESS_1, TRANSPORT_ADDRESS_2));
     }
 
     private static Pair<MapRequest, TransportAddress> getDefaultMapRequestPair() {
         final MapRequestBuilder mapRequestBuilder = new MapRequestBuilder()
-                .setEidItem(Lists.newArrayList(EID_ITEM_BUILDER.build()));
+                .setEidItem(List.of(EID_ITEM_BUILDER.build()));
 
         return new ImmutablePair<>(mapRequestBuilder.build(), TRANSPORT_ADDRESS_1);
     }

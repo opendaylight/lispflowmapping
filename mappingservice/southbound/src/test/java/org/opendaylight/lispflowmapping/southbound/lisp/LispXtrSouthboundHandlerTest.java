@@ -10,7 +10,6 @@ package org.opendaylight.lispflowmapping.southbound.lisp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
@@ -18,6 +17,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -206,8 +206,7 @@ public class LispXtrSouthboundHandlerTest {
             }
         }
 
-        byte[] result = Arrays.copyOfRange(buffer.array(),
-                headerLength, headerLength + lispPacketLength);
+        byte[] result = Arrays.copyOfRange(buffer.array(), headerLength, headerLength + lispPacketLength);
         final InetAddress inetAddress = null;
         final InetSocketAddress recipient = new InetSocketAddress(PORT);
         final InetSocketAddress sender = new InetSocketAddress(inetAddress, PORT);
@@ -230,8 +229,8 @@ public class LispXtrSouthboundHandlerTest {
                 .setEid(eid).build();
 
         return new MapRequestBuilder()
-                .setItrRloc(Lists.newArrayList(itrRloc))
-                .setEidItem(Lists.newArrayList(eidItem))
+                .setItrRloc(List.of(itrRloc))
+                .setEidItem(List.of(eidItem))
                 .setNonce(NONCE)
                 .setSourceEid(new SourceEidBuilder().setEid(LispAddressUtil.asIpv4Eid(IPV4_STRING_1)).build())
                 .setAuthoritative(false)

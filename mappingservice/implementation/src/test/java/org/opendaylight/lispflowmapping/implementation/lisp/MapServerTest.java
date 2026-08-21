@@ -10,8 +10,6 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -151,9 +149,9 @@ public class MapServerTest {
             .setRloc(RLOC_2).build();
 
     private static final MappingRecord OLD_MAPPING_RECORD_1 = getDefaultMappingRecordBuilder()
-            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_1)).build();
+            .setLocatorRecord(List.of(LOCATOR_RECORD_1)).build();
     private static final MappingRecord OLD_MAPPING_RECORD_2 = getDefaultMappingRecordBuilder()
-            .setLocatorRecord(Lists.newArrayList(LOCATOR_RECORD_2)).build();
+            .setLocatorRecord(List.of(LOCATOR_RECORD_2)).build();
     private static final MappingData OLD_MAPPING_DATA_1 = new MappingData(OLD_MAPPING_RECORD_1);
     private static final MappingData OLD_MAPPING_DATA_2 = new MappingData(OLD_MAPPING_RECORD_2);
 
@@ -237,7 +235,7 @@ public class MapServerTest {
         Mockito.when(subscriber1.timedOut()).thenReturn(true);
         Mockito.when(subscriber1.toString()).thenReturn("sub1");
 
-        final Set<Subscriber> set1 = Sets.newHashSet(subscriber1);
+        final Set<Subscriber> set1 = Set.of(subscriber1);
 
         Mockito.when(mapService.getAuthenticationKey(IPV4_PREFIX_EID_1)).thenReturn(MAPPING_AUTHKEY);
         Mockito.when(mapService.getData(MappingOrigin.Southbound, IPV4_PREFIX_EID_1, SubKeys.SRC_RLOCS))
@@ -374,7 +372,7 @@ public class MapServerTest {
         return getDefaultMappingRecordItemBuilder(IPV4_EID_1);
     }
 
-    private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(Eid eid) {
+    private static MappingRecordItemBuilder getDefaultMappingRecordItemBuilder(final Eid eid) {
         return new MappingRecordItemBuilder()
                 .setMappingRecordItemId("mapping-record-item-id")
                 .withKey(new MappingRecordItemKey("mapping-record-item-key"))
@@ -385,7 +383,7 @@ public class MapServerTest {
         return getDefaultMappingRecordBuilder(IPV4_EID_1);
     }
 
-    private static MappingRecordBuilder getDefaultMappingRecordBuilder(Eid eid) {
+    private static MappingRecordBuilder getDefaultMappingRecordBuilder(final Eid eid) {
         return new MappingRecordBuilder()
                 .setAction(MappingRecord.Action.NoAction)
                 .setAuthoritative(false)
@@ -395,7 +393,7 @@ public class MapServerTest {
                 .setEid(eid);
     }
 
-    private static MapNotifyBuilder getDefaultMapNotifyBuilder(MapRegister mr) {
+    private static MapNotifyBuilder getDefaultMapNotifyBuilder(final MapRegister mr) {
         final MapNotifyBuilder mapNotifyBuilder = new MapNotifyBuilder()
                 .setXtrSiteIdPresent(mr.getXtrSiteIdPresent())
                 .setSiteId(mr.getSiteId())
@@ -410,7 +408,7 @@ public class MapServerTest {
         return mapNotifyBuilder;
     }
 
-    private static Set<IpAddressBinary> getDefaultIpAddressSet() {
+    private static ImmutableSet<IpAddressBinary> getDefaultIpAddressSet() {
         return ImmutableSet.of(IPV4_BINARY_1, IPV4_BINARY_2);
     }
 
@@ -423,10 +421,6 @@ public class MapServerTest {
                 .setIpAddress(IPV4_BINARY_2)
                 .setPort(new PortNumber(LispMessage.PORT_NUMBER));
 
-        final List<TransportAddress> transportAddressList = Lists.newArrayList(
-                transportAddressBuilder1.build(),
-                transportAddressBuilder2.build());
-
-        return transportAddressList;
+        return List.of(transportAddressBuilder1.build(), transportAddressBuilder2.build());
     }
 }
