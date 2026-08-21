@@ -9,6 +9,7 @@ package org.opendaylight.lispflowmapping.implementation.lisp;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -414,8 +415,8 @@ public class MapServerTest {
         mappingMergeField.setBoolean(CONFIG_INI, value);
     }
 
-    private static Set<IpAddressBinary> getDefaultIpAddressSet() {
-        return Set.of(IPV4_BINARY_1, IPV4_BINARY_2);
+    private static ImmutableSet<IpAddressBinary> getDefaultIpAddressSet() {
+        return ImmutableSet.of(IPV4_BINARY_1, IPV4_BINARY_2);
     }
 
     private static List<TransportAddress> getTransportAddressList() {
