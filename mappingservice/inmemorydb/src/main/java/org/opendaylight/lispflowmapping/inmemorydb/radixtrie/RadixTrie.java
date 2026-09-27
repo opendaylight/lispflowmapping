@@ -78,6 +78,7 @@ public class RadixTrie<T> {
 
     /**
      * Test bit in byte. Assumes bits are numbered from 0 to 7
+     *
      * @param byteArg byte
      * @param bitPosition the position to be tested
      * @return 1 if bit at position is 1, 0 otherwise.
