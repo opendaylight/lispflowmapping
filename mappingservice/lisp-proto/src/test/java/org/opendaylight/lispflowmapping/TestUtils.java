@@ -28,10 +28,10 @@ public final class TestUtils {
     }
 
     public static void assertHexEquals(short expected, short actual) {
-        assertEquals(String.format("0x%04X", expected), String.format("0x%04X", actual));
+        assertEquals("0x%04X".formatted(expected), "0x%04X".formatted(actual));
     }
 
     public static void assertHexEquals(byte expected, byte actual) {
-        assertEquals(String.format("0x%02X", expected), String.format("0x%02X", actual));
+        assertEquals("0x%02X".formatted(expected), "0x%02X".formatted(actual));
     }
 }

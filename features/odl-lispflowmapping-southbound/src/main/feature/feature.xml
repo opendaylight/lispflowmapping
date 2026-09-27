@@ -10,6 +10,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     <feature name="odl-lispflowmapping-southbound">
         <feature version="[14,15)">odl-netty-4</feature>
         <feature version="[13,14)">odl-mdsal-broker</feature>
-        <feature version="[11,12)">odl-restconf</feature>
+        <feature version="[11,12)">odl-restconf-nb</feature>
     </feature>
 </features>
