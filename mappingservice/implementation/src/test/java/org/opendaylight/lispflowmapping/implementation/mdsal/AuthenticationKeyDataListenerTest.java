@@ -28,7 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.AuthenticationKeyKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.yang.common.Uint16;
 
 public class AuthenticationKeyDataListenerTest {
@@ -61,8 +61,8 @@ public class AuthenticationKeyDataListenerTest {
 
         final DataTreeIdentifier<AuthenticationKey> dataTreeIdentifier = DataTreeIdentifier.of(
             LogicalDatastoreType.CONFIGURATION,
-            InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
-                .child(AuthenticationKey.class));
+            DataObjectReference.builder(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
+                .child(AuthenticationKey.class).build());
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);

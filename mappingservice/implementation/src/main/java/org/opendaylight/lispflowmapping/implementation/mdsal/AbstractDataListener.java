@@ -9,11 +9,10 @@ package org.opendaylight.lispflowmapping.implementation.mdsal;
 
 import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
-import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * The superclass for the different MD-SAL data change event listeners.
@@ -21,15 +20,13 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  */
 public abstract class AbstractDataListener<T extends DataObject> implements DataTreeChangeListener<T> {
     private DataBroker broker;
-    private InstanceIdentifier<T> path;
+    private DataObjectReference<T> path;
     private Registration configRegistration;
     private Registration operRegistration;
 
     void registerDataChangeListener() {
-        configRegistration = broker.registerTreeChangeListener(
-            DataTreeIdentifier.of(LogicalDatastoreType.CONFIGURATION, path), this);
-        operRegistration = broker.registerTreeChangeListener(
-            DataTreeIdentifier.of(LogicalDatastoreType.OPERATIONAL, path), this);
+        configRegistration = broker.registerTreeChangeListener(LogicalDatastoreType.CONFIGURATION, path, this);
+        operRegistration = broker.registerTreeChangeListener(LogicalDatastoreType.OPERATIONAL, path, this);
     }
 
     public void closeDataChangeListener() {
@@ -41,7 +38,7 @@ public abstract class AbstractDataListener<T extends DataObject> implements Data
         this.broker = broker;
     }
 
-    void setPath(InstanceIdentifier<T> path) {
+    void setPath(DataObjectReference<T> path) {
         this.path = path;
     }
 }

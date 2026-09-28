@@ -27,7 +27,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +48,10 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
         setBroker(broker);
         setMappingSystem(msmr);
         setNotificationProviderService(nps);
-        setPath(InstanceIdentifier.create(MappingDatabase.class).child(VirtualNetworkIdentifier.class)
-                .child(Mapping.class));
+        setPath(DataObjectReference.builder(MappingDatabase.class)
+            .child(VirtualNetworkIdentifier.class)
+            .child(Mapping.class)
+            .build());
         LOG.trace("Registering Mapping listener.");
         registerDataChangeListener();
     }
@@ -80,7 +82,7 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
                     }
 
                     LOG.trace("Received deleted data");
-                    LOG.trace("Key: {}", change.getRootPath().path());
+                    LOG.trace("Key: {}", change.path());
                     LOG.trace("Value: {}", mapping);
 
                     final Mapping convertedMapping = convertToBinaryIfNecessary(mapping);
@@ -102,13 +104,13 @@ public class MappingDataListener extends AbstractDataListener<Mapping> {
 
                     if (ModificationType.SUBTREE_MODIFIED == mod.modificationType()) {
                         LOG.trace("Received update data");
-                        LOG.trace("Key: {}", change.getRootPath().path());
+                        LOG.trace("Key: {}", change.path());
                         LOG.trace("Value: {}", mapping);
                         mapSystem.updateMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
                     } else {
                         LOG.trace("Received write data");
-                        LOG.trace("Key: {}", change.getRootPath().path());
+                        LOG.trace("Key: {}", change.path());
                         LOG.trace("Value: {}", mapping);
                         mapSystem.addMapping(convertedMapping.getOrigin(), convertedEid,
                             new MappingData(convertedMapping.getMappingRecord()));
