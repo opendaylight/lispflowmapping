@@ -40,7 +40,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 public class MappingDataListenerTest {
     private static IMappingSystem iMappingSystemMock;
@@ -79,9 +79,10 @@ public class MappingDataListenerTest {
 
         final DataTreeIdentifier<Mapping> dataTreeIdentifier = DataTreeIdentifier.of(
             LogicalDatastoreType.CONFIGURATION,
-            InstanceIdentifier.create(MappingDatabase.class)
+            DataObjectReference.builder(MappingDatabase.class)
                 .child(VirtualNetworkIdentifier.class)
-                .child(Mapping.class));
+                .child(Mapping.class)
+                .build());
 
         change_del = Mockito.mock(DataTreeModification.class);
         change_subtreeModified = Mockito.mock(DataTreeModification.class);
