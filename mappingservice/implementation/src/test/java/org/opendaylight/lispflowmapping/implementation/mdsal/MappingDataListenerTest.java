@@ -7,14 +7,20 @@
  */
 package org.opendaylight.lispflowmapping.implementation.mdsal;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.opendaylight.lispflowmapping.implementation.util.MSNotificationInputUtil;
 import org.opendaylight.lispflowmapping.interfaces.mapcache.IMappingSystem;
 import org.opendaylight.lispflowmapping.lisp.type.MappingData;
@@ -24,10 +30,8 @@ import org.opendaylight.mdsal.binding.api.DataBroker;
 import org.opendaylight.mdsal.binding.api.DataObjectDeleted;
 import org.opendaylight.mdsal.binding.api.DataObjectModified;
 import org.opendaylight.mdsal.binding.api.DataObjectWritten;
-import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
 import org.opendaylight.mdsal.binding.api.DataTreeModification;
 import org.opendaylight.mdsal.binding.api.NotificationPublishService;
-import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.eid.container.Eid;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecord;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.lisp.proto.rev151105.mapping._record.container.MappingRecordBuilder;
@@ -36,25 +40,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev15090
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingDatabase;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.MappingOrigin;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.VniUri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.Mapping;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.db.instance.MappingKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifier;
-import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.lfm.mappingservice.rev150906.mapping.database.VirtualNetworkIdentifierKey;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
 public class MappingDataListenerTest {
-    private static IMappingSystem iMappingSystemMock;
-    private static NotificationPublishService notificationPublishServiceMock;
-
-    private static DataTreeModification<Mapping> change_del;
-    private static DataTreeModification<Mapping> change_subtreeModified;
-    private static DataTreeModification<Mapping> change_write;
-    private static DataObjectDeleted<Mapping> mod_del;
-    private static DataObjectModified<Mapping> mod_subtreeModified;
-    private static DataObjectWritten<Mapping> mod_write;
-
-    private static MappingDataListener mappingDataListener;
-
+    private static final VirtualNetworkIdentifierKey VNI_KEY = new VirtualNetworkIdentifierKey(new VniUri("urn:foo"));
     private static final String IPV4_STRING_1 = "192.168.0.1";
     private static final String IPV4_STRING_2 = "192.168.0.2";
     private static final String IPV4_STRING_3 = "192.168.0.3";
@@ -69,35 +64,49 @@ public class MappingDataListenerTest {
     private static final Mapping MAPPING_EID_3_NB = getDefaultMapping(IPV4_EID_3, MappingOrigin.Northbound);
     private static final Mapping MAPPING_EID_3_SB = getDefaultMapping(IPV4_EID_3, MappingOrigin.Southbound);
 
+    private IMappingSystem mappingSystemMock;
+    private NotificationPublishService notificationPublishServiceMock;
+
+    private DataTreeModification<Mapping> changeDel;
+    private DataTreeModification<Mapping> changeSubtreeModified;
+    private DataTreeModification<Mapping> changeWrite;
+    private DataObjectDeleted<Mapping> modDel;
+    private DataObjectModified<Mapping> modSubtreeModified;
+    private DataObjectWritten<Mapping> modWrite;
+
+    private MappingDataListener mappingDataListener;
+
     @Before
     public void init() {
-        final DataBroker dataBrokerMock = Mockito.mock(DataBroker.class);
-        iMappingSystemMock = Mockito.mock(IMappingSystem.class);
-        notificationPublishServiceMock = Mockito.mock(NotificationPublishService .class);
+        final DataBroker dataBrokerMock = mock(DataBroker.class);
+        mappingSystemMock = mock(IMappingSystem.class);
+        notificationPublishServiceMock = mock(NotificationPublishService .class);
         mappingDataListener =
-                new MappingDataListener(dataBrokerMock, iMappingSystemMock, notificationPublishServiceMock);
+                new MappingDataListener(dataBrokerMock, mappingSystemMock, notificationPublishServiceMock);
 
-        final DataTreeIdentifier<Mapping> dataTreeIdentifier = DataTreeIdentifier.of(
-            LogicalDatastoreType.CONFIGURATION,
-            DataObjectReference.builder(MappingDatabase.class)
-                .child(VirtualNetworkIdentifier.class)
-                .child(Mapping.class)
-                .build());
+        changeDel = mock(DataTreeModification.class);
+        changeSubtreeModified = mock(DataTreeModification.class);
+        changeWrite = mock(DataTreeModification.class);
+        modDel = spy(DataObjectDeleted.class);
+        modSubtreeModified = spy(DataObjectModified.class);
+        modWrite = spy(DataObjectWritten.class);
 
-        change_del = Mockito.mock(DataTreeModification.class);
-        change_subtreeModified = Mockito.mock(DataTreeModification.class);
-        change_write = Mockito.mock(DataTreeModification.class);
-        mod_del = Mockito.spy(DataObjectDeleted.class);
-        mod_subtreeModified = Mockito.spy(DataObjectModified.class);
-        mod_write = Mockito.spy(DataObjectWritten.class);
-
-        Mockito.when(change_del.getRootPath()).thenReturn(dataTreeIdentifier);
-        Mockito.when(change_del.getRootNode()).thenReturn(mod_del);
-        Mockito.when(change_subtreeModified.getRootPath()).thenReturn(dataTreeIdentifier);
-        Mockito.when(change_subtreeModified.getRootNode()).thenReturn(mod_subtreeModified);
-        Mockito.when(change_write.getRootPath()).thenReturn(dataTreeIdentifier);
-        Mockito.when(change_write.getRootNode()).thenReturn(mod_write);
-        Mockito.when(iMappingSystemMock.isMaster()).thenReturn(true);
+        when(changeDel.path()).thenReturn(DataObjectIdentifier.builder(MappingDatabase.class)
+            .child(VirtualNetworkIdentifier.class, VNI_KEY)
+            .child(Mapping.class, MAPPING_EID_1_NB.key())
+            .build());
+        when(changeDel.getRootNode()).thenReturn(modDel);
+        when(changeSubtreeModified.path()).thenReturn(DataObjectIdentifier.builder(MappingDatabase.class)
+            .child(VirtualNetworkIdentifier.class, VNI_KEY)
+            .child(Mapping.class, MAPPING_EID_2_NB.key())
+            .build());
+        when(changeSubtreeModified.getRootNode()).thenReturn(modSubtreeModified);
+        when(changeWrite.path()).thenReturn(DataObjectIdentifier.builder(MappingDatabase.class)
+            .child(VirtualNetworkIdentifier.class, VNI_KEY)
+            .child(Mapping.class, MAPPING_EID_3_NB.key())
+            .build());
+        when(changeWrite.getRootNode()).thenReturn(modWrite);
+        when(mappingSystemMock.isMaster()).thenReturn(true);
     }
 
     /**
@@ -105,11 +114,11 @@ public class MappingDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_delete_NB() throws InterruptedException {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_del);
-        Mockito.when(mod_del.dataBefore()).thenReturn(MAPPING_EID_1_NB);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeDel);
+        when(modDel.dataBefore()).thenReturn(MAPPING_EID_1_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
-        Mockito.verify(iMappingSystemMock).removeMapping(MappingOrigin.Northbound, IPV4_EID_1);
+        verify(mappingSystemMock).removeMapping(MappingOrigin.Northbound, IPV4_EID_1);
     }
 
     /**
@@ -117,12 +126,12 @@ public class MappingDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_delete_SB() {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_del);
-        Mockito.when(mod_del.dataBefore()).thenReturn(MAPPING_EID_1_SB);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeDel);
+        when(modDel.dataBefore()).thenReturn(MAPPING_EID_1_SB);
 
         mappingDataListener.onDataTreeChanged(changes);
-        //Mockito.verifyZeroInteractions(iMappingSystemMock);
-        Mockito.verifyZeroInteractions(notificationPublishServiceMock);
+        //verifyZeroInteractions(iMappingSystemMock);
+        verifyZeroInteractions(notificationPublishServiceMock);
     }
 
     /**
@@ -132,17 +141,16 @@ public class MappingDataListenerTest {
     @Test
     @Ignore
     public void onDataTreeChangedTest_subtreeModified_NB() throws InterruptedException {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_subtreeModified);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeSubtreeModified);
         final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
                 MAPPING_EID_2_NB.getMappingRecord(), null, null, null, MappingChange.Updated);
-        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_NB);
+        when(modSubtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
         final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
-        Mockito.verify(iMappingSystemMock)
-                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_2), captor.capture());
+        verify(mappingSystemMock).addMapping(eq(MappingOrigin.Northbound), eq(IPV4_EID_2), captor.capture());
         assertEquals(captor.getValue().getRecord(), MAPPING_EID_2_NB.getMappingRecord());
-        Mockito.verify(notificationPublishServiceMock).putNotification(mapChanged);
+        verify(notificationPublishServiceMock).putNotification(mapChanged);
     }
 
     /**
@@ -151,12 +159,12 @@ public class MappingDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_subtreeModified_SB() {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_subtreeModified);
-        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_SB);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeSubtreeModified);
+        when(modSubtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_SB);
 
         mappingDataListener.onDataTreeChanged(changes);
-        //Mockito.verifyZeroInteractions(iMappingSystemMock);
-        Mockito.verifyZeroInteractions(notificationPublishServiceMock);
+        //verifyZeroInteractions(iMappingSystemMock);
+        verifyZeroInteractions(notificationPublishServiceMock);
     }
 
     /**
@@ -165,17 +173,16 @@ public class MappingDataListenerTest {
     @Test
     @Ignore
     public void onDataTreeChangedTest_write_NB() throws InterruptedException {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_write);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeWrite);
         final MappingChanged mapChanged = MSNotificationInputUtil.toMappingChanged(
                 MAPPING_EID_3_NB.getMappingRecord(), null, null, null, MappingChange.Created);
-        Mockito.when(mod_write.dataAfter()).thenReturn(MAPPING_EID_3_NB);
+        when(modWrite.dataAfter()).thenReturn(MAPPING_EID_3_NB);
 
         mappingDataListener.onDataTreeChanged(changes);
         final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
-        Mockito.verify(iMappingSystemMock)
-                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_3), captor.capture());
+        verify(mappingSystemMock).addMapping(eq(MappingOrigin.Northbound), eq(IPV4_EID_3), captor.capture());
         assertEquals(captor.getValue().getRecord(), MAPPING_EID_3_NB.getMappingRecord());
-        Mockito.verify(notificationPublishServiceMock).putNotification(mapChanged);
+        verify(notificationPublishServiceMock).putNotification(mapChanged);
     }
 
     /**
@@ -183,12 +190,12 @@ public class MappingDataListenerTest {
      */
     @Test
     public void onDataTreeChangedTest_write_SB() {
-        final List<DataTreeModification<Mapping>> changes = List.of(change_write);
-        Mockito.when(mod_write.dataAfter()).thenReturn(MAPPING_EID_3_SB);
+        final List<DataTreeModification<Mapping>> changes = List.of(changeWrite);
+        when(modWrite.dataAfter()).thenReturn(MAPPING_EID_3_SB);
 
         mappingDataListener.onDataTreeChanged(changes);
-        //Mockito.verifyZeroInteractions(iMappingSystemMock);
-        Mockito.verifyZeroInteractions(notificationPublishServiceMock);
+        //verifyZeroInteractions(iMappingSystemMock);
+        verifyZeroInteractions(notificationPublishServiceMock);
     }
 
     /**
@@ -198,23 +205,22 @@ public class MappingDataListenerTest {
     @Ignore
     public void onDataTreeChangedTest_multipleChanges() throws InterruptedException {
         final List<DataTreeModification<Mapping>> changes =
-                List.of(change_del, change_subtreeModified, change_write);
+                List.of(changeDel, changeSubtreeModified, changeWrite);
         final MappingChanged mapChangedSubtreeMod = MSNotificationInputUtil.toMappingChanged(
                 MAPPING_EID_2_NB.getMappingRecord(), null, null, null, MappingChange.Updated);
 
-        Mockito.when(mod_del.dataBefore()).thenReturn(MAPPING_EID_1_NB);
-        Mockito.when(mod_subtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_NB);
-        Mockito.when(mod_write.dataAfter()).thenReturn(MAPPING_EID_3_SB);
+        when(modDel.dataBefore()).thenReturn(MAPPING_EID_1_NB);
+        when(modSubtreeModified.dataAfter()).thenReturn(MAPPING_EID_2_NB);
+        when(modWrite.dataAfter()).thenReturn(MAPPING_EID_3_SB);
 
         mappingDataListener.onDataTreeChanged(changes);
         final ArgumentCaptor<MappingData> captor = ArgumentCaptor.forClass(MappingData.class);
-        Mockito.verify(iMappingSystemMock).removeMapping(MappingOrigin.Northbound, IPV4_EID_1);
-        Mockito.verify(iMappingSystemMock)
-                .addMapping(Mockito.eq(MappingOrigin.Northbound), Mockito.eq(IPV4_EID_2), captor.capture());
+        verify(mappingSystemMock).removeMapping(MappingOrigin.Northbound, IPV4_EID_1);
+        verify(mappingSystemMock).addMapping(eq(MappingOrigin.Northbound), eq(IPV4_EID_2), captor.capture());
         assertEquals(captor.getValue().getRecord(), MAPPING_EID_2_NB.getMappingRecord());
-        Mockito.verify(notificationPublishServiceMock).putNotification(mapChangedSubtreeMod);
-        //Mockito.verifyNoMoreInteractions(iMappingSystemMock);
-        Mockito.verifyNoMoreInteractions(notificationPublishServiceMock);
+        verify(notificationPublishServiceMock).putNotification(mapChangedSubtreeMod);
+        //verifyNoMoreInteractions(iMappingSystemMock);
+        verifyNoMoreInteractions(notificationPublishServiceMock);
     }
 
     private static Mapping getDefaultMapping(final Eid eid, final MappingOrigin origin) {
