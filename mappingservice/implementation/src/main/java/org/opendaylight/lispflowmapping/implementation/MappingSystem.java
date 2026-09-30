@@ -9,7 +9,6 @@ package org.opendaylight.lispflowmapping.implementation;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -761,7 +760,7 @@ public class MappingSystem implements IMappingSystem {
     public synchronized void subscribe(Subscriber subscriber, Eid subscribedEid) {
         Set<Subscriber> subscribers = getSubscribers(subscribedEid);
         if (subscribers == null) {
-            subscribers = Sets.newConcurrentHashSet();
+            subscribers = ConcurrentHashMap.newKeySet();
         } else if (subscribers.contains(subscriber)) {
             // If there is an entry already for this subscriber, remove it, so that it gets the new timestamp
             subscribers.remove(subscriber);
