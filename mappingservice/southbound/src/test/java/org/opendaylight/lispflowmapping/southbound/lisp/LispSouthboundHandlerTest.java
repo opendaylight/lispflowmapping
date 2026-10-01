@@ -1045,7 +1045,7 @@ public class LispSouthboundHandlerTest {
     }
 
     private static void assertHexEquals(byte expected, byte actual) {
-        assertEquals(String.format("0x%02X", expected), String.format("0x%02X", actual));
+        assertEquals("0x%02X".formatted(expected), "0x%02X".formatted(actual));
     }
 
     @Test(expected = LispMalformedPacketException.class)
